@@ -1,0 +1,48 @@
+# Publish one version of one pack (sub-workflow). Included by pack-cycle (first release) and by the
+# pack-release main (every later release).
+# pack-release machine (memory.yaml): draft → validating → releasing (gate) → released.
+name: pack-release-cycle
+kind: sub
+description: "Classify, validate, approve and publish one pack version"
+version: 1
+element: pack-release
+phases:
+  - name: prepare
+    description: >-
+      Classify every change since the previous version (pack-semver), compute the bump, set
+      version and the wingfoil compatibility range in pack.yaml, write the CHANGELOG.md entry.
+    role: tech-lead
+    actions:
+      - 'memory.add(type: pack-release)'
+      - memory.submit            # draft → validating
+    produces:
+      - "docs/memory/pack-release/{id}.md"
+      - "packs/**/CHANGELOG.md"
+    checks:
+      post: ["frontmatter.required: [pack, version, bump, wingfoil]"]
+  - name: validate
+    description: >-
+      The compatibility matrix (pack-compatibility): compose every preset and every documented
+      combination that includes the pack, with the lowest and the newest WingFoil version of the
+      range; each must validate with zero errors, and two compositions must be byte-identical.
+      Record commands and exit codes in the Validation section.
+    role: reviewer
+    actions:
+      - memory.submit            # validating → releasing
+    checks:
+      post: ["Validation section lists every WingFoil version and preset with exit code 0"]
+  - name: approve-publication
+    description: "The approver authorizes the publication (releasing → released) or sends it back."
+    role: tech-lead
+    actions:
+      - memory.approve           # releasing → released (approver)
+    approval: { by_role: approver }
+    fallback: { step: validate, set_state: validating }
+  - name: publish
+    description: >-
+      Update catalog.yaml (version, commit, digest), commit, tag <axis>/<name>@<version>, push.
+      If WingFoil bundles the pack, add a note to docs/wingfoil-feedback/ for WingFoil's
+      advance-bundled-packs release step.
+    role: tech-lead
+    produces:
+      - "catalog.yaml"

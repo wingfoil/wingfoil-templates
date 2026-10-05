@@ -1,6 +1,21 @@
-# Capture an ADR on demand
+# Startable entry point to capture one architecture decision (pack model, schemas, catalog, tooling).
 name: adr-ingest
 kind: main
-description: "Capture an ADR on demand"
+description: "Capture an architecture decision record into Memory."
+version: 1
 phases:
   - name: capture
+    description: "Record the context, the decision and its consequences."
+    role: architect
+    actions:
+      - 'memory.add(type: adr)'
+      - memory.submit            # draft → pending
+    produces:
+      - "docs/memory/adr/{id}.md"
+  - name: approve
+    description: "The approver accepts the ADR (pending → approved) or sends it back."
+    role: architect
+    actions:
+      - memory.approve
+    approval: { by_role: approver }
+    fallback: { step: capture }

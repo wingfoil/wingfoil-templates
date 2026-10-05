@@ -1,10 +1,45 @@
-# The end-to-end software life cycle
+# The end-to-end life cycle of this repository.
+# inception (templates-inception: vision through sequencer, then the pack-model rulings) and
+# specification run once, to frame the repository and fix the pack model and the pack format. From
+# then on the repository grows pack by pack (pack-cycle, one iteration per `pack` element); each pack
+# is then released again and again on its own (pack-release) and retired on its own
+# (pack-deprecation).
 name: sw-life-cycle
 kind: main
-description: "The end-to-end software life cycle"
+description: "The end-to-end life cycle of the WingFoil-Templates repository"
+version: 1
 phases:
   - name: inception
+    description: >-
+      Frame the repository as a product (vision, personas, journeys, features, sequencer) and fix
+      the pack model: the axes, the composition rules, the versioning and distribution model, the
+      first catalog scope.
+    role: product-owner
+    include: templates-inception
+    approval: { by_role: approver }
   - name: specification
-  - name: delivery
-    include: workflows/custom/kanban-delivery.yaml
+    description: >-
+      Specify the pack format (pack.yaml, fragments, catalog.yaml, presets, transitions) as a
+      tech-spec and its JSON Schemas under schema/. The schemas are the contract with the WingFoil
+      CLI: a change to them is reported to WingFoil (wingfoil-feedback directive).
+    role: architect
+    actions:
+      - 'memory.add(type: tech-spec)'
+      - memory.submit
+    produces:
+      - "docs/memory/tech-spec/spec-001-*.md"
+      - "schema/*.schema.json"
+    approval: { by_role: approver }
+    fallback: { step: specification }
+  - name: pack-delivery
+    description: "One iteration per accepted pack, in the order the product-owner sets."
+    iterate_over: pack
+    where: { status: [accepted] }
+    include: pack-cycle
   - name: sunset
+    description: >-
+      Retire the whole repository (only if WingFoil stops consuming it): announce on WingFoil, keep
+      every tag, archive.
+    role: product-owner
+    optional: true
+    approval: { by_role: approver }

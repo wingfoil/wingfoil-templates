@@ -3,7 +3,18 @@ id: ""
 type: bug
 title: ""
 status: draft
+severity: ""        # critical | major | minor
+pack: ""            # the pack element id, or empty for tooling
 ---
 
-<!-- bug body. `wingfoil memory add` copies this scaffold verbatim; `memory submit` replaces
-     these placeholder comments with real content and fills the required frontmatter fields. -->
+## Observed
+
+<!-- What happens, with the command and its output. -->
+
+## Expected
+
+## Reproduction
+
+<!-- Minimal steps on a clean checkout. -->
+
+## Execution Notes

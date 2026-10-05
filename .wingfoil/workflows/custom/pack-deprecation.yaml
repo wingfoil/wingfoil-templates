@@ -1,0 +1,29 @@
+# Retire a pack. Tags are never deleted: a project that locked a version can always fetch it again.
+name: pack-deprecation
+kind: main
+description: "Deprecate and retire a pack"
+version: 1
+element: pack
+phases:
+  - name: decide
+    description: >-
+      A decision-log: why the pack is retired, its successor (if any), the grace period (at least
+      one WingFoil minor release).
+    role: product-owner
+    actions:
+      - 'memory.add(type: decision-log)'
+      - memory.submit
+    approval: { by_role: approver }
+  - name: announce
+    description: >-
+      Mark the pack deprecated in catalog.yaml with its successor; publish a final patch whose
+      pack.yaml carries the deprecation notice; add a note to docs/wingfoil-feedback/.
+    role: tech-lead
+    produces:
+      - "catalog.yaml"
+  - name: retire
+    description: "After the grace period: hide the pack from the default catalog listing; deprecate the element."
+    role: tech-lead
+    actions:
+      - memory.deprecate
+    approval: { by_role: approver }

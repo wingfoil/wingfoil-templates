@@ -1,13 +1,13 @@
-# Memory element schema (P1.13) — scaffolded by `wingfoil init`.
-# One entry per element type: its path pattern, its id pattern and its scaffold template. Every type
-# below shares the `defaults` state machine; give a type its own `states:` block to override it for
-# that type only (REQ-STATE-08).
+# Memory element schema (P1.13) — scaffolded by `wingfoil init`, then customized for this repository.
+# One entry per element type: its path pattern, its id pattern and its scaffold template. A type with
+# no `states:` block of its own uses the `defaults` state machine (REQ-STATE-08).
+# `release` and `release-line` from the scaffold are removed: this repository has no repository-wide
+# releases, every pack is versioned and published on its own (`pack-release`, dl-001).
 version: 1
 
-# Default state machine — applies to every type that declares no `states:` block of its own.
-# `sequence` is the ordered forward chain (`submit` walks it); a `gates` state's forward edge needs
-# `approve` instead, and its `reject` target is where a rejection lands. `deprecated` is implicit:
-# `memory deprecate` reaches it from any state, so it is never listed here.
+# Default state machine — `sequence` is the forward chain (`submit` walks it); a `gates` state's
+# forward edge needs `approve`, and its `reject` target is where a rejection lands. `deprecated` is
+# implicit: `memory deprecate` reaches it from any state.
 defaults:
   states:
     sequence: [ draft, pending, approved ]
@@ -23,38 +23,19 @@ types:
       frontmatter:
         required: [id, type, title, status]
   bug:
+    # A defect in a pack or in this repository's tooling. A defect in WingFoil itself is not a bug
+    # here: it goes to docs/wingfoil-feedback/ (wingfoil-feedback directive).
     path: docs/memory/bug/{id}.md
     id_pattern: "bug-{n}-{slug}"
     template:
       file: memory/templates/bug.md
       frontmatter:
-        required: [id, type, title, status]
+        required: [id, type, title, status, severity]
   decision-log:
     path: docs/memory/decision-log/{id}.md
     id_pattern: "dl-{n}-{slug}"
     template:
       file: memory/templates/decision-log.md
-      frontmatter:
-        required: [id, type, title, status]
-  release:
-    path: docs/memory/release/{id}.md
-    id_pattern: "release-{n}"
-    template:
-      file: memory/templates/release.md
-      frontmatter:
-        required: [id, type, title, status]
-  release-line:
-    path: docs/memory/release-line/{id}.md
-    id_pattern: "rl-{n}"
-    template:
-      file: memory/templates/release-line.md
-      frontmatter:
-        required: [id, type, title, status]
-  task:
-    path: docs/memory/task/{id}.md
-    id_pattern: "task-{n}-{slug}"
-    template:
-      file: memory/templates/task.md
       frontmatter:
         required: [id, type, title, status]
   tech-spec:
@@ -64,3 +45,60 @@ types:
       file: memory/templates/tech-spec.md
       frontmatter:
         required: [id, type, title, status]
+  task:
+    # Kanban work item (kanban-delivery). pending is the approver's acceptance into the backlog,
+    # in-review the approver's acceptance of the work. backlog → in-progress and approved → done are
+    # plain `submit`s. `pack` is not required: tooling tasks belong to no pack.
+    path: docs/memory/task/{id}.md
+    id_pattern: "task-{n}-{slug}"
+    template:
+      file: memory/templates/task.md
+      frontmatter:
+        required: [id, type, title, status]
+    states:
+      sequence: [ draft, pending, backlog, in-progress, in-review, approved, done ]
+      gates:
+        pending: { reject: draft }
+        in-review: { reject: in-progress }
+  plan:
+    # Phase plan (WingFoil dl-019): the executable plan for one workflow phase, written when the phase
+    # starts, while WingFoil has no workflow engine.
+    path: docs/plans/{id}.md
+    id_pattern: "plan-{n}-{slug}"
+    template:
+      file: memory/templates/plan.md
+      frontmatter:
+        required: [id, type, title, status, workflow, phase]
+    states:
+      sequence: [ draft, active, done ]
+  pack:
+    # One element per pack: its charter (axis, slot, scope, what it ships, what it requires and
+    # conflicts with). The id carries the axis and the pack name, which also fill the `axis` and
+    # `name` fields (`memory add --set` fills only id tokens): `memory add --type pack --title Scrum
+    # --set axis=methodology --set name=scrum`. The slot of a phase pack and the axis of `base` are
+    # settled by the pack-model rulings (inception). proposed is the approver's acceptance of the
+    # charter; active means at least one version is published (first `pack-release` released).
+    path: docs/memory/pack/{id}.md
+    id_pattern: "pack-{axis}-{name}"
+    template:
+      file: memory/templates/pack.md
+      frontmatter:
+        required: [id, type, title, status, axis, name, pack_path]
+    states:
+      sequence: [ draft, proposed, accepted, active ]
+      gates:
+        proposed: { reject: draft }
+  pack-release:
+    # One element per published version of one pack (pack-release-cycle). validating: the
+    # compatibility matrix runs; releasing: the approver authorizes the publication (gate, reject
+    # back to validating); released: tag pushed and catalog.yaml updated.
+    path: docs/memory/pack-release/{id}.md
+    id_pattern: "prel-{n}-{slug}"
+    template:
+      file: memory/templates/pack-release.md
+      frontmatter:
+        required: [id, type, title, status, pack, version, bump, wingfoil]
+    states:
+      sequence: [ draft, validating, releasing, released ]
+      gates:
+        releasing: { reject: validating }

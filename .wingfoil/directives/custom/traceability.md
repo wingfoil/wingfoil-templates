@@ -8,6 +8,9 @@ title: "Traceability"
 
 # Traceability
 
-Maintain the feature -> story -> acceptance -> requirement -> task chain across every change.
+Keep the chain decision → pack charter → task → pack-release across every change.
 
-<!-- Tailor this rule to your project's needs. Directives are auto-loaded per role (roles.yaml). -->
+- Every task names its `pack` (or is a tooling task), and the element it comes from (the pack
+  charter, spec-001, a DL, a bug) in its Context.
+- Every pack-release lists the tasks and bugs it ships.
+- A rule taken from WingFoil (an element of the WingFoil repository) cites that element's id.

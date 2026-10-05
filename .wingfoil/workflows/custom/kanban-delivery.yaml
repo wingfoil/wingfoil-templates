@@ -1,14 +1,47 @@
-# Kanban delivery loop (sub-workflow) — scaffolded by `wingfoil init`.
-# Work flows continuously across the board under explicit WIP limits; there are no timeboxed iterations.
+# Kanban delivery loop (sub-workflow), one iteration per `task` element.
+# WIP limits: at most 1 task in-progress and 1 in-review per pack. Not enforced by WingFoil (no
+# workflow engine): the plan phase checks them with
+# `npx wingfoil memory search --type task --status in-progress`.
+# Task machine (memory.yaml): draft → pending (gate) → backlog → in-progress → in-review (gate) →
+# approved → done.
 name: kanban-delivery
 kind: sub
 description: "Kanban delivery loop"
+version: 2
+element: task
 phases:
   - name: plan
-    description: "Select the next slice of work to deliver."
+    description: >-
+      Pick the next work within the WIP limits; create the task (pack, Context, Acceptance) and
+      submit it; the approver accepts it into the backlog or rejects it.
+    role: product-owner
+    actions:
+      - 'memory.add(type: task)'
+      - memory.submit            # draft → pending
+      - memory.approve           # pending → backlog (approver)
+    approval: { by_role: approver }
+  - name: design
+    description: "Write the Design section, open branch task/<id>, start the task (backlog → in-progress)."
+    role: pack-author
+    actions:
+      - memory.submit            # backlog → in-progress
   - name: build
-    description: "Implement the work test-first (TDD)."
+    description: >-
+      Write the pack content (pack-authoring) or the tooling (code-quality, testing). Every changed
+      pack composes and validates with the pinned WingFoil CLI before review.
+    role: pack-author
   - name: review
-    description: "Review against the directives; run unit + acceptance tests."
+    description: >-
+      Check against the directives of the roles involved; the Acceptance commands pass. Then
+      in-progress → in-review; the approver accepts (→ approved) or sends it back (→ in-progress).
+    role: reviewer
+    actions:
+      - memory.submit            # in-progress → in-review
+      - memory.approve           # in-review → approved (approver)
+    approval: { by_role: approver }
+    fallback: { step: build, set_state: in-progress }
   - name: deliver
-    description: "Integrate the completed work."
+    description: "Merge task/<id> into main with --no-ff, then approved → done."
+    role: pack-author
+    actions:
+      - memory.submit            # approved → done

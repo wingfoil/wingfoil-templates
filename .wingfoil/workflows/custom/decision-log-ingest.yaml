@@ -1,6 +1,21 @@
-# Capture a decision-log on demand
+# Startable entry point to capture one decision into Memory.
 name: decision-log-ingest
 kind: main
-description: "Capture a decision-log on demand"
+description: "Capture a decision (context, options, ruling) into Memory."
+version: 1
 phases:
   - name: capture
+    description: "Record the question, the options and the proposed ruling."
+    role: facilitator
+    actions:
+      - 'memory.add(type: decision-log)'
+      - memory.submit            # draft → pending
+    produces:
+      - "docs/memory/decision-log/{id}.md"
+  - name: rule
+    description: "The approver rules (pending → approved) or sends it back."
+    role: product-owner
+    actions:
+      - memory.approve
+    approval: { by_role: approver }
+    fallback: { step: capture }

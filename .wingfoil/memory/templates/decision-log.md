@@ -5,5 +5,14 @@ title: ""
 status: draft
 ---
 
-<!-- decision-log body. `wingfoil memory add` copies this scaffold verbatim; `memory submit` replaces
-     these placeholder comments with real content and fills the required frontmatter fields. -->
+## Context
+
+<!-- The question and why it needs an answer now. -->
+
+## Options
+
+## Decision
+
+<!-- What was decided, by whom (the approver's ruling), and the consequences. -->
+
+## Execution Notes

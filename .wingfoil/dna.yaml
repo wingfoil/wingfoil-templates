@@ -1,46 +1,96 @@
-# Project DNA (P2.4) — scaffolded by `wingfoil init` (Kanban template).
-# Structural map of the project: modules, stacks, team + roles, resource paths. Customize freely.
+# Project DNA (P2.4) — scaffolded by `wingfoil init` (Kanban template), then customized for this
+# repository. Structural map of the project: modules, stacks, team + roles, resource paths.
 version: 1
 
 project:
-  name: ""                        # your project name
-  description: ""
-  methodology: Kanban        # Continuous-flow delivery with work-in-progress limits.
+  name: wingfoil-templates
+  description: >-
+    The official, live source of WingFoil template packs: methodologies, team-mode overlays, phase
+    methods, project blueprints and lifecycle stages, with the transitions between stages. The
+    WingFoil CLI downloads them at init, pack add, upgrade and stage set; its npm package bundles the
+    base packs as offline fallback.
+  license: MIT
+  repository: https://github.com/wingfoil/wingfoil-templates
+  methodology: Kanban        # Continuous flow: every pack is semver'd and released on its own, no timeboxed iterations.
+  north_star: >-
+    Every pack combination composes deterministically (same packs, versions and parameters give
+    byte-identical files) into a .wingfoil/ configuration that every WingFoil version in the packs'
+    compatibility range validates with zero errors.
 
-# Modules — the parts of the system (anatomy for navigation). Add your own.
-modules: []
+# Modules — the parts of this repository.
+modules:
+  - name: catalog
+    description: "catalog.yaml: the index WingFoil reads — every pack, its axis, path, published versions and their digests."
+    path: catalog.yaml
+  - name: schema
+    description: "JSON Schemas of pack.yaml, catalog.yaml, presets and transitions (the contract with the WingFoil CLI)."
+    path: schema
+  - name: packs
+    description: "One directory per pack, grouped by axis: methodology, team-mode, phase/<slot>, blueprint, stage."
+    path: packs
+  - name: transitions
+    description: "Stage transitions run by `wingfoil stage set`: pre-checks, actions, the decision-log they record."
+    path: transitions
+  - name: presets
+    description: "Named, curated pack combinations selectable with `wingfoil init --preset`."
+    path: presets
 
-# Stacks — technologies + methodologies in use. The methodologies come from the Kanban template.
+# Stacks — technologies + methodologies in use.
 stacks:
-  # Each technology is a {name, category} entry: `category` is required (free text: language,
-  # runtime, framework, database, ...); `version` and `notes` are optional. To declare one, replace
-  # `technologies: []` with a list like this example, uncommented:
-  # technologies:
-  #   - name: TypeScript
-  #     category: language
-  # or run: wingfoil dna add stacks.technologies --value TypeScript --entry-category language
-  technologies: []
+  technologies:
+    - name: YAML
+      category: format
+      notes: "pack.yaml, fragments, workflows, catalog, presets, transitions"
+    - name: Markdown
+      category: format
+      notes: "directives, Memory templates, pack READMEs"
+    - name: JSON Schema
+      category: specification
+      version: "2020-12"
+    - name: WingFoil CLI
+      category: tool
+      version: "0.2.2"
+      notes: "manages this repository (package.json devDependency, pinned exact) and validates composed packs"
+    - name: Node.js
+      category: runtime
+      version: ">=22.12"
   methodologies:
     - name: Kanban
-    - name: Specification by Example (BDD)
-    - name: TDD
+    - name: Semantic Versioning
+      notes: "per pack, never repository-wide (dl-001); the rules are the pack-semver directive"
 
-# Team & roles — AI agents execute as developer/reviewer/qa/architect and never hold approval authority.
+# Team & roles — AI agents execute as non-approving roles and never hold approval authority.
 team:
-  members: []
+  members:
+    - name: Roberto Pompermaier
+      email: robypomper@gmail.com
+      roles: [approver, product-owner, tech-lead]
+  agents:
+    - name: claude
+      executes_as: [pack-author, developer, reviewer, architect, facilitator]
+      approval_authority: false
   roles:
+    - name: pack-author
+      description: "Writes and changes pack content: pack.yaml, fragments, directives, workflows, Memory templates."
     - name: developer
+      description: "Writes the repository tooling: composition and validation scripts, CI."
     - name: reviewer
-    - name: qa
+      description: "Reviews a change against the directives; judges independently of its author."
     - name: architect
+      description: "Owns the pack model, the schemas and the contract with the WingFoil CLI."
     - name: product-owner
+      description: "Owns the catalog scope: which packs exist, in which order they are built."
     - name: tech-lead
+      description: "Owns pack releases: the bump class, the compatibility range, the publication."
+    - name: facilitator
+      description: "Runs the capture workflows (bugs, decision logs, ADRs) and the WingFoil feedback inbox."
     - name: approver
+      description: "The human gate: accepts packs, tasks, decisions and every publication."
 
 # Resource paths — query categories used to navigate the project.
 paths:
-  sources: []
-  tests: []
-  docs: []
-  config: [.wingfoil]
-  governance: []
+  sources: [catalog.yaml, schema, packs, transitions, presets]
+  tests: [tests]
+  docs: [README.md, docs]
+  config: [.wingfoil, package.json]
+  governance: [docs/memory, docs/plans, docs/wingfoil-feedback, LICENSE]

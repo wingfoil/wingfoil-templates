@@ -8,6 +8,10 @@ title: "Determinism"
 
 # Determinism
 
-No wall-clock, randomness, or unordered iteration in context-building paths; prefer declared config.
+The same packs, versions and parameters must produce byte-identical files.
 
-<!-- Tailor this rule to your project's needs. Directives are auto-loaded per role (roles.yaml). -->
+- No wall-clock, randomness or filesystem-dependent ordering in pack content or in the tooling that
+  composes and validates it.
+- Prefer declared configuration (pack.yaml parameters with defaults) over inference.
+- Pin every tool used in validation to an exact version (the WingFoil CLI is pinned in
+  `package.json`).

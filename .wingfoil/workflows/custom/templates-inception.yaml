@@ -1,0 +1,53 @@
+# Templates inception (sub-workflow): a compact Lean Inception to frame WingFoil-Templates as a
+# product (who consumes and who writes packs, what the repository is and is not, which packs, in which
+# order), modelled on WingFoil2-Benchmark's benchmark-inception without its GQM experiment design.
+# It closes by recording the pack model (axes, composition, versioning, distribution) as decision-logs.
+name: templates-inception
+kind: sub
+description: "Lean Inception for the templates repository, closed by the pack-model rulings"
+version: 1
+phases:
+  - name: brief
+    description: "Product brief from the approver's answers: purpose, consumers, constraints, dependencies on WingFoil."
+    role: facilitator
+    produces:
+      - docs/01_vision/01_product-brief.md
+  - name: vision
+    description: "Product vision + Is / Is not / Does / Does not."
+    role: facilitator
+    produces:
+      - docs/01_vision/02_product-vision.md
+      - docs/01_vision/03_is-isnot.md
+  - name: personas
+    description: "Personas: the projects that adopt packs, the pack authors, the WingFoil maintainers who bundle them."
+    role: facilitator
+    produces:
+      - docs/01_vision/04_personas.md
+  - name: journeys
+    description: "Journeys: init from a preset, add a pack, upgrade, move stage, author a pack, publish a version."
+    role: facilitator
+    produces:
+      - docs/01_vision/05_journeys.md
+  - name: features
+    description: "Feature brainstorm (packs, catalog, compatibility, transitions, tooling) + technical/business review."
+    role: architect
+    produces:
+      - docs/01_vision/06_features.md
+  - name: sequencer
+    description: "Sequencer + MVP canvas: the order in which packs are chartered and published, and the first publishable set."
+    role: product-owner
+    produces:
+      - docs/01_vision/07_sequencer.md
+      - docs/01_vision/08_mvp-canvas.md
+  - name: pack-model
+    description: >-
+      Record the pack model the vision implies (axes, composition rules, versioning and distribution,
+      first catalog scope) as decision-logs through decision-log-ingest. WingFoil-side consequences
+      go to the feedback notes (wingfoil-feedback directive), which stay out of git by the
+      approver's ruling of 2026-10-05, so they are not a `produces` of this phase.
+    role: product-owner
+    actions:
+      - 'memory.add(type: decision-log)'
+      - memory.submit            # draft → pending
+    produces:
+      - "docs/memory/decision-log/{id}.md"

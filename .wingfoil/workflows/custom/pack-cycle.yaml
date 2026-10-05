@@ -1,0 +1,47 @@
+# From a pack charter to the pack's first published version (sub-workflow, one iteration per pack).
+# Pack machine (memory.yaml): draft → proposed (gate) → accepted → active.
+name: pack-cycle
+kind: sub
+description: "Charter, author and first-release one pack"
+version: 1
+element: pack
+phases:
+  - name: charter
+    description: >-
+      Write the pack charter (axis, slot, purpose, what it ships, requires/conflicts, minimum
+      WingFoil version) and submit it; the approver accepts it (proposed → accepted) or sends it back.
+    role: product-owner
+    actions:
+      - 'memory.add(type: pack)'
+      - memory.submit            # draft → proposed
+      - memory.approve           # proposed → accepted (approver)
+    approval: { by_role: approver }
+    produces:
+      - "docs/memory/pack/{id}.md"
+    checks:
+      post: ["frontmatter.required: [title, axis, pack_path]"]
+  - name: design
+    description: >-
+      Only when the pack introduces a new mechanism (a new fragment kind, a new parameter type, a
+      transition): a tech-spec, or an amendment of spec-001, before any task is opened.
+    role: architect
+    optional: true
+    actions:
+      - 'memory.add(type: tech-spec)'
+      - memory.submit
+    approval: { by_role: approver }
+  - name: author
+    description: "The pack's tasks, one kanban-delivery iteration each."
+    iterate_over: task
+    where: { pack: "{pack.id}" }
+    include: kanban-delivery
+  - name: first-release
+    description: "Publish the pack's first version (normally 1.0.0, or 0.x while spec-001 is a draft)."
+    include: pack-release-cycle
+  - name: activate
+    description: "First version released: the pack becomes active (accepted → active)."
+    role: tech-lead
+    actions:
+      - memory.submit            # accepted → active
+    checks:
+      pre: ["pack-release of this pack is released"]

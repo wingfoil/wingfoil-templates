@@ -1,0 +1,9 @@
+# Startable entry point to publish a new version of an already active pack.
+name: pack-release
+kind: main
+description: "Publish a new version of an active pack"
+version: 1
+phases:
+  - name: release
+    description: "One pack version, end to end."
+    include: pack-release-cycle
