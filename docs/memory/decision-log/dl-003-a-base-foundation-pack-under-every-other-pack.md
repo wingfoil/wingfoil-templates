@@ -2,7 +2,7 @@
 id: dl-003-a-base-foundation-pack-under-every-other-pack
 type: decision-log
 title: "A base foundation pack under every other pack"
-status: pending
+status: approved
 tags: ["packs","base"]
 ---
 
