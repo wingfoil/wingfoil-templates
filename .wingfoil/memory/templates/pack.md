@@ -26,6 +26,7 @@ conflicts: []       # pack ids that cannot be composed with this one
 
 ## Compatibility
 
-<!-- The minimum WingFoil version and the WingFoil features the pack depends on. -->
+<!-- The file formats the pack is written in and the WingFoil capabilities it requires (dl-002);
+     its WingFoil range is computed from compat.yaml, never written here. -->
 
 ## Execution Notes

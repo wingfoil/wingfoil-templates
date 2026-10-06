@@ -1,6 +1,6 @@
 # Project DNA (P2.4) — scaffolded by `wingfoil init` (Kanban template), then customized for this
 # repository. Structural map of the project: modules, stacks, team + roles, resource paths.
-version: 1
+version: 2
 
 project:
   name: wingfoil-templates
@@ -14,8 +14,8 @@ project:
   methodology: Kanban        # Continuous flow: every pack is semver'd and released on its own, no timeboxed iterations.
   north_star: >-
     Every pack combination composes deterministically (same packs, versions and parameters give
-    byte-identical files) into a .wingfoil/ configuration that every WingFoil version in the packs'
-    compatibility range validates with zero errors.
+    byte-identical files) into a .wingfoil/ configuration that every released WingFoil compatible
+    with the packs' formats and capabilities validates with zero errors.
 
 # Modules — the parts of this repository.
 modules:
@@ -34,6 +34,9 @@ modules:
   - name: presets
     description: "Named, curated pack combinations selectable with `wingfoil init --preset`."
     path: presets
+  - name: compat
+    description: "compat.yaml: per WingFoil release, the file formats it reads and the capabilities it provides (dl-002)."
+    path: compat.yaml
 
 # Stacks — technologies + methodologies in use.
 stacks:
@@ -81,7 +84,7 @@ team:
     - name: product-owner
       description: "Owns the catalog scope: which packs exist, in which order they are built."
     - name: tech-lead
-      description: "Owns pack releases: the bump class, the compatibility range, the publication."
+      description: "Owns pack releases and compat.yaml: the bump class, the formats and capabilities, the maintained lines, the publication."
     - name: facilitator
       description: "Runs the capture workflows (bugs, decision logs, ADRs) and the WingFoil feedback inbox."
     - name: approver
@@ -89,7 +92,7 @@ team:
 
 # Resource paths — query categories used to navigate the project.
 paths:
-  sources: [catalog.yaml, schema, packs, transitions, presets]
+  sources: [catalog.yaml, compat.yaml, schema, packs, transitions, presets]
   tests: [tests]
   docs: [README.md, docs]
   config: [.wingfoil, package.json]

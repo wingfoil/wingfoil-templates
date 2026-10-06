@@ -16,6 +16,9 @@ Applies to every role that writes or reviews pack content under `packs/`.
 - A pack only ever writes under `built-in/` in a project (`directives/built-in/`,
   `workflows/built-in/`, Memory templates). It never writes `custom/`: that is where projects
   override it, and `wingfoil upgrade` must be able to replace pack files without touching theirs.
+- `pack.yaml` declares the `formats` of every file kind the pack ships and the WingFoil
+  `requires_capabilities` it relies on, from the `compat.yaml` vocabulary (dl-002). Content uses
+  only what those formats and capabilities provide.
 - No project-specific values: names, paths, people and versions of the target project are
   parameters, declared in `pack.yaml` with a type and a default.
 - Composition is deterministic: no timestamps, no randomness, no ordering that depends on the

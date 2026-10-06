@@ -1,12 +1,13 @@
 # Project Workflow main configuration (P4.1) — scaffolded by `wingfoil init`, then customized.
 # This file does not inline workflows; it includes the workflow files. Startable mains first, then
 # the sub-workflows they include by name.
-version: 1
+version: 2
 
 include:
   - workflows/custom/sw-life-cycle.yaml
   - workflows/custom/pack-release.yaml
   - workflows/custom/pack-deprecation.yaml
+  - workflows/custom/wingfoil-release-intake.yaml
   - workflows/custom/bug-ingest.yaml
   - workflows/custom/decision-log-ingest.yaml
   - workflows/custom/adr-ingest.yaml

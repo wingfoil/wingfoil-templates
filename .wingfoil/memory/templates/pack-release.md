@@ -6,7 +6,8 @@ status: draft
 pack: ""            # the pack element id (pack-<axis>-<name>)
 version: ""         # the semver being published
 bump: ""            # major | minor | patch (pack-semver directive)
-wingfoil: ""        # compatibility range, e.g. ">=0.4.0 <0.6.0"
+wingfoil: ""        # COMPUTED from compat.yaml (formats + capabilities), e.g. ">=0.4.0 <0.6.0"; never chosen by hand (dl-002)
+line: ""            # the maintained line: current, or <major>.x for an N-1 maintenance line (dl-002)
 ---
 
 ## Changes

@@ -4,13 +4,15 @@
 name: pack-release-cycle
 kind: sub
 description: "Classify, validate, approve and publish one pack version"
-version: 1
+version: 2
 element: pack-release
 phases:
   - name: prepare
     description: >-
       Classify every change since the previous version (pack-semver), compute the bump, set
-      version and the wingfoil compatibility range in pack.yaml, write the CHANGELOG.md entry.
+      version, formats and requires_capabilities in pack.yaml, compute the WingFoil range from
+      compat.yaml (dl-002), write the CHANGELOG.md entry. On an N-1 maintenance line (after
+      WingFoil 1.0) only fixes are accepted.
     role: tech-lead
     actions:
       - 'memory.add(type: pack-release)'
@@ -23,8 +25,9 @@ phases:
   - name: validate
     description: >-
       The compatibility matrix (pack-compatibility): compose every preset and every documented
-      combination that includes the pack, with the lowest and the newest WingFoil version of the
-      range; each must validate with zero errors, and two compositions must be byte-identical.
+      combination that includes the pack, with the oldest and the newest released WingFoil that
+      compat.yaml lists as compatible; each must validate with zero errors, and two compositions
+      must be byte-identical.
       Record commands and exit codes in the Validation section.
     role: reviewer
     actions:
@@ -40,7 +43,8 @@ phases:
     fallback: { step: validate, set_state: validating }
   - name: publish
     description: >-
-      Update catalog.yaml (version, commit, digest), commit, tag <axis>/<name>@<version>, push.
+      Update catalog.yaml (version, commit, digest, formats, capabilities, computed WingFoil
+      range), commit, tag <axis>/<name>@<version>, push.
       If WingFoil bundles the pack, add a note to docs/wingfoil-feedback/ for WingFoil's
       advance-bundled-packs release step.
     role: tech-lead
