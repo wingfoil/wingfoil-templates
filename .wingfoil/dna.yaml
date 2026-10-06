@@ -1,6 +1,6 @@
 # Project DNA (P2.4) — scaffolded by `wingfoil init` (Kanban template), then customized for this
 # repository. Structural map of the project: modules, stacks, team + roles, resource paths.
-version: 2
+version: 3
 
 project:
   name: wingfoil-templates
@@ -26,7 +26,7 @@ modules:
     description: "JSON Schemas of pack.yaml, catalog.yaml, presets and transitions (the contract with the WingFoil CLI)."
     path: schema
   - name: packs
-    description: "One directory per pack, grouped by axis: methodology, team-mode, phase/<slot>, blueprint, stage."
+    description: "One directory per pack: base, then grouped by axis: methodology, phase/<slot>, blueprint, governance, team-mode, stage."
     path: packs
   - name: transitions
     description: "Stage transitions run by `wingfoil stage set`: pre-checks, actions, the decision-log they record."
@@ -57,6 +57,22 @@ stacks:
     - name: Node.js
       category: runtime
       version: ">=22.12"
+    - name: TypeScript
+      category: language
+      version: "6.0.3"
+      notes: "the repository tooling, compiled with tsc (adr-002)"
+    - name: yaml
+      category: library
+      version: "2.9.1"
+      notes: "YAML parsing with source text and deterministic output (adr-003)"
+    - name: ajv
+      category: library
+      version: "8.20.0"
+      notes: "JSON Schema 2020-12 validation against schema/ (adr-003)"
+    - name: semver
+      category: library
+      version: "7.8.5"
+      notes: "version comparison and range evaluation, behind the spec-001 §6.3 subset parser (adr-003)"
   methodologies:
     - name: Kanban
     - name: Semantic Versioning

@@ -23,7 +23,7 @@ Every pack has its own semver (dl-001). There is no repository-wide version.
   and the pack's own README.
 - When a change is in doubt between two classes, take the higher one.
 - The version is set in `pack.yaml` and recorded in a `pack-release` element; the tag is
-  `<catalog pack id>@<version>`, e.g. `base@0.1.0`, `methodology/kanban@1.0.0`,
+  `<catalog pack id>@<version>`, e.g. `base@1.0.0`, `methodology/kanban@1.0.0`,
   `phase/inception/lean-inception@1.0.0` (dl-004). A published tag is never moved or deleted.
 - `0.x` versions are allowed only while spec-001 (the pack format) is not approved.
 

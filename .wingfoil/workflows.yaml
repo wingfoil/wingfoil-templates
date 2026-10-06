@@ -1,7 +1,7 @@
 # Project Workflow main configuration (P4.1) — scaffolded by `wingfoil init`, then customized.
 # This file does not inline workflows; it includes the workflow files. Startable mains first, then
 # the sub-workflows they include by name.
-version: 2
+version: 3
 
 include:
   - workflows/custom/sw-life-cycle.yaml
@@ -18,3 +18,4 @@ include:
   - workflows/custom/retrospective.yaml
   - workflows/custom/pack-release-cycle.yaml
   - workflows/custom/kanban-delivery.yaml
+  - workflows/custom/tooling-delivery.yaml

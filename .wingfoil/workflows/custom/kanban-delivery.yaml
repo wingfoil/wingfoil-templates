@@ -1,4 +1,6 @@
-# Kanban delivery loop (sub-workflow), one iteration per `task` element.
+# Kanban delivery loop (sub-workflow), one iteration per `task` element of a pack. Included by
+# pack-cycle › author. Tooling tasks (no pack) run through tooling-delivery, the same loop with the
+# developer role (bug-001); the two files differ only in roles and descriptions.
 # WIP limits: at most 1 task in-progress and 1 in-review per pack. Not enforced by WingFoil (no
 # workflow engine): the plan phase checks them with
 # `npx wingfoil memory search --type task --status in-progress`.
@@ -7,7 +9,7 @@
 name: kanban-delivery
 kind: sub
 description: "Kanban delivery loop"
-version: 2
+version: 3
 element: task
 phases:
   - name: plan
@@ -27,8 +29,8 @@ phases:
       - memory.submit            # backlog → in-progress
   - name: build
     description: >-
-      Write the pack content (pack-authoring) or the tooling (code-quality, testing). Every changed
-      pack composes and validates with the pinned WingFoil CLI before review.
+      Write the pack content (pack-authoring). Every changed pack composes and validates with the
+      pinned WingFoil CLI before review.
     role: pack-author
   - name: review
     description: >-

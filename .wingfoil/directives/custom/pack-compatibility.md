@@ -9,7 +9,9 @@ tags: [packs, release, validation]
 
 # Pack compatibility
 
-Applies to every role that validates or publishes a pack.
+Applies to every role that validates or publishes a pack of this repository's catalog (`packs/`).
+The tooling's test fixtures (`tests/fixtures/`) are not catalog packs: their compositions are the
+tooling's self-tests, run in the matrix's self-test mode (dl-009).
 
 - The contract with WingFoil is what a pack declares in `pack.yaml`: the `formats` its content is
   written in and the `requires_capabilities` it needs (dl-002). Never write a WingFoil version

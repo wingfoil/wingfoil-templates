@@ -1,0 +1,53 @@
+# Tooling delivery loop (sub-workflow), one iteration per tooling `task` element (a task whose
+# `pack` is empty). Included by sw-life-cycle › tooling and by tooling-change (dl-005 G7).
+# The same loop as kanban-delivery, which serves pack tasks: same phases, states, gates and WIP
+# limits, with the developer role where kanban-delivery has pack-author (bug-001). The two files
+# differ only in roles and descriptions; a change to one is checked against the other.
+# WIP limits: at most 1 tooling task in-progress and 1 in-review. Not enforced by WingFoil (no
+# workflow engine): the plan phase checks them with
+# `npx wingfoil memory search --type task --status in-progress`.
+# Task machine (memory.yaml): draft → pending (gate) → backlog → in-progress → in-review (gate) →
+# approved → done.
+name: tooling-delivery
+kind: sub
+description: "Tooling delivery loop"
+version: 1
+element: task
+phases:
+  - name: plan
+    description: >-
+      Pick the next tooling work within the WIP limits; create the task (empty pack, Context citing
+      the feature, spec or ADR it comes from, Acceptance with the commands) and submit it; the
+      approver accepts it into the backlog or rejects it.
+    role: product-owner
+    actions:
+      - 'memory.add(type: task)'
+      - memory.submit            # draft → pending
+      - memory.approve           # pending → backlog (approver)
+    approval: { by_role: approver }
+  - name: design
+    description: "Write the Design section, open branch task/<id>, start the task (backlog → in-progress)."
+    role: developer
+    actions:
+      - memory.submit            # backlog → in-progress
+  - name: build
+    description: >-
+      Write the tooling (code-quality, testing, determinism). The build, the tests and the
+      Acceptance commands pass before review.
+    role: developer
+  - name: review
+    description: >-
+      Check against the reviewer's directives and the developer's (code-quality, testing); the
+      Acceptance commands pass. Then in-progress → in-review; the approver accepts (→ approved) or
+      sends it back (→ in-progress).
+    role: reviewer
+    actions:
+      - memory.submit            # in-progress → in-review
+      - memory.approve           # in-review → approved (approver)
+    approval: { by_role: approver }
+    fallback: { step: build, set_state: in-progress }
+  - name: deliver
+    description: "Merge task/<id> into main with --no-ff, then approved → done."
+    role: developer
+    actions:
+      - memory.submit            # approved → done
