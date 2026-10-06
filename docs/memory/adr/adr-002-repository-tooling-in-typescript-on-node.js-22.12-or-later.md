@@ -2,7 +2,7 @@
 id: adr-002-repository-tooling-in-typescript-on-node.js-22.12-or-later
 type: adr
 title: "Repository tooling in TypeScript on Node.js 22.12 or later"
-status: draft
+status: pending
 tags: ["tooling"]
 ---
 
