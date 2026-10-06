@@ -140,3 +140,6 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
 - **Milestone M0 (review N9):** M0 closes with spec-001 and `schema/` approved. The real
   `catalog.yaml` and `compat.yaml` are written with the tooling (M1) and with `base` (M2). The W3
   and W4 exit criteria are therefore met as a specification and its schemas, not as committed files.
+- 2026-10-06: the same reviewer re-reviewed the amendment and found nothing blocking. It raised two
+  should-fix points in §7.5 and five nits, all fixed in a second amendment (89d535f).
+  The validators agree on 34 samples.
