@@ -112,3 +112,7 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
 
 - 2026-10-06: the approver gave the remote and asked to register it and push `main`. The push from
   the agent session was blocked by its permission settings; the approver runs it.
+- Step 1: plan-016 captured dl-009 and dl-010; plan-017 captured adr-003, after a vulnerability
+  review of the libraries. All three `pending`.
+- Step 2: bug-001 captured through `bug-ingest` › `capture` (`bc715a3`, `4a32d04`), `pending`, with
+  three fix options; (a), a `tooling-delivery` sub-workflow, recommended.
