@@ -2,7 +2,7 @@
 id: adr-001-a-reference-composer-in-this-repository-proposed-to-wingfoil-as-its-implementation
 type: adr
 title: "A reference composer in this repository, proposed to WingFoil as its implementation"
-status: draft
+status: pending
 tags: ["tooling","composer"]
 ---
 
