@@ -31,25 +31,38 @@ approved element fixed the path (plan-018 Execution Notes).
 
 ## Acceptance
 
-Run from a clean clone of the task branch.
+Run from a clean clone of the task branch. The scripts are named `build`, `test` and `check:pins`.
 
-1. `npm ci` exits 0; `package.json` lists exactly the dependencies of adr-003, plus the pinned
-   `wingfoil` 0.2.2, every one as an exact version.
-2. `npm run build` (`tsc`) exits 0 and writes only under `dist/`, which git ignores.
-3. `npm test` runs the `node:test` suite on the compiled output and exits 0.
+1. `npm ci` exits 0. `package.json` pins every entry to an exact version:
+   - `dependencies`: `yaml` 2.9.1, `ajv` 8.20.0, `semver` 7.8.5;
+   - `devDependencies`: `typescript` 6.0.3, `@types/node` 22.20.5, `@types/semver` 7.8.0, `wingfoil`
+     0.2.2;
+   - `engines.node` stays `>=22.12.0`.
+
+   `git ls-files package-lock.json` prints the file.
+2. `npm run build` (`tsc`) exits 0 and compiles `src/` and the tests, which live under `tests/`
+   (`dna.yaml` `paths.tests`), into `dist/`. Afterwards `git check-ignore -q dist/x` exits 0 and
+   `git status --porcelain` prints nothing.
+3. `npm test` runs `node --test` on the compiled tests, given as explicit globs, and exits 0.
 4. `npm run check:pins` exits 0 on this repository. Its tests cover at least: a range (`^`, `~`,
    `>=`, `*`, `x`, a tag such as `latest`) in any dependency field fails, naming the dependency; a
    lockfile entry whose version differs from `package.json` fails; a missing lockfile fails.
-5. On the floor: with Node.js 22.12.0 installed in a local prefix
-   (`N_PREFIX=$PWD/.cache/n n install 22.12.0`, `.cache/` is ignored), then
-   `PATH=$PWD/.cache/n/bin:$PATH`, steps 1–4 pass and `node --version` prints `v22.12.0`.
-6. `npm audit` reports 0 vulnerabilities.
-7. `git check-attr text -- packs/x/pack.yaml` prints `text: unset`.
-8. `npx wingfoil workflow list`, `dna show` and `directives list` exit 0 with empty stderr after
-   the `dna.yaml` change, which has `version: 4`.
+5. On the floor. Prerequisite: `n` (here `/usr/local/bin/n`). With Node.js 22.12.0 installed in a
+   local prefix (`N_PREFIX=$PWD/.cache/n n install 22.12.0`; `.cache/` is ignored), then
+   `PATH=$PWD/.cache/n/bin:$PATH`: `node --version` prints `v22.12.0`, `npm --version` prints
+   `10.9.0`, and steps 1–4 pass.
+6. `npm audit` exits 0 and prints `found 0 vulnerabilities`; `npm audit signatures` exits 0.
+7. `git check-attr text -- packs/x/pack.yaml` prints `packs/x/pack.yaml: text: unset`.
+8. `dna.yaml` has `version: 4`; `npx wingfoil dna show` lists the module `tooling` at `src`, and
+   `paths.sources` contains `src`. `npx wingfoil workflow list`, `dna show` and `directives list`
+   exit 0 with empty stderr.
 
 ## Design
 
 <!-- Filled at the start of the work. -->
 
 ## Execution Notes
+
+- 2026-10-06: amended while `pending`, before the approver's review, after an independent review
+  of the task: dependencies split by field, the lockfile tracked, `dist/` ignored, tests under
+  `tests/`, the npm floor, the `dna show` check, exact audit output, script names.
