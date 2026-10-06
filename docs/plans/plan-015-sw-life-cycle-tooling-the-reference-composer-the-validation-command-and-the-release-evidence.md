@@ -132,3 +132,5 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   (Node.js floor tested in task 1 and CI, range subset scope, fixed YAML output options, two more
   alternatives, T15 uncommitted), bug-001 (scope, keeping the two loops in step, the ruling).
 - Step 2 follow-ups gain the `pack-compatibility` scope sentence (dl-009).
+- 2026-10-06: the same reviewer re-reviewed the amendment (`4a9390f`): verdict approve, every
+  finding resolved. dl-009, dl-010, adr-003 and bug-001 handed to the approver.

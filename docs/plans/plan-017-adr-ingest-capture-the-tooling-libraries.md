@@ -45,8 +45,10 @@ review of every dependency before it is added. The `approve` phase that follows 
     verified attestation.
   - Runtime tree: 7 packages (`yaml` and `semver` have no dependencies; `ajv` brings four).
   - `yaml` keeps the source text of a scalar (`1.0` reads as the number 1 with source `1.0`) and
-    reports duplicate keys (`DUPLICATE_KEY`). Ajv2020 (`strict`, `allowUnionTypes`) compiles the five
-    schemas. No schema uses the `format` keyword, so `ajv-formats` is not needed.
+    reports duplicate keys (`DUPLICATE_KEY`). Ajv2020 (`strict`, `allowUnionTypes`) compiles the
+    five schemas. No schema uses the `format` keyword, so `ajv-formats` is not needed.
 - 2026-10-06: adr-003 filled and submitted (`b083d4a`, `54b74cc`), `pending`. Its "about three
   hundred packages" for `jest` was checked afterwards in a scratch directory: `jest` 30 installs 316
   packages. Feedback note T15 names adr-003 and the `yaml`/`js-yaml` difference (uncommitted).
+- 2026-10-06: adr-003 amended while `pending` at the approver's request, after the independent
+  review (plan-015); the same reviewer re-reviewed the amendment and approved it.
