@@ -2,7 +2,7 @@
 id: plan-013-decision-log-ingest-capture-the-operations-slot
 type: plan
 title: "decision-log-ingest capture: the operations slot"
-status: active
+status: done
 workflow: "decision-log-ingest"
 phase: "capture"
 tags: ["process","decision-log"]
