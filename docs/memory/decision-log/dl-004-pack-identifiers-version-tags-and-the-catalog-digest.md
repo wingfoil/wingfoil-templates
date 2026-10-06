@@ -2,7 +2,7 @@
 id: dl-004-pack-identifiers-version-tags-and-the-catalog-digest
 type: decision-log
 title: "Pack identifiers, version tags and the catalog digest"
-status: pending
+status: approved
 tags: ["packs","conventions"]
 ---
 
