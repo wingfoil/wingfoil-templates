@@ -2,7 +2,7 @@
 id: adr-003-tooling-libraries-yaml-ajv-semver-and-the-node.js-test-runner
 type: adr
 title: "Tooling libraries: yaml, Ajv, semver and the Node.js test runner"
-status: draft
+status: pending
 tags: ["tooling","dependencies"]
 ---
 
