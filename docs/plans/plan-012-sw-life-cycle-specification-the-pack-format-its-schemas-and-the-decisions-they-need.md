@@ -119,3 +119,24 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   - WingFoil 0.2.2 warns on `format:` (`format_key`, O10);
   - Memory templates go under `memory/templates/built-in/`, checked to work on 0.2.2.
 - Next: step 6, the phase gate.
+- 2026-10-06, step 6: an independent review ran in a separate context (a subagent of the
+  authoring session, with its own context). Its verdict was **request changes**:
+  - one blocking finding, B1: a type following `defaults` could have its machine replaced;
+  - seven should-fix findings, S1–S7, and nine nits.
+
+  Everything else checked out: the digest vector, the five schemas, commit hygiene, no `.wingfoil/`
+  change, no dl-007 `method`, and valid ref names.
+- The approver ruled the two deviations the review raised (S4): no `workflows.yaml` fragment, and
+  required parameters without a default. The approver had spec-001 amended while `pending`, with
+  every finding fixed: `88e02b9` (spec) and `5939b9b` (schemas).
+- **Follow-ups for a later configuration change,** each from an approved element, with a `version:`
+  bump:
+  - `pack-authoring`: parameters "with a type and a default" → "with a type, and a default unless
+    required" (S4b);
+  - `pack-semver`: its example tag `base@0.1.0` predates the rule that the first published version is
+    ≥ 1.0.0 (review N2);
+  - `dna.yaml`: the `packs` module does not name the `governance` axis (already open);
+  - the feature text of F1.2 and F1.3 stays as approved; spec-001 §1 records the deviations.
+- **Milestone M0 (review N9):** M0 closes with spec-001 and `schema/` approved. The real
+  `catalog.yaml` and `compat.yaml` are written with the tooling (M1) and with `base` (M2). The W3
+  and W4 exit criteria are therefore met as a specification and its schemas, not as committed files.
