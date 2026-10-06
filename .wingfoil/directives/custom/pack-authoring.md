@@ -25,7 +25,8 @@ Applies to every role that writes or reviews pack content under `packs/`.
   `requires_capabilities` it relies on, from the `compat.yaml` vocabulary (dl-002). Content uses
   only what those formats and capabilities provide.
 - No project-specific values: names, paths, people and versions of the target project are
-  parameters, declared in `pack.yaml` with a type and a default.
+  parameters, declared in `pack.yaml` with a type, and a default unless the parameter is required
+  (spec-001 §8.1).
 - Composition is deterministic: no timestamps, no randomness, no ordering that depends on the
   filesystem. Lists in fragments are written in the order they must appear.
 - A workflow includes another workflow by **name**, never by path (WingFoil bug-144). Every
