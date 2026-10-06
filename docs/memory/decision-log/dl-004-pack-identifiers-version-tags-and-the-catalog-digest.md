@@ -61,7 +61,9 @@ proposal here, with its options.
 
 ## Decision
 
-Proposed, for the approver to rule. Recommended: **1(a), 2(a), 3(b), 4(a).**
+Ruled by the approver, Roberto Pompermaier, on 2026-10-06: **1(a), 2(a), 3(b), 4(a)**, the
+recommended options (approve commit `a66be1d`, reason "Recommended options ruled: 1(a), 2(a), 3(b),
+4(a)").
 
 - **1(a)** keeps the configured pattern working with the CLI as it is. Unique pack names are a
   sensible catalog rule anyway.
@@ -80,3 +82,7 @@ Configuration changes, depending on the ruling. Each is applied after approval a
   because the configuration commit can no longer be amended.
 
 ## Execution Notes
+
+- 2026-10-06, under plan-012: the Decision section, written before the ruling, still read as a
+  proposal. It now records the ruling, as the approver asked. The ruling itself is unchanged; it was
+  already in the approve commit and in plan-009's Execution Notes.
