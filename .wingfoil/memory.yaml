@@ -3,7 +3,7 @@
 # no `states:` block of its own uses the `defaults` state machine (REQ-STATE-08).
 # `release` and `release-line` from the scaffold are removed: this repository has no repository-wide
 # releases, every pack is versioned and published on its own (`pack-release`, dl-001).
-version: 1
+version: 2
 
 # Default state machine — `sequence` is the forward chain (`submit` walks it); a `gates` state's
 # forward edge needs `approve`, and its `reject` target is where a rejection lands. `deprecated` is
@@ -75,9 +75,10 @@ types:
     # One element per pack: its charter (axis, slot, scope, what it ships, what it requires and
     # conflicts with). The id carries the axis and the pack name, which also fill the `axis` and
     # `name` fields (`memory add --set` fills only id tokens): `memory add --type pack --title Scrum
-    # --set axis=methodology --set name=scrum`. The slot of a phase pack and the axis of `base` are
-    # settled by the pack-model rulings (inception). proposed is the approver's acceptance of the
-    # charter; active means at least one version is published (first `pack-release` released).
+    # --set axis=methodology --set name=scrum`. Pack names are unique across the catalog, so the
+    # slot of a phase pack is not in the id; `base` is `pack-foundation-base`, `foundation` being
+    # reserved for it (dl-004). proposed is the approver's acceptance of the charter; active means at
+    # least one version is published (first `pack-release` released).
     path: docs/memory/pack/{id}.md
     id_pattern: "pack-{axis}-{name}"
     template:

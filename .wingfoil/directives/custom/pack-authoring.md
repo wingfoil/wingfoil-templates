@@ -11,6 +11,10 @@ tags: [packs]
 
 Applies to every role that writes or reviews pack content under `packs/`.
 
+- Pack names are unique across the whole catalog, whatever the axis or slot, because the `pack`
+  Memory element id is `pack-{axis}-{name}` (dl-004). `base` is the element `pack-foundation-base`:
+  `foundation` is reserved for it in the element's `axis` field, while in `catalog.yaml` `base` stays
+  outside the axes.
 - Every pack lives in `packs/<axis>/[<slot>/]<name>/` and has a `pack.yaml`, a `README.md` and a
   `CHANGELOG.md`. Its `pack.yaml` validates against `schema/pack.schema.json`.
 - A pack only ever writes into the WingFoil-managed asset folders of a project: `built-in/` today

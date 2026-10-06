@@ -23,7 +23,8 @@ Every pack has its own semver (dl-001). There is no repository-wide version.
   and the pack's own README.
 - When a change is in doubt between two classes, take the higher one.
 - The version is set in `pack.yaml` and recorded in a `pack-release` element; the tag is
-  `<axis>/<name>@<version>`. A published tag is never moved or deleted.
+  `<catalog pack id>@<version>`, e.g. `base@0.1.0`, `methodology/kanban@1.0.0`,
+  `phase/inception/lean-inception@1.0.0` (dl-004). A published tag is never moved or deleted.
 - `0.x` versions are allowed only while spec-001 (the pack format) is not approved.
 
 ## Lines and maintenance (dl-002)
@@ -32,7 +33,8 @@ Every pack has its own semver (dl-001). There is no repository-wide version.
   stay tagged and listed in the catalog, frozen: a project on an older WingFoil resolves the newest
   version it can read, and that version gets no further fix.
 - **From WingFoil 1.0:** the current format generation (N) and the previous one (N-1) are maintained
-  for a declared window (at least one WingFoil minor after N ships). N-1 lives on a maintenance
-  branch and receives fixes only, never features. After the window it is frozen.
+  for a declared window (at least one WingFoil minor after N ships). N-1 lives on the branch
+  `maint/<catalog pack id>/<major>.x` (dl-004) and receives fixes only, never features. After the
+  window it is frozen.
 - A fix that applies to both lines is made on N first, then backported; the two pack-release
   elements cite each other.

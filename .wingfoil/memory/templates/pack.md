@@ -3,7 +3,7 @@ id: ""
 type: pack
 title: ""
 status: draft
-axis: ""            # methodology | team-mode | phase | blueprint | stage (filled by --set axis=)
+axis: ""            # methodology | team-mode | phase | blueprint | stage | governance; foundation for base only (dl-004); filled by --set axis=
 name: ""            # the pack name, e.g. scrum (filled by --set name=)
 slot: ""            # phase packs only: inception | specification | release | end-of-life (dl-003 D11)
 pack_path: ""       # packs/<axis>/[<slot>/]<name>

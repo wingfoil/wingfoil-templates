@@ -22,7 +22,7 @@ line: ""            # the maintained line: current, or <major>.x for an N-1 main
 
 ## Publication
 
-<!-- The tag (<axis>/<name>@<version>), the commit, the catalog.yaml digest. Whether the pack is one
+<!-- The tag (<catalog pack id>@<version>, dl-004), the commit, the catalog.yaml digest. Whether the pack is one
      WingFoil bundles (and the feedback note sent for WingFoil's advance-bundled-packs step). -->
 
 ## Execution Notes
