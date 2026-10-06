@@ -7,7 +7,7 @@ axis: ""            # methodology | team-mode | phase | blueprint | stage | gove
 name: ""            # the pack name, e.g. scrum (filled by --set name=)
 slot: ""            # phase packs only: inception | specification | release | end-of-life (dl-003 D11)
 pack_path: ""       # packs/<axis>/[<slot>/]<name>
-requires: []        # catalog pack ids with a semver range: always base@^<major> (dl-003), plus any other
+requires: []        # catalog pack ids with a semver range: base@^<major> for every pack but base (dl-003), plus any other
 conflicts: []       # pack ids that cannot be composed with this one
 ---
 

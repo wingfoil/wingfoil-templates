@@ -35,7 +35,7 @@ Applies to every role that writes or reviews pack content under `packs/`.
   phase slot per project.
 - Every workflow phase that should create or move an element says so with `actions` and `produces`:
   a phase that parses but declares nothing is a defect (WingFoil benchmark note N1).
-- Every pack requires the foundation pack (`requires: [base@^<major>]`) and only adds to it or
+- Every pack except `base` requires the foundation pack (`requires: [base@^<major>]`) and only adds to it or
   tightens it (dl-003 D1). Overlays (`team-mode`, `stage`) only add or tighten relative to everything
   else; they never remove what a methodology ships. In a Memory state machine, adding a state or a
   gate is allowed; removing either is not.
