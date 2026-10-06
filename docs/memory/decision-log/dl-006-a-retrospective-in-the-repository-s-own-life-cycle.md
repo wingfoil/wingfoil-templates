@@ -2,7 +2,7 @@
 id: dl-006-a-retrospective-in-the-repository-s-own-life-cycle
 type: decision-log
 title: "A retrospective in the repository's own life cycle"
-status: pending
+status: approved
 tags: ["process","retrospective"]
 ---
 
