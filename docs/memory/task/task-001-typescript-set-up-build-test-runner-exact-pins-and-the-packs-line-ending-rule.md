@@ -72,9 +72,10 @@ run through `tooling-delivery` as `developer` (`code-quality`, `testing`, `deter
   - `build`: `clean`, then `tsc -p tsconfig.json`;
   - `test`: `build`, then `node --test "dist/tests/**/*.test.js"`;
   - `check:pins`: `node dist/src/check-pins.js`.
-- **`src/check-pins.ts`:** a pure function `checkPins(manifest, lockfile)` returning a sorted list of
-  problems, and a small `main` that reads `package.json` and `package-lock.json` from the working
-  directory, prints the problems and exits 1 if there are any (2 if a file is missing or not JSON).
+- **`src/check-pins.ts`:** a pure function `checkPins(manifest, lockfile)` returning a sorted list
+  of problems, and a small `main` that reads `package.json` and `package-lock.json` from the
+  working directory, prints the problems and exits 1 if there are any (2 if a file is missing or
+  not JSON).
   - Exact means `MAJOR.MINOR.PATCH` with no range operator, wildcard, tag or URL; an npm alias
     `npm:<name>@<exact>` is accepted, since the compatibility matrix (task 8) may pin several
     WingFoil releases that way.
@@ -82,8 +83,8 @@ run through `tooling-delivery` as `developer` (`code-quality`, `testing`, `deter
     `peerDependencies`.
   - Each direct dependency's `node_modules/<name>` entry in the lockfile must have the same
     version.
-- **Tests:** `tests/check-pins.test.ts`, red first for each rule in Acceptance 4, plus the happy path
-  and the real repository's files.
+- **Tests:** `tests/check-pins.test.ts`, red first for each rule in Acceptance 4, plus the happy
+  path and the real repository's files.
 - **Static checks:** `tsc` in strict mode with the unused-code flags is the only static check. The
   `code-quality` directive mentions a linter; adr-003 chose none, and adding ESLint would be a new
   dependency set needing its own review. Recorded for the approver, not added here.
@@ -97,3 +98,30 @@ run through `tooling-delivery` as `developer` (`code-quality`, `testing`, `deter
 - 2026-10-06: amended while `pending`, before the approver's review, after an independent review
   of the task: dependencies split by field, the lockfile tracked, `dist/` ignored, tests under
   `tests/`, the npm floor, the `dna show` check, exact audit output, script names.
+- 2026-10-06/07, build on the task branch, as `developer`:
+  - `d963eff` `.gitattributes`; `e1671fe` toolchain and `check:pins`; `38803e0` `dna.yaml` v4;
+    `9a2fabc` and `4687218` review fixes.
+  - Red first: with a stub `checkPins`, 51 of 54 tests failed; the implementation made them pass.
+    The stub was never committed, so the red run is recorded here only.
+  - Acceptance 1–8 pass from a clean clone of the branch at `4687218`, on Node.js 22.21.0 / npm
+    11.6.2 and on the floor, Node.js 22.12.0 / npm 10.9.0 installed with `n` in `.cache/n`: 62 tests
+    pass, `check:pins` exits 0, `npm audit` finds 0 vulnerabilities and `audit signatures` exits 0,
+    `packs/x/pack.yaml: text: unset`, the three WingFoil commands exit 0 with empty stderr.
+    `npm ci` with npm 10.9.0 accepts the lockfile written by npm 11.
+- Deviations from the Design, all small:
+  - `tsconfig.json` also sets `lib`, `moduleResolution: Node16`, `forceConsistentCasingInFileNames`
+    and `skipLibCheck`, as WingFoil does. `skipLibCheck` skips type errors inside `@types`; the
+    pinned versions compile clean either way;
+  - `check:pins` prints its problems on stderr, and needs a prior `npm run build`, like every
+    script running `dist/`;
+  - prereleases and build metadata (`1.2.3-rc.1`, `1.2.3+b`) are refused on purpose: exact means
+    `MAJOR.MINOR.PATCH`, the form `pack-semver` allows too;
+  - `runCheckPins` exits 2 on a `package.json` that is not an object and on a lockfile without
+    `packages` (lockfileVersion 1), so that malformed input never passes.
+- **Linter, for the approver.** The `code-quality` directive asks that "the linter reports no
+  errors". adr-003 chose no linter, so `tsc` strict with the unused-code flags is the only static
+  check. Adding ESLint means a new dependency set with its own security review: an amendment of
+  adr-003 or a new ADR, if the approver wants it.
+- Review (a subagent with its own context, `tooling-delivery` › `review`): approve with four
+  should-fix (input validation, a test tied to the working directory, missing edge-case tests, the
+  prerelease rule) and nits; all should-fix applied in `9a2fabc`, the wrapping in `4687218`.
