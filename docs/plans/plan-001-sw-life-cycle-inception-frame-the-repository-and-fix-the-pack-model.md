@@ -2,7 +2,7 @@
 id: plan-001-sw-life-cycle-inception-frame-the-repository-and-fix-the-pack-model
 type: plan
 title: "sw-life-cycle inception: frame the repository and fix the pack model"
-status: active
+status: done
 workflow: "sw-life-cycle"
 phase: "inception"
 tags: ["inception"]
