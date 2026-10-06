@@ -2,7 +2,7 @@
 id: plan-011-dl-actions-configuration-changes-implied-by-dl-002-dl-006
 type: plan
 title: "dl actions: configuration changes implied by dl-002..dl-006"
-status: active
+status: done
 workflow: "decision-log-ingest"
 phase: "rule"
 tags: ["config"]
