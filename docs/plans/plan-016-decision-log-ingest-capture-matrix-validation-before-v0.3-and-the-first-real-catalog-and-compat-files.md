@@ -13,9 +13,10 @@ tags: ["process","decision-log","tooling"]
 The `capture` phase of `decision-log-ingest`, run from step 1 of plan-015 (`sw-life-cycle` ›
 `tooling`). Two decisions are needed before the tooling tasks that depend on them:
 - **dl-009, spec-001 O10.** No released WingFoil accepts the `format:` key without a warning: 0.2.2
-  prints `unknown field(s) ignored: format`, so `compat.yaml` marks it `format_key: false`. Fixtures
-  that follow spec-001 §5 cannot pass the zero-warning matrix (`pack-compatibility`) on any released
-  WingFoil. spec-001 gives the decision to the tooling phase. Blocks task 8 (F3.3).
+  prints `unknown field(s) ignored: format`, so spec-001 §12's `compat.yaml` example marks it
+  `format_key: false`. Fixtures that follow spec-001 §5 cannot pass the zero-warning matrix
+  (`pack-compatibility`) on any released WingFoil. spec-001 gives the decision to the tooling
+  phase. Blocks task 8 (F3.3).
 - **dl-010, the first real `catalog.yaml` and `compat.yaml`.** M0 closed with spec-001 and the
   schemas, not with committed files (plan-012, review N9). They arrive with the tooling or with
   `base`. Blocks task 4 (the resolver reads the axes and slots from `catalog.yaml`, spec-001 §3) and

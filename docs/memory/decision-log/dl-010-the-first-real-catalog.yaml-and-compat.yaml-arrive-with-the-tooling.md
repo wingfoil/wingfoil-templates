@@ -21,7 +21,9 @@ The tooling needs them:
 The content is known now:
 - `catalog.yaml`: `format: 1`, `foundation: base`, the `axes` and `slots` of spec-001 §11, and empty
   `packs`, `transitions` and `presets`. No pack charter is accepted yet, so no pack is listed, not
-  even as `planned`. The schema allows empty lists;
+  even as `planned`. The schema allows empty lists. `foundation: base` then names a pack absent
+  from `packs`; neither the schema nor spec-001 §18 rejects that, and the tooling must not either
+  until `base`'s charter is accepted;
 - `compat.yaml`: `format: 1`, the seven kinds, the capability vocabulary of spec-001 §12, and one
   release, 0.2.2, with `format_key: false`.
 
@@ -46,8 +48,8 @@ The content is known now:
 `memory approve`.
 
 - The real `catalog.yaml` is written in task 4 of plan-015, the real `compat.yaml` in task 8.
-- Fixtures used by the tests carry their own catalog and compat files under `test/fixtures/`; the
-  real files never list fixture packs.
+- Fixtures used by the tests carry their own catalog and compat files under `tests/fixtures/`
+  (`dna.yaml` `paths.tests`); the real files never list fixture packs.
 - The `axes` and `slots` of the real catalog are spec-001 §11 verbatim. A later change to them is a
   change of spec-001.
 
@@ -55,3 +57,7 @@ Configuration changes this decision implies: none. `dna.yaml` already declares t
 `compat` modules and lists both files in `paths.sources`.
 
 ## Execution Notes
+
+- 2026-10-06: amended while `pending`, as the approver asked, after an independent review (plan-015
+  Execution Notes): fixtures under `tests/fixtures/`, the `dna.yaml` tests folder;
+  `foundation: base` with no `base` entry is stated as allowed.

@@ -124,3 +124,11 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   in dl-009 and adr-003. One should-fix applied here: fixtures live under `tests/fixtures/`, the
   `dna.yaml` `paths.tests` folder, not `test/fixtures/`. The elements are `pending`; amending them
   waits for the approver's choice.
+- 2026-10-06: the approver asked for the four elements to be amended while `pending`, and ruled
+  bug-001 fix (a), a `tooling-delivery` sub-workflow. Every should-fix and nit of the review is
+  applied: dl-009 (empty compatible set fails publication, the caller fixes the mode, evidence
+  refuses self-test results, exact tolerated line, `pack-compatibility` scope sentence as a
+  configuration follow-up), dl-010 (`tests/fixtures/`, `foundation` with no `base` entry), adr-003
+  (Node.js floor tested in task 1 and CI, range subset scope, fixed YAML output options, two more
+  alternatives, T15 uncommitted), bug-001 (scope, keeping the two loops in step, the ruling).
+- Step 2 follow-ups gain the `pack-compatibility` scope sentence (dl-009).

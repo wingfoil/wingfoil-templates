@@ -9,6 +9,10 @@ pack: ""
 
 ## Observed
 
+`memory.yaml` defines a `bug` as a defect of a pack or of this repository's tooling. This one is in
+the repository's `.wingfoil/` configuration, which runs the tooling's delivery loop, so it is filed
+here rather than in `docs/wingfoil-feedback/`: WingFoil reads the configuration correctly.
+
 `kanban-delivery` (version 2) is included by three workflows:
 - `pack-cycle` › `deliver`, for the tasks of a pack;
 - `sw-life-cycle` › `tooling`, for the tasks with no pack (dl-005 G7);
@@ -54,8 +58,9 @@ on the element.
 - **(a) A `tooling-delivery` sub-workflow, recommended.** The same loop as `kanban-delivery`, with
   `developer` in `design`, `build` and `deliver`. `sw-life-cycle` › `tooling` and `tooling-change`
   include it; `kanban-delivery` stays for `pack-cycle`, and its `build` description loses the
-  tooling clause. Cost: two loops to keep in step (states, WIP, gates), which a lint or review
-  checklist can watch.
+  tooling clause. Cost: two loops to keep in step (states, WIP, gates). The review of every change
+  to either file checks that the two differ only in roles and descriptions; a lint rule (task 9 of
+  plan-015) can automate it.
 - **(b) `developer` everywhere,** with `pack-authoring` and `pack-semver` added to `developer`'s
   assignments in `roles.yaml`. Cost: blurs the two roles of `dna.yaml`, and pack authors get
   `code-quality` and `testing`.
@@ -64,3 +69,8 @@ on the element.
 
 The fix is a configuration change, applied with the follow-ups of plan-015 step 2, with a
 `version:` bump of every changed file and a new `include` in `workflows.yaml`.
+
+- 2026-10-06: the approver ruled **fix (a)** in chat ("ok fix (a)"), and asked for this bug to be
+  amended while `pending` after an independent review (plan-015 Execution Notes): the scope of a
+  configuration defect as a `bug`, and how the two loops are kept in step. The fix is applied with
+  the configuration follow-ups of plan-015 step 2.
