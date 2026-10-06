@@ -1,6 +1,6 @@
 # Personas — WingFoil-Templates
 
-**Version:** 1.0
+**Version:** 1.1
 **Date:** 2026-10-06
 **Status:** Draft
 **Traces to:** [01_product-brief.md](01_product-brief.md) §3–§5, [02_product-vision.md](02_product-vision.md) "Value by Audience"
@@ -143,15 +143,15 @@ referred to by **profile** rather than by name.
 
 ---
 
-## Open questions for the personas review
-
-1. **Primary persona per horizon.** Until v0.4: Persona 3 (governed repositories) and Persona 2
-   (WingFoil maintainer). From v0.4: Persona 1 (adopter). Confirm?
-2. **The agent as a persona.** Persona 6 makes pack content written for an agent reader: actionable,
-   checkable, no contradictions after composition. Keep it?
-3. **Compliance officer.** Regulatory `governance` packs could have their own reader: someone who
-   checks that a project follows an area's rules. Is this a persona now, or later together with the
-   community catalog?
-4. **Adoption profiles.** Reuse WingFoil's six user types as in §2?
-
 ## Decisions from the personas review
+
+Approver, 2026-10-06:
+
+1. **Primary persona per horizon.**
+   - Until WingFoil v0.4: Persona 3 (governed repositories) and Persona 2 (WingFoil maintainer).
+   - From v0.4: Persona 1 (adopter).
+2. **The agent stays a persona.** Pack content is written for an agent reader: it must be
+   actionable, checkable, and free of contradictions after composition.
+3. **No persona yet for the reader of regulatory packs.** One is added later, together with the
+   community catalog. Naming it now, for example "compliance officer", would cause confusion.
+4. **Adoption profiles:** WingFoil's six user types are reused, as in §2.

@@ -33,3 +33,11 @@ WingFoil2-Benchmark's personas.
 - No Memory gate. The approver's acceptance is recorded in the Execution Notes.
 
 ## Execution Notes
+- 2026-10-06: personas written (`801c954`).
+- 2026-10-06: personas review answered by the approver:
+  - primary persona per horizon: 3 and 2 until v0.4, then 1;
+  - the agent stays a persona;
+  - the reader of regulatory packs gets a persona later, with the community catalog;
+  - WingFoil's six user types are reused as adoption profiles.
+
+  The document is accepted as input to the journeys.
