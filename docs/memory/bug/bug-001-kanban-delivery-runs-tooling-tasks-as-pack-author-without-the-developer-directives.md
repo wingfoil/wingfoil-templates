@@ -2,7 +2,7 @@
 id: bug-001-kanban-delivery-runs-tooling-tasks-as-pack-author-without-the-developer-directives
 type: bug
 title: "kanban-delivery runs tooling tasks as pack-author, without the developer directives"
-status: draft
+status: pending
 severity: minor
 pack: ""
 ---
