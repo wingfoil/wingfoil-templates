@@ -40,3 +40,4 @@ Then hand the approver the `memory approve` command.
 
 - 2026-10-06: dl-008 was added (step 1) right after this plan, before this plan was filled and
   moved to `active`. The order has no effect on either element.
+- 2026-10-06: dl-008 submitted (`a2eefd8`) and approved by the approver (`68723d4`). Plan done.
