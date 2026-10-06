@@ -74,7 +74,8 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
    in-review). The product-owner creates each task when the previous one leaves in-progress; the
    approver accepts each one into the backlog. Builds load
    `npx wingfoil directives list --role developer`, reviews `--role reviewer`, task planning
-   `--role product-owner`. Fixtures live under `test/fixtures/`, never under `packs/`.
+   `--role product-owner`. Fixtures live under `tests/fixtures/` (`dna.yaml` `paths.tests`),
+   never under `packs/`.
 
    | # | Wave | Task | Source |
    |---|---|---|---|
@@ -116,3 +117,10 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   review of the libraries. All three `pending`.
 - Step 2: bug-001 captured through `bug-ingest` › `capture` (`bc715a3`, `4a32d04`), `pending`, with
   three fix options; (a), a `tooling-delivery` sub-workflow, recommended.
+- bug-001 was captured directly under this plan's step 2, with no `bug-ingest` plan of its own:
+  one element, with nothing to plan beyond the workflow's `capture` phase.
+- 2026-10-06: an independent review (a subagent with its own context) of dl-009, dl-010, adr-003
+  and bug-001 found nothing blocking and requested changes: five should-fix and nine nits, mostly
+  in dl-009 and adr-003. One should-fix applied here: fixtures live under `tests/fixtures/`, the
+  `dna.yaml` `paths.tests` folder, not `test/fixtures/`. The elements are `pending`; amending them
+  waits for the approver's choice.

@@ -43,5 +43,6 @@ For each decision-log, in order (dl-009, then dl-010):
   The plan stays `active` until both are approved.
 
 ## Execution Notes
+
 - 2026-10-06: dl-009 (`e1dab70`, `5820a36`) and dl-010 (`467c8e3`, `db1e51d`) filled and submitted,
   both `pending`, each with its proposal in the Decision section.
