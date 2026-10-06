@@ -34,3 +34,7 @@ dependencies on WingFoil. Its structure follows WingFoil2-Benchmark's
   Execution Notes.
 
 ## Execution Notes
+- 2026-10-06: questions answered by the approver. The brief was written and committed (`bc18106`).
+- 2026-10-06: the approver read the brief and confirmed it, including the purpose order: the
+  catalog for adopters first, with the single source and the alignment of the governed repositories
+  serving it. Accepted as input to the vision.
