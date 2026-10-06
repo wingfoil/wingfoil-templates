@@ -2,7 +2,7 @@
 id: task-001-typescript-set-up-build-test-runner-exact-pins-and-the-packs-line-ending-rule
 type: task
 title: "TypeScript set-up: build, test runner, exact pins and the packs line-ending rule"
-status: in-progress
+status: in-review
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: []
 tags: ["tooling","W5"]
