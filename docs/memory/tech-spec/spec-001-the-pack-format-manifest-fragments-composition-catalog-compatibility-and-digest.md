@@ -24,6 +24,17 @@ It implements `docs/01_vision/06_features.md` F1.1–F1.7 and F2.1–F2.6, and s
 - adr-001: the reference composer;
 - WingFoil dl-149: the `format:` key.
 
+Two deviations from approved texts were ruled by the approver on 2026-10-06, at the independent
+review:
+- **No `workflows.yaml` fragment.** F1.2 and plan-012 name fragments of `dna`, `roles`, `memory` and
+  `workflows`. The composer generates `workflows.yaml` from each pack's inventory instead (§7.7),
+  because a hand-written include list duplicates `contents` and can drift from it.
+- **Required parameters without a default.** F1.3 and the `pack-authoring` directive say that every
+  parameter has a default. A parameter such as `project_name` has no generic default, and inventing
+  one would put a project value in a pack. §8.1 therefore allows a parameter without a default,
+  which makes it required. The `pack-authoring` wording is aligned in a later configuration change,
+  from an approved element, with a `version:` bump.
+
 Out of scope:
 - how WingFoil downloads, locks, upgrades and merges packs with a project's own files (WingFoil
   dl-138; feedback notes T5, T7);
@@ -62,8 +73,8 @@ A composition holds `base` and packs chosen along these axes (dl-001 D1, dl-003 
 | `team-mode` | at most one | yes | |
 | `stage` | at most one | yes | Scale: `prototype` → `mvp` → `production` → `maintenance` → `sunset`. The functions of operations belong here (dl-008). |
 
-- Every pack except `base` **must** require `base` with a range, written `base@^<major>`
-  (dl-003 D1).
+- Every pack except `base` **must** require `base` exactly once, written `base@^<major>`, for
+  example `base@^1` (dl-003 D1). `base` requires nothing.
 - Every pack **must** only add to or tighten what the packs composed before it ship (§7). An
   overlay is composed after every non-overlay pack, so it can tighten them all.
 - The axes, cardinalities, slots and stage scale are data of `catalog.yaml` (§11), so that a resolver
@@ -192,16 +203,13 @@ contents:                       # §6.4
 | `version` | yes | §4. |
 | `formats` | yes | Map from file kind (§12) to format, one entry per kind the pack ships. May be empty only for a pack that ships no WingFoil file. |
 | `requires_capabilities` | yes | Capability names from `compat.yaml` (§12), sorted, unique. May be empty. |
-| `requires` | yes, except `base` | §6.3. Must contain `base@<range>` for every pack but `base`. |
+| `requires` | yes, except `base` | §6.3. Exactly one `base@^<major>` entry for every pack but `base`; empty or absent for `base`. |
 | `conflicts` | no | §6.3. |
 | `parameters` | no | §8. |
 | `contents` | yes | §6.4. |
 
-`schema/pack.schema.json` checks what JSON Schema can express. The lint rules (F3.5) check the rest:
-- `id` equals the directory path;
-- `name` equals the last segment of `id`;
-- `formats` lists exactly the kinds of the files shipped;
-- `contents` matches the files present (§6.4).
+`schema/pack.schema.json` checks what JSON Schema can express. The lint rules (F3.5) check the
+rest; §18 lists them for every file kind.
 
 `pack.yaml` has no `status` and no `bundled` field:
 - the state of a pack is its Memory element's, and its published versions are in `catalog.yaml`;
@@ -219,6 +227,8 @@ contents:                       # §6.4
     `>=1.2.0 <3.0.0`.
 
   `||`, hyphen ranges, `x` wildcards and pre-releases are not allowed.
+- A pack has at most one `requires` entry per catalog pack id. It never requires or conflicts with
+  itself, and never conflicts with `base`.
 - A composition **must** satisfy every `requires` of every pack, and **must not** contain two packs
   of which one `conflicts` with the other.
 - The cardinalities of §3 are conflicts already, so packs **must not** restate them.
@@ -253,9 +263,9 @@ packs were given.
 6. the `team-mode` pack;
 7. the `stage` pack.
 
-Within an axis of cardinality "many":
-- a pack comes after the packs it `requires`;
-- ties are broken by catalog pack id, in byte order.
+Within an axis of cardinality "many", the packs are sorted topologically on `requires` (Kahn's
+algorithm): at each step, the next pack is the one with the smallest catalog pack id, in byte
+order, among the packs whose requirements in that axis are already placed.
 
 A `requires` that points to a pack later in this order (for example a blueprint requiring a stage)
 is an error.
@@ -273,6 +283,18 @@ side**, and the next fragment is the **incoming side**.
   - a **keyed list** (a list of mappings with a `name`) merges an incoming item into the base item
     of the same `name` with these same rules, or appends it when the name is new.
 - **Nothing is ever removed.** No fragment syntax deletes a key, an item or a state.
+
+Definitions and the closing rule:
+- **Set items** are scalars. Two items are equal when they have the same YAML type and value. A set
+  whose items are mappings or lists fails.
+- **Keyed-list items** are mappings with a `name`. An item without `name`, or two items with the
+  same `name` in one fragment, fails.
+- **Kind mismatch.** When the two sides hold different YAML kinds for one key (scalar, mapping,
+  list), the composition fails.
+- **Undeclared lists.** A list under a key that §7.3–§7.5 does not declare is treated as a scalar:
+  the incoming list must be equal to the base side's, item by item and in order.
+- **Otherwise: fail.** Any case these rules and §7.3–§7.5 do not allow fails the composition. A
+  composer never guesses.
 
 Each fragment **must** declare `format:` (§5), and every fragment of one kind in a composition
 **must** have the same format. The composed file carries that format. Fragments carry no
@@ -302,44 +324,88 @@ built-in directives.
 
 ### 7.5 `memory.yaml`: add or tighten
 
-`types` is a mapping from type name to definition. A type is **defined** by the first pack that
-declares it. A later pack may **tighten** it, and may change nothing else.
+A `memory.yaml` fragment has two keys, `defaults` and `types`. Any other top-level key fails in
+format 1.
 
-| Key of a type, or of `defaults` | Defined by | A later pack may |
-|---|---|---|
-| `path`, `id_pattern`, `template.file` | the defining pack | nothing: an incoming value must be equal |
-| `template.frontmatter.required` | the defining pack | add fields (set) |
-| `states.sequence` | the defining pack | insert states: the incoming sequence must contain the base sequence as a subsequence, in the same order |
-| `states.gates` | the defining pack | add a gate on a state that has none; an existing gate's `reject` target must be equal |
-| `states` absent | — | the type uses `defaults.states`, and is tightened when `defaults` is |
+**Defining and tightening.**
+- A type is **defined** by the first pack that declares it, with all its keys: `path`, `id_pattern`,
+  `template`, and optionally `states`.
+- `defaults` is defined by `base`.
+- A later pack may **tighten** a type, or `defaults`, by the rules below, and may change nothing
+  else. A key not listed here fails.
 
-`defaults` (the default state machine) is defined by `base` and tightened by the same rules.
+| Key | A later pack may |
+|---|---|
+| `path`, `id_pattern`, `template.file` | nothing: an incoming value must be equal |
+| `template.frontmatter.required` | add fields (set), including when the defining pack declared none |
+| `states.sequence` | insert states (below) |
+| `states.gates` | add a gate on a state that has none; an existing gate's `reject` target must be equal |
 
-The incoming side writes the whole sequence it wants, so the position of an inserted state is
-explicit. Example (the states are illustrative; `base`'s charter fixes the real ones): suppose `base` defines
-`bug` with `[draft, open, in-progress, in-review, resolved, closed]` and gates on `open` and
-`in-review`. `stage/production` tightens it:
+**The effective machine.** A type that declares `states` has its own machine. A type that does
+not declares none, and follows `defaults.states`.
+- A tightening of `defaults` applies to every type that still follows `defaults`.
+- An incoming `states` on a type that follows `defaults` is a tightening of `defaults.states` as it
+  stands at that point of the composition. It must pass the sequence and gate rules against it.
+  From then on the type has its own machine: the merge of the two. Later tightenings of `defaults`
+  no longer apply to it.
+
+This is the only way a type gets its own machine after its definition. It can add states and gates
+to what it inherited, never replace them.
+
+**Sequences.** Each sequence names each state once; a duplicate fails. A pack writes the whole
+sequence it wants. The merge of the base side's sequence A and the incoming sequence B works as
+follows:
+1. B **must** contain the **reference sequence** as a subsequence, in the same order. The reference
+   sequence is the type's sequence as defined, or, for a type that follows `defaults` or detaches
+   from it, the sequence `base` defined in `defaults`.
+2. The states common to A and B **must** appear in the same relative order in both, or the
+   composition fails.
+3. The merged sequence keeps every state of A and B. Between two consecutive common states, and
+   before the first or after the last, the base side's own states come first, in A's order, then
+   the incoming side's own states, in B's order.
+
+So two packs that do not know each other can both insert states, and the result does not depend
+on anything but the composition order of §7.1.
+
+**Gates.**
+- A gate's state, and its `reject` target, **must** be states of the merged sequence. A gate whose
+  `reject` target is its own state fails.
+- An existing gate is never removed, and its `reject` target never changes.
+
+Which `reject` targets make sense (earlier or later states) is WingFoil's validation.
+
+**Example.** The states are illustrative; `base`'s charter fixes the real ones. Suppose `base`
+defines `task` with `[draft, pending, backlog, in-progress, in-review, approved, done]` and gates on
+`pending` and `in-review`. Two overlays, which do not require each other, tighten it:
 
 ```yaml
+# team-mode/agent-first, composed first (§7.1)
 types:
-  bug:
+  task:
     states:
-      sequence: [draft, open, triaged, planned, in-progress, in-review, resolved, closed]
+      sequence: [draft, pending, backlog, ready, in-progress, in-review, approved, done]
       gates:
-        triaged: { reject: open }
+        ready: { reject: backlog }
+# stage/production, composed after it
+types:
+  task:
+    states:
+      sequence: [draft, pending, backlog, in-progress, in-review, qa, approved, done]
 ```
 
-The merged type has the eight states and three gates. An incoming sequence such as
-`[draft, open, in-progress, resolved, closed]` drops `in-review`, so it fails: removing a state is
-not tightening.
+The merged sequence is `[draft, pending, backlog, ready, in-progress, in-review, qa, approved,
+done]`, with gates on `pending`, `ready` and `in-review`. Had stage inserted a state between
+`backlog` and `in-progress`, it would have come after `ready`, because the base side comes first.
 
-What is not allowed, and fails composition:
-- removing a state, or changing the order of existing states;
-- removing a gate, or changing a gate's `reject` target;
+These fail composition:
+- an incoming `[draft, pending, backlog, in-progress, approved, done]`, which drops `in-review`;
+- an incoming sequence that swaps two existing states;
+- changing a gate's `reject` target, or removing a gate;
 - removing a required frontmatter field;
-- redefining a type's `path`, `id_pattern` or template file.
+- redefining a type's `path`, `id_pattern` or template file;
+- a `states` on a type that replaces, rather than extends, the machine it follows.
 
-The tightening rules are the add-or-tighten rule of dl-003 D1 made exact.
+These rules are the add-or-tighten rule of dl-003 D1 made exact.
 
 ### 7.6 Asset files
 
@@ -365,8 +431,11 @@ Asset files are copied whole, after parameter substitution (§8). They are never
 
 ### 7.7 `workflows.yaml`
 
-Packs ship no `workflows.yaml` fragment. The composer generates the file from `contents.workflows`:
-- `format:` and `version: 1`;
+Packs ship no `workflows.yaml` fragment (§1, deviation). The composer generates the file from
+`contents.workflows`:
+- `format: 1` and `version: 1`. This specification fixes the composed `workflows.yaml` at format 1,
+  so no pack declares the `workflows` kind; the compatibility check includes it (§12). When WingFoil
+  bumps that kind, this specification is revised;
 - `include`: one entry `workflows/built-in/<name>.yaml` per composed workflow, in composition
   order, then in each pack's `contents.workflows` order.
 
@@ -391,12 +460,15 @@ parameters:
 
   | Type | Value |
   |---|---|
-  | `string` | Any text without control characters, `"`, `\` or `{{`. |
+  | `string` | Any text without control characters, `"` or `\`. |
   | `integer` | A base-10 integer. |
   | `boolean` | `true` or `false`. |
   | `path` | A relative POSIX path: no leading `/`, no `..` segment, no backslash. May contain WingFoil tokens (§8.3). |
   | `pattern` | An id pattern: no `/`, no whitespace. May contain WingFoil tokens (§8.3). |
 
+- **No value of any type contains `{{`**, so substitution is a single pass (§8.2).
+- **Every value is validated** against the declaring pack's type before substitution: a `default`,
+  a value set by a preset, and a value given at composition alike.
 - **Description:** required, so that the README and the CLI can show it.
 - **Default:**
   - a parameter with a `default` is optional;
@@ -422,9 +494,9 @@ parameters:
 
 ### 8.3 WingFoil tokens pass through
 
-Single-brace tokens belong to WingFoil and to the project, and the composer never interprets them:
-`{id}`, `{n}`, `{slug}`, `{axis}`, `{name}`, and the project tokens `{release}` and `{scope}`
-(`docs/notes/base-regeneration-inputs.md` §2). A `path` or `pattern` value may contain them, so a
+Single-brace tokens belong to WingFoil and to the project, and the composer never interprets any of
+them. Examples: `{id}`, `{n}`, `{slug}`, `{axis}`, `{name}`, `{workflow}`, `{phase}`, and the
+project tokens `{release}` and `{scope}` (`docs/notes/base-regeneration-inputs.md` §2). A `path` or `pattern` value may contain them, so a
 project can set, for example, `task_path: "docs/04_memory/{release}/{id}.md"`. Which tokens WingFoil
 fills, and from where, is WingFoil's.
 
@@ -519,6 +591,8 @@ transitions:
     path: transitions/prototype-to-production.yaml
     from: stage/prototype
     to: stage/production
+    formats: {}
+    requires_capabilities: [stage-transitions]
 presets:
   - { id: startup-mvp, path: presets/startup-mvp.yaml }
 ```
@@ -544,7 +618,9 @@ presets:
 - **Publication order.** The tag `<catalog pack id>@<version>` points at commit C, which contains
   the pack version. The catalog entry naming C is committed afterwards, in a later commit, because a
   commit cannot name itself. `pack-release-cycle` › `publish` follows this order.
-- **`transitions[]`** and **`presets[]`** index §14 and §15.
+- **`transitions[]`** index §14. Each copies the transition's `formats` and
+  `requires_capabilities`, so a resolver can check it without fetching it.
+- **`presets[]`** index §15.
 
 ## 12. `compat.yaml` and the computed range
 
@@ -564,22 +640,25 @@ kinds:
 capabilities:
   pack-install: "init, pack add and upgrade install packs from this repository"
   workflow-engine: "WingFoil executes workflows"
+  stage-transitions: "wingfoil stage set runs a transition from transitions/"
 releases:
   - wingfoil: 0.2.2
     format_key: false
     reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
     capabilities: []
+    notes: "Predates dl-149: reads format 1 but warns on the format: key."
 ```
 
-- **`kinds`** are dl-149's file kinds. `workflows` is listed even though packs ship no fragment of
-  it (§7.7), because the composed file has a format.
+- **`kinds`** are dl-149's seven file kinds, all of them required. `workflows` is listed even though
+  packs ship no fragment of it, because the composed file has a format (§7.7).
 - **`capabilities`** are this repository's proposal until WingFoil publishes its vocabulary
   (feedback notes T13). WingFoil owns the final names.
 - **`releases[]`:**
   - only released WingFoil versions (`MAJOR.MINOR.PATCH`, no pre-release), in ascending order;
   - `format_key` says whether the release accepts the `format:` key without a warning;
   - `reads` maps each kind to the formats that release reads;
-  - `capabilities` lists what it provides.
+  - `capabilities` lists what it provides, from the `capabilities` vocabulary above;
+  - `notes` is optional free text for people, never read by a resolver.
 
   WingFoil 0.2.2 predates dl-149. It reads format 1, which is files with no key, but warns on the
   key: `unknown field(s) ignored: format` from `workflow list`, `dna show` and `directives list`
@@ -588,10 +667,11 @@ releases:
 
   `wingfoil-release-intake` appends one entry per WingFoil release (dl-002).
 
-**Compatibility.** A pack version V is compatible with release R when all three hold:
+**Compatibility.** A pack version V is compatible with release R when all four hold:
 - `R.format_key` is `true`, because every file a pack ships declares `format:` (§5), and validation
   allows no warning (`pack-compatibility`);
 - for every kind `k` in `V.formats`, `R.reads[k]` exists and contains `V.formats[k]`;
+- `R.reads.workflows` contains the format of the composed `workflows.yaml`, which is 1 (§7.7);
 - every name in `V.requires_capabilities` is in `R.capabilities`.
 
 **Computed range.** The `wingfoil` field of a catalog version entry is computed, never written by
@@ -629,15 +709,21 @@ The digest makes a catalog entry verifiable against what was tagged (dl-004 4(a)
 6. **Digest:** `sha256:` followed by the 64 lowercase hex characters of the sha256 of the listing's
    bytes.
 
-Reference command, from a clean checkout of the tag:
+Reference command, from a clean checkout of the tag, with GNU coreutils (`shasum -a 256` prints
+the same format elsewhere):
 
 ```sh
 cd packs/<catalog pack id> &&
+git ls-files -s | awk '$1 !~ /^100(644|755)$/ {bad=1} END {exit bad}' &&
 git ls-files | LC_ALL=C sort | while IFS= read -r f; do sha256sum "$f"; done | sha256sum
 ```
 
+The first line fails on a symbolic link or a submodule. The command hashes the checked-out files,
+so it equals the definition only once `.gitattributes` disables conversion (step 2). Until the
+tooling phase adds it, hash the blobs with `git cat-file blob <tag>:<path>` instead.
+
 Test vector. A pack directory holding four files:
-- `CHANGELOG.md`: `- 0.1.0: first version.\n`
+- `CHANGELOG.md`: `- 1.0.0: first version.\n`
 - `README.md`: `Example pack.\n`
 - `pack.yaml`: `format: 1\nid: governance/example\n`
 - `workflows/example.yaml`: `name: example\n`
@@ -645,14 +731,14 @@ Test vector. A pack directory holding four files:
 It gives the listing
 
 ```
-2dc0a109eb797aa673f3304012e372ec34f82675916aa4175d2b811c15e5b93f  CHANGELOG.md
+f6097182a7684de9c96e3e177f7093dae055078578b6d50ffc29113615496567  CHANGELOG.md
 084afaef62d7b533569e4e4b5c17209d72f7ab184b4b27de88ec6e514db5a44f  README.md
 d5c3f6446bebdb367c001944c80c553c1d220d5a3f3fff14430d09dbc0b12494  pack.yaml
 15fcc3870625980bf58f15ba904736b4ffa1a84495a8f4f51d781e211016e743  workflows/example.yaml
 ```
 
 and the digest
-`sha256:bdf76170fe80f15fff022f992813b2d4ca9af9d7e68e3c6e5849bbd0051a575e`.
+`sha256:77a8a72717b5c73b556af940449ff91a609796079139ade0cb98ddf2ca81bd1c`.
 
 The digest is the pack's, not a composition's. The determinism check (two compositions,
 byte-identical) compares composed trees and is recorded in `pack-release`, not in the catalog.
@@ -677,7 +763,8 @@ actions:
 ```
 
 - `id` is `<from name>-to-<to name>`. `from` and `to` are stage catalog pack ids.
-- `formats` and `requires_capabilities` follow dl-002, as in `pack.yaml`.
+- `formats` and `requires_capabilities` follow dl-002, as in `pack.yaml`, and are copied into the
+  catalog's `transitions[]` (§11).
 - **No version of its own.** A transition is resolved together with its target stage: when a
   project moves to `stage/<to>@V`, the transition is read at the tag `stage/<to>@V`. A change to a
   transition is therefore published as a release of the target stage pack, and classified by
@@ -726,13 +813,15 @@ Each has an owner outside this specification. None blocks format 1.
 | O1 | Where community packs live, and how they relate to WingFoil's third-party sources. | M4 features (dl-001 D7; WingFoil dl-138 Q4) |
 | O2 | The final AGENTS.md markers. | WingFoil dl-137 part (b) (notes T14) |
 | O3 | The capability vocabulary. | WingFoil (notes T13) |
-| O4 | `workflows/bindings.yaml` (v0.3) is not a dl-149 kind; whether packs ship it. | WingFoil task-251 "Layer 3"; re-read with the v0.3 formats |
+| O4 | `workflows/bindings.yaml` (v0.3): whether it becomes a dl-149 kind, and whether packs ship it. | WingFoil dl-153 (`ready`, recommends making it a kind) and task-251 "Layer 3"; re-read with the v0.3 formats |
 | O5 | A pack directive that shares its id with a WingFoil built-in directive. In format 1 it is an error; overriding a built-in is the project's `custom/` folder. | WingFoil (dl-138 Q3, built-in precedence) |
 | O6 | Overlays cannot patch a workflow, only add workflows and tighten Memory, roles and DNA. A workflow-patch mechanism is a later format. | this repository, when a stage charter needs it |
 | O7 | A canonical YAML serialization of composed files, so that two different composers give the same bytes. Format 1 requires determinism of one composer only (adr-001). | WingFoil, with notes T15 |
 | O8 | The `{{` escape. Not needed so far. | this repository, when a pack needs it |
 | O9 | The `method` entry per workflow and phase. | dl-007 (`pending`) |
 | O10 | No released WingFoil has `format_key: true` before v0.3 is released, so the tooling's fixtures (sequencer W5–W7) cannot pass the zero-warning matrix on 0.2.2. Whether the matrix then runs against an unreleased v0.3 build, for tooling only and never for a publication, is the tooling phase's decision. | the tooling phase (M1) |
+| O11 | task-251 decision 4, held for the WingFoil approver: `memory add` copies a template's `format: 1` into the elements it creates. If ruled so, the `format:` that §5 requires in a pack's Memory templates also appears in every project element. | WingFoil (task-251) |
+| O12 | WingFoil's `init` writes its own built-in directives into `directives/built-in/`, the folder packs write to. Whether a composed `.wingfoil/` still holds them, who owns that folder, and how an upgrade tells them apart. | WingFoil (dl-138 Q2–Q3), with O5 |
 
 ## 17. What the reference composer does
 
@@ -752,6 +841,46 @@ pack ids with ranges, or local paths), parameter values and an output directory,
 It computes digests (§13) and computed ranges (§12) for the release process. It writes no lock,
 downloads nothing beyond reading git tags of this repository, and never touches `custom/` or the
 project's own files.
+
+## 18. Checks beyond the schemas
+
+The schemas check what JSON Schema can express. The lint rules of the validation command (F3.5)
+check the rest, and the composer refuses what they reject.
+
+**`pack.yaml` and the pack directory:**
+- `id` equals the directory path under `packs/`, and `name` equals its last segment (§4, §6.2);
+- the pack name is unique across the catalog (dl-004 1(a));
+- `requires` has exactly one `base@^<major>` entry (§3) and at most one entry per pack id; no pack
+  requires or conflicts with itself (§6.3);
+- `requires_capabilities` is sorted;
+- `contents.fragments` is in the order `dna`, `roles`, `memory`;
+- `contents` matches the files present, both ways (§6.4);
+- `formats` lists exactly the kinds of the files shipped, with the value each file declares (§5);
+- the layout and path segments of §6.1, with no symbolic link or submodule;
+- asset identifiers equal their file stems (§6.1);
+- every `{{name}}` is in the pack's parameter scope (§8.1), and every default passes its type (§8);
+- a phase pack ships its slot workflow, a methodology ships `delivery`, and no other pack ships a
+  slot name (§9).
+
+**`catalog.yaml`:**
+- `path` equals `packs/<id>`, and pack ids are unique;
+- `versions` are in ascending semver order, with unique versions;
+- `transitions` appears only on versions of `stage` packs;
+- every version entry matches the tagged `pack.yaml`, and its digest recomputes (§13);
+- every `wingfoil` range recomputes from `compat.yaml` (§12).
+
+**`compat.yaml`:**
+- `releases` are in ascending order, with unique versions;
+- every capability a release lists is in the `capabilities` vocabulary.
+
+**Presets:**
+- the packs satisfy the cardinalities of §3 (one methodology, at most one pack per slot, team-mode
+  and stage);
+- every parameter value passes the type of the parameter it sets (§8.1).
+
+**Transitions:**
+- `id` is `<from name>-to-<to name>`;
+- `from` differs from `to`, and both are stage packs of the catalog.
 
 ## Execution Notes
 
@@ -779,3 +908,24 @@ project's own files.
 - The digest test vector of §13 was computed twice, with the reference command and independently in
   Python, with the same result.
 - Feedback note T17 (uncommitted) reports the contract to WingFoil.
+- 2026-10-06: amended while `pending`, as the approver asked, after an independent review that
+  requested changes. The changes:
+  - **B1:** an incoming `states` on a type that follows `defaults` is a tightening of it, and the
+    type then detaches (§7.5);
+  - **S1:** sequences are checked against the reference sequence and merged as an order-preserving
+    union, so independent overlays compose; a two-overlay example is added (§7.5);
+  - **S2:** definitions and an "otherwise: fail" rule (§7.2, §7.5);
+  - **S3:** the composed `workflows.yaml` is format 1 and enters the compatibility check (§7.7,
+    §12);
+  - **S4:** the two deviations the approver ruled are recorded in §1;
+  - **S5:** exactly one `base@^<major>` (§3, §6.2, §6.3);
+  - **S6:** §18 lists the lint checks per file kind, and the schemas gain the cheap constraints;
+  - **S7:** every parameter value is validated, and `{{` is forbidden in every type (§8.1);
+  - **nits:** the digest reference command checks file modes and is valid after `.gitattributes`;
+    the test vector uses `1.0.0` (new digest
+    `sha256:77a8a72717b5c73b556af940449ff91a609796079139ade0cb98ddf2ca81bd1c`, computed twice); the
+    token list is open; the `compat.yaml` example and `notes`; the dl-153 citation; O11 and O12;
+    transitions' `formats` and capabilities copied into the catalog; Kahn ordering (§7.1).
+- Schemas re-checked after the amendment with Python `jsonschema` and ajv 2020 (strict, union types
+  allowed). The two validators agree on 33 samples (7 valid, 26 invalid). The reviewer's 60
+  edge cases were re-run: what the schemas still accept is in §18's lint list.
