@@ -59,7 +59,38 @@ Run from a clean clone of the task branch. The scripts are named `build`, `test`
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-001-typescript-set-up-build-test-runner-exact-pins-and-the-packs-line-ending-rule`,
+run through `tooling-delivery` as `developer` (`code-quality`, `testing`, `determinism`).
+
+- **Module system: CommonJS, `module: Node16`,** as WingFoil (WingFoil2 `tsconfig.json`, no
+  `"type": "module"`), so the composer can move there without a conversion (adr-001).
+- **`tsconfig.json`:** `target` ES2022, `strict`, `noUncheckedIndexedAccess`, `noUnusedLocals`,
+  `noUnusedParameters`, `exactOptionalPropertyTypes`, `rootDir: "."`, `outDir: "dist"`, `include:
+  ["src", "tests"]`, `types: ["node"]`. Sources compile to `dist/src/`, tests to `dist/tests/`.
+- **Scripts:**
+  - `clean`: removes `dist/` with `node:fs` (no shell `rm`), so a build never keeps stale files;
+  - `build`: `clean`, then `tsc -p tsconfig.json`;
+  - `test`: `build`, then `node --test "dist/tests/**/*.test.js"`;
+  - `check:pins`: `node dist/src/check-pins.js`.
+- **`src/check-pins.ts`:** a pure function `checkPins(manifest, lockfile)` returning a sorted list of
+  problems, and a small `main` that reads `package.json` and `package-lock.json` from the working
+  directory, prints the problems and exits 1 if there are any (2 if a file is missing or not JSON).
+  - Exact means `MAJOR.MINOR.PATCH` with no range operator, wildcard, tag or URL; an npm alias
+    `npm:<name>@<exact>` is accepted, since the compatibility matrix (task 8) may pin several
+    WingFoil releases that way.
+  - Fields checked: `dependencies`, `devDependencies`, `optionalDependencies`,
+    `peerDependencies`.
+  - Each direct dependency's `node_modules/<name>` entry in the lockfile must have the same
+    version.
+- **Tests:** `tests/check-pins.test.ts`, red first for each rule in Acceptance 4, plus the happy path
+  and the real repository's files.
+- **Static checks:** `tsc` in strict mode with the unused-code flags is the only static check. The
+  `code-quality` directive mentions a linter; adr-003 chose none, and adding ESLint would be a new
+  dependency set needing its own review. Recorded for the approver, not added here.
+- **`.gitattributes`:** `packs/** -text` (spec-001 §13). **`.gitignore`:** `dist/`.
+- **`dna.yaml` (3 → 4):** module `tooling` at `src` ("the reference composer and the validation
+  command, adr-001, adr-002"), and `src` in `paths.sources`.
+- **Floor run:** Acceptance 5 is run with `n`; the results go in the Execution Notes.
 
 ## Execution Notes
 
