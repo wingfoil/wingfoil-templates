@@ -81,6 +81,12 @@ export function runCheckPins(dir: string): CheckResult {
   } catch (error) {
     return { code: 2, messages: [error instanceof Error ? error.message : String(error)] };
   }
+  if (!isRecord(manifest)) {
+    return { code: 2, messages: ['package.json: not a JSON object'] };
+  }
+  if (!isRecord(lockfile) || !isRecord(lockfile['packages'])) {
+    return { code: 2, messages: ['package-lock.json: no `packages` map (lockfileVersion < 2)'] };
+  }
   const messages = checkPins(manifest, lockfile);
   return { code: messages.length > 0 ? 1 : 0, messages };
 }

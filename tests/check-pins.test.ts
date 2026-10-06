@@ -48,6 +48,18 @@ describe('checkPins', () => {
     }
   }
 
+  it('accepts a scoped package and a scoped alias', () => {
+    const manifest = { dependencies: { '@s/n': '1.0.0', alias: 'npm:@s/x@1.2.3' } };
+    const lock = lockFor({ '@s/n': '1.0.0', alias: 'npm:@s/x@1.2.3' });
+    assert.deepEqual(checkPins(manifest, lock), []);
+  });
+
+  for (const spec of ['01.2.3', '1.2.3-rc.1', '1.2.3+build', 'npm:x', 123]) {
+    it(`rejects ${JSON.stringify(spec)}: exact means MAJOR.MINOR.PATCH, no prerelease or build`, () => {
+      assert.equal(checkPins({ dependencies: { dep: spec } }, lockFor({})).length, 1);
+    });
+  }
+
   it('rejects a lockfile version that differs from package.json', () => {
     const manifest = { dependencies: { yaml: '2.9.1' } };
     const problems = checkPins(manifest, lockFor({ yaml: '2.9.0' }));
@@ -102,6 +114,20 @@ describe('runCheckPins', () => {
     });
   });
 
+  it('fails with code 2 when package.json is not an object', () => {
+    withDir({ 'package.json': '[]', 'package-lock.json': JSON.stringify(lockFor({})) }, (dir) => {
+      assert.equal(runCheckPins(dir).code, 2);
+    });
+  });
+
+  it('fails with code 2 on a lockfile without packages (lockfileVersion 1)', () => {
+    withDir({ 'package.json': '{}', 'package-lock.json': '{"lockfileVersion":1}' }, (dir) => {
+      const result = runCheckPins(dir);
+      assert.equal(result.code, 2);
+      assert.match(result.messages.join('\n'), /packages/);
+    });
+  });
+
   it('fails with code 1 and lists the problems', () => {
     withDir({
       'package.json': '{"dependencies":{"yaml":"^2.9.1"}}',
@@ -114,7 +140,7 @@ describe('runCheckPins', () => {
   });
 
   it('passes on this repository', () => {
-    const result = runCheckPins(process.cwd());
+    const result = runCheckPins(join(__dirname, '..', '..'));
     assert.deepEqual(result, { code: 0, messages: [] });
   });
 });
