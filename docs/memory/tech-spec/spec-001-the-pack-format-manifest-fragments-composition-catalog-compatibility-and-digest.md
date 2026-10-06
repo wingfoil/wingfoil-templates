@@ -324,8 +324,8 @@ built-in directives.
 
 ### 7.5 `memory.yaml`: add or tighten
 
-A `memory.yaml` fragment has two keys, `defaults` and `types`. Any other top-level key fails in
-format 1.
+Besides `format:` (§5), a `memory.yaml` fragment has two keys, `defaults` and `types`. Any other
+top-level key fails in format 1.
 
 **Defining and tightening.**
 - A type is **defined** by the first pack that declares it, with all its keys: `path`, `id_pattern`,
@@ -341,19 +341,24 @@ format 1.
 | `states.sequence` | insert states (below) |
 | `states.gates` | add a gate on a state that has none; an existing gate's `reject` target must be equal |
 
-**The effective machine.** A type that declares `states` has its own machine. A type that does
-not declares none, and follows `defaults.states`.
-- A tightening of `defaults` applies to every type that still follows `defaults`.
-- An incoming `states` on a type that follows `defaults` is a tightening of `defaults.states` as it
-  stands at that point of the composition. It must pass the sequence and gate rules against it.
-  From then on the type has its own machine: the merge of the two. Later tightenings of `defaults`
-  no longer apply to it.
+**The effective machine.** A type defined with `states` has its own machine; its `states`
+**must** have a `sequence`. A type defined without `states` **derives from `defaults`**:
+- While no pack tightens it on its own, it follows `defaults.states`.
+- An incoming `states` on it, with a `sequence`, `gates` or both, is a tightening of
+  `defaults.states` as it stands at that point of the composition. It must pass the sequence and
+  gate rules against it. From then on the type has its own machine: the merge of the two.
+- **Every tightening of `defaults` applies to every type that derives from `defaults`,** whether
+  it still follows it or already has its own machine. For the latter, the tightening is merged into
+  the type's machine with the same rules, `base`'s `defaults` sequence being the reference sequence.
+
+So an overlay that tightens `defaults` reaches every such type, whether or not another pack
+tightened it first (§3). A type defined with its own `states` never derives from `defaults`.
 
 This is the only way a type gets its own machine after its definition. It can add states and gates
 to what it inherited, never replace them.
 
 **Sequences.** Each sequence names each state once; a duplicate fails. A pack writes the whole
-sequence it wants. The merge of the base side's sequence A and the incoming sequence B works as
+sequence it wants. An incoming `states` without a `sequence` leaves the sequence unchanged: B is A. The merge of the base side's sequence A and the incoming sequence B works as
 follows:
 1. B **must** contain the **reference sequence** as a subsequence, in the same order. The reference
    sequence is the type's sequence as defined, or, for a type that follows `defaults` or detaches
@@ -396,6 +401,12 @@ types:
 The merged sequence is `[draft, pending, backlog, ready, in-progress, in-review, qa, approved,
 done]`, with gates on `pending`, `ready` and `in-review`. Had stage inserted a state between
 `backlog` and `in-progress`, it would have come after `ready`, because the base side comes first.
+
+A second example, for a type that derives from `defaults`. `adr` has no `states` and `defaults` is
+`[draft, pending, approved]`. `team-mode` gives `adr` the sequence
+`[draft, pending, ai-review, approved]`; `stage` then tightens `defaults` to
+`[draft, pending, approved, archived]`. `adr` ends as `[draft, pending, ai-review, approved,
+archived]`, and every other type that derives from `defaults` gains `archived` too.
 
 These fail composition:
 - an incoming `[draft, pending, backlog, in-progress, approved, done]`, which drops `in-review`;
@@ -847,7 +858,13 @@ project's own files.
 The schemas check what JSON Schema can express. The lint rules of the validation command (F3.5)
 check the rest, and the composer refuses what they reject.
 
+**Every file of this repository:**
+- `format`, and every integer value (an `integer` parameter's default or value), is written as a
+  YAML integer, never in fractional notation such as `1.0`. JSON Schema counts `1.0` as an
+  integer, so the schemas cannot reject it.
+
 **`pack.yaml` and the pack directory:**
+- once this specification is approved, `version` is `1.0.0` or later (§4);
 - `id` equals the directory path under `packs/`, and `name` equals its last segment (§4, §6.2);
 - the pack name is unique across the catalog (dl-004 1(a));
 - `requires` has exactly one `base@^<major>` entry (§3) and at most one entry per pack id; no pack
@@ -860,12 +877,16 @@ check the rest, and the composer refuses what they reject.
 - asset identifiers equal their file stems (§6.1);
 - every `{{name}}` is in the pack's parameter scope (§8.1), and every default passes its type (§8);
 - a phase pack ships its slot workflow, a methodology ships `delivery`, and no other pack ships a
-  slot name (§9).
+  slot name (§9);
+- no pack other than `base` ships `sw-life-cycle` or `retrospective` (§9).
 
 **`catalog.yaml`:**
 - `path` equals `packs/<id>`, and pack ids are unique;
 - `versions` are in ascending semver order, with unique versions;
-- `transitions` appears only on versions of `stage` packs;
+- `transitions` appears only on versions of `stage` packs, and each of its digests recomputes from
+  the transition file at the tag (§14);
+- every `transitions[]` and `presets[]` index entry matches its file: id and path, and for
+  transitions `from`, `to`, `formats` and `requires_capabilities`;
 - every version entry matches the tagged `pack.yaml`, and its digest recomputes (§13);
 - every `wingfoil` range recomputes from `compat.yaml` (§12).
 
@@ -928,4 +949,16 @@ check the rest, and the composer refuses what they reject.
     transitions' `formats` and capabilities copied into the catalog; Kahn ordering (§7.1).
 - Schemas re-checked after the amendment with Python `jsonschema` and ajv 2020 (strict, union types
   allowed). The two validators agree on 33 samples (7 valid, 26 invalid). The reviewer's 60
-  edge cases were re-run: what the schemas still accept is in §18's lint list.
+  edge cases were re-run.
+- 2026-10-06: a re-review of the amendment found nothing blocking. B1 and S1–S7 are fixed, and the
+  §7.5 merge was implemented independently and gives the documented results. Second amendment, from
+  its findings:
+  - a tightening of `defaults` now reaches types that already have their own machine derived from
+    it, so an overlay reaches them all (§7.5, with an example);
+  - `format:` is allowed in a `memory.yaml` fragment (§7.5);
+  - an incoming `states` without `sequence` is defined (§7.5);
+  - §18 gains: YAML integers (the schemas cannot reject `1.0`); `version` ≥ 1.0.0; the index entries
+    and transition digests; the reserved names `sw-life-cycle` and `retrospective`;
+  - the catalog schema fixes `overlay: false` on the `phase` axis.
+
+  With these, every accept the reviewer found in the schemas is a §18 check.

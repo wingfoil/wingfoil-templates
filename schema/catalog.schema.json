@@ -84,6 +84,9 @@
                     "end-of-life"
                   ]
                 },
+                "overlay": {
+                  "const": false
+                },
                 "scale": false
               },
               "required": [
