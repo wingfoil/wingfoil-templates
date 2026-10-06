@@ -43,3 +43,11 @@ releases (packs are versioned one by one), so waves are grouped into milestones,
 - No Memory gate. The approver's ruling is recorded in the Execution Notes.
 
 ## Execution Notes
+- 2026-10-06: sequencer and MVP canvas drafted (`c25587c`).
+- 2026-10-06: the approver ruled:
+  - order M0 → M1 → M2 → M3;
+  - tooling option (a), re-runnable: a `tooling` phase plus a startable `tooling-change` main. Its
+    parsing was checked in a scratch clone with WingFoil 0.2.2;
+  - `base` is published only after the v0.3 release.
+
+  The documents are accepted.

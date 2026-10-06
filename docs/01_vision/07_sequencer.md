@@ -1,6 +1,6 @@
 # Sequencer — WingFoil-Templates
 
-**Version:** 1.0
+**Version:** 1.1
 **Date:** 2026-10-06
 **Status:** Draft
 **Traces to:** [06_features.md](06_features.md), [05_journeys.md](05_journeys.md), [04_personas.md](04_personas.md)
@@ -106,3 +106,18 @@ Starts when the approver confirms that the v0.3 formats are final.
    released, as the `pack-compatibility` directive requires?
 
 ## Decisions from the sequencer review
+
+Approver, 2026-10-06:
+
+1. **Order M0 → M1 → M2 → M3**, with the tooling before `base`.
+2. **Tooling tasks: option (a), re-runnable.**
+   - A `tooling` phase in `sw-life-cycle`, between specification and pack-delivery, runs one
+     `kanban-delivery` iteration per task with no pack.
+   - For later changes to the tooling, a startable main workflow, `tooling-change`, includes the
+     same loop. It follows the pattern of `pack-release`, which reopens a pack after `pack-cycle`.
+
+   Checked on 2026-10-06 in a scratch clone with the pinned WingFoil 0.2.2: both declarations parse,
+   and `workflow list` exits 0 with no warning. The change is ruled in the pack-model phase and
+   applied afterwards, with a `version:` bump.
+3. **`base` is published only after WingFoil v0.3 is released.** Authoring can start when the v0.3
+   formats are final.
