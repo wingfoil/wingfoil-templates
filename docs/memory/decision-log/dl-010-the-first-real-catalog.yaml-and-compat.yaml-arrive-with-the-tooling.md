@@ -2,7 +2,7 @@
 id: dl-010-the-first-real-catalog.yaml-and-compat.yaml-arrive-with-the-tooling
 type: decision-log
 title: "The first real catalog.yaml and compat.yaml arrive with the tooling"
-status: draft
+status: pending
 tags: ["tooling","catalog","compatibility"]
 ---
 
