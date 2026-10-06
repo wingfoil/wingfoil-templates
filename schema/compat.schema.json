@@ -13,24 +13,50 @@
   "additionalProperties": false,
   "properties": {
     "format": {
+      "type": "integer",
       "const": 1
     },
     "kinds": {
       "type": "object",
-      "propertyNames": {
-        "enum": [
-          "dna",
-          "memory",
-          "roles",
-          "workflows",
-          "workflow",
-          "directive",
-          "memory-template"
-        ]
-      },
-      "additionalProperties": {
-        "type": "string",
-        "minLength": 1
+      "required": [
+        "dna",
+        "memory",
+        "roles",
+        "workflows",
+        "workflow",
+        "directive",
+        "memory-template"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "dna": {
+          "type": "string",
+          "minLength": 1
+        },
+        "memory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "roles": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workflows": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workflow": {
+          "type": "string",
+          "minLength": 1
+        },
+        "directive": {
+          "type": "string",
+          "minLength": 1
+        },
+        "memory-template": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "description": "file kind (WingFoil dl-149) -> what it is"
     },

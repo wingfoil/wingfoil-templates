@@ -14,6 +14,7 @@
   "additionalProperties": false,
   "properties": {
     "format": {
+      "type": "integer",
       "const": 1
     },
     "id": {
@@ -46,10 +47,20 @@
         "pattern": "^[a-z][a-z0-9_]*$"
       },
       "additionalProperties": {
-        "type": [
-          "string",
-          "integer",
-          "boolean"
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^[^\"\\\\\\u0000-\\u001f]*$",
+            "not": {
+              "pattern": "\\{\\{"
+            }
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "boolean"
+          }
         ]
       },
       "description": "generic values only, never project values (pack-authoring)"

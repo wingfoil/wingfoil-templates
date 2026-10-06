@@ -18,6 +18,7 @@
   "additionalProperties": false,
   "properties": {
     "format": {
+      "type": "integer",
       "const": 1
     },
     "id": {
@@ -72,10 +73,21 @@
     },
     "conflicts": {
       "type": "array",
+      "uniqueItems": true,
+      "description": "never base (spec-001 §6.3)",
       "items": {
-        "$ref": "#/$defs/conflictsEntry"
-      },
-      "uniqueItems": true
+        "allOf": [
+          {
+            "$ref": "#/$defs/conflictsEntry"
+          },
+          {
+            "type": "string",
+            "not": {
+              "pattern": "^base(?:@|$)"
+            }
+          }
+        ]
+      }
     },
     "parameters": {
       "type": "object",
@@ -171,7 +183,10 @@
               "properties": {
                 "default": {
                   "type": "string",
-                  "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\\\\\u0000-\\u001f\"]+$"
+                  "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)[^\\\\\\u0000-\\u001f\"]+$",
+                  "not": {
+                    "pattern": "\\{\\{"
+                  }
                 }
               }
             }
@@ -188,7 +203,10 @@
               "properties": {
                 "default": {
                   "type": "string",
-                  "pattern": "^[^/\\\\\\u0000-\\u001f\"\\s]+$"
+                  "pattern": "^[^/\\\\\\u0000-\\u001f\"\\s]+$",
+                  "not": {
+                    "pattern": "\\{\\{"
+                  }
                 }
               }
             }
@@ -254,7 +272,11 @@
       "then": {
         "properties": {
           "axis": false,
-          "slot": false
+          "slot": false,
+          "requires": {
+            "type": "array",
+            "maxItems": 0
+          }
         }
       },
       "else": {
@@ -266,10 +288,23 @@
           "axis": true,
           "requires": {
             "type": "array",
-            "contains": {
-              "type": "string",
-              "pattern": "^base@"
-            }
+            "allOf": [
+              {
+                "contains": {
+                  "type": "string",
+                  "pattern": "^base@\\^(?:0|[1-9][0-9]*)$"
+                },
+                "minContains": 1
+              },
+              {
+                "contains": {
+                  "type": "string",
+                  "pattern": "^base@"
+                },
+                "minContains": 0,
+                "maxContains": 1
+              }
+            ]
           }
         }
       }

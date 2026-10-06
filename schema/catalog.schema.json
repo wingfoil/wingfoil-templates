@@ -16,6 +16,7 @@
   "additionalProperties": false,
   "properties": {
     "format": {
+      "type": "integer",
       "const": 1
     },
     "foundation": {
@@ -35,22 +36,182 @@
       "description": "spec-001 §3; key order is the composition order after base (§7.1)",
       "properties": {
         "methodology": {
-          "$ref": "#/$defs/axis"
+          "allOf": [
+            {
+              "$ref": "#/$defs/axis"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "cardinality": {
+                  "const": "one"
+                },
+                "required": {
+                  "const": true
+                },
+                "overlay": {
+                  "const": false
+                },
+                "slots": false,
+                "scale": false
+              },
+              "required": [
+                "cardinality",
+                "required"
+              ]
+            }
+          ]
         },
         "phase": {
-          "$ref": "#/$defs/axis"
+          "allOf": [
+            {
+              "$ref": "#/$defs/axis"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "cardinality": {
+                  "const": "one-per-slot"
+                },
+                "required": {
+                  "const": false
+                },
+                "slots": {
+                  "const": [
+                    "inception",
+                    "specification",
+                    "release",
+                    "end-of-life"
+                  ]
+                },
+                "scale": false
+              },
+              "required": [
+                "cardinality",
+                "required",
+                "slots"
+              ]
+            }
+          ]
         },
         "blueprint": {
-          "$ref": "#/$defs/axis"
+          "allOf": [
+            {
+              "$ref": "#/$defs/axis"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "cardinality": {
+                  "const": "many"
+                },
+                "required": {
+                  "const": false
+                },
+                "overlay": {
+                  "const": false
+                },
+                "slots": false,
+                "scale": false
+              },
+              "required": [
+                "cardinality",
+                "required"
+              ]
+            }
+          ]
         },
         "governance": {
-          "$ref": "#/$defs/axis"
+          "allOf": [
+            {
+              "$ref": "#/$defs/axis"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "cardinality": {
+                  "const": "many"
+                },
+                "required": {
+                  "const": false
+                },
+                "overlay": {
+                  "const": false
+                },
+                "slots": false,
+                "scale": false
+              },
+              "required": [
+                "cardinality",
+                "required"
+              ]
+            }
+          ]
         },
         "team-mode": {
-          "$ref": "#/$defs/axis"
+          "allOf": [
+            {
+              "$ref": "#/$defs/axis"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "cardinality": {
+                  "const": "one"
+                },
+                "required": {
+                  "const": false
+                },
+                "overlay": {
+                  "const": true
+                },
+                "slots": false,
+                "scale": false
+              },
+              "required": [
+                "cardinality",
+                "required",
+                "overlay"
+              ]
+            }
+          ]
         },
         "stage": {
-          "$ref": "#/$defs/axis"
+          "allOf": [
+            {
+              "$ref": "#/$defs/axis"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "cardinality": {
+                  "const": "one"
+                },
+                "required": {
+                  "const": false
+                },
+                "overlay": {
+                  "const": true
+                },
+                "scale": {
+                  "const": [
+                    "prototype",
+                    "mvp",
+                    "production",
+                    "maintenance",
+                    "sunset"
+                  ]
+                },
+                "slots": false
+              },
+              "required": [
+                "cardinality",
+                "required",
+                "overlay",
+                "scale"
+              ]
+            }
+          ]
         }
       }
     },
@@ -67,19 +228,131 @@
       "description": "spec-001 §9",
       "properties": {
         "inception": {
-          "$ref": "#/$defs/slot"
+          "allOf": [
+            {
+              "$ref": "#/$defs/slot"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "included_by": {
+                  "const": "sw-life-cycle"
+                },
+                "default": {
+                  "const": "base"
+                },
+                "filled_by": {
+                  "const": "phase"
+                }
+              },
+              "required": [
+                "included_by",
+                "default",
+                "filled_by"
+              ]
+            }
+          ]
         },
         "specification": {
-          "$ref": "#/$defs/slot"
+          "allOf": [
+            {
+              "$ref": "#/$defs/slot"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "included_by": {
+                  "const": "sw-life-cycle"
+                },
+                "default": {
+                  "const": "base"
+                },
+                "filled_by": {
+                  "const": "phase"
+                }
+              },
+              "required": [
+                "included_by",
+                "default",
+                "filled_by"
+              ]
+            }
+          ]
         },
         "delivery": {
-          "$ref": "#/$defs/slot"
+          "allOf": [
+            {
+              "$ref": "#/$defs/slot"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "included_by": {
+                  "const": "sw-life-cycle"
+                },
+                "filled_by": {
+                  "const": "methodology"
+                },
+                "default": false
+              },
+              "required": [
+                "included_by",
+                "filled_by"
+              ]
+            }
+          ]
         },
         "release": {
-          "$ref": "#/$defs/slot"
+          "allOf": [
+            {
+              "$ref": "#/$defs/slot"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "included_by": {
+                  "const": "delivery"
+                },
+                "default": {
+                  "const": "base"
+                },
+                "filled_by": {
+                  "const": "phase"
+                }
+              },
+              "required": [
+                "included_by",
+                "default",
+                "filled_by"
+              ]
+            }
+          ]
         },
         "end-of-life": {
-          "$ref": "#/$defs/slot"
+          "allOf": [
+            {
+              "$ref": "#/$defs/slot"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "included_by": {
+                  "const": "sw-life-cycle"
+                },
+                "default": {
+                  "const": "base"
+                },
+                "filled_by": {
+                  "const": "phase"
+                }
+              },
+              "required": [
+                "included_by",
+                "default",
+                "filled_by"
+              ]
+            }
+          ]
         }
       }
     },
@@ -97,7 +370,9 @@
           "id",
           "path",
           "from",
-          "to"
+          "to",
+          "formats",
+          "requires_capabilities"
         ],
         "additionalProperties": false,
         "properties": {
@@ -116,6 +391,12 @@
           "to": {
             "type": "string",
             "pattern": "^stage/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "formats": {
+            "$ref": "#/$defs/formats"
+          },
+          "requires_capabilities": {
+            "$ref": "#/$defs/capabilities"
           }
         }
       }
@@ -396,7 +677,7 @@
         },
         "wingfoil": {
           "type": "string",
-          "pattern": "^(?:(?:(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|>=(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*) <=(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*))(?: \\|\\| (?:(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|>=(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*) <=(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)))*)?$",
+          "pattern": "^(?:(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|>=(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*) <=(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*))(?: \\|\\| (?:(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|>=(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*) <=(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)))*$",
           "description": "COMPUTED from compat.yaml (spec-001 §12); never written by hand"
         },
         "transitions": {

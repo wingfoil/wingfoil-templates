@@ -17,6 +17,7 @@
   "additionalProperties": false,
   "properties": {
     "format": {
+      "type": "integer",
       "const": 1
     },
     "id": {
