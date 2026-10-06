@@ -2,7 +2,7 @@
 id: plan-014-adr-ingest-capture-the-reference-composer-and-the-tooling-language
 type: plan
 title: "adr-ingest capture: the reference composer and the tooling language"
-status: draft
+status: active
 workflow: "adr-ingest"
 phase: "capture"
 tags: ["architecture","adr"]
