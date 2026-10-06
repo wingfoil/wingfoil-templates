@@ -2,7 +2,7 @@
 id: plan-017-adr-ingest-capture-the-tooling-libraries
 type: plan
 title: "adr-ingest capture: the tooling libraries"
-status: active
+status: done
 workflow: "adr-ingest"
 phase: "capture"
 tags: ["architecture","adr","tooling"]
