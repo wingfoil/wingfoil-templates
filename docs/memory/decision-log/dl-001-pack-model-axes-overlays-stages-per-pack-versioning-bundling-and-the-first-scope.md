@@ -58,7 +58,8 @@ Ruled by the approver, Roberto Pompermaier.
   | `blueprint` | any number | |
   | `stage` | at most one | overlay |
 
-  The `governance` axis is added by dl-003. Overlays only add or tighten; they never remove what a
+  The `governance` axis is added by dl-003 (D6). The slot list is amended by dl-003 D11: the
+  slots are `inception`, `specification`, `release`, `end-of-life`, and `operations` is open. Overlays only add or tighten; they never remove what a
   methodology ships. **Presets** name curated combinations. **Transitions** move a project from one
   stage to another.
 - **D2 — AI-agent variants are an overlay**, `team-mode/agent-first` (2026-10-05). They are not

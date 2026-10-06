@@ -53,3 +53,16 @@ Produces: `docs/memory/decision-log/{id}.md`, one element per ruling group, each
   go to an ADR in the specification phase (`adr-ingest`), not into these decision-logs.
 
 ## Execution Notes
+- 2026-10-06: dl-001…dl-005 captured and `pending` (plan-009).
+- 2026-10-06: the session "Metodologie nelle fasi wingfoil" acted at the approver's request:
+  - it amended dl-003 while `pending`: D4 and D11 add the `release` slot, and `operations` is left
+    open;
+  - it opened dl-006 (retrospective) and dl-007 (phase methods) under plan-010;
+  - it added feedback note T16.
+
+  Coherence check by this session:
+  - dl-001 D1 now points to the slot list of dl-003 D11;
+  - features F1.4 is aligned (1.2).
+- The approver defers dl-007 until WingFoil supports templates and Benchmark can test them. The
+  inception gate therefore covers dl-001…dl-006. dl-007 stays `pending` under plan-010, and
+  spec-001 does not include its `method` entry until it is ruled.

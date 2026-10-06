@@ -1,6 +1,6 @@
 # Features — WingFoil-Templates
 
-**Version:** 1.1
+**Version:** 1.2
 **Date:** 2026-10-06
 **Status:** Draft
 **Traces to:** [05_journeys.md](05_journeys.md), [03_is-isnot.md](03_is-isnot.md), [01_product-brief.md](01_product-brief.md) §8
@@ -30,7 +30,7 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 | F1.1 | **`pack.yaml` manifest:** id, axis, slot, version, `formats` and `requires_capabilities`, `requires` and `conflicts` with semver ranges, contents, parameters. | J1.3, J6.1 | H | M | M |
 | F1.2 | **Fragments:** pieces of `dna.yaml`, `roles.yaml`, `memory.yaml` and `workflows.yaml` that are merged in a defined order. The merge rule for Memory state machines is "add or tighten, never remove". | J1.3, J5.3 | H | H | **H** |
 | F1.3 | **Parameters** `{{name}}`: typed, each with a default, and with no project values inside packs. Path and id parameters accept the project's tokens (`{release}`, `{scope}`). | J2.2, J6.2 | H | M | M |
-| F1.4 | **Slots:** `sw-life-cycle` includes one workflow per slot, by name. A phase pack fills a slot by shipping the workflow of that name. | J1.3, J6.1 | H | M | M |
+| F1.4 | **Slots:** each slot is included by name. `sw-life-cycle` includes `inception`, `specification`, `delivery` and `end-of-life`, and the methodology's `delivery` includes `release` (dl-003 D4, D11). A phase pack fills a slot by shipping the workflow of that name. | J1.3, J6.1 | H | M | M |
 | F1.5 | **`format:` key** on every file a pack ships, and on this repository's own files (`pack.yaml`, catalog, compat, presets, transitions), per WingFoil dl-149. | J4.1, J3.1 | H | L | M |
 | F1.6 | **AGENTS.md section** (`agents_section`): a pack contributes text inside a marked region and never ships the file itself. | J2.4, J5.1 | M | L | **H** |
 | F1.7 | **JSON Schemas** for every file kind above, published under `schema/`. | J1.3, J1.4 | H | M | L |
@@ -147,3 +147,5 @@ Approver, 2026-10-06:
 2. **Tooling language:** TypeScript on Node.js ≥ 22.12, as WingFoil.
 3. **No release assets (F2.7 dropped).** The download signal of brief §8 is limited to the
    repository's clone and view traffic (F7.3). It is not counted per pack.
+4. **Amendment 1.2 (2026-10-06).** F1.4 is aligned with the slot list of dl-003 D11, which was
+   amended while pending.
