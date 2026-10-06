@@ -1,6 +1,6 @@
 # Features — WingFoil-Templates
 
-**Version:** 1.0
+**Version:** 1.1
 **Date:** 2026-10-06
 **Status:** Draft
 **Traces to:** [05_journeys.md](05_journeys.md), [03_is-isnot.md](03_is-isnot.md), [01_product-brief.md](01_product-brief.md) §8
@@ -45,7 +45,7 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 | F2.4 | **`compat.yaml`:** for each WingFoil release, the formats it reads and the capabilities it provides. The vocabulary belongs to WingFoil (notes T13), and until WingFoil publishes it this repository holds a proposal. | J4.1, J6.3 | H | L | **H** |
 | F2.5 | **Computed WingFoil range** in the catalog, derived from `compat.yaml`. It is never written by hand. | J1.6, J3.1 | M | L | L |
 | F2.6 | **Presets:** named combinations, organized by the adoption profiles (personas §2). | J6.1 | M | L | L |
-| F2.7 | **Release assets:** each published version is also attached to a GitHub Release as an archive. This gives the download counts of brief §8. | brief §8 | M | L | M |
+| ~~F2.7~~ | ~~**Release assets.**~~ Dropped in the features review: versions are not published as GitHub Release assets. | brief §8 | — | — | — |
 
 ## F3 — Validation tooling
 
@@ -92,7 +92,7 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 |---|---|---|---|---|---|
 | F7.1 | **Community catalog:** packs kept distinct from the official ones; where they live is open (vision review). | J9 | M | M | **H** |
 | F7.2 | **Contribution model:** Memory elements through ingest workflows, with `contributor:` and `credit:` (WingFoil dl-020). | J9 | M | L | L |
-| F7.3 | **Download metrics:** release-asset download counts (F2.7), plus clone traffic collected periodically. | brief §8 | L | L | M |
+| F7.3 | **Download metrics:** clone and view traffic, collected periodically because GitHub keeps only 14 days. There are no per-pack counts, because no release assets are published (features review). | brief §8 | L | L | M |
 
 ---
 
@@ -137,3 +137,13 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
    signal? It adds one artifact per publication and needs a matching feedback note to WingFoil.
 
 ## Decisions from the features review
+
+Approver, 2026-10-06:
+
+1. **Reference composer (F3.2): option (c).** This repository keeps a minimal composer, used for
+   validation. It is proposed to WingFoil as its implementation through a feedback note (notes
+   T15), so that one composer exists rather than two that may diverge. Composition is specified in
+   spec-001.
+2. **Tooling language:** TypeScript on Node.js ≥ 22.12, as WingFoil.
+3. **No release assets (F2.7 dropped).** The download signal of brief §8 is limited to the
+   repository's clone and view traffic (F7.3). It is not counted per pack.

@@ -38,3 +38,11 @@ effort, uncertainty).
 - No Memory gate. The approver's acceptance is recorded in the Execution Notes.
 
 ## Execution Notes
+- 2026-10-06: features written (`a5f306e`).
+- 2026-10-06: features review answered by the approver:
+  - reference composer (c): written here and proposed to WingFoil. Recorded as note T15 in the
+    uncommitted feedback inbox;
+  - tooling in TypeScript on Node;
+  - no release assets (F2.7 dropped), so the download signal is clone traffic only.
+
+  The document is accepted as input to the sequencer.
