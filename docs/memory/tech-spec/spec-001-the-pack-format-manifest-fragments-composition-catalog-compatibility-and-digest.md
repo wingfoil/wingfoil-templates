@@ -2,7 +2,7 @@
 id: spec-001-the-pack-format-manifest-fragments-composition-catalog-compatibility-and-digest
 type: tech-spec
 title: "The pack format: manifest, fragments, composition, catalog, compatibility and digest"
-status: draft
+status: pending
 tags: ["packs","format","contract"]
 ---
 
