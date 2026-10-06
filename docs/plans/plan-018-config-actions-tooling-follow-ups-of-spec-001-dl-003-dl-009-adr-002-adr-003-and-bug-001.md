@@ -2,7 +2,7 @@
 id: plan-018-config-actions-tooling-follow-ups-of-spec-001-dl-003-dl-009-adr-002-adr-003-and-bug-001
 type: plan
 title: "config actions: tooling follow-ups of spec-001, dl-003, dl-009, adr-002, adr-003 and bug-001"
-status: draft
+status: active
 workflow: "sw-life-cycle"
 phase: "tooling"
 tags: ["config"]
