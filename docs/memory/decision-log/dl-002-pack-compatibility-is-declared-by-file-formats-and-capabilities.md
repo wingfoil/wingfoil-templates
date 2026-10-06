@@ -2,7 +2,7 @@
 id: dl-002-pack-compatibility-is-declared-by-file-formats-and-capabilities
 type: decision-log
 title: "Pack compatibility is declared by file formats and capabilities"
-status: pending
+status: approved
 tags: ["compatibility","packs"]
 ---
 
