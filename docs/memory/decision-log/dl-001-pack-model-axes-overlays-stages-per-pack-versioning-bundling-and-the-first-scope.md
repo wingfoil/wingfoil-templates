@@ -2,7 +2,7 @@
 id: dl-001-pack-model-axes-overlays-stages-per-pack-versioning-bundling-and-the-first-scope
 type: decision-log
 title: "Pack model: axes, overlays, stages, per-pack versioning, bundling and the first scope"
-status: draft
+status: pending
 tags: ["founding","packs"]
 ---
 
