@@ -2,7 +2,7 @@
 id: plan-006-templates-inception-features-feature-brainstorm-and-review
 type: plan
 title: "templates-inception features: feature brainstorm and review"
-status: draft
+status: active
 workflow: "templates-inception"
 phase: "features"
 tags: ["inception"]
