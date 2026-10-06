@@ -65,3 +65,29 @@ bumped only once, in the first commit that touches it.
   is offered.
 
 ## Execution Notes
+- 2026-10-06: applied on `config/dl-002-006-actions`, one commit per decision-log:
+  - dl-002: `4a5ea7b`;
+  - dl-003: `ad5b1ee`;
+  - dl-004: `6f0bf2a`;
+  - dl-005 G7: `b56377c`;
+  - dl-006: `9b6a1c6`.
+
+  Versions went 1 → 2 once each: dna, memory, workflows, pack-cycle, pack-release-cycle,
+  sw-life-cycle. The new workflows are at 1. `workflow list`, `dna show` and `directives list` exit
+  0 with no warning.
+- Independent review by another session: **approve with nits**, none blocking.
+  - Fixed in `3150a11`: the foundation rule exempts `base`; the retrospective's `approve` phase runs
+    as product-owner.
+  - Recorded only:
+    - the dl-004 commit also edited the `memory.yaml` comment and bumped it 1 → 2. This follows from
+      option 1(a)'s own text, although the decision-log listed `memory.yaml` changes only under
+      1(b)/1(c);
+    - step 1 of this plan did not list the `pack` template, which the dl-002 commit changed
+      (Compatibility comment).
+  - Left for a later configuration change, with no decision-log source today: the `packs` module
+    description in `dna.yaml` does not name the `governance` axis.
+  - Untested: WingFoil 0.2.2 parses `where: { pack: "" }`, but without a workflow engine nobody
+    knows whether it selects tasks with an empty `pack`.
+  - Also seen: `workflow list` passed while `pack-cycle` included a workflow not yet declared.
+    That is WingFoil bug-145, already known, so no new note was written.
+- 2026-10-06: the approver authorized the merge. Merged into `main` with `--no-ff`.
