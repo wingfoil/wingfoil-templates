@@ -35,3 +35,11 @@ table of steps per journey (touchpoint, pain or opportunity), feeding the featur
 - No Memory gate. The approver's acceptance is recorded in the Execution Notes.
 
 ## Execution Notes
+- 2026-10-06: journeys written (`eca9521`).
+- 2026-10-06: journeys review answered by the approver:
+  - priorities as listed;
+  - J4 is in the MVP, so `wingfoil-release-intake` returns to the configuration after the
+    pack-model rulings;
+  - each governed repository records its `base` adoption in its own Memory, with no list here.
+
+  The document is accepted as input to the features.

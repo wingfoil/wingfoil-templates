@@ -1,6 +1,6 @@
 # User Journeys — WingFoil-Templates
 
-**Version:** 1.0
+**Version:** 1.1
 **Date:** 2026-10-06
 **Status:** Draft
 **Traces to:** [04_personas.md](04_personas.md), [03_is-isnot.md](03_is-isnot.md)
@@ -165,15 +165,15 @@ written then. Two paths are already known:
 
 ---
 
-## Open questions for the journeys review
-
-1. **Priorities.** J1–J5 are now; J6–J7 come with v0.4; J8 comes when WingFoil runs transitions.
-   Confirm?
-2. **J4 in the MVP?** Keeping `compat.yaml` true needs the `wingfoil-release-intake` workflow. It was
-   drafted in the first attempt and is not in today's configuration. Bring it into the configuration
-   with the pack-model rulings?
-3. **J2, step 6.** Each governed repository records its `base` adoption in its own Memory. Is that
-   enough, or should this repository also keep a list of adopters with their versions? The list
-   would also serve the success signal of brief §8.
-
 ## Decisions from the journeys review
+
+Approver, 2026-10-06:
+
+1. **Priorities as listed.**
+   - J1–J5: now.
+   - J6–J7: with WingFoil v0.4.
+   - J8: when WingFoil runs transitions.
+2. **J4 is in the MVP.** The `wingfoil-release-intake` workflow returns to the configuration. It
+   comes after the pack-model rulings, as one of the configuration changes they imply.
+3. **Adoption register.** Each governed repository records its `base` adoption in its own Memory.
+   This repository keeps no list of adopters.
