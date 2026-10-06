@@ -2,7 +2,7 @@
 id: dl-005-repository-governance-configuration-restart-notes-contributions-and-the-tooling-loop
 type: decision-log
 title: "Repository governance: configuration, restart, notes, contributions and the tooling loop"
-status: pending
+status: approved
 tags: ["governance","process"]
 ---
 
