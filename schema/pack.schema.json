@@ -1,0 +1,592 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/wingfoil/wingfoil-templates/schema/pack.schema.json",
+  "title": "WingFoil-Templates pack manifest (pack.yaml)",
+  "$comment": "Format 1, specified by spec-001 (docs/memory/tech-spec/). A change to this schema is a change of the contract with the WingFoil CLI and produces a feedback note (wingfoil-feedback directive). Not expressible here, checked by the lint rules: id equals the directory path, name equals the last segment of id, every file kind shipped is in formats, every file listed in contents exists and none is unlisted.",
+  "type": "object",
+  "required": [
+    "format",
+    "id",
+    "name",
+    "title",
+    "description",
+    "version",
+    "formats",
+    "requires_capabilities",
+    "contents"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "type": "integer",
+      "const": 1
+    },
+    "id": {
+      "$ref": "#/$defs/packId"
+    },
+    "axis": {
+      "enum": [
+        "methodology",
+        "phase",
+        "blueprint",
+        "governance",
+        "team-mode",
+        "stage"
+      ],
+      "description": "absent for base (dl-004 1(a))"
+    },
+    "name": {
+      "$ref": "#/$defs/name"
+    },
+    "slot": {
+      "enum": [
+        "inception",
+        "specification",
+        "release",
+        "end-of-life"
+      ],
+      "description": "phase packs only (dl-003 D11, dl-008)"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "$ref": "#/$defs/version"
+    },
+    "formats": {
+      "$ref": "#/$defs/formats"
+    },
+    "requires_capabilities": {
+      "$ref": "#/$defs/capabilities"
+    },
+    "requires": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/requiresEntry"
+      },
+      "uniqueItems": true
+    },
+    "conflicts": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "never base (spec-001 §6.3)",
+      "items": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/conflictsEntry"
+          },
+          {
+            "type": "string",
+            "not": {
+              "pattern": "^base(?:@|$)"
+            }
+          }
+        ]
+      }
+    },
+    "parameters": {
+      "type": "object",
+      "description": "spec-001 §8; a parameter without default is required",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "type",
+          "description"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "enum": [
+              "string",
+              "integer",
+              "boolean",
+              "path",
+              "pattern"
+            ]
+          },
+          "default": {},
+          "description": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "string"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "default": {
+                  "type": "string",
+                  "pattern": "^[^\"\\\\\\u0000-\\u001f]*$",
+                  "not": {
+                    "pattern": "\\{\\{"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "integer"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "default": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "boolean"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "default": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "path"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "default": {
+                  "type": "string",
+                  "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)[^\\\\\\u0000-\\u001f\"]+$",
+                  "not": {
+                    "pattern": "\\{\\{"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "pattern"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "default": {
+                  "type": "string",
+                  "pattern": "^[^/\\\\\\u0000-\\u001f\"\\s]+$",
+                  "not": {
+                    "pattern": "\\{\\{"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "contents": {
+      "type": "object",
+      "description": "the pack's inventory, in output order (spec-001 §6.4)",
+      "additionalProperties": false,
+      "properties": {
+        "fragments": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "dna",
+              "roles",
+              "memory"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "directives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/name"
+          },
+          "uniqueItems": true
+        },
+        "workflows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/name"
+          },
+          "uniqueItems": true
+        },
+        "memory_templates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/name"
+          },
+          "uniqueItems": true
+        },
+        "agents_section": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "id": {
+            "const": "base"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "axis": false,
+          "slot": false,
+          "requires": {
+            "type": "array",
+            "maxItems": 0
+          }
+        }
+      },
+      "else": {
+        "required": [
+          "axis",
+          "requires"
+        ],
+        "properties": {
+          "axis": true,
+          "requires": {
+            "type": "array",
+            "allOf": [
+              {
+                "contains": {
+                  "type": "string",
+                  "pattern": "^base@\\^(?:0|[1-9][0-9]*)$"
+                },
+                "minContains": 1
+              },
+              {
+                "contains": {
+                  "type": "string",
+                  "pattern": "^base@"
+                },
+                "minContains": 0,
+                "maxContains": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "axis": {
+            "const": "methodology"
+          }
+        },
+        "required": [
+          "axis"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^methodology/"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "axis": {
+            "const": "phase"
+          }
+        },
+        "required": [
+          "axis"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^phase/"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "axis": {
+            "const": "blueprint"
+          }
+        },
+        "required": [
+          "axis"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^blueprint/"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "axis": {
+            "const": "governance"
+          }
+        },
+        "required": [
+          "axis"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^governance/"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "axis": {
+            "const": "team-mode"
+          }
+        },
+        "required": [
+          "axis"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^team-mode/"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "axis": {
+            "const": "stage"
+          }
+        },
+        "required": [
+          "axis"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^stage/"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "axis": {
+            "const": "phase"
+          }
+        },
+        "required": [
+          "axis"
+        ]
+      },
+      "then": {
+        "required": [
+          "slot"
+        ],
+        "properties": {
+          "slot": true
+        }
+      },
+      "else": {
+        "properties": {
+          "slot": false
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "slot": {
+            "const": "inception"
+          }
+        },
+        "required": [
+          "slot"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^phase/inception/"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "slot": {
+            "const": "specification"
+          }
+        },
+        "required": [
+          "slot"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^phase/specification/"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "slot": {
+            "const": "release"
+          }
+        },
+        "required": [
+          "slot"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^phase/release/"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "slot": {
+            "const": "end-of-life"
+          }
+        },
+        "required": [
+          "slot"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^phase/end-of-life/"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "description": "a pack name or an asset identifier (spec-001 §4, §6.1)"
+    },
+    "packId": {
+      "type": "string",
+      "pattern": "^(?:base|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$",
+      "description": "catalog pack id (spec-001 §4)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$",
+      "description": "SemVer MAJOR.MINOR.PATCH, no pre-release (spec-001 §4)"
+    },
+    "requiresEntry": {
+      "type": "string",
+      "pattern": "^(?:base|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)@(?:\\^(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?)?|~(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?|(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|(?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?: (?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*))*)$",
+      "description": "<catalog pack id>@<range> (spec-001 §6.3)"
+    },
+    "conflictsEntry": {
+      "type": "string",
+      "pattern": "^(?:base|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)(?:@(?:\\^(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?)?|~(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?|(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|(?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?: (?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*))*))?$",
+      "description": "<catalog pack id>[@<range>] (spec-001 §6.3)"
+    },
+    "formats": {
+      "type": "object",
+      "description": "file kind -> the WingFoil format the content is written in (dl-002; spec-001 §5, §12)",
+      "propertyNames": {
+        "enum": [
+          "dna",
+          "memory",
+          "roles",
+          "workflow",
+          "directive",
+          "memory-template"
+        ]
+      },
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 1
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "WingFoil capabilities, from the compat.yaml vocabulary (dl-002; spec-001 §12)",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      },
+      "uniqueItems": true
+    }
+  }
+}

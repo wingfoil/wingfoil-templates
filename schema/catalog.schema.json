@@ -1,0 +1,700 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/wingfoil/wingfoil-templates/schema/catalog.schema.json",
+  "title": "WingFoil-Templates catalog (catalog.yaml)",
+  "$comment": "Format 1, specified by spec-001 (docs/memory/tech-spec/). A change to this schema is a change of the contract with the WingFoil CLI and produces a feedback note (wingfoil-feedback directive).",
+  "type": "object",
+  "required": [
+    "format",
+    "foundation",
+    "axes",
+    "slots",
+    "packs",
+    "transitions",
+    "presets"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "type": "integer",
+      "const": 1
+    },
+    "foundation": {
+      "const": "base"
+    },
+    "axes": {
+      "type": "object",
+      "required": [
+        "methodology",
+        "phase",
+        "blueprint",
+        "governance",
+        "team-mode",
+        "stage"
+      ],
+      "additionalProperties": false,
+      "description": "spec-001 §3; key order is the composition order after base (§7.1)",
+      "properties": {
+        "methodology": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/axis"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "cardinality": {
+                  "const": "one"
+                },
+                "required": {
+                  "const": true
+                },
+                "overlay": {
+                  "const": false
+                },
+                "slots": false,
+                "scale": false
+              },
+              "required": [
+                "cardinality",
+                "required"
+              ]
+            }
+          ]
+        },
+        "phase": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/axis"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "cardinality": {
+                  "const": "one-per-slot"
+                },
+                "required": {
+                  "const": false
+                },
+                "slots": {
+                  "const": [
+                    "inception",
+                    "specification",
+                    "release",
+                    "end-of-life"
+                  ]
+                },
+                "overlay": {
+                  "const": false
+                },
+                "scale": false
+              },
+              "required": [
+                "cardinality",
+                "required",
+                "slots"
+              ]
+            }
+          ]
+        },
+        "blueprint": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/axis"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "cardinality": {
+                  "const": "many"
+                },
+                "required": {
+                  "const": false
+                },
+                "overlay": {
+                  "const": false
+                },
+                "slots": false,
+                "scale": false
+              },
+              "required": [
+                "cardinality",
+                "required"
+              ]
+            }
+          ]
+        },
+        "governance": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/axis"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "cardinality": {
+                  "const": "many"
+                },
+                "required": {
+                  "const": false
+                },
+                "overlay": {
+                  "const": false
+                },
+                "slots": false,
+                "scale": false
+              },
+              "required": [
+                "cardinality",
+                "required"
+              ]
+            }
+          ]
+        },
+        "team-mode": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/axis"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "cardinality": {
+                  "const": "one"
+                },
+                "required": {
+                  "const": false
+                },
+                "overlay": {
+                  "const": true
+                },
+                "slots": false,
+                "scale": false
+              },
+              "required": [
+                "cardinality",
+                "required",
+                "overlay"
+              ]
+            }
+          ]
+        },
+        "stage": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/axis"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "cardinality": {
+                  "const": "one"
+                },
+                "required": {
+                  "const": false
+                },
+                "overlay": {
+                  "const": true
+                },
+                "scale": {
+                  "const": [
+                    "prototype",
+                    "mvp",
+                    "production",
+                    "maintenance",
+                    "sunset"
+                  ]
+                },
+                "slots": false
+              },
+              "required": [
+                "cardinality",
+                "required",
+                "overlay",
+                "scale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "slots": {
+      "type": "object",
+      "required": [
+        "inception",
+        "specification",
+        "delivery",
+        "release",
+        "end-of-life"
+      ],
+      "additionalProperties": false,
+      "description": "spec-001 §9",
+      "properties": {
+        "inception": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/slot"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "included_by": {
+                  "const": "sw-life-cycle"
+                },
+                "default": {
+                  "const": "base"
+                },
+                "filled_by": {
+                  "const": "phase"
+                }
+              },
+              "required": [
+                "included_by",
+                "default",
+                "filled_by"
+              ]
+            }
+          ]
+        },
+        "specification": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/slot"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "included_by": {
+                  "const": "sw-life-cycle"
+                },
+                "default": {
+                  "const": "base"
+                },
+                "filled_by": {
+                  "const": "phase"
+                }
+              },
+              "required": [
+                "included_by",
+                "default",
+                "filled_by"
+              ]
+            }
+          ]
+        },
+        "delivery": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/slot"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "included_by": {
+                  "const": "sw-life-cycle"
+                },
+                "filled_by": {
+                  "const": "methodology"
+                },
+                "default": false
+              },
+              "required": [
+                "included_by",
+                "filled_by"
+              ]
+            }
+          ]
+        },
+        "release": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/slot"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "included_by": {
+                  "const": "delivery"
+                },
+                "default": {
+                  "const": "base"
+                },
+                "filled_by": {
+                  "const": "phase"
+                }
+              },
+              "required": [
+                "included_by",
+                "default",
+                "filled_by"
+              ]
+            }
+          ]
+        },
+        "end-of-life": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/slot"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "included_by": {
+                  "const": "sw-life-cycle"
+                },
+                "default": {
+                  "const": "base"
+                },
+                "filled_by": {
+                  "const": "phase"
+                }
+              },
+              "required": [
+                "included_by",
+                "default",
+                "filled_by"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "packs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pack"
+      }
+    },
+    "transitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "path",
+          "from",
+          "to",
+          "formats",
+          "requires_capabilities"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*-to-[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^transitions/[a-z][a-z0-9]*(?:-[a-z0-9]+)*-to-[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.yaml$"
+          },
+          "from": {
+            "type": "string",
+            "pattern": "^stage/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "to": {
+            "type": "string",
+            "pattern": "^stage/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "formats": {
+            "$ref": "#/$defs/formats"
+          },
+          "requires_capabilities": {
+            "$ref": "#/$defs/capabilities"
+          }
+        }
+      }
+    },
+    "presets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "path"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/name"
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^presets/[a-z][a-z0-9]*(?:-[a-z0-9]+)*\\.yaml$"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "description": "a pack name or an asset identifier (spec-001 §4, §6.1)"
+    },
+    "packId": {
+      "type": "string",
+      "pattern": "^(?:base|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$",
+      "description": "catalog pack id (spec-001 §4)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$",
+      "description": "SemVer MAJOR.MINOR.PATCH, no pre-release (spec-001 §4)"
+    },
+    "requiresEntry": {
+      "type": "string",
+      "pattern": "^(?:base|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)@(?:\\^(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?)?|~(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?|(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|(?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?: (?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*))*)$",
+      "description": "<catalog pack id>@<range> (spec-001 §6.3)"
+    },
+    "conflictsEntry": {
+      "type": "string",
+      "pattern": "^(?:base|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)(?:@(?:\\^(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?)?|~(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?|(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|(?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?: (?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*))*))?$",
+      "description": "<catalog pack id>[@<range>] (spec-001 §6.3)"
+    },
+    "formats": {
+      "type": "object",
+      "description": "file kind -> the WingFoil format the content is written in (dl-002; spec-001 §5, §12)",
+      "propertyNames": {
+        "enum": [
+          "dna",
+          "memory",
+          "roles",
+          "workflow",
+          "directive",
+          "memory-template"
+        ]
+      },
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 1
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "WingFoil capabilities, from the compat.yaml vocabulary (dl-002; spec-001 §12)",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      },
+      "uniqueItems": true
+    },
+    "axis": {
+      "type": "object",
+      "required": [
+        "cardinality",
+        "required"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "cardinality": {
+          "enum": [
+            "one",
+            "one-per-slot",
+            "many"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "overlay": {
+          "type": "boolean"
+        },
+        "slots": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "inception",
+              "specification",
+              "release",
+              "end-of-life"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "scale": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/name"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "slot": {
+      "type": "object",
+      "required": [
+        "included_by",
+        "filled_by"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "included_by": {
+          "enum": [
+            "sw-life-cycle",
+            "delivery"
+          ]
+        },
+        "default": {
+          "const": "base"
+        },
+        "filled_by": {
+          "enum": [
+            "phase",
+            "methodology"
+          ]
+        }
+      }
+    },
+    "pack": {
+      "type": "object",
+      "required": [
+        "id",
+        "path",
+        "catalog",
+        "status",
+        "versions"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/packId"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^packs/(?:base|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$"
+        },
+        "catalog": {
+          "enum": [
+            "official",
+            "community"
+          ],
+          "description": "dl-001 D7; format 1 lists official packs only"
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "active",
+            "deprecated"
+          ]
+        },
+        "successor": {
+          "$ref": "#/$defs/packId"
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/packVersion"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "planned"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "versions": {
+                "type": "array",
+                "maxItems": 0
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "versions": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "successor"
+            ],
+            "properties": {
+              "successor": true
+            }
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": "deprecated"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "packVersion": {
+      "type": "object",
+      "required": [
+        "version",
+        "commit",
+        "digest",
+        "formats",
+        "requires_capabilities",
+        "requires",
+        "conflicts",
+        "wingfoil"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "$ref": "#/$defs/version"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "description": "spec-001 §13"
+        },
+        "formats": {
+          "$ref": "#/$defs/formats"
+        },
+        "requires_capabilities": {
+          "$ref": "#/$defs/capabilities"
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/requiresEntry"
+          },
+          "uniqueItems": true
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/conflictsEntry"
+          },
+          "uniqueItems": true
+        },
+        "wingfoil": {
+          "type": "string",
+          "pattern": "^(?:(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|>=(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*) <=(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*))(?: \\|\\| (?:(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|>=(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*) <=(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)))*$",
+          "description": "COMPUTED from compat.yaml (spec-001 §12); never written by hand"
+        },
+        "transitions": {
+          "type": "object",
+          "description": "stage packs only: transition id -> digest of the transition file (spec-001 §14)",
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*-to-[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/wingfoil/wingfoil-templates/schema/transition.schema.json",
+  "title": "WingFoil-Templates stage transition (transitions/<from>-to-<to>.yaml)",
+  "$comment": "Format 1, specified by spec-001 (docs/memory/tech-spec/). A change to this schema is a change of the contract with the WingFoil CLI and produces a feedback note (wingfoil-feedback directive). pre_checks and actions are descriptive in format 1 (spec-001 §14).",
+  "type": "object",
+  "required": [
+    "format",
+    "id",
+    "from",
+    "to",
+    "formats",
+    "requires_capabilities",
+    "pre_checks",
+    "actions"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "type": "integer",
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*-to-[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "from": {
+      "type": "string",
+      "pattern": "^stage/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "to": {
+      "type": "string",
+      "pattern": "^stage/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "formats": {
+      "$ref": "#/$defs/formats"
+    },
+    "requires_capabilities": {
+      "$ref": "#/$defs/capabilities"
+    },
+    "pre_checks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/step"
+      }
+    },
+    "actions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/step"
+      }
+    }
+  },
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "description": "a pack name or an asset identifier (spec-001 §4, §6.1)"
+    },
+    "formats": {
+      "type": "object",
+      "description": "file kind -> the WingFoil format the content is written in (dl-002; spec-001 §5, §12)",
+      "propertyNames": {
+        "enum": [
+          "dna",
+          "memory",
+          "roles",
+          "workflow",
+          "directive",
+          "memory-template"
+        ]
+      },
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 1
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "WingFoil capabilities, from the compat.yaml vocabulary (dl-002; spec-001 §12)",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      },
+      "uniqueItems": true
+    },
+    "step": {
+      "type": "object",
+      "required": [
+        "id",
+        "description"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/name"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}
