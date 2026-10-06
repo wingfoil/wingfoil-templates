@@ -2,7 +2,7 @@
 id: plan-003-templates-inception-vision-product-vision-and-is-is-not
 type: plan
 title: "templates-inception vision: product vision and is-is not"
-status: draft
+status: active
 workflow: "templates-inception"
 phase: "vision"
 tags: ["inception"]
