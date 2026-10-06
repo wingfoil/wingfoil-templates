@@ -1,6 +1,6 @@
 # Product Vision — WingFoil-Templates
 
-**Version:** 1.0
+**Version:** 1.1
 **Date:** 2026-10-06
 **Status:** Draft
 **Traces to:** [01_product-brief.md](01_product-brief.md)
@@ -37,6 +37,8 @@ constraints.
 | Where WingFoil changes happen | **In WingFoil, through its own process.** A WingFoil defect or gap found here becomes a note in `docs/wingfoil-feedback/`, never an edit to WingFoil (`wingfoil-feedback` directive). |
 | Dogfooding | **This repository is a WingFoil project** and adopts its own packs. Its history is the first evidence that the packs work. |
 | Timing | **The MVP is ready when WingFoil v0.4 installs packs** (WingFoil dl-138). `base` waits for the formats of v0.3. |
+| Official and community packs | **Two catalogs** (vision review). The official one is curated; the community one is broader, written and maintained by external contributors, and opens later. |
+| Language | **English only** (vision review). |
 
 Proposed here and ruled in the **pack-model** phase. These come from the 2026-10-01..05 design
 discussion and the first attempt; they are not yet approved elements.
@@ -57,19 +59,25 @@ discussion and the first attempt; they are not yet approved elements.
 | WingFoil maintainer | A versioned, validated source for the bundled packs, in place of templates compiled into the CLI. A compatibility table tells which release reads what. |
 | Governed-repository maintainer | One shared foundation (`base`) for Memory types, life cycles, capture workflows and directives across the four repositories. The project-specific parts stay their own. |
 | Pack author | A documented format with schemas, authoring rules and a validation that tells whether a pack is publishable. |
-| External contributor (later) | A way to propose packs and changes as Memory elements, with credit, on WingFoil's contribution model. |
+| External contributor (later) | A way to propose changes to official packs as Memory elements, with credit, on WingFoil's contribution model. A community catalog where they publish and maintain their own packs. |
 
 ---
 
-## Open questions for the vision review
-
-1. **Curated or broad.** The catalog favours a small set of packs that are validated and maintained
-   over a broad set of packs of uneven quality. A new pack enters only if someone will maintain its
-   line. Confirm?
-2. **Hand adoption.** Before v0.4 the only way to adopt a pack is by hand: the governed repositories
-   copy it, following its README. Does every pack keep hand-adoption steps after v0.4 too? Or does
-   only `base` keep them, and only until the CLI installs packs?
-3. **Language.** Pack content (directives, workflows, templates, READMEs) is English only, as
-   WingFoil's is. Localized packs are out of scope. Confirm?
-
 ## Decisions from the vision review
+
+Approver, 2026-10-06:
+
+1. **Two catalogs.**
+   - **Official packs:** a curated catalog. Packs are few, validated and maintained, and a pack
+     enters only if its line will be maintained.
+   - **Community packs:** a broader catalog of packs suggested, created and maintained by external
+     contributors. It opens together with external contributions (brief §5).
+
+   Still open, for the features and pack-model phases:
+   - where community packs live (this repository or their own repositories);
+   - how a reader tells them apart from official packs;
+   - how they relate to WingFoil's third-party sources and allowlist (dl-138 Q4).
+2. **Hand adoption is temporary.** Packs carry hand-adoption steps only until the WingFoil CLI can
+   install them. Then the steps are removed from the packs. At most, a generic procedure stays in one
+   user-docs file.
+3. **English only.** All pack content is in English. Translated packs are out of scope.

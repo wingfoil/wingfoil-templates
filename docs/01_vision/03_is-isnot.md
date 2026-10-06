@@ -1,6 +1,6 @@
 # Is / Is Not / Does / Does Not — WingFoil-Templates
 
-**Version:** 1.0
+**Version:** 1.1
 **Date:** 2026-10-06
 **Status:** Draft
 **Traces to:** [01_product-brief.md](01_product-brief.md), [02_product-vision.md](02_product-vision.md)
@@ -13,7 +13,9 @@ Items marked *(pack-model)* depend on proposals ruled in the pack-model phase.
 
 - The official, public **catalog of WingFoil process packs**: methodologies, team-mode overlays,
   phase methods, project blueprints, lifecycle stages, and the transitions between stages
-  *(pack-model)*.
+  *(pack-model)*. The catalog is curated.
+- Later, also a broader **community catalog**: packs suggested, created and maintained by external
+  contributors, kept distinct from the official ones (vision review).
 - The **pack format** and its JSON Schemas. They are the contract with the WingFoil CLI (spec-001).
 - An **index** that the CLI reads (`catalog.yaml`): packs, published versions and their digests. It
   comes with a **compatibility table** (`compat.yaml`) that maps each WingFoil release to what it
@@ -30,11 +32,15 @@ Items marked *(pack-model)* depend on proposals ruled in the pack-model phase.
   process.
 - A scaffolder of application code. A blueprint shapes the process configuration (paths, modules,
   domain directives, Memory types, checks). It does not generate source code.
-- A registry of third-party packs. Other sources are WingFoil's decision (dl-138 Q4).
+- A registry of other pack sources. Which sources the CLI trusts is WingFoil's decision
+  (dl-138 Q4). Where community packs live is still open (vision review).
 - A collection of project-specific configurations. A pack carries no project's names, paths, people
   or versions; those are parameters.
 - Open to code pull requests from outside, for now. Contributions open later as Memory elements
   (brief §5).
+- Localized. Pack content is English only (vision review).
+- A manual. Hand-adoption steps exist only until the WingFoil CLI installs packs. After that, at
+  most a generic procedure stays in the user docs (vision review).
 
 ## DOES
 
@@ -63,3 +69,14 @@ Items marked *(pack-model)* depend on proposals ruled in the pack-model phase.
 - Let an overlay remove what a methodology ships (`pack-authoring`).
 - Depend on wall-clock time, randomness or filesystem ordering in pack content or tooling
   (`determinism`).
+
+---
+
+## Review decisions
+
+- **1.1, vision review (2026-10-06).** The approver ruled three points:
+  - two catalogs, a curated official one and a broader community one;
+  - hand adoption only until the CLI installs packs;
+  - English only.
+
+  Source: [02_product-vision.md](02_product-vision.md), "Decisions from the vision review".
