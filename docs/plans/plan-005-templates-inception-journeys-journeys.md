@@ -3,25 +3,35 @@ id: plan-005-templates-inception-journeys-journeys
 type: plan
 title: "templates-inception journeys: journeys"
 status: draft
-workflow: ""
-phase: ""
+workflow: "templates-inception"
+phase: "journeys"
 tags: ["inception"]
 ---
 
 ## Context
 
-<!-- Why this phase runs now, its preconditions, and what it produces. Keep it coherent with the
-     workflow definition's phases, roles and produces. -->
+Fourth sub-phase of `templates-inception`, under plan-001. Its input is the accepted personas
+document (plan-004), with these review decisions:
+- primary personas until WingFoil v0.4: 3 and 2; from v0.4: 1;
+- the agent stays a persona.
+
+It produces `docs/01_vision/05_journeys.md`, structured like WingFoil2-Benchmark's journeys: one
+table of steps per journey (touchpoint, pain or opportunity), feeding the feature brainstorm.
 
 ## Steps
 
-<!-- The ordered steps, with the role of each and the artifact it produces. -->
+1. (facilitator) List the journeys with persona and priority. The priority follows the horizon of
+   the personas review.
+2. (facilitator) Write each journey's trigger, steps and "ends well when". Commands of the WingFoil
+   CLI (`init --preset`, `pack add`, `upgrade`, `stage set`) are WingFoil's to design. A journey
+   only states what the packs must make possible.
+3. Commit by hand and show the document to the approver with the open questions.
+4. Record the review answers in the document, then plan `active → done`.
 
 ## Handoff
 
-<!-- What needs the approver and what the agent does alone; checkpoints and completion criteria. -->
+- **Approver:** reviews the document and answers the open questions.
+- **claude:** writes and corrects it.
+- No Memory gate. The approver's acceptance is recorded in the Execution Notes.
 
 ## Execution Notes
-
-<!-- Filled while the plan runs: deviations, blockers, decisions taken, WingFoil friction
-     (also recorded in docs/wingfoil-feedback/). -->
