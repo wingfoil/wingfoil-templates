@@ -52,3 +52,4 @@ review of every dependency before it is added. The `approve` phase that follows 
   packages. Feedback note T15 names adr-003 and the `yaml`/`js-yaml` difference (uncommitted).
 - 2026-10-06: adr-003 amended while `pending` at the approver's request, after the independent
   review (plan-015); the same reviewer re-reviewed the amendment and approved it.
+- 2026-10-06: adr-003 approved by the approver (`8491378`). Plan done.

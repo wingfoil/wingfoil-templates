@@ -47,3 +47,5 @@ For each decision-log, in order (dl-009, then dl-010):
 
 - 2026-10-06: dl-009 (`e1dab70`, `5820a36`) and dl-010 (`467c8e3`, `db1e51d`) filled and submitted,
   both `pending`, each with its proposal in the Decision section.
+- 2026-10-06: amended while `pending` after an independent review (`4a9390f`), then approved by the
+  approver: dl-009 (`0efa37a`), dl-010 (`9ba87a5`). Plan done.
