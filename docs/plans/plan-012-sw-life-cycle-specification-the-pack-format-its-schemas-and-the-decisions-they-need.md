@@ -143,3 +143,9 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
 - 2026-10-06: the same reviewer re-reviewed the amendment and found nothing blocking. It raised two
   should-fix points in §7.5 and five nits, all fixed in a second amendment (89d535f).
   The validators agree on 34 samples.
+- 2026-10-06: the approver approved adr-001 (`fa3de60`), adr-002 (`a2d5171`) and spec-001
+  (`212ea0d`), then approved the specification phase in chat ("approvo la fase"). The branch
+  `spec/spec-001` is merged into `main` with `--no-ff`, and this plan is done.
+- Next: the `tooling` phase (sequencer M1), one `kanban-delivery` iteration per task with no pack.
+  `base` waits for the approver's gate on the final WingFoil v0.3 formats, and is published only
+  after v0.3 is released.
