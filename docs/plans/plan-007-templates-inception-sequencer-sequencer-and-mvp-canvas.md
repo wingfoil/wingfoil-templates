@@ -2,7 +2,7 @@
 id: plan-007-templates-inception-sequencer-sequencer-and-mvp-canvas
 type: plan
 title: "templates-inception sequencer: sequencer and MVP canvas"
-status: active
+status: done
 workflow: "templates-inception"
 phase: "sequencer"
 tags: ["inception"]
