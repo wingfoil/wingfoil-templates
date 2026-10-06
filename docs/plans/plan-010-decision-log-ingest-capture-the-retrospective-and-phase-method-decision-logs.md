@@ -2,7 +2,7 @@
 id: plan-010-decision-log-ingest-capture-the-retrospective-and-phase-method-decision-logs
 type: plan
 title: "decision-log-ingest capture: the retrospective and phase-method decision-logs"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "capture"
 tags: ["process","decision-log"]
