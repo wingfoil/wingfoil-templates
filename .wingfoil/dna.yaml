@@ -1,6 +1,6 @@
 # Project DNA (P2.4) — scaffolded by `wingfoil init` (Kanban template), then customized for this
 # repository. Structural map of the project: modules, stacks, team + roles, resource paths.
-version: 3
+version: 4
 
 project:
   name: wingfoil-templates
@@ -37,6 +37,9 @@ modules:
   - name: compat
     description: "compat.yaml: per WingFoil release, the file formats it reads and the capabilities it provides (dl-002)."
     path: compat.yaml
+  - name: tooling
+    description: "The reference composer and the validation command (adr-001, adr-002): TypeScript, compiled with tsc."
+    path: src
 
 # Stacks — technologies + methodologies in use.
 stacks:
@@ -108,7 +111,7 @@ team:
 
 # Resource paths — query categories used to navigate the project.
 paths:
-  sources: [catalog.yaml, compat.yaml, schema, packs, transitions, presets]
+  sources: [catalog.yaml, compat.yaml, schema, packs, transitions, presets, src]
   tests: [tests]
   docs: [README.md, docs]
   config: [.wingfoil, package.json]
