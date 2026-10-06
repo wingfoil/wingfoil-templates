@@ -104,3 +104,18 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   approved the phase.
 
 ## Execution Notes
+- 2026-10-06: plan-012 went `draft → active` (`60dc019`) on branch `spec/spec-001`.
+- Step 1: dl-004's Decision section records the ruling (`09318c5`). Its status is unchanged.
+- Step 2: plan-013 captured dl-008. The approver ruled option (b) in chat and approved it
+  (`68723d4`). plan-013 is `done`.
+- Step 3: plan-014 captured adr-001 (reference composer) and adr-002 (TypeScript on Node.js
+  ≥ 22.12). Both are `pending` (`694437d`, `ecd29e8`), for the approver at the phase gate. Feedback
+  note T15 names them.
+- Steps 4–5, one deviation: the schemas were written before spec-001 was submitted, not after, so
+  that the spec was corrected while still `draft` and not amended while `pending`. spec-001 is
+  `f555ebe` (body) and `9fe7474` (submit); the schemas are `fe55755`. Feedback note T17 reports the
+  contract.
+- Found while specifying, and recorded in spec-001 rather than worked around:
+  - WingFoil 0.2.2 warns on `format:` (`format_key`, O10);
+  - Memory templates go under `memory/templates/built-in/`, checked to work on 0.2.2.
+- Next: step 6, the phase gate.
