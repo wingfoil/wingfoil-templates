@@ -2,7 +2,7 @@
 id: plan-009-decision-log-ingest-capture-the-pack-model-decision-logs
 type: plan
 title: "decision-log-ingest capture: the pack-model decision-logs"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "capture"
 tags: ["inception","decision-log"]
