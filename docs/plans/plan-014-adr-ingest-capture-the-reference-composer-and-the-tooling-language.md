@@ -43,3 +43,8 @@ Then add the composer ADR's id to feedback note T15, which stays uncommitted (dl
   stays `active` until both ADRs are approved.
 
 ## Execution Notes
+- 2026-10-06: adr-001 (composer) and adr-002 (language) filled and submitted, both `pending`
+  (`694437d`, `ecd29e8`). Feedback note T15 names them (uncommitted). The ADR template is a stub, so
+  each body uses Context, Decision, Alternatives, Consequences, with the requirements implemented
+  in Context (`architecture` directive).
+- Waiting for the approver's `approve` phase, at plan-012's phase gate.
