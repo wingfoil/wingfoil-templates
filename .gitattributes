@@ -1,0 +1,2 @@
+# spec-001 §13: pack files are hashed as committed, so no line-ending conversion under packs/.
+packs/** -text
