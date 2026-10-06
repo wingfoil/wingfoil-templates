@@ -1,6 +1,6 @@
 # Product Vision — WingFoil-Templates
 
-**Version:** 1.1
+**Version:** 1.2
 **Date:** 2026-10-06
 **Status:** Draft
 **Traces to:** [01_product-brief.md](01_product-brief.md)
@@ -38,7 +38,7 @@ constraints.
 | Dogfooding | **This repository is a WingFoil project** and adopts its own packs. Its history is the first evidence that the packs work. |
 | Timing | **The MVP is ready when WingFoil v0.4 installs packs** (WingFoil dl-138). `base` waits for the formats of v0.3. |
 | Official and community packs | **Two catalogs** (vision review). The official one is curated; the community one is broader, written and maintained by external contributors, and opens later. |
-| Language | **English only** (vision review). |
+| Language | **English as the bridge language**, with regulatory quotes in their original language. Packs are localized by geographic area (regulations), not translated (vision review). |
 
 Proposed here and ruled in the **pack-model** phase. These come from the 2026-10-01..05 design
 discussion and the first attempt; they are not yet approved elements.
@@ -80,4 +80,9 @@ Approver, 2026-10-06:
 2. **Hand adoption is temporary.** Packs carry hand-adoption steps only until the WingFoil CLI can
    install them. Then the steps are removed from the packs. At most, a generic procedure stays in one
    user-docs file.
-3. **English only.** All pack content is in English. Translated packs are out of scope.
+3. **English is the bridge language.** All pack content is in English: it bridges the languages a
+   team speaks and the languages of the documents it reads. Translated packs are out of scope.
+   Localization is by **geographic area**, not by language. `governance` packs for the regulations
+   of an area, such as GDPR, EU accessibility or Italy's AgID guidelines, are in scope. Inside their
+   directives, text quoted from a regulation may stay in its original language, and the rest of the
+   document is in English.

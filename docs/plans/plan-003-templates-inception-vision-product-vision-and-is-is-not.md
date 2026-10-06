@@ -34,3 +34,13 @@ Both follow the structure of WingFoil2-Benchmark's documents.
 - No Memory gate. The approver's acceptance is recorded in the Execution Notes.
 
 ## Execution Notes
+- 2026-10-06: vision and is/is-not written (`bac739d`).
+- 2026-10-06: vision review answered by the approver (`c8e68fa`, then 1.2):
+  - two catalogs, a curated official one and a broader community one;
+  - hand adoption only until the CLI installs packs;
+  - English as the bridge language, with localization by geographic area (regulatory `governance`
+    packs) and regulatory quotes in their original language.
+
+  The documents are accepted as input to the personas.
+- Open for the features and pack-model phases: where community packs live, how they are told apart
+  from official packs, and how they relate to WingFoil's third-party sources (dl-138 Q4).

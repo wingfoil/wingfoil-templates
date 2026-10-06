@@ -1,6 +1,6 @@
 # Is / Is Not / Does / Does Not — WingFoil-Templates
 
-**Version:** 1.1
+**Version:** 1.2
 **Date:** 2026-10-06
 **Status:** Draft
 **Traces to:** [01_product-brief.md](01_product-brief.md), [02_product-vision.md](02_product-vision.md)
@@ -38,7 +38,9 @@ Items marked *(pack-model)* depend on proposals ruled in the pack-model phase.
   or versions; those are parameters.
 - Open to code pull requests from outside, for now. Contributions open later as Memory elements
   (brief §5).
-- Localized. Pack content is English only (vision review).
+- Translated. Pack content is in English, the bridge language. Text quoted from a regulation may
+  stay in its original language. Packs are localized by geographic area, as `governance` packs for
+  an area's regulations, never by language (vision review).
 - A manual. Hand-adoption steps exist only until the WingFoil CLI installs packs. After that, at
   most a generic procedure stays in the user docs (vision review).
 
@@ -80,3 +82,6 @@ Items marked *(pack-model)* depend on proposals ruled in the pack-model phase.
   - English only.
 
   Source: [02_product-vision.md](02_product-vision.md), "Decisions from the vision review".
+- **1.2, vision review (2026-10-06).** Localization is by geographic area (regulatory `governance`
+  packs), not by language. English is the bridge language, and regulatory quotes may stay in their
+  original language.
