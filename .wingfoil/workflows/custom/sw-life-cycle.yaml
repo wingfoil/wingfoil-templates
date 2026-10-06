@@ -9,7 +9,7 @@
 name: sw-life-cycle
 kind: main
 description: "The end-to-end life cycle of the WingFoil-Templates repository"
-version: 2
+version: 3
 phases:
   - name: inception
     description: >-
@@ -35,11 +35,12 @@ phases:
     fallback: { step: specification }
   - name: tooling
     description: >-
-      The repository tooling (reference composer, validation command, CI), one kanban-delivery
-      iteration per task with no pack (dl-005 G7). Later tooling changes run through tooling-change.
+      The repository tooling (reference composer, validation command, CI), one tooling-delivery
+      iteration per task with no pack (dl-005 G7, bug-001). Later tooling changes run through
+      tooling-change.
     iterate_over: task
     where: { pack: "" }
-    include: kanban-delivery
+    include: tooling-delivery
   - name: pack-delivery
     description: "One iteration per accepted pack, in the order the product-owner sets."
     iterate_over: pack

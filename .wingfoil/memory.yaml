@@ -3,7 +3,7 @@
 # no `states:` block of its own uses the `defaults` state machine (REQ-STATE-08).
 # `release` and `release-line` from the scaffold are removed: this repository has no repository-wide
 # releases, every pack is versioned and published on its own (`pack-release`, dl-001).
-version: 2
+version: 3
 
 # Default state machine — `sequence` is the forward chain (`submit` walks it); a `gates` state's
 # forward edge needs `approve`, and its `reject` target is where a rejection lands. `deprecated` is
@@ -46,9 +46,9 @@ types:
       frontmatter:
         required: [id, type, title, status]
   task:
-    # Kanban work item (kanban-delivery). pending is the approver's acceptance into the backlog,
-    # in-review the approver's acceptance of the work. backlog → in-progress and approved → done are
-    # plain `submit`s. `pack` is not required: tooling tasks belong to no pack.
+    # Work item: kanban-delivery for a pack's tasks, tooling-delivery for tooling tasks (bug-001).
+    # pending is the approver's acceptance into the backlog, in-review the approver's acceptance of
+    # the work. backlog → in-progress and approved → done are plain `submit`s. `pack` is not required: tooling tasks belong to no pack.
     path: docs/memory/task/{id}.md
     id_pattern: "task-{n}-{slug}"
     template:
