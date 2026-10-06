@@ -2,7 +2,7 @@
 id: dl-009-matrix-validation-before-a-released-wingfoil-accepts-the-format-key
 type: decision-log
 title: "Matrix validation before a released WingFoil accepts the format key"
-status: pending
+status: approved
 tags: ["tooling","compatibility","validation"]
 ---
 
