@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/wingfoil/wingfoil-templates/schema/compat.schema.json",
+  "title": "WingFoil compatibility table (compat.yaml)",
+  "$comment": "Format 1, specified by spec-001 (docs/memory/tech-spec/). A change to this schema is a change of the contract with the WingFoil CLI and produces a feedback note (wingfoil-feedback directive). Capability names are this repository's proposal until WingFoil publishes its vocabulary (notes T13).",
+  "type": "object",
+  "required": [
+    "format",
+    "kinds",
+    "capabilities",
+    "releases"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": 1
+    },
+    "kinds": {
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "dna",
+          "memory",
+          "roles",
+          "workflows",
+          "workflow",
+          "directive",
+          "memory-template"
+        ]
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "file kind (WingFoil dl-149) -> what it is"
+    },
+    "capabilities": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "capability name -> what it means"
+    },
+    "releases": {
+      "type": "array",
+      "description": "released WingFoil versions only, ascending (spec-001 §12)",
+      "items": {
+        "type": "object",
+        "required": [
+          "wingfoil",
+          "format_key",
+          "reads",
+          "capabilities"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "wingfoil": {
+            "$ref": "#/$defs/version"
+          },
+          "format_key": {
+            "type": "boolean",
+            "description": "accepts the format: key without a warning"
+          },
+          "reads": {
+            "type": "object",
+            "propertyNames": {
+              "enum": [
+                "dna",
+                "memory",
+                "roles",
+                "workflows",
+                "workflow",
+                "directive",
+                "memory-template"
+              ]
+            },
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          },
+          "capabilities": {
+            "$ref": "#/$defs/capabilities"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "version": {
+      "type": "string",
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$",
+      "description": "SemVer MAJOR.MINOR.PATCH, no pre-release (spec-001 §4)"
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "capabilities this release provides",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      },
+      "uniqueItems": true
+    }
+  }
+}
