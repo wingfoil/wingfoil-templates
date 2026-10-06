@@ -2,7 +2,7 @@
 id: dl-007-phase-methods-every-phase-declares-its-method-and-the-method-is-spelled-out-as-steps
 type: decision-log
 title: "Phase methods: every phase declares its method, and the method is spelled out as steps"
-status: draft
+status: pending
 tags: ["process","packs"]
 ---
 
