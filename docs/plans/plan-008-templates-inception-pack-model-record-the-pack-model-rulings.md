@@ -2,7 +2,7 @@
 id: plan-008-templates-inception-pack-model-record-the-pack-model-rulings
 type: plan
 title: "templates-inception pack-model: record the pack-model rulings"
-status: active
+status: done
 workflow: "templates-inception"
 phase: "pack-model"
 tags: ["inception"]
