@@ -8,6 +8,7 @@ include:
   - workflows/custom/pack-release.yaml
   - workflows/custom/pack-deprecation.yaml
   - workflows/custom/wingfoil-release-intake.yaml
+  - workflows/custom/tooling-change.yaml
   - workflows/custom/bug-ingest.yaml
   - workflows/custom/decision-log-ingest.yaml
   - workflows/custom/adr-ingest.yaml

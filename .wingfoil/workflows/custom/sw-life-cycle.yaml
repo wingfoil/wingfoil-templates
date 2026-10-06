@@ -1,13 +1,14 @@
 # The end-to-end life cycle of this repository.
 # inception (templates-inception: vision through sequencer, then the pack-model rulings) and
-# specification run once, to frame the repository and fix the pack model and the pack format. From
-# then on the repository grows pack by pack (pack-cycle, one iteration per `pack` element); each pack
+# specification run once, to frame the repository and fix the pack model and the pack format. The
+# tooling phase then builds the composer and the validator (later changes: tooling-change, dl-005 G7).
+# From then on the repository grows pack by pack (pack-cycle, one iteration per `pack` element); each pack
 # is then released again and again on its own (pack-release) and retired on its own
 # (pack-deprecation).
 name: sw-life-cycle
 kind: main
 description: "The end-to-end life cycle of the WingFoil-Templates repository"
-version: 1
+version: 2
 phases:
   - name: inception
     description: >-
@@ -31,6 +32,13 @@ phases:
       - "schema/*.schema.json"
     approval: { by_role: approver }
     fallback: { step: specification }
+  - name: tooling
+    description: >-
+      The repository tooling (reference composer, validation command, CI), one kanban-delivery
+      iteration per task with no pack (dl-005 G7). Later tooling changes run through tooling-change.
+    iterate_over: task
+    where: { pack: "" }
+    include: kanban-delivery
   - name: pack-delivery
     description: "One iteration per accepted pack, in the order the product-owner sets."
     iterate_over: pack
