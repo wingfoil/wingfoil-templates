@@ -1,0 +1,42 @@
+# Retrospective (sub-workflow, dl-006). Included by pack-cycle after a pack's first release, and by
+# retrospective-periodic for the work between packs. Same phases as WingFoil2's retrospective and
+# the base pack's, so adopting base (dl-003 D10) replaces this file without changing its shape.
+# Method: Derby & Larsen's retrospective (gather data, generate insights, decide what to do),
+# adapted to Execution Notes as the data (dl-006 R5).
+name: retrospective
+kind: sub
+description: "Learn from the Execution Notes of the period and turn the learnings into decisions"
+version: 1
+phases:
+  - name: explore
+    description: >-
+      Read the Execution Notes of every element closed in the period (tasks, packs, pack-releases,
+      bugs, decision-logs, plans) and the feedback notes added in it; build a friction inventory
+      grouped by theme, each point citing its source. Read-only. The inventory is named
+      <YYYY-MM-DD>-<scope>-friction-inventory.md, the scope being the pack id or "periodic".
+    role: facilitator
+    produces:
+      # Outside every Memory path, as in WingFoil2 (dl-006 R4).
+      - "docs/retrospectives/*-friction-inventory.md"
+  - name: additional-points
+    description: >-
+      The approver reviews the inventory and adds the points to analyse. A checkpoint, no commit.
+    role: approver
+    approval: { by_role: approver }
+  - name: capture
+    description: >-
+      Record what to keep and what to change as a decision-log. A change of process is its own
+      decision-log; a WingFoil defect is a feedback note (wingfoil-feedback), not a decision.
+    role: facilitator
+    actions:
+      - 'memory.add(type: decision-log, title: "Retrospective <scope> <YYYY-MM-DD>")'
+      - memory.submit            # draft → pending
+    produces:
+      - "docs/memory/decision-log/{id}.md"
+  - name: approve
+    description: "The approver rules the retrospective (pending → approved), so its actions are committed."
+    role: facilitator
+    actions:
+      - memory.approve
+    approval: { by_role: approver }
+    fallback: { step: capture }

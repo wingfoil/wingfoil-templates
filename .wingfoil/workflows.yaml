@@ -9,10 +9,12 @@ include:
   - workflows/custom/pack-deprecation.yaml
   - workflows/custom/wingfoil-release-intake.yaml
   - workflows/custom/tooling-change.yaml
+  - workflows/custom/retrospective-periodic.yaml
   - workflows/custom/bug-ingest.yaml
   - workflows/custom/decision-log-ingest.yaml
   - workflows/custom/adr-ingest.yaml
   - workflows/custom/templates-inception.yaml
   - workflows/custom/pack-cycle.yaml
+  - workflows/custom/retrospective.yaml
   - workflows/custom/pack-release-cycle.yaml
   - workflows/custom/kanban-delivery.yaml

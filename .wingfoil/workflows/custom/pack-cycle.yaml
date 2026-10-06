@@ -38,6 +38,9 @@ phases:
   - name: first-release
     description: "Publish the pack's first version (normally 1.0.0, or 0.x while spec-001 is a draft)."
     include: pack-release-cycle
+  - name: retrospective
+    description: "Learn from the pack's whole charter-to-release cycle (dl-006 R1)."
+    include: retrospective
   - name: activate
     description: "First version released: the pack becomes active (accepted → active)."
     role: tech-lead

@@ -96,4 +96,4 @@ paths:
   tests: [tests]
   docs: [README.md, docs]
   config: [.wingfoil, package.json]
-  governance: [docs/memory, docs/plans, docs/wingfoil-feedback, LICENSE]
+  governance: [docs/memory, docs/plans, docs/retrospectives, docs/wingfoil-feedback, LICENSE]

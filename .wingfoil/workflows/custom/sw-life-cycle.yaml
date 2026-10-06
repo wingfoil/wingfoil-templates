@@ -1,10 +1,11 @@
 # The end-to-end life cycle of this repository.
 # inception (templates-inception: vision through sequencer, then the pack-model rulings) and
 # specification run once, to frame the repository and fix the pack model and the pack format. The
-# tooling phase then builds the composer and the validator (later changes: tooling-change, dl-005 G7).
-# From then on the repository grows pack by pack (pack-cycle, one iteration per `pack` element); each pack
-# is then released again and again on its own (pack-release) and retired on its own
-# (pack-deprecation).
+# tooling phase then builds the composer and the validator (later changes: tooling-change, dl-005
+# G7). From then on the repository grows pack by pack (pack-cycle, one iteration per `pack` element);
+# each pack is then released again and again on its own (pack-release) and retired on its own
+# (pack-deprecation). A retrospective closes each pack's first cycle (pack-cycle), and
+# retrospective-periodic covers the work between packs (dl-006).
 name: sw-life-cycle
 kind: main
 description: "The end-to-end life cycle of the WingFoil-Templates repository"
