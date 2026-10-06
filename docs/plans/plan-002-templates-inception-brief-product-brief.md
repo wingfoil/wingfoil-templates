@@ -3,25 +3,34 @@ id: plan-002-templates-inception-brief-product-brief
 type: plan
 title: "templates-inception brief: product brief"
 status: draft
-workflow: ""
-phase: ""
+workflow: "templates-inception"
+phase: "brief"
 tags: ["inception"]
 ---
 
 ## Context
 
-<!-- Why this phase runs now, its preconditions, and what it produces. Keep it coherent with the
-     workflow definition's phases, roles and produces. -->
+First sub-phase of `templates-inception`, under plan-001. It produces
+`docs/01_vision/01_product-brief.md` from the approver's answers: purpose, consumers, constraints and
+dependencies on WingFoil. Its structure follows WingFoil2-Benchmark's
+`docs/01_vision/01_product-brief.md`.
 
 ## Steps
 
-<!-- The ordered steps, with the role of each and the artifact it produces. -->
+1. (facilitator) Pre-fill what is already established, each item citing its source:
+   - `dna.yaml` description and north star;
+   - the first attempt's drafts;
+   - the feedback notes;
+   - the approver's constraints listed in plan-001.
+2. (facilitator) Ask the approver only what is still open (one batch of questions).
+3. (facilitator) Write the brief, commit it by hand, show it to the approver.
+4. Plan `active → done` once the approver has read the brief and accepts it as input to the vision.
 
 ## Handoff
 
-<!-- What needs the approver and what the agent does alone; checkpoints and completion criteria. -->
+- **Approver:** answers the questions and reads the brief.
+- **claude:** writes the brief.
+- No Memory gate in this sub-phase. The approver's acceptance of the brief is recorded in the
+  Execution Notes.
 
 ## Execution Notes
-
-<!-- Filled while the plan runs: deviations, blockers, decisions taken, WingFoil friction
-     (also recorded in docs/wingfoil-feedback/). -->
