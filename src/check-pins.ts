@@ -1,5 +1,5 @@
-// Exact-pin check (adr-002, determinism directive): every dependency in package.json is pinned to an
-// exact version, and package-lock.json resolves it to that same version.
+// Exact-pin check (adr-002, determinism directive): every dependency in package.json is pinned to
+// an exact version, and package-lock.json resolves it to that same version.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 

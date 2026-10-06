@@ -36,8 +36,8 @@ describe('checkPins', () => {
   });
 
   for (const field of FIELDS) {
-    for (const spec of ['^1.2.3', '~1.2.3', '>=1.2.3', '*', '1.x', 'latest', '', '1.2', 'npm:x@^1.0.0',
-      'git+https://example.invalid/x.git', 'file:../x']) {
+    for (const spec of ['^1.2.3', '~1.2.3', '>=1.2.3', '*', '1.x', 'latest', '', '1.2',
+      'npm:x@^1.0.0', 'git+https://example.invalid/x.git', 'file:../x']) {
       it(`rejects ${JSON.stringify(spec)} in ${field}, naming the dependency`, () => {
         const manifest = { [field]: { dep: spec } };
         const problems = checkPins(manifest, lockFor({}));
@@ -55,7 +55,7 @@ describe('checkPins', () => {
   });
 
   for (const spec of ['01.2.3', '1.2.3-rc.1', '1.2.3+build', 'npm:x', 123]) {
-    it(`rejects ${JSON.stringify(spec)}: exact means MAJOR.MINOR.PATCH, no prerelease or build`, () => {
+    it(`rejects ${JSON.stringify(spec)}: exact is MAJOR.MINOR.PATCH only`, () => {
       assert.equal(checkPins({ dependencies: { dep: spec } }, lockFor({})).length, 1);
     });
   }
@@ -77,12 +77,18 @@ describe('checkPins', () => {
 
   it('rejects an alias whose lockfile entry is another package', () => {
     const manifest = { devDependencies: { wf: 'npm:wingfoil@0.2.2' } };
-    const lock = { lockfileVersion: 3, packages: { 'node_modules/wf': { name: 'other', version: '0.2.2' } } };
+    const lock = {
+      lockfileVersion: 3,
+      packages: { 'node_modules/wf': { name: 'other', version: '0.2.2' } },
+    };
     assert.equal(checkPins(manifest, lock).length, 1);
   });
 
   it('reports problems in a stable, sorted order', () => {
-    const manifest = { devDependencies: { zeta: '^1.0.0', alpha: '~1.0.0' }, dependencies: { mid: '*' } };
+    const manifest = {
+      devDependencies: { zeta: '^1.0.0', alpha: '~1.0.0' },
+      dependencies: { mid: '*' },
+    };
     const problems = checkPins(manifest, lockFor({}));
     assert.deepEqual(problems, [...problems].sort());
     assert.equal(problems.length, 3);
