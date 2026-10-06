@@ -138,3 +138,10 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   `8491378`, `ae338be`); plan-016 and plan-017 done. The approver registered the remote and pushed.
   Step 2 runs under plan-018. Once merged, the tasks of step 3 run through `tooling-delivery`
   (bug-001), not `kanban-delivery`.
+- 2026-10-06: plan-018 done; the configuration follow-ups are on `main` (`8ccdc45`).
+- Task 1: task-001 created (`tooling-delivery` › `plan`, product-owner directives), committed and
+  submitted, `pending` for the approver's acceptance into the backlog.
+- **`where: { pack: "" }`, first real case:** `workflow list` accepts the clause, but nothing in
+  WingFoil 0.2.2 evaluates it: `memory search` cannot filter on `pack` and does not print it, and no
+  command lists a phase's iteration. The task is selected by reading its frontmatter. Recorded as
+  feedback note T18 (uncommitted).
