@@ -2,7 +2,7 @@
 id: plan-004-templates-inception-personas-personas
 type: plan
 title: "templates-inception personas: personas"
-status: active
+status: done
 workflow: "templates-inception"
 phase: "personas"
 tags: ["inception"]
