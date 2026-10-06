@@ -3,13 +3,13 @@
 name: pack-cycle
 kind: sub
 description: "Charter, author and first-release one pack"
-version: 1
+version: 2
 element: pack
 phases:
   - name: charter
     description: >-
-      Write the pack charter (axis, slot, purpose, what it ships, requires/conflicts, minimum
-      WingFoil version) and submit it; the approver accepts it (proposed → accepted) or sends it back.
+      Write the pack charter (axis, slot, purpose, what it ships, requires/conflicts, formats and
+      capabilities, dl-002) and submit it; the approver accepts it (proposed → accepted) or sends it back.
     role: product-owner
     actions:
       - 'memory.add(type: pack)'
@@ -38,6 +38,9 @@ phases:
   - name: first-release
     description: "Publish the pack's first version (normally 1.0.0, or 0.x while spec-001 is a draft)."
     include: pack-release-cycle
+  - name: retrospective
+    description: "Learn from the pack's whole charter-to-release cycle (dl-006 R1)."
+    include: retrospective
   - name: activate
     description: "First version released: the pack becomes active (accepted → active)."
     role: tech-lead

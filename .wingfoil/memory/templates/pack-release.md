@@ -6,7 +6,8 @@ status: draft
 pack: ""            # the pack element id (pack-<axis>-<name>)
 version: ""         # the semver being published
 bump: ""            # major | minor | patch (pack-semver directive)
-wingfoil: ""        # compatibility range, e.g. ">=0.4.0 <0.6.0"
+wingfoil: ""        # COMPUTED from compat.yaml (formats + capabilities), e.g. ">=0.4.0 <0.6.0"; never chosen by hand (dl-002)
+line: ""            # the maintained line: current, or <major>.x for an N-1 maintenance line (dl-002)
 ---
 
 ## Changes
@@ -21,7 +22,7 @@ wingfoil: ""        # compatibility range, e.g. ">=0.4.0 <0.6.0"
 
 ## Publication
 
-<!-- The tag (<axis>/<name>@<version>), the commit, the catalog.yaml digest. Whether the pack is one
+<!-- The tag (<catalog pack id>@<version>, dl-004), the commit, the catalog.yaml digest. Whether the pack is one
      WingFoil bundles (and the feedback note sent for WingFoil's advance-bundled-packs step). -->
 
 ## Execution Notes

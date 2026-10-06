@@ -3,11 +3,11 @@ id: ""
 type: pack
 title: ""
 status: draft
-axis: ""            # methodology | team-mode | phase | blueprint | stage (filled by --set axis=)
+axis: ""            # methodology | team-mode | phase | blueprint | stage | governance; foundation for base only (dl-004); filled by --set axis=
 name: ""            # the pack name, e.g. scrum (filled by --set name=)
-slot: ""            # phase packs only: inception | specification | release | operations
+slot: ""            # phase packs only: inception | specification | release | end-of-life (dl-003 D11)
 pack_path: ""       # packs/<axis>/[<slot>/]<name>
-requires: []        # pack ids this pack needs (e.g. team-mode/agent-first needs a methodology)
+requires: []        # catalog pack ids with a semver range: base@^<major> for every pack but base (dl-003), plus any other
 conflicts: []       # pack ids that cannot be composed with this one
 ---
 
@@ -26,6 +26,7 @@ conflicts: []       # pack ids that cannot be composed with this one
 
 ## Compatibility
 
-<!-- The minimum WingFoil version and the WingFoil features the pack depends on. -->
+<!-- The file formats the pack is written in and the WingFoil capabilities it requires (dl-002);
+     its WingFoil range is computed from compat.yaml, never written here. -->
 
 ## Execution Notes

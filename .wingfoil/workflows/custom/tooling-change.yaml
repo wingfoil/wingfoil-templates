@@ -1,0 +1,13 @@
+# Startable entry point to change the repository tooling (composer, validator, CI) after the
+# sw-life-cycle `tooling` phase has run (dl-005 G7). Same loop as that phase: one kanban-delivery
+# iteration per task with no pack. Mirrors pack-release, which reopens a pack after pack-cycle.
+name: tooling-change
+kind: main
+description: "Change the repository tooling, one kanban-delivery iteration per tooling task"
+version: 1
+phases:
+  - name: deliver
+    description: "One kanban-delivery iteration per tooling task (a task whose `pack` is empty)."
+    iterate_over: task
+    where: { pack: "" }
+    include: kanban-delivery

@@ -1,0 +1,31 @@
+# Startable when WingFoil publishes a release (normally after its advance-bundled-packs step).
+# Keeps compat.yaml true and tells which packs a new format or capability affects (dl-002; brought
+# back by the journeys review, dl-005 G8).
+name: wingfoil-release-intake
+kind: main
+description: "Record a new WingFoil release in compat.yaml and re-check the active packs"
+version: 1
+phases:
+  - name: record
+    description: >-
+      Add the release to compat.yaml: the format versions it reads and the capabilities it provides,
+      taken from WingFoil's own declaration (`wingfoil capabilities`, notes T13) or its CHANGELOG.
+      A new format kind or capability enters the vocabulary here.
+    role: tech-lead
+    produces:
+      - "compat.yaml"
+    approval: { by_role: approver }
+  - name: recheck
+    description: >-
+      Run the compatibility matrix of every active pack against the new release. A pack the release
+      can still read only gains the release in its computed range at its next publication.
+    role: reviewer
+  - name: plan-migrations
+    description: >-
+      For each pack whose formats the new release no longer reads, or that can now use a new format
+      or capability: open a task (kanban-delivery). Before WingFoil 1.0 the living line moves to the
+      new format; after 1.0 the previous line becomes the N-1 maintenance line (pack-semver).
+    role: product-owner
+    optional: true
+    actions:
+      - 'memory.add(type: task)'

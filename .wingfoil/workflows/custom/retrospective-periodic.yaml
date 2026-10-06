@@ -1,0 +1,12 @@
+# Startable entry point for the periodic retrospective (dl-006 R1, R3): the work between packs (pack
+# releases, tooling, governance). Run at least once between two WingFoil releases, before WingFoil's
+# release planning, so that WingFoil-side points reach the feedback notes in time (dl-001 D6); also
+# after any pack-deprecation. A main cannot be included, so this thin main includes the sub.
+name: retrospective-periodic
+kind: main
+description: "Periodic retrospective of the work between packs"
+version: 1
+phases:
+  - name: retrospective
+    description: "One retrospective over the period since the previous one."
+    include: retrospective
