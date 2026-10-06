@@ -2,7 +2,7 @@
 id: plan-016-decision-log-ingest-capture-matrix-validation-before-v0.3-and-the-first-real-catalog-and-compat-files
 type: plan
 title: "decision-log-ingest capture: matrix validation before v0.3 and the first real catalog and compat files"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "capture"
 tags: ["process","decision-log","tooling"]
