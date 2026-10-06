@@ -66,3 +66,6 @@ Produces: `docs/memory/decision-log/{id}.md`, one element per ruling group, each
 - The approver defers dl-007 until WingFoil supports templates and Benchmark can test them. The
   inception gate therefore covers dl-001…dl-006. dl-007 stays `pending` under plan-010, and
   spec-001 does not include its `method` entry until it is ruled.
+- 2026-10-06: dl-001…dl-006 approved (`0b36176`…`a295ce6`). Every `produces` of
+  `templates-inception` exists on `main`: `docs/01_vision/01…08` and the decision-logs. The
+  sub-phase is complete, and the next step is the inception phase gate (plan-001).

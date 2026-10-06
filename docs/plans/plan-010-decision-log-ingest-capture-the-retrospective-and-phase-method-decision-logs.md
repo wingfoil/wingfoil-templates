@@ -43,3 +43,8 @@ Then hand the approver the list of `memory approve` commands.
   plan, and the plan stays `active` until both are approved.
 
 ## Execution Notes
+
+- 2026-10-06: dl-006 approved by the approver (`a295ce6`).
+- 2026-10-06: dl-007 deferred by the approver until WingFoil supports templates and
+  WingFoil2-Benchmark can test them. It stays `pending`, and this plan stays `active` until it is
+  ruled.

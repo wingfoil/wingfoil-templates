@@ -40,3 +40,8 @@ Then hand the approver the list of `memory approve` commands.
   emendamento dl-003"): D4 gains the `release` slot and D11 reconciles the slot list with dl-001 D1.
   The element stays `pending`; the approver rules on the amended text. The related format proposal
   (a per-phase `method` key) went to the feedback notes as T16, uncommitted.
+- 2026-10-06: dl-001…dl-005 approved by the approver (`0b36176`…`f7465b7`). dl-004 was ruled on the
+  recommended options 1(a), 2(a), 3(b), 4(a).
+- `memory approve` in WingFoil 0.2.2 requires `--reason`. The first command handed to the approver
+  lacked it, and was corrected after `error: missing required argument: --reason`. That was an error
+  of this session, not a CLI defect: the option is documented in `memory approve --help`.
