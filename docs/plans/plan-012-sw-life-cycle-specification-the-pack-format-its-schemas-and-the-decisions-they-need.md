@@ -2,7 +2,7 @@
 id: plan-012-sw-life-cycle-specification-the-pack-format-its-schemas-and-the-decisions-they-need
 type: plan
 title: "sw-life-cycle specification: the pack format, its schemas and the decisions they need"
-status: active
+status: done
 workflow: "sw-life-cycle"
 phase: "specification"
 tags: ["spec"]
