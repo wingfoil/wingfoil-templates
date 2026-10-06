@@ -48,7 +48,8 @@ types:
   task:
     # Work item: kanban-delivery for a pack's tasks, tooling-delivery for tooling tasks (bug-001).
     # pending is the approver's acceptance into the backlog, in-review the approver's acceptance of
-    # the work. backlog → in-progress and approved → done are plain `submit`s. `pack` is not required: tooling tasks belong to no pack.
+    # the work. backlog → in-progress and approved → done are plain `submit`s. `pack` is not
+    # required: tooling tasks belong to no pack.
     path: docs/memory/task/{id}.md
     id_pattern: "task-{n}-{slug}"
     template:

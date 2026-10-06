@@ -37,9 +37,6 @@ modules:
   - name: compat
     description: "compat.yaml: per WingFoil release, the file formats it reads and the capabilities it provides (dl-002)."
     path: compat.yaml
-  - name: tooling
-    description: "The reference composer and the validation command (adr-001, adr-002), TypeScript compiled with tsc."
-    path: src
 
 # Stacks — technologies + methodologies in use.
 stacks:
@@ -111,7 +108,7 @@ team:
 
 # Resource paths — query categories used to navigate the project.
 paths:
-  sources: [catalog.yaml, compat.yaml, schema, packs, transitions, presets, src]
+  sources: [catalog.yaml, compat.yaml, schema, packs, transitions, presets]
   tests: [tests]
   docs: [README.md, docs]
   config: [.wingfoil, package.json]
