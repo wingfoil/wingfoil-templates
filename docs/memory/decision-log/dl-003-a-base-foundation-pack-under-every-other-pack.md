@@ -59,9 +59,10 @@ element is approved.
   `{scope}` tokens, the bug state `fixed`, the agent name, the `service` name clash.
 - **D3 — No `waiting` states in 0.x.** On WingFoil 0.2.2 no verb leaves a `waiting` state. A later
   major of `base` may add them. It then requires the `workflow-engine` capability (dl-002).
-- **D4 — Slots.** `sw-life-cycle` includes `inception`, `specification`, `delivery` and `end-of-life`
-  by name.
-  - `base` ships defaults for `inception`, `specification` and `end-of-life`.
+- **D4 — Slots** (amended 2026-10-06, see D11). `sw-life-cycle` includes `inception`,
+  `specification`, `delivery` and `end-of-life` by name; the methodology's `delivery` includes
+  `release` by name, at its own release cadence, as it includes `retrospective`.
+  - `base` ships defaults for `inception`, `specification`, `release` and `end-of-life`.
   - A phase pack fills a slot by shipping a workflow of the same name. This is the one sanctioned
     replacement of one pack's file by another's.
   - `delivery` has no default: the methodology fills it.
@@ -110,11 +111,25 @@ element is approved.
   - Benchmark and UI adopt only between two of their own releases.
   - Each repository records the adopted version in its own Memory, and this repository keeps no
     list of adopters.
+- **D11 — Amendment of dl-001 D1: the phase slots** (approver, 2026-10-06: "ok, procedi con
+  emendamento dl-003", on the reconciliation proposed in the session on phase methodologies).
+  dl-001 D1 names the slots `inception`, `specification`, `release`, `operations`; D4 named
+  `inception`, `specification`, `delivery`, `end-of-life`. The slots are those of D4 plus `release`:
+  - `release` is the planning and publication of one release: scope, backlog, submission, tag and
+    publication. It sits above the methodology's cadence (a Scrum sprint, a Kanban replenishment),
+    so the methodology's `delivery` includes it at its own release cadence rather than replacing it.
+    This gives release planning a slot that a phase pack can fill with a named method, as
+    `lean-inception` fills `inception`.
+  - `base`'s default `release` is minimal: scope recorded and approved, then tag and publication.
+    It names no methodology, and says so.
+  - The axis `phase/<slot>` of dl-001 D1 therefore takes the slots `inception`, `specification`,
+    `release`, `end-of-life`. `delivery` is not a `phase/` slot: the `methodology` axis fills it.
+  - `operations` is not a slot in 0.x; see Execution Notes.
 
 Configuration changes this decision implies. Each is applied after approval and bumps `version:`:
 - `pack-authoring`:
   - the foundation rule (`requires: base@^<major>`, add or tighten);
-  - the slot rule;
+  - the slot rule, with the slot list of D11;
   - AGENTS.md R1;
   - the install folder, following WingFoil dl-138 Q3: `built-in/` today, `remote/` if ratified.
 
@@ -125,4 +140,13 @@ Configuration changes this decision implies. Each is applied after approval and 
   - `requires` with ranges;
   - the slot-replacement rule;
   - the `{{parameter}}` syntax;
-  - the `agents_section` contribution.
+  - the `agents_section` contribution;
+  - the slot list of D11, and how a methodology's `delivery` includes `release` and
+    `retrospective`.
+- D11, open: dl-001's `operations` slot (running the product after release: incidents, support,
+  maintenance) has no default, no pack in the first scope and no counterpart in any governed
+  repository. It is either a later slot or part of `stage/production` and `stage/maintenance`. To be
+  ruled before spec-001 fixes the slot list.
+- D11, related: declaring which method a phase follows is a WingFoil format question, recorded in
+  the feedback notes (T16), not here.
+- Amended on 2026-10-06 while `pending` (D4, D11), under plan-009, before the approver's ruling.

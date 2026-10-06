@@ -35,3 +35,8 @@ Then hand the approver the list of `memory approve` commands.
   plan, and the plan stays `active` until every element is approved.
 
 ## Execution Notes
+
+- 2026-10-06 — dl-003 amended while `pending`, at the approver's request ("ok, procedi con
+  emendamento dl-003"): D4 gains the `release` slot and D11 reconciles the slot list with dl-001 D1.
+  The element stays `pending`; the approver rules on the amended text. The related format proposal
+  (a per-phase `method` key) went to the feedback notes as T16, uncommitted.
