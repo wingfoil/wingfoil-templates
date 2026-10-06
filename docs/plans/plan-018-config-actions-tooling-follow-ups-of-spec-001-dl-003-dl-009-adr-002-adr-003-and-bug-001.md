@@ -78,4 +78,5 @@ with a `version:` key is bumped once; directives have no such key.
     configuration change, from spec-001, removes them;
   - bug-001's Observed names `pack-cycle` › `deliver`; the phase is `author`. bug-001 is approved,
     so the slip is recorded here rather than amended.
-- Waiting for the approver's approval of the merge.
+- 2026-10-06: the approver approved the merge in chat ("si approvo il merge"). Merged into `main`
+  with `--no-ff` (`8ccdc45`); the step 5 checks pass on `main`. Plan done.
