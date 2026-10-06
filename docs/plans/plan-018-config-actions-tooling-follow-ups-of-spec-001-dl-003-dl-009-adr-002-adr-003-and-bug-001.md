@@ -62,3 +62,20 @@ with a `version:` key is bumped once; directives have no such key.
 
 ## Execution Notes
 
+- 2026-10-06: steps 1–4 on `config/tooling-followups`: `fe4c942` (spec-001), `397d747` (dl-009),
+  `b0291ad` (dl-003, adr-002, adr-003), `67b1b78` (bug-001).
+- Step 5 checks, WingFoil 0.2.2: `workflow list`, `dna show` and `directives list` exit 0 with empty
+  stderr; the nine `include`s resolve (checked by hand, WingFoil bug-145); `tooling-delivery` and
+  `kanban-delivery` differ only in name, version, descriptions and roles.
+- Step 6: an independent review (a subagent with its own context, on a separate worktree) approved,
+  with two should-fix, both applied in `a29f8b0`:
+  - `b0291ad` had also added a `tooling` module at `src` to `dna.yaml`, beyond this plan and with no
+    approved element fixing the path. Dropped; the first tooling task, which creates `src/`, adds it;
+  - the `memory.yaml` task comment rewrapped within 100 columns.
+- Left for later, out of this plan's scope (review nits):
+  - `pack-semver` ("`0.x` … only while spec-001 is not approved") and `pack-cycle` › `first-release`
+    ("or 0.x while spec-001 is a draft") are dead clauses now that spec-001 is approved. A later
+    configuration change, from spec-001, removes them;
+  - bug-001's Observed names `pack-cycle` › `deliver`; the phase is `author`. bug-001 is approved,
+    so the slip is recorded here rather than amended.
+- Waiting for the approver's approval of the merge.

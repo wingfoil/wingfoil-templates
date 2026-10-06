@@ -134,3 +134,7 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
 - Step 2 follow-ups gain the `pack-compatibility` scope sentence (dl-009).
 - 2026-10-06: the same reviewer re-reviewed the amendment (`4a9390f`): verdict approve, every
   finding resolved. dl-009, dl-010, adr-003 and bug-001 handed to the approver.
+- 2026-10-06: dl-009, dl-010, adr-003 and bug-001 approved by the approver (`0efa37a`, `9ba87a5`,
+  `8491378`, `ae338be`); plan-016 and plan-017 done. The approver registered the remote and pushed.
+  Step 2 runs under plan-018. Once merged, the tasks of step 3 run through `tooling-delivery`
+  (bug-001), not `kanban-delivery`.
