@@ -2,7 +2,7 @@
 id: plan-002-templates-inception-brief-product-brief
 type: plan
 title: "templates-inception brief: product brief"
-status: draft
+status: active
 workflow: "templates-inception"
 phase: "brief"
 tags: ["inception"]
