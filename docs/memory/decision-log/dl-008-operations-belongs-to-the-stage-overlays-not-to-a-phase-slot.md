@@ -2,7 +2,7 @@
 id: dl-008-operations-belongs-to-the-stage-overlays-not-to-a-phase-slot
 type: decision-log
 title: "Operations belongs to the stage overlays, not to a phase slot"
-status: draft
+status: pending
 tags: ["packs","slots"]
 ---
 
