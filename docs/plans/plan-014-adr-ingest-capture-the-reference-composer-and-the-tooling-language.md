@@ -48,3 +48,4 @@ Then add the composer ADR's id to feedback note T15, which stays uncommitted (dl
   each body uses Context, Decision, Alternatives, Consequences, with the requirements implemented
   in Context (`architecture` directive).
 - Waiting for the approver's `approve` phase, at plan-012's phase gate.
+- 2026-10-06: adr-001 and adr-002 approved by the approver (`fa3de60`, `a2d5171`). Plan done.
