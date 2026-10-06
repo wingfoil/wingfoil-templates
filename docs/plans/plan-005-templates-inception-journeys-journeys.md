@@ -2,7 +2,7 @@
 id: plan-005-templates-inception-journeys-journeys
 type: plan
 title: "templates-inception journeys: journeys"
-status: active
+status: done
 workflow: "templates-inception"
 phase: "journeys"
 tags: ["inception"]
