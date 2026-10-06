@@ -96,3 +96,21 @@ One plan per sub-phase, created when the sub-phase starts, `draft → active →
   - drops the uncommitted feedback notes from the phase outputs.
 - `workflow` and `phase` are not id tokens, so `memory add --set` cannot fill them (notes T11).
   They were filled by editing the draft.
+- 2026-10-06: sub-phases completed:
+  - brief, plan-002;
+  - vision, plan-003;
+  - personas, plan-004;
+  - journeys, plan-005;
+  - features, plan-006;
+  - sequencer, plan-007;
+  - pack-model, plan-008, with the capture batch plan-009.
+
+  Decision-logs dl-001…dl-006 are approved. dl-007 (phase methods, plan-010) is deferred by the
+  approver until WingFoil supports templates.
+- 2026-10-06: **phase approved by the approver** ("approvo la fase inception"). WingFoil 0.2.2 has no
+  verb for a phase gate, so the approval is recorded here. `docs/01_vision/01…08` are marked
+  Approved.
+- Left open by the phase:
+  - the `operations` slot (dl-003 D11), to be ruled before spec-001 fixes the slot list;
+  - dl-007.
+- Next, before the specification phase: the configuration changes implied by dl-002…dl-006.

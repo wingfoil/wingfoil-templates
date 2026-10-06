@@ -2,7 +2,7 @@
 
 **Version:** 1.0
 **Date:** 2026-10-06
-**Status:** Draft
+**Status:** Approved
 **Source:** the approver's answers (Roberto Pompermaier), 2026-10-06; the design discussion of
 2026-10-01..05; the first attempt on `archive/draft-2026-10-05` (unapproved drafts, source material
 only)

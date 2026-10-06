@@ -2,7 +2,7 @@
 
 **Version:** 1.0
 **Date:** 2026-10-06
-**Status:** Draft
+**Status:** Approved
 **Traces to:** [07_sequencer.md](07_sequencer.md) (milestones M0–M3), [01_product-brief.md](01_product-brief.md)
 
 ---

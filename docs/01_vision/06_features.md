@@ -2,7 +2,7 @@
 
 **Version:** 1.2
 **Date:** 2026-10-06
-**Status:** Draft
+**Status:** Approved
 **Traces to:** [05_journeys.md](05_journeys.md), [03_is-isnot.md](03_is-isnot.md), [01_product-brief.md](01_product-brief.md) §8
 
 ---

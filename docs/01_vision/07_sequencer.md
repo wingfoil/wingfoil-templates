@@ -2,7 +2,7 @@
 
 **Version:** 1.1
 **Date:** 2026-10-06
-**Status:** Draft
+**Status:** Approved
 **Traces to:** [06_features.md](06_features.md), [05_journeys.md](05_journeys.md), [04_personas.md](04_personas.md)
 
 ---

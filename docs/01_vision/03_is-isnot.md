@@ -2,7 +2,7 @@
 
 **Version:** 1.2
 **Date:** 2026-10-06
-**Status:** Draft
+**Status:** Approved
 **Traces to:** [01_product-brief.md](01_product-brief.md), [02_product-vision.md](02_product-vision.md)
 
 Items marked *(pack-model)* depend on proposals ruled in the pack-model phase.
