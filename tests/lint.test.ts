@@ -24,10 +24,12 @@ const IMPORTS = [
   "import { randomUUID, randomBytes, createHash } from 'node:crypto';",
   "import { hrtime } from 'node:process';",
   "import { performance as perf } from 'node:perf_hooks';",
+  "import { randomUUID as bareRandomUUID } from 'crypto';",
 ];
 /** Allowed values, and the imported names used so that only their imports are reported. */
 const ALLOWED = [
   'new Date(0)', "createHash('sha256')", 'randomUUID', 'randomBytes', 'hrtime', 'perf',
+  'bareRandomUUID',
 ];
 const PROBE = [
   ...IMPORTS,
@@ -61,9 +63,11 @@ describe('lint: determinism rules (adr-004)', () => {
     const found = await messages(PROBE, 'src/probe.ts');
     const lines = PROBE.split('\n');
     const lineOf = (text: string): number => lines.findIndex((line) => line.includes(text)) + 1;
-    const flagged = new Set(found.map((message) => message.line));
+    const errors = found.filter((message) =>
+      message.severity === 2 && DETERMINISM_RULES.has(message.ruleId ?? ''));
+    const flagged = new Set(errors.map((message) => message.line));
     for (const form of FORMS) assert.ok(flagged.has(lineOf(`    ${form},`)), form);
-    for (const line of [2, 3, 4]) assert.ok(flagged.has(line), `import on line ${line}`);
+    for (const line of IMPORTS.slice(1)) assert.ok(flagged.has(lineOf(line)), line);
     assert.ok(!flagged.has(lineOf('    new Date(0),')), 'new Date(0) is allowed');
     assert.ok(!flagged.has(lineOf("    createHash('sha256'),")), 'createHash is allowed');
     const others = found.filter((message) => !DETERMINISM_RULES.has(message.ruleId ?? ''));
@@ -92,12 +96,21 @@ describe('lint: node:test known-safe calls', () => {
   });
 });
 
+function lintScript(): string {
+  const manifest = JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8')) as {
+    scripts: Record<string, string>;
+  };
+  return manifest.scripts['lint'] ?? '';
+}
+
 describe('lint: the script', () => {
   it('is eslint --max-warnings 0 .', () => {
-    const manifest = JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8')) as {
-      scripts: Record<string, string>;
-    };
-    assert.equal(manifest.scripts['lint'], 'eslint --max-warnings 0 .');
+    assert.equal(lintScript(), 'eslint --max-warnings 0 .');
+  });
+
+  it('lints its own configuration file cleanly', async () => {
+    const [result] = await new ESLint({ cwd: REPO_ROOT }).lintFiles(['eslint.config.mjs']);
+    assert.deepEqual(result?.messages, []);
   });
 
   it('fails on a warning', () => {
@@ -106,8 +119,10 @@ describe('lint: the script', () => {
       writeFileSync(join(dir, 'eslint.config.mjs'),
         "export default [{ files: ['**/*.js'], rules: { 'no-console': 'warn' } }];\n");
       writeFileSync(join(dir, 'probe.js'), "console.log('only a warning');\n");
+      const [command, ...args] = lintScript().split(' ');
+      assert.equal(command, 'eslint');
       const bin = join(REPO_ROOT, 'node_modules', 'eslint', 'bin', 'eslint.js');
-      const result = spawnSync(process.execPath, [bin, '--max-warnings', '0', '.'], {
+      const result = spawnSync(process.execPath, [bin, ...args], {
         cwd: dir, encoding: 'utf8',
       });
       assert.match(result.stdout, /0 errors, 1 warning/);

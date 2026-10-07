@@ -17,7 +17,7 @@ export default defineConfig(
     },
   },
   {
-    files: ['src/**/*.ts'],
+    files: ['src/**/*.{ts,mts,cts}'],
     rules: {
       'no-restricted-properties': ['error',
         { object: 'Date', property: 'now', message: DETERMINISM },
@@ -44,7 +44,7 @@ export default defineConfig(
     },
   },
   {
-    files: ['tests/**/*.ts'],
+    files: ['tests/**/*.{ts,mts,cts}'],
     rules: {
       '@typescript-eslint/no-floating-promises': ['error', {
         allowForKnownSafeCalls: [
@@ -53,5 +53,6 @@ export default defineConfig(
       }],
     },
   },
-  { files: ['**/*.mjs'], extends: [tseslint.configs.disableTypeChecked] },
+  // JavaScript files are outside tsconfig.json, so they are linted without type information.
+  { files: ['**/*.{js,mjs,cjs}'], extends: [tseslint.configs.disableTypeChecked] },
 );
