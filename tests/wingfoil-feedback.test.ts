@@ -66,6 +66,12 @@ describe('the WingFoil feedback inbox (dl-163)', () => {
     }
   });
 
+  it('opens with the note it was migrated from, or says it is new', () => {
+    for (const note of all) {
+      assert.match(note.body, /^\n(?:Formerly T\d+\.|New note \(task-\d+\)\.)/, note.file);
+    }
+  });
+
   it('states what was observed and what was expected', () => {
     for (const note of all) {
       assert.match(note.body, /\n## Observed\n[\s\S]+\n## Expected\n/, note.file);

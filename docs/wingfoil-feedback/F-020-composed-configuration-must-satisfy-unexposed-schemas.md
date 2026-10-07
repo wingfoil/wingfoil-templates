@@ -15,7 +15,7 @@ WingFoil 0.2.2 from npm. In a scratch git repository after `wingfoil init --temp
 --no-interactive`, replace `.wingfoil/dna.yaml` with `version: 1`, `project: { name: x }`, then:
 
 ```
-$ wingfoil dna show            # one line of output, wrapped here
+$ wingfoil dna show            # one line of output, wrapped here; paths shortened to ...
 error: E_VALIDATION modules (.../.wingfoil/dna.yaml): Invalid input: expected array, received undefined;
 E_VALIDATION stacks (...): Invalid input: expected object, received undefined; E_VALIDATION team (...):
 Invalid input: expected object, received undefined; E_VALIDATION paths (...): Invalid input: expected

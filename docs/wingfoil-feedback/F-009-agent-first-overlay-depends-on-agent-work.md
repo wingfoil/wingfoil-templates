@@ -21,7 +21,9 @@ claim-evidence directives mandatory. It leans on work not yet landed in WingFoil
 
 ## Expected
 
-WingFoil publishes these pieces as capabilities a pack can require (see F-013), so that the
-overlay's `pack.yaml` declares what it needs instead of a minimum WingFoil version.
+The overlay's `pack.yaml` must declare the minimum WingFoil version that provides those pieces
+(the original wording). Restated under D6 (README, Context): the pieces are capabilities a pack
+requires, so WingFoil publishes them as capabilities (F-013) and the pack declares
+`requires_capabilities` rather than a version.
 
 Suggested kind in WingFoil: a dependency note on the v0.4 planning; no element by itself.

@@ -58,7 +58,15 @@ WingFoil templates. T1–T14 come from the design discussion held before any imp
 an analysis of WingFoil at commit `30f06016` (`v0.2.2-1778-g30f06016`, v0.3 in development, wave 1);
 their references point into the WingFoil repository at that commit. A first attempt at this
 repository skipped phases of its own `sw-life-cycle`; it is kept on the branch
-`archive/draft-2026-10-05`, and ids cited from it exist only there, as unapproved drafts.
+`archive/draft-2026-10-05`, and `main` restarted from the WingFoil configuration commit `539e943`.
+The ids the old inbox cited from that attempt — `dl-001`, `dl-002`, `dl-003`, `spec-001`, `pack-*`,
+`task-001`, `prel-001`, and the files `catalog.yaml`, `compat.yaml`, `schema/`, `packs/` — existed
+then only on that branch, as unapproved drafts; most have since been recreated on `main` through the
+workflows, with their own content.
+
+The old inbox was meant to be read at WingFoil's next `retrospective` (`additional-points` phase)
+and `release-planning` (v0.4, the release that already carries P4.18–P4.20 and the "methodology
+packs" idea, `docs/04_memory/planning/rl-v1/minor-v0.4.md:45-50`).
 
 **Decisions taken by the approver on 2026-10-05**, the inputs these notes assume:
 
@@ -73,9 +81,10 @@ repository skipped phases of its own `sw-life-cycle`; it is kept on the branch
 
 **WingFoil counterpart found on 2026-10-05:** dl-138 (WingFoil consumes templates from a remote,
 versioned source; `ready`, release v0.4) decides the direction these notes assume. Its questions map
-onto them: Q1 ↔ F-005, Q2 ↔ F-007, Q3 ↔ F-007, Q4 ↔ F-004, Q5 (release v0.4) ↔ the open question
-below. Beyond dl-138 the notes add the axes model (F-002), versioning by format and capability (D6,
-F-012, F-013), stages and transitions (F-008), and the bundled-pack release step (F-003).
+onto them: Q1 ↔ F-005, Q2 ↔ F-007, Q3 ↔ F-007 and this repository's `pack-authoring` directive, Q4 ↔
+F-004, Q5 (release v0.4) ↔ the open question below. Beyond dl-138 the notes add the axes model
+(F-002), versioning by format and capability (D6, F-012, F-013), stages and transitions (F-008), and
+the bundled-pack release step (F-003).
 
 **Open questions for WingFoil's planning** not tied to a single note (the others are in F-003,
 F-004, F-005, F-007, F-008):

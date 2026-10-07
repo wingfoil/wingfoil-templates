@@ -11,7 +11,8 @@ Formerly T18.
 
 ## Observed
 
-WingFoil 0.2.2 from npm, 2026-10-06. A phase with `iterate_over: task` and `where: { pack: "" }`:
+WingFoil 0.2.2 from npm, 2026-10-06, found at the first real iteration of this repository's
+`sw-life-cycle` › `tooling`. A phase with `iterate_over: task` and `where: { pack: "" }`:
 `wingfoil workflow list` accepts the clause, with exit 0 and no warning. No command evaluates it:
 `wingfoil memory search` filters only by `--type`, `--status`, `--tag` and a keyword, and does not
 print the `pack` field; nothing lists the elements a phase iterates over. The iteration is followed

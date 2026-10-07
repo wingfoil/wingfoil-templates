@@ -22,11 +22,11 @@ global security directives, coverage thresholds — and nothing models that chan
 - stage is a pack axis, and the current stage is recorded in the lock and in `dna.yaml`
   (`project.stage`, new key);
 - `wingfoil stage set <stage>` runs a **transition** that WingFoil-Templates defines (for example
-  `transitions/prototype-to-mvp.yaml`), with **pre-checks** (an approver exists — relates to dl-071,
-  where init seeds no approver —, CI is green, no open critical bug), **actions** (swap the stage
-  overlay, enable gates, create a `decision-log` element that records the transition) and **one
-  commit** (`wf(stage): mvp → production [...]`). The transition is traceable in Memory, like every
-  other mutation.
+  `transitions/prototype-to-mvp.yaml`, `mvp-to-production.yaml`), with **pre-checks** (an approver
+  exists — relates to dl-071, where init seeds no approver —, CI is green, no open critical bug),
+  **actions** (swap the stage overlay, enable gates, create a `decision-log` element that records
+  the transition) and **one commit** (`wf(stage): mvp → production [...]`). The transition is
+  traceable in Memory, like every other mutation.
 
 Open question (planning, 2): where the current stage lives — the lock only, or `dna.yaml`
 `project.stage` too?

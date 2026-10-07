@@ -15,9 +15,9 @@ WingFoil 0.2.2 from npm:
 
 ```
 $ mkdir /tmp/x && cd /tmp/x && wingfoil workflow list
-error: E_NO_GIT_ROOT: not inside a git repository          (exit 1)
+error: E_NO_GIT_ROOT: not inside a git repository          # exit 1
 $ git init -q && mkdir sub && cd sub && wingfoil workflow list
-error: E_NOT_AT_GIT_ROOT: run wingfoil from the project root   (exit 1)
+error: E_NOT_AT_GIT_ROOT: run wingfoil from the project root   # exit 1
 ```
 
 Every command, read-only ones included, needs the working directory to be the root of a git

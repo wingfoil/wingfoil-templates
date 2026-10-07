@@ -24,11 +24,11 @@ Compose **one pack per axis**:
 |---|---|---|
 | `methodology` | delivery cadence, delivery sub-workflow, roles, ceremonies | `scrum`, `kanban`; later `scrumban`, `shape-up`, `xp` |
 | `team-mode` (overlay) | who executes and who approves | `human`, `hybrid`, `agent-first` |
-| `phase/<slot>` | how each `sw-life-cycle` phase is run; one pack per slot | inception: `lean-inception`, `design-sprint`, `working-backwards`, `event-storming`. specification: `bdd-sbe`, `story-mapping`, `rfc-driven`. release: `trunk-based`, `gitflow`, `release-train` |
+| `phase/<slot>` | how each `sw-life-cycle` phase is run; one pack per slot | inception: `lean-inception`, `design-sprint`, `working-backwards`, `event-storming`. specification: `bdd-sbe`, `story-mapping`, `rfc-driven`. release: `trunk-based`, `gitflow`, `release-train`. operations: `sre-lite`, `incident-mgmt` (this slot was later dropped by this repository's dl-008) |
 | `blueprint` | `paths`/`modules` skeleton, domain directives, extra Memory types, checks | `web-service`, `web-frontend`, `mobile-app`, `cli-library`, `iac`, `data-pipeline`, `embedded-iot` |
 | `stage` (overlay) | how strict the process is | `prototype`, `mvp`, `production`, `maintenance`, `sunset` |
 | `stack` (later) | per-language quality directives | `typescript-node`, `python`, `go`, `terraform` |
-| `governance` | compliance / community obligations | `open-source`, `regulated`, `gdpr` |
+| `governance` (later) | compliance / community obligations | `open-source`, `regulated`, `gdpr` |
 
 **Presets** name curated combinations, for example `startup-mvp` = kanban + agent-first +
 web-service + lean-inception + mvp. Each pack ships a `pack.yaml` (id, axis, semver, `formats` +

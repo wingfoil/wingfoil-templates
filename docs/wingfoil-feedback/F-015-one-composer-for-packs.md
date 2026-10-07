@@ -11,7 +11,9 @@ Formerly T15.
 
 ## Observed
 
-Until WingFoil installs packs (v0.4, dl-138), nothing composes them, so nothing can validate them.
+Decided by this repository's approver on 2026-10-06, in its features review
+(`docs/01_vision/06_features.md`, F3.2, option c). Until WingFoil installs packs (v0.4, dl-138),
+nothing composes them, so nothing can validate them.
 WingFoil-Templates therefore has its own composer (its adr-001; TypeScript on Node.js ≥ 22.12,
 adr-002), implementing only composition as its spec-001 specifies: the merge, parameters, slots,
 `requires`/`conflicts` and cardinalities. Download, lock, upgrade and three-way merge stay
