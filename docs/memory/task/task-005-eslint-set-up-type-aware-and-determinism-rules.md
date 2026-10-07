@@ -101,3 +101,25 @@ Branch `task/task-005-eslint`, run through `tooling-delivery` as `developer` (`c
   that tried the probe approach on ESLint 10.12.0: `allowDefaultProject` through `overrideConfig`,
   named imports caught by `no-restricted-imports`, the configuration additions a working setup
   needs, the exact lint script, the license check, the floor note, the full commands.
+- 2026-10-07, build on `task/task-005-eslint`, as `developer`: `6930f1e` ESLint, `a68c2cb`
+  `dna.yaml` 5, `d249486` review fixes.
+  - The existing code passed the lint unchanged: no code fix (Acceptance 8). 27 files are linted.
+  - The probe tests were written after the configuration: they are characterization tests, not
+    red-first. Their strength was checked by mutation instead (below).
+  - Acceptance 1–8 pass from a clean clone at `d249486`: on Node.js 22.21.0 / npm 11.6.2, `npm ci`,
+    build, 240 tests, `lint`, `check:pins`, `check:schemas`, `npm audit` (0) and `audit signatures`
+    pass; on the floor 22.12.0 / npm 10.9.0 the same, `npm ci` exiting 0 with `EBADENGINE`
+    warnings for `eslint` 10.12.0, `@eslint/js` 10.0.1, `@eslint/config-array` 0.23.5,
+    `@eslint/config-helpers` 0.7.0, `@eslint/core` 1.2.1, `@eslint/object-schema` 3.0.5,
+    `@eslint/plugin-kit` 0.7.3, `eslint-scope` 9.1.2, `eslint-visitor-keys` 5.0.1, `espree` 11.2.0.
+    The lint also runs there. No `.npmrc` is added.
+  - The 85 added packages: MIT 63, Apache-2.0 12, BSD-2-Clause 6, BSD-3-Clause 1, ISC 2,
+    BlueOak-1.0.0 1 (`minimatch`), all permissive and compatible with this repository's MIT.
+  - Not caught, as recorded in the Acceptance: `globalThis.crypto.randomUUID()`.
+- Deviations from the Design: none beyond the review fixes; the configuration also covers `.mts`
+  and `.cts`, and lints every `.js`, `.mjs` and `.cjs` file without type information.
+- Review (a subagent with its own context): approve with two should-fix: the determinism test
+  passed with the rules set to `warn`, and `.mts`/`.cts` files would escape them. Both fixed in
+  `d249486`, with a probe for the bare `crypto` path and a test linting `eslint.config.mjs`. The
+  re-review confirmed that each surviving mutation (rules at `warn`, the bare path removed,
+  `disableTypeChecked` removed) now fails a test.
