@@ -13,6 +13,7 @@
     "build": "npm run clean && tsc -p tsconfig.json",
     "test": "npm run build && node --test \"dist/tests/**/*.test.js\"",
     "check:pins": "node dist/src/check-pins.js",
+    "check:schemas": "node dist/src/check-schemas.js",
     "wingfoil": "wingfoil"
   },
   "devDependencies": {

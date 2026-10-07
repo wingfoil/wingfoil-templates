@@ -1,0 +1,31 @@
+# expect: minItems /packs/0/versions
+format: 1
+foundation: base
+axes:
+  methodology: { cardinality: one, required: true }
+  phase:       { cardinality: one-per-slot, required: false, slots: [inception, specification, release, end-of-life] }
+  blueprint:   { cardinality: many, required: false }
+  governance:  { cardinality: many, required: false }
+  team-mode:   { cardinality: one, required: false, overlay: true }
+  stage:       { cardinality: one, required: false, overlay: true, scale: [prototype, mvp, production, maintenance, sunset] }
+slots:
+  inception:     { included_by: sw-life-cycle, default: base, filled_by: phase }
+  specification: { included_by: sw-life-cycle, default: base, filled_by: phase }
+  delivery:      { included_by: sw-life-cycle, filled_by: methodology }
+  release:       { included_by: delivery, default: base, filled_by: phase }
+  end-of-life:   { included_by: sw-life-cycle, default: base, filled_by: phase }
+packs:
+  - id: base
+    path: packs/base
+    catalog: official
+    status: active
+    versions: []
+transitions:
+  - id: prototype-to-production
+    path: transitions/prototype-to-production.yaml
+    from: stage/prototype
+    to: stage/production
+    formats: {}
+    requires_capabilities: [stage-transitions]
+presets:
+  - { id: startup-mvp, path: presets/startup-mvp.yaml }

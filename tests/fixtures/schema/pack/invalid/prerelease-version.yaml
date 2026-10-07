@@ -1,0 +1,27 @@
+# expect: pattern /version
+format: 1
+id: methodology/kanban          # catalog pack id (§4)
+axis: methodology               # absent for base
+name: kanban                    # equals the last segment of id
+# slot: release                 # phase packs only; equals the middle segment of id
+title: "Kanban"
+description: >-
+  Continuous flow under explicit WIP limits …
+version: 1.0.0-rc.1                  # the pack's semver (§4)
+formats:                        # file kind -> WingFoil format the content is written in (dl-002)
+  memory: 1
+  roles: 1
+  workflow: 1
+  directive: 1
+requires_capabilities: []       # WingFoil capabilities needed, from compat.yaml (dl-002)
+requires:                       # catalog pack id @ range (§6.3)
+  - base@^1
+conflicts: []                   # catalog pack id, optionally @ range (§6.3)
+parameters:                     # §8
+  wip_limit: { type: integer, default: 3, description: "WIP limit of the in-progress column" }
+contents:                       # §6.4
+  fragments: [roles, memory]
+  directives: [wip-limits]
+  workflows: [delivery, kanban-delivery, replenishment]
+  memory_templates: []
+  agents_section: false
