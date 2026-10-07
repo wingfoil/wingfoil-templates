@@ -2,7 +2,7 @@
 id: plan-019-adr-ingest-capture-the-lint-tool
 type: plan
 title: "adr-ingest capture: the lint tool"
-status: draft
+status: active
 workflow: "adr-ingest"
 phase: "capture"
 tags: ["architecture","adr","tooling"]
