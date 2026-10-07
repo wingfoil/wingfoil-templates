@@ -2,7 +2,7 @@
 id: task-010-wingfoil-feedback-inbox-one-file-per-note-ledger-and-the-wingfoil-cli-directive
 type: task
 title: "WingFoil feedback inbox: one file per note, ledger, and the wingfoil-cli directive"
-status: in-progress
+status: in-review
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-009-version-the-wingfoil-feedback-inbox"]
 tags: ["governance","feedback-loop"]
