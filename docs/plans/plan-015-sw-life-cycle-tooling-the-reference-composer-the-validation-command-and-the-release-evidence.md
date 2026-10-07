@@ -164,3 +164,11 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   "Meccanismo feedback wingfoil" is notified, and its changes to `docs/wingfoil-feedback/` and the
   `wingfoil-feedback` directive come through task elements. Pending with them: the feedback note
   on the copy of WingFoil's built-in directive ids (task-006).
+- 2026-10-07: the approver pushed `main` through this session (`origin/main` at `3f2e929`) and
+  confirmed step M1 of the WingFoil feedback loop
+  (`wingfoil/wingfoil` dl-163, R1–R8),
+  between W5 and W6, as two tooling tasks: task-009 versions `docs/wingfoil-feedback/`
+  (S1, R1; the approver lifts his rule of 2026-10-05 "non committare le note" for this folder;
+  `docs/notes/` stays untracked); task-010 splits the notes into one file per note with a ledger
+  (S4a, R4) and replaces the `wingfoil-feedback` directive with `wingfoil-cli` (S4b). W6 resumes
+  after them.
