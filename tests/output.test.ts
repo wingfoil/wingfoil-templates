@@ -27,20 +27,46 @@ function fails(specs: PackSpec[], request: string[], pattern: RegExp): void {
   });
 }
 
+/** A workflow file's text. */
+function workflow(name: string, kind = 'sub', extra = ''): string {
+  return `format: 1\nname: ${name}\nkind: ${kind}\n${extra}`;
+}
+
+/** A pack shipping exactly the given files, listed in its contents. */
+/** A directive file's text. */
+function directive(id: string, format = 1): string {
+  return `---\nid: ${id}\nformat: ${format}\n---\n`;
+}
+
+function shipping(
+  id: string,
+  lists: Partial<PackSpec>,
+  files: Record<string, string> = {},
+): PackSpec {
+  return { id, ...lists, extraFiles: files };
+}
+
+/** The memory fragment defining type `note`, with the given template file. */
+function noteType(templateFile: string): string {
+  return 'format: 1\ntypes:\n  note:\n    path: docs/{id}.md\n    id_pattern: "note-{n}"\n'
+    + `    template: { file: ${templateFile} }\n`;
+}
+
 /** A pack defining Memory type `note` and shipping its template. */
-const NOTES: PackSpec = {
-  id: 'governance/notes', fragments: ['memory'], memoryTemplates: ['note'],
-  extraFiles: { 'fragments/memory.yaml': 'format: 1\ntypes:\n  note:\n    path: docs/{id}.md\n'
-    + '    id_pattern: "note-{n}"\n    template: { file: memory/templates/built-in/note.md }\n' },
-};
+const NOTES: PackSpec = shipping('governance/notes',
+  { fragments: ['memory'], memoryTemplates: ['note'] },
+  { 'fragments/memory.yaml': noteType('memory/templates/built-in/note.md') });
+const WITH_NOTES = ['methodology/kanban', 'governance/notes'];
+const WITH_X = ['methodology/kanban', 'blueprint/x'];
 
 describe('output: assets (spec-001 §7.6)', () => {
   it('writes each asset to its built-in folder, copied whole', () => {
-    const files = plan([BASE, KANBAN, NOTES, { id: 'blueprint/x', directives: ['d'], workflows: ['w'],
-      extraFiles: { 'workflows/w.yaml': '# kept comment\nformat: 1\nname: w\nkind: sub\nversion: 7\n' } }],
-    ['methodology/kanban', 'governance/notes', 'blueprint/x']);
-    assert.equal(files.get('.wingfoil/workflows/built-in/w.yaml'),
-      '# kept comment\nformat: 1\nname: w\nkind: sub\nversion: 7\n');
+    const text = `# kept comment\n${workflow('w', 'sub', 'version: 7\n')}`;
+    const files = plan([BASE, KANBAN, NOTES,
+      shipping('blueprint/x', { directives: ['d'], workflows: ['w'] },
+        { 'workflows/w.yaml': text })],
+    [...WITH_NOTES, 'blueprint/x']);
+    assert.equal(files.get('.wingfoil/workflows/built-in/w.yaml'), text);
     assert.ok(files.has('.wingfoil/directives/built-in/d.md'));
     assert.ok(files.has('.wingfoil/memory/templates/built-in/note.md'));
     assert.ok(files.has('.wingfoil/workflows/built-in/delivery.yaml'));
@@ -53,22 +79,27 @@ describe('output: assets (spec-001 §7.6)', () => {
   for (const [what, other] of twice) {
     it(`fails on two packs shipping one ${what}`, () => {
       fails([BASE, KANBAN, { id: 'blueprint/x', directives: ['d'], workflows: ['w'] }, other],
-        ['methodology/kanban', 'blueprint/x', 'blueprint/y'], /blueprint\/x.*blueprint\/y/);
+        [...WITH_X, 'blueprint/y'], /blueprint\/x.*blueprint\/y/);
     });
   }
 
   it('fails on two packs shipping one Memory template', () => {
     fails([BASE, KANBAN, NOTES, { id: 'blueprint/y', memoryTemplates: ['note'] }],
-      ['methodology/kanban', 'governance/notes', 'blueprint/y'], /note/);
+      [...WITH_NOTES, 'blueprint/y'], /note/);
   });
 
   it('replaces base default slot workflow by the phase pack file, at its position', () => {
-    const base = { ...BASE, workflows: ['sw-life-cycle', 'retrospective', 'inception'], extraFiles: {
-      ...BASE.extraFiles, 'workflows/inception.yaml': 'format: 1\nname: inception\nkind: sub\n# base\n',
-    } };
-    const files = plan([base, KANBAN, { id: 'phase/inception/lean', workflows: ['inception'],
-      extraFiles: { 'workflows/inception.yaml': 'format: 1\nname: inception\nkind: sub\n# lean\n' } }],
-    ['methodology/kanban', 'phase/inception/lean']);
+    const base: PackSpec = {
+      ...BASE,
+      workflows: ['sw-life-cycle', 'retrospective', 'inception'],
+      extraFiles: {
+        ...BASE.extraFiles,
+        'workflows/inception.yaml': workflow('inception', 'sub', '# base\n'),
+      },
+    };
+    const lean = shipping('phase/inception/lean', { workflows: ['inception'] },
+      { 'workflows/inception.yaml': workflow('inception', 'sub', '# lean\n') });
+    const files = plan([base, KANBAN, lean], ['methodology/kanban', 'phase/inception/lean']);
     assert.match(files.get('.wingfoil/workflows/built-in/inception.yaml') ?? '', /# lean/);
     assert.equal(files.get('.wingfoil/workflows.yaml'), [
       'format: 1', 'version: 1', 'include:',
@@ -78,30 +109,29 @@ describe('output: assets (spec-001 §7.6)', () => {
   });
 
   it('fails on a slot workflow whose kind is not sub', () => {
-    fails([BASE, KANBAN, { id: 'phase/release/r', workflows: ['release'],
-      extraFiles: { 'workflows/release.yaml': 'format: 1\nname: release\nkind: main\n' } }],
+    fails([BASE, KANBAN, shipping('phase/release/r', { workflows: ['release'] },
+      { 'workflows/release.yaml': workflow('release', 'main') })],
     ['methodology/kanban', 'phase/release/r'], /phase\/release\/r.*release.*kind.*sub/);
   });
 
   it('fails on a Memory template shipped by a pack that does not define its type', () => {
     fails([BASE, KANBAN, NOTES, { id: 'blueprint/y', memoryTemplates: ['other'] }],
-      ['methodology/kanban', 'governance/notes', 'blueprint/y'], /blueprint\/y.*other/);
+      [...WITH_NOTES, 'blueprint/y'], /blueprint\/y.*other/);
   });
 
-  it('fails on a type whose template.file is not its built-in path, while its pack ships it', () => {
-    const notes = { ...NOTES, extraFiles: { 'fragments/memory.yaml': 'format: 1\ntypes:\n  note:\n'
-      + '    path: docs/{id}.md\n    id_pattern: "note-{n}"\n    template: { file: tpl/note.md }\n' } };
-    fails([BASE, KANBAN, notes], ['methodology/kanban', 'governance/notes'], /note.*template\.file/);
+  it('fails on a template.file other than the built-in path, while the pack ships it', () => {
+    const notes = { ...NOTES, extraFiles: { 'fragments/memory.yaml': noteType('tpl/note.md') } };
+    fails([BASE, KANBAN, notes], WITH_NOTES, /note.*template\.file/);
   });
 
   it('fails on a built-in template.file that no pack ships (derived)', () => {
-    fails([BASE, KANBAN, { ...NOTES, memoryTemplates: [] }], ['methodology/kanban', 'governance/notes'],
+    fails([BASE, KANBAN, { ...NOTES, memoryTemplates: [] }], WITH_NOTES,
       /memory\/templates\/built-in\/note\.md/);
   });
 
   it('fails on a directive id equal to a WingFoil built-in', () => {
-    fails([BASE, KANBAN, { id: 'blueprint/x', directives: ['security'] }],
-      ['methodology/kanban', 'blueprint/x'], /blueprint\/x.*security.*built-in/);
+    fails([BASE, KANBAN, { id: 'blueprint/x', directives: ['security'] }], WITH_X,
+      /blueprint\/x.*security.*built-in/);
   });
 
   it('fails on a composition without a dna, roles or memory fragment (derived)', () => {
@@ -111,53 +141,57 @@ describe('output: assets (spec-001 §7.6)', () => {
 
 describe('output: formats and identifiers (spec-001 §5, §6.1)', () => {
   const broken: [string, PackSpec, RegExp][] = [
-    ['a workflow without format', { id: 'blueprint/x', workflows: ['w'],
-      extraFiles: { 'workflows/w.yaml': 'name: w\nkind: sub\n' } }, /workflows\/w\.yaml.*format/],
-    ['a directive without format', { id: 'blueprint/x', directives: ['d'],
-      extraFiles: { 'directives/d.md': '---\nid: d\n---\n' } }, /directives\/d\.md.*format/],
-    ['a directive without frontmatter', { id: 'blueprint/x', directives: ['d'],
-      extraFiles: { 'directives/d.md': '# d\n' } }, /directives\/d\.md/],
-    ['a workflow in another format than its pack', { id: 'blueprint/x', workflows: ['w'],
-      extraFiles: { 'workflows/w.yaml': 'format: 2\nname: w\nkind: sub\n' } }, /format 2.*workflow is 1/],
-    ['a workflow named other than its stem', { id: 'blueprint/x', workflows: ['w'],
-      extraFiles: { 'workflows/w.yaml': 'format: 1\nname: v\nkind: sub\n' } }, /workflows\/w\.yaml.*name/],
-    ['a directive whose id is not its stem', { id: 'blueprint/x', directives: ['d'],
-      extraFiles: { 'directives/d.md': '---\nid: e\nformat: 1\n---\n' } }, /directives\/d\.md.*id/],
+    ['a workflow without format', shipping('blueprint/x', { workflows: ['w'] },
+      { 'workflows/w.yaml': 'name: w\nkind: sub\n' }), /workflows\/w\.yaml.*format/],
+    ['a directive without format', shipping('blueprint/x', { directives: ['d'] },
+      { 'directives/d.md': '---\nid: d\n---\n' }), /directives\/d\.md.*format/],
+    ['a directive without frontmatter', shipping('blueprint/x', { directives: ['d'] },
+      { 'directives/d.md': '# d\n' }), /directives\/d\.md/],
+    ['a workflow in another format than its pack', shipping('blueprint/x', { workflows: ['w'] },
+      { 'workflows/w.yaml': 'format: 2\nname: w\nkind: sub\n' }), /format 2.*workflow is 1/],
+    ['a workflow named other than its stem', shipping('blueprint/x', { workflows: ['w'] },
+      { 'workflows/w.yaml': workflow('v') }), /workflows\/w\.yaml.*name/],
+    ['a directive whose id is not its stem', shipping('blueprint/x', { directives: ['d'] },
+      { 'directives/d.md': '---\nid: e\nformat: 1\n---\n' }), /directives\/d\.md.*id/],
   ];
   for (const [name, spec, pattern] of broken) {
-    it(`fails on ${name}`, () => {
-      fails([BASE, KANBAN, spec], ['methodology/kanban', 'blueprint/x'], pattern);
-    });
+    it(`fails on ${name}`, () => fails([BASE, KANBAN, spec], WITH_X, pattern));
   }
 
   it('fails on a Memory template without type, or with another type', () => {
     for (const text of ['---\nformat: 1\n---\n', '---\ntype: other\nformat: 1\n---\n']) {
-      fails([BASE, KANBAN, { ...NOTES, extraFiles: { ...NOTES.extraFiles, 'memory-templates/note.md': text } }],
-        ['methodology/kanban', 'governance/notes'], /memory-templates\/note\.md.*type/);
+      const files = { ...NOTES.extraFiles, 'memory-templates/note.md': text };
+      const notes = { ...NOTES, extraFiles: files };
+      fails([BASE, KANBAN, notes], WITH_NOTES, /memory-templates\/note\.md.*type/);
     }
   });
 
   it('fails on two files of one kind in one pack in different formats', () => {
-    fails([BASE, KANBAN, { id: 'blueprint/x', directives: ['a', 'b'],
-      extraFiles: { 'directives/b.md': '---\nid: b\nformat: 2\n---\n' } }],
-    ['methodology/kanban', 'blueprint/x'], /directives\/b\.md.*format 2/);
+    fails([BASE, KANBAN, shipping('blueprint/x', { directives: ['a', 'b'] },
+      { 'directives/a.md': directive('a'), 'directives/b.md': directive('b', 2) })],
+    WITH_X, /directives\/b\.md.*format 2/);
   });
 
   it('accepts two packs shipping one kind in two formats', () => {
-    plan([BASE, KANBAN, { id: 'blueprint/x', directives: ['a'] }, { id: 'blueprint/y', directives: ['b'],
-      manifest: { formats: { directive: 2 } }, extraFiles: { 'directives/b.md': '---\nid: b\nformat: 2\n---\n' } }],
-    ['methodology/kanban', 'blueprint/x', 'blueprint/y']);
+    const second: PackSpec = {
+      ...shipping('blueprint/y', { directives: ['b'] }, { 'directives/b.md': directive('b', 2) }),
+      manifest: { formats: { directive: 2 } },
+    };
+    plan([BASE, KANBAN, { id: 'blueprint/x', directives: ['a'] }, second],
+      [...WITH_X, 'blueprint/y']);
   });
 });
 
 describe('output: workflows.yaml (spec-001 §7.7)', () => {
   it('lists workflows in composition order, then each pack contents order', () => {
     const files = plan([BASE, KANBAN, { id: 'blueprint/b', workflows: ['z', 'y'] },
-      { id: 'blueprint/a', workflows: ['x', 'w'] }], ['methodology/kanban', 'blueprint/b', 'blueprint/a']);
+      { id: 'blueprint/a', workflows: ['x', 'w'] }],
+    ['methodology/kanban', 'blueprint/b', 'blueprint/a']);
+    const prefix = '  - workflows/built-in/';
     const include = (files.get('.wingfoil/workflows.yaml') ?? '').split('\n')
-      .filter((line) => line.startsWith('  - ')).map((line) => line.slice('  - workflows/built-in/'.length));
-    assert.deepEqual(include, ['sw-life-cycle.yaml', 'retrospective.yaml', 'delivery.yaml', 'x.yaml',
-      'w.yaml', 'z.yaml', 'y.yaml']);
+      .filter((line) => line.startsWith(prefix)).map((line) => line.slice(prefix.length));
+    assert.deepEqual(include, ['sw-life-cycle.yaml', 'retrospective.yaml', 'delivery.yaml',
+      'x.yaml', 'w.yaml', 'z.yaml', 'y.yaml']);
   });
 
   it('writes format and version first in every generated file', () => {
@@ -170,15 +204,14 @@ describe('output: workflows.yaml (spec-001 §7.7)', () => {
 
 describe('output: bytes (spec-001 §17)', () => {
   it('normalizes line endings, the byte order mark and the final newline', () => {
-    assert.equal(normalizeText('\uFEFFa\r\nb'), 'a\nb\n');
+    assert.equal(normalizeText('﻿a\r\nb'), 'a\nb\n');
     assert.equal(normalizeText('a\n\n'), 'a\n\n');
     assert.equal(normalizeText(''), '\n');
   });
 
   it('writes a CRLF asset with LF', () => {
-    const files = plan([BASE, KANBAN, { id: 'blueprint/x', directives: ['d'],
-      extraFiles: { 'directives/d.md': '---\r\nid: d\r\nformat: 1\r\n---\r\ntext' } }],
-    ['methodology/kanban', 'blueprint/x']);
-    assert.equal(files.get('.wingfoil/directives/built-in/d.md'), '---\nid: d\nformat: 1\n---\ntext\n');
+    const files = plan([BASE, KANBAN, shipping('blueprint/x', { directives: ['d'] },
+      { 'directives/d.md': '---\r\nid: d\r\nformat: 1\r\n---\r\ntext' })], WITH_X);
+    assert.equal(files.get('.wingfoil/directives/built-in/d.md'), `${directive('d')}text\n`);
   });
 });

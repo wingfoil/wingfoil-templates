@@ -182,7 +182,10 @@ function proseLines(text: string): string[] {
 }
 
 /** §10: the generated region, from the agents sections in composition order. */
-export function agentsRegion(sections: { pack: string; text: string }[], foundation: string): string {
+export function agentsRegion(
+  sections: { pack: string; text: string }[],
+  foundation: string,
+): string {
   const bodies = sections.map(({ pack, text }) => {
     const body = normalizeText(text).replace(/\n+$/, '');
     if (body.includes(REGION_BEGIN) || body.includes(REGION_END)) {
@@ -245,6 +248,7 @@ export function writeOutput(out: string, files: OutputFile[]): void {
       writeFileSync(path, file.text, 'utf8');
     }
   } catch (error) {
-    throw new OutputError(`cannot write ${out}: ${error instanceof Error ? error.message : String(error)}`);
+    const reason = error instanceof Error ? error.message : String(error);
+    throw new OutputError(`cannot write ${out}: ${reason}`);
   }
 }
