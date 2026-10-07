@@ -46,6 +46,13 @@ describe('resolve: the complete fixture', () => {
     assert.deepEqual(ids(full, request), order);
   });
 
+  it('places a blueprint after the one it requires, even when its id sorts first (Kahn)', () => {
+    passes([BASE, KANBAN, { id: 'blueprint/a', requires: ['base@^1', 'blueprint/z@^1'] },
+      { id: 'blueprint/m' }, { id: 'blueprint/z' }],
+    ['methodology/kanban', 'blueprint/a', 'blueprint/m'],
+    ['base', 'methodology/kanban', 'blueprint/m', 'blueprint/z', 'blueprint/a']);
+  });
+
   it('gives the same order whatever the order of the request', () => {
     const request = order.slice(1);
     const permuted = [5, 2, 8, 0, 7, 3, 1, 6, 4].map((index) => request[index] ?? '');
@@ -74,6 +81,27 @@ describe('resolve: requires and conflicts', () => {
   it('fails on a required pack missing from the tree', () => {
     fails([BASE, KANBAN, WEB], ['methodology/kanban', 'blueprint/web'],
       /blueprint\/api.*not found.*required by blueprint\/web/);
+  });
+
+  it('reports the same range error whatever the order of the request', () => {
+    const errors = [['methodology/kanban@^2', 'methodology/kanban@^3'],
+      ['methodology/kanban@^3', 'methodology/kanban@^2']].map((request) => {
+      let message = '';
+      withPackTree([BASE, KANBAN], (root) => {
+        try {
+          resolve(root, CATALOG, request);
+        } catch (error) {
+          message = String(error);
+        }
+      });
+      return message;
+    });
+    assert.notEqual(errors[0], '');
+    assert.equal(errors[0], errors[1]);
+  });
+
+  it('refuses a catalog foundation that is not a catalog pack id', () => {
+    fails([BASE, KANBAN], ['methodology/kanban'], /foundation/, { ...CATALOG, foundation: '../x' });
   });
 
   it('fails on a requested range the tree does not satisfy', () => {
@@ -129,7 +157,7 @@ describe('resolve: requires and conflicts', () => {
   it('fails on a phase manifest whose slot is not the middle of its id', () => {
     fails([BASE, KANBAN, { id: 'phase/inception/lean', workflows: ['inception'],
       manifest: { slot: 'release' } }], ['methodology/kanban', 'phase/inception/lean'],
-    /phase\/inception\/lean/);
+    /packs\/phase\/inception\/lean\/pack\.yaml:\d+:\d+: \/id pattern/);
   });
 
   it('fails on a manifest that is not schema-valid, naming its file', () => {
@@ -192,6 +220,18 @@ describe('resolve: cardinalities and slots', () => {
     });
   }
 
+  it('fails on a phase pack whose slot the catalog does not list', () => {
+    const catalog: Catalog = {
+      ...CATALOG,
+      axes: CATALOG.axes.map((axis) => (axis.name === 'phase'
+        ? { ...axis, slots: ['inception', 'specification', 'end-of-life'] }
+        : axis)),
+    };
+    fails([BASE, KANBAN, { id: 'phase/release/semrel', workflows: ['release'] }],
+      ['methodology/kanban', 'phase/release/semrel'],
+      /phase\/release\/semrel: slot release is not a slot of axis phase/, catalog);
+  });
+
   it('reads cardinality and required from the catalog', () => {
     const catalog: Catalog = {
       ...CATALOG,
@@ -209,6 +249,12 @@ describe('resolve: cardinalities and slots', () => {
 });
 
 describe('resolve: inventories', () => {
+  it('fails on a directory where a listed file is expected', () => {
+    fails([BASE, KANBAN, { id: 'blueprint/x', directives: ['d'], omitFiles: ['directives/d.md'],
+      extraFiles: { 'directives/d.md/inner': 'x\n' } }], ['methodology/kanban', 'blueprint/x'],
+    /blueprint\/x: directives\/d\.md is a directory/);
+  });
+
   const listed: [string, PackSpec][] = [
     ['fragments/dna.yaml', { id: 'blueprint/x', fragments: ['dna'] }],
     ['directives/d.md', { id: 'blueprint/x', directives: ['d'] }],

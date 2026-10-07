@@ -9,7 +9,7 @@ import type { AxisSpec, Catalog } from './catalog';
 import { isCatalogPackId } from './digest';
 import { listSorted } from './listing';
 import { parseEntry, satisfies } from './requirements';
-import { loadSchemas } from './schemas';
+import { repositorySchemas } from './schemas';
 import type { SchemaSet } from './schemas';
 import { YamlError, loadYamlFile } from './yaml-load';
 
@@ -42,6 +42,8 @@ export interface ResolvedPack {
   /** The pack directory, relative to the tree. */
   path: string;
   manifest: PackManifest;
+  /** The ids of `requires`, parsed once (spec-001 §6.3). */
+  requiredIds: string[];
 }
 
 /** Workflows only base may ship (spec-001 §9). */
@@ -68,6 +70,10 @@ function attempt<T>(fn: () => T): T {
   }
 }
 
+/**
+ * Symbolic links and the rest of the layout of spec-001 §6.1 are the lint's (task 9); here a pack
+ * is whatever packs/<id>/pack.yaml leads to.
+ */
 function loadPack(tree: string, id: string, schemas: SchemaSet, requiredBy: string): ResolvedPack {
   const path = `packs/${id}`;
   const file = `${path}/pack.yaml`;
@@ -87,15 +93,12 @@ function loadPack(tree: string, id: string, schemas: SchemaSet, requiredBy: stri
     throw new ResolveError(`${file}:${line}:${column}: ${schemaError.instancePath || '/'} `
       + `${schemaError.keyword}: ${schemaError.message}`);
   }
+  // The schema already ties axis, slot and name to the id (spec-001 §6.2); the directory is ours.
   const manifest = loaded.data as PackManifest;
   if (manifest.id !== id) {
     throw new ResolveError(`${path}: pack.yaml declares the id ${manifest.id}`);
   }
-  const segments = id.split('/');
-  if (manifest.axis === 'phase' && manifest.slot !== segments[1]) {
-    throw new ResolveError(`${id}: slot ${String(manifest.slot)} is not the slot of its id`);
-  }
-  return { id, version: manifest.version, path, manifest };
+  return { id, version: manifest.version, path, manifest, requiredIds: [] };
 }
 
 function parseRequest(request: string[]): Constraint[] {
@@ -116,6 +119,10 @@ function collect(tree: string, catalog: Catalog, requested: Constraint[], schema
   packs: Map<string, ResolvedPack>;
   constraints: Constraint[];
 } {
+  if (!isCatalogPackId(catalog.foundation)) {
+    throw new ResolveError(`catalog foundation ${JSON.stringify(catalog.foundation)} is not a `
+      + 'catalog pack id');
+  }
   const packs = new Map<string, ResolvedPack>();
   const constraints = requested.filter((constraint) => constraint.range !== '');
   const queue: { id: string; requiredBy: string }[] = [
@@ -135,6 +142,7 @@ function collect(tree: string, catalog: Catalog, requested: Constraint[], schema
         throw new ResolveError(`${pack.id} requires ${required.id} twice`);
       }
       seen.add(required.id);
+      pack.requiredIds.push(required.id);
       constraints.push({ id: required.id, range: required.range ?? '', from: pack.id });
       queue.push({ id: required.id, requiredBy: `required by ${pack.id}` });
     }
@@ -143,7 +151,10 @@ function collect(tree: string, catalog: Catalog, requested: Constraint[], schema
 }
 
 function checkRanges(packs: Map<string, ResolvedPack>, constraints: Constraint[]): void {
-  for (const constraint of constraints) {
+  // Sorted, so that the error reported does not depend on the order of the request.
+  const sorted = [...constraints].sort((a, b) =>
+    byBytes(a.id, b.id) || byBytes(a.from, b.from) || byBytes(a.range, b.range));
+  for (const constraint of sorted) {
     const pack = packs.get(constraint.id);
     if (pack !== undefined && !satisfies(pack.version, constraint.range)) {
       throw new ResolveError(`${pack.id} ${pack.version} does not satisfy ${constraint.range}, `
@@ -187,6 +198,12 @@ function checkAxes(catalog: Catalog, ordered: ResolvedPack[]): void {
       throw new ResolveError(`axis ${axis.name} takes one pack: ${names(members)}`);
     }
     if (axis.cardinality === 'one-per-slot') {
+      const slots = axis.slots ?? [];
+      const unknown = members.find((pack) => !slots.includes(pack.manifest.slot ?? ''));
+      if (unknown !== undefined) {
+        throw new ResolveError(`${unknown.id}: slot ${String(unknown.manifest.slot)} is not a slot `
+          + `of axis ${axis.name}`);
+      }
       for (const slot of axis.slots ?? []) {
         const filling = members.filter((pack) => pack.manifest.slot === slot);
         if (filling.length > 1) {
@@ -231,12 +248,18 @@ function checkSlots(catalog: Catalog, ordered: ResolvedPack[]): void {
   }
 }
 
-/** Files under a pack directory's inventory folders, relative to the pack. */
+/** Files under a pack directory's inventory folders, relative to the pack; no subdirectory. */
 function presentFiles(tree: string, pack: ResolvedPack): string[] {
   const dir = join(tree, pack.path);
   const files: string[] = [];
   for (const folder of ['fragments', 'directives', 'workflows', 'memory-templates', 'agents']) {
-    for (const entry of listSorted(join(dir, folder))) files.push(`${folder}/${entry.name}`);
+    for (const entry of listSorted(join(dir, folder))) {
+      if (entry.isDirectory) {
+        throw new ResolveError(`${pack.id}: ${folder}/${entry.name} is a directory; `
+          + `${folder}/ holds files only (spec-001 §6.1)`);
+      }
+      files.push(`${folder}/${entry.name}`);
+    }
   }
   return files;
 }
@@ -275,8 +298,7 @@ function checkInventory(tree: string, pack: ResolvedPack): void {
 function kahn(members: ResolvedPack[]): ResolvedPack[] {
   const inAxis = new Set(members.map((pack) => pack.id));
   const dependencies = new Map(members.map((pack) => [pack.id, new Set(
-    (pack.manifest.requires ?? []).map((entry) => entry.slice(0, entry.indexOf('@')))
-      .filter((id) => inAxis.has(id)),
+    pack.requiredIds.filter((id) => inAxis.has(id)),
   )]));
   const placed: ResolvedPack[] = [];
   let remaining = [...members].sort((a, b) => byBytes(a.id, b.id));
@@ -310,8 +332,7 @@ function order(catalog: Catalog, packs: Map<string, ResolvedPack>): ResolvedPack
   }
   const position = new Map(ordered.map((pack, index) => [pack.id, index]));
   for (const pack of ordered) {
-    for (const entry of pack.manifest.requires ?? []) {
-      const required = entry.slice(0, entry.indexOf('@'));
+    for (const required of pack.requiredIds) {
       if ((position.get(required) ?? -1) > (position.get(pack.id) ?? -1)) {
         throw new ResolveError(`${pack.id} requires ${required}, which comes later in the `
           + 'composition order (spec-001 §7.1)');
@@ -326,7 +347,7 @@ function order(catalog: Catalog, packs: Map<string, ResolvedPack>): ResolvedPack
  * entries; the foundation is added, and so is every pack required, transitively.
  */
 export function resolve(tree: string, catalog: Catalog, request: string[]): ResolvedPack[] {
-  const schemas = loadSchemas();
+  const schemas = repositorySchemas();
   const { packs, constraints } = collect(tree, catalog, parseRequest(request), schemas);
   checkRanges(packs, constraints);
   const byId = [...packs.values()].sort((a, b) => byBytes(a.id, b.id));

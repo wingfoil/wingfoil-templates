@@ -32,6 +32,14 @@ function describe(error: ErrorObject): string {
   return typeof name === 'string' ? `${message} (${name})` : message;
 }
 
+let shared: SchemaSet | undefined;
+
+/** The schemas of this repository, compiled once per process. */
+export function repositorySchemas(): SchemaSet {
+  shared ??= loadSchemas();
+  return shared;
+}
+
 export function loadSchemas(dir: string = SCHEMA_DIR): SchemaSet {
   const warnings: string[] = [];
   const record = (...args: unknown[]): void => {

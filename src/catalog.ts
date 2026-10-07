@@ -1,6 +1,6 @@
 // catalog.yaml (spec-001 §11): the axes, cardinalities and slots are read from it, never
 // hard-coded (§3). The order of `axes` is the composition order after base (§7.1).
-import { loadSchemas } from './schemas';
+import { repositorySchemas } from './schemas';
 import { loadYamlFile } from './yaml-load';
 
 export interface AxisSpec {
@@ -25,6 +25,7 @@ export interface Catalog {
   foundation: string;
   axes: AxisSpec[];
   slots: SlotSpec[];
+  /** The file as parsed, for checks that compare it with spec-001. */
   raw: Record<string, unknown>;
 }
 
@@ -43,7 +44,7 @@ interface RawSlot {
 
 export function loadCatalog(path: string): Catalog {
   const loaded = loadYamlFile(path, path);
-  const errors = loadSchemas().validate('catalog', loaded.data);
+  const errors = repositorySchemas().validate('catalog', loaded.data);
   if (errors.length > 0) {
     const first = errors[0];
     const where = first?.instancePath ?? '';
