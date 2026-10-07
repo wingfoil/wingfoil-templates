@@ -2,7 +2,7 @@
 id: task-006-fragment-merge-add-or-tighten-and-parameters
 type: task
 title: "Fragment merge (add or tighten) and parameters"
-status: in-progress
+status: in-review
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-005-eslint-set-up-type-aware-and-determinism-rules"]
 tags: ["tooling","W5","F3.2","F1.2"]
