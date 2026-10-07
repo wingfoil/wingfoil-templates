@@ -19,4 +19,5 @@ slots:
   end-of-life:   { included_by: sw-life-cycle, default: base, filled_by: phase }
 packs: []
 transitions: []
-presets: []
+presets:
+  - { id: golden, path: presets/golden.yaml }

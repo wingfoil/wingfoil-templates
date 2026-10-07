@@ -17,6 +17,7 @@
     "check:schemas": "node dist/src/check-schemas.js",
     "compose": "node dist/src/compose-cli.js",
     "digest": "node dist/src/digest-cli.js",
+    "validate": "node dist/src/validate-cli.js",
     "wingfoil": "wingfoil"
   },
   "devDependencies": {
