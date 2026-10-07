@@ -123,7 +123,38 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-006-merge`, run through `tooling-delivery` as `developer` (`code-quality`,
+`testing`, `determinism`), under `npm run lint`.
+
+- **`src/resolve.ts` (extended):** `PackManifest` gains `formats` and `parameters`; a resolved pack
+  keeps its loaded `pack.yaml` (`source`), for the source text of integer defaults (§18).
+- **`src/wingfoil-builtins.ts`:** the six built-in directive ids of WingFoil 0.2.2, with their
+  source file named.
+- **`src/parameters.ts`:**
+  - `collectParameters(packs)`: one declaring pack per name;
+  - value checks from the pack schema itself: the `then.properties.default` subschema of each
+    parameter type, compiled once, so a given value and a default obey one grammar; plus the
+    source-text check of integer defaults;
+  - `parameterScopes(packs)`: per pack, its own parameters and those of its transitive `requires`;
+  - `substitute(text, scope, file)`: one `replace` over `{{name}}` with names matching
+    `^[a-z][a-z0-9_]*$`, so a replacement is never scanned again; a name outside the scope fails.
+- **`src/merge.ts`:** the general rules of §7.2 over plain data, driven by a rule table per document
+  (`set` or `keyed` per path, `[]` standing for a list item); `dna` and `roles` tables from §7.3
+  and §7.4; the `approval_authority` and directive-id checks.
+- **`src/memory-merge.ts`:** §7.5 as a small state machine: types (defined by, path, id_pattern,
+  template, derives from `defaults` or not, own machine), `defaults` and `base`'s reference
+  sequence; `mergeMachine(A, incoming, reference)` implements the three sequence steps and the gate
+  rules; a tightening of `defaults` is applied to `defaults` and to every detached type that
+  derives from it.
+- **`src/compose-documents.ts`:** `composeDocuments(tree, catalog, request, values)`: resolve,
+  parameters, read and substitute every listed file, parse YAML files, check each fragment's
+  `format:` and absence of `version:`, merge in composition order. Returns the packs, the
+  substituted texts by output-relevant path, and `{ dna, roles, memory }`, each starting with
+  `format` and `version: 1`. Errors are `CompositionError`, naming the pack and the file.
+- **Tests,** red first: `tests/parameters.test.ts`, `tests/merge.test.ts`,
+  `tests/memory-merge.test.ts`, `tests/compose-documents.test.ts`; the §7.5 examples as fixture
+  trees under `tests/fixtures/merge/`, written by the pack-tree helper extended with fragments'
+  content and parameters.
 
 ## Execution Notes
 
