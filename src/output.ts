@@ -1,8 +1,8 @@
 // From a composition to files (spec-001 §7.6, §7.7, §9, §10, §17 step 6): the asset checks, the
 // generated workflows.yaml, the AGENTS.md generated region, and the bytes of every file.
 import {
-  existsSync, mkdirSync, mkdtempSync, readdirSync, renameSync, rmSync, rmdirSync, statSync,
-  writeFileSync,
+  chmodSync, existsSync, mkdirSync, mkdtempSync, readdirSync, renameSync, rmSync, rmdirSync,
+  statSync, writeFileSync,
 } from 'node:fs';
 import { dirname, join, resolve as resolvePath } from 'node:path';
 import { isScalar } from 'yaml';
@@ -261,6 +261,8 @@ export function writeOutput(out: string, files: OutputFile[]): void {
       mkdirSync(dirname(path), { recursive: true });
       writeFileSync(path, file.text, 'utf8');
     }
+    // mkdtemp creates the directory private (0700); --out gets the ordinary mode instead.
+    chmodSync(staging, 0o777 & ~process.umask());
     if (existsSync(out)) rmdirSync(out);
     renameSync(staging, out);
     staging = undefined;

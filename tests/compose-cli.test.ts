@@ -1,6 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { spawnSync } from 'node:child_process';
-import { cpSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  cpSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { describe, it } from 'node:test';
@@ -42,6 +44,7 @@ describe('npm run compose', () => {
       const out = join(dir, 'out');
       const result = run(['--tree', TREE, '--out', out, ...PARAMS, ...ENTRIES]);
       assert.equal(result.status, 0, result.stderr);
+      assert.equal(statSync(out).mode & 0o777, 0o777 & ~process.umask(), 'ordinary mode');
       const files = filesUnder(out);
       assert.deepEqual(files, filesUnder(EXPECTED));
       for (const file of files) {
@@ -68,6 +71,7 @@ describe('npm run compose', () => {
       const result = run(['--tree', tree, '--out', join(dir, 'out'), ...PARAMS, ...ENTRIES]);
       assert.equal(result.status, 1);
       assert.match(result.stderr, /not a valid catalog/);
+      assert.doesNotMatch(result.stderr, /\n {4}at /, 'a handled error, not a crash');
     });
   });
 
