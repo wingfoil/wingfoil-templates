@@ -57,9 +57,9 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    id equal to a WingFoil built-in fails.
 4. **Formats and identifiers (§5, §6.1):** each with a test: a workflow, a directive and a Memory
    template without `format:`, or with a format other than its pack's `formats` entry, fail; two
-   packs shipping one kind in two formats fail; a workflow whose `name`, or a directive whose `id`,
-   differs from its file stem fails; a Memory template's frontmatter `type`, when present, must equal
-   the stem.
+   packs shipping one kind in two formats fail; a workflow whose `name`, or a directive whose
+   `id`, differs from its file stem fails; a Memory template's frontmatter `type`, when present,
+   must equal the stem.
 5. **`workflows.yaml` (§7.7):** `format: 1`, `version: 1`, the include order of §7.7 tested with
    two packs shipping two workflows each, and the slot workflow at its filler's position.
 6. **AGENTS region (§10):** the markers of spec-001 §10, the sections in composition order with one
@@ -72,8 +72,8 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 8. **`npm run compose -- --tree <dir> --out <dir> [--param <name>=<value>]… <entry>…`:** writes
    `<out>/.wingfoil/` and `<out>/AGENTS.region.md`; values are read by their declared type
    (`integer` base-10, `boolean` `true`/`false`, otherwise text); exit 0, 1 on a composition or
-   resolution error, 2 on an I/O error or an `--out` directory that exists and is not empty, 3 on bad
-   usage. A test runs it on the fixture tree and compares with the golden output.
+   resolution error, 2 on an I/O error or an `--out` directory that exists and is not empty, 3 on
+   bad usage. A test runs it on the fixture tree and compares with the golden output.
 9. `npm audit` reports 0 vulnerabilities.
 
 ## Design
