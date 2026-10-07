@@ -2,20 +2,19 @@
 // tree's files, then every preset and the given entries, each composed twice and compared (F3.4).
 // The compatibility matrix joins it in plan-015 task 8. The report lines are stable: the release
 // evidence of task 11 reads them.
+import { existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 
 import { CatalogError, loadCatalog } from './catalog';
 import type { Catalog } from './catalog';
 import { findFiles, runCheckSchemas } from './check-schemas';
-import { composeTwice, type Compare } from './determinism';
+import { composeTwice, type DeterminismOptions } from './determinism';
 import { ResolveError, resolve } from './resolve';
 import { YamlError, loadYamlFile } from './yaml-load';
 
-export interface ValidateOptions {
-  /** Replaces the byte-for-byte comparison, so that tests can show a mismatch. */
-  compare?: Compare;
-}
+/** Replace the comparison or the compose command, so that tests can show a mismatch. */
+export type ValidateOptions = DeterminismOptions;
 
 export interface ValidateResult {
   code: number;
@@ -76,6 +75,10 @@ function declaredBy(tree: string, catalog: Catalog, entries: string[]): Set<stri
     .flatMap((pack) => Object.keys(pack.manifest.parameters ?? {})));
 }
 
+function count(n: number, noun: string): string {
+  return `${n} ${noun}${n === 1 ? '' : 's'}`;
+}
+
 function messageOf(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
@@ -93,23 +96,27 @@ export function runValidate(argv: string[], options: ValidateOptions = {}): Vali
   } catch (error) {
     return { code: 3, lines: [messageOf(error)] };
   }
+  if (!existsSync(args.tree) || !statSync(args.tree).isDirectory()) {
+    return { code: 2, lines: [`${args.tree}: not a directory`] };
+  }
 
   const schemas = runCheckSchemas(args.tree);
-  lines.push(`schemas: checked ${schemas.checked} files, ${schemas.messages.length} problems`);
+  lines.push(`schemas: checked ${count(schemas.checked, 'file')}, `
+    + `${count(schemas.messages.length, 'problem')}`);
   for (const message of schemas.messages) fail(schemas.code, message);
   const broken = new Set(schemas.messages.map((message) => message.slice(0, message.indexOf(':'))));
 
   const compositions: Composition[] = [];
-  const presets: string[] = [];
-  try {
-    const files = findFiles(args.tree).filter((found) => found.kind === 'preset');
-    for (const { file } of files) {
-      if (broken.has(file)) continue;
-      presets.push(file);
+  // A composition whose packs could not be read leaves its --param names unjudged.
+  let unjudged = broken.size > 0;
+  for (const { file } of findFiles(args.tree).filter((found) => found.kind === 'preset')) {
+    if (broken.has(file)) continue;
+    try {
       compositions.push(presetComposition(args.tree, file));
+    } catch (error) {
+      unjudged = true;
+      fail(error instanceof YamlError && error.reason !== 'syntax' ? 2 : 1, messageOf(error));
     }
-  } catch (error) {
-    fail(error instanceof YamlError && error.reason !== 'syntax' ? 2 : 1, messageOf(error));
   }
   if (args.entries.length > 0) {
     compositions.push({ label: 'entries', entries: args.entries, preset: {} });
@@ -124,6 +131,7 @@ export function runValidate(argv: string[], options: ValidateOptions = {}): Vali
       const invalid = error instanceof CatalogError
         || (error instanceof YamlError && error.reason === 'syntax');
       fail(invalid ? 1 : 2, `catalog.yaml: ${messageOf(error)}`);
+      unjudged = true;
     }
   }
   let composed = 0;
@@ -142,19 +150,20 @@ export function runValidate(argv: string[], options: ValidateOptions = {}): Vali
         params[name] = value;
       }
     } catch (error) {
+      unjudged = true;
       fail(1, `${label}: ${messageOf(error)}`);
       continue;
     }
     const result = composeTwice({ tree: args.tree, entries: composition.entries, params },
-      options.compare);
+      options);
     if (result.code !== 0) {
       fail(result.code, `${label}: ${result.message}`);
       continue;
     }
     composed += 1;
-    lines.push(`${label}: composed twice, ${result.files} files, ${result.message}`);
+    lines.push(`${label}: composed twice, ${count(result.files, 'file')}, ${result.message}`);
   }
-  for (const name of args.params.keys()) {
+  for (const name of unjudged ? [] : args.params.keys()) {
     if (!used.has(name)) fail(1, `--param ${name}: no composition declares it`);
   }
   lines.push(`compositions: ${composed}`);

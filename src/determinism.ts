@@ -33,7 +33,14 @@ const RUNNER = [
   'process.exitCode = outcome.code;',
 ].join('\n');
 
-const CLI = join(__dirname, 'compose-cli.js');
+/** The compose command of task-007; tests give another module exporting runCompose. */
+const COMPOSE_CLI = join(__dirname, 'compose-cli.js');
+
+export interface DeterminismOptions {
+  compare?: Compare;
+  /** A module exporting `runCompose(argv)`, run in each child process. */
+  cli?: string;
+}
 
 interface Run {
   cwd: string;
@@ -42,49 +49,75 @@ interface Run {
   env: NodeJS.ProcessEnv;
 }
 
-function composeOnce(request: CompositionRequest, run: Run): { status: number; stderr: string } {
+interface Once {
+  code: number;
+  message: string;
+}
+
+function composeOnce(request: CompositionRequest, run: Run, cli: string): Once {
   const params = Object.entries(request.params).flatMap(([name, value]) => ['--param',
     `${name}=${value}`]);
   // The tree is absolute: the second run works from another directory on purpose.
-  const args = ['-e', RUNNER, CLI, run.umask, '--tree', resolvePath(request.tree),
+  const args = ['-e', RUNNER, cli, run.umask, '--tree', resolvePath(request.tree),
     '--out', run.out, ...params, ...request.entries];
   const result = spawnSync(process.execPath, args, {
     cwd: run.cwd, env: run.env, encoding: 'utf8',
   });
-  return { status: result.status ?? 2, stderr: result.stderr.trim() };
+  if (result.error !== undefined) {
+    return { code: 2, message: `cannot run: ${result.error.message}` };
+  }
+  if (result.signal !== null) return { code: 2, message: `killed by ${result.signal}` };
+  const message = (result.stderr ?? '').trim();
+  return { code: result.status === 0 ? 0 : result.status === 2 ? 2 : 1, message };
 }
 
-export function composeTwice(request: CompositionRequest, compare: Compare = compareTrees):
-DeterminismResult {
-  const root = mkdtempSync(join(tmpdir(), 'determinism-'));
+/**
+ * Composes twice, one run after the other, and compares. The second run changes every input a
+ * composer must not read: clock zone, locale, home, temporary directory, umask, working directory,
+ * and the output path, given relative.
+ */
+export function composeTwice(
+  request: CompositionRequest,
+  options: DeterminismOptions = {},
+): DeterminismResult {
+  const compare = options.compare ?? compareTrees;
+  let root: string | undefined;
   try {
-    const home = join(root, 'home');
-    const elsewhere = join(root, 'elsewhere');
-    mkdirSync(home);
-    mkdirSync(elsewhere);
+    root = mkdtempSync(join(tmpdir(), 'determinism-'));
+    for (const dir of ['home', 'elsewhere', 'tmp']) mkdirSync(join(root, dir));
     const first = join(root, 'first');
     const runs: Run[] = [
       { cwd: process.cwd(), out: first, umask: '022', env: process.env },
       {
-        cwd: elsewhere,
+        cwd: join(root, 'elsewhere'),
         out: join('..', 'second'),
         umask: '077',
-        env: { ...process.env, TZ: 'Pacific/Kiritimati', LC_ALL: 'C', HOME: home },
+        env: {
+          ...process.env,
+          TZ: 'Pacific/Kiritimati',
+          LC_ALL: 'tr_TR.UTF-8',
+          LANG: 'tr_TR.UTF-8',
+          HOME: join(root, 'home'),
+          TMPDIR: join(root, 'tmp'),
+        },
       },
     ];
     for (const run of runs) {
-      const result = composeOnce(request, run);
-      if (result.status !== 0) {
-        return { code: result.status === 2 ? 2 : 1, files: 0, message: result.stderr };
+      const result = composeOnce(request, run, options.cli ?? COMPOSE_CLI);
+      if (result.code !== 0) {
+        return { code: result.code, files: 0, message: result.message.split(root).join('<tmp>') };
       }
     }
-    const second = join(root, 'second');
-    const differences = compare(first, second);
+    const differences = compare(first, join(root, 'second'));
     if (differences.length > 0) {
       return { code: 1, files: 0, message: `not deterministic: ${differences.join('; ')}` };
     }
     return { code: 0, files: listTree(first).length, message: 'byte-identical' };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    const shown = root === undefined ? message : message.split(root).join('<tmp>');
+    return { code: 2, files: 0, message: shown };
   } finally {
-    rmSync(root, { recursive: true, force: true });
+    if (root !== undefined) rmSync(root, { recursive: true, force: true });
   }
 }

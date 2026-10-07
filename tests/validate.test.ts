@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { describe, it } from 'node:test';
@@ -61,7 +61,7 @@ describe('npm run validate', () => {
   it('validates this repository: one file, no composition', () => {
     const result = runValidate(['--tree', REPO_ROOT]);
     assert.equal(result.code, 0, result.lines.join('\n'));
-    assert.ok(result.lines.includes('schemas: checked 1 files, 0 problems'));
+    assert.ok(result.lines.includes('schemas: checked 1 file, 0 problems'));
     assert.ok(result.lines.includes('compositions: 0'));
   });
 
@@ -107,6 +107,62 @@ describe('npm run validate', () => {
     const result = runValidate(['--tree', TREE, ...NAME, '--param', 'nope=1']);
     assert.equal(result.code, 1);
     assert.ok(result.lines.some((line) => /nope/.test(line)));
+  });
+
+  it('exits 2 on a tree that does not exist', () => {
+    assert.equal(runValidate(['--tree', join(TREE, 'nope')]).code, 2);
+  });
+
+  it('does not claim a --param is undeclared when a composition could not be read', () => {
+    withTree((tree) => replaceIn(join(tree, 'presets', 'golden.yaml'), 'stage/production@^1',
+      'stage/production@^2'), (tree) => {
+      const result = runValidate(['--tree', tree, ...NAME]);
+      assert.ok(!result.lines.some((line) => line.includes('no composition declares')),
+        result.lines.join('\n'));
+    });
+  });
+
+  it('passes the preset values to the composition', () => {
+    withTree((tree) => replaceIn(join(tree, 'presets', 'golden.yaml'), 'wip_limit: 2',
+      'wip_limit: two'), (tree) => {
+      const result = runValidate(['--tree', tree, ...NAME]);
+      assert.equal(result.code, 1);
+      assert.ok(result.lines.some((line) => /presets\/golden\.yaml.*wip_limit/.test(line)),
+        result.lines.join('\n'));
+    });
+  });
+
+  it('gives each composition only the --param names its packs declare', () => {
+    withTree((tree) => {
+      replaceIn(join(tree, 'packs', 'blueprint', 'web-service', 'pack.yaml'), 'contents:',
+        'parameters:\n  api_prefix: { type: string, default: "/api", description: "x" }\n'
+          + 'contents:');
+      writeFileSync(join(tree, 'presets', 'small.yaml'), 'format: 1\nid: small\ntitle: "Small"\n'
+        + 'description: "Kanban only."\npacks:\n  - methodology/kanban@^1\n');
+    }, (tree) => {
+      const result = runValidate(['--tree', tree, ...NAME, '--param', 'api_prefix=/v2']);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      assert.ok(result.lines.includes('compositions: 2'));
+    });
+  });
+
+  it('exits with the highest code reached', (context) => {
+    if (process.getuid?.() === 0) {
+      context.skip('permissions do not apply to root');
+      return;
+    }
+    withTree(() => undefined, (tree) => {
+      const stage = join(tree, 'packs', 'stage');
+      chmodSync(stage, 0o000);
+      try {
+        const result = runValidate(['--tree', tree, ...NAME]);
+        assert.equal(result.code, 2, result.lines.join('\n'));
+        assert.ok(result.lines.some((line) =>
+          /presets\/golden\.yaml.*stage\/production/.test(line)));
+      } finally {
+        chmodSync(stage, 0o755);
+      }
+    });
   });
 
   it('exits 3 on bad usage', () => {
