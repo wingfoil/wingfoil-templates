@@ -2,7 +2,7 @@
 id: task-005-eslint-set-up-type-aware-and-determinism-rules
 type: task
 title: "ESLint set-up: type-aware and determinism rules"
-status: approved
+status: done
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-004-pack-resolution-ranges-requires-and-conflicts-cardinalities-slots-inventories-order-real-catalog"]
 tags: ["tooling","W5","lint"]
