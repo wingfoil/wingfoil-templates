@@ -1,0 +1,17 @@
+format: 1
+id: blueprint/web-service
+axis: blueprint
+name: web-service
+title: "web-service"
+description: "Golden fixture pack blueprint/web-service."
+version: 1.0.0
+formats:
+  dna: 1
+  memory: 1
+  memory-template: 1
+requires_capabilities: []
+requires:
+  - base@^1
+contents:
+  fragments: [dna, memory]
+  memory_templates: [endpoint]

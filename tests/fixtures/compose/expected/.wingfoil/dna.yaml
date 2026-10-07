@@ -1,0 +1,39 @@
+format: 1
+version: 1
+project:
+  name: Golden
+  license: MIT
+modules:
+  - name: docs
+    path: docs
+    description: Documentation
+  - name: api
+    path: src/api
+paths:
+  docs:
+    - README.md
+    - docs
+    - api.md
+stacks:
+  technologies:
+    - name: Markdown
+      category: format
+  methodologies: []
+team:
+  members:
+    - name: Approver
+      roles:
+        - approver
+  roles:
+    - name: approver
+      description: The human gate.
+    - name: developer
+      description: Writes the code.
+    - name: reviewer
+      description: Reviews every change.
+  agents:
+    - name: agent
+      executes_as:
+        - developer
+        - reviewer
+      approval_authority: false

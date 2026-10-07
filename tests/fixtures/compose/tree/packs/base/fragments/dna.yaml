@@ -1,0 +1,27 @@
+format: 1
+project:
+  name: "{{project_name}}"
+  license: MIT
+modules:
+  - name: docs
+    path: docs
+paths:
+  docs: [README.md, docs]
+stacks:
+  technologies:
+    - name: Markdown
+      category: format
+  methodologies: []
+team:
+  members:
+    - name: Approver
+      roles: [approver]
+  roles:
+    - name: approver
+      description: "The human gate."
+    - name: developer
+      description: "Writes the code."
+  agents:
+    - name: agent
+      executes_as: [developer]
+      approval_authority: false

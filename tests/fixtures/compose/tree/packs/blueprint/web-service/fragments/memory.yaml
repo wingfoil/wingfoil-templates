@@ -1,0 +1,6 @@
+format: 1
+types:
+  endpoint:
+    path: docs/endpoints/{id}.md
+    id_pattern: "ep-{n}-{slug}"
+    template: { file: memory/templates/built-in/endpoint.md }

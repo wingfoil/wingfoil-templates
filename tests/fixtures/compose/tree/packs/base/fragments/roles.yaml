@@ -1,0 +1,4 @@
+format: 1
+assignments:
+  developer: [base-rules, testing]
+global: [security]

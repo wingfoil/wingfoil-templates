@@ -1,0 +1,50 @@
+format: 1
+version: 1
+defaults:
+  states:
+    sequence:
+      - draft
+      - pending
+      - approved
+      - archived
+    gates:
+      pending:
+        reject: draft
+types:
+  task:
+    path: docs/memory/task/{id}.md
+    id_pattern: task-{n}-{slug}
+    template:
+      file: memory/templates/built-in/task.md
+    states:
+      sequence:
+        - draft
+        - pending
+        - backlog
+        - ready
+        - in-progress
+        - in-review
+        - qa
+        - approved
+        - done
+      gates:
+        pending:
+          reject: draft
+        in-review:
+          reject: in-progress
+        ready:
+          reject: backlog
+  adr:
+    path: docs/memory/adr/{id}.md
+    id_pattern: adr-{n}-{slug}
+    template:
+      file: memory/templates/built-in/adr.md
+      frontmatter:
+        required:
+          - id
+          - title
+  endpoint:
+    path: docs/endpoints/{id}.md
+    id_pattern: ep-{n}-{slug}
+    template:
+      file: memory/templates/built-in/endpoint.md

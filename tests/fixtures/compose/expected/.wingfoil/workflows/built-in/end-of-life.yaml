@@ -1,0 +1,6 @@
+format: 1
+name: end-of-life
+kind: sub
+version: 1
+phases:
+  - name: default

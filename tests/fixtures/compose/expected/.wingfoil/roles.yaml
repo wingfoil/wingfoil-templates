@@ -1,0 +1,9 @@
+format: 1
+version: 1
+assignments:
+  developer:
+    - base-rules
+    - testing
+    - wip-limits
+global:
+  - security

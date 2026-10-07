@@ -1,0 +1,16 @@
+format: 1
+id: team-mode/agent-first
+axis: team-mode
+name: agent-first
+title: "agent-first"
+description: "Golden fixture pack team-mode/agent-first."
+version: 1.0.0
+formats:
+  dna: 1
+  memory: 1
+requires_capabilities: []
+requires:
+  - base@^1
+contents:
+  fragments: [dna, memory]
+  agents_section: true

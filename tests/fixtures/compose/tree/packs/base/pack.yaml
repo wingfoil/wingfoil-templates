@@ -1,0 +1,23 @@
+format: 1
+id: base
+name: base
+title: "base"
+description: "Golden fixture pack base."
+version: 1.0.0
+formats:
+  dna: 1
+  roles: 1
+  memory: 1
+  workflow: 1
+  directive: 1
+  memory-template: 1
+requires_capabilities: []
+parameters:
+  project_name: { type: string, description: "The project name, dna.yaml project.name" }
+  adr_path: { type: path, default: "docs/memory/adr/{id}.md", description: "Where ADRs live" }
+contents:
+  fragments: [dna, roles, memory]
+  directives: [base-rules]
+  workflows: [sw-life-cycle, inception, specification, release, end-of-life, retrospective]
+  memory_templates: [task, adr]
+  agents_section: true

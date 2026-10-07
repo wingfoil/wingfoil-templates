@@ -1,0 +1,7 @@
+format: 1
+types:
+  task:
+    states:
+      sequence: [draft, pending, backlog, ready, in-progress, in-review, approved, done]
+      gates:
+        ready: { reject: backlog }
