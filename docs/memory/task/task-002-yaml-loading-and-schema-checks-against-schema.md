@@ -44,17 +44,18 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
      digest), §12 (`compat.yaml`), §14 (transition) and §15 (preset), and a `base` `pack.yaml`;
    - invalid, at least: an axis that does not match the id; a missing `base` requirement; slot
      `operations`; an `axis` on `base`; a pre-release version; a `..` path; a `status` in
-     `pack.yaml`; an `active` catalog pack without versions; a hand-written open range; `compat.yaml`
-     without `format_key`; a missing `format`.
+     `pack.yaml`; an `active` catalog pack without versions; a hand-written open range;
+     `compat.yaml` without `format_key`; a missing `format`.
 
    Every valid fixture passes; every invalid fixture fails, and its test names the expected schema
    keyword and instance path.
 5. **Errors** are reported as `<file>:<line>:<column>: <instance path> <message>`, the position
    being the offending value's, sorted by file, line and column.
-6. **`npm run check:schemas`** checks every file of a known kind in the repository: `packs/**/pack.yaml`,
-   `catalog.yaml`, `compat.yaml`, `presets/*.yaml`, `transitions/*.yaml`, read in sorted order. It
-   exits 0 on this repository and prints how many files it checked (0 today). A test runs it on a
-   temporary tree with one invalid file: exit 1 and the error line. Unreadable files exit 2.
+6. **`npm run check:schemas`** checks every file of a known kind in the repository:
+   `packs/**/pack.yaml`, `catalog.yaml`, `compat.yaml`, `presets/*.yaml`, `transitions/*.yaml`, read
+   in sorted order. It exits 0 on this repository and prints how many files it checked (0 today).
+   A test runs it on a temporary tree with one invalid file: exit 1 and the error line.
+   Unreadable files exit 2.
 7. `npm audit` reports 0 vulnerabilities.
 
 ## Design
