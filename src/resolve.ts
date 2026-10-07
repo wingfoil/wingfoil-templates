@@ -12,6 +12,7 @@ import { parseEntry, satisfies } from './requirements';
 import { repositorySchemas } from './schemas';
 import type { SchemaSet } from './schemas';
 import { YamlError, loadYamlFile } from './yaml-load';
+import type { LoadedYaml } from './yaml-load';
 
 /** A composition cannot be resolved; the message names the packs involved. */
 export class ResolveError extends Error {}
@@ -24,6 +25,13 @@ export interface PackContents {
   agents_section?: boolean;
 }
 
+/** A parameter declaration (spec-001 §8.1). */
+export interface ParameterDeclaration {
+  type: 'string' | 'integer' | 'boolean' | 'path' | 'pattern';
+  default?: unknown;
+  description: string;
+}
+
 /** The fields of pack.yaml the composer reads (spec-001 §6.2); the schema has checked them. */
 export interface PackManifest {
   id: string;
@@ -31,8 +39,10 @@ export interface PackManifest {
   name: string;
   slot?: string;
   version: string;
+  formats: Record<string, number>;
   requires?: string[];
   conflicts?: string[];
+  parameters?: Record<string, ParameterDeclaration>;
   contents: PackContents;
 }
 
@@ -44,6 +54,8 @@ export interface ResolvedPack {
   manifest: PackManifest;
   /** The ids of `requires`, parsed once (spec-001 §6.3). */
   requiredIds: string[];
+  /** pack.yaml as loaded, with the source text of each value (spec-001 §18). */
+  source: LoadedYaml;
 }
 
 /** Workflows only base may ship (spec-001 §9). */
@@ -98,7 +110,7 @@ function loadPack(tree: string, id: string, schemas: SchemaSet, requiredBy: stri
   if (manifest.id !== id) {
     throw new ResolveError(`${path}: pack.yaml declares the id ${manifest.id}`);
   }
-  return { id, version: manifest.version, path, manifest, requiredIds: [] };
+  return { id, version: manifest.version, path, manifest, requiredIds: [], source: loaded };
 }
 
 function parseRequest(request: string[]): Constraint[] {
@@ -264,7 +276,8 @@ function presentFiles(tree: string, pack: ResolvedPack): string[] {
   return files;
 }
 
-function listedFiles(contents: PackContents): string[] {
+/** The files a pack's inventory lists, relative to the pack (spec-001 §6.4). */
+export function listedFiles(contents: PackContents): string[] {
   return [
     ...(contents.fragments ?? []).map((name) => `fragments/${name}.yaml`),
     ...(contents.directives ?? []).map((name) => `directives/${name}.md`),

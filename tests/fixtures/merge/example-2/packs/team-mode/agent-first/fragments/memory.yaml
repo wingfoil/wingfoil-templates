@@ -1,0 +1,6 @@
+# spec-001 §7.5, example 2 (states illustrative, as in the spec).
+format: 1
+types:
+  adr:
+    states:
+      sequence: [draft, pending, ai-review, approved]
