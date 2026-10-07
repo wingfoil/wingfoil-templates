@@ -58,8 +58,8 @@ adr-003 do not change.
   directive).
 
 **Trial** (plan-019, 2026-10-07, scratch clone of `main` at `ba4757d`):
-- about 95 packages added to the 104 of the lockfile; `npm audit`: 0 vulnerabilities; registry
-  signatures verified; licenses MIT;
+- 85 packages added to the 104 of the lockfile (189 in all); `npm audit`: 0 vulnerabilities;
+  registry signatures verified; licenses MIT;
 - first run with `recommendedTypeChecked`: `src/` is clean; `tests/` has 17
   `no-floating-promises` errors, all on `describe` and `it`, which the known-safe-calls option
   covers.

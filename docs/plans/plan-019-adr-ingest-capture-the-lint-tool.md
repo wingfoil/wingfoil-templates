@@ -38,11 +38,15 @@ The `approve` phase that follows is the approver's.
 
 - 2026-10-07, step 1 (scratch clone of `main` at `ba4757d`):
   - `eslint` 10.12.0, `@eslint/js` 10.0.1, `typescript-eslint` 8.71.1 (peer `typescript >=4.8.4
-    <6.1.0`, so 6.0.3 is supported): about 95 packages on top of the current 104; `npm audit` 0
-    vulnerabilities; registry signatures verified.
+    <6.1.0`, so 6.0.3 is supported): 85 packages on top of the current 104 (189 in all, counted in
+    the lockfile); `npm audit` 0 vulnerabilities; registry signatures verified.
   - `eslint` 10 declares Node.js `^20.19.0 || ^22.13.0 || >=24`, and `typescript-eslint` 8.71.1
     pulls `eslint-visitor-keys` 5.0.1 with the same range, so even `eslint` 9.39.5 gives an
     `EBADENGINE` warning on 22.12.0. With `eslint` 9.39.5 on Node.js 22.12.0, `npm ci` warns but
     exits 0, and the lint runs.
   - First run with `recommendedTypeChecked`: 17 errors, all `no-floating-promises` on the
     `describe` and `it` calls of `node:test`; `src/` is clean.
+  - The repository run was repeated with the decided versions (`eslint` 10.12.0): same result,
+    `src/` clean, 17 `no-floating-promises` errors in `tests/`.
+- 2026-10-07: adr-004 filled and submitted, `pending`. The package count was corrected from "about
+  95" to 85 right after submit, before the approver's review.
