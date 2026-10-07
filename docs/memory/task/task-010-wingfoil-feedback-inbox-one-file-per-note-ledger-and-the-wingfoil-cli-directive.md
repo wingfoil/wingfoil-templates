@@ -102,7 +102,21 @@ the README's rules, source key, last sync line and ledger columns; `W-nn` entry 
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-010-feedback-notes`, run through `tooling-delivery` as `developer`.
+
+- **Note body:** a first line "Formerly T<n>." (with the archive-only ids, qualified), then
+  `## Observed` and `## Expected`, carrying the old note's text: what WingFoil does or lacks, and
+  what this repository needs or proposes. A note about the CLI's behaviour gives the command, its
+  output and the version.
+- **Kinds:** `defect` for wrong behaviour (T11); `gap` for a missing capability (T1, T4, T6, T7,
+  T16, T18, F-019, F-020); `request` for a proposal or a dependency (T2, T3, T5, T8, T9, T10, T12,
+  T13, T14, T15, T17, F-021).
+- **`wingfoil_version`:** `0.2.2-1778-g30f06016` for the notes written from the analysis at that
+  commit (T1–T10, T12–T14), `0.2.2` for those observed on the released CLI (T11, T15–T18, F-019 to
+  F-021).
+- **Order of commits:** the 21 notes and the README with its ledger; the test; the directive and
+  the configuration; the deletion of the old file, last.
+- The README's Context section takes D1–D6, the old header, dl-138's mapping and open question 6.
 
 ## Execution Notes
 
