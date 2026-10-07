@@ -172,3 +172,4 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   `docs/notes/` stays untracked); task-010 splits the notes into one file per note with a ledger
   (S4a, R4) and replaces the `wingfoil-feedback` directive with `wingfoil-cli` (S4b). W6 resumes
   after them.
+- 2026-10-07: task-009 (inbox versioned, M1 S1) done, merged `ceffa55`, pushed.

@@ -57,3 +57,4 @@ added by name.
 - Review (a subagent with its own context): approve. It read the whole file for anything unfit for
   a public repository and found none. Its nit, the open questions numbered 5, 7, 6, is left to the
   split of task-010, since this commit keeps the file byte-identical.
+- 2026-10-07: approved by the approver; merged into `main` with `--no-ff` (`ceffa55`) and pushed.
