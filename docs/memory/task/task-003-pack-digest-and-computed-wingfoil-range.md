@@ -2,7 +2,7 @@
 id: task-003-pack-digest-and-computed-wingfoil-range
 type: task
 title: "Pack digest and computed WingFoil range"
-status: pending
+status: backlog
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-002-yaml-loading-and-schema-checks-against-schema"]
 tags: ["tooling","W5","F3.2"]
