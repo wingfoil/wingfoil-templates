@@ -1,0 +1,11 @@
+# expect: required /
+id: prototype-to-production
+from: stage/prototype
+to: stage/production
+formats: {}
+requires_capabilities: [stage-transitions]
+pre_checks:
+  - { id: approver-declared, description: "dna.yaml team.members has at least one approver." }
+actions:
+  - { id: swap-stage-overlay, description: "Replace stage/prototype with stage/production." }
+  - { id: record-decision, description: "Create a decision-log recording the transition." }

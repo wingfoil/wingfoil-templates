@@ -1,0 +1,13 @@
+# spec-001 §15 example.
+format: 1
+id: startup-mvp
+title: "Startup MVP"
+description: "Kanban, agent-first, a web service, Lean Inception, MVP stage."
+profile: "small team building a first product"
+packs:
+  - methodology/kanban@^1
+  - team-mode/agent-first@^1
+  - blueprint/web-service@^1
+  - phase/inception/lean-inception@^1
+  - stage/mvp@^1
+parameters: {}
