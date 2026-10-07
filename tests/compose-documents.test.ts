@@ -138,6 +138,22 @@ describe('composeDocuments: parameters (spec-001 §8)', () => {
     assert.equal((result.dna['project'] as Doc)['name'], 'Demo');
   });
 
+  const invalid: [string, Doc, RegExp][] = [
+    ['a name breaking ^[a-z][a-z0-9_]*$',
+      { Bad: { type: 'string', description: 'x', default: 'a' } },
+      /blueprint\/p.*Bad|Bad.*blueprint\/p|parameters/],
+    ['a declaration without description', { wip: { type: 'integer', default: 3 } },
+      /blueprint\/p.*description|description/],
+    ['a default that breaks its type', { dir: { type: 'path', description: 'x', default: '/etc' } },
+      /blueprint\/p/],
+  ];
+  for (const [name, parameters, pattern] of invalid) {
+    it(`fails on ${name}`, () => {
+      fails([BASE_M, KANBAN, declaring(parameters)], ['methodology/kanban', 'blueprint/p'], pattern,
+        NAME);
+    });
+  }
+
   it('fails on a required parameter without a value, naming it and its pack', () => {
     fails([BASE_M, KANBAN], ['methodology/kanban'], /project_name.*base/);
   });
