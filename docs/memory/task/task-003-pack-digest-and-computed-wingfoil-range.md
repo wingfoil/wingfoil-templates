@@ -122,3 +122,24 @@ Branch `task/task-003-pack-digest-and-computed-wingfoil-range`, run through `too
   that confirmed the §13 test vector: a `--repo` option, id and ref validation, the prefix-sibling
   and nested-order cases, `-z` parsing, deterministic fixture recipes, a check for git isolation,
   the transition interface, the missing range cases, exit code 3 for bad usage.
+- 2026-10-07, build on the task branch, as `developer`: `08696ba` digests, `14ef7b9` range,
+  `2a8f253` `digest` command, `e5940a1` review fixes.
+  - Red first: with stubs, 30 of the new tests failed; the others were characterizations the stubs
+    already met (refusals returning `false`, the `""` range).
+  - Acceptance 1–8 pass from a clean clone at `e5940a1` on Node.js 22.21.0 / npm 11.6.2 and on the
+    floor 22.12.0 / npm 10.9.0: 163 tests pass (none skipped), `check:pins`, `check:schemas` and
+    `npm audit` clean, lockfile unchanged. The §13 vector is reproduced, and `npm run digest`
+    equals the §13 reference command on a test repository.
+- Deviations from the Design:
+  - `runGit` runs git in an environment of its own (`gitEnvironment`): every `GIT_*` variable of
+    the caller dropped, `GIT_CONFIG_NOSYSTEM=1`, `GIT_CONFIG_GLOBAL` set to the null device, replace
+    objects disabled. So the digest depends only on the repository's objects, also from a git hook;
+  - `transitionDigest` accepts only `transitions/<id>.yaml`, with the id grammar written in the
+    code: the transition schema's `id` is the content's, not the path's;
+  - the `--end-of-options` placement is tested on the argument list (`revParseArgs`), since git
+    already refuses refs that start with `-`.
+- Review (a subagent with its own context): request changes, one blocking: the caller's
+  environment reached git, and a decoy `GIT_DIR`, a `refs/replace` entry or pathspec-magic variables
+  changed or broke the digest (reproduced). Should-fix: a prefix check on listed paths, stricter
+  `cat-file --batch` parsing, test isolation, the `--end-of-options` test. All fixed in `e5940a1`
+  with tests; the re-review repeated the reproductions against the built code and approved.
