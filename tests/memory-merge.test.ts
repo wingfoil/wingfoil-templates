@@ -363,3 +363,46 @@ types:
       ['draft', 'pending', 'backlog', 'in-progress', 'in-review', 'approved', 'done']);
   });
 });
+
+describe('memory: review cases', () => {
+  it('dedupes required fields, at definition and when tightening', () => {
+    const doc = compose(['blueprint/x', `
+types:
+  service:
+    template:
+      file: memory/templates/built-in/service.md
+      frontmatter: { required: [id, id] }
+    path: docs/{id}.md
+    id_pattern: "s-{n}"
+`], ['stage/x',
+      'types:\n  service:\n    template:\n      frontmatter: { required: [id, owner, owner] }\n']);
+    const service = (doc['types'] as Record<string, Doc>)['service'] as Doc;
+    const frontmatter = (service['template'] as Doc)['frontmatter'] as Doc;
+    assert.deepEqual(frontmatter['required'], ['id', 'owner']);
+  });
+
+  it('keeps the defining fragment key order, and an empty frontmatter', () => {
+    const doc = compose(['blueprint/x', `
+types:
+  service:
+    template: { frontmatter: {}, file: memory/templates/built-in/service.md }
+    id_pattern: "s-{n}"
+    path: docs/{id}.md
+`]);
+    const service = (doc['types'] as Record<string, Doc>)['service'] as Doc;
+    assert.deepEqual(Object.keys(service), ['template', 'id_pattern', 'path']);
+    assert.deepEqual(service['template'], {
+      frontmatter: {}, file: 'memory/templates/built-in/service.md',
+    });
+  });
+
+  it('refuses a type without states when no pack defined defaults', () => {
+    assert.throws(() => mergeMemory([{ pack: 'base', data: parse(`
+types:
+  adr:
+    path: docs/{id}.md
+    id_pattern: "a-{n}"
+    template: { file: memory/templates/built-in/adr.md }
+`) as Doc }], 'base'), /adr.*defaults/);
+  });
+});

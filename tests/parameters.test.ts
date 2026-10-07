@@ -64,3 +64,10 @@ describe('parameters: substitution (spec-001 §8.2, §8.3)', () => {
       /f\.yaml.*\{\{wip\}\}.*blueprint\/x/);
   });
 });
+
+describe('parameters: review cases', () => {
+  it('leaves three braces as they are', () => {
+    const values = new Map<string, string | number | boolean>([['a', 'V']]);
+    assert.equal(substitute('{{{a}}} {{a}}', values, new Set(['a']), 'f', 'p'), '{{{a}}} V');
+  });
+});

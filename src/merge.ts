@@ -61,7 +61,7 @@ function deepEqual(a: unknown, b: unknown): boolean {
   const left = Object.entries(a as Doc);
   const right = b as Doc;
   return left.length === Object.keys(right).length
-    && left.every(([key, value]) => key in right && deepEqual(value, right[key]));
+    && left.every(([key, value]) => Object.hasOwn(right, key) && deepEqual(value, right[key]));
 }
 
 class Merger {
@@ -81,6 +81,7 @@ class Merger {
   /** Checks an incoming value whose key the base side does not have, and copies it. */
   normalize(value: unknown, path: string[]): unknown {
     const kind = kindOf(value);
+    this.checkListRule(kind, path);
     if (kind === 'scalar') return value;
     if (kind === 'mapping') {
       return Object.fromEntries(Object.entries(value as Doc)
@@ -98,6 +99,14 @@ class Merger {
       return items.map((item) => this.normalize(item, [...path, '[]']));
     }
     return structuredClone(items);
+  }
+
+  /** A key whose rule is a set or a keyed list holds a list, nothing else (§7.2). */
+  private checkListRule(kind: Kind, path: string[]): void {
+    const rule = this.ruleFor(path);
+    if (rule !== undefined && kind !== 'list') {
+      this.fail(path, `a ${rule === 'set' ? 'set' : 'keyed list'} must be a list, not a ${kind}`);
+    }
   }
 
   private checkSetItems(items: unknown[], path: string[]): void {
@@ -120,6 +129,7 @@ class Merger {
   merge(base: unknown, incoming: unknown, path: string[]): unknown {
     const baseKind = kindOf(base);
     const incomingKind = kindOf(incoming);
+    this.checkListRule(incomingKind, path);
     if (baseKind !== incomingKind) {
       this.fail(path, `a ${baseKind} cannot merge with a ${incomingKind}`);
     }
@@ -132,7 +142,7 @@ class Merger {
     if (baseKind === 'mapping') {
       const result: Doc = { ...(base as Doc) };
       for (const [key, value] of Object.entries(incoming as Doc)) {
-        result[key] = key in result
+        result[key] = Object.hasOwn(result, key)
           ? this.merge(result[key], value, [...path, key])
           : this.normalize(value, [...path, key]);
       }
@@ -196,12 +206,17 @@ export function checkDnaFragment(pack: string, data: Doc): void {
 /** spec-001 §7.4: every directive id is shipped by a pack or built into WingFoil. */
 export function checkRoleDirectives(roles: Doc, shipped: Set<string>): void {
   const assignments = kindOf(roles['assignments']) === 'mapping' ? roles['assignments'] as Doc : {};
-  const lists = [...Object.values(assignments), roles['global'] ?? []];
-  const ids = lists.flatMap((list): unknown[] => (Array.isArray(list) ? list as unknown[] : []));
-  for (const id of ids) {
-    if (typeof id !== 'string' || (!shipped.has(id) && !BUILTIN_DIRECTIVE_IDS.includes(id))) {
-      throw new CompositionError(`roles.yaml: directive ${JSON.stringify(id)} is neither shipped `
-        + 'by a pack of the composition nor built into WingFoil');
+  const lists: [string, unknown][] = [
+    ...Object.entries(assignments)
+      .map(([role, ids]): [string, unknown] => [`assignments.${role}`, ids]),
+    ['global', roles['global'] ?? []],
+  ];
+  for (const [where, list] of lists) {
+    for (const id of Array.isArray(list) ? list as unknown[] : []) {
+      if (typeof id !== 'string' || (!shipped.has(id) && !BUILTIN_DIRECTIVE_IDS.includes(id))) {
+        throw new CompositionError(`roles.yaml, ${where}: directive ${JSON.stringify(id)} is `
+          + 'neither shipped by a pack of the composition nor built into WingFoil');
+      }
     }
   }
 }

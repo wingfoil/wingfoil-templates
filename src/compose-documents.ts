@@ -13,6 +13,8 @@ import { parameterScopes, resolveParameters, substitute } from './parameters';
 import { listedFiles, resolve } from './resolve';
 import type { ResolvedPack } from './resolve';
 import { YamlError, parseYaml } from './yaml-load';
+import type { LoadedYaml } from './yaml-load';
+import { isScalar } from 'yaml';
 
 type Doc = Record<string, unknown>;
 
@@ -26,6 +28,8 @@ export interface ComposedFile {
   text: string;
   /** The parsed document, for YAML files. */
   data?: unknown;
+  /** The YAML file as loaded, with the source text of each value. */
+  yaml?: LoadedYaml;
 }
 
 export interface ComposedDocuments {
@@ -37,6 +41,9 @@ export interface ComposedDocuments {
 }
 
 type FragmentKind = 'dna' | 'roles' | 'memory';
+
+/** A format counter as written in YAML: a positive base-10 integer (spec-001 §5, §18). */
+const FORMAT_SOURCE = /^[1-9][0-9]*$/;
 
 function readFiles(
   tree: string,
@@ -53,7 +60,8 @@ function readFiles(
       const file: ComposedFile = { pack: pack.id, path, text };
       if (path.endsWith('.yaml')) {
         try {
-          file.data = parseYaml(text, label).data;
+          file.yaml = parseYaml(text, label);
+          file.data = file.yaml.data;
         } catch (error) {
           if (error instanceof YamlError) {
             throw new CompositionError(
@@ -85,6 +93,11 @@ function fragmentsOf(kind: FragmentKind, packs: ResolvedPack[], files: ComposedF
     const { format: declared, ...rest } = data as Doc;
     if (typeof declared !== 'number' || !Number.isInteger(declared)) {
       throw new CompositionError(`${label} must declare format: (spec-001 §5)`);
+    }
+    const source = file.yaml?.document.get('format', true);
+    if (isScalar(source) && !FORMAT_SOURCE.test(source.source ?? '')) {
+      throw new CompositionError(`${label}: format is written ${String(source.source)}; it must be `
+        + 'a YAML integer (spec-001 §18)');
     }
     if ('version' in rest) {
       throw new CompositionError(`${label}: a fragment carries no version: (spec-001 §7.2)`);

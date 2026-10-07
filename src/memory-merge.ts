@@ -19,6 +19,9 @@ interface Machine {
 
 interface TypeState {
   definedBy: string;
+  /** The keys of the definition and of its template, in the defining fragment's order (§7.2). */
+  keys: string[];
+  templateKeys: string[];
   path: unknown;
   idPattern: unknown;
   templateFile: unknown;
@@ -225,6 +228,9 @@ class MemoryMerge {
     checkKeys(template, TEMPLATE_KEYS, subject, pack, 'template.');
     const required = this.readRequired(template, subject, pack);
     let machine: Machine | undefined;
+    if (body['states'] === undefined && this.defaults === undefined) {
+      fail(subject, pack, 'a type without states follows defaults, and no pack defined defaults');
+    }
     if (body['states'] !== undefined) {
       const incoming = readStates(body['states'], subject, pack);
       if (incoming.sequence === undefined) fail(subject, pack, 'states needs a sequence');
@@ -233,6 +239,8 @@ class MemoryMerge {
     }
     this.types.set(name, {
       definedBy: pack,
+      keys: Object.keys(body),
+      templateKeys: Object.keys(template),
       path: body['path'],
       idPattern: body['id_pattern'],
       templateFile: template['file'],
@@ -253,7 +261,7 @@ class MemoryMerge {
     if (!Array.isArray(required) || !required.every((field) => typeof field === 'string')) {
       fail(subject, pack, 'template.frontmatter.required must be a list of field names');
     }
-    return required;
+    return required.filter((field, index) => required.indexOf(field) === index);
   }
 
   private tighten(name: string, pack: string, body: Doc): void {
@@ -294,16 +302,35 @@ class MemoryMerge {
     type.machine = mergeMachine(type.machine, incoming, reference, subject, pack);
   }
 
+  /** A type as composed, its keys in the defining fragment's order, later ones appended. */
+  private typeOut(type: TypeState): Doc {
+    const template: Doc = {};
+    const templateKeys = [...type.templateKeys];
+    if (type.required !== undefined && !templateKeys.includes('frontmatter')) {
+      templateKeys.push('frontmatter');
+    }
+    for (const key of templateKeys) {
+      if (key === 'file') template['file'] = type.templateFile;
+      if (key === 'frontmatter') {
+        template['frontmatter'] = type.required === undefined
+          ? {}
+          : { required: [...type.required] };
+      }
+    }
+    const values: Doc = { path: type.path, id_pattern: type.idPattern, template };
+    if (type.machine !== undefined) values['states'] = machineOut(type.machine);
+    const keys = [...type.keys];
+    if (type.machine !== undefined && !keys.includes('states')) keys.push('states');
+    return Object.fromEntries(keys.filter((key) => Object.hasOwn(values, key))
+      .map((key) => [key, values[key]]));
+  }
+
   result(): Doc {
     const out: Doc = {};
     if (this.defaults !== undefined) out['defaults'] = { states: machineOut(this.defaults) };
     const types: Doc = {};
     for (const [name, type] of this.types) {
-      const template: Doc = { file: type.templateFile };
-      if (type.required !== undefined) template['frontmatter'] = { required: [...type.required] };
-      const entry: Doc = { path: type.path, id_pattern: type.idPattern, template };
-      if (type.machine !== undefined) entry['states'] = machineOut(type.machine);
-      types[name] = entry;
+      types[name] = this.typeOut(type);
     }
     out['types'] = types;
     return out;

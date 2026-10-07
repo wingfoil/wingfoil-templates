@@ -20,8 +20,8 @@ export interface Parameter {
   value: ParameterValue;
 }
 
-/** `{{name}}`, exactly two braces and no space; any other `{{` is text (§8.2). */
-const REFERENCE = /\{\{([a-z][a-z0-9_]*)\}\}/g;
+/** `{{name}}`, exactly two braces on each side and no space; any other `{{` is text (§8.2). */
+const REFERENCE = /(?<!\{)\{\{([a-z][a-z0-9_]*)\}\}(?!\})/g;
 /** A base-10 integer as written in YAML (§8.1, §18): no fraction, no other base. */
 const INTEGER_SOURCE = /^-?(?:0|[1-9][0-9]*)$/;
 
@@ -36,10 +36,15 @@ let validators: Map<string, ValidateFunction> | undefined;
 function validatorFor(type: string): ValidateFunction | undefined {
   if (validators === undefined) {
     const schema = JSON.parse(readFileSync(join(SCHEMA_DIR, 'pack.schema.json'), 'utf8')) as {
-      properties: { parameters: { additionalProperties: { allOf: TypedDefault[] } } };
+      properties?: { parameters?: { additionalProperties?: { allOf?: TypedDefault[] } } };
     };
+    const rules = schema.properties?.parameters?.additionalProperties?.allOf;
+    if (!Array.isArray(rules)) {
+      throw new CompositionError('pack.schema.json: the parameter types are not where the '
+        + 'composer reads them (properties.parameters.additionalProperties.allOf)');
+    }
     const ajv = new Ajv2020({ strict: true, allowUnionTypes: true });
-    validators = new Map(schema.properties.parameters.additionalProperties.allOf
+    validators = new Map(rules
       .map((rule) => [rule.if.properties.type.const, ajv.compile(rule.then.properties.default)]));
   }
   return validators.get(type);
@@ -89,7 +94,7 @@ export function resolveParameters(
           fail(`parameter ${name} of ${pack.id}: default ${source} is not a base-10 integer`);
         }
       }
-      const value = name in given ? given[name] : declaration.default;
+      const value = Object.hasOwn(given, name) ? given[name] : declaration.default;
       if (value === undefined) {
         fail(`parameter ${name} of ${pack.id} is required and has no value`);
       }

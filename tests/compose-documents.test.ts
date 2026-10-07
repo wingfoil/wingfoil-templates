@@ -103,6 +103,12 @@ describe('composeDocuments: formats (spec-001 §5, §7.2)', () => {
     });
   }
 
+  it('fails on a fragment whose format is written 1.0 (spec-001 §18)', () => {
+    fails([BASE_M, KANBAN, { id: 'blueprint/x', fragments: ['dna'],
+      extraFiles: { 'fragments/dna.yaml': 'format: 1.0\n' } }],
+    ['methodology/kanban', 'blueprint/x'], /blueprint\/x.*fragments\/dna\.yaml.*1\.0/, NAME);
+  });
+
   it('fails on two fragments of one kind in different formats', () => {
     const other: PackSpec = { id: 'blueprint/x', fragments: ['dna'],
       manifest: { formats: { dna: 2 } }, extraFiles: { 'fragments/dna.yaml': 'format: 2\n' } };
@@ -158,6 +164,12 @@ describe('composeDocuments: parameters (spec-001 §8)', () => {
     fails([BASE_M, KANBAN], ['methodology/kanban'], /project_name.*base/);
   });
 
+  it('reports a required parameter named like an Object.prototype member as missing', () => {
+    const p = declaring({ constructor: { type: 'string', description: 'x' } });
+    fails([BASE_M, KANBAN, p], ['methodology/kanban', 'blueprint/p'], /constructor.*required/,
+      NAME);
+  });
+
   it('fails on a given value that no pack declares', () => {
     fails([BASE_M, KANBAN], ['methodology/kanban'], /nope/, { ...NAME, nope: 1 });
   });
@@ -207,6 +219,18 @@ describe('composeDocuments: parameters (spec-001 §8)', () => {
     const result = compose([BASE_M, KANBAN, p, mid, user], request, NAME);
     const directive = result.files.find((file) => file.path === 'directives/d.md');
     assert.equal(directive?.text, 'WIP 3 for Demo\n');
+  });
+
+  it('substitutes Memory templates and the agents section', () => {
+    const result = compose([BASE_M, KANBAN, { id: 'governance/t', memoryTemplates: ['note'],
+      agentsSection: true, extraFiles: {
+        'memory-templates/note.md': 'For {{project_name}}\n',
+        'agents/section.md': '## {{project_name}}\n',
+      } }], ['methodology/kanban', 'governance/t'], NAME);
+    const text = (path: string): string | undefined =>
+      result.files.find((file) => file.path === path)?.text;
+    assert.equal(text('memory-templates/note.md'), 'For Demo\n');
+    assert.equal(text('agents/section.md'), '## Demo\n');
   });
 
   it('does not substitute pack.yaml, README.md or CHANGELOG.md', () => {

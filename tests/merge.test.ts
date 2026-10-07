@@ -128,3 +128,27 @@ describe('merge: roles.yaml (spec-001 §7.4)', () => {
       ['architecture', 'code-quality', 'code-review', 'documentation', 'security', 'testing']);
   });
 });
+
+describe('merge: review cases', () => {
+  it('handles keys named like Object.prototype members as plain keys', () => {
+    const doc = merge('dna', 'project: { name: x }\n', 'project: { constructor: y }\n');
+    assert.deepEqual(doc['project'], { name: 'x', constructor: 'y' });
+  });
+
+  it('refuses a scalar where a set or a keyed list is declared', () => {
+    fails(/global.*must be a list/, 'roles', 'global: nonexistent\n');
+    fails(/assignments\.dev.*must be a list/, 'roles', 'assignments: { dev: [a] }\n',
+      'assignments: { dev: nonexistent }\n');
+    fails(/modules.*must be a list/, 'dna', 'modules: { name: a }\n');
+  });
+
+  it('dedupes and checks a set that arrives without a base side', () => {
+    assert.deepEqual((merge('dna', 'paths: { x: [a, a] }\n')['paths'] as Doc)['x'], ['a']);
+    fails(/paths\.x.*scalar/, 'dna', 'paths: { x: [{ k: 1 }] }\n');
+  });
+
+  it('names the role of an unknown directive', () => {
+    const doc = merge('roles', 'assignments:\n  developer: [nope]\n');
+    assert.throws(() => checkRoleDirectives(doc, new Set()), /assignments\.developer.*nope/);
+  });
+});
