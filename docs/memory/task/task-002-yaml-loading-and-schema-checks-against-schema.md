@@ -2,7 +2,7 @@
 id: task-002-yaml-loading-and-schema-checks-against-schema
 type: task
 title: "YAML loading and schema checks against schema/"
-status: pending
+status: backlog
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-001-typescript-set-up-build-test-runner-exact-pins-and-the-packs-line-ending-rule"]
 tags: ["tooling","W5","F3.1"]
