@@ -5,7 +5,7 @@ import { readdirSync } from 'node:fs';
 import type { Dirent } from 'node:fs';
 import { join } from 'node:path';
 
-import { loadSchemas } from './schemas';
+import { repositorySchemas } from './schemas';
 import type { SchemaKind, SchemaSet } from './schemas';
 import { YamlError, loadYamlFile } from './yaml-load';
 import type { Position } from './yaml-load';
@@ -117,7 +117,7 @@ function checkFile(
 
 export function runCheckSchemas(
   root: string,
-  schemas: SchemaSet = loadSchemas(),
+  schemas: SchemaSet = repositorySchemas(),
 ): SchemaCheckResult {
   const unreadable: Unreadable = [];
   const files = findFiles(root, unreadable);

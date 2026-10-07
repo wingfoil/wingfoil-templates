@@ -1,0 +1,17 @@
+format: 1
+id: blueprint/cli
+axis: blueprint
+name: cli
+title: blueprint/cli
+description: Test pack blueprint/cli.
+version: 1.0.0
+formats: {}
+requires_capabilities: []
+requires:
+  - base@^1
+contents:
+  fragments: []
+  directives: []
+  workflows: []
+  memory_templates: []
+  agents_section: false
