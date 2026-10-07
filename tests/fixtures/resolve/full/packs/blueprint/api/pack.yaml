@@ -1,0 +1,17 @@
+format: 1
+id: blueprint/api
+axis: blueprint
+name: api
+title: blueprint/api
+description: Test pack blueprint/api.
+version: 1.0.0
+formats: {}
+requires_capabilities: []
+requires:
+  - base@^1
+contents:
+  fragments: []
+  directives: []
+  workflows: []
+  memory_templates: []
+  agents_section: false

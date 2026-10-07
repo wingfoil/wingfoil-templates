@@ -1,0 +1,18 @@
+format: 1
+id: stage/production
+axis: stage
+name: production
+title: stage/production
+description: Test pack stage/production.
+version: 1.0.0
+formats: {}
+requires_capabilities: []
+requires:
+  - base@^1
+  - team-mode/agent-first@^1
+contents:
+  fragments: []
+  directives: []
+  workflows: []
+  memory_templates: []
+  agents_section: false
