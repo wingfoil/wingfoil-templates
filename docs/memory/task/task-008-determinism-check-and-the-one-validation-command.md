@@ -128,3 +128,4 @@ Branch `task/task-008-validate`, run through `tooling-delivery` as `developer` (
 - Left as they are (review nits): a schema problem anywhere suppresses the "no composition declares"
   check (the run still exits 1); a compose usage error (3) in a child is reported as 1, which
   `validate` cannot produce since it builds the arguments itself.
+- 2026-10-07: approved by the approver; merged into `main` with `--no-ff` (`f236df9`); on `main` the 424 tests, `npm run lint` and the golden `validate` pass.

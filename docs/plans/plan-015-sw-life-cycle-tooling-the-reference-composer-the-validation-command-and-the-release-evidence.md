@@ -157,3 +157,10 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
 - 2026-10-07: task-005 (task 4b, ESLint) done, merged `f1040d3`. From task 5 on, Acceptance includes `npm run lint`.
 - 2026-10-07: task-006 (task 5, fragment merge and parameters) done, merged `7ea0312`.
 - 2026-10-07: task-007 (task 6, composer output and compose command) done, merged `5e62e09`. The reference composer of adr-001 is complete; the golden composition is accepted by WingFoil 0.2.2 with only the O10 warnings.
+- 2026-10-07: task-008 (task 7, determinism check and `npm run validate`) done, merged `f236df9`.
+  **Wave W5 is closed:** its exit criterion holds on `main` (`npm run validate -- --tree
+  tests/fixtures/compose/tree --param project_name=Golden` composes the golden preset twice into
+  18 byte-identical files). As the approver ruled, work stops here before W6: the session
+  "Meccanismo feedback wingfoil" is notified, and its changes to `docs/wingfoil-feedback/` and the
+  `wingfoil-feedback` directive come through task elements. Pending with them: the feedback note
+  on the copy of WingFoil's built-in directive ids (task-006).
