@@ -38,24 +38,28 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    - fails with `<file>:<line>:<column>` on a syntax error and on a duplicate key;
    - fails on a file that is not UTF-8, and on a multi-document file.
 3. **Schemas.** A test compiles each of the five `schema/*.schema.json` with `Ajv2020` in strict
-   mode, with no warning.
+   mode and `allErrors`, capturing Ajv's `logger.warn`: no warning is logged.
 4. **Fixtures** under `tests/fixtures/schema/<kind>/valid/` and `invalid/`, one file each:
    - valid: the examples of spec-001 §6.2 (`pack.yaml`), §11 (`catalog.yaml`, with a full 64-hex
      digest), §12 (`compat.yaml`), §14 (transition) and §15 (preset), and a `base` `pack.yaml`;
    - invalid, at least: an axis that does not match the id; a missing `base` requirement; slot
-     `operations`; an `axis` on `base`; a pre-release version; a `..` path; a `status` in
-     `pack.yaml`; an `active` catalog pack without versions; a hand-written open range;
-     `compat.yaml` without `format_key`; a missing `format`.
+     `operations`; an `axis` on `base`; a pre-release version; a `..` path in a catalog
+     `packs[].path`; a `status` in `pack.yaml`; an `active` catalog pack without versions; a
+     hand-written open range; `compat.yaml` without `format_key`; a missing `format`.
 
-   Every valid fixture passes; every invalid fixture fails, and its test names the expected schema
-   keyword and instance path.
-5. **Errors** are reported as `<file>:<line>:<column>: <instance path> <message>`, the position
-   being the offending value's, sorted by file, line and column.
+   Every valid fixture passes. Every invalid fixture fails, and its test checks that the expected
+   (schema keyword, instance path) pair is among the reported errors. The `if` meta-error that Ajv
+   adds next to a failing `then` is folded into the error that caused it.
+5. **Errors** are reported as `<file>:<line>:<column>: <instance path> <message>`, sorted by file,
+   line and column. The position is the offending value's; for an error about a missing or extra
+   key (`required`, `additionalProperties`), the mapping's; for an error at the root, `1:1`.
 6. **`npm run check:schemas`** checks every file of a known kind in the repository:
    `packs/**/pack.yaml`, `catalog.yaml`, `compat.yaml`, `presets/*.yaml`, `transitions/*.yaml`, read
    in sorted order. It exits 0 on this repository and prints how many files it checked (0 today).
-   A test runs it on a temporary tree with one invalid file: exit 1 and the error line.
-   Unreadable files exit 2.
+   Exit codes: 0 when every file passes; 1 when a file has a YAML syntax error, a duplicate key or
+   a schema error; 2 when a file cannot be read or is not UTF-8. Tests run it on temporary trees:
+   one invalid file gives exit 1 and the error line; a `catalog.yaml` that is a directory gives
+   exit 2.
 7. `npm audit` reports 0 vulnerabilities.
 
 ## Design
@@ -63,3 +67,9 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 <!-- Filled at the start of the work. -->
 
 ## Execution Notes
+
+- 2026-10-07: amended while `pending`, before the approver's review, after an independent review
+  (plan-015): `allErrors` and the captured Ajv warnings; the expected error is checked among all
+  errors, with `if` meta-errors folded; positions of key and root errors; exit codes, and a
+  deterministic unreadable case; the `..` case placed in the catalog. The review checked that every
+  spec-001 example passes the schemas and every listed invalid case fails them.

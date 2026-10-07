@@ -41,25 +41,30 @@ adr-003 do not change.
 - **Rules:** `@eslint/js` `recommended`, and `typescript-eslint` `recommendedTypeChecked`, with the
   project service on `tsconfig.json`. No stylistic rule set and no formatter: layout is the
   reviewer's, as today.
-- **Determinism rules in `src/`:** `Date.now()`, `new Date()` with no argument, `Math.random()`, and
-  `performance.now()` are errors. Directory reads go through one sorted helper once the composer
-  reads directories (its task names it).
+- **Determinism rules in `src/`:** `Date.now()`, `new Date()` and `Date()` with no argument,
+  `Math.random()`, `performance.now()`, `process.hrtime`, `crypto.randomUUID` and
+  `crypto.randomBytes` are errors. `tests/` is outside them: the `testing` directive already
+  forbids clocks and randomness in tests, and a test may need a temporary directory name. Directory
+  reads go through one sorted helper once the composer reads directories (its task names it).
 - **Tests:** `describe` and `it` of `node:test` are known-safe calls for `no-floating-promises`
   (`allowForKnownSafeCalls`), rather than a `void` in front of each.
-- **Script:** `npm run lint`, exit 0 with no error and no warning. It runs locally and in CI (task
-  10), next to `build` and `test`.
+- **Script:** `npm run lint` runs `eslint --max-warnings 0 .`, so that a warning fails too. It runs
+  locally and in CI (task 10), next to `build` and `test`.
 - **The Node.js floor.** `eslint` 10 declares Node.js `^22.13.0`, above the floor of adr-002
   (22.12.0, WingFoil's), and `typescript-eslint` 8.71.1 does too through `eslint-visitor-keys` 5.
   The lint is static and its result does not depend on the Node.js running it, so it runs on the
   newest Node.js 22.x only. On the floor, `npm ci` prints `EBADENGINE` warnings for these
-  development packages and exits 0; the build and the tests still run there. The floor stays
-  WingFoil's.
+  development packages and exits 0; the build and the tests still run there. This holds as long as
+  the repository sets no `engine-strict` (it has no `.npmrc`). The floor stays WingFoil's, which has
+  the same mismatch (WingFoil2 lints with `eslint` 10 on a `>=22.12.0` floor).
 - **Review.** Adding or upgrading these packages repeats the review of adr-003 (`security`
   directive).
 
 **Trial** (plan-019, 2026-10-07, scratch clone of `main` at `ba4757d`):
 - 85 packages added to the 104 of the lockfile (189 in all); `npm audit`: 0 vulnerabilities;
   registry signatures verified; licenses MIT;
+- on the floor, Node.js 22.12.0 / npm 10.9.0, with these versions: `npm ci` prints `EBADENGINE`
+  warnings and exits 0; build, the 62 tests, and `eslint --max-warnings 0 src` pass;
 - first run with `recommendedTypeChecked`: `src/` is clean; `tests/` has 17
   `no-floating-promises` errors, all on `describe` and `it`, which the known-safe-calls option
   covers.
@@ -83,7 +88,12 @@ adr-003 do not change.
   `tests/`.
 - From that task on, every tooling task's Acceptance includes `npm run lint`.
 - The `tooling-delivery` review checks lint as part of `code-quality`.
-- If `typescript-eslint` lags a TypeScript upgrade (for example to TypeScript 7), the upgrade waits
-  for it or the lint is pinned to the previous TypeScript; that is decided in the upgrade's task.
+- `typescript-eslint` 8.71.1 accepts `typescript <6.1.0`. If it lags a TypeScript upgrade (6.1,
+  or 7), the upgrade waits for it or the lint is pinned to the previous TypeScript; that is decided
+  in the upgrade's task.
 
 ## Execution Notes
+
+- 2026-10-07: amended while `pending`, before the approver's review, after an independent review
+  (plan-019): the floor claim was tried with the decided versions; `--max-warnings 0`; more
+  determinism rules, and why `tests/` is outside them; the `typescript-eslint` peer range.
