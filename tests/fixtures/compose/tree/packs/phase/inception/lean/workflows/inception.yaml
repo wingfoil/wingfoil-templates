@@ -1,0 +1,7 @@
+format: 1
+name: inception
+kind: sub
+version: 1
+phases:
+  - name: vision
+  - name: features

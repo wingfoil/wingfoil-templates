@@ -12,7 +12,8 @@ function specExample(): { axes: unknown; slots: unknown } {
   const dir = join(REPO_ROOT, 'docs', 'memory', 'tech-spec');
   const spec = readdirSync(dir).find((name) => name.startsWith('spec-001-'));
   assert.ok(spec !== undefined);
-  const text = readFileSync(join(dir, spec), 'utf8');
+  // Line endings normalized: a checkout with core.autocrlf gives CRLF.
+  const text = readFileSync(join(dir, spec), 'utf8').replace(/\r\n/g, '\n');
   const section = text.slice(text.indexOf('## 11. `catalog.yaml`'));
   const block = /```yaml\n([\s\S]*?)```/.exec(section)?.[1];
   assert.ok(block !== undefined);

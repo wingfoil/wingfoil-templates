@@ -3,6 +3,9 @@
 import { repositorySchemas } from './schemas';
 import { loadYamlFile } from './yaml-load';
 
+/** catalog.yaml breaks its schema. */
+export class CatalogError extends Error {}
+
 export interface AxisSpec {
   name: string;
   cardinality: 'one' | 'one-per-slot' | 'many';
@@ -48,7 +51,7 @@ export function loadCatalog(path: string): Catalog {
   if (errors.length > 0) {
     const first = errors[0];
     const where = first?.instancePath ?? '';
-    throw new Error(`${path}: not a valid catalog: ${where} ${first?.message ?? ''}`);
+    throw new CatalogError(`${path}: not a valid catalog: ${where} ${first?.message ?? ''}`);
   }
   const raw = loaded.data as Record<string, unknown>;
   const axes = Object.entries(raw['axes'] as Record<string, RawAxis>).map(([name, axis]) => {

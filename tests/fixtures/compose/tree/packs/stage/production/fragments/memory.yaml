@@ -1,0 +1,8 @@
+format: 1
+defaults:
+  states:
+    sequence: [draft, pending, approved, archived]
+types:
+  task:
+    states:
+      sequence: [draft, pending, backlog, in-progress, in-review, qa, approved, done]

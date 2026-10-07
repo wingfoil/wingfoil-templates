@@ -1,0 +1,14 @@
+format: 1
+id: stage/production
+axis: stage
+name: production
+title: "production"
+description: "Golden fixture pack stage/production."
+version: 1.0.0
+formats:
+  memory: 1
+requires_capabilities: []
+requires:
+  - base@^1
+contents:
+  fragments: [memory]

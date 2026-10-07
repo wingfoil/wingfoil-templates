@@ -1,0 +1,21 @@
+format: 1
+id: methodology/kanban
+axis: methodology
+name: kanban
+title: "kanban"
+description: "Golden fixture pack methodology/kanban."
+version: 1.0.0
+formats:
+  roles: 1
+  workflow: 1
+  directive: 1
+requires_capabilities: []
+requires:
+  - base@^1
+parameters:
+  wip_limit: { type: integer, default: 3, description: "WIP limit of the in-progress column" }
+contents:
+  fragments: [roles]
+  directives: [wip-limits]
+  workflows: [delivery, replenishment]
+  agents_section: true

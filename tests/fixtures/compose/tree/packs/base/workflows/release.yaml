@@ -1,0 +1,6 @@
+format: 1
+name: release
+kind: sub
+version: 1
+phases:
+  - name: default

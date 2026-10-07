@@ -1,0 +1,11 @@
+format: 1
+version: 1
+include:
+  - workflows/built-in/sw-life-cycle.yaml
+  - workflows/built-in/specification.yaml
+  - workflows/built-in/release.yaml
+  - workflows/built-in/end-of-life.yaml
+  - workflows/built-in/retrospective.yaml
+  - workflows/built-in/delivery.yaml
+  - workflows/built-in/replenishment.yaml
+  - workflows/built-in/inception.yaml

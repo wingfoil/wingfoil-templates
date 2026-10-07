@@ -6,9 +6,10 @@ import { join } from 'node:path';
 
 import type { Catalog } from './catalog';
 import { CompositionError } from './composition-error';
+import { checkFormat } from './formats';
 import { checkDnaFragment, checkRoleDirectives, mergeFragments } from './merge';
 import type { Fragment } from './merge';
-import { mergeMemory } from './memory-merge';
+import { mergeMemoryWithOwners } from './memory-merge';
 import { parameterScopes, resolveParameters, substitute } from './parameters';
 import { listedFiles, resolve } from './resolve';
 import type { ResolvedPack } from './resolve';
@@ -38,12 +39,11 @@ export interface ComposedDocuments {
   dna: Doc;
   roles: Doc;
   memory: Doc;
+  /** Memory type -> the pack that defined it. */
+  memoryTypes: Map<string, string>;
 }
 
 type FragmentKind = 'dna' | 'roles' | 'memory';
-
-/** A format counter as written in YAML: a positive base-10 integer (spec-001 §5, §18). */
-const FORMAT_SOURCE = /^[1-9][0-9]*$/;
 
 function readFiles(
   tree: string,
@@ -90,23 +90,17 @@ function fragmentsOf(kind: FragmentKind, packs: ResolvedPack[], files: ComposedF
     if (typeof data !== 'object' || data === null || Array.isArray(data)) {
       throw new CompositionError(`${label} must be a mapping`);
     }
-    const { format: declared, ...rest } = data as Doc;
-    if (typeof declared !== 'number' || !Number.isInteger(declared)) {
-      throw new CompositionError(`${label} must declare format: (spec-001 §5)`);
-    }
-    const source = file.yaml?.document.get('format', true);
-    if (isScalar(source) && !FORMAT_SOURCE.test(source.source ?? '')) {
-      throw new CompositionError(`${label}: format is written ${String(source.source)}; it must be `
-        + 'a YAML integer (spec-001 §18)');
-    }
-    if ('version' in rest) {
+    const { format: rawFormat, ...rest } = data as Doc;
+    const node = file.yaml?.document.get('format', true);
+    const declared = checkFormat({
+      label,
+      kind,
+      declared: rawFormat,
+      source: isScalar(node) ? node.source : undefined,
+      expected: packs.find((candidate) => candidate.id === file.pack)?.manifest.formats[kind],
+    });
+    if (Object.hasOwn(rest, 'version')) {
       throw new CompositionError(`${label}: a fragment carries no version: (spec-001 §7.2)`);
-    }
-    const pack = packs.find((candidate) => candidate.id === file.pack);
-    const expected = pack?.manifest.formats[kind];
-    if (declared !== expected) {
-      throw new CompositionError(`${file.pack}: ${kind} fragment is format ${declared}, but its `
-        + `pack.yaml formats.${kind} is ${String(expected)}`);
     }
     if (format !== undefined && format.value !== declared) {
       throw new CompositionError(`${kind} fragments disagree: ${format.pack} is format `
@@ -128,9 +122,10 @@ export function composeDocuments(
   catalog: Catalog,
   request: string[],
   given: ParameterValues,
+  options: { givenAsText?: boolean } = {},
 ): ComposedDocuments {
   const packs = resolve(tree, catalog, request);
-  const parameters = resolveParameters(packs, given);
+  const parameters = resolveParameters(packs, given, options);
   const values = new Map([...parameters.values()]
     .map((parameter) => [parameter.name, parameter.value]));
   const files = readFiles(tree, packs, values, parameterScopes(packs, parameters));
@@ -142,12 +137,14 @@ export function composeDocuments(
   const shipped = new Set(packs.flatMap((pack) => pack.manifest.contents.directives ?? []));
   checkRoleDirectives(mergedRoles, shipped);
   const memory = fragmentsOf('memory', packs, files);
+  const mergedMemory = mergeMemoryWithOwners(memory.fragments, catalog.foundation);
 
   return {
     packs,
     files,
     dna: composed(dna.format, mergeFragments('dna', dna.fragments)),
     roles: composed(roles.format, mergedRoles),
-    memory: composed(memory.format, mergeMemory(memory.fragments, catalog.foundation)),
+    memory: composed(memory.format, mergedMemory.doc),
+    memoryTypes: mergedMemory.definedBy,
   };
 }

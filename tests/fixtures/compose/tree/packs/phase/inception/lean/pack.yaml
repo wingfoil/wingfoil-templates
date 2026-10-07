@@ -1,0 +1,16 @@
+format: 1
+id: phase/inception/lean
+axis: phase
+name: lean
+slot: inception
+title: "lean"
+description: "Golden fixture pack phase/inception/lean."
+version: 1.0.0
+formats:
+  workflow: 1
+requires_capabilities: []
+requires:
+  - base@^1
+contents:
+  workflows: [inception]
+  agents_section: true

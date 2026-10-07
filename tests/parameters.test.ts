@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
-import { checkValue, substitute } from '../src/parameters';
+import { checkValue, fromText, substitute } from '../src/parameters';
 
 describe('parameters: value checks (spec-001 §8.1, from the pack schema)', () => {
   const cases: [string, unknown, boolean][] = [
@@ -72,5 +72,18 @@ describe('parameters: review cases', () => {
     assert.equal(substitute('x: {k: {{a}}}', values, scope, 'f', 'p'), 'x: {k: V}');
     assert.equal(substitute('{{{a}}}', values, scope, 'f', 'p'), '{V}');
     assert.throws(() => substitute('x: {k: {{b}}}', values, scope, 'f', 'p'), /\{\{b\}\}/);
+  });
+});
+
+describe('parameters: values given as text', () => {
+  it('reads an integer, a boolean, and leaves anything else as text', () => {
+    assert.equal(fromText('integer', '12'), 12);
+    assert.equal(fromText('integer', '-3'), -3);
+    assert.equal(fromText('integer', '012'), '012');
+    assert.equal(fromText('integer', '1.0'), '1.0');
+    assert.equal(fromText('boolean', 'true'), true);
+    assert.equal(fromText('boolean', 'yes'), 'yes');
+    assert.equal(fromText('string', '007'), '007');
+    assert.equal(fromText('path', 'docs/x'), 'docs/x');
   });
 });

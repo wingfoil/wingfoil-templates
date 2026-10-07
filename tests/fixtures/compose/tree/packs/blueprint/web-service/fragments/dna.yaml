@@ -1,0 +1,8 @@
+format: 1
+modules:
+  - name: api
+    path: src/api
+  - name: docs
+    description: "Documentation"
+paths:
+  docs: [docs, api.md]

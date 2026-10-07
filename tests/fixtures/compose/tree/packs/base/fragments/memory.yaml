@@ -1,0 +1,22 @@
+format: 1
+defaults:
+  states:
+    sequence: [draft, pending, approved]
+    gates:
+      pending: { reject: draft }
+types:
+  task:
+    path: docs/memory/task/{id}.md
+    id_pattern: "task-{n}-{slug}"
+    template: { file: memory/templates/built-in/task.md }
+    states:
+      sequence: [draft, pending, backlog, in-progress, in-review, approved, done]
+      gates:
+        pending: { reject: draft }
+        in-review: { reject: in-progress }
+  adr:
+    path: "{{adr_path}}"
+    id_pattern: "adr-{n}-{slug}"
+    template:
+      file: memory/templates/built-in/adr.md
+      frontmatter: { required: [id, title] }

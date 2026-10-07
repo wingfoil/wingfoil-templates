@@ -1,0 +1,8 @@
+format: 1
+team:
+  roles:
+    - name: reviewer
+      description: "Reviews every change."
+  agents:
+    - name: agent
+      executes_as: [reviewer]

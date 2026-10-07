@@ -32,13 +32,20 @@ function formatsFor(spec: PackSpec): Record<string, number> {
   return formats;
 }
 
-/** Placeholder content: YAML files hold a minimal valid document. */
+function stem(file: string): string {
+  const name = file.slice(file.lastIndexOf('/') + 1);
+  return name.slice(0, name.lastIndexOf('.'));
+}
+
+/** Placeholder content: each file a minimal valid asset of its kind (spec-001 §5, §6.1). */
 function placeholder(file: string): string {
   if (file.startsWith('fragments/')) return 'format: 1\n';
-  if (file.startsWith('workflows/')) {
-    return `format: 1\nname: ${file.slice('workflows/'.length, -'.yaml'.length)}\n`;
+  if (file.startsWith('workflows/')) return `format: 1\nname: ${stem(file)}\nkind: sub\n`;
+  if (file.startsWith('directives/')) {
+    return `---\nid: ${stem(file)}\nformat: 1\n---\n# ${stem(file)}\n`;
   }
-  return `# ${file}\n`;
+  if (file.startsWith('memory-templates/')) return `---\ntype: ${stem(file)}\nformat: 1\n---\n`;
+  return `## ${file}\n`;
 }
 
 export function manifestFor(spec: PackSpec): Record<string, unknown> {
@@ -104,3 +111,16 @@ export function withPackTree(specs: PackSpec[], body: (root: string) => void): v
 /** The packs every valid composition needs: base, and a methodology shipping delivery. */
 export const BASE: PackSpec = { id: 'base', workflows: ['sw-life-cycle', 'retrospective'] };
 export const KANBAN: PackSpec = { id: 'methodology/kanban', workflows: ['delivery'] };
+
+/** base with the three fragments every composition needs, and a Memory type it defines. */
+export const BASE_COMPOSABLE: PackSpec = {
+  id: 'base',
+  workflows: ['sw-life-cycle', 'retrospective'],
+  fragments: ['dna', 'roles', 'memory'],
+  extraFiles: {
+    'workflows/sw-life-cycle.yaml': 'format: 1\nname: sw-life-cycle\nkind: main\n',
+    'fragments/dna.yaml': 'format: 1\nproject:\n  name: test\n',
+    'fragments/roles.yaml': 'format: 1\nglobal: [security]\n',
+    'fragments/memory.yaml': 'format: 1\ndefaults:\n  states:\n    sequence: [draft, done]\n',
+  },
+};

@@ -1,0 +1,6 @@
+format: 1
+name: specification
+kind: sub
+version: 1
+phases:
+  - name: default
