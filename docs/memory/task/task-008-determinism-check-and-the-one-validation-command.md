@@ -2,7 +2,7 @@
 id: task-008-determinism-check-and-the-one-validation-command
 type: task
 title: "Determinism check and the one validation command"
-status: backlog
+status: in-progress
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-007-composer-output-assets-workflows.yaml-agents-region-compose-command"]
 tags: ["tooling","W5","F3.1","F3.4"]
