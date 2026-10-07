@@ -46,3 +46,14 @@ added by name.
 
 - 2026-10-07: amended while `pending`, before the approver's review, after an independent review:
   the secret check names its command.
+- 2026-10-07, on `task/task-009-inbox`: commit `434d342` adds
+  `docs/wingfoil-feedback/X_wingfoil-templates-notes.md` alone (520 lines).
+  - Acceptance 1: sha256 before the commit and of the committed blob, both
+    `8b484510cd731a4e03e60182e3c5242328644e8e01e198ad56bdd38df4df3a2f`.
+  - Acceptance 2: `git ls-files docs/notes .idea` prints nothing.
+  - Acceptance 3: the search matches lines 22 and 132 ("secret scan", WingFoil dl-138 Q4 and
+    task-135) and 257, 263, 264 ("id tokens" of `memory add --set`): prose, no credential.
+  - Acceptance 4: 424 tests, `lint` and `validate` exit 0.
+- Review (a subagent with its own context): approve. It read the whole file for anything unfit for
+  a public repository and found none. Its nit, the open questions numbered 5, 7, 6, is left to the
+  split of task-010, since this commit keeps the file byte-identical.
