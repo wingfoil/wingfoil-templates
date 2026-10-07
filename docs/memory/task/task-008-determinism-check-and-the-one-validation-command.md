@@ -75,7 +75,26 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-008-validate`, run through `tooling-delivery` as `developer` (`code-quality`,
+`testing`, `determinism`), under `npm run lint`.
+
+- **`src/compare-trees.ts`:** `listTree(dir)` (relative paths in byte order) and
+  `compareTrees(a, b)`, which returns one message per difference: bytes, only in the first, only in
+  the second.
+- **`src/determinism.ts`:** `composeTwice(request, compare)` runs the compose command of task-007 in
+  two sequential child processes through a small runner (`node -e`) that sets the umask and calls
+  `runCompose`; the first with the caller's environment, the second with `TZ`, `LC_ALL`, `HOME`,
+  `umask`, working directory and a relative output path changed. Each output goes into its own
+  fresh temporary directory, removed afterwards.
+- **`src/validate.ts`:** `runValidate(argv, options)`: schema checks; then the compositions (each
+  preset passing its schema, then the entries), each resolved first to know which `--param` names
+  it declares; preset values passed as text, as `--param` values are, and read back by declared type;
+  then `composeTwice`. A report line per step; the exit code is the highest reached.
+  `options.compare` replaces the tree comparison in tests.
+- **`src/validate-cli.ts`:** `npm run validate`.
+- **Golden tree:** `presets/golden.yaml` (the golden packs with ranges, `wip_limit: 2`) and its
+  `catalog.yaml` `presets[]` entry.
+- **Tests,** red first: `tests/compare-trees.test.ts`, `tests/validate.test.ts`.
 
 ## Execution Notes
 
