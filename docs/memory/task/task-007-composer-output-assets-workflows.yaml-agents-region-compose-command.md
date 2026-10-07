@@ -141,3 +141,36 @@ Branch `task/task-007-output`, run through `tooling-delivery` as `developer` (`c
   composed documents and a missing fragment kind; O12 stated; derived rules marked; the AGENTS
   region's opening line, fenced code, markers after substitution, empty region; bytes and BOM;
   CLI exit codes for `--param`.
+- 2026-10-07, build on `task/task-007-output`, as `developer`, under `npm run lint`: `391e48e`
+  refactor (shared format check, frontmatter, type owners), `5949edf` and `5f68d2e` output plan,
+  `4982426` AGENTS region tests (with the fix for leading blank lines), `8a189c6` values as text,
+  `3b5a0e9` compose command and golden composition, `b5604d7` `.gitattributes` for fixtures,
+  the catalog test CRLF fix, `482c00d` and `e9c14e0` review fixes.
+  - Red first for the output plan (22 failing on a stub). The AGENTS region tests were written
+    after `agentsRegion`: characterization tests, checked by mutation (each mutant killed); they
+    found that blank lines before a section reached the region, now fixed.
+  - The golden output was generated once by `npm run compose`, read file by file against spec-001
+    §7.2–§7.7, §9, §10 and §17, then frozen. Its tree holds a file with a BOM and CRLF lines.
+  - **WingFoil 0.2.2 on the golden output** (a `git init`ed copy; WingFoil runs only at a git
+    root): `workflow list`, `dna show` and `directives list` exit 0, with only the warnings
+    `unknown field(s) ignored: format` (spec-001 O10). Getting there needed the fixture's content
+    to satisfy WingFoil's own schemas (`dna.yaml` `stacks`, `team.members`, `team.roles`; directive
+    `name`, `type`, `kind`; agent roles declared) — inputs for `base`'s charter.
+  - Acceptance 1–9 pass from a clean clone at `e9c14e0` on Node.js 22.21.0 / npm 11.6.2 and on the
+    floor 22.12.0 / npm 10.9.0: 396 tests pass (none skipped), `lint`, `check:pins`,
+    `check:schemas`, `npm audit` clean, dependencies unchanged; the tests also pass in a clone made
+    with `core.autocrlf=true`.
+- Deviations from the Design and choices:
+  - `writeOutput` writes into a sibling staging directory and renames it onto `--out`, so a failed
+    write leaves nothing half-written; `--out` as a symbolic link or as `.` is refused (exit 2);
+  - `loadCatalog` throws a typed `CatalogError`;
+  - `.gitattributes` also disables line-ending conversion under `tests/fixtures/`;
+  - left as they are, from the review's nits: indented fences and setext headings in agents
+    sections; frontmatter error lines counted from the frontmatter body.
+- Review (a subagent with its own context): request changes, one blocking (the missing-fragment
+  test stopped in the resolver and never reached its check) and five should-fix (a string-matched
+  catalog error, missing CLI tests, a non-atomic write, no BOM test, a golden CRLF case that a
+  rewrite of the file had silently lost). Fixed in `482c00d`; the re-review killed the earlier
+  surviving mutants and found `--out` created 0700, fixed in `e9c14e0`.
+- Commit hygiene, noted rather than rewritten: `5949edf` carries "(WIP)" in its subject and
+  `5f68d2e` only wraps it; `4982426`, typed `test:`, also carries a `src/output.ts` fix.
