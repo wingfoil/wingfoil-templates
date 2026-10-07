@@ -174,3 +174,4 @@ Branch `task/task-007-output`, run through `tooling-delivery` as `developer` (`c
   surviving mutants and found `--out` created 0700, fixed in `e9c14e0`.
 - Commit hygiene, noted rather than rewritten: `5949edf` carries "(WIP)" in its subject and
   `5f68d2e` only wraps it; `4982426`, typed `test:`, also carries a `src/output.ts` fix.
+- 2026-10-07: approved by the approver; merged into `main` with `--no-ff` (`5e62e09`); on `main` the 396 tests and `npm run lint` pass.
