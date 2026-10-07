@@ -2,7 +2,7 @@
 id: task-004-pack-resolution-ranges-requires-and-conflicts-cardinalities-slots-inventories-order-real-catalog
 type: task
 title: "Pack resolution: ranges, requires and conflicts, cardinalities, slots, inventories, order, real catalog"
-status: draft
+status: pending
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-003-pack-digest-and-computed-wingfoil-range"]
 tags: ["tooling","W5","F3.2"]
