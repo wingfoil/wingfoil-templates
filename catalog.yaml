@@ -1,0 +1,22 @@
+# The index WingFoil reads to list, resolve and verify packs (spec-001 §11).
+# axes and slots are spec-001 §3 and §9 as data; the order of axes is the composition order (§7.1).
+# Packs are listed when their first version is published (pack-release-cycle, publish); until then
+# the lists are empty (dl-010).
+format: 1
+foundation: base
+axes:
+  methodology: { cardinality: one, required: true }
+  phase:       { cardinality: one-per-slot, required: false, slots: [inception, specification, release, end-of-life] }
+  blueprint:   { cardinality: many, required: false }
+  governance:  { cardinality: many, required: false }
+  team-mode:   { cardinality: one, required: false, overlay: true }
+  stage:       { cardinality: one, required: false, overlay: true, scale: [prototype, mvp, production, maintenance, sunset] }
+slots:
+  inception:     { included_by: sw-life-cycle, default: base, filled_by: phase }
+  specification: { included_by: sw-life-cycle, default: base, filled_by: phase }
+  delivery:      { included_by: sw-life-cycle, filled_by: methodology }
+  release:       { included_by: delivery, default: base, filled_by: phase }
+  end-of-life:   { included_by: sw-life-cycle, default: base, filled_by: phase }
+packs: []
+transitions: []
+presets: []
