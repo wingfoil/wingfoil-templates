@@ -1,6 +1,6 @@
 # Project DNA (P2.4) — scaffolded by `wingfoil init` (Kanban template), then customized for this
 # repository. Structural map of the project: modules, stacks, team + roles, resource paths.
-version: 4
+version: 5
 
 project:
   name: wingfoil-templates
@@ -76,6 +76,14 @@ stacks:
       category: library
       version: "7.8.5"
       notes: "version comparison and range evaluation, behind the spec-001 §6.3 subset parser (adr-003)"
+    - name: ESLint
+      category: tool
+      version: "10.12.0"
+      notes: "npm run lint, with @eslint/js 10.0.1: type-aware and determinism rules, no style (adr-004)"
+    - name: typescript-eslint
+      category: tool
+      version: "8.71.1"
+      notes: "recommendedTypeChecked with the project service (adr-004)"
   methodologies:
     - name: Kanban
     - name: Semantic Versioning

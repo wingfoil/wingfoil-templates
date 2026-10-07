@@ -12,15 +12,19 @@
     "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
     "build": "npm run clean && tsc -p tsconfig.json",
     "test": "npm run build && node --test \"dist/tests/**/*.test.js\"",
+    "lint": "eslint --max-warnings 0 .",
     "check:pins": "node dist/src/check-pins.js",
     "check:schemas": "node dist/src/check-schemas.js",
     "digest": "node dist/src/digest-cli.js",
     "wingfoil": "wingfoil"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
     "@types/node": "22.20.5",
     "@types/semver": "7.8.0",
+    "eslint": "10.12.0",
     "typescript": "6.0.3",
+    "typescript-eslint": "8.71.1",
     "wingfoil": "0.2.2"
   },
   "dependencies": {
