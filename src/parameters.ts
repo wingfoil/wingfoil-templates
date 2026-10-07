@@ -53,6 +53,16 @@ function validatorFor(type: string): ValidateFunction | undefined {
   return validators.get(type);
 }
 
+/**
+ * A value given as text, as on a command line, read by its declared type: an integer by the base-10
+ * grammar, a boolean from `true` or `false`; anything else stays text, for the type check to judge.
+ */
+export function fromText(type: string, text: string): unknown {
+  if (type === 'integer' && INTEGER_SOURCE.test(text)) return Number(text);
+  if (type === 'boolean' && (text === 'true' || text === 'false')) return text === 'true';
+  return text;
+}
+
 /** Why a value does not fit a parameter type, or undefined when it does. */
 export function checkValue(type: string, value: unknown): string | undefined {
   const validate = validatorFor(type);
@@ -80,6 +90,7 @@ function fail(message: string): never {
 export function resolveParameters(
   packs: ResolvedPack[],
   given: Record<string, unknown>,
+  options: { givenAsText?: boolean } = {},
 ): Map<string, Parameter> {
   const parameters = new Map<string, Parameter>();
   for (const pack of packs) {
@@ -97,7 +108,10 @@ export function resolveParameters(
           fail(`parameter ${name} of ${pack.id}: default ${source} is not a base-10 integer`);
         }
       }
-      const value = Object.hasOwn(given, name) ? given[name] : declaration.default;
+      const raw = Object.hasOwn(given, name) ? given[name] : declaration.default;
+      const value = options.givenAsText === true && Object.hasOwn(given, name)
+        ? fromText(declaration.type, String(raw))
+        : raw;
       if (value === undefined) {
         fail(`parameter ${name} of ${pack.id} is required and has no value`);
       }

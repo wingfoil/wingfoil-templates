@@ -122,9 +122,10 @@ export function composeDocuments(
   catalog: Catalog,
   request: string[],
   given: ParameterValues,
+  options: { givenAsText?: boolean } = {},
 ): ComposedDocuments {
   const packs = resolve(tree, catalog, request);
-  const parameters = resolveParameters(packs, given);
+  const parameters = resolveParameters(packs, given, options);
   const values = new Map([...parameters.values()]
     .map((parameter) => [parameter.name, parameter.value]));
   const files = readFiles(tree, packs, values, parameterScopes(packs, parameters));
