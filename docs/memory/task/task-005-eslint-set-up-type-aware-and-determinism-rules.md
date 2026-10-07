@@ -69,7 +69,31 @@ adr-004's floor argument depends on it.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-005-eslint`, run through `tooling-delivery` as `developer` (`code-quality`,
+`testing`, `determinism`).
+
+- **`eslint.config.mjs`,** with `defineConfig` from `eslint/config`:
+  - ignores `dist/`, `node_modules/`, `.cache/`, `tests/fixtures/`;
+  - `@eslint/js` `recommended` and `typescript-eslint` `recommendedTypeChecked`, with
+    `parserOptions.projectService: true` and `tsconfigRootDir`;
+  - `src/**/*.ts`: the determinism rules, as `no-restricted-properties` (`Date.now`, `Math.random`,
+    `performance.now`, `process.hrtime`, `crypto.randomUUID`, `crypto.randomBytes`),
+    `no-restricted-syntax` (`Date` called or constructed with no argument) and
+    `no-restricted-imports` (the same names from `node:crypto`, `crypto`, `node:process`,
+    `node:perf_hooks`), each with a message citing the `determinism` directive;
+  - `tests/**/*.ts`: `no-floating-promises` with `allowForKnownSafeCalls` for `describe` and `it`
+    of `node:test`;
+  - `**/*.mjs`: `disableTypeChecked`.
+- **`package.json`:** the three packages pinned exact; `scripts.lint` is
+  `eslint --max-warnings 0 .`.
+- **`tests/lint.test.ts`:** the ESLint Node API with the repository's configuration, overriding only
+  `projectService.allowDefaultProject` for the probe paths; the probes are inline strings. A warning
+  probe uses a rule set to `warn` through the same override, run through the `--max-warnings 0`
+  logic (the CLI's exit code), by spawning `eslint` on a temporary file outside the repository with
+  the configuration given by `--config`.
+- **Defects the lint finds** in the existing code are fixed in their own commit, each named in the
+  Execution Notes.
+- **`dna.yaml`** 4 → 5: ESLint and `typescript-eslint` in `stacks.technologies`.
 
 ## Execution Notes
 
