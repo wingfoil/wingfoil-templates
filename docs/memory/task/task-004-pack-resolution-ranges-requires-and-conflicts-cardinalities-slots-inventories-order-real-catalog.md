@@ -147,3 +147,4 @@ name of over 100 characters.
   in an inventory folder counted as a file, schemas compiled per call, two ways of reading
   `requires`, a test passing for the wrong reason. All fixed in `9d7eb9b`; the re-review repeated
   the mutation (now caught by two tests) and approved.
+- 2026-10-07: approved by the approver; merged into `main` with `--no-ff` (`843c4c0`); on `main` the 234 tests, `check:pins` and `check:schemas` (1 file) pass.

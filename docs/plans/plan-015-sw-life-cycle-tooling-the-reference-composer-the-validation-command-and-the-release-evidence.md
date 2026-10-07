@@ -153,3 +153,4 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   fourteen tasks in all. From task 4b on, every tooling task's Acceptance includes `npm run lint`.
 - 2026-10-07: task-002 (YAML loading and schema checks) done, merged `f2b62ba`.
 - 2026-10-07: task-003 (digest and computed range) done, merged `2df2bb7`.
+- 2026-10-07: task-004 (resolution, real catalog) done, merged `843c4c0`.
