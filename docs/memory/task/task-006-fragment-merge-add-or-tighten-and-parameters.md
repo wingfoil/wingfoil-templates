@@ -164,3 +164,32 @@ Branch `task/task-006-merge`, run through `tooling-delivery` as `developer` (`co
   with `version:`; merge steps 2 and 3 and the reach of `defaults` tested directly; the missing
   definition cases; one case per §8.1 type rule; a real single-pass test; workflows parsed after
   substitution; presets deferred; the built-in directive ids' source and the deferred feedback note.
+- 2026-10-07, build on `task/task-006-merge`, as `developer`, under `npm run lint`: `f4d0a06`
+  memory merge, `6827efe` general merge, `654bd5d` parameters, `3f02ad6` `composeDocuments`,
+  `33c7b97` declaration tests, `044b5ed` and `c77a6f3` review fixes.
+  - Red first: each module's tests ran against a stub first (memory 30 failing, merge 14,
+    parameters 11, `composeDocuments` 29).
+  - Acceptance 1–8 pass from a clean clone at `c77a6f3` on Node.js 22.21.0 / npm 11.6.2 and on the
+    floor 22.12.0 / npm 10.9.0: 350 tests pass (none skipped), `lint`, `check:pins`,
+    `check:schemas` and `npm audit` clean, dependencies unchanged.
+- Deviations from the Design and choices:
+  - the parameter type rules are the pack schema's own `default` subschemas, compiled once; a
+    reshaped schema fails as a `CompositionError`;
+  - a composed Memory type keeps its defining fragment's key order (§7.2), later keys appended;
+  - a type without `states` needs `defaults`; a fragment's `format` must be written as a YAML
+    integer (§18), as integer defaults must;
+  - a `NaN` in a set is dropped, since it never equals itself; no pack writes one, and the §18 lint
+    can refuse it;
+  - substitution in `pack.yaml`, `README.md` and `CHANGELOG.md` never happens: those files are not
+    read.
+- **Feedback note due, deferred:** `src/wingfoil-builtins.ts` holds a copy of WingFoil 0.2.2's
+  built-in directive ids, for want of a WingFoil interface (`wingfoil-feedback`: do not work
+  around silently). The approver asked on 2026-10-07 that feedback notes stay untouched until wave
+  W5 closes; the note is written then, through the agreed feedback mechanism.
+- Review (a subagent with its own context): the §7.5 merge agreed with an independent
+  implementation on 2,000 seeded cases; 25 of 27 mutants were killed. Request changes, four
+  should-fix (prototype keys read through `in`, a scalar accepted under a set key, duplicate
+  required fields, `format: 1.0` accepted) and the two surviving mutants: fixed in `044b5ed`, every
+  fix killed by a test. One of the fixes, matching `{{name}}` only away from other braces, broke
+  §8.2's "every occurrence" (`{k: {{a}}}`); the re-review caught it and `c77a6f3` reverted it,
+  with tests. Re-review: approve.
