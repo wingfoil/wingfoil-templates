@@ -64,7 +64,38 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-002-yaml-loading-and-schema-checks-against-schema`, run through
+`tooling-delivery` as `developer` (`code-quality`, `testing`, `determinism`).
+
+- **`src/yaml-load.ts`:**
+  - `parseYaml(text, file)`: `parseAllDocuments` with `uniqueKeys: true` and a `LineCounter`. More
+    than one document, or any parse error, throws a `YamlError` carrying file, line, column and a
+    message; the first error, by position, is reported. Returns the `Document` (nodes, ranges and
+    source text kept) and its plain data (`toJS()`).
+  - `loadYamlFile(path)`: reads bytes, decodes with `TextDecoder('utf-8', { fatal: true })`; a
+    decode failure is an encoding error (exit 2 in the command), a read failure an I/O error (exit
+    2).
+  - `positionOf(doc, lineCounter, pointer, { key })`: walks the JSON pointer through the document's
+    nodes and returns the value's line and column, or, for key errors, the enclosing mapping's;
+    the root, or a path it cannot walk, gives `1:1`.
+- **`src/schemas.ts`:** one `Ajv2020` instance (`strict: true`, `allowUnionTypes: true`,
+  `allErrors: true`, a `logger` whose warnings are collected), the five schemas read from `schema/`
+  next to the package, compiled once. `validate(kind, data)` returns Ajv's errors with the `if`
+  meta-errors dropped (the `then` error that caused each stays).
+- **`src/check-schemas.ts`:** `findFiles(root)` lists `catalog.yaml`, `compat.yaml`,
+  `packs/**/pack.yaml`, `presets/*.yaml`, `transitions/*.yaml`, sorting every directory listing, so
+  the order never depends on the filesystem. `runCheckSchemas(root)` loads and validates each file
+  and returns `{ code, messages, checked }`, messages formatted `<file>:<line>:<column>: <instance
+  path> <keyword>: <message>` with the file relative to the root and sorted. `main` prints the
+  messages on stderr and `checked N files` on stdout; script `check:schemas`.
+- **Exit code:** the highest reached: 2 for an I/O or encoding error, otherwise 1 for a YAML or
+  schema error, otherwise 0.
+- **Tests,** red first: `tests/yaml-load.test.ts`, `tests/schemas.test.ts`,
+  `tests/check-schemas.test.ts`, with the fixtures under
+  `tests/fixtures/schema/<kind>/{valid,invalid}/` and, for invalid ones, the expected (keyword, instance path) in a `# expect: <keyword> <path>`
+  first-line comment, read by the test.
+- **Ajv import:** `ajv/dist/2020`, a CommonJS module, imported by its `default` export, as `tsc`
+  compiles it under `module: Node16`.
 
 ## Execution Notes
 
