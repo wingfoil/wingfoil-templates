@@ -91,7 +91,36 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-004-pack-resolution`, run through `tooling-delivery` as `developer`
+(`code-quality`, `testing`, `determinism`). The branch name is shortened: the full id makes a ref
+name of over 100 characters.
+
+- **`catalog.yaml`:** the §11 example's `format`, `foundation`, `axes` and `slots`, with empty
+  lists, and a header comment naming spec-001 §11 and dl-010.
+- **`src/catalog.ts`:** `loadCatalog(path)` loads the file (task-002 loader), checks it against
+  the catalog schema, and returns typed `axes` (in file order, which is the composition order of
+  §7.1) and `slots`.
+- **`src/requirements.ts`:** `parseEntry(entry, kind)` checks an entry against the pack schema's
+  `$defs.requiresEntry` or `$defs.conflictsEntry` pattern (one grammar, the contract's) and splits
+  it into id and range; `satisfies(version, range)` calls `semver.satisfies` without `loose` or
+  `includePrerelease`.
+- **`src/listing.ts`:** `sortEntries(entries)` and `listSorted(dir)`: every directory the resolver
+  reads goes through them, in byte order of the names.
+- **`src/resolve.ts`:** `resolve(tree, catalog, request)`, in stages, each failing with a
+  `ResolveError` that names the packs:
+  1. parse the request (bare ids or §6.3 entries), add `base`;
+  2. load each pack from `packs/<id>/pack.yaml`, schema-checked, `id` and `slot` checked against
+     the directory, and follow `requires` until closed;
+  3. check every requested and required range, then `conflicts`;
+  4. check axes against the catalog (cardinality, required, one per slot), the slots of §9, and the
+     inventories of §6.4;
+  5. order: `base`, then each catalog axis in order; `phase` by slot order; an axis of
+     cardinality "many" by Kahn's algorithm on its internal `requires`, ties in byte order of the
+     id; then every `requires` must point earlier.
+- **Tests,** red first: `tests/requirements.test.ts`, `tests/catalog.test.ts`,
+  `tests/resolve.test.ts`. Most cases are built in temporary trees by a helper,
+  `tests/support/pack-tree.ts`, which writes minimal schema-valid packs; one complete tree with
+  every axis is on disk under `tests/fixtures/resolve/full/`, for the order test.
 
 ## Execution Notes
 
