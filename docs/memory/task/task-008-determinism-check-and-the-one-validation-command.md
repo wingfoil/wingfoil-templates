@@ -88,7 +88,7 @@ Branch `task/task-008-validate`, run through `tooling-delivery` as `developer` (
   fresh temporary directory, removed afterwards.
 - **`src/validate.ts`:** `runValidate(argv, options)`: schema checks; then the compositions (each
   preset passing its schema, then the entries), each resolved first to know which `--param` names
-  it declares; preset values passed as text, as `--param` values are, and read back by declared type;
+  it declares; preset values passed as text, as `--param` values are, read back by declared type;
   then `composeTwice`. A report line per step; the exit code is the highest reached.
   `options.compare` replaces the tree comparison in tests.
 - **`src/validate-cli.ts`:** `npm run validate`.
@@ -103,3 +103,28 @@ Branch `task/task-008-validate`, run through `tooling-delivery` as `developer` (
   environments varied between the two runs, modes excluded; the highest exit code; a mismatch shown
   through `validate`; the §15 quote; the preset listed in the golden catalog; "0 compositions" on
   the repository; no evidence from `validate`.
+- 2026-10-07, build on `task/task-008-validate`, as `developer`, under `npm run lint`: `9bb6119`
+  determinism check, `c303a11` `validate` and the golden preset, `4d7d33f` review fixes.
+  - Red first: with stubs, 11 tests failed; the implementation made them pass.
+  - Found by running the command by hand: a relative `--tree` broke the second run, which works
+    from another directory on purpose; the tree path is now resolved, with a test.
+  - **W5 exit criterion met:** `npm run validate -- --tree tests/fixtures/compose/tree --param
+    project_name=Golden` composes the golden preset twice, in two processes with different
+    environments, into 18 byte-identical files, and exits 0.
+  - Acceptance 1–7 pass from a clean clone at `4d7d33f` on Node.js 22.21.0 / npm 11.6.2 and on the
+    floor 22.12.0 / npm 10.9.0: 424 tests pass (none skipped), `lint`, `check:pins`,
+    `check:schemas`, `npm audit` clean, dependencies unchanged; `npm run validate` on this
+    repository reports 1 file and 0 compositions.
+- Deviations from the Design: `composeTwice` takes options (`compare`, and `cli`, the compose
+  module, so that a leaky stand-in can test the real comparison); the second run also changes the
+  locale (`tr_TR.UTF-8`, which ICU honours) and `TMPDIR`; temporary paths are reported as `<tmp>`.
+- Review (a subagent with its own context): request changes, no blocking. It injected
+  nondeterminism into the compiled composer: the clock, the zone, home, the working directory,
+  the output path, the umask, randomness and the process id were caught; the locale and the
+  temporary directory were not, and eight mutants survived (among them a comparison of a tree with
+  itself). Fixed in `4d7d33f`: both leaks caught, every mutant killed, a missing `--tree` exits 2,
+  a killed child reports its signal, failures of the comparison exit 2, and no false
+  "no composition declares" line. Re-review: approve.
+- Left as they are (review nits): a schema problem anywhere suppresses the "no composition declares"
+  check (the run still exits 1); a compose usage error (3) in a child is reported as 1, which
+  `validate` cannot produce since it builds the arguments itself.
