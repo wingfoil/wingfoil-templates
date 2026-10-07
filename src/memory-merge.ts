@@ -325,6 +325,10 @@ class MemoryMerge {
       .map((key) => [key, values[key]]));
   }
 
+  definers(): Map<string, string> {
+    return new Map([...this.types].map(([name, type]) => [name, type.definedBy]));
+  }
+
   result(): Doc {
     const out: Doc = {};
     if (this.defaults !== undefined) out['defaults'] = { states: machineOut(this.defaults) };
@@ -337,9 +341,23 @@ class MemoryMerge {
   }
 }
 
-/** Merges memory fragments in composition order; the first must define `defaults`, if any. */
-export function mergeMemory(fragments: MemoryFragment[], foundation: string): Doc {
+export interface MergedMemory {
+  doc: Doc;
+  /** Type name -> the pack that defined it (§7.5), for the Memory template rules (§7.6). */
+  definedBy: Map<string, string>;
+}
+
+/** Merges memory fragments in composition order, and tells which pack defined each type. */
+export function mergeMemoryWithOwners(
+  fragments: MemoryFragment[],
+  foundation: string,
+): MergedMemory {
   const merge = new MemoryMerge(foundation);
   for (const fragment of fragments) merge.apply(fragment);
-  return merge.result();
+  return { doc: merge.result(), definedBy: merge.definers() };
+}
+
+/** Merges memory fragments in composition order; the first must define `defaults`, if any. */
+export function mergeMemory(fragments: MemoryFragment[], foundation: string): Doc {
+  return mergeMemoryWithOwners(fragments, foundation).doc;
 }
