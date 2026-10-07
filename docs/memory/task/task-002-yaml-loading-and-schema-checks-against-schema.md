@@ -92,8 +92,8 @@ Branch `task/task-002-yaml-loading-and-schema-checks-against-schema`, run throug
   schema error, otherwise 0.
 - **Tests,** red first: `tests/yaml-load.test.ts`, `tests/schemas.test.ts`,
   `tests/check-schemas.test.ts`, with the fixtures under
-  `tests/fixtures/schema/<kind>/{valid,invalid}/` and, for invalid ones, the expected (keyword, instance path) in a `# expect: <keyword> <path>`
-  first-line comment, read by the test.
+  `tests/fixtures/schema/<kind>/{valid,invalid}/` and, for invalid ones, the expected (keyword,
+  instance path) in a `# expect: <keyword> <path>` first-line comment, read by the test.
 - **Ajv import:** `ajv/dist/2020`, a CommonJS module, imported by its `default` export, as `tsc`
   compiles it under `module: Node16`.
 
@@ -104,3 +104,29 @@ Branch `task/task-002-yaml-loading-and-schema-checks-against-schema`, run throug
   errors, with `if` meta-errors folded; positions of key and root errors; exit codes, and a
   deterministic unreadable case; the `..` case placed in the catalog. The review checked that every
   spec-001 example passes the schemas and every listed invalid case fails them.
+- 2026-10-07, build on the task branch, as `developer`: `b5027ff` loader, `726a0c2` schemas and
+  fixtures, `dd53a19` `check:schemas`, `638b823` review fixes.
+  - Red first: with stubs, 18 of the new tests failed (the schema file failed as a whole, since
+    `loadSchemas` threw at load); the implementation made them pass. Stubs never committed.
+  - Fixtures: the spec-001 examples verbatim (the §11 digest made a full 64-hex value), a `base`
+    `pack.yaml`, and fifteen invalid files: the eleven of Acceptance 4, plus a missing `format` for
+    each of the five kinds. Each invalid file states its expected (keyword, path) on line 1.
+  - Acceptance 1–7 pass from a clean clone at `638b823` on Node.js 22.21.0 / npm 11.6.2 and on the
+    floor 22.12.0 / npm 10.9.0: 110 tests pass (none skipped), `check:pins` 0, `check:schemas`
+    0 with `checked 0 files`, `npm audit` 0 vulnerabilities; the lockfile is unchanged.
+- Deviations from the Design:
+  - `positionOf` has no `key` option: Ajv's path for `required` and `additionalProperties` already
+    names the mapping, so one rule serves both;
+  - `prettyErrors: false`, for one-line parser messages; aliases are refused (`maxAliasCount: 0`),
+    against expansion attacks, and reported at 1:1;
+  - `YamlError.detail` carries the message without its position prefix;
+  - discovery records a directory it cannot list (exit 2) and stops at a pack: a `pack.yaml`
+    inside a pack is not another pack.
+- Review (a subagent with its own context): request changes, one blocking (a root error was not
+  at 1:1 after leading comments) and four should-fix (unreadable directories skipped, nested
+  `pack.yaml` checked, a schema load failure exiting 1, weak syntax tests); all fixed in
+  `638b823`, and the re-review approved.
+- Left to the §18 layout lint (task 9), from the re-review: a directory named `presets/<x>.yaml` is
+  skipped rather than reported, and a `packs/pack.yaml` at the top of `packs/` is checked as a pack.
+- Lint preview (adr-004, in a scratch clone): `src/` is clean; the tests have the expected
+  `no-floating-promises` on `describe` and `it`, for task 4b.
