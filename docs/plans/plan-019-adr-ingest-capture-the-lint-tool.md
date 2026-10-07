@@ -54,3 +54,4 @@ The `approve` phase that follows is the approver's.
   before the approver's review: the floor claim, now tried with `eslint` 10.12.0 on Node.js 22.12.0
   / npm 10.9.0 (`npm ci` warns `EBADENGINE` and exits 0; build, 62 tests and the lint of `src/`
   pass), and `--max-warnings 0`.
+- 2026-10-07: adr-004 approved by the approver. Plan done.
