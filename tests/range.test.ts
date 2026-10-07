@@ -47,6 +47,11 @@ describe('isCompatible', () => {
     assert.equal(isCompatible(version, release('0.4.0', { capabilities: ['pack-install'] })), true);
   });
 
+  it('reads only own kinds of reads, never Object.prototype members', () => {
+    const version = { formats: { constructor: 1 }, requires_capabilities: [] };
+    assert.equal(isCompatible(version, release('0.3.0')), false);
+  });
+
   it('accepts empty formats and capabilities on any release with the key and workflows 1', () => {
     const reads = { workflows: [1] };
     assert.equal(isCompatible(EMPTY, release('0.3.0', { reads })), true);
@@ -77,6 +82,10 @@ describe('computeRange', () => {
 
   it('follows adjacency in compat.yaml, not semver', () => {
     assert.equal(computeRange(KANBAN, [release('0.3.0'), release('0.3.2')]), '>=0.3.0 <=0.3.2');
+  });
+
+  it('refuses a release that is not a version', () => {
+    assert.throws(() => computeRange(KANBAN, [release('0.3')]), /not a version/);
   });
 
   it('refuses releases that are not in ascending order', () => {

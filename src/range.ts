@@ -18,11 +18,15 @@ export interface VersionRequirements {
 /** The composed workflows.yaml is format 1 (spec-001 §7.7). */
 const COMPOSED_WORKFLOWS_FORMAT = 1;
 
+/** Own keys only: a kind named like an Object.prototype member is not read. */
+function reads(release: CompatRelease, kind: string, format: number): boolean {
+  return Object.hasOwn(release.reads, kind) && release.reads[kind]?.includes(format) === true;
+}
+
 export function isCompatible(version: VersionRequirements, release: CompatRelease): boolean {
   return release.format_key
-    && Object.entries(version.formats).every(([kind, format]) =>
-      release.reads[kind]?.includes(format) === true)
-    && release.reads['workflows']?.includes(COMPOSED_WORKFLOWS_FORMAT) === true
+    && Object.entries(version.formats).every(([kind, format]) => reads(release, kind, format))
+    && reads(release, 'workflows', COMPOSED_WORKFLOWS_FORMAT)
     && version.requires_capabilities.every((name) => release.capabilities.includes(name));
 }
 

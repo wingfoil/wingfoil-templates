@@ -3,14 +3,18 @@ import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
+import { revParseArgs } from '../src/git';
 import { REPO_ROOT } from './support/paths';
 import { withRepo } from './support/git-repo';
 import type { TestRepo } from './support/git-repo';
 
 const CLI = join(REPO_ROOT, 'dist', 'src', 'digest-cli.js');
 
-function run(args: string[]): { status: number | null; stdout: string; stderr: string } {
-  const result = spawnSync(process.execPath, [CLI, ...args], { encoding: 'utf8' });
+function run(
+  args: string[],
+  env?: NodeJS.ProcessEnv,
+): { status: number | null; stdout: string; stderr: string } {
+  const result = spawnSync(process.execPath, [CLI, ...args], { encoding: 'utf8', env });
   return { status: result.status, stdout: result.stdout, stderr: result.stderr };
 }
 
@@ -38,7 +42,7 @@ describe('npm run digest', () => {
     withRepo((repo) => {
       examplePack(repo);
       const id = 'phase/inception/lean';
-      const result = run(['--repo', repo.dir, `${id}@1.0.0`, id]);
+      const result = run(['--repo', repo.dir, `${id}@1.0.0`, id], repo.env);
       assert.equal(result.status, 0, result.stderr);
       assert.equal(result.stdout, `${reference(repo, 'phase/inception/lean')}\n`);
     });
@@ -50,6 +54,11 @@ describe('npm run digest', () => {
       repo.commitIndex('bad path');
       assert.equal(run(['--repo', repo.dir, 'HEAD', 'base']).status, 1);
     });
+  });
+
+  it('resolves a ref after --end-of-options, so it is never an option', () => {
+    const args = revParseArgs('--all');
+    assert.ok(args.indexOf('--end-of-options') < args.indexOf('--all^{commit}'), args.join(' '));
   });
 
   it('exits 2 on a missing ref, also one that looks like an option', () => {

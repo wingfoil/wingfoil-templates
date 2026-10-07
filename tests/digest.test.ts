@@ -36,6 +36,20 @@ function writePack(repo: TestRepo, id: string, files: Record<string, string>): v
   for (const [path, text] of Object.entries(files)) repo.write(`packs/${id}/${path}`, text);
 }
 
+/** Runs body with environment variables set, restoring them afterwards. */
+function withEnv(values: Record<string, string>, body: () => void): void {
+  const saved = Object.fromEntries(Object.keys(values).map((name) => [name, process.env[name]]));
+  Object.assign(process.env, values);
+  try {
+    body();
+  } finally {
+    for (const [name, value] of Object.entries(saved)) {
+      if (value === undefined) delete process.env[name];
+      else process.env[name] = value;
+    }
+  }
+}
+
 function digestError(fn: () => unknown): DigestError {
   try {
     fn();
@@ -159,7 +173,7 @@ describe('packDigest', () => {
     });
   });
 
-  it('does not depend on the user git configuration (core.autocrlf)', () => {
+  it('does not depend on core.autocrlf, global or in the repository', () => {
     withRepo((repo) => {
       repo.addBlob('packs/base/crlf.md', Buffer.from('a\r\n'));
       repo.addBlob('packs/base/lf.md', Buffer.from('a\n'));
@@ -167,16 +181,53 @@ describe('packDigest', () => {
       const plain = packDigest(repo.dir, 'HEAD', 'base').digest;
       const config = join(repo.home, 'autocrlf');
       writeFileSync(config, '[core]\n\tautocrlf = true\n');
-      const saved = process.env['GIT_CONFIG_GLOBAL'];
-      process.env['GIT_CONFIG_GLOBAL'] = config;
-      try {
+      withEnv({ GIT_CONFIG_GLOBAL: config }, () => {
         assert.equal(packDigest(repo.dir, 'HEAD', 'base').digest, plain);
-      } finally {
-        if (saved === undefined) delete process.env['GIT_CONFIG_GLOBAL'];
-        else process.env['GIT_CONFIG_GLOBAL'] = saved;
-      }
+      });
+      repo.git(['config', 'core.autocrlf', 'true']);
+      assert.equal(packDigest(repo.dir, 'HEAD', 'base').digest, plain);
     });
   });
+
+  it('ignores the caller GIT_DIR, as when run from a git hook', () => {
+    withRepo((repo) => {
+      writePack(repo, 'base', { 'pack.yaml': 'real\n' });
+      repo.commitAll('real');
+      const real = packDigest(repo.dir, 'HEAD', 'base').digest;
+      withRepo((decoy) => {
+        writePack(decoy, 'base', { 'pack.yaml': 'decoy\n' });
+        decoy.commitAll('decoy');
+        withEnv({ GIT_DIR: join(decoy.dir, '.git') }, () => {
+          assert.equal(packDigest(repo.dir, 'HEAD', 'base').digest, real);
+        });
+      });
+    });
+  });
+
+  it('ignores replace objects', () => {
+    withRepo((repo) => {
+      writePack(repo, 'base', { 'pack.yaml': 'real\n' });
+      repo.commitAll('real');
+      const real = packDigest(repo.dir, 'HEAD', 'base').digest;
+      const blob = repo.git(['rev-parse', 'HEAD:packs/base/pack.yaml']).trim();
+      const other = repo.git(['hash-object', '-w', '--stdin'], Buffer.from('replaced\n')).trim();
+      repo.git(['replace', blob, other]);
+      assert.equal(packDigest(repo.dir, 'HEAD', 'base').digest, real);
+    });
+  });
+
+  for (const name of ['GIT_GLOB_PATHSPECS', 'GIT_ICASE_PATHSPECS', 'GIT_LITERAL_PATHSPECS']) {
+    it(`ignores ${name}`, () => {
+      withRepo((repo) => {
+        writePack(repo, 'base', { 'pack.yaml': 'x\n' });
+        repo.commitAll('one');
+        const plain = packDigest(repo.dir, 'HEAD', 'base').digest;
+        withEnv({ [name]: '1' }, () => {
+          assert.equal(packDigest(repo.dir, 'HEAD', 'base').digest, plain);
+        });
+      });
+    });
+  }
 
   it('refuses an id that is not a catalog pack id', () => {
     withRepo((repo) => {
@@ -188,6 +239,15 @@ describe('packDigest', () => {
 });
 
 describe('transitionDigest', () => {
+  it('refuses a file outside transitions/<id>.yaml', () => {
+    withRepo((repo) => {
+      repo.write('README.md', 'x\n');
+      repo.commitAll('none');
+      digestError(() => transitionDigest(repo.dir, 'HEAD', 'README.md'));
+      digestError(() => transitionDigest(repo.dir, 'HEAD', 'transitions/../README.md'));
+    });
+  });
+
   it('lists the file under its base name', () => {
     withRepo((repo) => {
       const text = 'format: 1\nid: prototype-to-production\n';

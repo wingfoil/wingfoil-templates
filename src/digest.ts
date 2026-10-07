@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join, posix } from 'node:path';
 
-import { readBlobs, resolveCommit, runGit } from './git';
+import { GitError, readBlobs, resolveCommit, runGit } from './git';
 import { SCHEMA_DIR } from './schemas';
 
 /** A rule of §13 is broken: the pack cannot have a digest. */
@@ -83,11 +83,15 @@ function filesAt(
     if (!REGULAR_MODES.has(entry.mode)) {
       const kind = entry.mode === '120000' ? 'a symbolic link'
         : entry.mode === '160000' ? 'a submodule' : `mode ${entry.mode}`;
-      throw new DigestError(`${entry.path}: ${kind}, only regular files are allowed`);
+      throw new DigestError(
+        `${JSON.stringify(entry.path)}: ${kind}, only regular files are allowed`,
+      );
     }
     const path = relative(entry.path);
     if (!path.split('/').every((segment) => SEGMENT.test(segment))) {
-      throw new DigestError(`${entry.path}: path segment does not match ${SEGMENT.source}`);
+      throw new DigestError(
+        `${JSON.stringify(entry.path)}: path segment does not match ${SEGMENT.source}`,
+      );
     }
   }
   const blobs = readBlobs(repo, entries.map((entry) => entry.sha));
@@ -111,11 +115,20 @@ export function packDigest(repo: string, ref: string, packId: string): DigestRes
   const prefix = `packs/${packId}/`;
   const entries = treeEntries(repo, commit, prefix);
   if (entries.length === 0) throw new DigestError(`no file under ${prefix} at ${ref}`);
+  const outside = entries.find((entry) => !entry.path.startsWith(prefix));
+  if (outside !== undefined) {
+    throw new GitError(`git ls-tree: ${JSON.stringify(outside.path)} is outside ${prefix}`);
+  }
   return result(filesAt(repo, entries, (path) => path.slice(prefix.length)));
 }
 
+const TRANSITION_FILE = /^transitions\/[a-z][a-z0-9]*(?:-[a-z0-9]+)*\.yaml$/;
+
 /** The digest of one transition file at a ref: §13 on a one-file listing of its base name (§14). */
 export function transitionDigest(repo: string, ref: string, file: string): DigestResult {
+  if (!TRANSITION_FILE.test(file)) {
+    throw new DigestError(`${JSON.stringify(file)} is not a transitions/<id>.yaml file`);
+  }
   const commit = resolveCommit(repo, ref);
   const entries = treeEntries(repo, commit, file).filter((entry) => entry.path === file);
   if (entries.length !== 1) throw new DigestError(`no file ${file} at ${ref}`);
