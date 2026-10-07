@@ -1,0 +1,19 @@
+format: 1
+id: base
+name: base
+title: base
+description: Test pack base.
+version: 1.0.0
+formats:
+  memory: 1
+  workflow: 1
+requires_capabilities: []
+contents:
+  fragments:
+    - memory
+  directives: []
+  workflows:
+    - sw-life-cycle
+    - retrospective
+  memory_templates: []
+  agents_section: false

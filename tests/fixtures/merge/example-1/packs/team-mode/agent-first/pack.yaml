@@ -1,0 +1,19 @@
+format: 1
+id: team-mode/agent-first
+axis: team-mode
+name: agent-first
+title: team-mode/agent-first
+description: Test pack team-mode/agent-first.
+version: 1.0.0
+formats:
+  memory: 1
+requires_capabilities: []
+requires:
+  - base@^1
+contents:
+  fragments:
+    - memory
+  directives: []
+  workflows: []
+  memory_templates: []
+  agents_section: false

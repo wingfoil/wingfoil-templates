@@ -22,6 +22,25 @@ export interface PackSpec {
   omitFiles?: string[];
 }
 
+/** Format 1 for every file kind the pack ships (spec-001 §5). */
+function formatsFor(spec: PackSpec): Record<string, number> {
+  const formats: Record<string, number> = {};
+  for (const fragment of spec.fragments ?? []) formats[fragment] = 1;
+  if ((spec.workflows ?? []).length > 0) formats['workflow'] = 1;
+  if ((spec.directives ?? []).length > 0) formats['directive'] = 1;
+  if ((spec.memoryTemplates ?? []).length > 0) formats['memory-template'] = 1;
+  return formats;
+}
+
+/** Placeholder content: YAML files hold a minimal valid document. */
+function placeholder(file: string): string {
+  if (file.startsWith('fragments/')) return 'format: 1\n';
+  if (file.startsWith('workflows/')) {
+    return `format: 1\nname: ${file.slice('workflows/'.length, -'.yaml'.length)}\n`;
+  }
+  return `# ${file}\n`;
+}
+
 export function manifestFor(spec: PackSpec): Record<string, unknown> {
   const segments = spec.id.split('/');
   const isBase = spec.id === 'base';
@@ -33,7 +52,7 @@ export function manifestFor(spec: PackSpec): Record<string, unknown> {
     title: spec.id,
     description: `Test pack ${spec.id}.`,
     version: spec.version ?? '1.0.0',
-    formats: {},
+    formats: formatsFor(spec),
     requires_capabilities: [],
   });
   if (!isBase) manifest['requires'] = spec.requires ?? ['base@^1'];
@@ -66,7 +85,7 @@ export function writePack(root: string, spec: PackSpec): void {
   };
   write('pack.yaml', stringify(manifestFor(spec)));
   for (const file of contentFiles(spec)) {
-    if (!(spec.omitFiles ?? []).includes(file)) write(file, `# ${file}\n`);
+    if (!(spec.omitFiles ?? []).includes(file)) write(file, placeholder(file));
   }
   for (const [path, text] of Object.entries(spec.extraFiles ?? {})) write(path, text);
 }

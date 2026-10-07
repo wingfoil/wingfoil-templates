@@ -1,0 +1,25 @@
+# spec-001 §7.5, example 1 (states illustrative, as in the spec).
+format: 1
+defaults:
+  states:
+    sequence: [draft, pending, approved]
+    gates:
+      pending: { reject: draft }
+types:
+  task:
+    path: docs/memory/task/{id}.md
+    id_pattern: "task-{n}-{slug}"
+    template: { file: memory/templates/built-in/task.md }
+    states:
+      sequence: [draft, pending, backlog, in-progress, in-review, approved, done]
+      gates:
+        pending: { reject: draft }
+        in-review: { reject: in-progress }
+  adr:
+    path: docs/memory/adr/{id}.md
+    id_pattern: "adr-{n}-{slug}"
+    template: { file: memory/templates/built-in/adr.md }
+  bug:
+    path: docs/memory/bug/{id}.md
+    id_pattern: "bug-{n}-{slug}"
+    template: { file: memory/templates/built-in/bug.md }
