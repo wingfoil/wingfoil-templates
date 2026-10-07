@@ -2,7 +2,7 @@
 id: task-007-composer-output-assets-workflows.yaml-agents-region-compose-command
 type: task
 title: "Composer output: assets, workflows.yaml, AGENTS region, compose command"
-status: approved
+status: done
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-006-fragment-merge-add-or-tighten-and-parameters"]
 tags: ["tooling","W5","F3.2"]
