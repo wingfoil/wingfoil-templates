@@ -4,7 +4,7 @@
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 
-import { loadCatalog } from './catalog';
+import { CatalogError, loadCatalog } from './catalog';
 import { composeDocuments } from './compose-documents';
 import { CompositionError } from './composition-error';
 import { OutputError, planOutput, writeOutput } from './output';
@@ -32,19 +32,23 @@ function parameters(raw: string[]): Record<string, string> {
   return values;
 }
 
+function parseCompose(argv: string[]) {
+  return parseArgs({
+    args: argv,
+    options: {
+      tree: { type: 'string' },
+      out: { type: 'string' },
+      param: { type: 'string', multiple: true },
+    },
+    allowPositionals: true,
+    strict: true,
+  });
+}
+
 function compose(argv: string[]): void {
-  let parsed;
+  let parsed: ReturnType<typeof parseCompose>;
   try {
-    parsed = parseArgs({
-      args: argv,
-      options: {
-        tree: { type: 'string' },
-        out: { type: 'string' },
-        param: { type: 'string', multiple: true },
-      },
-      allowPositionals: true,
-      strict: true,
-    });
+    parsed = parseCompose(argv);
   } catch (error) {
     throw new UsageError(error instanceof Error ? error.message : String(error));
   }
@@ -71,10 +75,7 @@ export function runCompose(argv: string[]): Outcome {
     if (error instanceof CompositionError || error instanceof ResolveError) {
       return { code: 1, message };
     }
-    // loadCatalog reports a catalog that breaks its schema as a plain Error.
-    if (error instanceof Error && message.includes('not a valid catalog')) {
-      return { code: 1, message };
-    }
+    if (error instanceof CatalogError) return { code: 1, message };
     throw error;
   }
 }

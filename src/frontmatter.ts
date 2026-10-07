@@ -7,7 +7,7 @@ const FRONTMATTER = /^---\n([\s\S]*?\n)?---(?:\n|$)/;
 
 /** The frontmatter as loaded, or undefined when the file has none. */
 export function readFrontmatter(text: string, file: string): LoadedYaml | undefined {
-  const match = FRONTMATTER.exec(text.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n'));
+  const match = FRONTMATTER.exec(text.replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n'));
   if (match === null) return undefined;
   return parseYaml(match[1] ?? '', file);
 }

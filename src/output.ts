@@ -1,7 +1,10 @@
 // From a composition to files (spec-001 §7.6, §7.7, §9, §10, §17 step 6): the asset checks, the
 // generated workflows.yaml, the AGENTS.md generated region, and the bytes of every file.
-import { existsSync, mkdirSync, readdirSync, statSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import {
+  existsSync, mkdirSync, mkdtempSync, readdirSync, renameSync, rmSync, rmdirSync, statSync,
+  writeFileSync,
+} from 'node:fs';
+import { dirname, join, resolve as resolvePath } from 'node:path';
 import { isScalar } from 'yaml';
 
 import type { Catalog } from './catalog';
@@ -85,6 +88,10 @@ interface Plan {
   targets: Map<string, Asset>;
 }
 
+/**
+ * One owner per target (§7.6). A slot workflow may replace its default's file: the resolver has
+ * already refused a slot workflow from a pack that does not fill the slot (§9).
+ */
 function place(plan: Plan, target: string, asset: Asset, catalog: Catalog): void {
   const existing = plan.targets.get(target);
   if (existing !== undefined) {
@@ -194,13 +201,12 @@ export function agentsRegion(
     }
     const lines = body.split('\n');
     const first = lines.find((line) => line.trim() !== '') ?? '';
-    const prose = proseLines(body);
     const heading = pack === foundation ? /^# \S/ : /^## \S/;
-    if (!heading.test(first) || prose[lines.indexOf(first)] !== first) {
+    if (!heading.test(first)) {
       throw new CompositionError(`${pack}: agents/section.md must open with a level-`
         + `${pack === foundation ? '1' : '2'} heading (spec-001 §10)`);
     }
-    if (pack !== foundation && prose.some((line) => /^# /.test(line))) {
+    if (pack !== foundation && proseLines(body).some((line) => /^# /.test(line))) {
       throw new CompositionError(`${pack}: agents/section.md contains a level-1 heading; only `
         + `${foundation}'s section has one (spec-001 §10)`);
     }
@@ -237,19 +243,31 @@ export function planOutput(composed: ComposedDocuments, catalog: Catalog): Outpu
   return files.sort((a, b) => Buffer.compare(Buffer.from(a.path), Buffer.from(b.path)));
 }
 
-/** Writes the files under `out`, which must not exist or be empty (§17: no project file). */
+/**
+ * Writes the files under `out`, which must not exist or be an empty directory (§17: the composer
+ * never touches a project's own files). The files are written to a sibling directory first and
+ * renamed into place, so a failed write leaves no half-written `out`.
+ */
 export function writeOutput(out: string, files: OutputFile[]): void {
   if (existsSync(out) && (!statSync(out).isDirectory() || readdirSync(out).length > 0)) {
     throw new OutputError(`${out} exists and is not an empty directory`);
   }
+  let staging: string | undefined;
   try {
+    mkdirSync(dirname(resolvePath(out)), { recursive: true });
+    staging = mkdtempSync(join(dirname(resolvePath(out)), '.compose-'));
     for (const file of files) {
-      const path = join(out, file.path);
+      const path = join(staging, file.path);
       mkdirSync(dirname(path), { recursive: true });
       writeFileSync(path, file.text, 'utf8');
     }
+    if (existsSync(out)) rmdirSync(out);
+    renameSync(staging, out);
+    staging = undefined;
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
     throw new OutputError(`cannot write ${out}: ${reason}`);
+  } finally {
+    if (staging !== undefined) rmSync(staging, { recursive: true, force: true });
   }
 }

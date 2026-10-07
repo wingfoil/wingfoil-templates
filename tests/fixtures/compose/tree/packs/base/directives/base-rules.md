@@ -1,4 +1,4 @@
----
+﻿---
 id: base-rules
 name: base-rules
 type: directive

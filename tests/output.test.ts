@@ -135,7 +135,10 @@ describe('output: assets (spec-001 §7.6)', () => {
   });
 
   it('fails on a composition without a dna, roles or memory fragment (derived)', () => {
-    fails([{ ...BASE, fragments: ['dna', 'roles'] }, KANBAN], ['methodology/kanban'], /memory/);
+    const files = { ...BASE.extraFiles };
+    delete files['fragments/memory.yaml'];
+    const base = { ...BASE, fragments: ['dna', 'roles'], extraFiles: files };
+    fails([base, KANBAN], ['methodology/kanban'], /ships a memory fragment/);
   });
 });
 
@@ -207,6 +210,12 @@ describe('output: bytes (spec-001 §17)', () => {
     assert.equal(normalizeText('﻿a\r\nb'), 'a\nb\n');
     assert.equal(normalizeText('a\n\n'), 'a\n\n');
     assert.equal(normalizeText(''), '\n');
+  });
+
+  it('writes an asset with a byte order mark without it', () => {
+    const files = plan([BASE, KANBAN, shipping('blueprint/x', { directives: ['d'] },
+      { 'directives/d.md': `\uFEFF${directive('d')}text\n` })], WITH_X);
+    assert.equal(files.get('.wingfoil/directives/built-in/d.md'), `${directive('d')}text\n`);
   });
 
   it('writes a CRLF asset with LF', () => {

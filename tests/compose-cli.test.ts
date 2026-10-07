@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { describe, it } from 'node:test';
@@ -59,6 +59,28 @@ describe('npm run compose', () => {
     });
   });
 
+  it('exits 1 on a catalog that breaks its schema', () => {
+    withTemp((dir) => {
+      const tree = join(dir, 'tree');
+      cpSync(TREE, tree, { recursive: true });
+      const catalog = join(tree, 'catalog.yaml');
+      writeFileSync(catalog, readFileSync(catalog, 'utf8').replace('format: 1', 'format: 2'));
+      const result = run(['--tree', tree, '--out', join(dir, 'out'), ...PARAMS, ...ENTRIES]);
+      assert.equal(result.status, 1);
+      assert.match(result.stderr, /not a valid catalog/);
+    });
+  });
+
+  it('exits 2 on a tree without catalog.yaml, and on an --out that is a file', () => {
+    withTemp((dir) => {
+      const noCatalog = run(['--tree', dir, '--out', join(dir, 'out'), ...PARAMS, ...ENTRIES]);
+      assert.equal(noCatalog.status, 2);
+      const file = join(dir, 'file');
+      writeFileSync(file, 'x\n');
+      assert.equal(run(['--tree', TREE, '--out', file, ...PARAMS, ...ENTRIES]).status, 2);
+    });
+  });
+
   it('exits 2 when --out exists and is not empty', () => {
     withTemp((dir) => {
       writeFileSync(join(dir, 'keep.txt'), 'project file\n');
@@ -73,6 +95,7 @@ describe('npm run compose', () => {
       assert.equal(run(['--tree', TREE, ...PARAMS, ...ENTRIES]).status, 3);
       assert.equal(run(['--tree', TREE, '--out', out, ...PARAMS]).status, 3);
       assert.equal(run(['--tree', TREE, '--out', out, '--param', 'novalue', ...ENTRIES]).status, 3);
+      assert.equal(run(['--tree', TREE, '--out', out, '--param', '=x', ...ENTRIES]).status, 3);
       assert.equal(run(['--tree', TREE, '--out', out, ...PARAMS, '--param', 'wip_limit=4',
         ...ENTRIES]).status, 3);
       assert.equal(run(['--tree', TREE, '--out', out, '--unknown', ...ENTRIES]).status, 3);
