@@ -147,3 +147,7 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   feedback note T18 (uncommitted).
 - 2026-10-07: task-001 (TypeScript set-up) done, merged `ba4757d`. Open for the approver: a linter
   (the `code-quality` directive mentions one; adr-003 chose none).
+- 2026-10-07: the approver chose ESLint in minimal form (type-aware and determinism rules, no
+  style). adr-004 captured under plan-019, `pending`. The backlog gains a task, **4b, ESLint
+  set-up (adr-004)**, between task 4 and task 5, so that the fragment merge is written under lint:
+  fourteen tasks in all. From task 4b on, every tooling task's Acceptance includes `npm run lint`.
