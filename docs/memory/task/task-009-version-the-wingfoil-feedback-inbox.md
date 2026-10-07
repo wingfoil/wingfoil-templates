@@ -29,8 +29,10 @@ file per note, the ledger and the `wingfoil-cli` directive (task-010);
    (`git show --stat` lists that file alone); its bytes equal the working copy's before the
    commit (same sha256, recorded in the Execution Notes).
 2. `git ls-files docs/notes .idea` prints nothing.
-3. The file holds no secret: a search for tokens, keys and passwords (`security-secrets`) finds
-   none.
+3. The file holds no secret (`security-secrets`):
+   `grep -niE 'token|secret|password|passwd|api[_-]?key|BEGIN .*PRIVATE KEY|gh[pousr]_[A-Za-z0-9]{20}|AKIA[0-9A-Z]{16}' docs/wingfoil-feedback/X_wingfoil-templates-notes.md`
+   finds no credential: every match, if any, is prose about the concept, listed in the Execution
+   Notes.
 4. `npm test`, `npm run lint` and `npm run validate` still exit 0.
 
 ## Design
@@ -38,3 +40,6 @@ file per note, the ledger and the `wingfoil-cli` directive (task-010);
 <!-- Filled at the start of the work. -->
 
 ## Execution Notes
+
+- 2026-10-07: amended while `pending`, before the approver's review, after an independent review:
+  the secret check names its command.
