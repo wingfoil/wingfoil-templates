@@ -3,24 +3,46 @@ id: plan-019-adr-ingest-capture-the-lint-tool
 type: plan
 title: "adr-ingest capture: the lint tool"
 status: draft
-workflow: ""
-phase: ""
+workflow: "adr-ingest"
+phase: "capture"
+tags: ["architecture","adr","tooling"]
 ---
 
 ## Context
 
-<!-- Why this phase runs now, its preconditions, and what it produces. Keep it coherent with the
-     workflow definition's phases, roles and produces. -->
+The `capture` phase of `adr-ingest`, run as architect from plan-015 (`sw-life-cycle` › `tooling`).
+task-001 found that the `code-quality` directive asks that "the linter reports no errors", while
+adr-003 chose no linter. On 2026-10-07 the approver weighed `tsc` alone against ESLint and chose
+ESLint "in minimal form, as recommended": type-aware rules and determinism rules, no style rules,
+set up in a task before the fragment merge (plan-015 task 5).
+
+The `approve` phase that follows is the approver's.
 
 ## Steps
 
-<!-- The ordered steps, with the role of each and the artifact it produces. -->
+1. Trial in a scratch clone of `main`, on the Node.js floor 22.12.0 and on the current Node.js:
+   versions, engines, transitive packages, `npm audit`, `npm audit signatures`, a first run on
+   `src/` and `tests/`.
+2. `npx wingfoil memory add --type adr --title "…"`, which creates adr-004 as `draft`.
+3. Write Context, Decision, Alternatives and Consequences, with the trial's results.
+4. Commit the body by hand, with the Co-Authored-By trailer, before `submit` (notes N13).
+5. `npx wingfoil memory submit <id>` (`draft → pending`).
 
 ## Handoff
 
-<!-- What needs the approver and what the agent does alone; checkpoints and completion criteria. -->
+- **claude:** steps 1–5.
+- **Approver:** the `approve` phase.
+- A rejected ADR comes back to `draft`, is corrected under this plan and submitted again.
 
 ## Execution Notes
 
-<!-- Filled while the plan runs: deviations, blockers, decisions taken, WingFoil friction
-     (also recorded in docs/wingfoil-feedback/). -->
+- 2026-10-07, step 1 (scratch clone of `main` at `ba4757d`):
+  - `eslint` 10.12.0, `@eslint/js` 10.0.1, `typescript-eslint` 8.71.1 (peer `typescript >=4.8.4
+    <6.1.0`, so 6.0.3 is supported): about 95 packages on top of the current 104; `npm audit` 0
+    vulnerabilities; registry signatures verified.
+  - `eslint` 10 declares Node.js `^20.19.0 || ^22.13.0 || >=24`, and `typescript-eslint` 8.71.1
+    pulls `eslint-visitor-keys` 5.0.1 with the same range, so even `eslint` 9.39.5 gives an
+    `EBADENGINE` warning on 22.12.0. With `eslint` 9.39.5 on Node.js 22.12.0, `npm ci` warns but
+    exits 0, and the lint runs.
+  - First run with `recommendedTypeChecked`: 17 errors, all `no-floating-promises` on the
+    `describe` and `it` calls of `node:test`; `src/` is clean.
