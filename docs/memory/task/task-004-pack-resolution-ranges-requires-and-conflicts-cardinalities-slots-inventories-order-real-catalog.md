@@ -129,3 +129,21 @@ name of over 100 characters.
   located and checked; the request syntax; requested versus required unsatisfied ranges; cycle and
   "points later" cases; the two passing conflict cases; dl-010's `foundation` tolerance; the
   reuse of these checks by task 9; the result shape; the empty intersection; the listing seam.
+- 2026-10-07, build on `task/task-004-pack-resolution`, as `developer`: `9ea1c53` catalog,
+  `45a01c1` entries and listings, `ca3c0a0` resolution, `9d7eb9b` review fixes.
+  - Red first: with stubs, 66 of the new tests failed; the implementation made them pass.
+  - Acceptance 1–9 pass from a clean clone at `9d7eb9b` on Node.js 22.21.0 / npm 11.6.2 and on the
+    floor 22.12.0 / npm 10.9.0: 234 tests pass (none skipped), `check:schemas` checks 1 file (the
+    real `catalog.yaml`), `check:pins` and `npm audit` clean, lockfile unchanged.
+- Deviations from the Design:
+  - the branch is `task/task-004-pack-resolution`, shortened as the Design said;
+  - the slot-versus-id check is the schema's (`/id pattern`), so the resolver has no copy of it;
+  - a resolved pack carries `requiredIds`, its `requires` parsed once;
+  - schemas are compiled once per process (`repositorySchemas`);
+  - symbolic links and the rest of the §6.1 layout are left to the lint (task 9), as a comment in
+    `loadPack` says; task 9 keeps that rule in its scope.
+- Review (a subagent with its own context): request changes, one blocking: the order test could not
+  tell Kahn's algorithm from a byte sort (a mutation replacing it passed); should-fix: a directory
+  in an inventory folder counted as a file, schemas compiled per call, two ways of reading
+  `requires`, a test passing for the wrong reason. All fixed in `9d7eb9b`; the re-review repeated
+  the mutation (now caught by two tests) and approved.
