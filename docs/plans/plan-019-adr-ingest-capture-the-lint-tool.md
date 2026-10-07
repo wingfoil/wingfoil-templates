@@ -50,3 +50,7 @@ The `approve` phase that follows is the approver's.
     `src/` clean, 17 `no-floating-promises` errors in `tests/`.
 - 2026-10-07: adr-004 filled and submitted, `pending`. The package count was corrected from "about
   95" to 85 right after submit, before the approver's review.
+- 2026-10-07: an independent review approved adr-004 with two should-fix, applied while `pending`
+  before the approver's review: the floor claim, now tried with `eslint` 10.12.0 on Node.js 22.12.0
+  / npm 10.9.0 (`npm ci` warns `EBADENGINE` and exits 0; build, 62 tests and the lint of `src/`
+  pass), and `--max-warnings 0`.
