@@ -11,20 +11,26 @@ tags: ["governance","feedback-loop"]
 ## Context
 
 Step M1, S4a and S4b, of the WingFoil feedback loop, between wave W5 and wave W6 of plan-015.
-Tooling task, no pack: it changes this repository's governance and its `.wingfoil/`
-configuration.
+Tooling task, no pack: it changes this repository's governance and its `.wingfoil/` configuration.
 
-It comes from `wingfoil/wingfoil` dl-163:
-- **R4:** one file per note, `docs/wingfoil-feedback/F-nnn-<slug>.md`, with the
-  frontmatter of Acceptance 1 and the sections Observation, Impact here, Proposed, Replies; a
-  `README.md` with the short rules, the source key `templates`, the last sync and the ledger;
-  notes never deleted;
-- **Migration:** `legacy_id` kept; known counterparts written as a proposal, never in the
-  WingFoil-owned fields; ids of `archive/draft-2026-10-05` only in `legacy_id` and
-  Observation; the old file deleted only once the ledger lists every note;
-- **S3e:** the global directive `wingfoil-cli`, rules 1–7, replacing `wingfoil-feedback`,
-  whose own rule ("a change to `schema/` and the publication of a pack WingFoil bundles both
-  produce a note") is kept; a table of known behaviours of the pinned CLI.
+It comes from **WingFoil dl-163** ("Consumer projects' feedback sources and the feedback loop",
+read in WingFoil2 at `ed4607a4` and later, ratified 2026-10-07), applied **strictly, with no local
+extension**, as the approver chose on 2026-10-07 (relayed by the session coordinating the loop).
+Where it differs from this task's first draft, dl-163
+wins:
+- **R4, minimal format:** one file per note, `docs/wingfoil-feedback/F-<nnn>-<slug>.md`, whose
+  frontmatter has exactly `id`, `title`, `kind` (`defect | gap | request`), `status`
+  (`open | needs-info | captured | resolved | declined | duplicate`), `wingfoil_version` (the build
+  the note was observed on) and `answered_by` (the WingFoil element ids, filled only by this
+  repository's sync); the body states what was observed and what was expected, reproducible with
+  WingFoil alone (command, output, version). No other field and no Replies section. If WingFoil's
+  `COLLABORATION.md` (its v0.3 user-docs phase) refines the format, the next sync follows it;
+- **R2:** WingFoil cites a note as `<service id>/F-<nnn>@<sha>`; the source key of this repository
+  is the `svc-NNN` id WingFoil gives it when it registers it (its task-269), written in the README once
+  known;
+- **the directive** `wingfoil-cli` follows the shared skeleton, with rule 5 (no `verified`
+  status: a shipped answer stays `resolved`) and rule 6 (only the sync sets `answered_by` and the
+  statuses other than `open`) adjusted to dl-163.
 
 New notes owed by this phase: task-006 (a copy of WingFoil's built-in directive ids) and task-007
 (a composed `.wingfoil/` must satisfy WingFoil's own schemas; WingFoil runs only at a git root).
@@ -33,65 +39,58 @@ Approved texts that cite `wingfoil-feedback` (spec-001, dl-005, dl-006, adr-001,
 left as they are: they record what was true when approved, and the rule they cite survives in
 `wingfoil-cli` (rule 8). dl-005 G3 ("notes stay out of git") is lifted only for
 `docs/wingfoil-feedback/` (task-009, plan-015). dl-003 plans for `base` to ship
-`wingfoil-feedback`; `base` will ship `wingfoil-cli` and the README skeleton instead, which
-its charter records. The five `schema/*.schema.json` cite `wingfoil-feedback` in a `$comment`; they
+`wingfoil-feedback`; `base` will ship `wingfoil-cli` and the README skeleton instead, which its
+charter records. The five `schema/*.schema.json` cite `wingfoil-feedback` in a `$comment`; they
 are left unchanged here, since any edit to the contract with WingFoil produces a note; the next
 schema change updates them.
 
 **Kept alike across the feedback sources** (the coordinating session compares WingFoil-UI,
-WingFoil2-Benchmark and this repository): rules 1–7 of the directive word for word, this
-repository's own rules from 8 on; the directive frontmatter and tags; the note frontmatter,
-sections and life cycle, `kind: positive` allowed; the ledger columns and the "Last sync" line;
-`W-nn` entry ids with a *Note* column, linked both ways through `directive_entry`; the source key
-`templates`.
+WingFoil2-Benchmark and this repository): the dl-163 note format exactly; rules 1–7 of the
+directive word for word, this repository's own rules from 8 on; the directive frontmatter and tags;
+the README's rules, source key, last sync line and ledger columns; `W-nn` entry ids with a
+*Note* column.
 
 ## Acceptance
 
-1. **Notes:** `F-001` … `F-018` hold T1 … T18 (`legacy_id: T<n>`); `F-019` holds the decisions D1–D6
-   and the old header (the branch note and the analysis at WingFoil `30f06016`), `kind: proposal`,
-   `legacy_id: D1-D6`; `F-020` … `F-022` are the new notes. Every file has every note field and
-   the four sections in order, with these values:
-   - `status: open`; `triaged_in`, `decision`, `wingfoil_elements`, `target_release`, `resolved_in`,
-     `verified_in` empty;
-   - `kind` from the note's content (defect, gap, friction, request, proposal, positive);
-   - `need_by: before-v1.0`, unless the note says otherwise;
-   - `found`: the date the note was first written, from its text;
-   - `found_in`: the element on `main` whose work found it, or empty when the note predates the
-     elements on `main`; F-020 `task-006`, F-021 and F-022 `task-007`;
-   - `wingfoil_version: 0.2.2`; `wingfoil_commit: 30f06016` for the notes written from the analysis
-     of WingFoil at that commit, empty otherwise;
-   - `directive_entry`: the `W-nn` of `wingfoil-cli` when the note has one.
-2. **Migration:** the original text is kept in Observation, Impact here and Proposed. Ids that
-   exist only on `archive/draft-2026-10-05` appear only in `legacy_id` and Observation, qualified
-   `(archive/draft-2026-10-05)`, since `spec-001`, `dl-001`… and `task-001` also exist on `main`.
-   Known counterparts go in Proposed only, as a suggestion: T12 → WingFoil dl-149, task-251; dl-138
-   ↔ T4, T5, T7. The seven open questions are attached: 1 → F-003 (T3), 2 → F-008 (T8), 3 → F-019
-   (D4), 4 → F-005 (T5), 5 → F-004 (T4), 6 → F-019 (dl-138 Q5), 7 → F-007 (T7).
-3. **The three new notes** are reproducible with WingFoil 0.2.2 alone (command, output, version, run
-   in a scratch directory): F-020 the copy of WingFoil's built-in directive ids in
+1. **Notes:** `F-001` … `F-018` hold T1 … T18, `F-019` … `F-021` the new notes. Each frontmatter has
+   exactly the six fields of dl-163 R4: `kind` `request`, `gap` or `defect`, as fits;
+   `status: open`; `wingfoil_version`: the build observed (`0.2.2`, or the development commit the
+   note was written from, e.g. `0.2.2-1778-g30f06016`); `answered_by: []`.
+2. **Bodies:** the first line of a migrated note is "Formerly T<n>.", followed by the ids that
+   exist only on `archive/draft-2026-10-05`, qualified so; then what was observed and what was
+   expected, with command, output and version wherever the note is about WingFoil's behaviour. The
+   open questions go into the notes they concern (1 → T3, 2 → T8, 3 → D4 in the README, 4 → T5,
+   5 → T4, 6 → the README, 7 → T7). T12's body says WingFoil already has dl-149 and task-251;
+   T4, T5 and T7 name dl-138; `answered_by` stays empty.
+3. **The three new notes** are reproducible with WingFoil 0.2.2 alone (command, output, version,
+   run in a scratch directory): F-019 the copy of WingFoil's built-in directive ids in
    `src/wingfoil-builtins.ts`, citing F-017, which already asks WingFoil to publish the reserved
-   ids; F-021 a composed `.wingfoil/` must satisfy WingFoil's own schemas, which nothing exposes;
-   F-022 WingFoil runs only at a git root.
-4. **Ledger:** `docs/wingfoil-feedback/README.md` holds the short rules (pointing to
-   `wingfoil-cli`), the source key `templates`, "Last sync: none", and one row per note with the
-   columns Note, Title, Kind, Status, WingFoil elements, Target, Resolved in, Verified in.
-   `tests/wingfoil-feedback.test.ts` checks that every note has all its fields (`legacy_id` read as
-   a string), that ids are unique and sequential, that the ledger rows match the files (id, title,
-   kind, status), and that every `directive_entry` names an entry of `wingfoil-cli` whose *Note*
-   column names the note back.
+   ids; F-020 a composed `.wingfoil/` must satisfy WingFoil's own schemas, which nothing exposes;
+   F-021 WingFoil runs only at a git root.
+4. **README:** `docs/wingfoil-feedback/README.md` holds the short rules (pointing to
+   `wingfoil-cli`), the source key ("to be set: the `svc-NNN` WingFoil assigns when it registers
+   this repository, WingFoil task-269"), "Last sync: none", a Context section with the decisions
+   D1–D6 and the old header (branch note, analysis at WingFoil `30f06016`), and the ledger
+   Note | Title | Kind | Status | Answered by, one row per note. `tests/wingfoil-feedback.test.ts`
+   checks that every note has exactly the six fields with allowed values, that ids are unique and
+   sequential and match the file names, that the ledger rows match the files (id, title, kind,
+   status, answered by), and that every *Note* of the directive's table names an existing note.
 5. **Old file:** `X_wingfoil-templates-notes.md` is deleted in its own commit, after the ledger
    matches; `git log --follow --oneline -- docs/wingfoil-feedback/X_wingfoil-templates-notes.md`
    lists the task-009 commit and the deletion.
-6. **Directive:** `.wingfoil/directives/custom/wingfoil-cli.md`: frontmatter and tags
-   alike, version 1.0, date, *Checked against* `wingfoil@0.2.2`, rules 1–7 word for word, rule 8
-   kept from `wingfoil-feedback` (a change to `schema/` and the publication of a pack WingFoil
-   bundles each produce a note), and the table "Known behaviours (0.2.2)" (#, Behaviour, How to work
-   with it, Note, WingFoil element), seeded with the surprises met so far: W-01 the `format` warning
-   (spec-001 O10), then `memory add --set` filling only id tokens, `approve` requiring `--reason`,
-   `submit` committing uncommitted body edits, two `submit`s giving one commit subject, "illegal
-   transition" for a wrong target state, no verb leaving a `waiting` state, `workflow list` not
-   checking includes (WingFoil bug-145), `where:` not evaluated, WingFoil running only at a git
-   root.
+6. **Directive:** `.wingfoil/directives/custom/wingfoil-cli.md`: the shared frontmatter and tags;
+   version 1.0, date, *Checked against* `wingfoil@0.2.2`; the shared rules 1–4 and 7 word for word,
+   rule 5 "when the pin advances, re-check every entry and remove the fixed ones; a note whose
+   answer has shipped stays `resolved`", rule 6 "`answered_by` and every status other than `open`
+   are set only by the sync, from what WingFoil published; WingFoil cites a note as
+   `<service id>/F-<nnn>@<sha>`"; rule 8 kept from `wingfoil-feedback` (a change to `schema/` and
+   the publication of a pack WingFoil bundles each produce a note); the table "Known behaviours
+   (0.2.2)" (#, Behaviour, How to work with it, Note, WingFoil element), seeded with the surprises
+   met so far: W-01 the `format` warning (spec-001 O10), then `memory add --set` filling only id
+   tokens, `approve` requiring `--reason`, `submit` committing uncommitted body edits, two
+   `submit`s giving one commit subject, "illegal transition" for a wrong target state, no verb
+   leaving a `waiting` state, `workflow list` not checking includes (WingFoil bug-145), `where:`
+   not evaluated, WingFoil running only at a git root.
 7. **Configuration:** `wingfoil-feedback.md` is removed; `roles.yaml` binds `wingfoil-cli` globally
    instead (1 → 2); the comments that cite the directive by name, or say the notes stay out of git,
    name `wingfoil-cli`: `memory.yaml` (3 → 4), `bug-ingest` (1 → 2), `sw-life-cycle` (3 → 4),
@@ -112,3 +111,9 @@ sections and life cycle, `kind: positive` allowed; the ledger columns and the "L
   as rule 8; the archive-id rule; a value rule for each field; dl-138 counterparts and the
   mapping of the seven open questions; the old header in F-019; F-020 citing F-017; the seeded
   behaviours with `W-nn` ids linked both ways; the test file; the cross-repository alignment.
+
+- 2026-10-07: amended again while `pending`, before the approver's review: the approver had WingFoil
+  dl-163 applied strictly in place of the first draft's note format (six frontmatter fields, kinds
+  `defect | gap | request`, no Replies, the old id on the body's first line, D1–D6 as README
+  context, source key `svc-NNN` once registered, rules 5 and 6 adjusted). The new notes are
+  F-019 … F-021.
