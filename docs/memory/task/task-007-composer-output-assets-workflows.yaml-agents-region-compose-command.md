@@ -106,7 +106,32 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-007-output`, run through `tooling-delivery` as `developer` (`code-quality`,
+`testing`, `determinism`), under `npm run lint`.
+
+- **`src/formats.ts`:** the format checks shared by fragments (task-006) and assets: `format:`
+  present, written as a positive YAML integer, equal to the pack's `formats.<kind>`.
+- **`src/frontmatter.ts`:** a Markdown file's frontmatter (`---` lines) parsed with the task-002
+  loader, positions kept.
+- **`src/memory-merge.ts`:** also returns which pack defined each type, for the template rules.
+- **`src/output.ts`:**
+  - `checkAssets(composed, catalog)`: formats and identifiers (§5, §6.1), one owner per target with
+    the slot exception and `kind: sub` (§7.6, §9), Memory templates and `template.file`, built-in
+    directive ids, a fragment of each kind;
+  - `workflowsYaml(composed, catalog)`: the include list of §7.7;
+  - `agentsRegion(composed, catalog)`: §10, scanning lines outside fenced code;
+  - `outputFiles(...)`: the list of `{ path, text }`, every text normalized (no BOM, `LF`, final
+    newline);
+  - `writeOutput(out, files)`: refuses an `--out` that exists and is not empty, then writes in
+    sorted path order.
+- **`src/yaml-write.ts`:** `toYaml(doc)`, the one stringify call with adr-003's named options.
+- **`src/parameters.ts`:** `fromText(type, text)` reads a command-line value by its declared type.
+- **`src/compose-cli.ts`:** `npm run compose`, arguments by `node:util` `parseArgs`; the catalog is
+  the tree's `catalog.yaml`, so a fixture tree carries its own.
+- **Tests,** red first: `tests/output.test.ts`, `tests/agents-region.test.ts`,
+  `tests/compose-cli.test.ts`; the golden tree `tests/fixtures/compose/tree/` and its expected
+  output `tests/fixtures/compose/expected/`, generated once by the composer, read line by line
+  against spec-001 before it is committed, then compared byte for byte.
 
 ## Execution Notes
 
