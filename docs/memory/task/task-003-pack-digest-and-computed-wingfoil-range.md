@@ -32,36 +32,57 @@ range is tested on fixture compat data.
 ## Acceptance
 
 Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 as in task-001.
+Test repositories are temporary, with isolated git configuration (`GIT_CONFIG_NOSYSTEM=1`, a
+`GIT_CONFIG_GLOBAL` file of the test's own, an identity set, `tag.gpgSign=false`), and tags are
+annotated (spec-001 §4). Fixtures are built deterministically: a submodule entry with `git
+update-index --add --cacheinfo 160000,<sha>,<path>`, an executable bit with `git update-index
+--chmod=+x`, a `CRLF` blob with `git hash-object -w --no-filters` and `git update-index`.
 
 1. `npm ci`, `npm run build`, `npm test`, `npm run check:pins` and `npm run check:schemas` exit 0;
-   no dependency is added.
-2. **Test vector.** A test builds the four files of spec-001 §13 in a temporary git repository,
-   commits and tags them, and gets exactly the listing and the digest
+   `package.json` gains the `digest` script and no dependency.
+2. **Test vector.** A test commits the four files of spec-001 §13 under `packs/governance/example/`
+   in a test repository, tags them, and gets exactly the listing and the digest
    `sha256:77a8a72717b5c73b556af940449ff91a609796079139ade0cb98ddf2ca81bd1c` of §13.
-3. **Digest rules,** each with a test on a temporary git repository:
-   - a symbolic link, and a submodule entry (mode `160000`), in the pack directory make the digest
-     fail, naming the path;
+3. **Digest rules,** each with a test:
+   - a symbolic link, and a submodule entry, in the pack directory make the digest fail, naming the
+     path;
    - an executable file (`100755`) gives the same digest as the same file at `100644`;
-   - the blob bytes are hashed as committed: a file committed with `CRLF` keeps its `CR`, whatever
-     the checkout does;
-   - a path whose segments break `^[A-Za-z0-9][A-Za-z0-9._-]*$` makes the digest fail;
-   - order is byte order (`B.md` before `a.md`);
-   - an empty or missing pack directory at the ref fails;
-   - the result does not depend on the working tree (a file changed but not committed).
-4. **Transition digest:** §13 on a one-file listing whose path is the file name; a test checks it
-   against `sha256sum` arithmetic computed independently in the test.
-5. **Computed range,** tested on fixture compat data: none compatible gives `""`; one release gives
-   `0.3.0`; a run gives `>=0.3.0 <=0.3.2`; two runs give `>=0.3.0 <=0.3.1 || 0.4.0`; a release
-   with `format_key: false`, one missing a kind's format, one without `workflows: [1]` in `reads`,
-   and one lacking a required capability are each excluded; the result follows `compat.yaml`'s
-   order.
-6. **`npm run digest -- <ref> <catalog pack id>`** prints the digest of `packs/<id>` at `<ref>`;
-   on the test repository it equals the spec-001 §13 reference command run there (`git ls-files -s`
-   mode check, then `sha256sum` of the sorted listing). Exit 1 on a digest rule failure, 2 on a
-   missing ref or a git failure.
-7. `git` is called with an argument list, never through a shell, and without depending on the
-   user's git configuration for the result (no `core.autocrlf` effect, since blobs are read with
-   `git cat-file`).
+   - blob bytes are hashed as committed: a `CRLF` blob keeps its `CR`;
+   - a path with a segment that breaks `^[A-Za-z0-9][A-Za-z0-9._-]*$` (`a b.md`, `.hidden`) makes
+     the digest fail;
+   - order is byte order of the whole path: `B.md`, `a-b.md`, `a.md`, `a/x.md`, `a0.md`;
+   - a sibling directory sharing the prefix (`packs/base-x/` next to `packs/base/`) does not enter
+     `packs/base`'s listing;
+   - no file under `packs/<id>/` at the ref fails;
+   - an uncommitted change in the working tree does not change the result.
+
+   The tree is read with `git ls-tree -r -z --full-tree <commit> -- packs/<id>/` and blobs with
+   `git cat-file`, so quoting, tabs or newlines in paths cannot corrupt the parse.
+4. **Transition digest:** a function (repository, ref, transition file) returns §13 applied to a
+   one-file listing whose path is the file's base name (`prototype-to-production.yaml`, not
+   `transitions/…`); a test checks it against the sha256 arithmetic computed in the test.
+5. **Computed range,** on fixture compat data, which the function requires in ascending order (it
+   fails otherwise):
+   - none compatible gives `""`; one gives `0.3.0`; a run gives `>=0.3.0 <=0.3.2`; two runs give
+     `>=0.3.0 <=0.3.1 || 0.4.0`;
+   - excluded, each alone: `format_key: false`; a kind of `formats` absent from `reads`; a kind
+     present with the format not in its list; `reads.workflows` without 1; a required capability
+     not provided;
+   - runs follow adjacency in `compat.yaml`, not semver: with `0.3.0` and `0.3.2` listed next to
+     each other and both compatible, the result is `>=0.3.0 <=0.3.2`;
+   - empty `formats` and empty `requires_capabilities` are compatible with every release that has
+     `format_key: true` and reads `workflows` 1.
+6. **`npm run digest -- [--repo <dir>] <ref> <catalog pack id>`** prints the digest of
+   `packs/<id>` at `<ref>` (default repository: the working directory). A test runs it with
+   `--repo` on a test repository and compares it with the spec-001 §13 reference command run there.
+   - The id must follow spec-001 §4 (`base`, `<axis>/<name>`, `phase/<slot>/<name>`):
+     `phase/inception` and `../x` are refused;
+   - the ref is resolved with `git rev-parse --verify --end-of-options <ref>^{commit}`, so a ref
+     starting with `-` never reaches git as an option;
+   - exit 1 on a digest rule failure, 2 on a missing ref or a git failure, 3 on bad usage.
+7. **Isolation from the user's git:** a test runs the digest with a global configuration setting
+   `core.autocrlf=true` and gets the same result; `src/` contains no `exec(`, `execSync(` or
+   `shell: true` (`grep` in a test).
 8. `npm audit` reports 0 vulnerabilities.
 
 ## Design
@@ -69,3 +90,8 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 <!-- Filled at the start of the work. -->
 
 ## Execution Notes
+
+- 2026-10-07: amended while `pending`, before the approver's review, after an independent review
+  that confirmed the §13 test vector: a `--repo` option, id and ref validation, the prefix-sibling
+  and nested-order cases, `-z` parsing, deterministic fixture recipes, a check for git isolation,
+  the transition interface, the missing range cases, exit code 3 for bad usage.
