@@ -26,7 +26,8 @@ export const SCHEMA_DIR = join(__dirname, '..', '..', 'schema');
 
 function describe(error: ErrorObject): string {
   const params = error.params as Record<string, unknown>;
-  const name = params['missingProperty'] ?? params['additionalProperty'];
+  // Ajv's `required` message names the key already; `additionalProperties` does not.
+  const name = params['additionalProperty'];
   const message = error.message ?? error.keyword;
   return typeof name === 'string' ? `${message} (${name})` : message;
 }

@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { describe, it } from 'node:test';
@@ -28,13 +28,16 @@ describe('findFiles', () => {
     withTree({
       'transitions/b-to-c.yaml': '', 'transitions/a-to-b.yaml': '',
       'packs/stage/prod/pack.yaml': '', 'packs/base/pack.yaml': '',
-      'packs/base/fragments/dna.yaml': '', 'presets/README.md': '', 'presets/x.yaml': '',
+      'packs/base/fragments/dna.yaml': '', 'packs/base/fragments/pack.yaml': '',
+      'packs/methodology/kanban/nested/pack.yaml': '', 'packs/methodology/kanban/pack.yaml': '',
+      'presets/README.md': '', 'presets/x.yaml': '', 'presets/dir.yaml/keep': '',
       'catalog.yaml': '', 'compat.yaml': '', 'other.yaml': '',
     }, (root) => {
       assert.deepEqual(findFiles(root), [
         { file: 'catalog.yaml', kind: 'catalog' },
         { file: 'compat.yaml', kind: 'compat' },
         { file: 'packs/base/pack.yaml', kind: 'pack' },
+        { file: 'packs/methodology/kanban/pack.yaml', kind: 'pack' },
         { file: 'packs/stage/prod/pack.yaml', kind: 'pack' },
         { file: 'presets/x.yaml', kind: 'preset' },
         { file: 'transitions/a-to-b.yaml', kind: 'transition' },
@@ -65,11 +68,36 @@ describe('runCheckSchemas', () => {
     });
   });
 
-  it('positions a missing key at its mapping', () => {
-    withTree({ 'presets/a.yaml': PRESET.replace('format: 1\n', '') }, (root) => {
+  it('positions a missing key at its mapping, and a root error at 1:1', () => {
+    withTree({
+      'presets/a.yaml': `# A preset.\n\n${PRESET.replace('format: 1\n', '')}`,
+      'compat.yaml': 'format: 1\nkinds: {}\ncapabilities: {}\nreleases:\n  - wingfoil: 0.2.2\n',
+    }, (root) => {
       const result = runCheckSchemas(root);
       assert.equal(result.code, 1);
-      assert.match(result.messages[0] ?? '', /^presets\/a\.yaml:1:1: \/ required: /);
+      assert.ok(result.messages.includes(
+        "presets/a.yaml:1:1: / required: must have required property 'format'",
+      ), result.messages.join('\n'));
+      assert.ok(result.messages.some((message) => message.startsWith(
+        "compat.yaml:5:5: /releases/0 required: must have required property 'format_key'",
+      )), result.messages.join('\n'));
+    });
+  });
+
+  it('exits 2 on a directory it cannot list, rather than skipping it', (context) => {
+    if (process.getuid?.() === 0) {
+      context.skip('permissions do not apply to root');
+      return;
+    }
+    withTree({ 'packs/x/pack.yaml': '', 'presets/a.yaml': PRESET }, (root) => {
+      chmodSync(join(root, 'packs', 'x'), 0o000);
+      try {
+        const result = runCheckSchemas(root);
+        assert.equal(result.code, 2);
+        assert.match(result.messages[0] ?? '', /^packs\/x:1:1: cannot list directory: EACCES$/);
+      } finally {
+        chmodSync(join(root, 'packs', 'x'), 0o755);
+      }
     });
   });
 

@@ -62,7 +62,7 @@ function nodeAt(document: Document, path: string[]): Node | undefined {
 export function parseYaml(text: string, file: string): LoadedYaml {
   const lineCounter = new LineCounter();
   const documents = [
-    ...parseAllDocuments(text, { lineCounter, uniqueKeys: true, prettyErrors: true }),
+    ...parseAllDocuments(text, { lineCounter, uniqueKeys: true, prettyErrors: false }),
   ];
   const at = (offset: number): Position => {
     const { line, col } = lineCounter.linePos(offset);
@@ -93,6 +93,8 @@ export function parseYaml(text: string, file: string): LoadedYaml {
     data,
     document,
     positionOf(pointer) {
+      // The root is the file itself, wherever its first node starts after comments.
+      if (pointer === '') return START;
       const range = nodeAt(document, decodePointer(pointer))?.range;
       return range ? at(range[0]) : START;
     },

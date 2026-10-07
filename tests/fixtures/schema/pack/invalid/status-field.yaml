@@ -7,8 +7,8 @@ name: kanban                    # equals the last segment of id
 title: "Kanban"
 description: >-
   Continuous flow under explicit WIP limits …
-version: 1.0.0
-status: active                  # the pack's semver (§4)
+version: 1.0.0                  # the pack's semver (§4)
+status: active
 formats:                        # file kind -> WingFoil format the content is written in (dl-002)
   memory: 1
   roles: 1

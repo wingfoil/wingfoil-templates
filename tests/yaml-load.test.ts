@@ -54,8 +54,24 @@ describe('parseYaml', () => {
     const error = yamlError(() => parseYaml('format: 1\nid: [unclosed\n', 'p.yaml'));
     assert.equal(error.reason, 'syntax');
     assert.equal(error.file, 'p.yaml');
-    assert.ok(error.position.line >= 2, JSON.stringify(error.position));
+    assert.ok(error.message.startsWith('p.yaml:3:1: '), error.message);
+    assert.ok(!error.message.endsWith(':'), error.message);
   });
+
+  it('puts the root at 1:1 even after leading comments', () => {
+    const loaded = parseYaml('# header\n\nformat: 1\n', 'c.yaml');
+    assert.deepEqual(loaded.positionOf(''), { line: 1, column: 1 });
+    assert.deepEqual(loaded.positionOf('/format'), { line: 3, column: 9 });
+  });
+
+  const empty: [string, string][] = [['an empty file', ''], ['a comment-only file', '# nothing\n']];
+  for (const [name, text] of empty) {
+    it(`fails on ${name}`, () => {
+      const error = yamlError(() => parseYaml(text, 'p.yaml'));
+      assert.equal(error.reason, 'syntax');
+      assert.match(error.message, /^p\.yaml:1:1: no YAML document$/);
+    });
+  }
 
   it('fails on a duplicate key, at the duplicate', () => {
     const error = yamlError(() => parseYaml('format: 1\nid: a\nid: b\n', 'p.yaml'));
@@ -64,10 +80,11 @@ describe('parseYaml', () => {
     assert.match(error.message, /duplicate|unique/i);
   });
 
-  it('fails on a multi-document file', () => {
+  it('fails on a multi-document file, at the second document', () => {
     const error = yamlError(() => parseYaml('format: 1\n---\nformat: 1\n', 'p.yaml'));
     assert.equal(error.reason, 'syntax');
-    assert.match(error.message, /document/i);
+    assert.equal(error.position.line, 2);
+    assert.match(error.message, /more than one YAML document/);
   });
 });
 
@@ -86,6 +103,12 @@ describe('loadYamlFile', () => {
   it('reads a UTF-8 file', () => {
     withFile(Buffer.from('title: "Città"\n', 'utf8'), (path) => {
       assert.deepEqual(loadYamlFile(path, 'f.yaml').data, { title: 'Città' });
+    });
+  });
+
+  it('reads a UTF-8 file that starts with a byte order mark', () => {
+    withFile(Buffer.from('\ufefftitle: "x"\n', 'utf8'), (path) => {
+      assert.deepEqual(loadYamlFile(path, 'f.yaml').data, { title: 'x' });
     });
   });
 

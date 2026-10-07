@@ -2,6 +2,7 @@
 // (spec-001 §17 step 2, F3.1). Files are found in sorted order and messages are sorted, so the
 // output never depends on the filesystem.
 import { readdirSync } from 'node:fs';
+import type { Dirent } from 'node:fs';
 import { join } from 'node:path';
 
 import { loadSchemas } from './schemas';
@@ -28,11 +29,27 @@ interface Message {
   text: string;
 }
 
-function sortedEntries(dir: string): { name: string; isDirectory: boolean }[] {
-  let entries;
+interface Entry {
+  name: string;
+  isDirectory: boolean;
+}
+
+/** Directories that exist but cannot be listed, relative to the root, each with its reason. */
+export type Unreadable = { dir: string; reason: string }[];
+
+/**
+ * A directory's entries, sorted by name. A directory that does not exist has none; one that exists
+ * but cannot be listed is recorded in `unreadable`, so that it is never skipped silently.
+ */
+function sortedEntries(root: string, dir: string, unreadable: Unreadable): Entry[] {
+  let entries: Dirent[];
   try {
-    entries = readdirSync(dir, { withFileTypes: true });
-  } catch {
+    entries = readdirSync(join(root, dir), { withFileTypes: true });
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    if (code !== 'ENOENT' && code !== 'ENOTDIR') {
+      unreadable.push({ dir: dir === '' ? '.' : dir, reason: code ?? String(error) });
+    }
     return [];
   }
   return entries
@@ -40,33 +57,34 @@ function sortedEntries(dir: string): { name: string; isDirectory: boolean }[] {
     .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 }
 
-function packManifests(root: string, dir: string): string[] {
-  const found: string[] = [];
-  for (const entry of sortedEntries(join(root, dir))) {
-    const path = `${dir}/${entry.name}`;
-    if (entry.isDirectory) found.push(...packManifests(root, path));
-    else if (entry.name === 'pack.yaml') found.push(path);
+// Every pack.yaml under packs/, not descending into a pack: packs never nest (spec-001 §4, §6.1).
+function packManifests(root: string, dir: string, unreadable: Unreadable): string[] {
+  const entries = sortedEntries(root, dir, unreadable);
+  if (entries.some((entry) => !entry.isDirectory && entry.name === 'pack.yaml')) {
+    return [`${dir}/pack.yaml`];
   }
-  return found;
+  return entries
+    .filter((entry) => entry.isDirectory)
+    .flatMap((entry) => packManifests(root, `${dir}/${entry.name}`, unreadable));
 }
 
-function yamlFilesIn(root: string, dir: string): string[] {
-  return sortedEntries(join(root, dir))
-    .filter((entry) => entry.name.endsWith('.yaml'))
+function yamlFilesIn(root: string, dir: string, unreadable: Unreadable): string[] {
+  return sortedEntries(root, dir, unreadable)
+    .filter((entry) => !entry.isDirectory && entry.name.endsWith('.yaml'))
     .map((entry) => `${dir}/${entry.name}`);
 }
 
-export function findFiles(root: string): FoundFile[] {
-  const rootNames = new Set(sortedEntries(root).map((entry) => entry.name));
+export function findFiles(root: string, unreadable: Unreadable = []): FoundFile[] {
+  const rootNames = new Set(sortedEntries(root, '', unreadable).map((entry) => entry.name));
   const found: FoundFile[] = [];
   for (const kind of ['catalog', 'compat'] as const) {
     if (rootNames.has(`${kind}.yaml`)) found.push({ file: `${kind}.yaml`, kind });
   }
-  found.push(...packManifests(root, 'packs').map((file) => ({ file, kind: 'pack' as const })));
-  found.push(...yamlFilesIn(root, 'presets').map((file) => ({ file, kind: 'preset' as const })));
-  found.push(
-    ...yamlFilesIn(root, 'transitions').map((file) => ({ file, kind: 'transition' as const })),
-  );
+  for (const file of packManifests(root, 'packs', unreadable)) found.push({ file, kind: 'pack' });
+  for (const file of yamlFilesIn(root, 'presets', unreadable)) found.push({ file, kind: 'preset' });
+  for (const file of yamlFilesIn(root, 'transitions', unreadable)) {
+    found.push({ file, kind: 'transition' });
+  }
   return found;
 }
 
@@ -101,9 +119,14 @@ export function runCheckSchemas(
   root: string,
   schemas: SchemaSet = loadSchemas(),
 ): SchemaCheckResult {
-  const files = findFiles(root);
-  let code = 0;
-  const messages: Message[] = [];
+  const unreadable: Unreadable = [];
+  const files = findFiles(root, unreadable);
+  let code = unreadable.length > 0 ? 2 : 0;
+  const messages: Message[] = unreadable.map(({ dir, reason }) => ({
+    file: dir,
+    position: { line: 1, column: 1 },
+    text: `cannot list directory: ${reason}`,
+  }));
   for (const found of files) {
     const result = checkFile(root, found, schemas);
     code = Math.max(code, result.code);
@@ -119,8 +142,15 @@ export function runCheckSchemas(
 }
 
 if (require.main === module) {
-  const result = runCheckSchemas(process.cwd());
-  for (const message of result.messages) process.stderr.write(`${message}\n`);
-  process.stdout.write(`checked ${result.checked} files\n`);
-  process.exitCode = result.code;
+  try {
+    const result = runCheckSchemas(process.cwd());
+    for (const message of result.messages) process.stderr.write(`${message}\n`);
+    process.stdout.write(`checked ${result.checked} files\n`);
+    process.exitCode = result.code;
+  } catch (error) {
+    // The schemas themselves cannot be read or compiled: not a verdict on any file.
+    const message = error instanceof Error ? error.message : String(error);
+    process.stderr.write(`check:schemas: ${message}\n`);
+    process.exitCode = 2;
+  }
 }

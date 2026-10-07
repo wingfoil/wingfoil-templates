@@ -44,7 +44,7 @@ describe('loadSchemas', () => {
     const required = errors.find((error) => error.keyword === 'required');
     const additional = errors.find((error) => error.keyword === 'additionalProperties');
     assert.equal(required?.instancePath, '');
-    assert.match(required?.message ?? '', /\(format\)$/);
+    assert.match(required?.message ?? '', /'format'/);
     assert.equal(additional?.instancePath, '');
     assert.match(additional?.message ?? '', /\(extra\)$/);
   });
