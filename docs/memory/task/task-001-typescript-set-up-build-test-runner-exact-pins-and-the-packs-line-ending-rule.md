@@ -125,3 +125,5 @@ run through `tooling-delivery` as `developer` (`code-quality`, `testing`, `deter
 - Review (a subagent with its own context, `tooling-delivery` › `review`): approve with four
   should-fix (input validation, a test tied to the working directory, missing edge-case tests, the
   prerelease rule) and nits; all should-fix applied in `9a2fabc`, the wrapping in `4687218`.
+- 2026-10-07: approved by the approver; merged into `main` with `--no-ff` (`ba4757d`). On `main`,
+  `npm ci`, `npm test` (62 pass) and `check:pins` pass.

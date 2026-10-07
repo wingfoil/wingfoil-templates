@@ -145,3 +145,5 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   WingFoil 0.2.2 evaluates it: `memory search` cannot filter on `pack` and does not print it, and no
   command lists a phase's iteration. The task is selected by reading its frontmatter. Recorded as
   feedback note T18 (uncommitted).
+- 2026-10-07: task-001 (TypeScript set-up) done, merged `ba4757d`. Open for the approver: a linter
+  (the `code-quality` directive mentions one; adr-003 chose none).
