@@ -143,3 +143,4 @@ Branch `task/task-003-pack-digest-and-computed-wingfoil-range`, run through `too
   changed or broke the digest (reproduced). Should-fix: a prefix check on listed paths, stricter
   `cat-file --batch` parsing, test isolation, the `--end-of-options` test. All fixed in `e5940a1`
   with tests; the re-review repeated the reproductions against the built code and approved.
+- 2026-10-07: approved by the approver; merged into `main` with `--no-ff` (`2df2bb7`); on `main` the 163 tests, `check:pins` and `check:schemas` pass.
