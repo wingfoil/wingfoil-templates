@@ -131,3 +131,24 @@ Branch `task/task-010-feedback-notes`, run through `tooling-delivery` as `develo
   `defect | gap | request`, no Replies, the old id on the body's first line, D1–D6 as README
   context, source key `svc-NNN` once registered, rules 5 and 6 adjusted). The new notes are
   F-019 … F-021.
+- 2026-10-07, build on `task/task-010-feedback-notes`, as `developer`: `376cd3d` the 21 notes and
+  the README with its ledger; `830dccb` the `wingfoil-cli` directive and the configuration;
+  `4fb9ee6` the test; `f839ea8` the deletion of the old file; `59f6be9` review fixes.
+  - The three new notes were reproduced with WingFoil 0.2.2 alone in a scratch git repository
+    (`init --template Kanban --no-interactive`, `directives list`, a minimal `dna.yaml`, a command
+    outside a repository and in a subdirectory).
+  - The test was written after the notes: a characterization test, checked by mutation (a status
+    outside dl-163, an extra field, a wrong ledger title, a missing Expected, a behaviour naming
+    F-099, a missing first line), each caught.
+  - Acceptance 1–8 pass from a clean clone of the branch on Node.js 22.21.0 and on the floor
+    22.12.0: 430 tests, `lint`, `validate`; `npm run -s wingfoil -- directives list` shows
+    `wingfoil-cli` global and no `wingfoil-feedback`; the three WingFoil commands exit 0 with empty
+    stderr; `git log --follow` on the old file lists `434d342` (task-009) and `f839ea8`.
+- Deviations: the directive and configuration were committed before the test, which reads the
+  directive's table; rule 7 of `wingfoil-cli` leaves out a section reference that does not
+  resolve here; the table has twelve entries (W-11 and W-12 added for F-019 and
+  F-020). `wingfoil-sync`, named by rule 7, is not defined in this repository: reported to the
+  session coordinating the loop.
+- Review (a subagent with its own context): request changes, no blocking: content of T2, T8, T9,
+  T11, T13, T15, T16, T18 and of the old header had been lost or changed in the split. Restored in
+  `59f6be9`, with T9's original wording kept beside its restatement; the re-review approved.
