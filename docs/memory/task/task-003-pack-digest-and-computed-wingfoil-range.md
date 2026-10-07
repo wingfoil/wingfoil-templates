@@ -87,7 +87,34 @@ update-index --add --cacheinfo 160000,<sha>,<path>`, an executable bit with `git
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-003-pack-digest-and-computed-wingfoil-range`, run through `tooling-delivery` as
+`developer` (`code-quality`, `testing`, `determinism`).
+
+- **`src/git.ts`:** `runGit(repo, args, input?)` calls `execFileSync('git', ['-C', repo, ...args])`
+  with an argument list and returns the raw bytes; a non-zero exit becomes a `GitError` carrying
+  git's stderr. `resolveCommit(repo, ref)` runs `rev-parse --verify --quiet --end-of-options
+  <ref>^{commit}`. `readBlobs(repo, shas)` uses one `cat-file --batch` and parses the
+  `<sha> <type> <size>` headers by byte count.
+- **`src/digest.ts`:**
+  - `listingOf(files)`: one `<sha256 hex>  <path>\n` line per file, sorted with `Buffer.compare` on
+    the UTF-8 path, so byte order holds whatever the locale;
+  - `digestOfListing(listing)`: `sha256:` and the hex sha256 of the listing's bytes;
+  - `treeFiles(repo, commit, prefix)`: `ls-tree -r -z --full-tree <commit> -- <prefix>`, parsed by
+    NUL records; mode `100644`/`100755` kept, `120000` and `160000` refused with the path, any other
+    mode refused too; paths made relative to the prefix and checked segment by segment;
+  - `packDigest(repo, ref, packId)` and `transitionDigest(repo, ref, file)`; a `DigestError` for a
+    rule failure.
+  - The catalog pack id is checked against `$defs.packId.pattern` of `schema/pack.schema.json`, so
+    the id grammar has one source, the contract.
+- **`src/range.ts`:** `isCompatible(version, release)` with the four conditions of spec-001 §12, and
+  `computeRange(version, releases)`: checks ascending order with `semver`, walks the list, and
+  closes a run at every incompatible release.
+- **`src/digest-cli.ts`:** `npm run digest -- [--repo <dir>] <ref> <catalog pack id>`, arguments
+  parsed with `node:util` `parseArgs` (adr-003); exit 0, 1 (digest rule), 2 (ref or git), 3
+  (usage).
+- **Tests,** red first: `tests/digest.test.ts`, `tests/range.test.ts`, `tests/digest-cli.test.ts`,
+  with `tests/support/git-repo.ts` building isolated temporary repositories (the recipe in
+  Acceptance).
 
 ## Execution Notes
 
