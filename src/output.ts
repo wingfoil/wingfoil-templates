@@ -187,7 +187,8 @@ export function agentsRegion(
   foundation: string,
 ): string {
   const bodies = sections.map(({ pack, text }) => {
-    const body = normalizeText(text).replace(/\n+$/, '');
+    // Blank lines around a section are dropped: sections are separated by one blank line.
+    const body = normalizeText(text).replace(/^\n+/, '').replace(/\n+$/, '');
     if (body.includes(REGION_BEGIN) || body.includes(REGION_END)) {
       throw new CompositionError(`${pack}: agents/section.md contains a generated-region marker`);
     }
