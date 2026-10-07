@@ -130,3 +130,4 @@ Branch `task/task-002-yaml-loading-and-schema-checks-against-schema`, run throug
   skipped rather than reported, and a `packs/pack.yaml` at the top of `packs/` is checked as a pack.
 - Lint preview (adr-004, in a scratch clone): `src/` is clean; the tests have the expected
   `no-floating-promises` on `describe` and `it`, for task 4b.
+- 2026-10-07: approved by the approver; merged into `main` with `--no-ff` (`f2b62ba`); on `main` the 110 tests, `check:pins` and `check:schemas` pass.

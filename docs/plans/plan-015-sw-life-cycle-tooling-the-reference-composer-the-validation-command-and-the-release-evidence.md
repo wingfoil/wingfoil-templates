@@ -151,3 +151,4 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   style). adr-004 captured under plan-019, `pending`. The backlog gains a task, **4b, ESLint
   set-up (adr-004)**, between task 4 and task 5, so that the fragment merge is written under lint:
   fourteen tasks in all. From task 4b on, every tooling task's Acceptance includes `npm run lint`.
+- 2026-10-07: task-002 (YAML loading and schema checks) done, merged `f2b62ba`.
