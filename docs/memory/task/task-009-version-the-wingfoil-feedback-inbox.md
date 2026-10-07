@@ -2,7 +2,7 @@
 id: task-009-version-the-wingfoil-feedback-inbox
 type: task
 title: "Version the WingFoil feedback inbox"
-status: backlog
+status: in-progress
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: []
 tags: ["governance","feedback-loop"]
