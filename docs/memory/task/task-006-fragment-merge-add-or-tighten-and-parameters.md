@@ -193,3 +193,4 @@ Branch `task/task-006-merge`, run through `tooling-delivery` as `developer` (`co
   fix killed by a test. One of the fixes, matching `{{name}}` only away from other braces, broke
   §8.2's "every occurrence" (`{k: {{a}}}`); the re-review caught it and `c77a6f3` reverted it,
   with tests. Re-review: approve.
+- 2026-10-07: approved by the approver; merged into `main` with `--no-ff` (`7ea0312`); on `main` the 350 tests and `npm run lint` pass.

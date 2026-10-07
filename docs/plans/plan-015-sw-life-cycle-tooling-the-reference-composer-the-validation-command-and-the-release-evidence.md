@@ -155,3 +155,4 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
 - 2026-10-07: task-003 (digest and computed range) done, merged `2df2bb7`.
 - 2026-10-07: task-004 (resolution, real catalog) done, merged `843c4c0`.
 - 2026-10-07: task-005 (task 4b, ESLint) done, merged `f1040d3`. From task 5 on, Acceptance includes `npm run lint`.
+- 2026-10-07: task-006 (task 5, fragment merge and parameters) done, merged `7ea0312`.
