@@ -20,8 +20,11 @@ export interface Parameter {
   value: ParameterValue;
 }
 
-/** `{{name}}`, exactly two braces on each side and no space; any other `{{` is text (§8.2). */
-const REFERENCE = /(?<!\{)\{\{([a-z][a-z0-9_]*)\}\}(?!\})/g;
+/**
+ * Every occurrence of `{{name}}` (§8.2), also next to other braces, as in a YAML flow mapping
+ * `{k: {{name}}}`; any other `{{` is text.
+ */
+const REFERENCE = /\{\{([a-z][a-z0-9_]*)\}\}/g;
 /** A base-10 integer as written in YAML (§8.1, §18): no fraction, no other base. */
 const INTEGER_SOURCE = /^-?(?:0|[1-9][0-9]*)$/;
 

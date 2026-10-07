@@ -66,8 +66,11 @@ describe('parameters: substitution (spec-001 §8.2, §8.3)', () => {
 });
 
 describe('parameters: review cases', () => {
-  it('leaves three braces as they are', () => {
+  it('substitutes every occurrence, also next to other braces', () => {
     const values = new Map<string, string | number | boolean>([['a', 'V']]);
-    assert.equal(substitute('{{{a}}} {{a}}', values, new Set(['a']), 'f', 'p'), '{{{a}}} V');
+    const scope = new Set(['a']);
+    assert.equal(substitute('x: {k: {{a}}}', values, scope, 'f', 'p'), 'x: {k: V}');
+    assert.equal(substitute('{{{a}}}', values, scope, 'f', 'p'), '{V}');
+    assert.throws(() => substitute('x: {k: {{b}}}', values, scope, 'f', 'p'), /\{\{b\}\}/);
   });
 });
