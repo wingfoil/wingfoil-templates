@@ -2,7 +2,7 @@
 id: adr-004-lint-eslint-with-typescript-eslint-type-aware-and-determinism-rules-only
 type: adr
 title: "Lint: ESLint with typescript-eslint, type-aware and determinism rules only"
-status: pending
+status: approved
 tags: ["tooling","dependencies","lint"]
 ---
 
