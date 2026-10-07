@@ -123,3 +123,4 @@ Branch `task/task-005-eslint`, run through `tooling-delivery` as `developer` (`c
   `d249486`, with a probe for the bare `crypto` path and a test linting `eslint.config.mjs`. The
   re-review confirmed that each surviving mutation (rules at `warn`, the bare path removed,
   `disableTypeChecked` removed) now fails a test.
+- 2026-10-07: approved by the approver; merged into `main` with `--no-ff` (`f1040d3`); on `main` `npm ci`, the 240 tests and `npm run lint` pass.
