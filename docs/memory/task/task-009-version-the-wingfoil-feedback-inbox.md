@@ -37,7 +37,10 @@ file per note, the ledger and the `wingfoil-cli` directive (task-010);
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-009-inbox`, run through `tooling-delivery` as `developer`. The sha256 of the file
+is taken before the commit and compared with the committed blob (`git cat-file blob HEAD:<path>`);
+the secret search of Acceptance 3 runs on the committed file. Nothing else is staged: the file is
+added by name.
 
 ## Execution Notes
 
