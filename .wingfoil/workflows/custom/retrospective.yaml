@@ -6,7 +6,7 @@
 name: retrospective
 kind: sub
 description: "Learn from the Execution Notes of the period and turn the learnings into decisions"
-version: 1
+version: 2
 phases:
   - name: explore
     description: >-
@@ -26,7 +26,7 @@ phases:
   - name: capture
     description: >-
       Record what to keep and what to change as a decision-log. A change of process is its own
-      decision-log; a WingFoil defect is a feedback note (wingfoil-feedback), not a decision.
+      decision-log; a WingFoil defect is a feedback note (wingfoil-cli), not a decision.
     role: facilitator
     actions:
       - 'memory.add(type: decision-log, title: "Retrospective <scope> <YYYY-MM-DD>")'

@@ -9,7 +9,7 @@
 name: sw-life-cycle
 kind: main
 description: "The end-to-end life cycle of the WingFoil-Templates repository"
-version: 3
+version: 4
 phases:
   - name: inception
     description: >-
@@ -23,7 +23,7 @@ phases:
     description: >-
       Specify the pack format (pack.yaml, fragments, catalog.yaml, presets, transitions) as a
       tech-spec and its JSON Schemas under schema/. The schemas are the contract with the WingFoil
-      CLI: a change to them is reported to WingFoil (wingfoil-feedback directive).
+      CLI: a change to them is reported to WingFoil (wingfoil-cli directive, rule 8).
     role: architect
     actions:
       - 'memory.add(type: tech-spec)'

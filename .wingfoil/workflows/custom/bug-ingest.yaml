@@ -1,9 +1,9 @@
 # Startable entry point to capture one defect of a pack or of this repository's tooling.
-# A defect of WingFoil itself goes to docs/wingfoil-feedback/ instead (wingfoil-feedback directive).
+# A defect of WingFoil itself goes to docs/wingfoil-feedback/ instead (wingfoil-cli directive).
 name: bug-ingest
 kind: main
 description: "Capture a defect of a pack or of the repository tooling into Memory."
-version: 1
+version: 2
 phases:
   - name: capture
     description: "Record the bug (observed, expected, reproduction, severity, pack)."

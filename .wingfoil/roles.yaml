@@ -1,6 +1,6 @@
 # Directive role assignments (P3.2/P3.7) — scaffolded by `wingfoil init`, then customized.
 # Binds directives to roles by directive ID, independent of the built-in/custom subfolder holding the file.
-version: 1
+version: 2
 
 assignments:
   pack-author:
@@ -38,4 +38,4 @@ global:
   - documentation
   - security
   - security-secrets
-  - wingfoil-feedback
+  - wingfoil-cli

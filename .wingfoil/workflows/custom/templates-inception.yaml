@@ -5,7 +5,7 @@
 name: templates-inception
 kind: sub
 description: "Lean Inception for the templates repository, closed by the pack-model rulings"
-version: 1
+version: 2
 phases:
   - name: brief
     description: "Product brief from the approver's answers: purpose, consumers, constraints, dependencies on WingFoil."
@@ -43,8 +43,9 @@ phases:
     description: >-
       Record the pack model the vision implies (axes, composition rules, versioning and distribution,
       first catalog scope) as decision-logs through decision-log-ingest. WingFoil-side consequences
-      go to the feedback notes (wingfoil-feedback directive), which stay out of git by the
-      approver's ruling of 2026-10-05, so they are not a `produces` of this phase.
+      go to the feedback notes in docs/wingfoil-feedback/ (wingfoil-cli directive). They were kept
+      out of git when this phase ran (2026-10-05) and are versioned since 2026-10-07 (WingFoil
+      dl-163 R1); they are not a `produces` of this phase.
     role: product-owner
     actions:
       - 'memory.add(type: decision-log)'

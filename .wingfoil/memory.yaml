@@ -3,7 +3,7 @@
 # no `states:` block of its own uses the `defaults` state machine (REQ-STATE-08).
 # `release` and `release-line` from the scaffold are removed: this repository has no repository-wide
 # releases, every pack is versioned and published on its own (`pack-release`, dl-001).
-version: 3
+version: 4
 
 # Default state machine — `sequence` is the forward chain (`submit` walks it); a `gates` state's
 # forward edge needs `approve`, and its `reject` target is where a rejection lands. `deprecated` is
@@ -24,7 +24,7 @@ types:
         required: [id, type, title, status]
   bug:
     # A defect in a pack or in this repository's tooling. A defect in WingFoil itself is not a bug
-    # here: it goes to docs/wingfoil-feedback/ (wingfoil-feedback directive).
+    # here: it goes to docs/wingfoil-feedback/ (wingfoil-cli directive).
     path: docs/memory/bug/{id}.md
     id_pattern: "bug-{n}-{slug}"
     template:
