@@ -173,3 +173,6 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   (S4a, R4) and replaces the `wingfoil-feedback` directive with `wingfoil-cli` (S4b). W6 resumes
   after them.
 - 2026-10-07: task-009 (inbox versioned, M1 S1) done, merged `ceffa55`, pushed.
+- 2026-10-08: task-010 (dl-163 notes, ledger, `wingfoil-cli`; M1 S4a, S4b) done, merged `59e1b45`,
+  pushed. Step M1 of the feedback loop is complete; the coordinating session is told what was done
+  and where it departs from its request. W6 is not started: the approver asked to wait.

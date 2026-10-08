@@ -152,3 +152,4 @@ Branch `task/task-010-feedback-notes`, run through `tooling-delivery` as `develo
 - Review (a subagent with its own context): request changes, no blocking: content of T2, T8, T9,
   T11, T13, T15, T16, T18 and of the old header had been lost or changed in the split. Restored in
   `59f6be9`, with T9's original wording kept beside its restatement; the re-review approved.
+- 2026-10-08: approved by the approver; merged into `main` with `--no-ff` (`59e1b45`) and pushed.
