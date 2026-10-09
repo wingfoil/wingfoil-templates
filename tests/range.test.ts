@@ -56,6 +56,15 @@ describe('isCompatible', () => {
     const reads = { workflows: [1] };
     assert.equal(isCompatible(EMPTY, release('0.3.0', { reads })), true);
   });
+
+  it('without the format_key condition (self-test, dl-009), applies the other three', () => {
+    const noKey = release('0.2.2', { format_key: false });
+    assert.equal(isCompatible(KANBAN, noKey, { formatKey: false }), true);
+    assert.equal(isCompatible(KANBAN, noKey, { formatKey: true }), false);
+    const reads = { ...READS_ALL, memory: [2] };
+    assert.equal(isCompatible(KANBAN, release('0.2.2', { format_key: false, reads }),
+      { formatKey: false }), false);
+  });
 });
 
 describe('computeRange', () => {

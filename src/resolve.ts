@@ -40,6 +40,8 @@ export interface PackManifest {
   slot?: string;
   version: string;
   formats: Record<string, number>;
+  /** What the compatibility matrix needs a release to provide (spec-001 §12). */
+  requires_capabilities?: string[];
   requires?: string[];
   conflicts?: string[];
   parameters?: Record<string, ParameterDeclaration>;

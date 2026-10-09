@@ -40,6 +40,11 @@ export interface DeterminismOptions {
   compare?: Compare;
   /** A module exporting `runCompose(argv)`, run in each child process. */
   cli?: string;
+  /**
+   * Called with the first output of a composition that composed and proved deterministic, before
+   * its temporary directory is removed: the compatibility matrix runs on it (task-011).
+   */
+  use?: (composed: string) => void;
 }
 
 interface Run {
@@ -112,7 +117,9 @@ export function composeTwice(
     if (differences.length > 0) {
       return { code: 1, files: 0, message: `not deterministic: ${differences.join('; ')}` };
     }
-    return { code: 0, files: listTree(first).length, message: 'byte-identical' };
+    const files = listTree(first).length;
+    options.use?.(first);
+    return { code: 0, files, message: 'byte-identical' };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     const shown = root === undefined ? message : message.split(root).join('<tmp>');

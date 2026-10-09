@@ -23,14 +23,24 @@ function reads(release: CompatRelease, kind: string, format: number): boolean {
   return Object.hasOwn(release.reads, kind) && release.reads[kind]?.includes(format) === true;
 }
 
-export function isCompatible(version: VersionRequirements, release: CompatRelease): boolean {
-  return release.format_key
+/** `formatKey: false` drops the first condition only: the matrix's self-test mode (dl-009). */
+export interface CompatibilityOptions {
+  formatKey: boolean;
+}
+
+export function isCompatible(
+  version: VersionRequirements,
+  release: CompatRelease,
+  options: CompatibilityOptions = { formatKey: true },
+): boolean {
+  return (release.format_key || !options.formatKey)
     && Object.entries(version.formats).every(([kind, format]) => reads(release, kind, format))
     && reads(release, 'workflows', COMPOSED_WORKFLOWS_FORMAT)
     && version.requires_capabilities.every((name) => release.capabilities.includes(name));
 }
 
-function checkAscending(releases: CompatRelease[]): void {
+/** Every release a version, each greater than the one before: none repeated, none descending. */
+export function checkAscending(releases: CompatRelease[]): void {
   releases.forEach((release, index) => {
     if (valid(release.wingfoil) === null) {
       throw new Error(`compat.yaml: ${JSON.stringify(release.wingfoil)} is not a version`);
