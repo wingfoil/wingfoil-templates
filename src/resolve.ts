@@ -193,42 +193,47 @@ function checkConflicts(ordered: ResolvedPack[], packs: Map<string, ResolvedPack
   }
 }
 
-function membersOf(axis: AxisSpec, ordered: ResolvedPack[]): ResolvedPack[] {
+function membersOf<T extends Pick<ResolvedPack, 'manifest'>>(axis: AxisSpec, ordered: T[]): T[] {
   return ordered.filter((pack) => pack.manifest.axis === axis.name);
 }
 
-function checkAxes(catalog: Catalog, ordered: ResolvedPack[]): void {
+/**
+ * The cardinalities of spec-001 §3, read from the catalog, for the packs of one composition; every
+ * breach, as a message. The resolver throws the first; the lint reports each one for a preset.
+ */
+export function axesMessages(
+  catalog: Catalog,
+  ordered: Pick<ResolvedPack, 'id' | 'manifest'>[],
+): string[] {
+  const messages: string[] = [];
   const known = new Set(catalog.axes.map((axis) => axis.name));
   for (const pack of ordered) {
     if (pack.id !== catalog.foundation && !known.has(pack.manifest.axis ?? '')) {
-      const axis = String(pack.manifest.axis);
-      throw new ResolveError(`${pack.id}: axis ${axis} is not in the catalog`);
+      messages.push(`${pack.id}: axis ${String(pack.manifest.axis)} is not in the catalog`);
     }
   }
   for (const axis of catalog.axes) {
     const members = membersOf(axis, ordered);
-    const names = (packs: ResolvedPack[]): string => packs.map((pack) => pack.id).join(', ');
+    const names = (packs: typeof ordered): string => packs.map((pack) => pack.id).join(', ');
     if (axis.required && members.length === 0) {
-      throw new ResolveError(`axis ${axis.name} is required, and no pack of it is given`);
+      messages.push(`axis ${axis.name} is required, and no pack of it is given`);
     }
     if (axis.cardinality === 'one' && members.length > 1) {
-      throw new ResolveError(`axis ${axis.name} takes one pack: ${names(members)}`);
+      messages.push(`axis ${axis.name} takes one pack: ${names(members)}`);
     }
     if (axis.cardinality === 'one-per-slot') {
       const slots = axis.slots ?? [];
-      const unknown = members.find((pack) => !slots.includes(pack.manifest.slot ?? ''));
-      if (unknown !== undefined) {
-        throw new ResolveError(`${unknown.id}: slot ${String(unknown.manifest.slot)} is not a slot `
+      for (const unknown of members.filter((pack) => !slots.includes(pack.manifest.slot ?? ''))) {
+        messages.push(`${unknown.id}: slot ${String(unknown.manifest.slot)} is not a slot `
           + `of axis ${axis.name}`);
       }
-      for (const slot of axis.slots ?? []) {
+      for (const slot of slots) {
         const filling = members.filter((pack) => pack.manifest.slot === slot);
-        if (filling.length > 1) {
-          throw new ResolveError(`slot ${slot} takes one pack: ${names(filling)}`);
-        }
+        if (filling.length > 1) messages.push(`slot ${slot} takes one pack: ${names(filling)}`);
       }
     }
   }
+  return messages;
 }
 
 /** Kahn's algorithm on the requires inside one axis; ties in byte order of the id (§7.1). */
@@ -289,7 +294,8 @@ export function resolve(tree: string, catalog: Catalog, request: string[]): Reso
   checkRanges(packs, constraints);
   const byId = [...packs.values()].sort((a, b) => byBytes(a.id, b.id));
   checkConflicts(byId, packs);
-  checkAxes(catalog, byId);
+  const [axisProblem] = axesMessages(catalog, byId);
+  if (axisProblem !== undefined) throw new ResolveError(axisProblem);
   for (const pack of byId) throwFirst(slotProblems(catalog, pack));
   for (const pack of byId) {
     throwFirst(inventoryProblems(tree, pack));

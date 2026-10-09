@@ -18,6 +18,7 @@ import { formatProblem, sortProblems } from './problems';
 import type { Problem } from './problems';
 import type { PackManifest } from './resolve';
 import { repositorySchemas } from './schemas';
+import { treeProblems } from './tree-rules';
 import { YamlError, loadYamlFile } from './yaml-load';
 
 export interface CheckPacksResult {
@@ -115,7 +116,7 @@ function packProblems(context: LintContext): Problem[] {
 }
 
 /** The rule groups, in order; each sees the context the ones before it filled. */
-const GROUPS: readonly ((context: LintContext) => Problem[])[] = [packProblems];
+const GROUPS: readonly ((context: LintContext) => Problem[])[] = [packProblems, treeProblems];
 
 export function runCheckPacks(tree: string): CheckPacksResult {
   if (!existsSync(tree) || !statSync(tree).isDirectory()) {

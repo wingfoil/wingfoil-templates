@@ -34,6 +34,8 @@ export interface LoadedYaml {
    * position is the mapping's.
    */
   positionOf(pointer: string): Position;
+  /** Where the character at an offset of the parsed text is (task-012's lint). */
+  positionAt(offset: number): Position;
 }
 
 const START: Position = { line: 1, column: 1 };
@@ -98,6 +100,7 @@ export function parseYaml(text: string, file: string): LoadedYaml {
       const range = nodeAt(document, decodePointer(pointer))?.range;
       return range ? at(range[0]) : START;
     },
+    positionAt: at,
   };
 }
 

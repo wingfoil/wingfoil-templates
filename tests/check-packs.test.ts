@@ -1,10 +1,11 @@
 import { strict as assert } from 'node:assert';
 import { execFileSync } from 'node:child_process';
 import {
-  copyFileSync, mkdirSync, rmSync, symlinkSync, writeFileSync,
+  copyFileSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync,
 } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
+import { parse, stringify } from 'yaml';
 
 import { runCheckPacks } from '../src/check-packs';
 import type { CheckPacksResult } from '../src/check-packs';
@@ -30,11 +31,13 @@ function rules(result: CheckPacksResult): string[] {
   return [...new Set(result.problems.map((problem) => problem.rule))].sort();
 }
 
-/** The lint passes the clean tree and fails the edited one with exactly this rule. */
-function failsWith(rule: string, specs: PackSpec[], edit?: (root: string) => void): void {
+/** The lint fails the tree with exactly these rules (one, or a sorted list). */
+function failsWith(rule: string | string[], specs: PackSpec[], edit?: (root: string) => void):
+void {
   const result = lint(specs, edit);
   assert.equal(result.code, 1, result.lines.join('\n'));
-  assert.deepEqual(rules(result), [rule], result.lines.join('\n'));
+  assert.deepEqual(rules(result), typeof rule === 'string' ? [rule] : rule,
+    result.lines.join('\n'));
 }
 
 const CLEAN = [BASE, KANBAN];
@@ -93,8 +96,8 @@ describe('npm run check:packs', () => {
 });
 
 describe('pack.yaml rules', () => {
-  it('pack-id: the directory names another id', () => {
-    failsWith('pack-id', CLEAN, (root) => {
+  it('pack-id: the directory names another id (and so repeats a name)', () => {
+    failsWith(['pack-id', 'pack-name-unique'], CLEAN, (root) => {
       mkdirSync(join(root, 'packs', 'methodology', 'scrum'), { recursive: true });
       for (const file of ['pack.yaml', 'README.md', 'CHANGELOG.md']) {
         copyFileSync(join(root, 'packs', 'methodology', 'kanban', file),
@@ -143,7 +146,7 @@ describe('inventory and formats rules', () => {
     failsWith('formats', [BASE, { ...KANBAN, manifest: { formats: { workflow: 1, dna: 1 } } }]);
     failsWith('formats', [BASE, { ...KANBAN,
       extraFiles: { 'workflows/delivery.yaml': 'format: 2\nname: delivery\nkind: sub\n' } }]);
-    failsWith('formats', [BASE, { ...KANBAN,
+    failsWith(['formats', 'integer'], [BASE, { ...KANBAN,
       extraFiles: { 'workflows/delivery.yaml': 'format: 1.0\nname: delivery\nkind: sub\n' } }]);
   });
 
@@ -180,7 +183,7 @@ describe('parameter rules', () => {
 
   it('parameter-default: an integer default not written as a base-10 integer', () => {
     // A default of the wrong type is the schema's (pack.schema.json types the defaults).
-    failsWith('parameter-default', [BASE, { ...declares({
+    failsWith(['integer', 'parameter-default'], [BASE, { ...declares({
       wip: { type: 'integer', default: 3, description: 'x' } }) }], (root) => {
       const file = join(root, 'packs', 'methodology', 'kanban', 'pack.yaml');
       execFileSync('sed', ['-i', 's/default: 3/default: 3.0/', file]);
@@ -229,5 +232,207 @@ describe('layout rules', () => {
   it('submodule: a .git entry inside packs/', () => {
     failsWith('submodule', CLEAN, (root) => writeFileSync(kanban(root, '.git'),
       'gitdir: ../.git/modules/x\n'));
+  });
+});
+
+type Doc = Record<string, unknown>;
+
+/** Edits the tree's catalog.yaml as data. */
+function catalog(root: string, edit: (data: Doc) => void): void {
+  const file = join(root, 'catalog.yaml');
+  const data = parse(readFileSync(file, 'utf8')) as Doc;
+  edit(data);
+  writeFileSync(file, stringify(data));
+}
+
+const SHA = '0123456789abcdef0123456789abcdef01234567';
+const DIGEST = `sha256:${'a'.repeat(64)}`;
+
+function version(v: string, extra: Doc = {}): Doc {
+  return { version: v, commit: SHA, digest: DIGEST, formats: {}, requires_capabilities: [],
+    requires: [], conflicts: [], wingfoil: '0.2.2', ...extra };
+}
+
+function entry(id: string, versions: Doc[], extra: Doc = {}): Doc {
+  return { id, path: `packs/${id}`, catalog: 'official', status: 'active', versions, ...extra };
+}
+
+function write(root: string, file: string, text: string): void {
+  mkdirSync(join(root, file, '..'), { recursive: true });
+  writeFileSync(join(root, file), text);
+}
+
+const GOLDEN_PRESET = 'format: 1\nid: small\ntitle: "Small"\ndescription: "Kanban."\n'
+  + 'packs:\n  - methodology/kanban@^1\n';
+
+const TRANSITION = (id: string, from: string, to: string): string => [
+  'format: 1', `id: ${id}`, `from: ${from}`, `to: ${to}`, 'formats: {}',
+  'requires_capabilities: [stage-transitions]', 'pre_checks: []',
+  'actions:', '  - { id: swap-stage-overlay, description: "Swap the stage overlay." }', '']
+  .join('\n');
+
+describe('YAML rules, every file', () => {
+  it('integer: a value written 2.0 in compat.yaml, a preset, a fragment', () => {
+    failsWith('integer', CLEAN, (root) => {
+      const file = join(root, 'compat.yaml');
+      writeFileSync(file, readFileSync(file, 'utf8').replace('dna: [1]', 'dna: [1.0]'));
+    });
+    failsWith('integer', [BASE, { ...KANBAN, fragments: ['roles'],
+      extraFiles: { 'fragments/roles.yaml': 'format: 1\nlimits: { wip: 2.0 }\n' } }]);
+  });
+
+  it('integer: leaves non-integer numbers and strings alone', () => {
+    assert.equal(lint([BASE, { ...KANBAN, fragments: ['roles'],
+      extraFiles: { 'fragments/roles.yaml': 'format: 1\nratio: 1.5\nlabel: "2.0"\n' } }]).code,
+    0);
+  });
+
+  it('nan: .nan or .inf anywhere', () => {
+    failsWith('nan', [BASE, { ...KANBAN, fragments: ['roles'],
+      extraFiles: { 'fragments/roles.yaml': 'format: 1\nlimits: [.nan, .inf]\n' } }]);
+  });
+});
+
+describe('catalog.yaml rules (no tag)', () => {
+  it('catalog-path and catalog-id', () => {
+    failsWith('catalog-path', CLEAN, (root) => catalog(root, (data) => {
+      data['packs'] = [{ ...entry('methodology/kanban', [version('1.0.0')]),
+        path: 'packs/methodology/scrum' }];
+    }));
+    failsWith('catalog-id', CLEAN, (root) => catalog(root, (data) => {
+      data['packs'] = [entry('base', [version('1.0.0')]), entry('base', [version('1.0.0')])];
+    }));
+  });
+
+  it('catalog-versions: ascending, no repeat', () => {
+    failsWith('catalog-versions', CLEAN, (root) => catalog(root, (data) => {
+      data['packs'] = [entry('base', [version('1.1.0'), version('1.0.0')])];
+    }));
+    failsWith('catalog-versions', CLEAN, (root) => catalog(root, (data) => {
+      data['packs'] = [entry('base', [version('1.0.0'), version('1.0.0')])];
+    }));
+  });
+
+  it('catalog-transitions: only on a stage pack\'s versions', () => {
+    failsWith('catalog-transitions', CLEAN, (root) => catalog(root, (data) => {
+      data['packs'] = [entry('base', [version('1.0.0',
+        { transitions: { 'mvp-to-production': DIGEST } })])];
+    }));
+  });
+
+  it('catalog-index: a preset or transition entry that does not match its file', () => {
+    failsWith('catalog-index', CLEAN, (root) => catalog(root, (data) => {
+      data['presets'] = [{ id: 'small', path: 'presets/small.yaml' }];
+    }));
+    failsWith('catalog-index', CLEAN, (root) => {
+      write(root, 'presets/small.yaml', GOLDEN_PRESET);
+      catalog(root, (data) => { data['presets'] = [{ id: 'small', path: 'presets/tiny.yaml' }]; });
+    });
+    failsWith('catalog-index', CLEAN, (root) => {
+      write(root, 'transitions/mvp-to-production.yaml',
+        TRANSITION('mvp-to-production', 'stage/mvp', 'stage/production'));
+      catalog(root, (data) => {
+        data['packs'] = [entry('stage/mvp', [version('1.0.0')]),
+          entry('stage/production', [version('1.0.0')])];
+        data['transitions'] = [{ id: 'mvp-to-production',
+          path: 'transitions/mvp-to-production.yaml', from: 'stage/mvp', to: 'stage/production',
+          formats: {}, requires_capabilities: [] }];
+      });
+    });
+  });
+});
+
+describe('compat.yaml rules', () => {
+  it('compat: a release out of order, a capability outside the vocabulary', () => {
+    failsWith('compat', CLEAN, (root) => {
+      const file = join(root, 'compat.yaml');
+      writeFileSync(file, readFileSync(file, 'utf8').replace('capabilities: []',
+        'capabilities: [time-travel]'));
+    });
+  });
+});
+
+describe('preset rules', () => {
+  it('passes a preset that resolves', () => {
+    const result = lint(CLEAN, (root) => write(root, 'presets/small.yaml', GOLDEN_PRESET));
+    assert.equal(result.code, 0, result.lines.join('\n'));
+  });
+
+  it('preset-name: an id other than the file name', () => {
+    failsWith('preset-name', CLEAN, (root) => write(root, 'presets/tiny.yaml', GOLDEN_PRESET));
+  });
+
+  it('preset-cardinality: two methodologies, or a pack the tree does not hold', () => {
+    failsWith('preset-cardinality', [...CLEAN, { id: 'methodology/scrum', workflows: ['delivery'] }],
+      (root) => write(root, 'presets/small.yaml',
+        `${GOLDEN_PRESET}  - methodology/scrum@^1\n`));
+    failsWith('preset-cardinality', CLEAN, (root) => write(root, 'presets/small.yaml',
+      `${GOLDEN_PRESET}  - blueprint/web@^1\n`));
+  });
+
+  it('preset-value: a value of the wrong YAML type, or a parameter nobody declares', () => {
+    const declaring = { ...KANBAN, manifest: { parameters: {
+      wip: { type: 'integer', default: 2, description: 'x' } } } };
+    failsWith('preset-value', [BASE, declaring], (root) => write(root, 'presets/small.yaml',
+      `${GOLDEN_PRESET}parameters:\n  wip: "3"\n`));
+    failsWith('preset-value', [BASE, declaring], (root) => write(root, 'presets/small.yaml',
+      `${GOLDEN_PRESET}parameters:\n  colour: red\n`));
+    assert.equal(lint([BASE, declaring], (root) => write(root, 'presets/small.yaml',
+      `${GOLDEN_PRESET}parameters:\n  wip: 3\n`)).code, 0);
+  });
+
+  it('preset-directory: presets/<x>.yaml as a directory is reported', () => {
+    failsWith('preset-directory', CLEAN, (root) => mkdirSync(join(root, 'presets', 'odd.yaml'),
+      { recursive: true }));
+  });
+});
+
+describe('transition rules', () => {
+  const stages = (root: string): void => catalog(root, (data) => {
+    data['packs'] = [entry('stage/mvp', [version('1.0.0')]),
+      entry('stage/production', [version('1.0.0')])];
+  });
+
+  it('passes a transition between two stage packs of the catalog', () => {
+    const result = lint(CLEAN, (root) => {
+      stages(root);
+      write(root, 'transitions/mvp-to-production.yaml',
+        TRANSITION('mvp-to-production', 'stage/mvp', 'stage/production'));
+    });
+    assert.equal(result.code, 0, result.lines.join('\n'));
+  });
+
+  it('transition-name and transition-id', () => {
+    failsWith('transition-name', CLEAN, (root) => {
+      stages(root);
+      write(root, 'transitions/mvp-to-prod.yaml',
+        TRANSITION('mvp-to-production', 'stage/mvp', 'stage/production'));
+    });
+    failsWith('transition-id', CLEAN, (root) => {
+      stages(root);
+      write(root, 'transitions/mvp-to-live.yaml',
+        TRANSITION('mvp-to-live', 'stage/mvp', 'stage/production'));
+    });
+  });
+
+  it('transition-stages: from equals to, or a stage the catalog does not list', () => {
+    failsWith('transition-stages', CLEAN, (root) => {
+      stages(root);
+      write(root, 'transitions/mvp-to-mvp.yaml', TRANSITION('mvp-to-mvp', 'stage/mvp',
+        'stage/mvp'));
+    });
+    failsWith('transition-stages', CLEAN, (root) => {
+      stages(root);
+      write(root, 'transitions/mvp-to-sunset.yaml', TRANSITION('mvp-to-sunset', 'stage/mvp',
+        'stage/sunset'));
+    });
+  });
+});
+
+describe('pack-name-unique', () => {
+  it('two packs of the tree, or a tree pack and a catalog pack, with one name', () => {
+    failsWith('pack-name-unique', [...CLEAN, { id: 'blueprint/kanban' }]);
+    failsWith('pack-name-unique', [...CLEAN, { id: 'blueprint/web' }], (root) =>
+      catalog(root, (data) => { data['packs'] = [entry('governance/web', [version('1.0.0')])]; }));
   });
 });
