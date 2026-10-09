@@ -220,3 +220,43 @@ workflow and overlay rules; (4) secret rules; (5) `check:packs`, the validate st
   plan, and a composition for every pack no combination reaches; the counted files and fixed rule
   ids; names unique in the tree and the catalog; transitions named `<id>.yaml`; submodules and
   stray files; the module named `check-packs`.
+- 2026-10-09, build on `task/task-012-check-packs`, as `developer`, in five commits, each green on
+  its own: `9cf1d9d` problems, per-pack rules shared with the composer, layout, pack files and
+  `check:packs`; `4b9f777` YAML and tree rules; `360aa1b` workflow and overlay rules, and the
+  fixtures; `6dc48a9` secret scan; `b283e5b` the lint as a step of `validate`.
+  - Rule ids: `pack-id`, `pack-name`, `pack-version`, `requires-self`, `requires-twice`,
+    `conflicts-self`, `capabilities-sorted`, `fragment-order`, `contents`, `formats`, `layout`,
+    `symlink`, `submodule`, `asset-id`, `parameter-default`, `parameter-scope`, `slot`,
+    `base-only`, `parse`, `integer`, `nan`, `catalog-path`, `catalog-id`, `catalog-versions`,
+    `catalog-transitions`, `catalog-index`, `compat`, `preset-name`, `preset-cardinality`,
+    `preset-value`, `preset-directory`, `transition-name`, `transition-id`, `transition-stages`,
+    `pack-name-unique`, `empty-phase`, `include`, `life-cycle-includes`, `role`, `memory-type`,
+    `directive`, `overlay`, `compose`, `secret`.
+  - The composer now also refuses, for the packs it composes: a version below 1.0.0, a name other
+    than its id's last segment, unsorted capabilities, a self-conflict, a `formats` kind not
+    shipped, a missing `README.md` or `CHANGELOG.md` or any other §6.1 layout breach, the F3.5
+    workflow rules and a secret in a listed file. The merge and resolve fixtures gained
+    `README.md` and `CHANGELOG.md`; the merge fixtures' and the test helper's `sw-life-cycle`
+    and `delivery` include their slots.
+  - Golden tree: its phases declare `produces` and its `sw-life-cycle` includes the four slots;
+    `tests/fixtures/compose/expected` regenerated (only those lines changed). The real run of
+    task-011 acceptance 9 still passes on `wingfoil@0.2.2`: 1 run, 0 failed, tolerance applied.
+  - Acceptance 1–14 pass from a clean clone of the branch on Node.js 22.21.0 and on the floor
+    22.12.0: 545 tests, ESLint, `check:pins`, `check:schemas`, `check:packs` (`lint: checked 2
+    files, 0 problems` on this repository, 48 files on the golden tree), `validate` with the same
+    lint line, exit 3 on bad usage, `npm audit` 0.
+- Deviations:
+  - `check:packs` arrived with the first commit rather than the fifth, so that every group was
+    tested through the command from the start.
+  - A pack that no overlay combination reaches is reported under its own rule id, `compose`, not
+    `overlay`: the refusal is not a contradiction between overlays.
+  - Acceptance 11: hex of exactly 40 or 64 characters (a git object id, a SHA-256 digest) is not
+    reported. Run over this repository's own 326 text files, the scan as written reported 10
+    findings, all of them such references, and nothing else; with the exception it reports none.
+  - Acceptance 7: `validate` does not compose a preset the lint rejects, rather than passing its
+    values to the compose command with their YAML type; a value whose YAML type passed its
+    parameter's type has a lossless text form, so the composed result is the same.
+  - The composer's secret scan covers the files a pack lists (the ones it composes), not
+    `pack.yaml`, `README.md` and `CHANGELOG.md`, which the lint covers.
+  - `validate` runs the schema checks twice, once for its own line and once inside the lint.
+
