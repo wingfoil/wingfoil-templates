@@ -25,6 +25,10 @@ in chat. Each adds a capability to the catalog:
   evolutions of the project or of its governance. The initialization template must be able to
   select installable packs in its configuration, and the feedback pack is the first concrete
   example of a governance capability distributed as a pack.
+- **dl-013, the Directive First methodology** (third request, same day). A template that lets a
+  project follow Directive First: intent is formalized into directives before implementation, and
+  directives drive methodology, workflows, agents, tools and verification, in a cycle closed by
+  feedback (dl-012) and fed by the initialization template (dl-011).
 
 The approver asked that both requests enter the normal governance processes rather than become
 notes or TODOs, that no parallel methodology be invented, and that no software be implemented in
@@ -45,7 +49,7 @@ session; it runs on the branch `dl/dl-011-initialization-template`, from `main` 
 
 ## Steps
 
-For each decision-log, in order (dl-011, then dl-012, which cites dl-011):
+For each decision-log, in order (dl-011, dl-012, dl-013; each cites the earlier ones):
 
 1. **claude (facilitator):** `npm run -s wingfoil -- memory add --type decision-log --title "…"`,
    which creates the `draft`.
@@ -64,12 +68,12 @@ Then commit this plan's Execution Notes and `submit` it (`draft → active`).
 - **Approver:** an independent review if wanted, then the `rule` phase for each:
   `npm run -s wingfoil -- memory approve <id> --reason "…"` (W-03), or `memory reject` back to
   `capture`. The approver also rules the points each decision-log leaves open (pack names, waves,
-  bootstrap preset, feedback state machine).
+  bootstrap preset, feedback state machine, the directive type's name, the split of dl-013).
 - **After approval**, a follow-up plan (pattern of plan-011 and plan-018) applies the
   vision-document amendments both decision-logs list. The pack charters and their tasks are opened
   when `pack-delivery` reaches each pack, in the order the sequencer sets.
 - A rejected decision-log comes back to `draft`, is corrected under this plan and submitted again.
-  The plan stays `active` until both are approved, then `done`.
+  The plan stays `active` until all three are approved, then `done`.
 - The branch is merged into `main` by the approver, or on the approver's word.
 
 ## Execution Notes
@@ -83,3 +87,7 @@ Then commit this plan's Execution Notes and `submit` it (`draft → active`).
 - 2026-10-09: dl-011 (`3fda19e`, `0e15766`) and dl-012 (`042743c`, `33d5900`) filled and submitted,
   both `pending`, each with its proposal, its acceptance criteria (AC-1…AC-9, FA-1…FA-9), the
   amendments it implies and the charter and tasks it opens later. Waiting for the approver's ruling.
+- 2026-10-09: a third request (Directive First) arrived after the plan was submitted; captured
+  under this plan as dl-013 rather than a new plan, since it is the same capture phase and cites
+  dl-011 and dl-012. The plan's title still names the first two. dl-013 (`01b1dcb`, `1de6ec0`) filled
+  and submitted, `pending`, with acceptance criteria DF-1…DF-12.
