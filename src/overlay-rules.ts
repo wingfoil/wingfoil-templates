@@ -54,12 +54,13 @@ export function overlayProblems(context: LintContext, earlier: Problem[]): Probl
   const stages = [undefined, ...ofAxis(sound, 'stage')];
   const problems: Problem[] = [];
   const reached = new Set<string>();
-  const compose = (request: LintPack[], rule: string, blamed: LintPack): void => {
+  const compose = (request: LintPack[], rule: string, blamed: LintPack[]): void => {
     const ids = request.map((pack) => pack.id);
     for (const pack of request) for (const id of reachable(pack, context.packs)) reached.add(id);
     const message = refusal(tree, catalog, ids);
-    if (message !== undefined) {
-      problems.push({ file: `${blamed.path}/pack.yaml`, rule,
+    if (message === undefined) return;
+    for (const pack of blamed) {
+      problems.push({ file: `${pack.path}/pack.yaml`, rule,
         message: `${[catalog.foundation, ...ids].join(' + ')}: ${message}` });
     }
   };
@@ -67,8 +68,7 @@ export function overlayProblems(context: LintContext, earlier: Problem[]): Probl
     for (const teamMode of teamModes) {
       for (const stage of stages) {
         const overlays = [teamMode, stage].filter((pack) => pack !== undefined);
-        const [blamed] = overlays;
-        if (blamed !== undefined) compose([methodology, ...overlays], 'overlay', blamed);
+        if (overlays.length > 0) compose([methodology, ...overlays], 'overlay', overlays);
       }
     }
   }
@@ -79,7 +79,7 @@ export function overlayProblems(context: LintContext, earlier: Problem[]): Probl
     // base comes with every composition; a methodology is composed alone (one per composition).
     const request = pack.id === catalog.foundation ? [first]
       : pack.manifest.axis === 'methodology' ? [pack] : [first, pack];
-    compose(request, 'compose', pack);
+    compose(request, 'compose', [pack]);
   }
   return problems;
 }

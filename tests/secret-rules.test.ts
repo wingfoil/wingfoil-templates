@@ -48,10 +48,22 @@ describe('secretProblems', () => {
       'name: task-011-compatibility-matrix-and-the-real-compat',
       `commit: ${'0123456789abcdef'.repeat(2)}01234567`,
       `checksum: ${'9f86d081884c7d659a2feaa0c55ad015'.repeat(2)}`,
+      `fixed in commit ${'0123456789abcdef'.repeat(2)}01234567.`,
       'description: "A plain sentence with ordinary words in it, and nothing secret at all."',
     ].join('\n');
     assert.deepEqual(secretProblems('packs/x/pack.yaml', text), []);
     assert.deepEqual(secretProblems('packs/x/README.md', text), []);
+  });
+});
+
+describe('40- and 64-character hex', () => {
+  it('is a finding unless its line names it a commit, sha, digest or hash', () => {
+    const forty = join('9f86d081884c7d65', '9a2feaa0c55ad015', 'a3bf4f1b');
+    assert.equal(secretProblems('packs/x/README.md', `token ${forty}\n`).length, 1);
+    assert.equal(secretProblems('packs/x/fragments/dna.yaml', `format: 1\nkey: ${forty}\n`)
+      .length, 1);
+    assert.deepEqual(secretProblems('packs/x/fragments/dna.yaml', `format: 1\nsha: ${forty}\n`),
+      []);
   });
 });
 

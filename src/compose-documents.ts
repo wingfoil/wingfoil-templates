@@ -116,7 +116,8 @@ function fragmentsOf(kind: FragmentKind, packs: ResolvedPack[], files: ComposedF
 }
 
 /** F3.5 on the packs composed (task-012): the composer refuses what the lint rejects (§18). */
-function checkWorkflows(catalog: Catalog, packs: ResolvedPack[], files: ComposedFile[]): void {
+function checkWorkflows(tree: string, catalog: Catalog, packs: ResolvedPack[],
+  files: ComposedFile[]): void {
   const byPack = new Map<string, RuleFile[]>();
   for (const file of files) {
     const pack = packs.find((candidate) => candidate.id === file.pack);
@@ -129,9 +130,11 @@ function checkWorkflows(catalog: Catalog, packs: ResolvedPack[], files: Composed
     const [first] = workflowProblems(catalog, pack, byId, byPack);
     if (first !== undefined) throw new CompositionError(first.message);
   }
+  // The files as written, before substitution: a value given with --param is the user's, not
+  // the pack's, and the lint scans the files as written too.
   for (const file of files) {
     const path = `${byId.get(file.pack)?.path ?? file.pack}/${file.path}`;
-    const [secret] = secretProblems(path, file.text);
+    const [secret] = secretProblems(path, readFileSync(join(tree, path), 'utf8'));
     if (secret !== undefined) throw new CompositionError(secret.message);
   }
 }
@@ -153,7 +156,7 @@ export function composeDocuments(
   const values = new Map([...parameters.values()]
     .map((parameter) => [parameter.name, parameter.value]));
   const files = readFiles(tree, packs, values, parameterScopes(packs, parameters));
-  checkWorkflows(catalog, packs, files);
+  checkWorkflows(tree, catalog, packs, files);
 
   const dna = fragmentsOf('dna', packs, files);
   for (const fragment of dna.fragments) checkDnaFragment(fragment.pack, fragment.data);

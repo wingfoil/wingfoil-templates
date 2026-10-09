@@ -59,16 +59,23 @@ function loadValid(context: LintContext, file: string, kind: SchemaKind): Loaded
 function folder(context: LintContext, name: string): { files: string[]; problems: Problem[] } {
   const dir = join(context.tree, name);
   if (!existsSync(dir)) return { files: [], problems: [] };
+  if (!lstatSync(dir).isDirectory()) {
+    return { files: [], problems: [{ file: name, rule: 'layout',
+      message: `${name} must be a directory of YAML files (spec-001 §14, §15)` }] };
+  }
   const files: string[] = [];
   const problems: Problem[] = [];
   for (const entry of readdirSync(dir).sort(byBytes)) {
-    if (!entry.endsWith('.yaml')) continue;
     const file = `${name}/${entry}`;
-    if (lstatSync(join(dir, entry)).isFile()) {
+    const isFile = lstatSync(join(dir, entry)).isFile();
+    if (entry.endsWith('.yaml') && isFile) {
       files.push(file);
-    } else {
+    } else if (entry.endsWith('.yaml')) {
       problems.push({ file, rule: name === 'presets' ? 'preset-directory' : 'transition-name',
         message: `${file} is not a file; ${name}/ holds one YAML file per entry (spec-001 §15, §14)` });
+    } else {
+      problems.push({ file, rule: 'layout',
+        message: `${file}: ${name}/ holds only <id>.yaml files (spec-001 §14, §15)` });
     }
   }
   return { files, problems };
@@ -227,13 +234,19 @@ function compatProblems(yaml: LoadedYaml): Problem[] {
 }
 
 /** Pack names unique across the packs of the tree and the catalog's packs (dl-004 1(a)). */
-function uniqueNames(context: LintContext): Problem[] {
+function uniqueNames(context: LintContext, catalog: LoadedYaml | undefined): Problem[] {
   const problems: Problem[] = [];
   const owners = new Map<string, string>();
-  for (const entry of list(context.catalog?.raw['packs']).filter(isDoc)) {
+  list(catalog === undefined ? [] : (catalog.data as Doc)['packs']).forEach((entry, index) => {
+    if (!isDoc(entry)) return;
     const id = String(entry['id']);
-    owners.set(lastSegment(id), id);
-  }
+    const owner = owners.get(lastSegment(id));
+    if (owner !== undefined && owner !== id && catalog !== undefined) {
+      problems.push(at(catalog, `/packs/${index}/id`, 'pack-name-unique', `catalog.yaml: the `
+        + `name ${lastSegment(id)} of ${id} is already ${owner}'s (dl-004 1(a))`));
+    }
+    owners.set(lastSegment(id), owner ?? id);
+  });
   for (const pack of [...context.packs.values()].sort((a, b) => byBytes(a.id, b.id))) {
     const owner = owners.get(pack.manifest.name);
     if (owner !== undefined && owner !== pack.id) {
@@ -273,6 +286,6 @@ export function treeProblems(context: LintContext): Problem[] {
         file.firstLine));
     }
   }
-  problems.push(...uniqueNames(context));
+  problems.push(...uniqueNames(context, catalog));
   return problems;
 }

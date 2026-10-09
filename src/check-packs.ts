@@ -48,27 +48,12 @@ function count(n: number, noun: string): string {
   return `${n} ${noun}${n === 1 ? '' : 's'}`;
 }
 
-/** Regular files under a folder of the tree, links and other entries not entered. */
-function regularFiles(tree: string, rel: string): number {
-  let total = 0;
-  for (const name of readdirSync(join(tree, rel))) {
-    const stat = lstatSync(join(tree, rel, name));
-    if (stat.isDirectory()) total += regularFiles(tree, `${rel}/${name}`);
-    else if (stat.isFile()) total += 1;
-  }
-  return total;
-}
-
 function checkedFiles(tree: string): number {
   let total = 0;
   for (const root of ['catalog.yaml', 'compat.yaml']) {
     if (existsSync(join(tree, root)) && lstatSync(join(tree, root)).isFile()) total += 1;
   }
-  for (const folder of ['packs', 'presets', 'transitions']) {
-    if (existsSync(join(tree, folder)) && lstatSync(join(tree, folder)).isDirectory()) {
-      total += regularFiles(tree, folder);
-    }
-  }
+  for (const folder of ['packs', 'presets', 'transitions']) total += filesUnder(tree, folder).length;
   return total;
 }
 
@@ -123,8 +108,7 @@ function workflowGroup(context: LintContext): Problem[] {
     workflowProblems(context.catalog, pack, context.packs, context.files));
 }
 
-/** The rule groups, in order; each sees the context and the problems the ones before it found. */
-/** Every regular file under a folder, relative to the tree, in byte order. */
+/** Every regular file under a folder, relative to the tree, links and other entries not entered. */
 function filesUnder(tree: string, rel: string): string[] {
   if (!existsSync(join(tree, rel)) || !lstatSync(join(tree, rel)).isDirectory()) return [];
   return readdirSync(join(tree, rel)).sort().flatMap((name) => {
@@ -139,11 +123,20 @@ function secretGroup(context: LintContext): Problem[] {
     .flatMap((file) => secretProblems(file, readFileSync(join(context.tree, file), 'utf8')));
 }
 
+/** The rule groups, in order; each sees the context and the problems the ones before it found. */
 const GROUPS: readonly ((context: LintContext, earlier: Problem[]) => Problem[])[] = [
   packProblems, treeProblems, workflowGroup, overlayProblems, secretGroup,
 ];
 
-export function runCheckPacks(tree: string): CheckPacksResult {
+export interface CheckPacksOptions {
+  /**
+   * Report each file that failed its schema as a `schema` problem, so that the command alone
+   * never passes such a tree; `validate`, which prints the schema check, turns it off.
+   */
+  schemaProblems?: boolean;
+}
+
+export function runCheckPacks(tree: string, options: CheckPacksOptions = {}): CheckPacksResult {
   if (!existsSync(tree) || !statSync(tree).isDirectory()) {
     return { code: 2, checked: 0, problems: [], lines: [`${tree}: not a directory`] };
   }
@@ -151,6 +144,12 @@ export function runCheckPacks(tree: string): CheckPacksResult {
     const schemas = runCheckSchemas(tree);
     const broken = new Set(schemas.messages.map((message) => message.slice(0, message.indexOf(':'))));
     const problems: Problem[] = [];
+    if (options.schemaProblems !== false) {
+      for (const file of [...broken].sort()) {
+        problems.push({ file, rule: 'schema',
+          message: `${file} fails its schema; npm run check:schemas names the problems` });
+      }
+    }
     const layout = treeLayout(tree);
     problems.push(...layout.problems);
     let catalog: Catalog | undefined;

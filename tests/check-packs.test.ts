@@ -76,9 +76,18 @@ describe('npm run check:packs', () => {
     ]);
   });
 
-  it('skips a pack whose pack.yaml fails its schema: that is the schema check\'s', () => {
-    const result = lint([BASE, { ...KANBAN, manifest: { version: 'one' } }]);
-    assert.equal(result.code, 0, result.lines.join('\n'));
+  it('reports a file that fails its schema once, and lints nothing else of its pack', () => {
+    const result = lint([BASE, { ...KANBAN, manifest: { version: 'one', name: 'other' } }]);
+    assert.equal(result.code, 1, result.lines.join('\n'));
+    assert.deepEqual(rules(result), ['schema'], 'pack-name is not reported for a broken pack');
+  });
+
+  it('a directory where a listed file should be is a problem, not an I/O error', () => {
+    failsWith(['contents', 'layout'], CLEAN, (root) => {
+      const file = join(root, 'packs', 'methodology', 'kanban', 'workflows', 'delivery.yaml');
+      rmSync(file);
+      mkdirSync(file);
+    });
   });
 
   it('exits 2 on a tree that does not exist', () => {
@@ -109,6 +118,10 @@ describe('pack.yaml rules', () => {
       copyFileSync(join(root, 'packs', 'methodology', 'kanban', 'workflows', 'delivery.yaml'),
         join(root, 'packs', 'methodology', 'scrum', 'workflows', 'delivery.yaml'));
     });
+  });
+
+  it('pack-name: a name other than the id\'s last segment', () => {
+    failsWith('pack-name', [BASE, { ...KANBAN, manifest: { name: 'scrum' } }]);
   });
 
   it('pack-version: below 1.0.0', () => {
@@ -216,7 +229,8 @@ describe('layout rules', () => {
   it('layout: a file outside every pack directory, and packs/pack.yaml', () => {
     failsWith('layout', CLEAN, (root) => writeFileSync(join(root, 'packs', 'methodology',
       'README.md'), 'x'));
-    failsWith('layout', CLEAN, (root) => writeFileSync(join(root, 'packs', 'pack.yaml'), 'x'));
+    failsWith(['layout', 'schema'], CLEAN, (root) =>
+      writeFileSync(join(root, 'packs', 'pack.yaml'), 'x'));
   });
 
   it('layout: a path segment out of the grammar', () => {
@@ -382,6 +396,11 @@ describe('preset rules', () => {
       `${GOLDEN_PRESET}parameters:\n  wip: 3\n`)).code, 0);
   });
 
+  it('layout: a file other than <id>.yaml in presets/, and presets/ as a file', () => {
+    failsWith('layout', CLEAN, (root) => write(root, 'presets/README.md', '# presets\n'));
+    failsWith('layout', CLEAN, (root) => writeFileSync(join(root, 'presets'), 'x'));
+  });
+
   it('preset-directory: presets/<x>.yaml as a directory is reported', () => {
     failsWith('preset-directory', CLEAN, (root) => mkdirSync(join(root, 'presets', 'odd.yaml'),
       { recursive: true }));
@@ -435,6 +454,10 @@ describe('pack-name-unique', () => {
     failsWith('pack-name-unique', [...CLEAN, { id: 'blueprint/kanban' }]);
     failsWith('pack-name-unique', [...CLEAN, { id: 'blueprint/web' }], (root) =>
       catalog(root, (data) => { data['packs'] = [entry('governance/web', [version('1.0.0')])]; }));
+    failsWith('pack-name-unique', CLEAN, (root) => catalog(root, (data) => {
+      data['packs'] = [entry('blueprint/web', [version('1.0.0')]),
+        entry('governance/web', [version('1.0.0')])];
+    }));
   });
 });
 
@@ -534,6 +557,8 @@ describe('F3.5 overlays and lone packs', () => {
     assert.deepEqual(rules(result), ['overlay']);
     assert.ok(result.lines.some((line) => line.includes(
       'base + methodology/kanban + team-mode/solo + stage/mvp:')), result.lines.join('\n'));
+    assert.deepEqual([...new Set(result.problems.map((problem) => problem.file))].sort(),
+      ['packs/stage/mvp/pack.yaml', 'packs/team-mode/solo/pack.yaml'], 'both overlays are named');
   });
 
   it('compose: a pack no combination reaches is composed with base and a methodology', () => {
@@ -542,6 +567,18 @@ describe('F3.5 overlays and lone packs', () => {
 });
 
 describe('F3.5 secrets', () => {
+  it('the composer judges the files as written, never a value given with --param', () => {
+    const labelled = { ...KANBAN, manifest: { parameters: {
+      label: { type: 'string', description: 'x' } } },
+      extraFiles: { 'workflows/delivery.yaml': `${DELIVERY}description: "{{label}}"\n` } };
+    withPackTree([BASE, labelled], (root) => {
+      copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
+      const value = ['Zm9vYmFyQmF6', 'cXV4MTIzNDU2', 'Nzg5MEFC'].join('');
+      assert.doesNotThrow(() => composeDocuments(root, loadCatalog(join(root, 'catalog.yaml')),
+        ['methodology/kanban'], { label: value }));
+    });
+  });
+
   it('secret: a private key block in a pack file, and the composer refuses it too', () => {
     const block = ['-----BEGIN ', 'OPENSSH PRIVATE', ' KEY-----'].join('');
     failsWith('secret', [BASE, { ...KANBAN, extraFiles: { 'README.md': `# kanban\n\n${block}\n` } }]);

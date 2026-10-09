@@ -22,6 +22,8 @@ const MIN_LENGTH = 32;
 const BASE64 = /^[A-Za-z0-9+=_]+$/;
 const HEX = /^[0-9a-fA-F]+$/;
 const OBJECT_ID_LENGTHS = [40, 64];
+/** Words that present a 40- or 64-character hex string as a reference on its line. */
+const REFERENCE_WORDS = /\b(?:commit|commits|sha|sha1|sha256|digest|hash|checksum|object|revision)\b/i;
 
 /** Shannon entropy in bits per character. */
 export function entropy(text: string): number {
@@ -37,19 +39,30 @@ export function entropy(text: string): number {
 
 /**
  * A string of 32 or more characters with no `/`, `.` or `-`: base64 with an entropy of at least
- * 4.5 bits per character, a digit and both cases; or hex with an entropy of at least 3.0, other
- * than a git object id or a SHA-256 digest. A `sha256:` digest holds a `:`, so it is never one.
+ * 4.5 bits per character, a digit and both cases; or hex with an entropy of at least 3.0. A hex
+ * string of 40 or 64 characters on a line that names it a commit, sha, digest or hash is a git
+ * object id or a SHA-256 digest, not a secret; the same shape alone stays a finding, since some
+ * tokens are 40 or 64 hex characters. A `sha256:` digest holds a `:`, so it is never one.
  */
-export function looksLikeSecret(value: string): boolean {
+export function looksLikeSecret(value: string, line = ''): boolean {
   if (value.length < MIN_LENGTH || /[/.-]/.test(value)) return false;
-  // 40 and 64 hex characters are a git object id and a SHA-256 digest: references, not secrets.
-  if (HEX.test(value)) return !OBJECT_ID_LENGTHS.includes(value.length) && entropy(value) >= 3.0;
+  if (HEX.test(value)) {
+    const reference = OBJECT_ID_LENGTHS.includes(value.length) && REFERENCE_WORDS.test(line);
+    return !reference && entropy(value) >= 3.0;
+  }
   return BASE64.test(value) && /[0-9]/.test(value) && /[a-z]/.test(value) && /[A-Z]/.test(value)
     && entropy(value) >= 4.5;
 }
 
 function lineAt(text: string, offset: number): number {
   return text.slice(0, offset).split('\n').length;
+}
+
+/** The text of the line holding an offset. */
+function lineTextAt(text: string, offset: number): string {
+  const start = text.lastIndexOf('\n', offset - 1) + 1;
+  const end = text.indexOf('\n', offset);
+  return text.slice(start, end === -1 ? text.length : end);
 }
 
 function finding(file: string, line: number, kind: string): Problem {
@@ -83,7 +96,7 @@ function tokens(text: string): { value: string; offset: number }[] {
   }));
 }
 
-/** Every secret finding of one file, its text as read (or as composed, for the composer). */
+/** Every secret finding of one file, its text as written (the lint and the composer alike). */
 export function secretProblems(file: string, text: string): Problem[] {
   const problems: Problem[] = [];
   for (const match of text.matchAll(PRIVATE_KEY)) {
@@ -98,7 +111,7 @@ export function secretProblems(file: string, text: string): Problem[] {
   const reported = new Set(problems.map((problem) => problem.line));
   const strings = (file.endsWith('.yaml') ? yamlStrings(text, file) : undefined) ?? tokens(text);
   for (const { value, offset } of strings) {
-    if (looksLikeSecret(value) && !reported.has(lineAt(text, offset))) {
+    if (looksLikeSecret(value, lineTextAt(text, offset)) && !reported.has(lineAt(text, offset))) {
       problems.push(finding(file, lineAt(text, offset), `a high-entropy string of ${value.length} `
         + 'characters'));
     }

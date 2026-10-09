@@ -2,7 +2,7 @@
 // pack's parameter scope (its own and its transitive requires', spec-001 §8.1) is replaced by the
 // parameter's default, or by a placeholder of its type, so that the YAML can be parsed and the
 // checks the composer makes on assets and fragments can run on every pack of the tree.
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, lstatSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { isScalar } from 'yaml';
 
@@ -144,7 +144,8 @@ export function readPackFiles(
   const files: PackFile[] = [];
   for (const path of listedFiles(pack.manifest.contents)) {
     const file = `${pack.path}/${path}`;
-    if (!existsSync(join(tree, file))) continue;
+    // A missing file, or a directory in its place, is the inventory rule's problem.
+    if (!existsSync(join(tree, file)) || !lstatSync(join(tree, file)).isFile()) continue;
     const raw = readFileSync(join(tree, file), 'utf8');
     for (const reference of referencesIn(raw)) {
       if (!scope.has(reference.name)) {

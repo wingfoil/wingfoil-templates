@@ -220,7 +220,7 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
   const broken = new Set(schemas.messages.map((message) => message.slice(0, message.indexOf(':'))));
 
   // The lint (task-012): spec-001 §18 and F3.5 over the whole tree, compat.yaml included.
-  const lint = runCheckPacks(args.tree);
+  const lint = runCheckPacks(args.tree, { schemaProblems: false });
   if (lint.code === 2) {
     fail(2, lint.lines[0] ?? 'lint: I/O error');
   } else {
