@@ -217,3 +217,16 @@ Branch `task/task-011-matrix`, run through `tooling-delivery` as `developer` (`c
     tree exits 1 with `no compatible release (publication)`; on this repository `validate` exits
     0 (`0 runs`) and `validate:publication` exits 1. `--cache c`, run from another directory,
     installs under that directory.
+- Review (a subagent with its own context, as `reviewer`): approve, no blocking finding;
+  acceptance 1–11 checked in a clean clone, and the matrix and validate tests pass with no network
+  (`unshare -rn`). Should-fix and nits applied in `a608f82`: `runValidate` needs its mode, so a caller
+  that forgets it cannot fall into the tolerant mode; a timeout is a failing check, not an I/O
+  error; a `--version` that cannot run reports its exit and stderr; a cached install is reused only
+  when complete and made from the same manifest and lockfile, and the CLI runs without
+  `NODE_PATH`; messages named once; tests for a link that leaves `.wingfoil/`, a timeout, a CLI
+  that cannot run and a reinstall. After the fixes: 474 tests, `lint`, `check:pins`, and the real
+  runs of acceptance 9 unchanged.
+- Configuration follow-ups (Context), not applied here: `wingfoil-cli` W-12 to name the matrix's
+  releases; `wingfoil-release-intake` › `record` to add the release's lockfile under
+  `src/matrix/`.
+
