@@ -2,7 +2,7 @@
 id: task-011-compatibility-matrix-and-the-real-compat.yaml
 type: task
 title: "Compatibility matrix and the real compat.yaml"
-status: in-review
+status: approved
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-008-determinism-check-and-the-one-validation-command"]
 tags: ["tooling","W6","F3.3"]
