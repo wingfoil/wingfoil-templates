@@ -25,6 +25,9 @@ in chat. Each adds a capability to the catalog:
   evolutions of the project or of its governance. The initialization template must be able to
   select installable packs in its configuration, and the feedback pack is the first concrete
   example of a governance capability distributed as a pack.
+- **dl-014, a browsable catalog** (fourth request, same day). Per-pack READMEs to a standard, a
+  generated index for people and agents, a search page; whether Markdown in the repository is
+  enough or GitHub Pages is needed.
 - **dl-013, the Directive First methodology** (third request, same day). A template that lets a
   project follow Directive First: intent is formalized into directives before implementation, and
   directives drive methodology, workflows, agents, tools and verification, in a cycle closed by
@@ -49,7 +52,7 @@ session; it runs on the branch `dl/dl-011-initialization-template`, from `main` 
 
 ## Steps
 
-For each decision-log, in order (dl-011, dl-012, dl-013; each cites the earlier ones):
+For each decision-log, in order (dl-011, dl-012, dl-013, dl-014; each cites the earlier ones):
 
 1. **claude (facilitator):** `npm run -s wingfoil -- memory add --type decision-log --title "…"`,
    which creates the `draft`.
@@ -73,7 +76,7 @@ Then commit this plan's Execution Notes and `submit` it (`draft → active`).
   vision-document amendments both decision-logs list. The pack charters and their tasks are opened
   when `pack-delivery` reaches each pack, in the order the sequencer sets.
 - A rejected decision-log comes back to `draft`, is corrected under this plan and submitted again.
-  The plan stays `active` until all three are approved, then `done`.
+  The plan stays `active` until all four are approved, then `done`.
 - The branch is merged into `main` by the approver, or on the approver's word.
 
 ## Execution Notes
@@ -91,3 +94,5 @@ Then commit this plan's Execution Notes and `submit` it (`draft → active`).
   under this plan as dl-013 rather than a new plan, since it is the same capture phase and cites
   dl-011 and dl-012. The plan's title still names the first two. dl-013 (`01b1dcb`, `1de6ec0`) filled
   and submitted, `pending`, with acceptance criteria DF-1…DF-12.
+- 2026-10-09: a fourth request (browsable catalog) captured under this plan as dl-014 (`92c0bc9`,
+  `8b1c2d5`), `pending`, with acceptance criteria CB-1…CB-8 and the GitHub access checked anonymously.
