@@ -2,7 +2,7 @@
 id: dl-011-an-initialization-template-one-guided-workflow-from-intent-to-a-reconfigured-wingfoil
 type: decision-log
 title: "An initialization template: one guided workflow from intent to a reconfigured WingFoil"
-status: draft
+status: pending
 tags: ["packs","scope","inception","adoption"]
 ---
 
