@@ -4,4 +4,6 @@ kind: sub
 version: 1
 phases:
   - name: vision
+    produces: [docs/vision.md]
   - name: features
+    produces: [docs/features.md]

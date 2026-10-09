@@ -8,9 +8,11 @@ import { describe, it } from 'node:test';
 import { parse, stringify } from 'yaml';
 
 import { runCheckPacks } from '../src/check-packs';
+import { loadCatalog } from '../src/catalog';
+import { composeDocuments } from '../src/compose-documents';
 import type { CheckPacksResult } from '../src/check-packs';
 import { FIXTURES, REPO_ROOT } from './support/paths';
-import { BASE, KANBAN, withPackTree } from './support/pack-tree';
+import { BASE_COMPOSABLE as BASE, DELIVERY, KANBAN, withPackTree } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 
 /** A tree with the given packs and this repository's catalog.yaml and compat.yaml. */
@@ -46,8 +48,8 @@ describe('npm run check:packs', () => {
   it('passes a clean tree, counting every file it covers', () => {
     const result = lint(CLEAN);
     assert.equal(result.code, 0, result.lines.join('\n'));
-    // catalog, compat, and pack.yaml, README.md, CHANGELOG.md and the workflows of each pack.
-    assert.equal(result.lines[0], 'lint: checked 11 files, 0 problems');
+    // catalog, compat, and each pack's pack.yaml, README.md, CHANGELOG.md, workflows, fragments.
+    assert.equal(result.lines[0], 'lint: checked 14 files, 0 problems');
   });
 
   it('passes this repository: two files, no problem (acceptance 13)', () => {
@@ -65,7 +67,7 @@ describe('npm run check:packs', () => {
     const result = lint([BASE, { ...KANBAN, version: '0.9.0',
       manifest: { requires_capabilities: ['workflow-engine', 'pack-install'] } }]);
     assert.equal(result.code, 1);
-    assert.equal(result.lines[0], 'lint: checked 11 files, 2 problems');
+    assert.equal(result.lines[0], 'lint: checked 14 files, 2 problems');
     assert.deepEqual(result.lines.slice(1).map((line) => line.replace(/:\d+:\d+:/, ':L:C:')), [
       'packs/methodology/kanban/pack.yaml:L:C: capabilities-sorted: methodology/kanban: '
         + 'requires_capabilities must be sorted and unique',
@@ -145,9 +147,9 @@ describe('inventory and formats rules', () => {
   it('formats: a declared kind the pack does not ship, a file of another format', () => {
     failsWith('formats', [BASE, { ...KANBAN, manifest: { formats: { workflow: 1, dna: 1 } } }]);
     failsWith('formats', [BASE, { ...KANBAN,
-      extraFiles: { 'workflows/delivery.yaml': 'format: 2\nname: delivery\nkind: sub\n' } }]);
+      extraFiles: { 'workflows/delivery.yaml': DELIVERY.replace('format: 1', 'format: 2') } }]);
     failsWith(['formats', 'integer'], [BASE, { ...KANBAN,
-      extraFiles: { 'workflows/delivery.yaml': 'format: 1.0\nname: delivery\nkind: sub\n' } }]);
+      extraFiles: { 'workflows/delivery.yaml': DELIVERY.replace('format: 1', 'format: 1.0') } }]);
   });
 
   it('asset-id: an identifier other than the file stem', () => {
@@ -169,7 +171,7 @@ describe('slot rules', () => {
 
   it('slot: a slot workflow that is not kind: sub', () => {
     failsWith('slot', [BASE, { ...KANBAN,
-      extraFiles: { 'workflows/delivery.yaml': 'format: 1\nname: delivery\nkind: main\n' } }]);
+      extraFiles: { 'workflows/delivery.yaml': DELIVERY.replace('kind: sub', 'kind: main') } }]);
   });
 
   it('base-only', () => {
@@ -192,12 +194,11 @@ describe('parameter rules', () => {
 
   it('parameter-scope: a reference outside the pack and its requires', () => {
     failsWith('parameter-scope', [BASE, { ...KANBAN,
-      extraFiles: { 'workflows/delivery.yaml': 'format: 1\nname: delivery\nkind: sub\n'
-        + 'description: "{{wip}}"\n' } }]);
+      extraFiles: { 'workflows/delivery.yaml': `${DELIVERY}description: "{{wip}}"\n` } }]);
     const base = { ...BASE, manifest: { parameters: {
       wip: { type: 'integer', default: 2, description: 'x' } } } };
     assert.equal(lint([base, { ...KANBAN, extraFiles: { 'workflows/delivery.yaml':
-      'format: 1\nname: delivery\nkind: sub\nlimit: {{wip}}\n' } }]).code, 0,
+      `${DELIVERY}limit: {{wip}}\n` } }]).code, 0,
     'a parameter of a required pack is in scope (spec-001 §8.1)');
   });
 });
@@ -434,5 +435,108 @@ describe('pack-name-unique', () => {
     failsWith('pack-name-unique', [...CLEAN, { id: 'blueprint/kanban' }]);
     failsWith('pack-name-unique', [...CLEAN, { id: 'blueprint/web' }], (root) =>
       catalog(root, (data) => { data['packs'] = [entry('governance/web', [version('1.0.0')])]; }));
+  });
+});
+
+/** KANBAN with one more workflow, written as given. */
+function withWorkflow(name: string, text: string, extra: Partial<PackSpec> = {}): PackSpec {
+  return { ...KANBAN, ...extra, workflows: ['delivery', name],
+    extraFiles: { [`workflows/${name}.yaml`]: text, ...extra.extraFiles } };
+}
+
+const FLOW = (phases: string, head = ''): string =>
+  `format: 1\nname: flow\nkind: sub\n${head}phases:\n${phases}`;
+
+describe('F3.5 workflow rules', () => {
+  it('passes phases that declare include, actions or produces', () => {
+    const result = lint([BASE, withWorkflow('flow', FLOW('  - { name: a, actions: [memory.submit] }\n'
+      + '  - { name: b, produces: [docs/b.md] }\n  - { name: c, include: retrospective }\n'))]);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+  });
+
+  it('empty-phase: a phase that declares none of include, actions and produces', () => {
+    failsWith('empty-phase', [BASE, withWorkflow('flow', FLOW('  - { name: a, description: x }\n'))]);
+  });
+
+  it('include: a path, a file name, or a workflow neither shipped nor a slot', () => {
+    failsWith('include', [BASE, withWorkflow('flow',
+      FLOW('  - { name: a, include: workflows/built-in/retrospective.yaml }\n'))]);
+    failsWith('include', [BASE, withWorkflow('flow', FLOW('  - { name: a, include: hotfix }\n'))]);
+  });
+
+  it('include: a workflow of a pack that is required only transitively is not enough', () => {
+    const api = { id: 'blueprint/api', workflows: ['api-review'] };
+    const web = { id: 'blueprint/web', requires: ['base@^1', 'blueprint/api@^1'] };
+    const cli = { id: 'blueprint/cli', requires: ['base@^1', 'blueprint/web@^1'],
+      workflows: ['ship'], extraFiles: { 'workflows/ship.yaml': 'format: 1\nname: ship\n'
+        + 'kind: sub\nphases:\n  - { name: a, include: api-review }\n' } };
+    failsWith('include', [BASE, KANBAN, api, web, cli]);
+  });
+
+  it('life-cycle-includes: base\'s sw-life-cycle and a methodology\'s delivery (§9)', () => {
+    failsWith('life-cycle-includes', [{ ...BASE, extraFiles: { ...BASE.extraFiles,
+      'workflows/sw-life-cycle.yaml': 'format: 1\nname: sw-life-cycle\nkind: main\nphases:\n'
+        + '  - { name: delivery, include: delivery }\n' } }, KANBAN]);
+    failsWith('life-cycle-includes', [BASE, { ...KANBAN, extraFiles: {
+      'workflows/delivery.yaml': DELIVERY.replace(/ {2}- \{ name: retrospective[^\n]*\n/, '') } }]);
+  });
+
+  it('role: a phase role or approval.by_role not in team.roles', () => {
+    const dna = 'format: 1\nproject:\n  name: test\nteam:\n  roles:\n    - { name: approver }\n';
+    const base = { ...BASE, extraFiles: { ...BASE.extraFiles, 'fragments/dna.yaml': dna } };
+    assert.equal(lint([base, withWorkflow('flow', FLOW('  - { name: a, produces: [x.md], '
+      + 'approval: { by_role: approver } }\n'))]).code, 0);
+    failsWith('role', [base, withWorkflow('flow',
+      FLOW('  - { name: a, produces: [x.md], role: developer }\n'))]);
+    failsWith('role', [base, withWorkflow('flow',
+      FLOW('  - { name: a, produces: [x.md], approval: { by_role: owner } }\n'))]);
+  });
+
+  it('memory-type: an element or iterate_over that no memory fragment declares', () => {
+    failsWith('memory-type', [BASE, withWorkflow('flow',
+      FLOW('  - { name: a, produces: [x.md] }\n', 'element: ticket\n'))]);
+    failsWith('memory-type', [BASE, withWorkflow('flow',
+      FLOW('  - { name: a, iterate_over: ticket, include: retrospective }\n'))]);
+  });
+
+  it('directive: a roles fragment naming a directive nobody ships', () => {
+    failsWith('directive', [BASE, { ...KANBAN, fragments: ['roles'],
+      extraFiles: { 'fragments/roles.yaml': 'format: 1\nassignments:\n  developer: [tdd]\n' } }]);
+    assert.equal(lint([BASE, { ...KANBAN, fragments: ['roles'], directives: ['tdd'],
+      extraFiles: { 'fragments/roles.yaml': 'format: 1\nassignments:\n  developer: [tdd]\n' } }])
+      .code, 0);
+  });
+
+  it('the composer refuses what these rules reject (spec-001 §17, §18)', () => {
+    withPackTree([BASE, withWorkflow('flow', FLOW('  - { name: a, description: x }\n'))],
+      (root) => {
+        copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
+        assert.throws(() => composeDocuments(root, loadCatalog(join(root, 'catalog.yaml')),
+          ['methodology/kanban'], {}), /declares none of include, actions and produces/);
+      });
+  });
+});
+
+describe('F3.5 overlays and lone packs', () => {
+  const directive = (id: string): Partial<PackSpec> => ({ directives: [id],
+    extraFiles: { [`directives/${id}.md`]: `---\nid: ${id}\nformat: 1\n---\n# ${id}\n` } });
+  const overlay = (id: string, extra: Partial<PackSpec> = {}): PackSpec => ({ id, ...extra });
+
+  it('passes overlays that compose with every methodology', () => {
+    const result = lint([BASE, KANBAN, overlay('team-mode/solo'), overlay('stage/mvp')]);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+  });
+
+  it('overlay: a team-mode and a stage that ship one directive (spec-001 §7.6)', () => {
+    const result = lint([BASE, KANBAN, overlay('team-mode/solo', directive('review')),
+      overlay('stage/mvp', directive('review'))]);
+    assert.equal(result.code, 1, result.lines.join('\n'));
+    assert.deepEqual(rules(result), ['overlay']);
+    assert.ok(result.lines.some((line) => line.includes(
+      'base + methodology/kanban + team-mode/solo + stage/mvp:')), result.lines.join('\n'));
+  });
+
+  it('compose: a pack no combination reaches is composed with base and a methodology', () => {
+    failsWith('compose', [BASE, KANBAN, { id: 'blueprint/web', ...directive('security') }]);
   });
 });

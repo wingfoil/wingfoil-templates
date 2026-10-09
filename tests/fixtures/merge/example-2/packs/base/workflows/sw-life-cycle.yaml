@@ -1,2 +1,8 @@
 format: 1
 name: sw-life-cycle
+kind: main
+phases:
+  - { name: inception, include: inception }
+  - { name: specification, include: specification }
+  - { name: delivery, include: delivery }
+  - { name: end-of-life, include: end-of-life }

@@ -1,2 +1,6 @@
 format: 1
 name: delivery
+kind: sub
+phases:
+  - { name: release, include: release }
+  - { name: retrospective, include: retrospective }

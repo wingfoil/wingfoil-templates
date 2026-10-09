@@ -18,7 +18,9 @@ import { formatProblem, sortProblems } from './problems';
 import type { Problem } from './problems';
 import type { PackManifest } from './resolve';
 import { repositorySchemas } from './schemas';
+import { overlayProblems } from './overlay-rules';
 import { treeProblems } from './tree-rules';
+import { workflowProblems } from './workflow-rules';
 import { YamlError, loadYamlFile } from './yaml-load';
 
 export interface CheckPacksResult {
@@ -115,8 +117,15 @@ function packProblems(context: LintContext): Problem[] {
   return problems;
 }
 
-/** The rule groups, in order; each sees the context the ones before it filled. */
-const GROUPS: readonly ((context: LintContext) => Problem[])[] = [packProblems, treeProblems];
+function workflowGroup(context: LintContext): Problem[] {
+  return [...context.packs.values()].flatMap((pack) =>
+    workflowProblems(context.catalog, pack, context.packs, context.files));
+}
+
+/** The rule groups, in order; each sees the context and the problems the ones before it found. */
+const GROUPS: readonly ((context: LintContext, earlier: Problem[]) => Problem[])[] = [
+  packProblems, treeProblems, workflowGroup, overlayProblems,
+];
 
 export function runCheckPacks(tree: string): CheckPacksResult {
   if (!existsSync(tree) || !statSync(tree).isDirectory()) {
@@ -138,7 +147,7 @@ export function runCheckPacks(tree: string): CheckPacksResult {
     }
     const context: LintContext = { tree, catalog, broken, files: new Map(),
       packs: loadPacks(tree, layout.packs, problems) };
-    for (const group of GROUPS) problems.push(...group(context));
+    for (const group of GROUPS) problems.push(...group(context, problems));
     const sorted = sortProblems(problems);
     const checked = checkedFiles(tree);
     return {
