@@ -10,8 +10,9 @@ tags: ["process","decision-log","packs","scope"]
 
 ## Context
 
-The `capture` phase of `decision-log-ingest`, started on 2026-10-09 on two requests of the approver
-in chat. Each adds a capability to the catalog:
+The `capture` phase of `decision-log-ingest`, started on 2026-10-09 on four requests of the approver
+in chat, each adding a capability to the catalog (the first two arrived together, the other two
+later the same day):
 - **dl-011, an initialization template.** One guided workflow that starts from the user's intent,
   asks questions that adapt to the answers already collected, writes a structured project
   definition, and ends with an explicit **Reconfigure WingFoil** phase that adapts the project's
@@ -33,12 +34,12 @@ in chat. Each adds a capability to the catalog:
   directives drive methodology, workflows, agents, tools and verification, in a cycle closed by
   feedback (dl-012) and fed by the initialization template (dl-011).
 
-The approver asked that both requests enter the normal governance processes rather than become
+The approver asked that the requests enter the normal governance processes rather than become
 notes or TODOs, that no parallel methodology be invented, and that no software be implemented in
 this step.
 
 Why decision-logs first:
-- both change the catalog scope: dl-001 D5 and dl-003 D7 fix the first scope, and
+- they change the catalog scope or the tooling: dl-001 D5 and dl-003 D7 fix the first scope, and
   `06_features.md`, `07_sequencer.md` and `08_mvp-canvas.md` are approved;
 - where each sits in the pack model (axis, slot, `base`, or the WingFoil CLI) is a pack-model
   ruling;
@@ -73,7 +74,9 @@ Then commit this plan's Execution Notes and `submit` it (`draft → active`).
   `capture`. The approver also rules the points each decision-log leaves open (pack names, waves,
   bootstrap preset, feedback state machine, the directive type's name, the split of dl-013).
 - **After approval**, a follow-up plan (pattern of plan-011 and plan-018) applies the
-  vision-document amendments both decision-logs list. The pack charters and their tasks are opened
+  vision-document, directive, workflow and configuration amendments the four decision-logs list,
+  and the tooling tasks of dl-012 D8 and dl-014 D7 are opened through `tooling-change` once plan-015
+  is `done`. The pack charters and their tasks are opened
   when `pack-delivery` reaches each pack, in the order the sequencer sets.
 - A rejected decision-log comes back to `draft`, is corrected under this plan and submitted again.
   The plan stays `active` until all four are approved, then `done`.
@@ -96,3 +99,14 @@ Then commit this plan's Execution Notes and `submit` it (`draft → active`).
   and submitted, `pending`, with acceptance criteria DF-1…DF-12.
 - 2026-10-09: a fourth request (browsable catalog) captured under this plan as dl-014 (`92c0bc9`,
   `8b1c2d5`), `pending`, with acceptance criteria CB-1…CB-8 and the GitHub access checked anonymously.
+- 2026-10-09: independent review of the four decision-logs, one reviewer each with no context from
+  this session, read-only, as the approver asked before ruling. Verdict for each: approve after
+  amendments; no option reversed. Cross-cutting findings: criteria naming checks that nothing runs
+  (now tagged [V] validation/tests, [E] a shared fixture-element check tooling task, [A] approver);
+  format-1 limits (scalar parameters only, no cross-pack configuration) needing a design phase for
+  dl-012 as for dl-013; a methodology cannot require a governance pack (spec-001 §7.1); the
+  bootstrap preset in W11; README content that must not depend on `catalog.yaml` (digest).
+- 2026-10-09: the approver chose, in chat: apply all amendments; dl-011 published only once a
+  released WingFoil provides `pack-install`; dl-013 in a wave of its own after M3. The four
+  decision-logs were amended while `pending`, each recording the findings it answers in its
+  Execution Notes. The plan's title still names the first two captures; its id cannot change.
