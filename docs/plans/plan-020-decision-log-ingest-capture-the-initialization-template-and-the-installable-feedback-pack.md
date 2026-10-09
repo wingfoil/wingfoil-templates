@@ -80,3 +80,6 @@ Then commit this plan's Execution Notes and `submit` it (`draft → active`).
   to be checked at merge.
 - 2026-10-09: the second request (feedback pack) arrived while the plan was being opened; the plan
   was re-created with a title covering both captures before any body was committed.
+- 2026-10-09: dl-011 (`3fda19e`, `0e15766`) and dl-012 (`042743c`, `33d5900`) filled and submitted,
+  both `pending`, each with its proposal, its acceptance criteria (AC-1…AC-9, FA-1…FA-9), the
+  amendments it implies and the charter and tasks it opens later. Waiting for the approver's ruling.
