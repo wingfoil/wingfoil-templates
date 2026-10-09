@@ -2,7 +2,7 @@
 id: dl-013-directive-first-a-methodology-pack-where-directives-drive-methodology-workflows-agents-and-verification
 type: decision-log
 title: "Directive First: a methodology pack where directives drive methodology, workflows, agents and verification"
-status: draft
+status: pending
 tags: ["packs","scope","methodology","directives"]
 ---
 
