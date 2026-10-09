@@ -2,7 +2,7 @@
 id: task-012-lint-rules-over-the-whole-tree-spec-001-18-f3.5
 type: task
 title: "Lint rules over the whole tree (spec-001 §18, F3.5)"
-status: in-progress
+status: in-review
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-011-compatibility-matrix-and-the-real-compat.yaml"]
 tags: ["tooling","W6","F3.5"]
