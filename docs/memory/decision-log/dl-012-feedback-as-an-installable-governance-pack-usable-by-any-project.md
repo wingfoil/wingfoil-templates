@@ -2,7 +2,7 @@
 id: dl-012-feedback-as-an-installable-governance-pack-usable-by-any-project
 type: decision-log
 title: "Feedback as an installable governance pack, usable by any project"
-status: draft
+status: pending
 tags: ["packs","scope","governance","feedback-loop"]
 ---
 
