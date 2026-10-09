@@ -281,7 +281,9 @@ describe('isCatalogPackId', () => {
 describe('src/ runs no shell', () => {
   it('calls neither exec nor execSync of child_process, nor sets shell: true', () => {
     const dir = join(REPO_ROOT, 'src');
-    for (const name of readdirSync(dir).sort()) {
+    const sources = readdirSync(dir, { recursive: true, encoding: 'utf8' })
+      .filter((name) => name.endsWith('.ts')).sort();
+    for (const name of sources) {
       const text = readFileSync(join(dir, name), 'utf8');
       // `.exec(` is RegExp.prototype.exec, not child_process.
       assert.doesNotMatch(text, /(?<![.\w])exec(?:Sync)?\(|shell:\s*true/, name);

@@ -1,0 +1,8 @@
+{
+  "name": "wingfoil-matrix-0.2.2",
+  "private": true,
+  "description": "WingFoil 0.2.2 as the compatibility matrix installs it (task-011): exact pin, committed lockfile",
+  "dependencies": {
+    "wingfoil": "0.2.2"
+  }
+}

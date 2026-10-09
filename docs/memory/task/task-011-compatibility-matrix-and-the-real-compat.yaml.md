@@ -2,7 +2,7 @@
 id: task-011-compatibility-matrix-and-the-real-compat.yaml
 type: task
 title: "Compatibility matrix and the real compat.yaml"
-status: in-progress
+status: approved
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-008-determinism-check-and-the-one-validation-command"]
 tags: ["tooling","W6","F3.3"]
@@ -173,8 +173,9 @@ Branch `task/task-011-matrix`, run through `tooling-delivery` as `developer` (`c
   1); the matrix lines and the closing line of acceptance 7 replace the task-008 placeholder. In
   publication mode, no composition is a failure. The result gains `mode` and `tolerated`
   (the versions for which the tolerance was applied).
-- **`src/validate-cli.ts`** (`npm run validate`, self-test) and **`src/validate-publication-cli.ts`**
-  (`npm run validate:publication`): each fixes its mode; `--mode` is an unknown option (exit 3).
+- **`src/validate-cli.ts`** (`npm run validate`, self-test) and
+  **`src/validate-publication-cli.ts`** (`npm run validate:publication`): each fixes its mode;
+  `--mode` is an unknown option (exit 3).
 - **`src/check-pins.ts`:** also checks every `src/matrix/wingfoil-*/` manifest and lockfile; each
   must pin `wingfoil` to the version in its folder name.
 - **`src/matrix/wingfoil-0.2.2/`:** `package.json` (private, `wingfoil: 0.2.2`) and its
@@ -197,3 +198,35 @@ Branch `task/task-011-matrix`, run through `tooling-delivery` as `developer` (`c
   option; the configuration follow-ups for `wingfoil-cli` W-12 and `wingfoil-release-intake`; the
   exact report lines; a run with no composition in publication mode named as an extension of
   dl-009; skipped compositions.
+- 2026-10-09, build on `task/task-011-matrix`, as `developer`: `b763a73` the 0.2.2 manifest and
+  lockfile (100 packages, `npm install --package-lock-only --ignore-scripts`) and `check:pins` over
+  `src/matrix/`; `8f645c0` `compat.yaml`, the loader, the matrix, the two entry points and the
+  tests. Each commit builds, tests and lints on its own.
+  - The no-shell test of `tests/digest.test.ts` read every entry of `src/` as a file; it now walks
+    `src/` recursively and reads the `.ts` files only, so it covers sources in subfolders too.
+  - `PackManifest` gains the optional `requires_capabilities` the schema already requires, for
+    the release selection.
+  - Acceptance 1–11 pass from a clean clone of the branch on Node.js 22.21.0 and on the floor
+    22.12.0: 470 tests, `lint`, `check:pins`, `check:schemas` (2 files), `npm audit` 0 on the root
+    and on the release lockfile.
+  - Real runs (acceptance 9), npm registry reached: `npm run validate -- --tree
+    tests/fixtures/compose/tree --param project_name=Golden` exits 0, `schemas: checked 9 files,
+    0 problems`, the three commands pass on `wingfoil@0.2.2` in self-test mode with 9, 1 and 3
+    tolerated lines, closing `matrix: self-test, 1 run, 0 failed, tolerance applied: 0.2.2`; the
+    first install took about 10 s, a cached run about 6 s. `validate:publication` on the same
+    tree exits 1 with `no compatible release (publication)`; on this repository `validate` exits
+    0 (`0 runs`) and `validate:publication` exits 1. `--cache c`, run from another directory,
+    installs under that directory.
+- Review (a subagent with its own context, as `reviewer`): approve, no blocking finding; acceptance
+  1–11 checked in a clean clone, and the matrix and validate tests pass with no network (`unshare
+  -rn`). Should-fix and nits applied in `a608f82`: `runValidate` needs its mode, so a caller that
+  forgets it cannot fall into the tolerant mode; a timeout is a failing check, not an I/O error; a
+  `--version` that cannot run reports its exit and stderr; a cached install is reused only when
+  complete and made from the same manifest and lockfile, and the CLI runs without `NODE_PATH`;
+  messages named once; tests for a link that leaves `.wingfoil/`, a timeout, a CLI that cannot run
+  and a reinstall. After the fixes: 474 tests, `lint`, `check:pins`, and the real runs of acceptance
+  9 unchanged.
+- Configuration follow-ups (Context), not applied here: `wingfoil-cli` W-12 to name the matrix's
+  releases; `wingfoil-release-intake` › `record` to add the release's lockfile under
+  `src/matrix/`.
+
