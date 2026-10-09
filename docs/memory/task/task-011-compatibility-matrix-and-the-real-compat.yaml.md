@@ -134,7 +134,57 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-011-matrix`, run through `tooling-delivery` as `developer` (`code-quality`,
+`testing`, `determinism`), under `npm run lint`.
+
+- **`compat.yaml`** (root) and **`tests/fixtures/compose/tree/compat.yaml`:** spec-001 §12's
+  example, byte-identical; a test compares the two.
+- **`src/compat.ts`:** `loadCompat(path)` returns the releases; beyond the schema it refuses a
+  repeated or descending release (the check `range.ts` already makes, exported and shared) and a
+  release capability outside `capabilities`, with a `CompatError` naming the entry.
+- **`src/range.ts`:** `isCompatible(version, release, { formatKey })`: the four §12 conditions,
+  the first only when `formatKey` is true (publication); `computeRange` keeps calling it with all
+  four, so the computed range is unchanged.
+- **`src/matrix.ts`:**
+  - `selectReleases(packs, releases, mode)`: the releases compatible with every resolved pack's
+    `formats` and `requires_capabilities`, in `compat.yaml` order; returns the oldest and the
+    newest, one when they coincide, none when the set is empty;
+  - `installRelease(version, { pins, cache })`: copies `src/matrix/wingfoil-<version>/package.json`
+    and `package-lock.json` into `<cache>/<version>/`, runs `npm ci --ignore-scripts --no-audit
+    --no-fund` there, and writes the lockfile's sha256 beside it; a cached install whose sha256
+    matches is reused. Returns the CLI entry, read from the installed `wingfoil` package's `bin`,
+    run with `process.execPath`. Then `--version` is checked against the release;
+  - `runRelease(cli, composed, release, mode)`: `mkdtemp` under `os.tmpdir()`, copy of the
+    composed `.wingfoil/`, `git init -q` with `gitEnvironment()` of `src/git.ts`, then the three
+    commands in order with `spawnSync` (argument list, no shell, a timeout); the scratch directory
+    is removed in `finally`;
+  - `judge(stdout, stderr, status, tolerate, wingfoilDir)`: drops the tolerated lines (exact
+    pattern, `<file>` after `realpath` inside the scratch `.wingfoil/`) only when `tolerate`, then
+    fails on any stderr line, any stdout line starting with `Warning:` and a non-zero exit. Paths
+    in a failure reason are shown relative to the scratch root, never absolute;
+  - `MatrixOptions`: `install` and `exec` can be replaced, so that tests run a stub CLI and never
+    reach the network.
+- **`src/determinism.ts`:** `composeTwice` gains an optional `use(composed)` callback, called on
+  the first output before the temporary directory is removed, so that the matrix runs on the
+  composition the determinism check already made, and a composition that failed is never run
+  (reported `skipped`).
+- **`src/validate.ts`:** `runValidate(argv, { mode, ... })`: the mode comes from the options, never
+  from `argv`; `--cache <dir>` is added; with compositions, `compat.yaml` is loaded (missing: exit
+  1); the matrix lines and the closing line of acceptance 7 replace the task-008 placeholder. In
+  publication mode, no composition is a failure. The result gains `mode` and `tolerated`
+  (the versions for which the tolerance was applied).
+- **`src/validate-cli.ts`** (`npm run validate`, self-test) and **`src/validate-publication-cli.ts`**
+  (`npm run validate:publication`): each fixes its mode; `--mode` is an unknown option (exit 3).
+- **`src/check-pins.ts`:** also checks every `src/matrix/wingfoil-*/` manifest and lockfile; each
+  must pin `wingfoil` to the version in its folder name.
+- **`src/matrix/wingfoil-0.2.2/`:** `package.json` (private, `wingfoil: 0.2.2`) and its
+  `package-lock.json`, made once with `npm install --package-lock-only --ignore-scripts`.
+- **Tests,** red first: `tests/compat.test.ts`, `tests/matrix.test.ts` (stub CLI written to a
+  temporary directory, its behaviour chosen per case: clean, tolerated lines, a line with
+  `format` and another field, a file outside `.wingfoil/`, another warning, a stdout warning, a
+  non-zero exit, a wrong `--version`; a failing installer for exit 2), additions to
+  `tests/range.test.ts`, `tests/validate.test.ts` and `tests/check-pins.test.ts`. The real runs of
+  acceptance 9 are run by hand and recorded in the Execution Notes, since they need the registry.
 
 ## Execution Notes
 
