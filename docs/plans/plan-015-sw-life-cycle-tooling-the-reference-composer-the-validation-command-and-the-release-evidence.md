@@ -176,3 +176,10 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
 - 2026-10-08: task-010 (dl-163 notes, ledger, `wingfoil-cli`; M1 S4a, S4b) done, merged `59e1b45`,
   pushed. Step M1 of the feedback loop is complete; the coordinating session is told what was done
   and where it departs from its request. W6 is not started: the approver asked to wait.
+- 2026-10-09: W6 started at the approver's request. task-011 (plan-015 task 8: compatibility
+  matrix, real `compat.yaml`; F3.3, dl-009, dl-010) done, merged `b57bdc9`, pushed.
+  `npm run validate` runs the matrix in self-test mode and `npm run validate:publication` in
+  publication mode; each release is installed from a committed lockfile under `src/matrix/`.
+  Configuration follow-ups owed, each through its own element: `wingfoil-cli` W-12, and
+  `wingfoil-release-intake` › `record` adding the release's lockfile. Next: plan-015 task 9 (lint).
+

@@ -229,4 +229,5 @@ Branch `task/task-011-matrix`, run through `tooling-delivery` as `developer` (`c
 - Configuration follow-ups (Context), not applied here: `wingfoil-cli` W-12 to name the matrix's
   releases; `wingfoil-release-intake` › `record` to add the release's lockfile under
   `src/matrix/`.
+- 2026-10-09: approved by the approver; merged into `main` with `--no-ff` (`b57bdc9`) and pushed.
 
