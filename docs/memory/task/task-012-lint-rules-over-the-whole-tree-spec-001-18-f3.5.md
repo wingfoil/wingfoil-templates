@@ -250,13 +250,36 @@ workflow and overlay rules; (4) secret rules; (5) `check:packs`, the validate st
     tested through the command from the start.
   - A pack that no overlay combination reaches is reported under its own rule id, `compose`, not
     `overlay`: the refusal is not a contradiction between overlays.
-  - Acceptance 11: hex of exactly 40 or 64 characters (a git object id, a SHA-256 digest) is not
-    reported. Run over this repository's own 326 text files, the scan as written reported 10
-    findings, all of them such references, and nothing else; with the exception it reports none.
+  - Acceptance 11: hex of exactly 40 or 64 characters is not reported on a line that names it a
+    commit, sha, digest or hash (amended after the review, see below).
   - Acceptance 7: `validate` does not compose a preset the lint rejects, rather than passing its
     values to the compose command with their YAML type; a value whose YAML type passed its
     parameter's type has a lossless text form, so the composed result is the same.
   - The composer's secret scan covers the files a pack lists (the ones it composes), not
     `pack.yaml`, `README.md` and `CHANGELOG.md`, which the lint covers.
   - `validate` runs the schema checks twice, once for its own line and once inside the lint.
+- Review (a subagent with its own context, as `reviewer`): request changes. Acceptance 1–14
+  checked in a clean clone (545 tests; 543 with no network, 2 permission tests skipped as root),
+  with odd trees built by hand. Applied in `fb9e193`:
+  - the composer scanned files after substitution, so a high-entropy `--param` value made a
+    composition fail as a secret; it now scans the files as written, as the lint does;
+  - a directory in place of a listed file aborted the lint with exit 2; it is now a `contents`
+    and `layout` problem;
+  - `check:packs` alone passed a tree whose files fail their schema; it now reports each as a
+    `schema` problem (`validate`, which prints the schema check, does not repeat them). This
+    departs from acceptance 2's "silently", towards failing closed;
+  - the blanket 40/64-hex exemption also dropped tokens of that shape (classic GitHub tokens are
+    40 hex); the exemption now needs a line naming a commit, sha, digest or hash. Over this
+    repository's 327 text files the scan then reports 5 findings, all bare SHA-256 values alone on
+    a line in `docs/`, which the lint does not cover;
+  - `pack-name` had no failing test (acceptance 12); added;
+  - nits: names repeated inside the catalog, stray files in `presets/` and `transitions/`,
+    `presets` as a file, every overlay of a refused combination named, one file walker.
+- Left as they are, from the review's nits: positions inside a pack file are computed on the
+  substituted text, so a line can drift when a default is longer than its `{{name}}` (column only,
+  as no placeholder holds a newline); a `README.md` that is a directory gives two lines; the small
+  helpers `byBytes`, `isDoc` and `list` are repeated across the rule modules, as in the rest of
+  `src/`; the rule tests live in `tests/check-packs.test.ts` and `tests/secret-rules.test.ts`
+  rather than one file per module, as the Design said. After the fixes: 550 tests, ESLint, and the
+  real run on `wingfoil@0.2.2` unchanged.
 
