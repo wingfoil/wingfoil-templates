@@ -1,6 +1,8 @@
 // Exact-pin check (adr-002, determinism directive): every dependency in package.json is pinned to
-// an exact version, and package-lock.json resolves it to that same version.
-import { readFileSync } from 'node:fs';
+// an exact version, and package-lock.json resolves it to that same version. The same holds for
+// each release of the compatibility matrix, `src/matrix/wingfoil-<version>/` (task-011), whose
+// only dependency is wingfoil at the version its folder names.
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 const DEPENDENCY_FIELDS = [
@@ -72,23 +74,70 @@ function readJson(dir: string, file: string): unknown {
   return JSON.parse(readFileSync(join(dir, file), 'utf8'));
 }
 
-export function runCheckPins(dir: string): CheckResult {
+/** One manifest and its lockfile; `where` prefixes every message (empty for the root). */
+function checkDir(dir: string, where: string): CheckResult & { manifest?: Record<string, unknown> } {
   let manifest: unknown;
   let lockfile: unknown;
   try {
     manifest = readJson(dir, 'package.json');
     lockfile = readJson(dir, 'package-lock.json');
   } catch (error) {
-    return { code: 2, messages: [error instanceof Error ? error.message : String(error)] };
+    return { code: 2, messages: [`${where}${error instanceof Error ? error.message : String(error)}`] };
   }
   if (!isRecord(manifest)) {
-    return { code: 2, messages: ['package.json: not a JSON object'] };
+    return { code: 2, messages: [`${where}package.json: not a JSON object`] };
   }
   if (!isRecord(lockfile) || !isRecord(lockfile['packages'])) {
-    return { code: 2, messages: ['package-lock.json: no `packages` map (lockfileVersion < 2)'] };
+    return { code: 2,
+      messages: [`${where}package-lock.json: no \`packages\` map (lockfileVersion < 2)`] };
   }
-  const messages = checkPins(manifest, lockfile);
-  return { code: messages.length > 0 ? 1 : 0, messages };
+  const messages = checkPins(manifest, lockfile).map((message) => `${where}${message}`);
+  return { code: messages.length > 0 ? 1 : 0, messages, manifest };
+}
+
+const RELEASE_DIR = /^wingfoil-((?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*))$/;
+
+/** A matrix release pins wingfoil, at its folder's version, and nothing else. */
+function checkRelease(manifest: Record<string, unknown>, version: string, where: string): string[] {
+  const deps = DEPENDENCY_FIELDS.flatMap((field) => {
+    const value = manifest[field];
+    return isRecord(value) ? Object.entries(value).map(([name, spec]) => ({ field, name, spec })) : [];
+  });
+  const problems = deps
+    .filter((dep) => dep.name !== 'wingfoil' || dep.field !== 'dependencies')
+    .map((dep) => `${where}${dep.field}.${dep.name}: a matrix release depends on wingfoil only`);
+  const wingfoil = deps.find((dep) => dep.name === 'wingfoil' && dep.field === 'dependencies');
+  if (wingfoil === undefined || wingfoil.spec !== version) {
+    problems.push(`${where}dependencies.wingfoil: must be ${version}, the version of its folder`);
+  }
+  return problems;
+}
+
+export function runCheckPins(dir: string): CheckResult {
+  const root = checkDir(dir, '');
+  if (root.code === 2) return { code: 2, messages: root.messages };
+  let code = root.code;
+  const messages = [...root.messages];
+  const matrix = join(dir, 'src', 'matrix');
+  const releases = existsSync(matrix)
+    ? readdirSync(matrix, { withFileTypes: true }).filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name).sort()
+    : [];
+  for (const name of releases) {
+    const where = `src/matrix/${name}/`;
+    const version = RELEASE_DIR.exec(name)?.[1];
+    if (version === undefined) {
+      code = Math.max(code, 1);
+      messages.push(`${where}: not wingfoil-<MAJOR.MINOR.PATCH>`);
+      continue;
+    }
+    const release = checkDir(join(matrix, name), where);
+    const problems = release.manifest === undefined ? []
+      : checkRelease(release.manifest, version, where);
+    code = Math.max(code, release.code, problems.length > 0 ? 1 : 0);
+    messages.push(...release.messages, ...problems);
+  }
+  return { code, messages };
 }
 
 if (require.main === module) {

@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { describe, it } from 'node:test';
 
 import { checkPins, runCheckPins } from '../src/check-pins';
@@ -99,7 +99,10 @@ describe('runCheckPins', () => {
   function withDir(files: Record<string, string>, body: (dir: string) => void): void {
     const dir = mkdtempSync(join(tmpdir(), 'check-pins-'));
     try {
-      for (const [name, text] of Object.entries(files)) writeFileSync(join(dir, name), text);
+      for (const [name, text] of Object.entries(files)) {
+        mkdirSync(dirname(join(dir, name)), { recursive: true });
+        writeFileSync(join(dir, name), text);
+      }
       body(dir);
     } finally {
       rmSync(dir, { recursive: true, force: true });
@@ -143,6 +146,53 @@ describe('runCheckPins', () => {
       assert.equal(result.code, 1);
       assert.equal(result.messages.length, 1);
     });
+  });
+
+  const ROOT_OK = {
+    'package.json': '{"dependencies":{"yaml":"2.9.1"}}',
+    'package-lock.json': JSON.stringify(lockFor({ yaml: '2.9.1' })),
+  };
+  const RELEASE = 'src/matrix/wingfoil-0.3.0';
+
+  function release(spec: Record<string, string>, locked: Record<string, string>):
+  Record<string, string> {
+    return {
+      ...ROOT_OK,
+      [`${RELEASE}/package.json`]: JSON.stringify({ private: true, dependencies: spec }),
+      [`${RELEASE}/package-lock.json`]: JSON.stringify(lockFor(locked)),
+    };
+  }
+
+  it('checks the matrix releases\' manifests and lockfiles too (task-011)', () => {
+    withDir(release({ wingfoil: '0.3.0' }, { wingfoil: '0.3.0' }), (dir) => {
+      assert.deepEqual(runCheckPins(dir), { code: 0, messages: [] });
+    });
+    withDir(release({ wingfoil: '^0.3.0' }, { wingfoil: '0.3.0' }), (dir) => {
+      const result = runCheckPins(dir);
+      assert.equal(result.code, 1);
+      assert.match(result.messages.join('\n'), /src\/matrix\/wingfoil-0\.3\.0/);
+    });
+  });
+
+  it('needs a matrix release to pin exactly the wingfoil of its folder, and nothing else', () => {
+    withDir(release({ wingfoil: '0.2.2' }, { wingfoil: '0.2.2' }), (dir) => {
+      const result = runCheckPins(dir);
+      assert.equal(result.code, 1);
+      assert.match(result.messages.join('\n'), /0\.3\.0/);
+    });
+    withDir(release({ wingfoil: '0.3.0', yaml: '2.9.1' }, { wingfoil: '0.3.0', yaml: '2.9.1' }),
+      (dir) => {
+        assert.equal(runCheckPins(dir).code, 1);
+      });
+  });
+
+  it('fails with code 2 when a matrix release has no lockfile', () => {
+    withDir({ ...ROOT_OK, [`${RELEASE}/package.json`]: '{"dependencies":{"wingfoil":"0.3.0"}}' },
+      (dir) => {
+        const result = runCheckPins(dir);
+        assert.equal(result.code, 2);
+        assert.match(result.messages.join('\n'), /wingfoil-0\.3\.0/);
+      });
   });
 
   it('passes on this repository', () => {
