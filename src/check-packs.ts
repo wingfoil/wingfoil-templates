@@ -1,7 +1,7 @@
 // `npm run check:packs`: the lint rules of spec-001 §18 and F3.5 over the whole tree (task-012).
 // The schema checks run first, silently: a file that fails its schema is not linted again, and a
 // pack whose pack.yaml fails it is skipped as a whole. Every rule returns all its problems.
-import { existsSync, lstatSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, lstatSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { CatalogError, loadCatalog } from './catalog';
@@ -18,6 +18,7 @@ import { formatProblem, sortProblems } from './problems';
 import type { Problem } from './problems';
 import type { PackManifest } from './resolve';
 import { repositorySchemas } from './schemas';
+import { secretProblems } from './secret-rules';
 import { overlayProblems } from './overlay-rules';
 import { treeProblems } from './tree-rules';
 import { workflowProblems } from './workflow-rules';
@@ -123,8 +124,23 @@ function workflowGroup(context: LintContext): Problem[] {
 }
 
 /** The rule groups, in order; each sees the context and the problems the ones before it found. */
+/** Every regular file under a folder, relative to the tree, in byte order. */
+function filesUnder(tree: string, rel: string): string[] {
+  if (!existsSync(join(tree, rel)) || !lstatSync(join(tree, rel)).isDirectory()) return [];
+  return readdirSync(join(tree, rel)).sort().flatMap((name) => {
+    const stat = lstatSync(join(tree, rel, name));
+    if (stat.isDirectory()) return filesUnder(tree, `${rel}/${name}`);
+    return stat.isFile() ? [`${rel}/${name}`] : [];
+  });
+}
+
+function secretGroup(context: LintContext): Problem[] {
+  return ['packs', 'presets', 'transitions'].flatMap((folder) => filesUnder(context.tree, folder))
+    .flatMap((file) => secretProblems(file, readFileSync(join(context.tree, file), 'utf8')));
+}
+
 const GROUPS: readonly ((context: LintContext, earlier: Problem[]) => Problem[])[] = [
-  packProblems, treeProblems, workflowGroup, overlayProblems,
+  packProblems, treeProblems, workflowGroup, overlayProblems, secretGroup,
 ];
 
 export function runCheckPacks(tree: string): CheckPacksResult {

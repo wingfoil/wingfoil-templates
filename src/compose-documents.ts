@@ -13,6 +13,7 @@ import { mergeMemoryWithOwners } from './memory-merge';
 import { parameterScopes, resolveParameters, substitute } from './parameters';
 import { listedFiles, resolve } from './resolve';
 import type { ResolvedPack } from './resolve';
+import { secretProblems } from './secret-rules';
 import { workflowProblems } from './workflow-rules';
 import type { RuleFile } from './workflow-rules';
 import { YamlError, parseYaml } from './yaml-load';
@@ -127,6 +128,11 @@ function checkWorkflows(catalog: Catalog, packs: ResolvedPack[], files: Composed
   for (const pack of packs) {
     const [first] = workflowProblems(catalog, pack, byId, byPack);
     if (first !== undefined) throw new CompositionError(first.message);
+  }
+  for (const file of files) {
+    const path = `${byId.get(file.pack)?.path ?? file.pack}/${file.path}`;
+    const [secret] = secretProblems(path, file.text);
+    if (secret !== undefined) throw new CompositionError(secret.message);
   }
 }
 

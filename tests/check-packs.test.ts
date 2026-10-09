@@ -540,3 +540,16 @@ describe('F3.5 overlays and lone packs', () => {
     failsWith('compose', [BASE, KANBAN, { id: 'blueprint/web', ...directive('security') }]);
   });
 });
+
+describe('F3.5 secrets', () => {
+  it('secret: a private key block in a pack file, and the composer refuses it too', () => {
+    const block = ['-----BEGIN ', 'OPENSSH PRIVATE', ' KEY-----'].join('');
+    failsWith('secret', [BASE, { ...KANBAN, extraFiles: { 'README.md': `# kanban\n\n${block}\n` } }]);
+    const leaky = withWorkflow('flow', FLOW(`  - { name: a, produces: [x.md], note: "${block}" }\n`));
+    withPackTree([BASE, leaky], (root) => {
+      copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
+      assert.throws(() => composeDocuments(root, loadCatalog(join(root, 'catalog.yaml')),
+        ['methodology/kanban'], {}), /private key block/);
+    });
+  });
+});
