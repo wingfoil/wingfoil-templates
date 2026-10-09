@@ -8,7 +8,7 @@ import type { ValidateFunction } from 'ajv';
 import { isScalar } from 'yaml';
 
 import { CompositionError } from './composition-error';
-import type { ResolvedPack } from './resolve';
+import type { ParameterDeclaration, ResolvedPack } from './resolve';
 import { SCHEMA_DIR } from './schemas';
 
 export type ParameterValue = string | number | boolean;
@@ -73,9 +73,35 @@ export function checkValue(type: string, value: unknown): string | undefined {
 }
 
 /** The source text of a default, as written in pack.yaml. */
-function defaultSource(pack: ResolvedPack, name: string): string | undefined {
+function defaultSource(pack: Pick<ResolvedPack, 'source'>, name: string): string | undefined {
   const node = pack.source.document.getIn(['parameters', name, 'default'], true);
   return isScalar(node) ? node.source : undefined;
+}
+
+/**
+ * Why a declared default does not pass its type (§8, §18), or undefined; shared by the composer
+ * and the lint (task-012).
+ */
+export function defaultMessage(
+  pack: Pick<ResolvedPack, 'id' | 'source'>,
+  name: string,
+  declaration: ParameterDeclaration,
+): string | undefined {
+  if (declaration.default === undefined) return undefined;
+  const problem = checkValue(declaration.type, declaration.default);
+  if (problem !== undefined) return `parameter ${name} of ${pack.id}: default ${problem}`;
+  const source = defaultSource(pack, name);
+  if (declaration.type === 'integer' && source !== undefined && !INTEGER_SOURCE.test(source)) {
+    return `parameter ${name} of ${pack.id}: default ${source} is not a base-10 integer`;
+  }
+  return undefined;
+}
+
+/** The parameter names a text references as `{{name}}`, in order of appearance (§8.2). */
+export function referencesIn(text: string): { name: string; offset: number }[] {
+  return [...text.matchAll(REFERENCE)].map((match) => ({
+    name: match[1] ?? '', offset: match.index,
+  }));
 }
 
 function fail(message: string): never {
@@ -99,15 +125,8 @@ export function resolveParameters(
       if (other !== undefined) {
         fail(`parameter ${name} is declared by ${other.pack} and by ${pack.id}`);
       }
-      if (declaration.default !== undefined) {
-        const problem = checkValue(declaration.type, declaration.default);
-        if (problem !== undefined) fail(`parameter ${name} of ${pack.id}: default ${problem}`);
-        const source = defaultSource(pack, name);
-        const integer = declaration.type === 'integer' && source !== undefined;
-        if (integer && !INTEGER_SOURCE.test(source)) {
-          fail(`parameter ${name} of ${pack.id}: default ${source} is not a base-10 integer`);
-        }
-      }
+      const defaultProblem = defaultMessage(pack, name, declaration);
+      if (defaultProblem !== undefined) fail(defaultProblem);
       const raw = Object.hasOwn(given, name) ? given[name] : declaration.default;
       const value = options.givenAsText === true && Object.hasOwn(given, name)
         ? fromText(declaration.type, String(raw))

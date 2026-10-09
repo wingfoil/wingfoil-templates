@@ -17,18 +17,23 @@ export interface FormatCheck {
   expected: number | undefined;
 }
 
-export function checkFormat(check: FormatCheck): number {
+/** Why a file's format does not hold, or undefined when it does; the lint reports it (task-012). */
+export function formatMessage(check: FormatCheck): string | undefined {
   const { label, kind, declared, source, expected } = check;
   if (typeof declared !== 'number' || !Number.isInteger(declared)) {
-    throw new CompositionError(`${label} must declare format: (spec-001 §5)`);
+    return `${label} must declare format: (spec-001 §5)`;
   }
   if (source !== undefined && !FORMAT_SOURCE.test(source)) {
-    throw new CompositionError(`${label}: format is written ${source}; it must be a YAML `
-      + 'integer (spec-001 §18)');
+    return `${label}: format is written ${source}; it must be a YAML integer (spec-001 §18)`;
   }
   if (declared !== expected) {
-    throw new CompositionError(`${label}: format ${declared}, but its pack.yaml formats.${kind} `
-      + `is ${String(expected)}`);
+    return `${label}: format ${declared}, but its pack.yaml formats.${kind} is ${String(expected)}`;
   }
-  return declared;
+  return undefined;
+}
+
+export function checkFormat(check: FormatCheck): number {
+  const message = formatMessage(check);
+  if (message !== undefined) throw new CompositionError(message);
+  return check.declared as number;
 }

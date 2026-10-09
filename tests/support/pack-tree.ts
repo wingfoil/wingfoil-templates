@@ -91,6 +91,8 @@ export function writePack(root: string, spec: PackSpec): void {
     writeFileSync(join(dir, path), text);
   };
   write('pack.yaml', stringify(manifestFor(spec)));
+  write('README.md', `# ${spec.id}\n`);
+  write('CHANGELOG.md', `# ${spec.id}\n`);
   for (const file of contentFiles(spec)) {
     if (!(spec.omitFiles ?? []).includes(file)) write(file, placeholder(file));
   }
