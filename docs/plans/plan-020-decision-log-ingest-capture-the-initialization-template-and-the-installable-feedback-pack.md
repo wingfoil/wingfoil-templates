@@ -2,7 +2,7 @@
 id: plan-020-decision-log-ingest-capture-the-initialization-template-and-the-installable-feedback-pack
 type: plan
 title: "decision-log-ingest capture: the initialization template and the installable feedback pack"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "capture"
 tags: ["process","decision-log","packs","scope"]
