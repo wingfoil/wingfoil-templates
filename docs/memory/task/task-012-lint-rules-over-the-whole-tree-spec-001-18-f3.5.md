@@ -155,7 +155,57 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-012-check-packs`, run through `tooling-delivery` as `developer`
+(`code-quality`, `testing`, `determinism`), under `npm run lint`. Built in five commits, one per
+group of rules, each green on its own.
+
+- **`src/problems.ts`:** `Problem` (`file`, optional `line` and `column`, `rule`, `message`), the
+  byte-order sort and the report line of acceptance 2. A check returns every problem it finds;
+  only the composer turns the first into its error.
+- **`src/pack-rules.ts`,** the per-pack rules, moved out of `resolve.ts` and `output.ts` and
+  completed: manifest (`pack-version`, `pack-id`, `pack-name`, `requires-twice`, `requires-self`,
+  `conflicts-self`, `capabilities-sorted`), inventory (`fragment-order`, `contents`), `formats`,
+  layout (`layout`, `symlink`, `submodule`), `asset-id`, parameters (`parameter-scope`,
+  `parameter-default`), slots (`slot`, `base-only`). `resolve` and `planOutput` call them on the
+  packs they compose and throw the first problem as `ResolveError` or `OutputError`, with the
+  messages they give today, so their tests keep passing. The layout walk uses `lstat`, never
+  follows a link, and reports a `.git` entry as a submodule.
+- **`src/yaml-rules.ts`:** `integer` and `nan`, over every scalar node of a loaded YAML file, read
+  from its source range: a numeric value whose source is not a base-10 integer where an integer
+  is expected, and any `.nan` or `.inf`.
+- **`src/tree-rules.ts`:** `catalog.yaml` (`catalog-path`, `catalog-id`, `catalog-versions`,
+  `catalog-transitions`, `catalog-index`), `compat` (the two checks of `src/compat.ts`, now
+  returning problems), presets (`preset-name`, `preset-cardinality` through `resolve`'s axis
+  check, `preset-value` with `checkValue` on the YAML value, `preset-directory`), transitions
+  (`transition-name`, `transition-id`, `transition-stages`), and `pack-name-unique` across the
+  tree and the catalog.
+- **`src/workflow-rules.ts`,** F3.5 on each pack's workflows and fragments: `empty-phase`,
+  `include` (bare name; shipped by the pack or a direct `requires`, or a §9 slot),
+  `life-cycle-includes` (§9), `role` (phase `role`, `approval.by_role`, against dna `team.roles`),
+  `memory-type` (`element`, `iterate_over`), `directive` (roles fragments, with
+  `BUILTIN_DIRECTIVE_IDS`).
+- **`src/overlay-rules.ts`:** `overlay`, the combinations of acceptance 10 through
+  `composeDocuments` (typed placeholders) and `planOutput`, in memory; a refusal becomes one
+  problem naming the combination, attached to the overlay packs' `pack.yaml`.
+- **`src/secret-rules.ts`:** `secret`, the scan of acceptance 11; the entropy is computed over
+  the characters of the scalar or token; the message gives the kind of finding, never the value.
+- **`src/check-packs.ts`:** `runCheckPacks(tree)`: the schema check run silently, then every rule
+  over the files that passed it; returns `{ code, checked, problems }`. `src/check-packs-cli.ts`
+  is `npm run check:packs`.
+- **`src/validate.ts`:** the lint replaces the `compat.yaml` step as the step after the schema
+  checks, and keeps the loaded compat for the matrix. Preset values are checked on their YAML
+  type (acceptance 7) before a preset is composed; the text then given to the compose command is
+  that value's own text, so the type cannot change on the way.
+- **Fixtures:** `tests/support/pack-tree.ts` writes `README.md`, `CHANGELOG.md` and workflows
+  whose phases declare `actions` and `produces`. The golden tree's workflows gain `actions` and
+  `produces`, its `sw-life-cycle` includes the four slots, and `tests/fixtures/compose/expected` is
+  regenerated with `npm run compose`.
+- **Tests,** red first: `tests/check-packs.test.ts` (the command, the report, exit codes, this
+  repository), one test file per rule module with a passing and a failing case per rule id, and
+  the existing resolve, output, compose and validate tests kept green.
+
+Commits: (1) problems and pack rules, shared with the composer; (2) YAML and tree rules; (3)
+workflow and overlay rules; (4) secret rules; (5) `check:packs`, the validate step, the fixtures.
 
 ## Execution Notes
 
