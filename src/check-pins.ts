@@ -128,7 +128,7 @@ export function runCheckPins(dir: string): CheckResult {
     const version = RELEASE_DIR.exec(name)?.[1];
     if (version === undefined) {
       code = Math.max(code, 1);
-      messages.push(`${where}: not wingfoil-<MAJOR.MINOR.PATCH>`);
+      messages.push(`src/matrix/${name}: not wingfoil-<MAJOR.MINOR.PATCH>`);
       continue;
     }
     const release = checkDir(join(matrix, name), where);

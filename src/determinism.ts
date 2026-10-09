@@ -42,7 +42,8 @@ export interface DeterminismOptions {
   cli?: string;
   /**
    * Called with the first output of a composition that composed and proved deterministic, before
-   * its temporary directory is removed: the compatibility matrix runs on it (task-011).
+   * its temporary directory is removed: the compatibility matrix runs on it (task-011). It must
+   * not throw: its failures are reported by the caller, not as a composition failure.
    */
   use?: (composed: string) => void;
 }

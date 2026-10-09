@@ -91,8 +91,8 @@ function installedCli(target: string): string | undefined {
 
 /**
  * Installs a release from its committed lockfile with `npm ci --ignore-scripts`, into its own
- * cache directory, and returns its CLI entry. A cached install is reused only while the lockfile
- * it was made from is unchanged.
+ * cache directory, and returns its CLI entry. A cached install is reused only while it is complete
+ * and the manifest and lockfile it was made from are unchanged.
  */
 export function installRelease(version: string, options: InstallOptions): string {
   const source = join(options.pins, `wingfoil-${version}`);
@@ -101,10 +101,13 @@ export function installRelease(version: string, options: InstallOptions): string
     throw new MatrixIoError(`wingfoil@${version}: no committed lockfile `
       + `(src/matrix/wingfoil-${version}/)`);
   }
-  const sha = createHash('sha256').update(readFileSync(lockfile)).digest('hex');
+  const sha = createHash('sha256').update(readFileSync(join(source, 'package.json')))
+    .update(readFileSync(lockfile)).digest('hex');
   const target = join(resolvePath(options.cache), version);
   const stamp = join(target, STAMP);
-  if (existsSync(stamp) && readFileSync(stamp, 'utf8') === sha) {
+  // npm ci writes node_modules/.package-lock.json only once the install is complete.
+  const complete = existsSync(join(target, 'node_modules', '.package-lock.json'));
+  if (complete && existsSync(stamp) && readFileSync(stamp, 'utf8') === sha) {
     const cli = installedCli(target);
     if (cli !== undefined) return cli;
   }
@@ -147,6 +150,8 @@ interface Output {
   status: number | null;
   stdout: string;
   stderr: string;
+  /** Set when the command was stopped for running longer than COMMAND_TIMEOUT_MS. */
+  timedOut?: boolean;
 }
 
 const TOLERATED = /^Warning: (.+): unknown field\(s\) ignored: format$/;
@@ -181,7 +186,11 @@ Omit<CommandOutcome, 'command'> {
     }
   }
   const reasons: string[] = [];
-  if (output.status !== 0) reasons.push(`exit ${output.status ?? 'none'}`);
+  if (output.timedOut === true) {
+    reasons.push(`timed out after ${COMMAND_TIMEOUT_MS / 1000} s`);
+  } else if (output.status !== 0) {
+    reasons.push(`exit ${output.status ?? 'none'}`);
+  }
   for (const line of remaining) reasons.push(`stderr: ${line}`);
   for (const line of lines(output.stdout).filter((text) => text.startsWith('Warning:'))) {
     reasons.push(`stdout: ${line}`);
@@ -189,10 +198,21 @@ Omit<CommandOutcome, 'command'> {
   return { pass: reasons.length === 0, tolerated, reason: reasons.join('; ') };
 }
 
+/** The CLI's environment: no GIT_* variable (git.ts), and no NODE_PATH to resolve modules from. */
+function cliEnvironment(): NodeJS.ProcessEnv {
+  const env = gitEnvironment();
+  delete env['NODE_PATH'];
+  return env;
+}
+
 function execute(cli: string, args: readonly string[], cwd: string): Output {
   const result = spawnSync(process.execPath, [cli, ...args], {
-    cwd, env: gitEnvironment(), encoding: 'utf8', timeout: COMMAND_TIMEOUT_MS,
+    cwd, env: cliEnvironment(), encoding: 'utf8', timeout: COMMAND_TIMEOUT_MS,
   });
+  const code = (result.error as NodeJS.ErrnoException | undefined)?.code;
+  if (code === 'ETIMEDOUT') {
+    return { status: result.status, stdout: result.stdout, stderr: result.stderr, timedOut: true };
+  }
   if (result.error !== undefined) {
     throw new MatrixIoError(`cannot run ${args.join(' ')}: ${result.error.message}`);
   }
@@ -224,7 +244,13 @@ export function runRelease(
     runGit(scratch, ['init', '--quiet']);
     const version = execute(cli, ['--version'], scratch);
     const printed = version.stdout.trim();
-    if (version.status !== 0 || printed !== release.wingfoil) {
+    if (version.timedOut === true || version.status !== 0) {
+      const why = version.timedOut === true ? `timed out after ${COMMAND_TIMEOUT_MS / 1000} s`
+        : `exit ${version.status ?? 'none'}: ${lastLine(version.stderr)}`;
+      return { code: 1, outcomes: [],
+        message: hideScratch(`--version ${why}`, scratch, realScratch) };
+    }
+    if (printed !== release.wingfoil) {
       return { code: 1, outcomes: [], message: `--version printed ${JSON.stringify(printed)}, `
         + `not ${release.wingfoil}` };
     }

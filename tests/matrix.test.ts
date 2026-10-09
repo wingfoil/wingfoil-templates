@@ -1,12 +1,14 @@
 import { strict as assert } from 'node:assert';
 import { createHash } from 'node:crypto';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
 import {
-  MatrixIoError, installRelease, runRelease, selectReleases,
+  MatrixIoError, installRelease, judge, runRelease, selectReleases,
 } from '../src/matrix';
 import type { MatrixMode, ReleaseRun } from '../src/matrix';
 import type { CompatRelease, VersionRequirements } from '../src/range';
@@ -154,16 +156,41 @@ describe('runRelease', () => {
   });
 
   it('fails a tolerated line whose file lies outside the composed .wingfoil/', () => {
-    writeFileSync(join(tmpdir(), 'matrix-outside.yaml'), 'format: 1\n');
+    const dir = mkdtempSync(join(tmpdir(), 'matrix-outside-'));
     try {
-      const outside = `Warning: ${join(tmpdir(), 'matrix-outside.yaml')}: unknown field(s) ignored: format`;
-      const result = run({ 'dna show': { stderr: [outside] } });
-      assert.equal(result.code, 1);
-      const sibling = 'Warning: {cwd}/AGENTS.yaml: unknown field(s) ignored: format';
-      assert.equal(run({ 'dna show': { stderr: [sibling] } }).code, 1);
+      const outside = join(dir, 'outside.yaml');
+      writeFileSync(outside, 'format: 1\n');
+      const line = `Warning: ${outside}: unknown field(s) ignored: format`;
+      assert.equal(run({ 'dna show': { stderr: [line] } }).code, 1);
     } finally {
-      rmSync(join(tmpdir(), 'matrix-outside.yaml'), { force: true });
+      rmSync(dir, { recursive: true, force: true });
     }
+  });
+
+  it('fails a tolerated line about a link inside .wingfoil/ that points outside it', () => {
+    const outsideDir = mkdtempSync(join(tmpdir(), 'matrix-outside-'));
+    const stub = new StubWingfoil({ commands: { 'dna show': {
+      stderr: ['Warning: {cwd}/.wingfoil/link.yaml: unknown field(s) ignored: format'],
+    } } });
+    const composed = composedOutput();
+    try {
+      writeFileSync(join(outsideDir, 'target.yaml'), 'format: 1\n');
+      symlinkSync(join(outsideDir, 'target.yaml'), join(composed.dir, '.wingfoil', 'link.yaml'));
+      const result = runRelease(stub.cli, composed.dir, release('0.2.2', { format_key: false }),
+        'self-test');
+      assert.equal(result.code, 1, JSON.stringify(result));
+      assert.match(failureOf(result), /link\.yaml/);
+    } finally {
+      stub.dispose();
+      composed.dispose();
+      rmSync(outsideDir, { recursive: true, force: true });
+    }
+  });
+
+  it('fails a command that runs too long, as a check, not as an I/O error', () => {
+    const verdict = judge({ status: null, stdout: '', stderr: '', timedOut: true }, true, '/x');
+    assert.equal(verdict.pass, false);
+    assert.match(verdict.reason, /timed out/);
   });
 
   it('fails any other stderr line', () => {
@@ -190,6 +217,19 @@ describe('runRelease', () => {
     assert.match(result.message ?? '', /0\.2\.1/);
   });
 
+  it('reports the exit and the last stderr line of a CLI that cannot run', () => {
+    const composed = composedOutput();
+    try {
+      const result = runRelease(join(composed.dir, 'missing-cli.js'), composed.dir,
+        release('0.2.2'), 'publication');
+      assert.equal(result.code, 1);
+      assert.match(result.message ?? '', /^--version exit 1: /);
+      assert.ok(!(result.message ?? '').includes(tmpdir()), result.message);
+    } finally {
+      composed.dispose();
+    }
+  });
+
   it('shows no scratch path in a failure reason', () => {
     const line = 'Warning: {cwd}/.wingfoil/dna.yaml: unknown field(s) ignored: format, colour';
     const result = run({ 'dna show': { stderr: [line] } });
@@ -199,8 +239,10 @@ describe('runRelease', () => {
   });
 });
 
-function sha256(text: string): string {
-  return createHash('sha256').update(text).digest('hex');
+/** The stamp of an install: the manifest's bytes, then the lockfile's. */
+function stampOf(dir: string): string {
+  return createHash('sha256').update(readFileSync(join(dir, 'package.json')))
+    .update(readFileSync(join(dir, 'package-lock.json'))).digest('hex');
 }
 
 describe('installRelease', () => {
@@ -232,20 +274,39 @@ describe('installRelease', () => {
     });
   });
 
-  it('reuses a cached install only while its lockfile is unchanged', () => {
+  /** A complete install of 0.2.2 in the cache, as npm ci leaves it, stamped with `stamp`. */
+  function cached(cache: string, stamp: string): string {
+    const target = join(cache, '0.2.2');
+    mkdirSync(join(target, 'node_modules', 'wingfoil'), { recursive: true });
+    writeFileSync(join(target, 'node_modules', 'wingfoil', 'package.json'),
+      JSON.stringify({ name: 'wingfoil', version: '0.2.2', bin: { wingfoil: 'dist/cli.js' } }));
+    writeFileSync(join(target, 'node_modules', '.package-lock.json'), '{}');
+    writeFileSync(join(target, '.lockfile-sha256'), stamp);
+    return target;
+  }
+
+  it('reuses a complete cached install made from the same manifest and lockfile', () => {
     withDirs((pins, cache) => {
-      const lock = '{"lockfileVersion":3,"packages":{}}\n';
-      pin(pins, '0.2.2', lock);
-      const target = join(cache, '0.2.2');
-      mkdirSync(join(target, 'node_modules', 'wingfoil'), { recursive: true });
-      writeFileSync(join(target, 'node_modules', 'wingfoil', 'package.json'),
-        JSON.stringify({ name: 'wingfoil', version: '0.2.2', bin: { wingfoil: 'dist/cli.js' } }));
-      writeFileSync(join(target, '.lockfile-sha256'), sha256(lock));
+      pin(pins, '0.2.2', '{"lockfileVersion":3,"packages":{}}\n');
+      const target = cached(cache, stampOf(join(pins, 'wingfoil-0.2.2')));
       assert.equal(installRelease('0.2.2', { pins, cache }),
         join(target, 'node_modules', 'wingfoil', 'dist', 'cli.js'));
-      writeFileSync(join(target, '.lockfile-sha256'), sha256('another lockfile'));
-      assert.throws(() => installRelease('0.2.2', { pins, cache }), MatrixIoError,
-        'a changed lockfile is installed again, and this one cannot be');
+    });
+  });
+
+  it('installs again when the lockfile changed, or the cached install is incomplete', () => {
+    withDirs((pins, cache) => {
+      const lock = 'not json: npm ci fails before reaching the network';
+      pin(pins, '0.2.2', lock);
+      const committed = join(pins, 'wingfoil-0.2.2');
+      const target = cached(cache, 'a stamp of another lockfile');
+      assert.throws(() => installRelease('0.2.2', { pins, cache }), MatrixIoError);
+      assert.equal(readFileSync(join(target, 'package-lock.json'), 'utf8'), lock,
+        'the committed lockfile was copied for a new install');
+      cached(cache, stampOf(committed));
+      rmSync(join(target, 'node_modules', '.package-lock.json'));
+      assert.throws(() => installRelease('0.2.2', { pins, cache }), MatrixIoError);
+      assert.ok(!existsSync(join(target, '.lockfile-sha256')), 'the incomplete install is gone');
     });
   });
 

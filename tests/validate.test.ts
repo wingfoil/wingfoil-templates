@@ -25,8 +25,8 @@ const WINGFOIL = stubbed({ stderr: [FORMAT_WARNING] });
 after(() => WINGFOIL.dispose());
 
 /** `validate` never installs a release in the tests: the stub stands for every release. */
-function validate(argv: string[], options: ValidateOptions = {}): ValidateResult {
-  return runValidate(argv, { install: () => WINGFOIL.cli, ...options });
+function validate(argv: string[], options: Partial<ValidateOptions> = {}): ValidateResult {
+  return runValidate(argv, { mode: 'self-test', install: () => WINGFOIL.cli, ...options });
 }
 
 function withTree(edit: (tree: string) => void, body: (tree: string) => void): void {

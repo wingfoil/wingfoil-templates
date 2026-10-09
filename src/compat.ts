@@ -6,7 +6,7 @@ import type { CompatRelease } from './range';
 import { repositorySchemas } from './schemas';
 import { loadYamlFile } from './yaml-load';
 
-/** compat.yaml breaks its schema or a check beyond it. */
+/** compat.yaml breaks its schema or a check beyond it; the caller names the file. */
 export class CompatError extends Error {}
 
 export interface Compat {
@@ -20,20 +20,21 @@ export function loadCompat(path: string): Compat {
   const errors = repositorySchemas().validate('compat', loaded.data);
   if (errors.length > 0) {
     const first = errors[0];
-    throw new CompatError(`${path}: not a valid compat file: ${first?.instancePath ?? ''} `
+    throw new CompatError(`not a valid compat file: ${first?.instancePath ?? ''} `
       + `${first?.message ?? ''}`);
   }
   const compat = loaded.data as Compat;
   try {
     checkAscending(compat.releases);
   } catch (error) {
-    throw new CompatError(error instanceof Error ? error.message : String(error));
+    const message = error instanceof Error ? error.message : String(error);
+    throw new CompatError(message.replace(/^compat\.yaml: /, ''));
   }
   for (const release of compat.releases) {
     for (const name of release.capabilities) {
       if (!Object.hasOwn(compat.capabilities, name)) {
-        throw new CompatError(`compat.yaml: release ${release.wingfoil}: capability ${name} is `
-          + 'not in capabilities');
+        throw new CompatError(`release ${release.wingfoil}: capability ${name} is not in `
+          + 'capabilities');
       }
     }
   }

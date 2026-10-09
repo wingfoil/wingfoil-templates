@@ -21,8 +21,8 @@ import { ResolveError, resolve } from './resolve';
 import { YamlError, loadYamlFile } from './yaml-load';
 
 export interface ValidateOptions extends Omit<DeterminismOptions, 'use'> {
-  /** Fixed by the entry point, never by argv or the data (dl-009); self-test by default. */
-  mode?: MatrixMode;
+  /** Fixed by the entry point, never by argv or the data (dl-009); no default. */
+  mode: MatrixMode;
   /** Replaces the install of a release: tests give a stub CLI and never reach the network. */
   install?: (version: string) => string;
 }
@@ -184,8 +184,8 @@ class Matrix {
   }
 }
 
-export function runValidate(argv: string[], options: ValidateOptions = {}): ValidateResult {
-  const mode = options.mode ?? 'self-test';
+export function runValidate(argv: string[], options: ValidateOptions): ValidateResult {
+  const mode = options.mode;
   const lines: string[] = [];
   let code = 0;
   const fail = (level: number, line: string): void => {
