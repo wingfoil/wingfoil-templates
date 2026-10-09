@@ -268,3 +268,7 @@ dl-012 and dl-013 (their **[E]** criteria).
   machine (N7); `requires` syntax and who may require the pack (N8); outcome list and default route
   (N9); kind mapping for upstreams (N10); complete amendments, Uncertainty H (N11); FA wording and
   self-test mode (N12); roles (N13); wording fixes (N14).
+- 2026-10-09: the approver deferred the ruling, in chat: dl-011, dl-012 and dl-013 are ruled once
+  WingFoil has released stable configuration contracts (at least v0.3, preferably later); dl-014 may
+  be ruled earlier. The element stays `pending` until then (precedent: dl-007). At the ruling, the
+  text is re-checked against the formats that WingFoil release defines.

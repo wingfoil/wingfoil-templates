@@ -79,7 +79,9 @@ Then commit this plan's Execution Notes and `submit` it (`draft → active`).
   is `done`. The pack charters and their tasks are opened
   when `pack-delivery` reaches each pack, in the order the sequencer sets.
 - A rejected decision-log comes back to `draft`, is corrected under this plan and submitted again.
-  The plan stays `active` until all four are approved, then `done`.
+  The plan stays `active` until all four are ruled, then `done`. The ruling has no deadline:
+  dl-011, dl-012 and dl-013 are deferred until WingFoil has stable configuration contracts (at
+  least v0.3); dl-014 may be ruled earlier.
 - The branch is merged into `main` by the approver, or on the approver's word.
 
 ## Execution Notes
@@ -110,3 +112,9 @@ Then commit this plan's Execution Notes and `submit` it (`draft → active`).
   released WingFoil provides `pack-install`; dl-013 in a wave of its own after M3. The four
   decision-logs were amended while `pending`, each recording the findings it answers in its
   Execution Notes. The plan's title still names the first two captures; its id cannot change.
+- 2026-10-09: the approver deferred the ruling of dl-011, dl-012 and dl-013 until WingFoil releases
+  stable configuration contracts (at least v0.3, preferably later); dl-014 may be ruled earlier.
+  Checked: no workflow of this repository has a planning step that rules pending decision-logs (the
+  `rule` phase of `decision-log-ingest` is the approver's, with no deadline; `release-planning`,
+  named by `wingfoil-cli` rule 7, is not defined here); leaving them `pending` follows dl-007's
+  precedent (plan-010 stays `active`). The plan stays `active` meanwhile.

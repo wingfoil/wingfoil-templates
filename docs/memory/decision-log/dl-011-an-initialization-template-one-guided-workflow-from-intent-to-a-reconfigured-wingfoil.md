@@ -314,3 +314,7 @@ Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`, when the sequencer
   option (b)'s argument corrected (N9); citations, dl-007 house method and dl-001 D7 (N10); AC-10
   moved here from dl-012 FA-9 (N11); maturity → `stage` (N12); `kind: sub`, AC-7, MVP canvas and J10
   priority (N13).
+- 2026-10-09: the approver deferred the ruling, in chat: dl-011, dl-012 and dl-013 are ruled once
+  WingFoil has released stable configuration contracts (at least v0.3, preferably later); dl-014 may
+  be ruled earlier. The element stays `pending` until then (precedent: dl-007). At the ruling, the
+  text is re-checked against the formats that WingFoil release defines.

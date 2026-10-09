@@ -369,3 +369,7 @@ Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`:
   corrected (N10); body sections listed (N11); materialization rules (N12); one required task field,
   separation of duties as a parameter (N13); README per dl-014 (N14); conditions, handoffs, evidence,
   the UI point and journeys (N15).
+- 2026-10-09: the approver deferred the ruling, in chat: dl-011, dl-012 and dl-013 are ruled once
+  WingFoil has released stable configuration contracts (at least v0.3, preferably later); dl-014 may
+  be ruled earlier. The element stays `pending` until then (precedent: dl-007). At the ruling, the
+  text is re-checked against the formats that WingFoil release defines.

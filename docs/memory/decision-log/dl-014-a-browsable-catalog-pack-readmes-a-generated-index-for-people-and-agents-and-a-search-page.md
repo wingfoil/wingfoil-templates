@@ -264,3 +264,5 @@ CB-1 and CB-2: the charters of dl-011, dl-012 and dl-013 among them.
   after plan-015, "F3.5 lint rules" (N10); Pages security (N11); URL patterns, caching, Pages and
   `llms.txt` caveats, signed-in search (N12); fictional examples, fixture layout, README excerpt
   (N13); charters cite D1, journey steps (N14); §6.1, wording, the tag claim (N15).
+- 2026-10-09: unlike dl-011…dl-013, which the approver deferred until WingFoil has stable
+  configuration contracts, this decision-log may be ruled before then.
