@@ -9,6 +9,7 @@ import { parseArgs } from 'node:util';
 import { CatalogError, loadCatalog } from './catalog';
 import type { Catalog } from './catalog';
 import { findFiles, runCheckSchemas } from './check-schemas';
+import { runCheckPacks } from './check-packs';
 import { CompatError, loadCompat } from './compat';
 import type { Compat } from './compat';
 import { composeTwice, type DeterminismOptions } from './determinism';
@@ -218,16 +219,25 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
   for (const message of schemas.messages) fail(schemas.code, message);
   const broken = new Set(schemas.messages.map((message) => message.slice(0, message.indexOf(':'))));
 
-  // compat.yaml, when present, is checked beyond its schema even with no composition to run.
+  // The lint (task-012): spec-001 §18 and F3.5 over the whole tree, compat.yaml included.
+  const lint = runCheckPacks(args.tree);
+  if (lint.code === 2) {
+    fail(2, lint.lines[0] ?? 'lint: I/O error');
+  } else {
+    lines.push(lint.lines[0] ?? '');
+    for (const line of lint.lines.slice(1)) fail(1, line);
+  }
+  const linted = new Set(lint.problems.map((problem) => problem.file));
+
+  // Loaded for the matrix; a compat.yaml the loader refuses is the lint's to report.
   let compat: Compat | undefined;
   const compatPath = join(args.tree, 'compat.yaml');
   if (existsSync(compatPath) && !broken.has('compat.yaml')) {
     try {
       compat = loadCompat(compatPath);
     } catch (error) {
-      const invalid = error instanceof CompatError
-        || (error instanceof YamlError && error.reason === 'syntax');
-      fail(invalid ? 1 : 2, `compat.yaml: ${messageOf(error)}`);
+      if (!(error instanceof CompatError) && !(error instanceof YamlError
+        && error.reason === 'syntax')) fail(2, `compat.yaml: ${messageOf(error)}`);
     }
   }
 
@@ -236,6 +246,13 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
   let unjudged = broken.size > 0;
   for (const { file } of findFiles(args.tree).filter((found) => found.kind === 'preset')) {
     if (broken.has(file)) continue;
+    // A preset the lint rejects (its values' YAML types among others) is not composed.
+    if (linted.has(file)) {
+      unjudged = true;
+      lines.push(`composition ${file}: skipped, the lint reports it`);
+      matrixLines.push(`matrix ${file}: skipped`);
+      continue;
+    }
     try {
       compositions.push(presetComposition(args.tree, file));
     } catch (error) {
