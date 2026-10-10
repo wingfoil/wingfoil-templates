@@ -180,4 +180,15 @@ Commits: (1) evidence and `validate:publication --evidence`; (2) the tag-depende
     the form the golden fixture writes; the range check runs after the guard validation, so the
     real dry run reports `no compatible release (publication)` as acceptance 7 expects;
   - the tests were written with each module rather than strictly before it.
+- Review (a subagent with its own context, as `reviewer`): approve with minor changes; 584 tests,
+  lint and checks in a clean clone, plus probes of the identity (a caller `GIT_INDEX_FILE` did not
+  leak; repository-level signing stayed off). Applied: a failure after the tag removes the tag and
+  restores `catalog.yaml` (exit 1 or 2, no crash); a non-semver version refused first; the
+  evidence reads `--tree` as `runValidate` does; the identity lookup ignores `GIT_DIR` and the
+  like; tests of the identity, the rollback and the catalog edit. 588 tests.
+- Deviation, from the review: acceptance 4 says the catalog commit keeps comments. Comments
+  outside the `packs:` block are kept byte for byte; a comment inside it is refused (exit 1) rather
+  than dropped, since the block is rewritten. A planned pack becomes `active` with its first
+  version. The empty-range refusal is unreachable once the guard passes (the guard ran on a
+  compatible release), so it has no test of its own; it stays as a second guard.
 
