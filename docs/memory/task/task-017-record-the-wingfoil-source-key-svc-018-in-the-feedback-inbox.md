@@ -36,3 +36,7 @@ A one-line edit of `docs/wingfoil-feedback/README.md`, committed on `main` (no c
 then pushed; CI runs on the pushed `main`.
 
 ## Execution Notes
+
+- 2026-10-10: `d4013c2` sets the source key to `svc-018` in the inbox README, on `main`, pushed;
+  611 tests and `check:packs` pass. CI on `main`,
+  https://github.com/wingfoil/wingfoil-templates/actions/runs/38079807906: `success`, both jobs.
