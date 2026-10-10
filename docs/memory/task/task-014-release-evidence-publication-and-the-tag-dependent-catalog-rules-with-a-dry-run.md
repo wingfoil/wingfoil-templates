@@ -159,3 +159,25 @@ Commits: (1) evidence and `validate:publication --evidence`; (2) the tag-depende
   only; the script named `publish:pack`, refusing npm's swallowed `--dry-run`; stage transitions,
   the first pack entry, the CHANGELOG entry form, an empty range, `version` in
   `catalog-manifest`, a defined clean tree, the cache inside the dry run's clone.
+- 2026-10-10, build on `task/task-014-publish`, as `developer`: `c16cf33` the evidence writer and
+  `validate:publication -- --evidence`; `3a277af` the tag-dependent catalog rules; `caa04d5`
+  `publish:pack`, the catalog edit and the dry run in the tests; `81063cc` the validation before
+  the range check, and the CHANGELOG entry form. 584 tests, ESLint, `check:pins`, `check:packs`.
+- Real dry run (acceptance 7): the golden tree copied into a scratch git repository with this
+  repository's `compat.yaml` and `.gitattributes`, then `npm run publish:pack -- --tree <scratch>
+  --pack methodology/kanban --param project_name=Golden --dry-run`: exit 1,
+  `matrix presets/golden.yaml: no compatible release (publication)`, "the publication validation
+  failed; no tag"; the scratch repository kept one commit, no tag and a clean status.
+- Deviations:
+  - acceptance 5: a catalog with published versions on a tree that is not the top level of a git
+    repository is one `catalog-tag` problem (exit 1), not an I/O error (exit 2): the lint never
+    passes it and its other problems stay visible; the lint tests' trees, which are not
+    repositories, then keep their own rules;
+  - `transition-stages` (task-012) accepts a stage pack of the tree as well as of the catalog: a
+    transition is published with its target stage's first release (spec-001 §14), before that
+    stage is in `catalog.yaml`, so the stricter reading made such a publication impossible;
+  - acceptance 4: a CHANGELOG entry is a line `- <version>`, alone or followed by `:` or a space,
+    the form the golden fixture writes; the range check runs after the guard validation, so the
+    real dry run reports `no compatible release (publication)` as acceptance 7 expects;
+  - the tests were written with each module rather than strictly before it.
+
