@@ -62,3 +62,6 @@ All work happens on branch `config/pre-ci-followups`, one commit per step.
   `validate` pass. Independent review (a subagent with its own context): approve; applied its
   should-fix (publish leaves the two files unchanged until W14, with a testable trigger) and nits
   (the lockfile command's folder, `npm audit` on the new lockfile).
+- 2026-10-10: the approver approved the merge in chat; merged into `main` with `--no-ff` (`600ba9f`) and
+  pushed. Next: plan-015 task 10 (CI).
+
