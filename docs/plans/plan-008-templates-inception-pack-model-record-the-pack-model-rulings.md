@@ -69,3 +69,5 @@ Produces: `docs/memory/decision-log/{id}.md`, one element per ruling group, each
 - 2026-10-06: dl-001…dl-006 approved (`0b36176`…`a295ce6`). Every `produces` of
   `templates-inception` exists on `main`: `docs/01_vision/01…08` and the decision-logs. The
   sub-phase is complete, and the next step is the inception phase gate (plan-001).
+- 2026-10-10: the input `docs/notes/base-regeneration-inputs.md` was removed (plan-022); what it
+  held for `base` is in dl-015 and spec-001.

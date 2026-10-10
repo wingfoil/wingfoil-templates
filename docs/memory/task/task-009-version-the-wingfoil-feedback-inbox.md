@@ -58,3 +58,6 @@ added by name.
   a public repository and found none. Its nit, the open questions numbered 5, 7, 6, is left to the
   split of task-010, since this commit keeps the file byte-identical.
 - 2026-10-07: approved by the approver; merged into `main` with `--no-ff` (`ceffa55`) and pushed.
+- 2026-10-10: `docs/notes/base-regeneration-inputs.md`, which this task left untracked, was
+  committed by mistake in `8b7f782` and then removed, its content moved to dl-015 and spec-001
+  (plan-022).
