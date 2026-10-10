@@ -54,5 +54,11 @@ All work happens on branch `config/pre-ci-followups`, one commit per step.
 
 ## Execution Notes
 
-<!-- Filled while the plan runs: deviations, blockers, decisions taken, WingFoil friction
-     (also recorded in docs/wingfoil-feedback/). -->
+- 2026-10-10: plan-022 was first created here for this work, unpushed, and withdrawn because the
+  dl-015 capture branch already held plan-022; recreated as plan-023 after that branch was merged
+  (`c86962e`).
+- 2026-10-10: steps 1–3 on `config/pre-ci-followups` (`680efd6`, `ffed728`, `3648dd4`); `workflow
+  list`, `dna show` and `directives list` exit 0 with empty stderr; 550 tests, `check:packs` and
+  `validate` pass. Independent review (a subagent with its own context): approve; applied its
+  should-fix (publish leaves the two files unchanged until W14, with a testable trigger) and nits
+  (the lockfile command's folder, `npm audit` on the new lockfile).

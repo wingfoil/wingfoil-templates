@@ -48,8 +48,9 @@ phases:
       later commit, update catalog.yaml (version, commit, digest, formats, capabilities, computed
       WingFoil range) and regenerate CATALOG.md and catalog-index.json with npm run index
       (spec-002 §3); no file under packs/ changes. Push the tag and the commit.
-      Until npm run index exists (wave W14), the regeneration is skipped and recorded as skipped
-      in the pack-release element's Execution Notes (plan-023).
+      Until npm run index exists (wave W14; no index script in package.json), CATALOG.md and
+      catalog-index.json are left unchanged and the pack-release element's Execution Notes record
+      the skipped regeneration (plan-023).
       If WingFoil bundles the pack, add a note to docs/wingfoil-feedback/ for WingFoil's
       advance-bundled-packs release step.
     role: tech-lead

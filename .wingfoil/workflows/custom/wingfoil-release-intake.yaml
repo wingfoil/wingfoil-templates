@@ -12,10 +12,11 @@ phases:
       taken from WingFoil's own declaration (`wingfoil capabilities`, notes T13) or its CHANGELOG. A
       new format kind or capability enters the vocabulary here. Commit
       src/matrix/wingfoil-<version>/package.json, pinning wingfoil to exactly that version, and its
-      lockfile (npm install --package-lock-only --ignore-scripts), so that the compatibility matrix
-      can install the release (task-011); npm run check:pins checks them. Then recompute the
-      wingfoil field of every published version in catalog.yaml (spec-001 §12), and regenerate
-      CATALOG.md and catalog-index.json with npm run index (spec-002 §3).
+      lockfile (npm install --package-lock-only --ignore-scripts in that folder), so that the
+      compatibility matrix can install the release (task-011); npm run check:pins checks them, and
+      npm audit reports 0 vulnerabilities on the new lockfile. Then recompute the wingfoil field of
+      every published version in catalog.yaml (spec-001 §12), and regenerate CATALOG.md and
+      catalog-index.json with npm run index (spec-002 §3).
     role: tech-lead
     produces:
       - "compat.yaml"
