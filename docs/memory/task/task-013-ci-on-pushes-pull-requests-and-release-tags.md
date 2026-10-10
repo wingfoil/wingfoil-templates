@@ -94,7 +94,29 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-013-ci`, run through `tooling-delivery` as `developer` (`code-quality`,
+`testing`, `determinism`), under `npm run lint`.
+
+- **`.github/workflows/ci.yml`:**
+  - `on`: `push` with `branches: ['**']` and `tags: ['**@*']`; `pull_request`;
+  - top-level `permissions: contents: read`; `concurrency` group `ci-${{ github.ref }}`, with
+    `cancel-in-progress` true except for tags (`github.ref_type != 'tag'`);
+  - one job `validate`, a matrix over `node: ['22.12.0', '22.21.0']`, `runs-on: ubuntu-24.04`,
+    `timeout-minutes: 30`;
+  - steps: `actions/checkout` v7.0.1 (`3d3c42e5aac5ba805825da76410c181273ba90b1`) with
+    `fetch-depth: 0`, `fetch-tags: true`, `persist-credentials: false`; `actions/setup-node` v7.1.0
+    (`949feb2413d6458794dcd2491c4babbbce0c15c1`) with the exact version and
+    `check-latest: false`; `actions/cache` v6.1.0 (`55cc8345863c7cc4c66a329aec7e433d2d1c52a9`) on
+    `.cache/wingfoil-matrix`, key `wingfoil-matrix-${{ runner.os }}-node${{ matrix.node }}-` and
+    `hashFiles('src/matrix/wingfoil-*/package-lock.json')`; then `npm ci`, the build, tests, lints
+    and checks of acceptance 2, one step each; a step `npm audit` looping over `src/matrix/*/`;
+  - `validate` steps with `if: github.ref_type != 'tag'`, `validate:publication` with
+    `if: github.ref_type == 'tag'`.
+- **`tests/ci-workflow.test.ts`:** reads the file with the repository's YAML loader and checks each
+  point of acceptance 2–4 on the parsed data.
+- **`.wingfoil/dna.yaml`:** `paths.config` gains `.github`, version 6 → 7.
+- **The real run:** `git push -u origin task/task-013-ci`, then `gh run list --branch …` once the
+  run ends; its URL and result go in the Execution Notes.
 
 ## Execution Notes
 
