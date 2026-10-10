@@ -119,7 +119,36 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-014-publish`, run through `tooling-delivery` as `developer` (`code-quality`,
+`testing`, `determinism`), under `npm run lint`. Built in three commits, each green on its own.
+
+- **`src/evidence.ts`:** `writeEvidence(result, { commit, command })` returns the `## Validation`
+  section or throws `EvidenceError` (mode not publication, a tolerance applied, code not 0).
+  `src/validate-publication-cli.ts` takes `--evidence` out of its arguments before `runValidate`,
+  reads `HEAD` of the tree (not a git repository: exit 2) and prints the section after the report.
+- **`src/git.ts`:** `runGit` gains an optional environment to add; `callerIdentity(repo)` reads
+  `user.name` and `user.email` with the caller's own git configuration, and keeps the caller's
+  `GIT_AUTHOR_*`, `GIT_COMMITTER_*` and their `_DATE`, before the tooling's environment closes it.
+- **`src/tag-rules.ts`:** the rule group of acceptance 5, registered in `check-packs.ts` after the
+  tree rules; it reads the tag with `git cat-file -t` (annotated: `tag`) and `rev-parse
+  <tag>^{commit}`, the tagged `pack.yaml` with `git show`, and reuses `packDigest`,
+  `transitionDigest` and `computeRange`.
+- **`src/catalog-edit.ts`:** `addVersion(text, packId, versionEntry, newPack?)` rewrites only the
+  `packs:` block of `catalog.yaml` (from its key to the end of its value, located with the YAML
+  document's ranges) as a block sequence written by `toYaml`; every other byte, comments included,
+  is kept, which a test checks.
+- **`src/publish.ts`:** `runPublish(argv, { install? })`: the checks of acceptance 4, the guard
+  validation (`runValidate` in publication mode, with `install` for the tests only), the tag, the
+  digest and range, the catalog commit; `--dry-run` clones the repository with its tags into a
+  temporary directory (`git clone --no-local`), runs there with the matrix cache inside it, and
+  removes it. `src/publish-cli.ts` is `npm run publish:pack`, with the `npm_config_dry_run` guard.
+- **Tests,** red first: `tests/evidence.test.ts`, `tests/tag-rules.test.ts`,
+  `tests/catalog-edit.test.ts`, `tests/publish.test.ts` (scratch repositories through
+  `tests/support/git-repo.ts`, a fixture pack, a fixture `compat.yaml` with the fictional release
+  `9.0.0`, `format_key: true`, and the stub WingFoil of task-011).
+
+Commits: (1) evidence and `validate:publication --evidence`; (2) the tag-dependent catalog rules;
+(3) the catalog edit, `publish:pack` and the dry run.
 
 ## Execution Notes
 
