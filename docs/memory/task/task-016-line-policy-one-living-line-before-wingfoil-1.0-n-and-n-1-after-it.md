@@ -148,3 +148,5 @@ Branch `task/task-016-lines`, run through `tooling-delivery` as `developer` (`co
 - Deviation from acceptance 3: on the current line the published versions are read from `main`
   and from the working tree, not from `main` alone, so that task-014's rule still holds on a branch
   that already tagged a version.
+- 2026-10-10: CI after the review fixes, https://github.com/wingfoil/wingfoil-templates/actions/runs/38078707653
+  (`a95bf53`): `success`, both jobs.
