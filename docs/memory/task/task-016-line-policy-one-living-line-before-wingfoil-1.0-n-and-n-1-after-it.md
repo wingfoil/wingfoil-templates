@@ -94,7 +94,26 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-016-lines`, run through `tooling-delivery` as `developer` (`code-quality`,
+`testing`, `determinism`), under `npm run lint`.
+
+- **`src/lines.ts`:** `decideLine({ pack, version, formats, branch, published, fromOne,
+  descends })` returns the current line or the maintenance line `<major>.x`, or throws `LineError`
+  naming the rule broken (acceptance 2–3). `published` comes from `main`'s `catalog.yaml`; `fromOne`
+  is "compat.yaml lists a release 1.0.0 or later"; `descends(tag)` asks git whether the branch's
+  head descends from a tag.
+- **`src/publish.ts`:** reads the branch (`symbolic-ref --short HEAD`), `main`'s catalog
+  (`git show main:catalog.yaml`) and `compat.yaml` before the validation, and decides the line
+  first. On the current line nothing changes. On a maintenance line it tags the branch's head, then
+  writes the catalog commit on `main` with plumbing and a temporary index (`read-tree main`,
+  `hash-object`, `update-index`, `write-tree`, `commit-tree -p main`, `update-ref` with the old
+  value), so the branch's working tree is untouched; the rollback also moves `main` back. `--bundled`
+  is refused on a maintenance line: the note goes to `main`'s inbox with `npm run feedback:note`
+  there. `--dry-run` clones the checked-out branch and creates a local `main` in the clone.
+- **`src/catalog-edit.ts`:** `addVersion` inserts the entry at its semver position.
+- **Tests,** red first: `tests/lines.test.ts` (the decision, unit), `tests/publish.test.ts` (the
+  scenarios of acceptance 5), `tests/catalog-edit.test.ts` (the insertion);
+  `tests/support/published-repo.ts` takes the fixture release's version (`0.9.0` before 1.0).
 
 ## Execution Notes
 
