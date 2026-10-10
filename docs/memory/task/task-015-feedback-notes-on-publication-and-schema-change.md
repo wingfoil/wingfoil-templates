@@ -92,7 +92,24 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-015-feedback-notes`, run through `tooling-delivery` as `developer`
+(`code-quality`, `testing`, `determinism`), under `npm run lint`.
+
+- **`src/schema-digest.ts`:** `schemaListing(tree)`: the regular files under `schema/` in the
+  working tree, paths relative to it, through `listingOf` and `digestOfListing` of
+  `src/digest.ts` (§13 steps 3–6).
+- **`src/feedback-inbox.ts`:** reads `docs/wingfoil-feedback/` (notes by number, the ledger); finds
+  the newest schema note and parses its `Schema digest:` line and the listing in the fenced block
+  under it; `writeNote(tree, note)` writes `F-<n+1>-<slug>.md` and inserts its row after the last
+  ledger row. `src/feedback-note-cli.ts` is `npm run feedback:note`.
+- **`src/check-packs.ts`:** the `schema-note` group.
+- **`src/publish.ts`:** `--bundled` and `--from`; after the catalog commit, the note commit; the
+  head before the tag is kept, so that a failure after the catalog commit resets to it
+  (`reset --hard`; the working tree was clean) and removes the tag.
+- **`tests/wingfoil-feedback.test.ts`:** the opening pattern accepts `New note (prel-<nnn>).`.
+- **F-017:** the baseline line and listing, by hand.
+- **Tests,** red first: `tests/feedback-note.test.ts` (command, rule, failure paths) and additions
+  to `tests/publish.test.ts` (`--bundled`, the W7 dry run with the note).
 
 ## Execution Notes
 
