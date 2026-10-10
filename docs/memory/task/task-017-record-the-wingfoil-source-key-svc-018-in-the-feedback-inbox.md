@@ -24,7 +24,7 @@ Not in scope: the sync (`wingfoil-cli` rule 7) and the `Last sync:` line; the no
 ## Acceptance
 
 1. In `docs/wingfoil-feedback/README.md`, the line `**Source key:** to be set — …` reads
-   `**Source key:** \`svc-018\` — …`, keeping the explanation of the key and of WingFoil's
+   ``**Source key:** `svc-018` — …``, keeping the explanation of the key and of WingFoil's
    citation form; no other line of the README changes.
 2. `npm test` (the inbox checks of `tests/wingfoil-feedback.test.ts`) and `npm run check:packs`
    exit 0.
