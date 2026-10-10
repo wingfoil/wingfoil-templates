@@ -27,9 +27,12 @@ It comes from:
 - **the Node.js floor** (adr-002, task-001): 22.12.0, and the newest 22.x the tasks are checked on
   (22.21.0).
 
-This repository merges tooling branches locally and pushes `main`; pull requests are possible but
-not the habit. So CI also runs on every push to `main`, in self-test mode, or most changes would go
-unchecked; that is an addition to F3.6's two triggers.
+This repository uses no pull requests: only the approver and agents write it, branches are merged
+locally with `--no-ff` and `main` is pushed (brief §5, dl-005 G5); outside contributions will arrive
+as Memory elements, not as code pull requests (`03_is-isnot.md`). So CI also runs on every pushed
+branch, `main` and work branches such as `task/…` or `config/…`, in self-test mode, or most changes
+would go unchecked; that is an addition to F3.6's two triggers. The `pull_request` trigger stays
+for F3.6, though the normal flow never uses it.
 
 Release tags are `<catalog pack id>@<version>` (spec-001 §4), for example `base@1.0.0` or
 `methodology/kanban@1.2.0`. None exists yet. Until `compat.yaml` lists a release with
@@ -48,12 +51,12 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 1. `npm ci`, `npm run build`, `npm test`, `npm run lint`, `npm run check:pins`,
    `npm run check:schemas` and `npm run check:packs` exit 0; no dependency is added.
-2. **`.github/workflows/ci.yml`**, triggered by `push` to `main`, `pull_request` (any branch) and
-   `push` of a tag matching `**@*` (in GitHub's filter patterns `*` does not match `/`, and pack ids
-   such as `methodology/kanban` contain one):
+2. **`.github/workflows/ci.yml`**, triggered by `push` of any branch (`**`), `pull_request` (any
+   branch) and `push` of a tag matching `**@*` (in GitHub's filter patterns `*` does not match `/`,
+   and pack ids such as `methodology/kanban` contain one):
    - one job per Node.js version, `22.12.0` and `22.21.0`, each exact (`setup-node` with
      `check-latest: false`), on `ubuntu-24.04`, with a `timeout-minutes`;
-   - `concurrency` cancels a superseded run of the same pull request;
+   - `concurrency` cancels a superseded run of the same branch or pull request, never a tag run;
    - checkout with every tag and the full history (`fetch-depth: 0`), without persisting
      credentials;
    - `npm ci`, `npm run build`, `npm test`, `npm run lint`, `npm run check:pins`,
@@ -81,12 +84,12 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    (`github.ref_type == 'tag'`) runs `validate:publication` and no `validate` step, and the other
    paths the reverse.
 5. **`dna.yaml`:** `paths.config` gains `.github` (`version:` bumped).
-6. **A real run, before approval:** the task branch is pushed and a pull request opened, with the
-   approver's go; the workflow runs on GitHub, both jobs succeed, and the run's URL and result are
-   recorded in the Execution Notes before `in-review → approved`. A failed run keeps the task in
-   review. The merge stays local (`--no-ff`) and the push of `main` runs the workflow once more. A
-   tag run is not triggered by this task (no pack is published; a tag fails publication by
-   design).
+6. **A real run, before approval, with no pull request:** the task branch is pushed; the workflow
+   runs on GitHub, both jobs succeed, and the run's URL and result are recorded in the Execution
+   Notes before `in-review → approved`. A failed run keeps the task in review. The merge stays local
+   (`--no-ff`), the push of `main` runs the workflow once more, and the remote task branch is then
+   deleted. A tag run is not triggered by this task (no pack is published; a tag fails publication
+   by design).
 7. `npm audit` reports 0 vulnerabilities.
 
 ## Design
@@ -101,3 +104,5 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
   permissions for the later Pages job, the cache key and its safety, a pinned runner and Node.js,
   `npm audit` on the matrix folders without install, the tag path's condition and scope, the
   expected publication failure, timeouts and concurrency.
+- 2026-10-10: amended again while `pending`, as the approver asked: no pull request. CI runs on the
+  push of any branch; the real run of acceptance 6 is on the pushed task branch.
