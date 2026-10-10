@@ -29,16 +29,16 @@ It comes from:
   digests recompute at the tag; every `wingfoil` range recomputes from `compat.yaml`;
 - **plan-023:** until `npm run index` exists (wave W14), `publish` leaves `CATALOG.md` and
   `catalog-index.json` unchanged and records the skipped regeneration;
-- **`pack-release-cycle`:** `validate` records the evidence; `publish` tags, then updates
-  `catalog.yaml` in a later commit, then pushes (by hand).
+- **`pack-release-cycle`:** `validate` records the evidence before the approval gate; `publish`
+  tags, then updates `catalog.yaml` in a later commit, then pushes (by hand).
 
-**The dry run,** as the approver ruled on 2026-10-10. Publication mode cannot pass today: no WingFoil
-release in `compat.yaml` has `format_key: true` (dl-009). So the whole publication path is proven
-in the tests, in a scratch git repository built from a fixture, against a stub WingFoil declared as a
-fictional release with `format_key: true` in a **fixture** `compat.yaml` only, never in the real
-one. A real dry run on the golden tree, with the real `compat.yaml`, stops as designed at
-`no compatible release (publication)` and writes no evidence. Real evidence waits for WingFoil v0.3
-and its intake.
+**The dry run,** as the approver ruled on 2026-10-10. Publication mode cannot pass today: no
+WingFoil release in `compat.yaml` has `format_key: true` (dl-009). So the whole publication path is
+proven in the tests, in a scratch git repository built from a fixture, against a stub WingFoil
+declared as a fictional release with `format_key: true` in a **fixture** `compat.yaml` only, never
+in the real one. A real dry run on the golden tree, with the real `compat.yaml`, stops as designed
+at `no compatible release (publication)` and writes no evidence. Real evidence waits for WingFoil
+v0.3 and its intake.
 
 Not in scope: the feedback note on publication (plan-015 task 12); the line policy (plan-015 task
 13); pushing (the workflow's manual step); the index (wave W14); creating or moving the
@@ -51,47 +51,71 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 1. `npm ci`, `npm run build`, `npm test`, `npm run lint`, `npm run check:pins`,
    `npm run check:schemas` and `npm run check:packs` exit 0; no dependency is added; `npm test`
    needs no network.
-2. **Evidence writer** (`src/evidence.ts`): from a `validate` result it writes the `## Validation`
-   section of a `pack-release` element: the command, the mode, every WingFoil version run with the
-   command lines and their results, the compositions, and the exit code. It **refuses** (exit 1, no
-   text) a result whose mode is not `publication`, that applied a tolerance, or whose code is not 0.
-   No option of any command selects another mode.
-3. **`npm run publish -- --pack <catalog pack id> [--tree <dir>] [--param <name>=<value>]…
-   [--dry-run]`**, on a git repository whose working tree is clean:
+2. **Evidence, in `pack-release-cycle` › `validate`, before the approval gate:**
+   `npm run validate:publication -- --evidence [other options]` writes, after the report, the
+   `## Validation` section of a `pack-release` element (`src/evidence.ts`): the validated commit,
+   the command, the mode, every WingFoil version run with the command lines and their results, the
+   compositions, and the exit code. The writer **refuses** (exit 1, no section) a result whose mode
+   is not `publication`, that applied a tolerance, or whose code is not 0. `--evidence` exists only
+   on `validate:publication`; no option or environment variable of any command selects another mode.
+3. **Compositions validated for a pack:** every preset of the tree, plus each combination given as
+   entries (the documented combinations, `pack-compatibility`). At least one of them must contain
+   the pack, or the command exits 1 naming the pack.
+4. **`npm run publish:pack -- --pack <catalog pack id> [--tree <dir>] [--param <name>=<value>]…
+   [--dry-run]`**, in `publish`, after the approval:
+   - `--tree` must be the top level of a git repository (otherwise exit 3); its working tree must be
+     clean: no tracked change and no untracked file that is not ignored;
    - checks that `pack.yaml`'s `version` is higher than every version of the pack in
-     `catalog.yaml`, that the tag `<id>@<version>` does not exist, and that `CHANGELOG.md` has an
-     entry for the version;
-   - runs the validation in publication mode in-process, with every preset that contains the pack
-     and the pack itself as an entry; writes the evidence of acceptance 2 to standard output, or
-     stops (exit 1) when the writer refuses;
-   - creates the annotated tag `<id>@<version>` at `HEAD`; computes its digest (§13) and its
-     `wingfoil` range (§12); adds the version entry to `catalog.yaml` (and the pack entry, `status:
-     active`, the first time), in a new commit `catalog: <id>@<version>`;
-   - leaves `CATALOG.md` and `catalog-index.json` unchanged and says so (plan-023);
-   - prints the `## Publication` section: tag, commit, digest, range, the index skip;
-   - never pushes.
-
-   With `--dry-run` it does all of this in a temporary clone (tags included) and deletes it: the
-   repository is left byte-for-byte as it was, which a test checks.
-4. **Tag-dependent catalog rules** in `npm run check:packs` (spec-001 §18), each a rule id with a
+     `catalog.yaml` (one living line, before WingFoil 1.0; maintenance lines are plan-015 task 13),
+     that the tag `<id>@<version>` does not exist, and that `CHANGELOG.md` has an entry, a line
+     starting `- <version>:`;
+   - re-runs the publication validation of acceptance 3 at `HEAD` as a guard, and stops (exit 1)
+     when it fails;
+   - creates the annotated, unsigned tag `<id>@<version>` at `HEAD`, whose message is the tag name
+     followed by the CHANGELOG entry; computes its digest (§13) and its `wingfoil` range (§12),
+     refusing an empty range; for a stage pack, the `transitions` map (transition id → the §14
+     digest of `transitions/<id>.yaml` at the tag) of the transitions whose `to` is the pack;
+   - adds, in a new commit `catalog: <id>@<version>` that changes `catalog.yaml` only and keeps its
+     comments, the version entry (`version`, `commit`, `digest`, `formats`,
+     `requires_capabilities`, `requires`, `conflicts`, `wingfoil`, and `transitions` for a stage
+     pack), and the first time the pack entry (`id`, `path: packs/<id>`, `catalog: official`,
+     `status: active`, `versions`); nothing under `packs/` changes;
+   - leaves `CATALOG.md` and `catalog-index.json` unchanged, and prints the line the element's
+     Execution Notes record (plan-023);
+   - prints the `## Publication` section: tag, commit, digest, range, transitions;
+   - never pushes;
+   - the tag and the commit use the caller's git identity (author, committer, tagger), read before
+     the tooling's git environment is closed (`src/git.ts`); the tests pin the `GIT_*_DATE`
+     variables and a test identity;
+   - `--dry-run` does all of this in a temporary clone, tags included, with the matrix cache inside
+     it, and deletes it; the repository's tracked and untracked files, refs and tags are left as
+     they were, which a test checks;
+   - npm's own `--dry-run` would swallow the option when typed without `--`, so the command refuses
+     (exit 3) when `npm_config_dry_run` is set and `--dry-run` is not among its arguments.
+5. **Tag-dependent catalog rules** in `npm run check:packs` (spec-001 §18), each a rule id with a
    passing and a failing test on a scratch git repository: `catalog-tag` (the version's tag exists
    and is annotated), `catalog-commit` (`commit` is the tag's target), `catalog-digest` (the digest
-   recomputes), `catalog-manifest` (`formats`, `requires_capabilities`, `requires`, `conflicts`
-   equal the tagged `pack.yaml`), `catalog-range` (`wingfoil` recomputes from `compat.yaml`),
-   `catalog-transition` (a stage version's transition digests recompute at its tag). On this
-   repository (no tag, no pack) they find nothing.
-5. **The dry run, in the tests (W7 exit criterion, except the note):** a fixture tree with a pack and
-   a fixture `compat.yaml` listing a fictional release with `format_key: true`, run through a stub
-   WingFoil for that release: `publish` produces the annotated tag, the catalog entry with commit,
-   digest and range, and the evidence; afterwards `check:packs` (with the rules of acceptance 4)
-   and `validate:publication` pass on the result.
-6. **A real dry run** on the golden tree, with this repository's `compat.yaml`, exits 1 with
-   `no compatible release (publication)`, writes no evidence and creates no tag; recorded in the
-   Execution Notes.
-7. **Failure paths,** each with a test, exit 1 naming the cause: a dirty working tree, a version not
-   above the catalog's, an existing tag, a missing `CHANGELOG.md` entry, a refused evidence; exit 2
-   on an I/O or git error; exit 3 on bad usage.
-8. `npm audit` reports 0 vulnerabilities.
+   recomputes), `catalog-manifest` (`version`, `formats`, `requires_capabilities`, `requires`,
+   `conflicts` equal the tagged `pack.yaml`), `catalog-range` (`wingfoil` recomputes from
+   `compat.yaml`), `catalog-transition-digest` (a stage version's transition digests recompute at
+   its tag). A tree that is not a git repository and has published versions in its catalog is an I/O
+   error (exit 2). On this repository (no tag, no pack) they find nothing.
+6. **The dry run, in the tests (W7 exit criterion, except the note):** a scratch git repository from
+   a fixture tree with a pack and a fixture `compat.yaml` listing a fictional release with
+   `format_key: true`. The stub WingFoil for that release is injected only through the in-process
+   `install` option (task-011): no CLI option or environment variable. The evidence, then the
+   publication of a first version and of a stage pack with a transition, produce the annotated tag,
+   the catalog entry with commit, digest and range, and the evidence; afterwards `runCheckPacks`
+   (with the rules of acceptance 5) and `runValidate` in publication mode with the stub pass.
+7. **A real dry run,** recorded in the Execution Notes: the golden tree copied into a scratch git
+   repository with this repository's `compat.yaml`, then `npm run publish:pack -- --tree <scratch>
+   --pack <a golden pack> --param project_name=Golden --dry-run`, exits 1 with `no compatible
+   release (publication)`, and creates no tag and no commit.
+8. **Failure paths,** each with a test, exit 1 naming the cause: a dirty working tree, a version not
+   above the catalog's, an existing tag, a missing `CHANGELOG.md` entry, no composition containing
+   the pack, a refused evidence, an empty range; exit 2 on an I/O or git error; exit 3 on bad usage,
+   a `--tree` that is not the repository's top level, and npm's swallowed `--dry-run`.
+9. `npm audit` reports 0 vulnerabilities.
 
 ## Design
 
@@ -99,4 +123,10 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Execution Notes
 
-<!-- Deviations, blockers, decisions taken, WingFoil friction. -->
+- 2026-10-10: amended while `pending`, before the approver's review, after an independent review
+  (a subagent with its own context): the evidence written in `validate`, before the gate, and
+  `publish` re-validating as a guard; the caller's git identity and pinned test dates; `--tree` as
+  the repository's top level; the compositions validated for a pack; the stub injected in-process
+  only; the script named `publish:pack`, refusing npm's swallowed `--dry-run`; stage transitions,
+  the first pack entry, the CHANGELOG entry form, an empty range, `version` in
+  `catalog-manifest`, a defined clean tree, the cache inside the dry run's clone.
