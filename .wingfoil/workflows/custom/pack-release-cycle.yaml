@@ -44,10 +44,10 @@ phases:
     fallback: { step: validate, set_state: validating }
   - name: publish
     description: >-
-      Update catalog.yaml (version, commit, digest, formats, capabilities, computed WingFoil
-      range), commit, tag <catalog pack id>@<version> (dl-004), push.
-      In the commit that updates catalog.yaml, regenerate CATALOG.md and catalog-index.json with
-      npm run index (spec-002 §3); no file under packs/ changes.
+      Tag <catalog pack id>@<version> at the release commit (dl-004, spec-001 §11); then, in one
+      later commit, update catalog.yaml (version, commit, digest, formats, capabilities, computed
+      WingFoil range) and regenerate CATALOG.md and catalog-index.json with npm run index
+      (spec-002 §3); no file under packs/ changes. Push the tag and the commit.
       If WingFoil bundles the pack, add a note to docs/wingfoil-feedback/ for WingFoil's
       advance-bundled-packs release step.
     role: tech-lead
