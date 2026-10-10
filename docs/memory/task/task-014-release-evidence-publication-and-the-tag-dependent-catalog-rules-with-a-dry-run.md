@@ -2,7 +2,7 @@
 id: task-014-release-evidence-publication-and-the-tag-dependent-catalog-rules-with-a-dry-run
 type: task
 title: "Release evidence, publication and the tag-dependent catalog rules, with a dry run"
-status: in-review
+status: approved
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-013-ci-on-pushes-pull-requests-and-release-tags"]
 tags: ["tooling","W7","F5.1"]
