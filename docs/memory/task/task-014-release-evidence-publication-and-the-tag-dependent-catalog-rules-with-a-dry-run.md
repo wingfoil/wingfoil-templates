@@ -197,4 +197,6 @@ Commits: (1) evidence and `validate:publication --evidence`; (2) the tag-depende
   **failure** on both jobs, which this note first misreported. The new identity test compared ISO
   dates, which git prints as `Z` on the runner and `+00:00` locally; it now compares seconds since
   the epoch. The task stays in review until CI passes again.
+- 2026-10-10: CI after the fix: https://github.com/wingfoil/wingfoil-templates/actions/runs/38067441455
+  (`f3eebc5`), conclusion `success`, both jobs `success`.
 
