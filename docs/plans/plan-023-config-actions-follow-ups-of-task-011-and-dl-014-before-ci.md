@@ -2,7 +2,7 @@
 id: plan-023-config-actions-follow-ups-of-task-011-and-dl-014-before-ci
 type: plan
 title: "config actions: follow-ups of task-011 and dl-014 before CI"
-status: draft
+status: active
 workflow: "sw-life-cycle"
 phase: "tooling"
 tags: ["config"]
