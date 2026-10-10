@@ -1,7 +1,7 @@
 # Features — WingFoil-Templates
 
-**Version:** 1.2
-**Date:** 2026-10-06
+**Version:** 1.3
+**Date:** 2026-10-10
 **Status:** Approved
 **Traces to:** [05_journeys.md](05_journeys.md), [03_is-isnot.md](03_is-isnot.md), [01_product-brief.md](01_product-brief.md) §8
 
@@ -46,6 +46,8 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 | F2.5 | **Computed WingFoil range** in the catalog, derived from `compat.yaml`. It is never written by hand. | J1.6, J3.1 | M | L | L |
 | F2.6 | **Presets:** named combinations, organized by the adoption profiles (personas §2). | J6.1 | M | L | L |
 | ~~F2.7~~ | ~~**Release assets.**~~ Dropped in the features review: versions are not published as GitHub Release assets. | brief §8 | — | — | — |
+| F2.8 | **Browsable catalog:** README standard, generated `CATALOG.md`, `catalog-index.json`, `llms.txt` (dl-014, spec-002). | J1.1, J6.1, J7.1 | H | M | L |
+| F2.9 | **Catalog search page** on GitHub Pages, built from the index (dl-014, spec-002 §5). | J6.1 | M | M | L |
 
 ## F3 — Validation tooling
 
@@ -83,7 +85,7 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 
 | ID | Feature | Journey | Value | Effort | Unc. |
 |---|---|---|---|---|---|
-| F6.1 | **Hand-adoption steps in the `base` README.** They are temporary: they are removed when the CLI installs packs, and a generic procedure stays in the user docs (vision review). | J2.1–J2.5 | H | L | L |
+| F6.1 | **Hand-adoption steps in the `base` README,** in its section 3 "Install and update" (spec-002 §2.3). They are temporary: they are removed when the CLI installs packs, and a generic procedure stays in the user docs (vision review). | J2.1–J2.5 | H | L | L |
 | F6.2 | **Parameters for the governed repositories:** paths per Memory type, plan ids, agent name, the `governance` path meaning. | J2.2 | H | M | M |
 
 ## F7 — Community and metrics (later)
