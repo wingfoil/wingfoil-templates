@@ -4,14 +4,15 @@
 name: pack-release-cycle
 kind: sub
 description: "Classify, validate, approve and publish one pack version"
-version: 2
+version: 3
 element: pack-release
 phases:
   - name: prepare
     description: >-
       Classify every change since the previous version (pack-semver), compute the bump, set
       version, formats and requires_capabilities in pack.yaml, compute the WingFoil range from
-      compat.yaml (dl-002), write the CHANGELOG.md entry. On an N-1 maintenance line (after
+      compat.yaml (dl-002), write the CHANGELOG.md entry. Check the README's "Install and update"
+      section against compat.yaml (spec-002 §2.3, CB-3). On an N-1 maintenance line (after
       WingFoil 1.0) only fixes are accepted.
     role: tech-lead
     actions:
@@ -43,10 +44,14 @@ phases:
     fallback: { step: validate, set_state: validating }
   - name: publish
     description: >-
-      Update catalog.yaml (version, commit, digest, formats, capabilities, computed WingFoil
-      range), commit, tag <catalog pack id>@<version> (dl-004), push.
+      Tag <catalog pack id>@<version> at the release commit (dl-004, spec-001 §11); then, in one
+      later commit, update catalog.yaml (version, commit, digest, formats, capabilities, computed
+      WingFoil range) and regenerate CATALOG.md and catalog-index.json with npm run index
+      (spec-002 §3); no file under packs/ changes. Push the tag and the commit.
       If WingFoil bundles the pack, add a note to docs/wingfoil-feedback/ for WingFoil's
       advance-bundled-packs release step.
     role: tech-lead
     produces:
       - "catalog.yaml"
+      - "CATALOG.md"
+      - "catalog-index.json"

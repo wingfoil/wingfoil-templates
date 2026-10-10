@@ -17,17 +17,18 @@ approved element.
 
 Scheduling, as the approver ruled on 2026-10-10: dl-014 is carried out as it is written. This plan
 applies D6 now; plan-015 then goes on (task 10, CI; wave W7); the tooling tasks of D7 (wave W14,
-F2.8 and F2.9) open through `tooling-change` once plan-015 is `done`. Nothing here is a tooling task:
-no code, no fixture, no generated file.
+F2.8 and F2.9) open through `tooling-change` once plan-015 is `done`. Nothing here is a tooling
+task: no code, no fixture, no generated file.
 
 Sources, all `approved`: dl-014 D1–D7 (with the proposals the approver did not restate at the
 ruling: option (b) then (c); wave id W14; `npm run index`, `CATALOG.md`, `catalog-index.json`,
 `llms.txt`, `index/catalog-index.schema.json`); spec-001 §6.1, §11–§13, §18; the vision documents
 `03_is-isnot.md`, `06_features.md`, `07_sequencer.md`, `08_mvp-canvas.md`.
 
-Not in this plan: the tooling tasks T1–T7 of D7; enabling GitHub Pages (the approver's action, after
-CI); README content of any pack (each pack's own tasks); the live check of CB-6 (`base`'s first
-`pack-release`, W9).
+Not in this plan: the code of D7's tooling tasks. The parts D6 also lists are applied here: T1's
+tech-spec and `pack-authoring` rule, and T7's workflow changes; T1 keeps the README lint rules.
+Also not here: enabling GitHub Pages (the approver's action, after CI); README content of any
+pack (each pack's own tasks); the live check of CB-6 (`base`'s first `pack-release`, W9).
 
 ## Steps
 
@@ -37,8 +38,8 @@ a `version:` key, and every vision document with a **Version** line, is bumped o
 
 1. **The tech-spec** "Pack README and catalog index" (`memory add --type tech-spec`): D1 (the
    README standard, its nine sections and which are generated), D2 (the index command and its
-   outputs, with field sources and determinism), D3 (the agent URL patterns), D4 (the search page and
-   its security rules), the acceptance criteria CB-1…CB-8, and the statement that it supersedes
+   outputs, with field sources and determinism), D3 (the agent URL patterns), D4 (the search page
+   and its security rules), the acceptance criteria CB-1…CB-8, and the statement that it supersedes
    spec-001 §6.1's README line. Written by `claude`, reviewed by an independent context, submitted
    for the approver's ruling. spec-001 is `approved` and is not edited: its Execution Notes gain a
    line citing the new spec.
@@ -56,7 +57,8 @@ a `version:` key, and every vision document with a **Version** line, is bumped o
      `catalog-index.json`), generated from the catalog"; "not a manual" stays.
 4. **Workflows:** `pack-release-cycle` › `publish` and `wingfoil-release-intake` regenerate
    `CATALOG.md` and `catalog-index.json` and list them in `produces` (`version:` bumped); the
-   includes are checked by hand (`wingfoil-cli` W-08).
+   includes are checked by hand (`wingfoil-cli` W-08). `pack-release-cycle` › `prepare` gains the
+   README install check that dl-014 CB-3 places there, though D6 does not list it.
 5. **`dna.yaml`:** `paths.docs` gains `CATALOG.md` and `llms.txt`; `paths.sources` gains
    `catalog-index.json` and `index/`; a module `catalog-index` (`version:` bumped).
 6. **Checks:** `npm run -s wingfoil -- workflow list`, `dna show` and `directives list` exit 0 with
@@ -75,5 +77,17 @@ a `version:` key, and every vision document with a **Version** line, is bumped o
 
 ## Execution Notes
 
-<!-- Filled while the plan runs: deviations, blockers, decisions taken, WingFoil friction
-     (also recorded in docs/wingfoil-feedback/). -->
+- 2026-10-10: steps 1–6 on `config/dl-014-amendments`: spec-002 (`f4b7508`, submitted
+  `pending`), `pack-authoring` (`dcb5a86`), the vision documents (`2c31579`), the workflows
+  (`a9261d4`), `dna.yaml` (`fe4d531`). `workflow list`, `dna show` and `directives list` exit 0 with
+  empty stderr; 550 tests, `check:packs` and `validate` pass.
+- 2026-10-10: independent review (a subagent with its own context): request changes. One blocking
+  point went to the approver: `base` and `wingfoil-dogfood` (W9) cannot have a composable example
+  before the first methodology (W10). The approver chose a temporary exemption: such a pack writes
+  `None yet: no methodology pack is published.` as section 7 until a methodology is published.
+  Applied with the rest: per-version fields from `catalog.yaml` and from the tag, each named;
+  `axis`, `slot` and `latest` derived; preset and transition URLs; absolute links to `CATALOG.md`;
+  the exact temporary mark and command rule; anchors in table cells; CI with every tag; `publish`
+  tags before the catalog commit (spec-001 §11); `record` recomputes the ranges in `catalog.yaml`
+  (spec-001 §12) and produces it; this plan's overlap with D7 and the CB-3 check in `prepare`
+  stated.

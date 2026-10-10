@@ -1,7 +1,7 @@
 # Is / Is Not / Does / Does Not — WingFoil-Templates
 
-**Version:** 1.2
-**Date:** 2026-10-06
+**Version:** 1.3
+**Date:** 2026-10-10
 **Status:** Approved
 **Traces to:** [01_product-brief.md](01_product-brief.md), [02_product-vision.md](02_product-vision.md)
 
@@ -20,6 +20,8 @@ Items marked *(pack-model)* depend on proposals ruled in the pack-model phase.
 - An **index** that the CLI reads (`catalog.yaml`): packs, published versions and their digests. It
   comes with a **compatibility table** (`compat.yaml`) that maps each WingFoil release to what it
   reads and provides *(pack-model)*.
+- A **browsable index for people and agents** (`CATALOG.md`, `catalog-index.json`), generated from
+  the catalog (dl-014).
 - The **source of the packs WingFoil bundles** as offline fallback.
 - The **tooling that validates** packs: composition, schema checks, the compatibility matrix,
   determinism.

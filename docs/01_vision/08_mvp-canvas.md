@@ -1,7 +1,7 @@
 # MVP Canvas — WingFoil-Templates
 
-**Version:** 1.0
-**Date:** 2026-10-06
+**Version:** 1.1
+**Date:** 2026-10-10
 **Status:** Approved
 **Traces to:** [07_sequencer.md](07_sequencer.md) (milestones M0–M3), [01_product-brief.md](01_product-brief.md)
 
@@ -39,11 +39,12 @@
 
 ## Features
 
-The 32 features of waves W1–W12 in [07_sequencer.md](07_sequencer.md). In short:
+The 34 features of waves W1–W12 and W14 in [07_sequencer.md](07_sequencer.md). In short:
 
 - the format (manifest, fragments, parameters, slots, `format:` key, AGENTS.md section, schemas);
 - the catalog (tags, digests, `compat.yaml`, computed ranges, presets);
-- the tooling (reference composer, one validation command, matrix, determinism, lint, CI);
+- the tooling (reference composer, one validation command, matrix, determinism, lint, CI) and a
+  browsable catalog for people and agents (`CATALOG.md`, `catalog-index.json`, a search page);
 - the release process (evidence, release intake, line policy, feedback notes);
 - the content: `base`, `wingfoil-dogfood` and the first scope.
 

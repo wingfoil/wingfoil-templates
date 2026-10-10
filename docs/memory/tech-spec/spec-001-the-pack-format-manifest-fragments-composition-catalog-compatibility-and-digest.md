@@ -962,3 +962,7 @@ check the rest, and the composer refuses what they reject.
   - the catalog schema fixes `overlay: false` on the `phase` axis.
 
   With these, every accept the reviewer found in the schemas is a §18 check.
+- 2026-10-10, under plan-021 (dl-014 D6): the README line of §6.1 ("purpose, parameters,
+  adaptation notes") is superseded by spec-002 ("Pack README and catalog index"), which fixes the
+  README's sections and the generated catalog index. This specification is otherwise unchanged:
+  the README stays a file of the pack, hashed into its digest (§13).

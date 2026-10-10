@@ -1,7 +1,7 @@
 # Sequencer — WingFoil-Templates
 
-**Version:** 1.1
-**Date:** 2026-10-06
+**Version:** 1.2
+**Date:** 2026-10-10
 **Status:** Approved
 **Traces to:** [06_features.md](06_features.md), [05_journeys.md](05_journeys.md), [04_personas.md](04_personas.md)
 
@@ -26,7 +26,7 @@ Wave ids (`W1`…) belong to this repository and are unrelated to WingFoil's own
 | Milestone | Goal | Waits for | Serves | Features |
 |---|---|---|---|---|
 | **M0 — Contract** | spec-001 and its schemas approved: the format, the catalog, compatibility. `wingfoil-release-intake` back in the configuration. | the pack-model rulings | Pack author, WingFoil maintainer | 12 |
-| **M1 — Tooling** | one command composes and validates any pack against every compatible WingFoil release; the release process records its evidence. | M0 | Pack author, Agent | 9 |
+| **M1 — Tooling** | one command composes and validates any pack against every compatible WingFoil release; the release process records its evidence; the catalog is browsable by people and agents. | M0 | Pack author, Agent | 11 |
 | **M2 — Foundation** | `base` and `governance/wingfoil-dogfood` published. Templates adopts them first; Benchmark and UI follow between their own releases. | the WingFoil v0.3 formats, M1 | Governed-repository maintainer (primary), WingFoil maintainer (primary) | 5 |
 | **M3 — First catalog (MVP)** | the first official catalog, published and validated, ready when WingFoil v0.4 installs packs. | M2, WingFoil v0.4 for J6–J7 | Adopter (primary from v0.4) | 6 |
 | **M4 — Community** | community catalog, contributions, download traffic. | M3, WingFoil dl-138 Q4 | Community contributor | 3 |
@@ -54,6 +54,7 @@ Tooling work that waits for nothing in WingFoil.
 | W5 — Composer | F3.2 reference composer · F3.4 determinism check · F3.1 one validation command | F3.2 | a fixture pack composes twice into byte-identical files, through one command |
 | W6 — Matrix and lint | F3.3 compatibility matrix · F3.5 lint rules · F3.6 CI | — | a fixture validates against pinned WingFoil releases, in CI |
 | W7 — Release process | F5.1 evidence in `pack-release` · F5.4 feedback notes on publication · F5.3 line policy | — | a dry-run publication of a fixture pack produces tag, catalog entry, digest and note |
+| W14 — Browsable catalog | F2.8 browsable catalog · F2.9 search page | — | a fixture catalog is browsable in `CATALOG.md`, `catalog-index.json` and a search page built in the tests |
 
 ## M2 — Foundation
 
