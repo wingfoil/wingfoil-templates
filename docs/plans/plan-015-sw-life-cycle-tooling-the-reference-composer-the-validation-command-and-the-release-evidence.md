@@ -205,3 +205,8 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   the tests: a dry-run publication of a fixture pack produces tag, catalog entry, digest and note.
   Next: plan-015 task 13 (line policy, F5.3); then, at the end of W7, the source key `svc-018` in
   the inbox README (requested by the coordinating session, confirmed by the approver).
+- 2026-10-10: task-016 (plan-015 task 13: the line policy; F5.3, dl-002, `pack-semver`) done,
+  merged `9a27b8b`, pushed. Before WingFoil 1.0 `publish:pack` keeps one living line; from 1.0 it
+  publishes N, and N-1 from `maint/<id>/<major>.x` (the previous major, a patch or a minor), the tag
+  on that branch and the catalog commit on `main`. The tooling backlog is complete. Next: the
+  source key `svc-018` in the inbox README, then the phase gate.

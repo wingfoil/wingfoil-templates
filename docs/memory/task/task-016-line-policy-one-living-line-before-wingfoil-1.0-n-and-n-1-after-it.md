@@ -150,3 +150,5 @@ Branch `task/task-016-lines`, run through `tooling-delivery` as `developer` (`co
   that already tagged a version.
 - 2026-10-10: CI after the review fixes, https://github.com/wingfoil/wingfoil-templates/actions/runs/38078707653
   (`a95bf53`): `success`, both jobs.
+- 2026-10-10: approved by the approver; merged into `main` with `--no-ff` (`9a27b8b`) and pushed;
+  the remote task branch deleted.
