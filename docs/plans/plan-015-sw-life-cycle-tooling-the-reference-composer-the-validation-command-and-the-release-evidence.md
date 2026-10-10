@@ -200,3 +200,8 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   against a fictional release with `format_key: true` in a fixture `compat.yaml` (the approver's
   ruling); a real dry run on the golden tree stops at `no compatible release (publication)` until
   WingFoil v0.3. Next: plan-015 task 12 (feedback note on publication and schema change, F5.4).
+- 2026-10-10: task-015 (plan-015 task 12: feedback notes on publication and schema change; F5.4,
+  `wingfoil-cli` rule 8) done, merged `c10c9e5`, pushed. With task-014, W7's exit criterion holds in
+  the tests: a dry-run publication of a fixture pack produces tag, catalog entry, digest and note.
+  Next: plan-015 task 13 (line policy, F5.3); then, at the end of W7, the source key `svc-018` in
+  the inbox README (requested by the coordinating session, confirmed by the approver).

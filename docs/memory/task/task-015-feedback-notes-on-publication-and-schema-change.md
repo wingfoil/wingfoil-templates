@@ -140,4 +140,5 @@ Branch `task/task-015-feedback-notes`, run through `tooling-delivery` as `develo
   a published note checks the version's fields. 596 tests.
 - 2026-10-10: CI after the review fixes, https://github.com/wingfoil/wingfoil-templates/actions/runs/38069232503
   (`c740236`): `success`, both jobs.
-
+- 2026-10-10: approved by the approver; merged into `main` with `--no-ff` (`c10c9e5`) and pushed;
+  the remote task branch deleted.
