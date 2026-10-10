@@ -11,7 +11,7 @@ import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { gt, valid } from 'semver';
 
-import { addVersion } from './catalog-edit';
+import { CatalogEditError, addVersion } from './catalog-edit';
 import { CatalogError, loadCatalog } from './catalog';
 import type { Catalog } from './catalog';
 import { findFiles } from './check-schemas';
@@ -173,6 +173,9 @@ function publishIn(tree: string, args: Args, options: PublishOptions, cache: str
   const manifest = load(() => loadYamlFile(join(tree, manifestFile), manifestFile).data,
     manifestFile) as PackManifest;
   const version = manifest.version;
+  if (valid(version) === null) {
+    throw new PublishError(1, `${manifestFile}: version ${JSON.stringify(version)} is not semver`);
+  }
   const tag = `${pack}@${version}`;
   const catalog = load(() => loadCatalog(join(tree, 'catalog.yaml')), 'catalog.yaml');
   const catalogText = readFileSync(join(tree, 'catalog.yaml'), 'utf8');
@@ -212,6 +215,29 @@ function publishIn(tree: string, args: Args, options: PublishOptions, cache: str
 
   git(tree, ['-c', 'tag.gpgSign=false', 'tag', '-a', tag, '-m', `${tag}\n\n${changelog}`],
     identity);
+  try {
+    return [...lines, ...afterTag(tree, pack, tag, version, manifest, range, catalogText,
+      identity)];
+  } catch (error) {
+    // Never half-published: the tag goes, and catalog.yaml is restored.
+    try {
+      git(tree, ['tag', '-d', tag]);
+      git(tree, ['checkout', '--', 'catalog.yaml']);
+    } catch {
+      // The original failure is the one to report.
+    }
+    const message = error instanceof Error ? error.message : String(error);
+    const code = error instanceof CatalogEditError ? 1 : 2;
+    throw new PublishError(code, `${tag}: ${message}; the tag was removed and catalog.yaml `
+      + 'restored', lines);
+  }
+}
+
+/** The steps after the tag: the digest, the catalog commit and the Publication section. */
+function afterTag(tree: string, pack: string, tag: string, version: string,
+  manifest: PackManifest, range: string, catalogText: string, identity: NodeJS.ProcessEnv):
+string[] {
+  const lines: string[] = [];
   const ref = `refs/tags/${tag}`;
   const commit = resolveCommit(tree, ref);
   const entry: Doc = {

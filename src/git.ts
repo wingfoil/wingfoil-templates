@@ -85,8 +85,11 @@ const IDENTITY = ['GIT_AUTHOR_NAME', 'GIT_AUTHOR_EMAIL', 'GIT_AUTHOR_DATE', 'GIT
 /** A value of the caller's own git configuration (global included), or undefined. */
 function callerConfig(repo: string, key: string, base: NodeJS.ProcessEnv): string | undefined {
   try {
+    // The caller's configuration, but never another repository's: no GIT_DIR and the like.
+    const env = Object.fromEntries(Object.entries(base).filter(([name]) =>
+      !['GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'GIT_COMMON_DIR'].includes(name)));
     const value = execFileSync('git', ['-C', repo, 'config', '--get', key], {
-      env: base, stdio: ['ignore', 'pipe', 'ignore'],
+      env, stdio: ['ignore', 'pipe', 'ignore'],
     }).toString('utf8').trim();
     return value === '' ? undefined : value;
   } catch {

@@ -24,6 +24,13 @@ export function addVersion(text: string, packId: string, version: Doc): string {
   if (keyStart === undefined || valueEnd === undefined) {
     throw new CatalogEditError('catalog.yaml has no packs list');
   }
+  // A comment inside the block would be lost in the rewrite: refused, never dropped silently.
+  const lineEnd = text.indexOf('\n', valueEnd);
+  const region = text.slice(keyStart, lineEnd === -1 ? text.length : lineEnd);
+  if (/(^|\s)#/m.test(region)) {
+    throw new CatalogEditError('catalog.yaml: the packs block holds a comment, which the '
+      + 'publication would drop; move it above packs:');
+  }
   const packs = (document.toJS() as Doc)['packs'];
   if (!Array.isArray(packs)) throw new CatalogEditError('catalog.yaml packs is not a list');
   const entries = packs as Doc[];
@@ -32,7 +39,10 @@ export function addVersion(text: string, packId: string, version: Doc): string {
     pack = newPackEntry(packId);
     entries.push(pack);
   }
+  if (!Array.isArray(pack['versions'])) pack['versions'] = [];
   (pack['versions'] as Doc[]).push(version);
+  // A planned pack becomes active with its first version (spec-001 §11).
+  if (pack['status'] === 'planned') pack['status'] = 'active';
   // A block sequence's range runs past its last line break; the edit stops before it.
   let end = valueEnd;
   while (end > keyStart && text[end - 1] === '\n') end -= 1;

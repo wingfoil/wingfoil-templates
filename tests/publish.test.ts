@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { spawnSync } from 'node:child_process';
-import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, chmodSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { after, describe, it } from 'node:test';
 import { parse } from 'yaml';
@@ -164,6 +164,40 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
       noisy.dispose();
     }
   });
+
+  it('tags and commits as the caller, unsigned, with the dates the caller pins', () => {
+    withRepository((repo) => {
+      assert.equal(publish(repo, ['--pack', 'base', ...WITH_KANBAN]).code, 0);
+      assert.equal(repo.git(['log', '-1', '--format=%an <%ae>|%cn|%cI']).trim(),
+        'Test <test@example.invalid>|Test|2026-10-10T12:00:00+00:00');
+      assert.equal(repo.git(['tag', '-l', '--format=%(taggername)|%(taggerdate:iso-strict)',
+        'base@1.0.0']).trim(), 'Test|2026-10-10T12:00:00+00:00');
+      assert.equal(repo.git(['cat-file', '-p', 'refs/tags/base@1.0.0']).includes('BEGIN PGP'),
+        false);
+    });
+  });
+
+  it('removes the tag and restores catalog.yaml when a step after the tag fails (exit 2)',
+    (context) => {
+      if (process.getuid?.() === 0) {
+        context.skip('permissions do not apply to root');
+        return;
+      }
+      withRepository((repo) => {
+        const catalog = join(repo.dir, 'catalog.yaml');
+        const before = readFileSync(catalog, 'utf8');
+        chmodSync(catalog, 0o444);
+        try {
+          const result = publish(repo, ['--pack', 'base', ...WITH_KANBAN]);
+          assert.equal(result.code, 2, result.lines.join('\n'));
+          assert.match(result.lines.join('\n'), /the tag was removed and catalog\.yaml restored/);
+          assert.equal(repo.git(['tag', '-l']).trim(), '');
+          assert.equal(readFileSync(catalog, 'utf8'), before);
+        } finally {
+          chmodSync(catalog, 0o644);
+        }
+      });
+    });
 
   it('exits 3 on bad usage and on a tree that is not the repository\'s top level', () => {
     withRepository((repo) => {

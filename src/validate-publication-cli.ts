@@ -3,16 +3,17 @@
 // (dl-009), for `pack-release-cycle` › `validate` and CI on release tags. No option selects another
 // mode. With `--evidence`, the `## Validation` section of the pack-release element follows the
 // report (F5.1, task-014); it is refused for a run that did not pass.
+import { parseArgs } from 'node:util';
+
 import { EvidenceError, writeEvidence } from './evidence';
 import { GitError, resolveCommit } from './git';
 import { runValidate } from './validate';
 
-/** The tree an argument list names, as runValidate reads it. */
+/** The tree an argument list names, read as runValidate reads it (the last one wins). */
 function treeOf(argv: string[]): string {
-  const index = argv.indexOf('--tree');
-  const inline = argv.find((arg) => arg.startsWith('--tree='));
-  return inline?.slice('--tree='.length) ?? (index >= 0 ? argv[index + 1] : undefined)
-    ?? process.cwd();
+  const { values } = parseArgs({ args: argv, options: { tree: { type: 'string' } }, strict: false,
+    allowPositionals: true });
+  return typeof values.tree === 'string' ? values.tree : process.cwd();
 }
 
 function main(argv: string[]): number {
