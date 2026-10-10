@@ -20,6 +20,8 @@ import type { PackManifest } from './resolve';
 import { repositorySchemas } from './schemas';
 import { secretProblems } from './secret-rules';
 import { overlayProblems } from './overlay-rules';
+import { hasInbox, newestSchemaRecord, readNotes } from './feedback-inbox';
+import { schemaListing } from './schema-digest';
 import { tagProblems } from './tag-rules';
 import { treeProblems } from './tree-rules';
 import { workflowProblems } from './workflow-rules';
@@ -109,6 +111,16 @@ function workflowGroup(context: LintContext): Problem[] {
     workflowProblems(context.catalog, pack, context.packs, context.files));
 }
 
+/** wingfoil-cli rule 8 (task-015): schema/ is as the newest schema feedback note records it. */
+function schemaNoteGroup(context: LintContext): Problem[] {
+  const current = schemaListing(context.tree);
+  if (current === undefined || !hasInbox(context.tree)) return [];
+  const recorded = newestSchemaRecord(readNotes(context.tree));
+  if (recorded?.digest === current.digest) return [];
+  return [{ file: 'schema', rule: 'schema-note', message: `schema/ is ${current.digest}, and no `
+    + 'feedback note records it: run npm run feedback:note -- --schema (wingfoil-cli rule 8)' }];
+}
+
 /** Every regular file under a folder, relative to the tree, links and other entries not entered. */
 function filesUnder(tree: string, rel: string): string[] {
   if (!existsSync(join(tree, rel)) || !lstatSync(join(tree, rel)).isDirectory()) return [];
@@ -127,6 +139,7 @@ function secretGroup(context: LintContext): Problem[] {
 /** The rule groups, in order; each sees the context and the problems the ones before it found. */
 const GROUPS: readonly ((context: LintContext, earlier: Problem[]) => Problem[])[] = [
   packProblems, treeProblems, tagProblems, workflowGroup, overlayProblems, secretGroup,
+  schemaNoteGroup,
 ];
 
 export interface CheckPacksOptions {

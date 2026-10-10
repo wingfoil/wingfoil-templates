@@ -192,7 +192,7 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
         try {
           const result = publish(repo, ['--pack', 'base', ...WITH_KANBAN]);
           assert.equal(result.code, 2, result.lines.join('\n'));
-          assert.match(result.lines.join('\n'), /the tag was removed and catalog\.yaml restored/);
+          assert.match(result.lines.join('\n'), /the tag was removed and the branch reset/);
           assert.equal(repo.git(['tag', '-l']).trim(), '');
           assert.equal(readFileSync(catalog, 'utf8'), before);
         } finally {
