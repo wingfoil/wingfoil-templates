@@ -195,3 +195,8 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   plan-023 closed the follow-ups of task-011 and dl-014 (publish skips the index until W14). Next:
   W7, plan-015 task 11 (release evidence, dry run), which also takes the catalog rules that need a
   tag (moved from task-012).
+- 2026-10-10: task-014 (plan-015 task 11: release evidence, `publish:pack`, the tag-dependent
+  catalog rules; F5.1, dl-009) done, merged `05140d4`, pushed. The dry run of W7 runs in the tests
+  against a fictional release with `format_key: true` in a fixture `compat.yaml` (the approver's
+  ruling); a real dry run on the golden tree stops at `no compatible release (publication)` until
+  WingFoil v0.3. Next: plan-015 task 12 (feedback note on publication and schema change, F5.4).

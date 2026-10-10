@@ -199,4 +199,5 @@ Commits: (1) evidence and `validate:publication --evidence`; (2) the tag-depende
   the epoch. The task stays in review until CI passes again.
 - 2026-10-10: CI after the fix: https://github.com/wingfoil/wingfoil-templates/actions/runs/38067441455
   (`f3eebc5`), conclusion `success`, both jobs `success`.
-
+- 2026-10-10: approved by the approver; merged into `main` with `--no-ff` (`05140d4`) and pushed;
+  the remote task branch deleted.
