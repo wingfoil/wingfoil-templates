@@ -2,7 +2,7 @@
 id: task-015-feedback-notes-on-publication-and-schema-change
 type: task
 title: "Feedback notes on publication and schema change"
-status: backlog
+status: in-progress
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-014-release-evidence-publication-and-the-tag-dependent-catalog-rules-with-a-dry-run"]
 tags: ["tooling","W7","F5.4"]
