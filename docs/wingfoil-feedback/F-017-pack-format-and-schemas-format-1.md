@@ -41,3 +41,15 @@ works with `memory add`.
   `directives/built-in/` with pack files — who owns the folder on upgrade?
 
 Suggested kind in WingFoil: input to the v0.4 planning, with dl-138.
+
+Baseline of the `schema-note` lint rule (task-015): the schemas this note is about.
+
+Schema digest: sha256:1fb43cefb4fee4fe6376dbe5e6515e6d646fd49f7ef3ef78d42020941563d3f9
+
+```text
+e81bb71bf7e7fb44d2a652c8600d2445a8aaf7f6f5f321fe933ad32cafb230bf  catalog.schema.json
+8e10177bd4d4f145d6c659aa65a662a47bddc777e210a55db8472cfa765cf1b7  compat.schema.json
+a39e983745bbca8ebdb45a507f5ca1c1d1dec982e6e2bbe15b6310ea3f2ea3b8  pack.schema.json
+147492f7f6fef3fb075b7c825fca9d33784777fb334f33876959b3946c5028c2  preset.schema.json
+52746d4c0eaa1dd9a7b2766e09c0d07b7f399444974da2f1557118725c0e0fcf  transition.schema.json
+```

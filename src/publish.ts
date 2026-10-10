@@ -12,6 +12,8 @@ import { parseArgs } from 'node:util';
 import { gt, valid } from 'semver';
 
 import { CatalogEditError, addVersion } from './catalog-edit';
+import { INBOX } from './feedback-inbox';
+import { FeedbackNoteError, fromElement, writePublishedNote } from './feedback-note';
 import { CatalogError, loadCatalog } from './catalog';
 import type { Catalog } from './catalog';
 import { findFiles } from './check-schemas';
@@ -51,6 +53,10 @@ interface Args {
   params: string[];
   entries: string[];
   dryRun: boolean;
+  /** The approver states that WingFoil bundles the pack (dl-001): a feedback note follows. */
+  bundled: boolean;
+  /** The pack-release element the note comes from (`prel-<nnn>`), with --bundled. */
+  from: string | undefined;
 }
 
 function parse(argv: string[]): Args {
@@ -63,6 +69,8 @@ function parse(argv: string[]): Args {
         tree: { type: 'string' },
         param: { type: 'string', multiple: true },
         'dry-run': { type: 'boolean' },
+        bundled: { type: 'boolean' },
+        from: { type: 'string' },
       },
       allowPositionals: true,
       strict: true,
@@ -74,8 +82,18 @@ function parse(argv: string[]): Args {
   if (values.pack === undefined || !isCatalogPackId(values.pack)) {
     throw new PublishError(3, '--pack <catalog pack id> is required (spec-001 §4)');
   }
+  const bundled = values.bundled ?? false;
+  let from: string | undefined;
+  if (bundled) {
+    try {
+      from = fromElement(values.from, 'prel');
+    } catch (error) {
+      if (error instanceof FeedbackNoteError) throw new PublishError(3, `--bundled: ${error.message}`);
+      throw error;
+    }
+  }
   return { pack: values.pack, tree: values.tree ?? process.cwd(), params: values.param ?? [],
-    entries: positionals, dryRun: values['dry-run'] ?? false };
+    entries: positionals, dryRun: values['dry-run'] ?? false, bundled, from };
 }
 
 function git(tree: string, args: string[], extra?: NodeJS.ProcessEnv): string {
@@ -213,30 +231,34 @@ function publishIn(tree: string, args: Args, options: PublishOptions, cache: str
       + 'spec-001 §12)', validation.lines);
   }
 
+  const head = git(tree, ['rev-parse', 'HEAD']);
   git(tree, ['-c', 'tag.gpgSign=false', 'tag', '-a', tag, '-m', `${tag}\n\n${changelog}`],
     identity);
   try {
     return [...lines, ...afterTag(tree, pack, tag, version, manifest, range, catalogText,
-      identity)];
+      identity, args)];
   } catch (error) {
-    // Never half-published: the tag goes, and catalog.yaml is restored.
+    // Never half-published: the tag goes, and the branch returns to its head before the tag (the
+    // working tree was clean), whatever commit was already made.
     try {
       git(tree, ['tag', '-d', tag]);
-      git(tree, ['checkout', '--', 'catalog.yaml']);
+      git(tree, ['reset', '--quiet', '--hard', head]);
+      // A note written but not committed is untracked; the tree was clean before.
+      git(tree, ['clean', '-fdq', '--', INBOX]);
     } catch {
       // The original failure is the one to report.
     }
     const message = error instanceof Error ? error.message : String(error);
-    const code = error instanceof CatalogEditError ? 1 : 2;
-    throw new PublishError(code, `${tag}: ${message}; the tag was removed and catalog.yaml `
-      + 'restored', lines);
+    const code = error instanceof CatalogEditError || error instanceof FeedbackNoteError ? 1 : 2;
+    throw new PublishError(code, `${tag}: ${message}; the tag was removed and the branch reset to `
+      + 'its head before the tag', lines);
   }
 }
 
 /** The steps after the tag: the digest, the catalog commit and the Publication section. */
 function afterTag(tree: string, pack: string, tag: string, version: string,
-  manifest: PackManifest, range: string, catalogText: string, identity: NodeJS.ProcessEnv):
-string[] {
+  manifest: PackManifest, range: string, catalogText: string, identity: NodeJS.ProcessEnv,
+  args: Args): string[] {
   const lines: string[] = [];
   const ref = `refs/tags/${tag}`;
   const commit = resolveCommit(tree, ref);
@@ -263,7 +285,15 @@ string[] {
   for (const [id, digest] of Object.entries((entry['transitions'] as Doc | undefined) ?? {})) {
     lines.push(`- Transition ${id}: \`${String(digest)}\``);
   }
-  lines.push('- Not pushed: push the tag and the commit by hand (pack-release-cycle › publish).');
+  if (args.bundled && args.from !== undefined) {
+    // WingFoil bundles the pack: the note of F5.4, in a third commit (task-015).
+    const note = writePublishedNote(tree, tag, args.from);
+    git(tree, ['add', '--', INBOX]);
+    git(tree, ['commit', '--quiet', '--no-verify', '--no-gpg-sign', '-m', `feedback: ${note} ${tag}`],
+      identity);
+    lines.push(`- Feedback note: ${note}`);
+  }
+  lines.push('- Not pushed: push the tag and the commits by hand (pack-release-cycle › publish).');
   return lines;
 }
 
