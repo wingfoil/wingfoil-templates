@@ -81,3 +81,7 @@ Configuration changes this decision implies. Each is applied after approval and 
   - a reference composer in this repository, proposed to WingFoil as its implementation (feedback
     note T15);
   - tooling in TypeScript on Node.js.
+- 2026-10-10: G3's two notes are gone: `X_wingfoil-templates-notes.md` was split into
+  `docs/wingfoil-feedback/F-*.md` (task-010), and `docs/notes/base-regeneration-inputs.md`,
+  committed by mistake in `8b7f782`, was removed after its content moved to dl-015 and spec-001
+  (plan-022). G3 still governs any future working note.

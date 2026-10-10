@@ -114,3 +114,5 @@ One plan per sub-phase, created when the sub-phase starts, `draft → active →
   - the `operations` slot (dl-003 D11), to be ruled before spec-001 fixes the slot list;
   - dl-007.
 - Next, before the specification phase: the configuration changes implied by dl-002…dl-006.
+- 2026-10-10: the input `docs/notes/base-regeneration-inputs.md` was removed (plan-022); what it
+  held for `base` is in dl-015 and spec-001.

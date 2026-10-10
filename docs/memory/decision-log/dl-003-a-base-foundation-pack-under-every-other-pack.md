@@ -150,3 +150,8 @@ Configuration changes this decision implies. Each is applied after approval and 
 - D11, related: declaring which method a phase follows is a WingFoil format question, recorded in
   the feedback notes (T16), not here.
 - Amended on 2026-10-06 while `pending` (D4, D11), under plan-009, before the approver's ruling.
+- 2026-10-10: `docs/notes/base-regeneration-inputs.md`, cited in Context and D2, was removed
+  (plan-022). Its inputs for `base`'s charter are in dl-015-conventions-the-base-pack-fixes-across-the-governed-repositories-names-states-ids-paths-and-the-agent (per-type paths,
+  `paths.governance`, the bug state `fixed`, the agent name, and the naming points of the governed
+  repositories); the `{release}`/`{scope}` tokens are in spec-001 §8.3, the `service` clash in
+  `06_features.md` F4.6, and the `format:` key in spec-001 §5.

@@ -149,3 +149,5 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
 - Next: the `tooling` phase (sequencer M1), one `kanban-delivery` iteration per task with no pack.
   `base` waits for the approver's gate on the final WingFoil v0.3 formats, and is published only
   after v0.3 is released.
+- 2026-10-10: the input `docs/notes/base-regeneration-inputs.md` §1–§2 was removed (plan-022): §1
+  is in spec-001 §5, O4 and O11, §2 in dl-015 and spec-001 §8.3.

@@ -966,3 +966,6 @@ check the rest, and the composer refuses what they reject.
   adaptation notes") is superseded by spec-002 ("Pack README and catalog index"), which fixes the
   README's sections and the generated catalog index. This specification is otherwise unchanged:
   the README stays a file of the pack, hashed into its digest (§13).
+- 2026-10-10: §8.3 cites `docs/notes/base-regeneration-inputs.md` §2 for the project tokens
+  `{release}` and `{scope}`. That note was removed (plan-022); the per-type path conventions it
+  held are in dl-015-conventions-the-base-pack-fixes-across-the-governed-repositories-names-states-ids-paths-and-the-agent C10.
