@@ -91,3 +91,5 @@ a `version:` key, and every vision document with a **Version** line, is bumped o
   tags before the catalog commit (spec-001 §11); `record` recomputes the ranges in `catalog.yaml`
   (spec-001 §12) and produces it; this plan's overlap with D7 and the CB-3 check in `prepare`
   stated.
+- 2026-10-10: spec-002 approved by the approver (`05c05cb`); the merge approved in chat; merged
+  into `main` with `--no-ff` (`86d2124`) and pushed. dl-014 and plan-020 cite the result.

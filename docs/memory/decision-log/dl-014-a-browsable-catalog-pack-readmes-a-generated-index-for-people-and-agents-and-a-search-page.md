@@ -266,3 +266,8 @@ CB-1 and CB-2: the charters of dl-011, dl-012 and dl-013 among them.
   (N13); charters cite D1, journey steps (N14); §6.1, wording, the tag claim (N15).
 - 2026-10-09: unlike dl-011…dl-013, which the approver deferred until WingFoil has stable
   configuration contracts, this decision-log may be ruled before then.
+- 2026-10-10: D6 applied under plan-021, merged `86d2124`: spec-002 ("Pack README and catalog
+  index", `approved`), the `pack-authoring` rules, F2.8 and F2.9 with wave W14, the workflow and
+  `dna.yaml` changes. The approver ruled the scheduling: D7's tooling tasks (W14) open through
+  `tooling-change` once plan-015 is `done`, as written; and a temporary exemption from CB-2 for
+  packs that cannot compose an example before the first methodology (spec-002 §2.4).

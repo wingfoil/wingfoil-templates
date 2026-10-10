@@ -118,3 +118,5 @@ Then commit this plan's Execution Notes and `submit` it (`draft → active`).
   `rule` phase of `decision-log-ingest` is the approver's, with no deadline; `release-planning`,
   named by `wingfoil-cli` rule 7, is not defined here); leaving them `pending` follows dl-007's
   precedent (plan-010 stays `active`). The plan stays `active` meanwhile.
+- 2026-10-10: dl-014's follow-up plan is plan-021, `done` (merged `86d2124`); the tooling tasks of
+  dl-014 D7 wait for plan-015 to be `done`. dl-011…dl-013 stay `pending`.
