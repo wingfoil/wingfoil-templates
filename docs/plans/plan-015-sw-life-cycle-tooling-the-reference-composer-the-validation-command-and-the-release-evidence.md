@@ -188,4 +188,10 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   2026-10-09, the catalog rules that need a git tag (version entry against the tagged pack.yaml,
   pack and transition digests, the `wingfoil` range) move to plan-015 task 11. Next: plan-015
   task 10 (CI).
-
+- 2026-10-10: task-013 (plan-015 task 10: CI; F3.6, dl-009) done, merged `ef07021`, pushed. CI
+  runs on every pushed branch (self-test) and on release tags `**@*` (publication), with no pull
+  requests, as the approver ruled. Its real runs validate the golden fixture against
+  `wingfoil@0.2.2`: **wave W6 is closed** (tasks 8–10). Before it, plan-021 applied dl-014 D6 and
+  plan-023 closed the follow-ups of task-011 and dl-014 (publish skips the index until W14). Next:
+  W7, plan-015 task 11 (release evidence, dry run), which also takes the catalog rules that need a
+  tag (moved from task-012).
