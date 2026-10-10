@@ -191,4 +191,7 @@ Commits: (1) evidence and `validate:publication --evidence`; (2) the tag-depende
   than dropped, since the block is rewritten. A planned pack becomes `active` with its first
   version. The empty-range refusal is unreachable once the guard passes (the guard ran on a
   compatible release), so it has no test of its own; it stays as a second guard.
+- 2026-10-10: CI on the pushed task branch: https://github.com/wingfoil/wingfoil-templates/actions/runs/38066927617
+  (`695050f`) and https://github.com/wingfoil/wingfoil-templates/actions/runs/38067293198
+  (`a07d404`, after the review), both `success` on Node.js 22.12.0 and 22.21.0.
 
