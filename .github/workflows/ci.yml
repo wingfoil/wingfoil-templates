@@ -1,0 +1,77 @@
+# CI (task-013, plan-015 task 10, F3.6). This repository uses no pull requests: branches are merged
+# locally and pushed, so every pushed branch is validated in the matrix's self-test mode; a release
+# tag <catalog pack id>@<version> is validated in publication mode (dl-009), which fails by design
+# until compat.yaml lists a WingFoil release with format_key: true. Every action is pinned to a
+# commit SHA; the job reads the repository and nothing more.
+name: CI
+
+on:
+  push:
+    branches: ['**']
+    # `*` does not match `/`, and pack ids such as methodology/kanban contain one.
+    tags: ['**@*']
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        # The Node.js floor (adr-002) and the newest 22.x the tasks are checked on.
+        node: ['22.12.0', '22.21.0']
+    steps:
+      - name: Check out, with every tag (spec-002 §3.1)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+          check-latest: false
+      - name: Cache the matrix's WingFoil releases (task-011)
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .cache/wingfoil-matrix
+          key: wingfoil-matrix-${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles('src/matrix/wingfoil-*/package-lock.json') }}
+      - name: Install
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm test
+      - name: Lint (ESLint)
+        run: npm run lint
+      - name: Exact pins
+        run: npm run check:pins
+      - name: Schemas
+        run: npm run check:schemas
+      - name: Pack lint (spec-001 §18, F3.5)
+        run: npm run check:packs
+      - name: Audit the root lockfile
+        run: npm audit
+      - name: Audit every matrix release's lockfile
+        run: |
+          for dir in src/matrix/wingfoil-*/; do
+            (cd "$dir" && npm audit)
+          done
+      - name: Validate this repository (self-test)
+        if: github.ref_type != 'tag'
+        run: npm run validate
+      - name: Validate the golden fixture against wingfoil 0.2.2 (self-test, W6 exit criterion)
+        if: github.ref_type != 'tag'
+        run: npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden
+      - name: Validate for publication (dl-009)
+        if: github.ref_type == 'tag'
+        run: npm run validate:publication

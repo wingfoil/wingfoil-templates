@@ -1,6 +1,6 @@
 # Project DNA (P2.4) — scaffolded by `wingfoil init` (Kanban template), then customized for this
 # repository. Structural map of the project: modules, stacks, team + roles, resource paths.
-version: 6
+version: 7
 
 project:
   name: wingfoil-templates
@@ -125,5 +125,5 @@ paths:
   sources: [catalog.yaml, compat.yaml, catalog-index.json, index, schema, packs, transitions, presets, src]
   tests: [tests]
   docs: [README.md, CATALOG.md, llms.txt, docs]
-  config: [.wingfoil, package.json]
+  config: [.wingfoil, .github, package.json]
   governance: [docs/memory, docs/plans, docs/retrospectives, docs/wingfoil-feedback, LICENSE]

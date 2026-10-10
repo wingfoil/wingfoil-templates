@@ -2,7 +2,7 @@
 id: task-013-ci-on-pushes-pull-requests-and-release-tags
 type: task
 title: "CI on pushes, pull requests and release tags"
-status: in-progress
+status: approved
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-012-lint-rules-over-the-whole-tree-spec-001-18-f3.5"]
 tags: ["tooling","W6","F3.6"]
@@ -63,7 +63,7 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
      `npm run check:schemas`, `npm run check:packs`, and `npm audit` on the root lockfile and in
      every `src/matrix/wingfoil-*/` folder (it reads the lockfile; no install). A new advisory can
      turn CI red with no change of code: intended, since it would also block a publication;
-   - on a push to `main` or a pull request: `npm run validate` on this repository and
+   - on any branch push or a pull request: `npm run validate` on this repository and
      `npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden` (the W6
      exit criterion: a fixture validated against `wingfoil@0.2.2` in self-test mode);
    - on a tag (`github.ref_type == 'tag'`): `npm run validate:publication` on this repository,
@@ -128,3 +128,26 @@ Branch `task/task-013-ci`, run through `tooling-delivery` as `developer` (`code-
   expected publication failure, timeouts and concurrency.
 - 2026-10-10: amended again while `pending`, as the approver asked: no pull request. CI runs on the
   push of any branch; the real run of acceptance 6 is on the pushed task branch.
+- 2026-10-10, build on `task/task-013-ci`, as `developer`: `6002337` the workflow, its test and
+  `dna.yaml` 7. The test file ran red first (the workflow did not exist), then 9 of 9.
+  - Locally: 559 tests, ESLint, `check:pins`, `check:schemas`, `check:packs`, the three WingFoil
+    commands with exit 0 and empty stderr, `npm audit` 0 on the root and on
+    `src/matrix/wingfoil-0.2.2/`.
+  - Real run (acceptance 6), on the pushed task branch, no pull request:
+    https://github.com/wingfoil/wingfoil-templates/actions/runs/38049411405, conclusion
+    `success`, jobs `validate (22.12.0)` and `validate (22.21.0)` both `success`. Each ran 559
+    tests, `npm audit` 0 on both lockfiles, `lint: checked 2 files, 0 problems`, and the golden
+    fixture against `wingfoil@0.2.2`: the three commands pass in self-test mode (9, 1 and 3 lines
+    tolerated), `matrix: self-test, 1 run, 0 failed, tolerance applied: 0.2.2`. This is wave W6's
+    exit criterion: a fixture validates against pinned WingFoil releases, in CI.
+- Review (a subagent with its own context, as `reviewer`): approve, no blocking or medium finding.
+  It confirmed the pinned SHAs, the filter semantics (`**@*` matches `methodology/kanban@1.2.0`;
+  pull requests take the self-test path), the audit loop failing the step under `bash -e`, and the
+  real run. Its four low findings applied: the audit loop globs `src/matrix/wingfoil-*/`; the test
+  asserts the loop's exact body and no `continue-on-error`, and an unfiltered `pull_request`;
+  acceptance 2's wording ("any branch push"). `fetch-tags: true` is redundant with
+  `fetch-depth: 0`, kept as harmless and explicit.
+- 2026-10-10: after the review fixes, run
+  https://github.com/wingfoil/wingfoil-templates/actions/runs/38049638412 on `4434eff`, the task
+  branch's head: conclusion `success`, both jobs `success`.
+
