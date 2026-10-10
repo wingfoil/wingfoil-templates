@@ -2,7 +2,7 @@
 id: dl-015-conventions-the-base-pack-fixes-across-the-governed-repositories-names-states-ids-paths-and-the-agent
 type: decision-log
 title: "Conventions the base pack fixes across the governed repositories: names, states, ids, paths and the agent"
-status: draft
+status: pending
 tags: ["packs","base","conventions"]
 ---
 
