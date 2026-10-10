@@ -147,4 +147,7 @@ Branch `task/task-013-ci`, run through `tooling-delivery` as `developer` (`code-
   asserts the loop's exact body and no `continue-on-error`, and an unfiltered `pull_request`;
   acceptance 2's wording ("any branch push"). `fetch-tags: true` is redundant with
   `fetch-depth: 0`, kept as harmless and explicit.
+- 2026-10-10: after the review fixes, run
+  https://github.com/wingfoil/wingfoil-templates/actions/runs/38049638412 on `4434eff`, the task
+  branch's head: conclusion `success`, both jobs `success`.
 
