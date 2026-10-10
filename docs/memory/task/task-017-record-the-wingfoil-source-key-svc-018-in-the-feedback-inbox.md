@@ -32,4 +32,7 @@ Not in scope: the sync (`wingfoil-cli` rule 7) and the `Last sync:` line; the no
 
 ## Design
 
+A one-line edit of `docs/wingfoil-feedback/README.md`, committed on `main` (no code, no branch),
+then pushed; CI runs on the pushed `main`.
+
 ## Execution Notes
