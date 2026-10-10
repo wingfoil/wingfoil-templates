@@ -4,16 +4,20 @@
 name: wingfoil-release-intake
 kind: main
 description: "Record a new WingFoil release in compat.yaml and re-check the active packs"
-version: 1
+version: 2
 phases:
   - name: record
     description: >-
       Add the release to compat.yaml: the format versions it reads and the capabilities it provides,
       taken from WingFoil's own declaration (`wingfoil capabilities`, notes T13) or its CHANGELOG.
-      A new format kind or capability enters the vocabulary here.
+      A new format kind or capability enters the vocabulary here. Then regenerate CATALOG.md and
+      catalog-index.json with npm run index (spec-002 §3): the computed ranges and the Install
+      block may change.
     role: tech-lead
     produces:
       - "compat.yaml"
+      - "CATALOG.md"
+      - "catalog-index.json"
     approval: { by_role: approver }
   - name: recheck
     description: >-
