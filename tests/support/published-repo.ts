@@ -13,9 +13,12 @@ type Doc = Record<string, unknown>;
 /** A fictional WingFoil release with format_key: true, in fixture compat files only (task-014). */
 export const STUB_RELEASE = '9.0.0';
 
-/** This repository's compat.yaml with the fictional release appended. */
-export function fixtureCompat(): string {
-  return `${readFileSync(join(REPO_ROOT, 'compat.yaml'), 'utf8')}  - wingfoil: ${STUB_RELEASE}
+/**
+ * This repository's compat.yaml with a fictional release appended: by default STUB_RELEASE, from
+ * WingFoil 1.0 on; a release below 1.0.0 keeps the tree before it (the line policy, task-016).
+ */
+export function fixtureCompat(release = STUB_RELEASE): string {
+  return `${readFileSync(join(REPO_ROOT, 'compat.yaml'), 'utf8')}  - wingfoil: ${release}
     format_key: true
     reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
     capabilities: []
@@ -23,11 +26,12 @@ export function fixtureCompat(): string {
 }
 
 /** A scratch repository holding packs, this repository's catalog and the fixture compat file. */
-export function treeRepo(specs: PackSpec[] = [BASE_COMPOSABLE, KANBAN]): TestRepo {
+export function treeRepo(specs: PackSpec[] = [BASE_COMPOSABLE, KANBAN],
+  release = STUB_RELEASE): TestRepo {
   const repo = new TestRepo();
   for (const spec of specs) writePack(repo.dir, spec);
   repo.write('catalog.yaml', readFileSync(join(REPO_ROOT, 'catalog.yaml'), 'utf8'));
-  repo.write('compat.yaml', fixtureCompat());
+  repo.write('compat.yaml', fixtureCompat(release));
   repo.write('.gitignore', '.cache/\nnode_modules/\n');
   repo.commitAll('the tree');
   return repo;
