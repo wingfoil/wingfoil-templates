@@ -17,6 +17,13 @@ Applies to every role that writes or reviews pack content under `packs/`.
   outside the axes.
 - Every pack lives in `packs/<axis>/[<slot>/]<name>/` and has a `pack.yaml`, a `README.md` and a
   `CHANGELOG.md`. Its `pack.yaml` validates against `schema/pack.schema.json`.
+- A pack's `README.md` follows spec-002 §2 (dl-014 D1): its nine sections, in order. The generated
+  ones (title, composition, what it adds, parameters) are written by `npm run index` from the pack's
+  own files, never by hand. It holds no WingFoil CLI command; while no released WingFoil provides
+  `pack-install`, its "Install and update" section gives the hand steps, marked temporary.
+- Every example in a README is a fixture, `tests/fixtures/examples/<pack name>/<example>/`, that the
+  validation command composes and validates, about a clearly fictional project (spec-002 §2.4,
+  dl-014 CB-2). Its fictional names are not project values.
 - A pack only ever writes into the WingFoil-managed asset folders of a project: `built-in/` today
   (`directives/built-in/`, `workflows/built-in/`, Memory templates), or a `remote/` class if
   WingFoil's dl-138 Q3 ratifies one (dl-003). It never writes `custom/`: that is where projects
