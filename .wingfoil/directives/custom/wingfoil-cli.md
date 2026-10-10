@@ -9,7 +9,7 @@ tags: [custom, wingfoil, cli, governance]
 
 # Directive — Using the pinned WingFoil CLI
 
-**Version:** 1.0 · **Date:** 2026-10-07 · **Checked against:** `wingfoil@0.2.2`
+**Version:** 1.1 · **Date:** 2026-10-10 · **Checked against:** `wingfoil@0.2.2`
 
 Global. Applies to every role, human or agent, that runs the WingFoil CLI in this repository.
 
@@ -46,4 +46,4 @@ Global. Applies to every role, human or agent, that runs the WingFoil CLI in thi
 | W-09 | `where:` on an `iterate_over` phase is accepted but nothing evaluates it. | Select the iterated elements by reading their frontmatter. | F-018 | |
 | W-10 | Every command needs the working directory to be the root of a git repository (`E_NO_GIT_ROOT`, `E_NOT_AT_GIT_ROOT`). | Run from the repository root; around a composed `.wingfoil/`, `git init` a scratch directory first. | F-021 | |
 | W-11 | WingFoil's built-in directive ids are readable only from a project `wingfoil init` scaffolded. | `src/wingfoil-builtins.ts` keeps a copy; re-check it at every pin bump. | F-019 | |
-| W-12 | The validation rules of the files WingFoil reads live only in its loaders. | Run the pinned WingFoil on every composed configuration (the compatibility matrix). | F-020 | |
+| W-12 | The validation rules of the files WingFoil reads live only in its loaders. | Run the real WingFoil on every composed configuration: the compatibility matrix installs each release it selects from its committed lockfile under `src/matrix/wingfoil-<version>/` (task-011), never the governance pin. | F-020 | |
