@@ -2,7 +2,7 @@
 id: task-013-ci-on-pushes-pull-requests-and-release-tags
 type: task
 title: "CI on pushes, pull requests and release tags"
-status: approved
+status: done
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-012-lint-rules-over-the-whole-tree-spec-001-18-f3.5"]
 tags: ["tooling","W6","F3.6"]
