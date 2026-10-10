@@ -85,8 +85,8 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    - before 1.0, with a fixture `compat.yaml` whose stub release is `0.9.0` (`format_key: true`): a
      `maint/` branch is refused before any validation;
    - from 1.0, with task-014's fictional `9.0.0` stub: `1.0.0`, then `2.0.0` on the current line,
-     then `1.0.1` and `1.1.0` on `maint/base/1.x` cut from the tag `base@1.0.0`, their entries placed
-     before `2.0.0` in `main`'s catalog, the branch's own `catalog.yaml` unchanged;
+     then `1.0.1` and `1.1.0` on `maint/base/1.x` cut from the tag `base@1.0.0`, their entries
+     placed before `2.0.0` in `main`'s catalog, the branch's own `catalog.yaml` unchanged;
    - refused: `1.0.1` from `main`; `1.0.1` on `maint/base/2.x` or `maint/methodology/kanban/1.x`;
      an N-2 version (`1.0.1` when `3.0.0` is the newest); a `2.0.0` on `maint/base/1.x`; a format
      move on N-1; a maintenance branch that does not descend from the line's newest tag.
@@ -98,10 +98,10 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Execution Notes
 
-- 2026-10-10: amended while `pending`, after an independent review and the approver's three
-  rulings (N-1 is the previous major; patch or minor on N-1; tag on the maintenance branch, catalog
-  commit on `main`): the published versions read from `main`'s catalog; the before-1.0 fixture with
-  a `0.9.0` stub, since task-014's `9.0.0` stub is already "from 1.0"; the maintenance refusal before
+- 2026-10-10: amended while `pending`, after an independent review and the approver's three rulings
+  (N-1 is the previous major; patch or minor on N-1; tag on the maintenance branch, catalog commit
+  on `main`): the published versions read from `main`'s catalog; the before-1.0 fixture with a
+  `0.9.0` stub, since task-014's `9.0.0` stub is already "from 1.0"; the maintenance refusal before
   the validation; the window recorded in the N release's `pack-release` element; the checks on the
   branch's descent and on formats; the tag rules on a tag reachable only from the maintenance
   branch.
