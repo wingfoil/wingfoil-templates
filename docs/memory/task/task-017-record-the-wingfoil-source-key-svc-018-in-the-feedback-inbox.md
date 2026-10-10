@@ -2,7 +2,7 @@
 id: task-017-record-the-wingfoil-source-key-svc-018-in-the-feedback-inbox
 type: task
 title: "Record the WingFoil source key svc-018 in the feedback inbox"
-status: backlog
+status: in-progress
 pack: ""            # no pack: the feedback inbox
 depends_on: ["task-016-line-policy-one-living-line-before-wingfoil-1.0-n-and-n-1-after-it"]
 tags: ["W7","feedback"]
