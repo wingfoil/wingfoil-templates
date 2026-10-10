@@ -182,4 +182,10 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   publication mode; each release is installed from a committed lockfile under `src/matrix/`.
   Configuration follow-ups owed, each through its own element: `wingfoil-cli` W-12, and
   `wingfoil-release-intake` › `record` adding the release's lockfile. Next: plan-015 task 9 (lint).
+- 2026-10-10: task-012 (plan-015 task 9: lint rules over the whole tree; spec-001 §18, F3.5) done,
+  merged `302f3de`, pushed. `npm run check:packs` runs the lint alone and `validate` runs it as a
+  step; the composer applies the same rules to the packs it composes. As the approver ruled on
+  2026-10-09, the catalog rules that need a git tag (version entry against the tagged pack.yaml,
+  pack and transition digests, the `wingfoil` range) move to plan-015 task 11. Next: plan-015
+  task 10 (CI).
 

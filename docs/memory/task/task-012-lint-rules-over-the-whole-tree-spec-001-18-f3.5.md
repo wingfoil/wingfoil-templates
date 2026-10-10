@@ -282,4 +282,5 @@ workflow and overlay rules; (4) secret rules; (5) `check:packs`, the validate st
   `src/`; the rule tests live in `tests/check-packs.test.ts` and `tests/secret-rules.test.ts`
   rather than one file per module, as the Design said. After the fixes: 550 tests, ESLint, and the
   real run on `wingfoil@0.2.2` unchanged.
+- 2026-10-10: approved by the approver; merged into `main` with `--no-ff` (`302f3de`) and pushed.
 
