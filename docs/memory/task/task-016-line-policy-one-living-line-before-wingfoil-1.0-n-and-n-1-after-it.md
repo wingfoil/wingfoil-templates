@@ -30,12 +30,24 @@ It comes from:
 
 "From WingFoil 1.0" is read from `compat.yaml`: the policy of lines N and N-1 applies once it lists a
 release `1.0.0` or later. Today it lists 0.2.2 only, so the single-line rule is the one in force;
-the N-1 path is proven in the tests, on a fixture `compat.yaml` with a fictional `1.0.0` release,
-as task-014 proved the publication path.
+the N-1 path is proven in the tests, as task-014 proved the publication path.
 
-Not in scope: the length of the maintenance window and when an N-1 line freezes (dl-002 leaves the
-window to be declared; it stays the approver's decision at each release); classifying a change's
-bump (the `pack-release` element's `bump`, a review by `pack-semver`); backport tooling.
+Ruled by the approver on 2026-10-10:
+- **N-1 is the pack's previous major:** the newest published major below the current one. dl-002
+  speaks of format generations; a format move is always a major (`pack-semver`), and any other major
+  starts a new line too. This is the reading of dl-002 the tooling applies;
+- **N-1 takes a patch or a minor** above the line's newest version, with the line's formats (a
+  format move is a major); "a fix, not a feature" stays the review's judgement (`pack-release`
+  `bump`, `pack-semver`);
+- **an N-1 publication tags the maintenance branch's head and commits the catalog entry on
+  `main`,** where `catalog.yaml` lives (spec-001 §11 order: the tag, then the catalog commit); the
+  maintenance branch's own `catalog.yaml` is never edited.
+
+Not in scope: the length of the maintenance window and when an N-1 line freezes: the window is
+declared in the N release's `pack-release` element, the tool does not check it, and a publication on
+an expired line is stopped at `approve-publication`; `catalog.yaml` format 1 has no marker of a
+frozen line. Also not in scope: classifying a change's bump (`pack-semver`); backport tooling;
+`pack-semver`'s `0.x` rule, untouched.
 
 ## Acceptance
 
@@ -45,26 +57,39 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    `npm run check:schemas` and `npm run check:packs` exit 0; no dependency is added; `npm test`
    needs no network.
 2. **Before WingFoil 1.0** (no release `1.0.0` or later in `compat.yaml`): `publish:pack` keeps
-   task-014's rule, a version above every published version of the pack, on any branch but a
-   `maint/…` one, where it refuses (exit 1: "maintenance lines start with WingFoil 1.0").
-3. **From WingFoil 1.0**, `publish:pack` decides the line from the version and the branch:
+   task-014's rule, a version above every published version of the pack. On a `maint/…` branch it
+   refuses (exit 1: "maintenance lines start with WingFoil 1.0"), before the validation and the
+   range check.
+3. **From WingFoil 1.0**, `publish:pack` decides the line from the version and the branch; the
+   published versions are always read from `catalog.yaml` on `main` (`git show main:catalog.yaml`):
    - **current line (N):** a version above every published version of the pack, from any branch
-     but a `maint/…` one, as before;
-   - **N-1 line:** a version below the newest published one is accepted only when all hold:
-     the checked-out branch is `maint/<catalog pack id>/<major>.x` with `<major>` the version's
-     major; that major is the one just below the newest published major (N-1, not older); the
-     version is a **patch** above the newest published version of that major (fixes only, never
-     features); otherwise exit 1, naming the rule broken;
+     that is not a `maint/…` branch, as before;
+   - **N-1 line:** a version below the newest published one is accepted only when all hold, or exit
+     1 naming the rule broken:
+     - the checked-out branch is `maint/<catalog pack id>/<major>.x`, of this pack, with `<major>`
+       the version's major;
+     - that major is the newest published major below the current one (N-1, not older);
+     - the version is a patch or a minor above the newest published version of that major;
+     - its `pack.yaml` `formats` equal those of that newest version (no format move);
+     - the branch's head descends from that version's tag;
+   - on the N-1 line the tag is made at the maintenance branch's head, and the catalog commit is
+     made on `main` without checking it out (git plumbing on `main`'s tree), so the maintenance
+     branch's working tree and its `catalog.yaml` are untouched;
    - the Publication section prints `- Line: current` or `- Line: <major>.x`, the value of the
      `pack-release` element's `line` field.
 4. **Catalog order:** `catalog-edit` inserts a version entry at its semver position among the pack's
-   versions, so an N-1 patch published after a newer major keeps `versions` ascending (§11); the
-   lint rules of task-012 and task-014 pass on the result.
-5. **Tests** on scratch repositories (task-014's helpers): before 1.0, a `maint/` branch is refused;
-   from 1.0 (a fixture `compat.yaml` listing a fictional release `1.0.0` with `format_key: true`,
-   and its stub), `2.0.0` on the current line, then `1.0.1` on `maint/base/1.x` with its entry
-   placed before `2.0.0`; refused: `1.1.0` on `maint/base/1.x` (a feature), `1.0.1` from the current
-   branch, `1.0.1` on `maint/base/2.x`, an N-2 patch (`1.0.1` when `3.0.0` is the newest).
+   versions, so an N-1 version published after a newer major keeps `versions` ascending (§11). The
+   lint rules of task-012 and task-014 pass on `main` afterwards, the tag rules included for a tag
+   whose commit is reachable only from the maintenance branch.
+5. **Tests** on scratch repositories (task-014's helpers):
+   - before 1.0, with a fixture `compat.yaml` whose stub release is `0.9.0` (`format_key: true`): a
+     `maint/` branch is refused before any validation;
+   - from 1.0, with task-014's fictional `9.0.0` stub: `1.0.0`, then `2.0.0` on the current line,
+     then `1.0.1` and `1.1.0` on `maint/base/1.x` cut from the tag `base@1.0.0`, their entries placed
+     before `2.0.0` in `main`'s catalog, the branch's own `catalog.yaml` unchanged;
+   - refused: `1.0.1` from `main`; `1.0.1` on `maint/base/2.x` or `maint/methodology/kanban/1.x`;
+     an N-2 version (`1.0.1` when `3.0.0` is the newest); a `2.0.0` on `maint/base/1.x`; a format
+     move on N-1; a maintenance branch that does not descend from the line's newest tag.
 6. `npm audit` reports 0 vulnerabilities.
 
 ## Design
@@ -73,4 +98,10 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Execution Notes
 
-<!-- Deviations, blockers, decisions taken, WingFoil friction. -->
+- 2026-10-10: amended while `pending`, after an independent review and the approver's three
+  rulings (N-1 is the previous major; patch or minor on N-1; tag on the maintenance branch, catalog
+  commit on `main`): the published versions read from `main`'s catalog; the before-1.0 fixture with
+  a `0.9.0` stub, since task-014's `9.0.0` stub is already "from 1.0"; the maintenance refusal before
+  the validation; the window recorded in the N release's `pack-release` element; the checks on the
+  branch's descent and on formats; the tag rules on a tag reachable only from the maintenance
+  branch.
