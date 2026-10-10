@@ -54,3 +54,12 @@ What the note holds, and where it goes:
 - The plan stays `active` until dl-015 is ruled, then `done`.
 
 ## Execution Notes
+
+- 2026-10-10: dl-015 filled (`6646b94`) and submitted, `pending` (`140dd13`): C1–C11, the
+  conventions `base` fixes, each with the governed repositories' values, this repository's, the
+  consumer's provisional choice and the proposal. Its ruling waits for `base`'s charter (M2).
+- 2026-10-10: Execution Notes added to dl-003, dl-005, spec-001, task-009, plan-001, plan-008 and
+  plan-012, pointing to dl-015 and spec-001 (`7b495aa`, wording fixed afterwards); their bodies stay
+  as approved. `docs/notes/base-regeneration-inputs.md` removed (`1aa50c3`); it stays readable in
+  the history (`8b7f782`), which `main`'s protection does not allow to rewrite. The plan stays
+  `active` until dl-015 is ruled.

@@ -968,4 +968,4 @@ check the rest, and the composer refuses what they reject.
   the README stays a file of the pack, hashed into its digest (§13).
 - 2026-10-10: §8.3 cites `docs/notes/base-regeneration-inputs.md` §2 for the project tokens
   `{release}` and `{scope}`. That note was removed (plan-022); the per-type path conventions it
-  held are in dl-015-conventions-the-base-pack-fixes-across-the-governed-repositories-names-states-ids-paths-and-the-agent C10.
+  held are in dl-015 C10.
