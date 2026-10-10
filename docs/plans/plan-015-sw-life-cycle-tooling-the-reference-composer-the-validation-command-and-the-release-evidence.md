@@ -2,7 +2,7 @@
 id: plan-015-sw-life-cycle-tooling-the-reference-composer-the-validation-command-and-the-release-evidence
 type: plan
 title: "sw-life-cycle tooling: the reference composer, the validation command and the release evidence"
-status: active
+status: done
 workflow: "sw-life-cycle"
 phase: "tooling"
 tags: ["tooling"]
