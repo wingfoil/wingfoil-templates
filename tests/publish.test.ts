@@ -168,10 +168,12 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
   it('tags and commits as the caller, unsigned, with the dates the caller pins', () => {
     withRepository((repo) => {
       assert.equal(publish(repo, ['--pack', 'base', ...WITH_KANBAN]).code, 0);
-      assert.equal(repo.git(['log', '-1', '--format=%an <%ae>|%cn|%cI']).trim(),
-        'Test <test@example.invalid>|Test|2026-10-10T12:00:00+00:00');
-      assert.equal(repo.git(['tag', '-l', '--format=%(taggername)|%(taggerdate:iso-strict)',
-        'base@1.0.0']).trim(), 'Test|2026-10-10T12:00:00+00:00');
+      // Seconds since the epoch: git versions print an ISO date as Z or +00:00.
+      const pinned = String(Date.parse(DATES.GIT_COMMITTER_DATE) / 1000);
+      assert.equal(repo.git(['log', '-1', '--format=%an <%ae>|%cn|%ct']).trim(),
+        `Test <test@example.invalid>|Test|${pinned}`);
+      assert.equal(repo.git(['tag', '-l', '--format=%(taggername)|%(taggerdate:unix)',
+        'base@1.0.0']).trim(), `Test|${pinned}`);
       assert.equal(repo.git(['cat-file', '-p', 'refs/tags/base@1.0.0']).includes('BEGIN PGP'),
         false);
     });

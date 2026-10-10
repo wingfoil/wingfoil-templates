@@ -193,5 +193,8 @@ Commits: (1) evidence and `validate:publication --evidence`; (2) the tag-depende
   compatible release), so it has no test of its own; it stays as a second guard.
 - 2026-10-10: CI on the pushed task branch: https://github.com/wingfoil/wingfoil-templates/actions/runs/38066927617
   (`695050f`) and https://github.com/wingfoil/wingfoil-templates/actions/runs/38067293198
-  (`a07d404`, after the review), both `success` on Node.js 22.12.0 and 22.21.0.
+  (`a07d404`, after the review). Correction: the first ended in `success`, the second in
+  **failure** on both jobs, which this note first misreported. The new identity test compared ISO
+  dates, which git prints as `Z` on the runner and `+00:00` locally; it now compares seconds since
+  the epoch. The task stays in review until CI passes again.
 
