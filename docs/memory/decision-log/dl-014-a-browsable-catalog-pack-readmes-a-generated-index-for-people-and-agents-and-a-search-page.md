@@ -271,3 +271,7 @@ CB-1 and CB-2: the charters of dl-011, dl-012 and dl-013 among them.
   `dna.yaml` changes. The approver ruled the scheduling: D7's tooling tasks (W14) open through
   `tooling-change` once plan-015 is `done`, as written; and a temporary exemption from CB-2 for
   packs that cannot compose an example before the first methodology (spec-002 §2.4).
+- 2026-10-10: until the index command exists (D7 T2, wave W14), `pack-release-cycle` › `publish`
+  (v4) leaves `CATALOG.md` and `catalog-index.json` unchanged and records the skipped regeneration
+  in the `pack-release` element's Execution Notes, as the approver ruled (option "skip and record");
+  applied under plan-023 (`600ba9f`). The W7 dry-run publication is not blocked by W14.
