@@ -2,7 +2,7 @@
 id: task-014-release-evidence-publication-and-the-tag-dependent-catalog-rules-with-a-dry-run
 type: task
 title: "Release evidence, publication and the tag-dependent catalog rules, with a dry run"
-status: in-progress
+status: approved
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-013-ci-on-pushes-pull-requests-and-release-tags"]
 tags: ["tooling","W7","F5.1"]
@@ -159,3 +159,44 @@ Commits: (1) evidence and `validate:publication --evidence`; (2) the tag-depende
   only; the script named `publish:pack`, refusing npm's swallowed `--dry-run`; stage transitions,
   the first pack entry, the CHANGELOG entry form, an empty range, `version` in
   `catalog-manifest`, a defined clean tree, the cache inside the dry run's clone.
+- 2026-10-10, build on `task/task-014-publish`, as `developer`: `c16cf33` the evidence writer and
+  `validate:publication -- --evidence`; `3a277af` the tag-dependent catalog rules; `caa04d5`
+  `publish:pack`, the catalog edit and the dry run in the tests; `81063cc` the validation before
+  the range check, and the CHANGELOG entry form. 584 tests, ESLint, `check:pins`, `check:packs`.
+- Real dry run (acceptance 7): the golden tree copied into a scratch git repository with this
+  repository's `compat.yaml` and `.gitattributes`, then `npm run publish:pack -- --tree <scratch>
+  --pack methodology/kanban --param project_name=Golden --dry-run`: exit 1,
+  `matrix presets/golden.yaml: no compatible release (publication)`, "the publication validation
+  failed; no tag"; the scratch repository kept one commit, no tag and a clean status.
+- Deviations:
+  - acceptance 5: a catalog with published versions on a tree that is not the top level of a git
+    repository is one `catalog-tag` problem (exit 1), not an I/O error (exit 2): the lint never
+    passes it and its other problems stay visible; the lint tests' trees, which are not
+    repositories, then keep their own rules;
+  - `transition-stages` (task-012) accepts a stage pack of the tree as well as of the catalog: a
+    transition is published with its target stage's first release (spec-001 §14), before that
+    stage is in `catalog.yaml`, so the stricter reading made such a publication impossible;
+  - acceptance 4: a CHANGELOG entry is a line `- <version>`, alone or followed by `:` or a space,
+    the form the golden fixture writes; the range check runs after the guard validation, so the
+    real dry run reports `no compatible release (publication)` as acceptance 7 expects;
+  - the tests were written with each module rather than strictly before it.
+- Review (a subagent with its own context, as `reviewer`): approve with minor changes; 584 tests,
+  lint and checks in a clean clone, plus probes of the identity (a caller `GIT_INDEX_FILE` did not
+  leak; repository-level signing stayed off). Applied: a failure after the tag removes the tag and
+  restores `catalog.yaml` (exit 1 or 2, no crash); a non-semver version refused first; the
+  evidence reads `--tree` as `runValidate` does; the identity lookup ignores `GIT_DIR` and the
+  like; tests of the identity, the rollback and the catalog edit. 588 tests.
+- Deviation, from the review: acceptance 4 says the catalog commit keeps comments. Comments
+  outside the `packs:` block are kept byte for byte; a comment inside it is refused (exit 1) rather
+  than dropped, since the block is rewritten. A planned pack becomes `active` with its first
+  version. The empty-range refusal is unreachable once the guard passes (the guard ran on a
+  compatible release), so it has no test of its own; it stays as a second guard.
+- 2026-10-10: CI on the pushed task branch: https://github.com/wingfoil/wingfoil-templates/actions/runs/38066927617
+  (`695050f`) and https://github.com/wingfoil/wingfoil-templates/actions/runs/38067293198
+  (`a07d404`, after the review). Correction: the first ended in `success`, the second in
+  **failure** on both jobs, which this note first misreported. The new identity test compared ISO
+  dates, which git prints as `Z` on the runner and `+00:00` locally; it now compares seconds since
+  the epoch. The task stays in review until CI passes again.
+- 2026-10-10: CI after the fix: https://github.com/wingfoil/wingfoil-templates/actions/runs/38067441455
+  (`f3eebc5`), conclusion `success`, both jobs `success`.
+

@@ -20,6 +20,7 @@
     "digest": "node dist/src/digest-cli.js",
     "validate": "node dist/src/validate-cli.js",
     "validate:publication": "node dist/src/validate-publication-cli.js",
+    "publish:pack": "node dist/src/publish-cli.js",
     "wingfoil": "wingfoil"
   },
   "devDependencies": {

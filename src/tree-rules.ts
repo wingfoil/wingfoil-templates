@@ -214,15 +214,19 @@ function transitionProblems(context: LintContext, yaml: LoadedYaml): Problem[] {
   if (id !== expected) {
     problems.push(at(yaml, '/id', 'transition-id', `${yaml.file}: id must be ${expected}`));
   }
-  const stages = new Set(list((context.catalog?.raw['packs'])).filter(isDoc)
-    .map((entry) => String(entry['id'])).filter((packId) => packId.startsWith('stage/')));
+  // A stage pack of the catalog, published, or of the tree: a transition is published with the
+  // first release of its target stage (§14), before that stage is in catalog.yaml (task-014).
+  const stages = new Set([
+    ...list((context.catalog?.raw['packs'])).filter(isDoc).map((entry) => String(entry['id'])),
+    ...context.packs.keys(),
+  ].filter((packId) => packId.startsWith('stage/')));
   if (from === to) {
     problems.push(at(yaml, '/to', 'transition-stages', `${yaml.file}: from and to are the same`));
   }
   for (const [field, value] of [['from', from], ['to', to]] as const) {
     if (!stages.has(value)) {
       problems.push(at(yaml, `/${field}`, 'transition-stages',
-        `${yaml.file}: ${field} ${value} is not a stage pack of the catalog`));
+        `${yaml.file}: ${field} ${value} is not a stage pack of the catalog or of the tree`));
     }
   }
   return problems;

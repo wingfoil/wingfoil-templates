@@ -29,8 +29,13 @@ CheckPacksResult {
   return result;
 }
 
+/**
+ * The rules reported, without `catalog-tag`: these trees are not git repositories, so a catalog
+ * with published versions always gets it (task-014); the tag rules have tests of their own.
+ */
 function rules(result: CheckPacksResult): string[] {
-  return [...new Set(result.problems.map((problem) => problem.rule))].sort();
+  return [...new Set(result.problems.map((problem) => problem.rule))]
+    .filter((rule) => rule !== 'catalog-tag').sort();
 }
 
 /** The lint fails the tree with exactly these rules (one, or a sorted list). */
@@ -419,7 +424,7 @@ describe('transition rules', () => {
       write(root, 'transitions/mvp-to-production.yaml',
         TRANSITION('mvp-to-production', 'stage/mvp', 'stage/production'));
     });
-    assert.equal(result.code, 0, result.lines.join('\n'));
+    assert.deepEqual(rules(result), [], result.lines.join('\n'));
   });
 
   it('transition-name and transition-id', () => {
