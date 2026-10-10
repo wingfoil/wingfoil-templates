@@ -2,7 +2,7 @@
 id: plan-021-config-actions-dl-014-amendments-the-catalog-readme-and-index-tech-spec
 type: plan
 title: "config actions: dl-014 amendments, the catalog README and index tech-spec"
-status: draft
+status: active
 workflow: "sw-life-cycle"
 phase: "tooling"
 tags: ["config"]
