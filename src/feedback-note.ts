@@ -18,15 +18,17 @@ export class FeedbackNoteError extends Error {
   }
 }
 
-const FROM = /^(?:task|prel)-\d{3}/;
+/** An element id, `task-<nnn>` or `prel-<nnn>`, alone or with its slug. */
+const FROM = /^((?:task|prel)-\d{3})(?:-[a-z0-9.-]+)?$/;
 
 /** The element a note comes from, as the note's first line names it: `task-<nnn>` or `prel-<nnn>`. */
-export function fromElement(value: string | undefined): string {
-  const match = value === undefined ? null : FROM.exec(value);
-  if (match === null) {
-    throw new FeedbackNoteError(3, '--from <task-<nnn> | prel-<nnn>> is required');
+export function fromElement(value: string | undefined, only?: 'prel'): string {
+  const id = value === undefined ? undefined : FROM.exec(value)?.[1];
+  if (id === undefined || (only !== undefined && !id.startsWith(`${only}-`))) {
+    const expected = only === undefined ? '<task-<nnn> | prel-<nnn>>' : '<prel-<nnn>>';
+    throw new FeedbackNoteError(3, `--from ${expected} is required`);
   }
-  return match[0];
+  return id;
 }
 
 /** The governance pin of package.json, the WingFoil build this repository runs. */
@@ -60,6 +62,11 @@ export function writePublishedNote(tree: string, release: string, from: string):
     candidate['version'] === version);
   if (entry === undefined) {
     throw new FeedbackNoteError(1, `catalog.yaml lists no version ${version} of ${packId}`);
+  }
+  for (const field of ['commit', 'digest', 'wingfoil']) {
+    if (typeof entry[field] !== 'string') {
+      throw new FeedbackNoteError(1, `catalog.yaml: ${release} has no ${field}`);
+    }
   }
   return writeNote(tree, {
     title: `Pack \`${release}\` published, for the bundled copy`,

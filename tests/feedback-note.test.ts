@@ -7,6 +7,7 @@ import { after, describe, it } from 'node:test';
 import { runCheckPacks } from '../src/check-packs';
 import { runFeedbackNote } from '../src/feedback-note';
 import { runPublish } from '../src/publish';
+import { schemaListing } from '../src/schema-digest';
 import type { TestRepo } from './support/git-repo';
 import { assertInbox, notesOf } from './support/inbox';
 import { BASE_COMPOSABLE, KANBAN } from './support/pack-tree';
@@ -71,6 +72,22 @@ describe('npm run feedback:note -- --schema (wingfoil-cli rule 8)', () => {
   });
 });
 
+describe('the digest of schema/', () => {
+  it('in a git repository, counts only the files git tracks (no editor swap file)', () => {
+    const repo = treeRepo();
+    try {
+      addRepositoryFiles(repo.dir);
+      repo.commitAll('inbox and schemas');
+      const before = schemaListing(repo.dir)?.digest;
+      writeFileSync(join(repo.dir, 'schema', '.pack.schema.json.swp'), 'junk');
+      assert.equal(schemaListing(repo.dir)?.digest, before);
+      assert.equal(runCheckPacks(repo.dir).code, 0, runCheckPacks(repo.dir).lines.join('\n'));
+    } finally {
+      repo.dispose();
+    }
+  });
+});
+
 describe('npm run feedback:note -- --published', () => {
   it('writes the note of a published version, read from catalog.yaml', () => {
     const repo = treeRepo();
@@ -96,7 +113,8 @@ describe('npm run feedback:note -- --published', () => {
   it('exits 3 on bad usage and 2 on a missing or malformed inbox', () => {
     withTree((tree) => {
       for (const argv of [[], ['--schema', '--published', 'base@1.0.0', '--from', 'task-015'],
-        ['--schema'], ['--schema', '--from', 'issue-1'], ['--bogus']]) {
+        ['--schema'], ['--schema', '--from', 'issue-1'], ['--schema', '--from', 'task-0159xyz'],
+        ['--bogus']]) {
         assert.equal(runFeedbackNote([...argv, '--tree', tree]).code, 3, argv.join(' '));
       }
       appendFileSync(join(tree, 'schema', 'pack.schema.json'), '\n');
@@ -147,6 +165,8 @@ describe('npm run publish:pack -- --bundled (F5.4; the W7 exit criterion)', () =
     const repo = bundledRepository();
     try {
       assert.equal(publish(repo, ['--bundled']).code, 3);
+      assert.equal(publish(repo, ['--bundled', '--from', 'task-015']).code, 3,
+        'a publication note comes from a pack-release');
       assert.equal(publish(repo, ['--dry-run', '--bundled', '--from', 'prel-001']).code, 0);
       assert.equal(publish(repo, []).code, 0);
       assert.equal(repo.git(['log', '-1', '--format=%s']).trim(), 'catalog: base@1.0.0');

@@ -5,9 +5,10 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 export const INBOX = join('docs', 'wingfoil-feedback');
-const NOTE_FILE = /^F-(\d{3})-.+\.md$/;
+const NOTE_FILE = /^F-(\d{3,})-.+\.md$/;
 const DIGEST_LINE = /^Schema digest: (sha256:[0-9a-f]{64})$/m;
-const LISTING_BLOCK = /^Schema digest: sha256:[0-9a-f]{64}\n\n```text\n([\s\S]*?)```$/m;
+/** The listing a schema note records: a ```text fence after the digest line, blank lines between. */
+const LISTING_BLOCK = /^Schema digest: sha256:[0-9a-f]{64}\n+```text\n([\s\S]*?)```$/m;
 
 /** The inbox is missing or malformed: an I/O error for the commands (exit 2). */
 export class InboxError extends Error {}

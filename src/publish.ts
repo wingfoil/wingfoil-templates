@@ -86,7 +86,7 @@ function parse(argv: string[]): Args {
   let from: string | undefined;
   if (bundled) {
     try {
-      from = fromElement(values.from);
+      from = fromElement(values.from, 'prel');
     } catch (error) {
       if (error instanceof FeedbackNoteError) throw new PublishError(3, `--bundled: ${error.message}`);
       throw error;
@@ -243,6 +243,8 @@ function publishIn(tree: string, args: Args, options: PublishOptions, cache: str
     try {
       git(tree, ['tag', '-d', tag]);
       git(tree, ['reset', '--quiet', '--hard', head]);
+      // A note written but not committed is untracked; the tree was clean before.
+      git(tree, ['clean', '-fdq', '--', INBOX]);
     } catch {
       // The original failure is the one to report.
     }

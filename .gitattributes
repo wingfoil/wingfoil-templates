@@ -2,3 +2,5 @@
 packs/** -text
 # Golden and fixture files are compared byte for byte, CRLF test cases included (task-007).
 tests/fixtures/** -text
+# schema/ is hashed by the schema-note rule (task-015): the bytes as committed.
+schema/** -text
