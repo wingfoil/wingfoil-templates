@@ -138,4 +138,6 @@ Branch `task/task-015-feedback-notes`, run through `tooling-delivery` as `develo
   and `schema/** -text`; `--from` takes a whole id, and `--bundled` needs a `prel-<nnn>`; the
   rollback removes an uncommitted note; the listing parsed with any blank lines; notes past F-999;
   a published note checks the version's fields. 596 tests.
+- 2026-10-10: CI after the review fixes, https://github.com/wingfoil/wingfoil-templates/actions/runs/38069232503
+  (`c740236`): `success`, both jobs.
 
