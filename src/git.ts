@@ -19,10 +19,15 @@ export function gitEnvironment(base: NodeJS.ProcessEnv = process.env): NodeJS.Pr
   return env;
 }
 
-export function runGit(repo: string, args: string[], input?: Buffer): Buffer {
+/**
+ * Runs git in the tooling's own environment. `extra` adds variables on top of it: only the caller's
+ * identity (`callerIdentity`), for the tag and the commit a publication writes.
+ */
+export function runGit(repo: string, args: string[], input?: Buffer,
+  extra: NodeJS.ProcessEnv = {}): Buffer {
   try {
     return execFileSync('git', ['--no-replace-objects', '-C', repo, ...args], {
-      env: gitEnvironment(),
+      env: { ...gitEnvironment(), ...extra },
       input,
       maxBuffer: 1 << 30,
       stdio: ['pipe', 'pipe', 'pipe'],
@@ -72,4 +77,43 @@ export function readBlobs(repo: string, shas: string[]): Buffer[] {
   }
   if (offset !== output.length) throw new GitError('git cat-file: unexpected trailing output');
   return blobs;
+}
+
+const IDENTITY = ['GIT_AUTHOR_NAME', 'GIT_AUTHOR_EMAIL', 'GIT_AUTHOR_DATE', 'GIT_COMMITTER_NAME',
+  'GIT_COMMITTER_EMAIL', 'GIT_COMMITTER_DATE'];
+
+/** A value of the caller's own git configuration (global included), or undefined. */
+function callerConfig(repo: string, key: string, base: NodeJS.ProcessEnv): string | undefined {
+  try {
+    const value = execFileSync('git', ['-C', repo, 'config', '--get', key], {
+      env: base, stdio: ['ignore', 'pipe', 'ignore'],
+    }).toString('utf8').trim();
+    return value === '' ? undefined : value;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * The caller's git identity, read before the tooling's environment closes the configuration: the
+ * caller's `GIT_AUTHOR_*` and `GIT_COMMITTER_*` variables (dates included) when set, else
+ * `user.name` and `user.email`. A publication's tag and commit are the caller's (task-014).
+ */
+export function callerIdentity(repo: string, base: NodeJS.ProcessEnv = process.env):
+NodeJS.ProcessEnv {
+  const identity: NodeJS.ProcessEnv = {};
+  for (const name of IDENTITY) {
+    const value = base[name];
+    if (value !== undefined && value !== '') identity[name] = value;
+  }
+  const name = callerConfig(repo, 'user.name', base);
+  const email = callerConfig(repo, 'user.email', base);
+  for (const role of ['AUTHOR', 'COMMITTER']) {
+    identity[`GIT_${role}_NAME`] ??= name;
+    identity[`GIT_${role}_EMAIL`] ??= email;
+  }
+  if (identity['GIT_AUTHOR_NAME'] === undefined || identity['GIT_AUTHOR_EMAIL'] === undefined) {
+    throw new GitError('no git identity: set user.name and user.email');
+  }
+  return identity;
 }
