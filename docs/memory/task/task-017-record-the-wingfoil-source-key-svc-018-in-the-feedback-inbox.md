@@ -40,3 +40,5 @@ then pushed; CI runs on the pushed `main`.
 - 2026-10-10: `d4013c2` sets the source key to `svc-018` in the inbox README, on `main`, pushed;
   611 tests and `check:packs` pass. CI on `main`,
   https://github.com/wingfoil/wingfoil-templates/actions/runs/38079807906: `success`, both jobs.
+- 2026-10-10: approved by the approver; the coordinating session is told the task, the commit
+  `d4013c2` and that it is pushed.

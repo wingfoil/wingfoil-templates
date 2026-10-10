@@ -210,3 +210,6 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   publishes N, and N-1 from `maint/<id>/<major>.x` (the previous major, a patch or a minor), the tag
   on that branch and the catalog commit on `main`. The tooling backlog is complete. Next: the
   source key `svc-018` in the inbox README, then the phase gate.
+- 2026-10-10: task-017 done: the inbox README records the WingFoil source key `svc-018` (`d4013c2`,
+  pushed), as the coordinating session asked at the end of W7. **Wave W7 is closed** (tasks 11–13).
+  Next: the phase gate.
