@@ -6,5 +6,9 @@ version: 1
 phases:
   - name: inception
     include: inception
+  - name: specification
+    include: specification
   - name: delivery
     include: delivery
+  - name: end-of-life
+    include: end-of-life

@@ -4,3 +4,4 @@ kind: sub
 version: 1
 phases:
   - name: review
+    produces: [docs/retrospective.md]

@@ -40,6 +40,19 @@ export function normalizeText(text: string): string {
   return lf.endsWith('\n') ? lf : `${lf}\n`;
 }
 
+/** An asset's identifier must equal its file stem (§6.1); shared with the lint (task-012). */
+export function assetIdMessage(label: string, idKey: string, value: unknown, stem: string):
+string | undefined {
+  return value === stem ? undefined
+    : `${label}: ${idKey} ${JSON.stringify(value)} must equal its file stem ${stem} (spec-001 §6.1)`;
+}
+
+/** A slot workflow is `kind: sub` (§9); shared with the lint (task-012). */
+export function slotKindMessage(label: string, stem: string, kind: unknown): string | undefined {
+  return kind === 'sub' ? undefined
+    : `${label}: slot workflow ${stem} must have kind: sub (spec-001 §9)`;
+}
+
 function stemOf(path: string): string {
   const name = path.slice(path.lastIndexOf('/') + 1);
   return name.slice(0, name.lastIndexOf('.'));
@@ -76,10 +89,8 @@ function readAsset(file: ComposedFile, pack: ResolvedPack, kind: string, idKey: 
     expected: pack.manifest.formats[kind],
   });
   const stem = stemOf(file.path);
-  if (fields[idKey] !== stem) {
-    throw new CompositionError(`${label}: ${idKey} ${JSON.stringify(fields[idKey])} must equal `
-      + `its file stem ${stem} (spec-001 §6.1)`);
-  }
+  const idProblem = assetIdMessage(label, idKey, fields[idKey], stem);
+  if (idProblem !== undefined) throw new CompositionError(idProblem);
   return { file, pack, label, stem, yaml, fields };
 }
 
@@ -115,10 +126,9 @@ function assetsOf(composed: ComposedDocuments, catalog: Catalog): Plan {
     if (pack === undefined) continue;
     if (file.path.startsWith('workflows/')) {
       const asset = readAsset(file, pack, 'workflow', 'name');
-      if (slotNames.has(asset.stem) && asset.fields['kind'] !== 'sub') {
-        throw new CompositionError(`${asset.label}: slot workflow ${asset.stem} must have `
-          + 'kind: sub (spec-001 §9)');
-      }
+      const kindProblem = slotNames.has(asset.stem)
+        ? slotKindMessage(asset.label, asset.stem, asset.fields['kind']) : undefined;
+      if (kindProblem !== undefined) throw new CompositionError(kindProblem);
       place(plan, `workflows/built-in/${asset.stem}.yaml`, asset, catalog);
     } else if (file.path.startsWith('directives/')) {
       const asset = readAsset(file, pack, 'directive', 'id');

@@ -13,6 +13,9 @@ import { mergeMemoryWithOwners } from './memory-merge';
 import { parameterScopes, resolveParameters, substitute } from './parameters';
 import { listedFiles, resolve } from './resolve';
 import type { ResolvedPack } from './resolve';
+import { secretProblems } from './secret-rules';
+import { workflowProblems } from './workflow-rules';
+import type { RuleFile } from './workflow-rules';
 import { YamlError, parseYaml } from './yaml-load';
 import type { LoadedYaml } from './yaml-load';
 import { isScalar } from 'yaml';
@@ -112,6 +115,30 @@ function fragmentsOf(kind: FragmentKind, packs: ResolvedPack[], files: ComposedF
   return { format: format?.value, fragments };
 }
 
+/** F3.5 on the packs composed (task-012): the composer refuses what the lint rejects (§18). */
+function checkWorkflows(tree: string, catalog: Catalog, packs: ResolvedPack[],
+  files: ComposedFile[]): void {
+  const byPack = new Map<string, RuleFile[]>();
+  for (const file of files) {
+    const pack = packs.find((candidate) => candidate.id === file.pack);
+    const ruleFile: RuleFile = { path: file.path, file: `${pack?.path ?? file.pack}/${file.path}` };
+    if (file.yaml !== undefined) ruleFile.yaml = file.yaml;
+    byPack.set(file.pack, [...(byPack.get(file.pack) ?? []), ruleFile]);
+  }
+  const byId = new Map(packs.map((pack) => [pack.id, pack]));
+  for (const pack of packs) {
+    const [first] = workflowProblems(catalog, pack, byId, byPack);
+    if (first !== undefined) throw new CompositionError(first.message);
+  }
+  // The files as written, before substitution: a value given with --param is the user's, not
+  // the pack's, and the lint scans the files as written too.
+  for (const file of files) {
+    const path = `${byId.get(file.pack)?.path ?? file.pack}/${file.path}`;
+    const [secret] = secretProblems(path, readFileSync(join(tree, path), 'utf8'));
+    if (secret !== undefined) throw new CompositionError(secret.message);
+  }
+}
+
 /** The composed document: `format` and `version: 1` first, then the merged keys (§7.2). */
 function composed(format: number | undefined, merged: Doc): Doc {
   return format === undefined ? {} : { format, version: 1, ...merged };
@@ -129,6 +156,7 @@ export function composeDocuments(
   const values = new Map([...parameters.values()]
     .map((parameter) => [parameter.name, parameter.value]));
   const files = readFiles(tree, packs, values, parameterScopes(packs, parameters));
+  checkWorkflows(tree, catalog, packs, files);
 
   const dna = fragmentsOf('dna', packs, files);
   for (const fragment of dna.fragments) checkDnaFragment(fragment.pack, fragment.data);

@@ -37,9 +37,22 @@ function stem(file: string): string {
   return name.slice(0, name.lastIndexOf('.'));
 }
 
+/** Phases including each name, as the life cycle's workflows must (spec-001 §9). */
+function including(names: string[]): string {
+  return `phases:\n${names.map((name) => `  - { name: ${name}, include: ${name} }\n`).join('')}`;
+}
+
+/** base's life cycle and a methodology's delivery, including their slots (spec-001 §9). */
+export const SW_LIFE_CYCLE = 'format: 1\nname: sw-life-cycle\nkind: main\n'
+  + including(['inception', 'specification', 'delivery', 'end-of-life']);
+export const DELIVERY = `format: 1\nname: delivery\nkind: sub\n${including(['release',
+  'retrospective'])}`;
+
 /** Placeholder content: each file a minimal valid asset of its kind (spec-001 §5, §6.1). */
 function placeholder(file: string): string {
   if (file.startsWith('fragments/')) return 'format: 1\n';
+  if (file === 'workflows/sw-life-cycle.yaml') return SW_LIFE_CYCLE;
+  if (file === 'workflows/delivery.yaml') return DELIVERY;
   if (file.startsWith('workflows/')) return `format: 1\nname: ${stem(file)}\nkind: sub\n`;
   if (file.startsWith('directives/')) {
     return `---\nid: ${stem(file)}\nformat: 1\n---\n# ${stem(file)}\n`;
@@ -91,6 +104,8 @@ export function writePack(root: string, spec: PackSpec): void {
     writeFileSync(join(dir, path), text);
   };
   write('pack.yaml', stringify(manifestFor(spec)));
+  write('README.md', `# ${spec.id}\n`);
+  write('CHANGELOG.md', `# ${spec.id}\n`);
   for (const file of contentFiles(spec)) {
     if (!(spec.omitFiles ?? []).includes(file)) write(file, placeholder(file));
   }
@@ -118,7 +133,7 @@ export const BASE_COMPOSABLE: PackSpec = {
   workflows: ['sw-life-cycle', 'retrospective'],
   fragments: ['dna', 'roles', 'memory'],
   extraFiles: {
-    'workflows/sw-life-cycle.yaml': 'format: 1\nname: sw-life-cycle\nkind: main\n',
+    'workflows/sw-life-cycle.yaml': SW_LIFE_CYCLE,
     'fragments/dna.yaml': 'format: 1\nproject:\n  name: test\n',
     'fragments/roles.yaml': 'format: 1\nglobal: [security]\n',
     'fragments/memory.yaml': 'format: 1\ndefaults:\n  states:\n    sequence: [draft, done]\n',

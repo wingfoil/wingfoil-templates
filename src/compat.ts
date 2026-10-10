@@ -24,19 +24,31 @@ export function loadCompat(path: string): Compat {
       + `${first?.message ?? ''}`);
   }
   const compat = loaded.data as Compat;
-  try {
-    checkAscending(compat.releases);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    throw new CompatError(message.replace(/^compat\.yaml: /, ''));
-  }
-  for (const release of compat.releases) {
+  const [first] = compatMessages(compat);
+  if (first !== undefined) throw new CompatError(first.message);
+  return compat;
+}
+
+/**
+ * The two checks of spec-001 §18 beyond the schema, each with the index of the release it is
+ * about; the loader throws the first, the lint reports each one (task-012).
+ */
+export function compatMessages(compat: Compat): { release: number; message: string }[] {
+  const messages: { release: number; message: string }[] = [];
+  compat.releases.forEach((release, index) => {
+    // Each release against the one before it, so that one breach is reported once.
+    try {
+      checkAscending(compat.releases.slice(Math.max(0, index - 1), index + 1));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      messages.push({ release: index, message: message.replace(/^compat\.yaml: /, '') });
+    }
     for (const name of release.capabilities) {
       if (!Object.hasOwn(compat.capabilities, name)) {
-        throw new CompatError(`release ${release.wingfoil}: capability ${name} is not in `
-          + 'capabilities');
+        messages.push({ release: index, message: `release ${release.wingfoil}: capability ${name} `
+          + 'is not in capabilities' });
       }
     }
-  }
-  return compat;
+  });
+  return messages;
 }

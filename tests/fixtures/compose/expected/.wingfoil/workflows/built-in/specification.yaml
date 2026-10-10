@@ -4,3 +4,4 @@ kind: sub
 version: 1
 phases:
   - name: default
+    produces: [docs/specification.md]

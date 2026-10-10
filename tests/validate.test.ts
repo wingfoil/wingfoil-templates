@@ -121,7 +121,27 @@ describe('npm run validate', () => {
       'capabilities: [time-travel]'), (tree) => {
       const result = validate(['--tree', tree, ...NAME]);
       assert.equal(result.code, 1);
-      assert.ok(result.lines.some((line) => /time-travel/.test(line)), result.lines.join('\n'));
+      assert.equal(result.lines.filter((line) => /time-travel/.test(line)).length, 1,
+        `reported once, by the lint: ${result.lines.join('\n')}`);
+      assert.ok(result.lines.some((line) => /^compat\.yaml:\d+:\d+: compat: /.test(line)));
+    });
+  });
+
+  it('runs the lint after the schema checks, on the golden tree', () => {
+    const result = validate(['--tree', TREE, ...NAME]);
+    assert.equal(result.lines[1], 'lint: checked 48 files, 0 problems', result.lines.join('\n'));
+  });
+
+  it('exits 1 on a lint problem, and composes no preset the lint rejects', () => {
+    withTree((tree) => replaceIn(join(tree, 'presets', 'golden.yaml'), 'wip_limit: 2',
+      'wip_limit: "2"'), (tree) => {
+      const result = validate(['--tree', tree, ...NAME]);
+      assert.equal(result.code, 1, result.lines.join('\n'));
+      assert.ok(result.lines.some((line) => /presets\/golden\.yaml:\d+:\d+: preset-value: /
+        .test(line)), result.lines.join('\n'));
+      assert.ok(result.lines.includes('composition presets/golden.yaml: skipped, the lint '
+        + 'reports it'));
+      assert.ok(result.lines.includes('matrix presets/golden.yaml: skipped'));
     });
   });
 
@@ -149,6 +169,7 @@ describe('npm run validate', () => {
     const result = validate(['--tree', REPO_ROOT]);
     assert.equal(result.code, 0, result.lines.join('\n'));
     assert.ok(result.lines.includes('schemas: checked 2 files, 0 problems'));
+    assert.ok(result.lines.includes('lint: checked 2 files, 0 problems'));
     assert.ok(result.lines.includes('compositions: 0'));
     assert.ok(result.lines.includes('matrix: self-test, 0 runs, 0 failed, tolerance applied: none'));
   });

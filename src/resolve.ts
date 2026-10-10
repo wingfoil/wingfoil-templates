@@ -7,12 +7,18 @@ import { join } from 'node:path';
 
 import type { AxisSpec, Catalog } from './catalog';
 import { isCatalogPackId } from './digest';
-import { listSorted } from './listing';
+import { packLayoutProblems } from './layout-rules';
+import {
+  formatKindsProblems, inventoryProblems, manifestProblems, slotProblems,
+} from './pack-rules';
+import type { Problem } from './problems';
 import { parseEntry, satisfies } from './requirements';
 import { repositorySchemas } from './schemas';
 import type { SchemaSet } from './schemas';
 import { YamlError, loadYamlFile } from './yaml-load';
 import type { LoadedYaml } from './yaml-load';
+
+export { listedFiles } from './pack-rules';
 
 /** A composition cannot be resolved; the message names the packs involved. */
 export class ResolveError extends Error {}
@@ -60,9 +66,6 @@ export interface ResolvedPack {
   source: LoadedYaml;
 }
 
-/** Workflows only base may ship (spec-001 §9). */
-const BASE_ONLY_WORKFLOWS = ['sw-life-cycle', 'retrospective'];
-const FRAGMENT_ORDER = ['dna', 'roles', 'memory'];
 
 interface Constraint {
   id: string;
@@ -84,9 +87,15 @@ function attempt<T>(fn: () => T): T {
   }
 }
 
+/** The composer refuses what the lint rejects (spec-001 §17, §18): the first problem, as an error. */
+function throwFirst(problems: Problem[]): void {
+  const [first] = problems;
+  if (first !== undefined) throw new ResolveError(first.message);
+}
+
 /**
- * Symbolic links and the rest of the layout of spec-001 §6.1 are the lint's (task 9); here a pack
- * is whatever packs/<id>/pack.yaml leads to.
+ * Symbolic links and the rest of the layout of spec-001 §6.1 are the lint's (task-012, over the
+ * whole tree); here a pack is whatever packs/<id>/pack.yaml leads to.
  */
 function loadPack(tree: string, id: string, schemas: SchemaSet, requiredBy: string): ResolvedPack {
   const path = `packs/${id}`;
@@ -107,12 +116,11 @@ function loadPack(tree: string, id: string, schemas: SchemaSet, requiredBy: stri
     throw new ResolveError(`${file}:${line}:${column}: ${schemaError.instancePath || '/'} `
       + `${schemaError.keyword}: ${schemaError.message}`);
   }
-  // The schema already ties axis, slot and name to the id (spec-001 §6.2); the directory is ours.
   const manifest = loaded.data as PackManifest;
-  if (manifest.id !== id) {
-    throw new ResolveError(`${path}: pack.yaml declares the id ${manifest.id}`);
-  }
-  return { id, version: manifest.version, path, manifest, requiredIds: [], source: loaded };
+  const pack: ResolvedPack = { id, version: manifest.version, path, manifest, requiredIds: [],
+    source: loaded };
+  throwFirst(manifestProblems(pack));
+  return pack;
 }
 
 function parseRequest(request: string[]): Constraint[] {
@@ -148,14 +156,9 @@ function collect(tree: string, catalog: Catalog, requested: Constraint[], schema
     if (packs.has(next.id)) continue;
     const pack = loadPack(tree, next.id, schemas, next.requiredBy);
     packs.set(pack.id, pack);
-    const seen = new Set<string>();
     for (const entry of pack.manifest.requires ?? []) {
+      // manifestProblems has refused a pack requiring itself or one id twice.
       const required = attempt(() => parseEntry(entry, 'requires'));
-      if (required.id === pack.id) throw new ResolveError(`${pack.id} requires itself`);
-      if (seen.has(required.id)) {
-        throw new ResolveError(`${pack.id} requires ${required.id} twice`);
-      }
-      seen.add(required.id);
       pack.requiredIds.push(required.id);
       constraints.push({ id: required.id, range: required.range ?? '', from: pack.id });
       queue.push({ id: required.id, requiredBy: `required by ${pack.id}` });
@@ -190,123 +193,47 @@ function checkConflicts(ordered: ResolvedPack[], packs: Map<string, ResolvedPack
   }
 }
 
-function membersOf(axis: AxisSpec, ordered: ResolvedPack[]): ResolvedPack[] {
+function membersOf<T extends Pick<ResolvedPack, 'manifest'>>(axis: AxisSpec, ordered: T[]): T[] {
   return ordered.filter((pack) => pack.manifest.axis === axis.name);
 }
 
-function checkAxes(catalog: Catalog, ordered: ResolvedPack[]): void {
+/**
+ * The cardinalities of spec-001 §3, read from the catalog, for the packs of one composition; every
+ * breach, as a message. The resolver throws the first; the lint reports each one for a preset.
+ */
+export function axesMessages(
+  catalog: Catalog,
+  ordered: Pick<ResolvedPack, 'id' | 'manifest'>[],
+): string[] {
+  const messages: string[] = [];
   const known = new Set(catalog.axes.map((axis) => axis.name));
   for (const pack of ordered) {
     if (pack.id !== catalog.foundation && !known.has(pack.manifest.axis ?? '')) {
-      const axis = String(pack.manifest.axis);
-      throw new ResolveError(`${pack.id}: axis ${axis} is not in the catalog`);
+      messages.push(`${pack.id}: axis ${String(pack.manifest.axis)} is not in the catalog`);
     }
   }
   for (const axis of catalog.axes) {
     const members = membersOf(axis, ordered);
-    const names = (packs: ResolvedPack[]): string => packs.map((pack) => pack.id).join(', ');
+    const names = (packs: typeof ordered): string => packs.map((pack) => pack.id).join(', ');
     if (axis.required && members.length === 0) {
-      throw new ResolveError(`axis ${axis.name} is required, and no pack of it is given`);
+      messages.push(`axis ${axis.name} is required, and no pack of it is given`);
     }
     if (axis.cardinality === 'one' && members.length > 1) {
-      throw new ResolveError(`axis ${axis.name} takes one pack: ${names(members)}`);
+      messages.push(`axis ${axis.name} takes one pack: ${names(members)}`);
     }
     if (axis.cardinality === 'one-per-slot') {
       const slots = axis.slots ?? [];
-      const unknown = members.find((pack) => !slots.includes(pack.manifest.slot ?? ''));
-      if (unknown !== undefined) {
-        throw new ResolveError(`${unknown.id}: slot ${String(unknown.manifest.slot)} is not a slot `
+      for (const unknown of members.filter((pack) => !slots.includes(pack.manifest.slot ?? ''))) {
+        messages.push(`${unknown.id}: slot ${String(unknown.manifest.slot)} is not a slot `
           + `of axis ${axis.name}`);
       }
-      for (const slot of axis.slots ?? []) {
+      for (const slot of slots) {
         const filling = members.filter((pack) => pack.manifest.slot === slot);
-        if (filling.length > 1) {
-          throw new ResolveError(`slot ${slot} takes one pack: ${names(filling)}`);
-        }
+        if (filling.length > 1) messages.push(`slot ${slot} takes one pack: ${names(filling)}`);
       }
     }
   }
-}
-
-function workflowsOf(pack: ResolvedPack): string[] {
-  return pack.manifest.contents.workflows ?? [];
-}
-
-/** The slots of spec-001 §9, read from the catalog. */
-function checkSlots(catalog: Catalog, ordered: ResolvedPack[]): void {
-  for (const slot of catalog.slots) {
-    const axis = catalog.axes.find((candidate) => candidate.name === slot.filledBy);
-    const fillers = ordered.filter((pack) => pack.manifest.axis === slot.filledBy
-      && (axis?.slots === undefined || pack.manifest.slot === slot.name));
-    for (const filler of fillers) {
-      if (!workflowsOf(filler).includes(slot.name)) {
-        throw new ResolveError(`${filler.id}: fills slot ${slot.name} but ships no `
-          + `workflows/${slot.name}.yaml`);
-      }
-    }
-    for (const pack of ordered) {
-      if (workflowsOf(pack).includes(slot.name) && !fillers.includes(pack)
-        && pack.id !== slot.default) {
-        throw new ResolveError(`${pack.id}: ships workflow ${slot.name} but does not fill `
-          + `slot ${slot.name}`);
-      }
-    }
-  }
-  for (const pack of ordered) {
-    if (pack.id === catalog.foundation) continue;
-    const reserved = workflowsOf(pack).find((name) => BASE_ONLY_WORKFLOWS.includes(name));
-    if (reserved !== undefined) {
-      throw new ResolveError(`${pack.id}: ships ${reserved}, which only ${catalog.foundation} `
-        + 'may ship (spec-001 §9)');
-    }
-  }
-}
-
-/** Files under a pack directory's inventory folders, relative to the pack; no subdirectory. */
-function presentFiles(tree: string, pack: ResolvedPack): string[] {
-  const dir = join(tree, pack.path);
-  const files: string[] = [];
-  for (const folder of ['fragments', 'directives', 'workflows', 'memory-templates', 'agents']) {
-    for (const entry of listSorted(join(dir, folder))) {
-      if (entry.isDirectory) {
-        throw new ResolveError(`${pack.id}: ${folder}/${entry.name} is a directory; `
-          + `${folder}/ holds files only (spec-001 §6.1)`);
-      }
-      files.push(`${folder}/${entry.name}`);
-    }
-  }
-  return files;
-}
-
-/** The files a pack's inventory lists, relative to the pack (spec-001 §6.4). */
-export function listedFiles(contents: PackContents): string[] {
-  return [
-    ...(contents.fragments ?? []).map((name) => `fragments/${name}.yaml`),
-    ...(contents.directives ?? []).map((name) => `directives/${name}.md`),
-    ...(contents.workflows ?? []).map((name) => `workflows/${name}.yaml`),
-    ...(contents.memory_templates ?? []).map((name) => `memory-templates/${name}.md`),
-    ...(contents.agents_section === true ? ['agents/section.md'] : []),
-  ];
-}
-
-/** spec-001 §6.4: every listed file exists, every file present is listed. */
-function checkInventory(tree: string, pack: ResolvedPack): void {
-  const fragments = pack.manifest.contents.fragments ?? [];
-  const positions = fragments.map((name) => FRAGMENT_ORDER.indexOf(name));
-  if (positions.some((position, index) => index > 0 && position < (positions[index - 1] ?? -1))) {
-    throw new ResolveError(`${pack.id}: contents.fragments must keep the order `
-      + `${FRAGMENT_ORDER.join(', ')}`);
-  }
-  const listed = listedFiles(pack.manifest.contents);
-  const present = presentFiles(tree, pack);
-  const missing = listed.filter((file) => !present.includes(file)).sort(byBytes)[0];
-  if (missing !== undefined) {
-    throw new ResolveError(`${pack.id}: ${missing} is listed in contents but missing`);
-  }
-  const unlisted = present.filter((file) => !listed.includes(file))[0];
-  if (unlisted !== undefined) {
-    throw new ResolveError(`${pack.id}: ${unlisted} is present but not listed in contents`);
-  }
+  return messages;
 }
 
 /** Kahn's algorithm on the requires inside one axis; ties in byte order of the id (§7.1). */
@@ -367,8 +294,13 @@ export function resolve(tree: string, catalog: Catalog, request: string[]): Reso
   checkRanges(packs, constraints);
   const byId = [...packs.values()].sort((a, b) => byBytes(a.id, b.id));
   checkConflicts(byId, packs);
-  checkAxes(catalog, byId);
-  checkSlots(catalog, byId);
-  for (const pack of byId) checkInventory(tree, pack);
+  const [axisProblem] = axesMessages(catalog, byId);
+  if (axisProblem !== undefined) throw new ResolveError(axisProblem);
+  for (const pack of byId) throwFirst(slotProblems(catalog, pack));
+  for (const pack of byId) {
+    throwFirst(inventoryProblems(tree, pack));
+    throwFirst(formatKindsProblems(pack));
+    throwFirst(packLayoutProblems(tree, pack));
+  }
   return order(catalog, packs);
 }
