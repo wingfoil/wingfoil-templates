@@ -119,3 +119,15 @@ Branch `task/task-015-feedback-notes`, run through `tooling-delivery` as `develo
   the schema listing recorded in each schema note and taken from the working tree; the slugs and
   the schema title; the rollback of a failure after the catalog commit; CI red on a schema change
   until its note, as rule 8 intends; more failure paths.
+- 2026-10-10, build on `task/task-015-feedback-notes`, as `developer`: `9b596aa` the F-017
+  baseline, a hand edit of an open note (rule 2: no verb writes it), adding `Schema digest:
+  sha256:1fb43cef…` and the listing of `schema/`; `b00e6b5` the command, the `schema-note` rule,
+  `publish:pack --bundled`, and the inbox checks moved to `tests/support/inbox.ts` so that they run
+  on scratch trees. 595 tests, ESLint, `check:pins`, `check:packs` (0 problems after the baseline,
+  1 `schema-note` problem before it).
+- The W7 exit criterion holds in the tests: a publication of a fixture pack against the fictional
+  release produces the annotated tag, the catalog entry with commit, digest and range, and the
+  feedback note F-022 with its ledger row; the inbox checks and `check:packs` pass on the result.
+- Deviation: a failure after the tag now resets the branch to its head before the tag (task-014
+  restored `catalog.yaml` only), since a third commit can now fail after the catalog commit.
+
