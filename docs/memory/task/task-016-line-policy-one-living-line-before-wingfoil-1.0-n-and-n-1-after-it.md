@@ -2,7 +2,7 @@
 id: task-016-line-policy-one-living-line-before-wingfoil-1.0-n-and-n-1-after-it
 type: task
 title: "Line policy: one living line before WingFoil 1.0, N and N-1 after it"
-status: in-review
+status: approved
 pack: ""            # tooling task (sw-life-cycle › tooling, tooling-delivery)
 depends_on: ["task-015-feedback-notes-on-publication-and-schema-change"]
 tags: ["tooling","W7","F5.3"]
