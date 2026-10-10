@@ -44,15 +44,15 @@ other level-1 or level-2 heading:
 
 | # | Heading | Kind | Content |
 |---|---|---|---|
-| 1 | `# <title>` | generated | `pack.yaml` `title` as the heading; then `description`; then one line `Axis: <axis> · Slot: <slot>` (`Slot` only for phase packs; `base` writes `Foundation`) |
+| 1 | `# <title>` | generated | `pack.yaml` `title` as the heading; then `description`; then one line `Axis: <axis>` and, for a phase pack, ` · Slot: <slot>`; `base` writes `Axis: foundation` |
 | 2 | `## When to use it` | written | the problem it solves; the adoption profiles it serves (`docs/01_vision/04_personas.md` §2), as the presets that contain it name them; when **not** to use it |
 | 3 | `## Install and update` | written | §2.3 |
 | 4 | `## Composition` | generated | `requires`, `conflicts`, `formats`, `requires_capabilities`; for every pack but `base`, the Memory types, roles and workflows it adds or tightens over `base` |
-| 5 | `## What it adds` | generated | workflows (name, kind, phases with their roles and gates), Memory types (states, gates), directives (id, the roles fragment entries that assign them), fragments, Memory templates |
+| 5 | `## What it adds` | generated | workflows (name, kind, phases with their roles and gates), Memory types (states, gates), directives (id, the roles fragment entries that assign them), fragments (`dna`, `roles`), Memory templates |
 | 6 | `## Parameters` | generated | one row per parameter: name, type, default (or "required"), description; "None." when there is none |
 | 7 | `## Examples` | written | §2.4 |
 | 8 | `## Sources and adaptations` | written | the sources of the method, with their edition, and what the pack adapts from them (dl-007 M3); "None: written for this catalog." when there is none |
-| 9 | `## Versions` | written | a link to `CHANGELOG.md` and a link to the pack's entry in `CATALOG.md` (§3.2) |
+| 9 | `## Versions` | written | a link to `CHANGELOG.md` and a link to the pack's entry in `CATALOG.md` (§3.2, §2.5) |
 
 A written section may contain level-3 headings and below.
 
@@ -75,19 +75,26 @@ intake or a new version of another pack never changes a pack's directory.
 
 For section 4, "what it adds or tightens over `base`" is computed from the pack's own fragments
 alone: the Memory types, roles and states it declares, and the workflows it ships; it is not a
-composition with `base`. Versions appear only in `CHANGELOG.md` and in the index (§3).
+composition with `base`, so it lists what the pack declares without telling an addition from a
+tightening. Versions appear only in `CHANGELOG.md` and in the index (§3).
 
 ### 2.3 Install and update
 
 While no release listed in `compat.yaml` provides the capability `pack-install`, section 3
-**must** give the hand-adoption steps (F6.1) and mark them, in its first line, as **temporary**:
-they are replaced by WingFoil's commands once a release provides them (`03_is-isnot.md`: not a
-manual). Once such a release is listed, the section **should** shrink to a link.
+**must** give the hand-adoption steps (F6.1), and its first line after the heading **must** be:
 
-In every case section 3 links the "Install" block of `CATALOG.md` (§3.2), which says what the CLI
-supports. **No README contains a WingFoil CLI command**: no line, in a code block or in inline code,
-starting with `wingfoil `, `npx wingfoil`, `npm exec wingfoil` or `npm run -s wingfoil` (or
-`npm run wingfoil`). The hand steps name files and keys, not commands.
+```markdown
+> **Temporary:** these hand steps are replaced by WingFoil's commands once a release provides them.
+```
+
+(`03_is-isnot.md`: not a manual). Once such a release is listed, the section **should** shrink to a
+link.
+
+In every case section 3 links the "Install" block of `CATALOG.md` (§3.2, §2.5), which says what the
+CLI supports. **No README contains a WingFoil CLI command**: no code-block line and no inline code
+span whose text, after leading whitespace and an optional `$ `, starts with `wingfoil `,
+`npx wingfoil`, `npm exec wingfoil`, `npm run wingfoil` or `npm run -s wingfoil`. The hand steps
+name files and keys, not commands.
 
 ### 2.4 Examples
 
@@ -98,13 +105,27 @@ spec-001 §4's grammar) followed by:
   the project gets, and how one phase runs under it.
 
 Every example **is a fixture**. Its directory holds `example.yaml`, written in the preset format
-(spec-001 §15) with `id` equal to `<example>`, whose `packs` contain the pack. The validation
-command composes and validates every example as it does a preset (determinism, matrix, lint), so an
-example cannot rot.
+(spec-001 §15) with `id` equal to `<example>`, whose `packs` contain the pack and name only packs of
+the tree. The validation command composes and validates every example as it does a preset
+(determinism, matrix, lint), so an example cannot rot. An example fixture is not a preset: it is
+not indexed (§3) and names no profile.
+
+**Temporary exemption** (the approver's ruling, 2026-10-10): every composition needs a methodology
+(spec-001 §3), and none exists before wave W10. A pack whose examples cannot compose yet, because
+the tree holds no methodology, writes `None yet: no methodology pack is published.` as section 7;
+CB-2 accepts it until the first methodology is published, and the pack adds its examples in a later
+version.
 
 Examples name no real project, person or adopter (`pack-authoring`, dl-003 D10). Their fictional
 names are not project values: the "no project values" review rule of `pack-authoring` does not
 apply to section 7 and to `tests/fixtures/examples/`.
+
+### 2.5 Links to the index
+
+A README links `CATALOG.md` absolutely, as
+`https://github.com/wingfoil/wingfoil-templates/blob/main/CATALOG.md#<anchor>`: a tagged README
+predates its own version's catalog entry, so a relative link would open an outdated `CATALOG.md`.
+Links inside the pack (`CHANGELOG.md`, its files) are relative.
 
 ## 3. The generated index
 
@@ -123,10 +144,13 @@ Determinism (`determinism` directive): no clock, no randomness, no environment; 
 presets and transitions in ascending byte order of their ids, versions in semver order; LF line
 endings and a final newline; JSON with two-space indentation and keys in the order §3.3 gives.
 
-Reading published data: a published version is a `versions[]` entry of `catalog.yaml`; its
-per-version fields are read from its tag `<catalog pack id>@<version>` (`git show <tag>:…`), never
-from `main`. A tag named by `catalog.yaml` and missing from the repository is an error (exit 2). A
-pack with no published version is not listed in `CATALOG.md` or `catalog-index.json`.
+Reading published data: a published version is a `versions[]` entry of `catalog.yaml`. Its
+`version`, `tag` and `wingfoil` (the computed range) come from `catalog.yaml` at the working commit,
+because a tag precedes its own catalog entry (spec-001 §11); the fields taken from its `pack.yaml`
+and README are read at its tag `<catalog pack id>@<version>` (`git show <tag>:…`), never from
+`main`. A tag named by `catalog.yaml` and missing from the repository is an error (exit 2), so CI
+checks out with every tag (`fetch-depth: 0`). A pack with no published version is not listed in
+`CATALOG.md` or `catalog-index.json`.
 
 Exit codes as the other commands: 1 a check fails, 2 an I/O or git error, 3 bad usage.
 
@@ -138,8 +162,9 @@ The human index, in this order:
    `pack-install`, or the sentence that no released WingFoil installs packs yet and that each
    README's section 3 gives the temporary hand steps;
 3. one section per axis, in `catalog.yaml` order after `base` (which comes first): a table with
-   the columns Pack, Summary, Slot (phase only), Status, Latest, WingFoil, README. Pack is the id
-   with the anchor `pack-<id with / replaced by ->`; Summary is `description`'s first sentence;
+   the columns Pack, Summary, Slot (phase only), Status, Latest, WingFoil, README. Pack is the id,
+   preceded by `<a id="pack-<id with / replaced by ->"></a>`, the anchor READMEs link (§2.5);
+   Summary is `description`'s first sentence;
    Latest and WingFoil are the last published version and its computed range; README links the
    README at the latest version's tag (§4);
 4. **Presets**: id, title, profile, packs;
@@ -159,17 +184,21 @@ The machine index. Top-level keys, in order:
   `requires_capabilities`, `url`).
 
 A pack object holds, in order:
-- from `catalog.yaml`: `id`, `axis`, `slot`, `catalog`, `status`, `latest`;
-- `versions`: one object per published version, ascending: `version`, `tag`, `wingfoil` (the
-  computed range), and from the tag's `pack.yaml`: `formats`, `requires_capabilities`, `requires`,
-  `conflicts`; plus `readme_url` and `manifest_url` pinned to the tag (§4);
-- from the latest version's tag: `title`, `description`, `workflows` (names), `memory_types`,
-  `directives`, `parameters` (name, type, default when there is one, description), and `excerpt`,
-  the first paragraph of the README's section 2, at most 500 characters, cut at a word;
+- `id`, `catalog` and `status` from `catalog.yaml`; `axis` and `slot` derived from the id
+  (spec-001 §4), both `null` for `base` and `slot` `null` for every pack but a phase pack; `latest`,
+  the highest published version in semver order;
+- `versions`: one object per published version, ascending: `version`, `tag` and `wingfoil` (the
+  computed range) from `catalog.yaml`, and from the tag's `pack.yaml`: `formats`,
+  `requires_capabilities`, `requires`, `conflicts`; plus `readme_url` and `manifest_url` pinned to
+  the tag (§4);
+- from the latest version's tag: `title`, `description`, `workflows`, `memory_types` and
+  `directives` (each a sorted list of names), `parameters` (name, type, default when there is one,
+  description), and `excerpt`, the first paragraph of the README's section 2, at most 500
+  characters, cut at a word;
 - `profiles`: the profiles of the presets whose `packs` name the pack.
 
-No field holds a date, a commit of `main` or anything that changes without a publication or a
-preset change.
+No field holds a date or a commit of `main`. The file changes only at a publication, a WingFoil
+release intake (the `wingfoil` ranges, `install`) or a change of a preset or a transition.
 
 `index/catalog-index.schema.json` (JSON Schema 2020-12) describes this file. It lives outside
 `schema/` and is not part of the contract with WingFoil (§4).
@@ -197,6 +226,9 @@ No server. Agents read anonymous, CORS-enabled URLs, with
 - `<base>/refs/tags/<tag>/packs/<catalog pack id>/README.md` and `…/pack.yaml`: the description and
   composition of one published version, immutable because tags never move (dl-004, `pack-semver`);
 - `<base>/main/catalog.yaml` and `<base>/main/compat.yaml`: resolution and compatibility;
+- `<base>/main/presets/<id>.yaml` and `<base>/main/transitions/<id>.yaml`: a preset or a
+  transition, which have no version of their own (spec-001 §14, §15); these are the `url` fields of
+  §3.3;
 - with the search page (§5), `https://wingfoil.github.io/wingfoil-templates/catalog-index.json` and
   `…/llms.txt`, which serve `main` only.
 
@@ -236,10 +268,11 @@ command (F3.1):
 - **CB-2 Examples are fixtures.** Every example names its fixture; the fixture exists, its
   `example.yaml` passes the preset schema with `id` equal to the example's name, and its `packs`
   contain the pack; the validation command composes and validates each. An example without a
-  fixture, or a fixture no README names, fails.
+  fixture, or a fixture no README names, fails. A section 7 that reads `None yet: no methodology
+  pack is published.` passes while the tree holds no methodology (§2.4).
 - **CB-3 Install truth.** The lint fails on a README with a WingFoil CLI command (§2.3), and on a
-  section 3 without the temporary hand steps while no `compat.yaml` release provides
-  `pack-install`. `CATALOG.md`'s Install block lists only those releases. At
+  section 3 whose first line is not the temporary mark of §2.3 while no `compat.yaml` release
+  provides `pack-install`. `CATALOG.md`'s Install block lists only those releases. At
   `pack-release-cycle` › `prepare` the hand steps are checked against the `compat.yaml` of that
   commit; tagged READMEs are never checked again.
 - **CB-4 Index content.** For a fixture catalog with tagged versions, `catalog-index.json`
@@ -266,7 +299,16 @@ command (F3.1):
 |---|---|---|
 | P1 | The vendored search library, and whether the page needs any script beyond it. | the task of the search page (W14) |
 | P2 | Whether `excerpt` should also carry section 2's adoption profiles as text, for search. | the task of the index command (W14) |
+| P3 | The name of the site command (`npm run site` here) and its output layout. | the task of the search page (W14) |
 
 ## Execution Notes
 
-<!-- Deviations, blockers, decisions taken. -->
+- 2026-10-10, under plan-021: written from dl-014 D1–D5, submitted `pending`.
+- 2026-10-10: amended while `pending`, before the approver's ruling, after an independent review:
+  the temporary exemption of §2.4 for packs that cannot compose an example before the first
+  methodology (the approver's ruling); the sources of each index field (§3.1, §3.3), `axis`,
+  `slot` and `latest` derived; preset and transition URLs (§4); absolute links to `CATALOG.md`
+  (§2.5); the exact temporary mark and command rule (§2.3); anchors in table cells (§3.2); CI with
+  every tag; example fixtures are not presets. Additions dl-014 does not state, for the ruling: the
+  site command's name (P3), and section 4 listing what a pack declares without telling an addition
+  from a tightening (§2.2).

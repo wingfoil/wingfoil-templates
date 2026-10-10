@@ -966,4 +966,3 @@ check the rest, and the composer refuses what they reject.
   adaptation notes") is superseded by spec-002 ("Pack README and catalog index"), which fixes the
   README's sections and the generated catalog index. This specification is otherwise unchanged:
   the README stays a file of the pack, hashed into its digest (§13).
-
