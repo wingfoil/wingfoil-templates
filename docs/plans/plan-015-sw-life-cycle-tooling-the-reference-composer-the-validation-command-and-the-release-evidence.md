@@ -213,3 +213,16 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
 - 2026-10-10: task-017 done: the inbox README records the WingFoil source key `svc-018` (`d4013c2`,
   pushed), as the coordinating session asked at the end of W7. **Wave W7 is closed** (tasks 11–13).
   Next: the phase gate.
+- 2026-10-10, phase gate: an independent review of the phase (a subagent with its own context, on
+  `main` at `21dc7dc`, gates in a clean clone): verdict approve the phase, nothing blocking. Every
+  task element of the phase, task-001 to task-017, is `done`. "Done when" counts the thirteen
+  numbered tasks and 4b (task-001 to task-008, task-011 to task-016); task-009, task-010 and
+  task-017 are the feedback-inbox work the notes above describe. The exit criteria of W5, W6 and
+  W7 hold (W7: `tests/feedback-note.test.ts` and `tests/publish.test.ts`, and a dry run with
+  `--bundled` by hand). Superseded wording above, kept as written: the tasks ran through
+  `tooling-delivery` (bug-001), not `kanban-delivery`; CI runs on every pushed branch and on tags,
+  with no pull requests (task-013); milestone M1 also holds wave W14 (plan-021), so M1 stays open
+  until W14 is done. task-017 was committed on `main` with no branch, as its approved Design says.
+  `validate:publication` fails until `compat.yaml` lists a release with `format_key: true`, as
+  documented (task-011, task-014). Left without an owner, outside this plan: the dead `0.x` clauses
+  of `pack-semver` and `pack-cycle` and the `deliver`/`author` slip of bug-001 (plan-018).
