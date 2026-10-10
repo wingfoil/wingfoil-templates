@@ -2,7 +2,7 @@
 id: plan-022-decision-log-ingest-capture-the-conventions-the-base-pack-fixes-and-the-end-of-the-base-notes-file
 type: plan
 title: "decision-log-ingest capture: the conventions the base pack fixes, and the end of the base notes file"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "capture"
 tags: ["process","decision-log","base"]
