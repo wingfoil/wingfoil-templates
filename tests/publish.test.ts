@@ -146,7 +146,7 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
         repo.commitAll('no entry');
         const result = publish(repo, ['--pack', 'base', ...WITH_KANBAN]);
         assert.equal(result.code, 1);
-        assert.match(result.lines.join('\n'), /no entry "- 1\.0\.0: …"/);
+        assert.match(result.lines.join('\n'), /no entry "- 1\.0\.0"/);
       });
     });
 

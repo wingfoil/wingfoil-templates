@@ -140,13 +140,15 @@ string[] {
   }).map(([label]) => label);
 }
 
-/** The CHANGELOG.md line of the version: `- <version>: …`. */
+/** The CHANGELOG.md line of the version: `- <version>`, alone or followed by `:` or a space. */
 function changelogEntry(tree: string, pack: string, version: string): string {
   const file = join(tree, 'packs', pack, 'CHANGELOG.md');
   const text = existsSync(file) ? readFileSync(file, 'utf8') : '';
-  const line = text.split('\n').find((candidate) => candidate.startsWith(`- ${version}:`));
+  const entry = `- ${version}`;
+  const line = text.split('\n').map((candidate) => candidate.trimEnd()).find((candidate) =>
+    candidate === entry || candidate.startsWith(`${entry}:`) || candidate.startsWith(`${entry} `));
   if (line === undefined) {
-    throw new PublishError(1, `packs/${pack}/CHANGELOG.md has no entry "- ${version}: …"`);
+    throw new PublishError(1, `packs/${pack}/CHANGELOG.md has no entry "- ${version}"`);
   }
   return line;
 }
@@ -189,14 +191,6 @@ function publishIn(tree: string, args: Args, options: PublishOptions, cache: str
     throw new PublishError(1, `no composition of the validation contains ${pack}: give a preset or `
       + 'a documented combination that contains it (pack-compatibility)');
   }
-  const compat = load(() => loadCompat(join(tree, 'compat.yaml')), 'compat.yaml');
-  const range = computeRange({ formats: manifest.formats,
-    requires_capabilities: manifest.requires_capabilities ?? [] }, compat.releases);
-  if (range === '') {
-    throw new PublishError(1, `${tag}: no release of compat.yaml is compatible (an empty range, `
-      + 'spec-001 §12)');
-  }
-
   // The guard: the publication validation again, at HEAD (dl-009).
   const validateArgs = ['--tree', tree, ...args.params.flatMap((param) => ['--param', param]),
     ...(cache === undefined ? [] : ['--cache', cache]), ...args.entries];
@@ -206,6 +200,14 @@ function publishIn(tree: string, args: Args, options: PublishOptions, cache: str
   if (validation.code !== 0) {
     throw new PublishError(validation.code, `${tag}: the publication validation failed; no tag`,
       validation.lines);
+  }
+
+  const compat = load(() => loadCompat(join(tree, 'compat.yaml')), 'compat.yaml');
+  const range = computeRange({ formats: manifest.formats,
+    requires_capabilities: manifest.requires_capabilities ?? [] }, compat.releases);
+  if (range === '') {
+    throw new PublishError(1, `${tag}: no release of compat.yaml is compatible (an empty range, `
+      + 'spec-001 §12)', validation.lines);
   }
 
   git(tree, ['-c', 'tag.gpgSign=false', 'tag', '-a', tag, '-m', `${tag}\n\n${changelog}`],
