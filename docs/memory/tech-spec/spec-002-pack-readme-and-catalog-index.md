@@ -2,7 +2,7 @@
 id: spec-002-pack-readme-and-catalog-index
 type: tech-spec
 title: "Pack README and catalog index"
-status: draft
+status: pending
 tags: ["packs","catalog","index"]
 ---
 
