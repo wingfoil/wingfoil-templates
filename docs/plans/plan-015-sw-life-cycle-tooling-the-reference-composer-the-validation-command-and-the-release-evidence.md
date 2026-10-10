@@ -226,3 +226,5 @@ Ruled by the approver on 2026-10-06, when this plan was presented:
   `validate:publication` fails until `compat.yaml` lists a release with `format_key: true`, as
   documented (task-011, task-014). Left without an owner, outside this plan: the dead `0.x` clauses
   of `pack-semver` and `pack-cycle` and the `deliver`/`author` slip of bug-001 (plan-018).
+- 2026-10-10: the approver approved the phase in chat. This plan goes `active → done`. Next in M1:
+  wave W14 (dl-014's tooling tasks, through `tooling-change`), in a new session.
