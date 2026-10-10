@@ -17,8 +17,8 @@ approved element.
 
 Scheduling, as the approver ruled on 2026-10-10: dl-014 is carried out as it is written. This plan
 applies D6 now; plan-015 then goes on (task 10, CI; wave W7); the tooling tasks of D7 (wave W14,
-F2.8 and F2.9) open through `tooling-change` once plan-015 is `done`. Nothing here is a tooling task:
-no code, no fixture, no generated file.
+F2.8 and F2.9) open through `tooling-change` once plan-015 is `done`. Nothing here is a tooling
+task: no code, no fixture, no generated file.
 
 Sources, all `approved`: dl-014 D1–D7 (with the proposals the approver did not restate at the
 ruling: option (b) then (c); wave id W14; `npm run index`, `CATALOG.md`, `catalog-index.json`,
@@ -37,8 +37,8 @@ a `version:` key, and every vision document with a **Version** line, is bumped o
 
 1. **The tech-spec** "Pack README and catalog index" (`memory add --type tech-spec`): D1 (the
    README standard, its nine sections and which are generated), D2 (the index command and its
-   outputs, with field sources and determinism), D3 (the agent URL patterns), D4 (the search page and
-   its security rules), the acceptance criteria CB-1…CB-8, and the statement that it supersedes
+   outputs, with field sources and determinism), D3 (the agent URL patterns), D4 (the search page
+   and its security rules), the acceptance criteria CB-1…CB-8, and the statement that it supersedes
    spec-001 §6.1's README line. Written by `claude`, reviewed by an independent context, submitted
    for the approver's ruling. spec-001 is `approved` and is not edited: its Execution Notes gain a
    line citing the new spec.
