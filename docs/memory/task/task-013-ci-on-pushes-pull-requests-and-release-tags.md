@@ -128,3 +128,16 @@ Branch `task/task-013-ci`, run through `tooling-delivery` as `developer` (`code-
   expected publication failure, timeouts and concurrency.
 - 2026-10-10: amended again while `pending`, as the approver asked: no pull request. CI runs on the
   push of any branch; the real run of acceptance 6 is on the pushed task branch.
+- 2026-10-10, build on `task/task-013-ci`, as `developer`: `6002337` the workflow, its test and
+  `dna.yaml` 7. The test file ran red first (the workflow did not exist), then 9 of 9.
+  - Locally: 559 tests, ESLint, `check:pins`, `check:schemas`, `check:packs`, the three WingFoil
+    commands with exit 0 and empty stderr, `npm audit` 0 on the root and on
+    `src/matrix/wingfoil-0.2.2/`.
+  - Real run (acceptance 6), on the pushed task branch, no pull request:
+    https://github.com/wingfoil/wingfoil-templates/actions/runs/38049411405, conclusion
+    `success`, jobs `validate (22.12.0)` and `validate (22.21.0)` both `success`. Each ran 559
+    tests, `npm audit` 0 on both lockfiles, `lint: checked 2 files, 0 problems`, and the golden
+    fixture against `wingfoil@0.2.2`: the three commands pass in self-test mode (9, 1 and 3 lines
+    tolerated), `matrix: self-test, 1 run, 0 failed, tolerance applied: 0.2.2`. This is wave W6's
+    exit criterion: a fixture validates against pinned WingFoil releases, in CI.
+
