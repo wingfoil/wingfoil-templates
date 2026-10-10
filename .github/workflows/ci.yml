@@ -63,7 +63,7 @@ jobs:
         run: npm audit
       - name: Audit every matrix release's lockfile
         run: |
-          for dir in src/matrix/*/; do
+          for dir in src/matrix/wingfoil-*/; do
             (cd "$dir" && npm audit)
           done
       - name: Validate this repository (self-test)

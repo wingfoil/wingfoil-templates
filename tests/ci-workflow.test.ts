@@ -32,7 +32,7 @@ describe('the CI workflow (task-013)', () => {
       const on = workflow['on'] as Doc;
       assert.deepEqual(on['push'], { branches: ['**'], tags: ['**@*'] },
         '`*` does not match `/`, and pack ids such as methodology/kanban contain one');
-      assert.ok(Object.hasOwn(on, 'pull_request'));
+      assert.equal(on['pull_request'], null, 'pull_request on any branch, with no filter');
       assert.ok(!Object.hasOwn(on, 'pull_request_target'), 'never pull_request_target');
     });
 
@@ -89,7 +89,10 @@ describe('the CI workflow (task-013)', () => {
       assert.equal(step.if, undefined, `${command} runs on every path`);
     }
     const matrixAudit = steps.find((step) => step.run?.includes('src/matrix/'));
-    assert.ok(matrixAudit?.run?.includes('npm audit'), 'npm audit in every src/matrix folder');
+    assert.equal(matrixAudit?.run,
+      'for dir in src/matrix/wingfoil-*/; do\n  (cd "$dir" && npm audit)\ndone\n',
+      'npm audit in every release folder, a failure failing the step');
+    assert.ok(steps.every((step) => !Object.hasOwn(step, 'continue-on-error')));
   });
 
   it('runs self-test mode on branches and publication mode on tags, never both (dl-009)', () => {
