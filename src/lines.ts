@@ -19,7 +19,10 @@ export interface LineInput {
   formats: Record<string, number>;
   /** The checked-out branch, or '' when HEAD is detached. */
   branch: string;
-  /** The pack's published versions, from main's catalog.yaml. */
+  /**
+   * The pack's published versions: main's catalog.yaml, and on the current line the working tree's
+   * too.
+   */
   published: PublishedVersion[];
   /** compat.yaml lists a WingFoil release 1.0.0 or later. */
   fromOne: boolean;
@@ -28,6 +31,11 @@ export interface LineInput {
 }
 
 export type Line = { kind: 'current' } | { kind: 'maintenance'; major: number };
+
+/** Any branch under maint/: a maintenance line, or a refusal, never the current line. */
+export function isMaintenanceBranch(branch: string): boolean {
+  return branch.startsWith('maint/');
+}
 
 /** The `line` field of the pack-release element: `current` or `<major>.x`. */
 export function lineName(line: Line): string {
@@ -45,14 +53,19 @@ function same(a: Record<string, number>, b: Record<string, number>): boolean {
 export function decideLine(input: LineInput): Line {
   const { pack, version, branch } = input;
   const maintenance = MAINTENANCE.exec(branch);
+  const onMaintenance = isMaintenanceBranch(branch);
   const published = input.published.filter((entry) => valid(entry.version) !== null)
     .sort((a, b) => compare(a.version, b.version));
   const newest = published[published.length - 1];
   if (!input.fromOne) {
-    if (maintenance !== null) {
+    if (onMaintenance) {
       throw new LineError(`${branch}: maintenance lines start with WingFoil 1.0 (dl-002); `
         + 'before it a pack has one living line');
     }
+  }
+  if (onMaintenance && maintenance === null) {
+    throw new LineError(`${branch} is not a maintenance branch name: maint/<catalog pack id>/`
+      + '<major>.x (spec-001 §4)');
   }
   if (maintenance === null) {
     if (newest !== undefined && !gt(version, newest.version)) {
@@ -76,8 +89,13 @@ export function decideLine(input: LineInput): Line {
     throw new LineError(`${lineMajor}.x is not a previous line of ${pack}: no newer major is `
       + 'published');
   }
-  const previousMajor = Math.max(...published.map((entry) => major(entry.version))
-    .filter((value) => value < major(newest.version)));
+  const older = published.map((entry) => major(entry.version))
+    .filter((value) => value < major(newest.version));
+  if (older.length === 0) {
+    throw new LineError(`${lineMajor}.x is not N-1 of ${pack}: N is ${major(newest.version)}.x `
+      + 'and no older major is published');
+  }
+  const previousMajor = Math.max(...older);
   if (lineMajor !== previousMajor) {
     throw new LineError(`${lineMajor}.x is not N-1 of ${pack}: N is ${major(newest.version)}.x, `
       + `N-1 is ${previousMajor}.x (dl-002)`);

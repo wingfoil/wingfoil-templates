@@ -366,4 +366,34 @@ describe('npm run publish:pack, the lines (task-016, F5.3)', () => {
       assert.deepEqual([state(repo), repo.git(['rev-parse', 'main'])], before);
     });
   });
+
+  it('counts the working tree\'s versions too on the current line, and works without main', () => {
+    withRepository((repo) => {
+      repo.git(['checkout', '--quiet', '-b', 'task/x']);
+      published(repo, ['--pack', 'base', ...WITH_KANBAN]);
+      bump(repo, '1.1.0');
+      published(repo, ['--pack', 'base', ...WITH_KANBAN]);
+      bump(repo, '1.0.5');
+      refused(repo, /not above the published 1\.1\.0/);
+    });
+    withRepository((repo) => {
+      repo.git(['branch', '--quiet', '-m', 'main', 'trunk']);
+      const result = published(repo, ['--pack', 'base', ...WITH_KANBAN]);
+      assert.ok(result.lines.includes('- Line: current'), result.lines.join('\n'));
+      repo.git(['checkout', '--quiet', '-b', 'maint/base/1.x']);
+      bump(repo, '1.0.1');
+      const refusal = publish(repo, ['--pack', 'base', ...WITH_KANBAN]);
+      assert.equal(refusal.code, 1);
+      assert.match(refusal.lines.join('\n'), /no main branch with a catalog\.yaml/);
+    });
+  });
+
+  it('publishes from a detached HEAD on the current line', () => {
+    withRepository((repo) => {
+      repo.git(['checkout', '--quiet', '--detach']);
+      const result = published(repo, ['--pack', 'base', ...WITH_KANBAN]);
+      assert.ok(result.lines.includes('- Line: current'), result.lines.join('\n'));
+    });
+  });
 });
+

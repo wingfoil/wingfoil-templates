@@ -135,3 +135,16 @@ Branch `task/task-016-lines`, run through `tooling-delivery` as `developer` (`co
   `check:schemas`, `check:packs`, `npm audit` 0.
 - In the scenario tests, kanban's `requires` follows base's major (`base@^2` once base is 2.0.0): a
   methodology requires `base@^<major>` (the schema), so base 2.0.0 composes with kanban only so.
+- 2026-10-10: CI on the task branch, https://github.com/wingfoil/wingfoil-templates/actions/runs/38078508190
+  (`57ed993`): `success`, both jobs.
+- Review (a subagent with its own context, as `reviewer`): request changes; 606 tests and the
+  checks in a clean clone. Applied: every `maint/` branch is a maintenance branch, a name other
+  than `maint/<id>/<major>.x` refused (it was taken as the current line); the message when no
+  older major exists; on the current line the published versions are main's and the working
+  tree's (a version already tagged on a task branch counts); before WingFoil 1.0 a `maint/` branch
+  is refused before `main` is read; a repository without `main` publishes on the current line.
+  Tests for these, a detached HEAD included. 611 tests. Not tested: a failure after the catalog
+  commit on `main` (the rollback's `update-ref`), which no step after it can produce today.
+- Deviation from acceptance 3: on the current line the published versions are read from `main`
+  and from the working tree, not from `main` alone, so that task-014's rule still holds on a branch
+  that already tagged a version.

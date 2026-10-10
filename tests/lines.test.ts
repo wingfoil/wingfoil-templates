@@ -50,4 +50,20 @@ describe('decideLine (F5.3, dl-002)', () => {
     refused({ branch: 'maint/base/1.x', descends: () => false },
       /does not descend from base@1\.0\.0/);
   });
+
+  it('treats every maint/ branch as a maintenance branch, a malformed name refused', () => {
+    for (const branch of ['maint/base', 'maint/base/1.x-old']) {
+      refused({ fromOne: false, branch, version: '3.0.0' }, /start with WingFoil 1\.0/);
+      refused({ branch, version: '3.0.0' }, /not a maintenance branch name/);
+    }
+  });
+
+  it('names a missing N-1: no older major published', () => {
+    refused({ branch: 'maint/base/1.x', published: published('2.0.0') },
+      /N is 2\.x and no older major is published/);
+  });
+
+  it('a detached HEAD is on the current line', () => {
+    assert.equal(lineName(decideLine(input({ version: '2.1.0', branch: '' }))), 'current');
+  });
 });

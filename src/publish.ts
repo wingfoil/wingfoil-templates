@@ -22,7 +22,7 @@ import { findFiles } from './check-schemas';
 import { CompatError, loadCompat } from './compat';
 import { DigestError, isCatalogPackId, packDigest, transitionDigest } from './digest';
 import { GitError, callerIdentity, resolveCommit, runGit } from './git';
-import { LineError, decideLine, lineName } from './lines';
+import { LineError, decideLine, isMaintenanceBranch, lineName } from './lines';
 import type { Line, LineInput, PublishedVersion } from './lines';
 import { computeRange } from './range';
 import { ResolveError, resolve } from './resolve';
@@ -193,6 +193,7 @@ function currentBranch(tree: string): string {
   }
 }
 
+/** Whether the repository has a main branch. */
 function hasMain(tree: string): boolean {
   try {
     git(tree, ['rev-parse', '--verify', '--quiet', 'refs/heads/main']);
@@ -202,13 +203,12 @@ function hasMain(tree: string): boolean {
   }
 }
 
-/** catalog.yaml as committed on main, where the catalog lives (task-016). */
-function mainCatalog(tree: string): string {
+/** catalog.yaml as committed on main, where the catalog lives (task-016), if there is one. */
+function mainCatalog(tree: string): string | undefined {
   try {
     return runGit(tree, ['show', 'refs/heads/main:catalog.yaml']).toString('utf8');
   } catch {
-    throw new PublishError(1, 'a maintenance line reads the published versions from main, and '
-      + 'this repository has no main branch with a catalog.yaml');
+    return undefined;
   }
 }
 
@@ -283,18 +283,30 @@ function publishIn(tree: string, args: Args, options: PublishOptions, cache: str
   const tag = `${pack}@${version}`;
   const catalog = load(() => loadCatalog(join(tree, 'catalog.yaml')), 'catalog.yaml');
   const compat = load(() => loadCompat(join(tree, 'compat.yaml')), 'compat.yaml');
-  // The line (F5.3, task-016), decided before anything runs: the published versions are main's.
+  // The line (F5.3, task-016), decided before anything runs: the published versions are main's
+  // and, on the current line, the working tree's too (a version tagged on this branch counts).
   const branch = currentBranch(tree);
-  const onMaintenance = branch.startsWith('maint/');
-  const catalogText = onMaintenance ? mainCatalog(tree)
+  const onMaintenance = isMaintenanceBranch(branch);
+  const fromOne = compat.releases.some((release) =>
+    valid(release.wingfoil) !== null && gte(release.wingfoil, '1.0.0'));
+  const input = { pack, version, formats: manifest.formats, branch, fromOne,
+    descends: (from: string) => descends(tree, from) };
+  // Before WingFoil 1.0 a maint/ branch is refused as such, whatever main holds.
+  if (onMaintenance && !fromOne) decide({ ...input, published: [] });
+  const onMain = mainCatalog(tree);
+  if (onMaintenance && onMain === undefined) {
+    throw new PublishError(1, 'a maintenance line reads the published versions from main, and '
+      + 'this repository has no main branch with a catalog.yaml');
+  }
+  const catalogText = onMaintenance ? onMain ?? ''
     : readFileSync(join(tree, 'catalog.yaml'), 'utf8');
-  const publishedText = onMaintenance || !hasMain(tree) ? catalogText : mainCatalog(tree);
-  const line = decide({
-    pack, version, formats: manifest.formats, branch, fromOne: compat.releases.some((release) =>
-      valid(release.wingfoil) !== null && gte(release.wingfoil, '1.0.0')),
-    published: publishedVersions(publishedText, pack),
-    descends: (from) => descends(tree, from),
-  });
+  const published = publishedVersions(catalogText, pack);
+  if (!onMaintenance && onMain !== undefined) {
+    for (const entry of publishedVersions(onMain, pack)) {
+      if (!published.some((known) => known.version === entry.version)) published.push(entry);
+    }
+  }
+  const line = decide({ ...input, published });
   if (line.kind === 'maintenance' && args.bundled) {
     throw new PublishError(3, `--bundled on the line ${lineName(line)}: write the note on main `
       + 'with npm run feedback:note -- --published');
