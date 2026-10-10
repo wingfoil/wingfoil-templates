@@ -20,6 +20,7 @@ import type { PackManifest } from './resolve';
 import { repositorySchemas } from './schemas';
 import { secretProblems } from './secret-rules';
 import { overlayProblems } from './overlay-rules';
+import { tagProblems } from './tag-rules';
 import { treeProblems } from './tree-rules';
 import { workflowProblems } from './workflow-rules';
 import { YamlError, loadYamlFile } from './yaml-load';
@@ -125,7 +126,7 @@ function secretGroup(context: LintContext): Problem[] {
 
 /** The rule groups, in order; each sees the context and the problems the ones before it found. */
 const GROUPS: readonly ((context: LintContext, earlier: Problem[]) => Problem[])[] = [
-  packProblems, treeProblems, workflowGroup, overlayProblems, secretGroup,
+  packProblems, treeProblems, tagProblems, workflowGroup, overlayProblems, secretGroup,
 ];
 
 export interface CheckPacksOptions {
