@@ -130,4 +130,12 @@ Branch `task/task-015-feedback-notes`, run through `tooling-delivery` as `develo
   feedback note F-022 with its ledger row; the inbox checks and `check:packs` pass on the result.
 - Deviation: a failure after the tag now resets the branch to its head before the tag (task-014
   restored `catalog.yaml` only), since a third commit can now fail after the catalog commit.
+- 2026-10-10: CI on the task branch, https://github.com/wingfoil/wingfoil-templates/actions/runs/38068978595
+  (`752cc93`): `success`, both jobs.
+- Review (a subagent with its own context, as `reviewer`): request changes (minor); 595 tests and
+  the checks in a clean clone; the baseline digest recomputed and confirmed. Applied: the schema
+  digest counts only tracked files in a git repository (an untracked swap file had changed it),
+  and `schema/** -text`; `--from` takes a whole id, and `--bundled` needs a `prel-<nnn>`; the
+  rollback removes an uncommitted note; the listing parsed with any blank lines; notes past F-999;
+  a published note checks the version's fields. 596 tests.
 
