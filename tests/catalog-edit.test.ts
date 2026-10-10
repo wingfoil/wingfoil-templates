@@ -33,6 +33,16 @@ describe('addVersion (spec-001 §11)', () => {
     assert.ok(twice.endsWith(CATALOG.split('packs: []')[1] ?? '?'));
   });
 
+  it('inserts a version at its semver position, an N-1 fix before a newer major (task-016)', () => {
+    let text = CATALOG;
+    for (const v of ['1.0.0', '2.0.0', '1.0.1', '1.10.0', '1.2.0']) {
+      text = addVersion(text, 'base', version(v));
+    }
+    const packs = (parse(text) as { packs: Record<string, unknown>[] }).packs;
+    assert.deepEqual((packs[0]?.['versions'] as { version: string }[]).map((v) => v.version),
+      ['1.0.0', '1.0.1', '1.2.0', '1.10.0', '2.0.0']);
+  });
+
   it('refuses a comment inside the packs block rather than drop it', () => {
     for (const commented of [CATALOG.replace('packs: []', 'packs: [] # none yet'),
       CATALOG.replace('packs: []', 'packs:\n  # the first pack\n  - id: base\n    path: packs/base\n'

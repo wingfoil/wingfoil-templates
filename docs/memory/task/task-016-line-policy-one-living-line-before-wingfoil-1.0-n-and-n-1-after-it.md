@@ -107,9 +107,10 @@ Branch `task/task-016-lines`, run through `tooling-delivery` as `developer` (`co
   first. On the current line nothing changes. On a maintenance line it tags the branch's head, then
   writes the catalog commit on `main` with plumbing and a temporary index (`read-tree main`,
   `hash-object`, `update-index`, `write-tree`, `commit-tree -p main`, `update-ref` with the old
-  value), so the branch's working tree is untouched; the rollback also moves `main` back. `--bundled`
-  is refused on a maintenance line: the note goes to `main`'s inbox with `npm run feedback:note`
-  there. `--dry-run` clones the checked-out branch and creates a local `main` in the clone.
+  value), so the branch's working tree is untouched; the rollback also moves `main` back.
+  `--bundled` is refused on a maintenance line: the note goes to `main`'s inbox with
+  `npm run feedback:note` there. `--dry-run` clones the checked-out branch and creates a local
+  `main` in the clone.
 - **`src/catalog-edit.ts`:** `addVersion` inserts the entry at its semver position.
 - **Tests,** red first: `tests/lines.test.ts` (the decision, unit), `tests/publish.test.ts` (the
   scenarios of acceptance 5), `tests/catalog-edit.test.ts` (the insertion);
@@ -124,3 +125,13 @@ Branch `task/task-016-lines`, run through `tooling-delivery` as `developer` (`co
   the validation; the window recorded in the N release's `pack-release` element; the checks on the
   branch's descent and on formats; the tag rules on a tag reachable only from the maintenance
   branch.
+- 2026-10-10, build on `task/task-016-lines`, as `developer`: `src/lines.ts` (the decision);
+  `publish:pack` decides the line before the tag check, the CHANGELOG and the validation, reading
+  the published versions from `main`'s catalog; on `maint/<id>/<major>.x` it tags the branch's head
+  and commits the catalog entry on `main` with plumbing; `addVersion` inserts at the semver
+  position; `--dry-run` clones the checked-out branch and adds a local `main`. Tests: the decision
+  (unit), the four scenarios of acceptance 5 (a refusal leaves the branch, its tags and `main` as
+  they were, and never reaches the validation), the insertion. 606 tests, ESLint, `check:pins`,
+  `check:schemas`, `check:packs`, `npm audit` 0.
+- In the scenario tests, kanban's `requires` follows base's major (`base@^2` once base is 2.0.0): a
+  methodology requires `base@^<major>` (the schema), so base 2.0.0 composes with kanban only so.

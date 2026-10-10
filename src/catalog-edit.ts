@@ -1,6 +1,7 @@
 // The one edit a publication makes to catalog.yaml (spec-001 §11, task-014): a version entry, and the
 // pack entry the first time. Only the `packs:` block is rewritten, as a block sequence written by
 // toYaml; every other byte of the file, comments included, is kept.
+import { gt, valid } from 'semver';
 import { isMap, isScalar, parseDocument } from 'yaml';
 
 import { toYaml } from './yaml-write';
@@ -40,7 +41,11 @@ export function addVersion(text: string, packId: string, version: Doc): string {
     entries.push(pack);
   }
   if (!Array.isArray(pack['versions'])) pack['versions'] = [];
-  (pack['versions'] as Doc[]).push(version);
+  // At its semver position: an N-1 version published after a newer major keeps the order (§11).
+  const versions = pack['versions'] as Doc[];
+  const at = versions.findIndex((existing) => valid(String(existing['version'])) !== null
+    && gt(String(existing['version']), String(version['version'])));
+  versions.splice(at < 0 ? versions.length : at, 0, version);
   // A planned pack becomes active with its first version (spec-001 §11).
   if (pack['status'] === 'planned') pack['status'] = 'active';
   // A block sequence's range runs past its last line break; the edit stops before it.
