@@ -2,7 +2,7 @@
 id: task-019-the-index-command-catalog.md-catalog-index.json-llms.txt-and-the-readme-generated-sections-spec-002-3-cb-4-cb-5
 type: task
 title: "The index command: CATALOG.md, catalog-index.json, llms.txt and the README generated sections (spec-002 §3, CB-4, CB-5)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-change › deliver, tooling-delivery)
 depends_on: ["task-018-readme-lint-rules-the-sections-the-generated-markers-and-install-truth-spec-002-2-cb-1-cb-3"]
 tags: ["tooling","W14","F2.8"]
@@ -300,3 +300,36 @@ hand, the schema is compiled by the Ajv 2020 of adr-003.
   and 2b, the Context, the order) and nits are applied too. Third pass: approve, nothing left but a line
   wrap; its note for the Design: the interim helper runs after each test's assertions on the
   publication's own commits.
+- 2026-10-11, build on `task/task-019-index` (`a7e5bfb`): the implementation of the model, the renderers and the README
+  rewrite was drafted before its tests, a departure from red first; the red was then shown by
+  mutation, each new suite failing on its own mutation: `validate` without the index step (the CB-5
+  test failed), the latest title read from the working tree instead of the tag (`index-model`),
+  `rewriteReadme` as a no-op (`readme-generate`, `index`). Later fixes were written test first.
+- 2026-10-11, deviations from the Design: the source helpers are `atCommit` and `atTag` (not
+  `atRef`) and the github.com helper is `githubMain` (not `specOnGithub`); the shared helpers live in
+  `src/index-data.ts`; `writeIndex` and `reindex` live in `tests/support/published-repo.ts`.
+  **Interim helper (S6):** in `tests/publish.test.ts`, `bump()` runs the index before its release
+  commit, as an author does after changing `pack.yaml` (the README sections follow the bump); until
+  plan-024 task 2b this also refreshes the `CATALOG.md` and `catalog-index.json` that a publication
+  leaves stale, and the first test calls `reindex` after its assertions on the publication's own
+  commits. Task 2b removes those post-publication refreshes. In `tests/validate.test.ts`, `withTree`
+  runs the index after the test's edit and asserts that it wrote, unless the test opts out.
+- 2026-10-11, choices beyond the Acceptance (S8): `validate` skips the index step, with one line,
+  when the schema check reports a problem or the lint reports a file that does not parse (running
+  it on refused data would turn a level-1 defect into exit 2); a file the index cannot use (it does
+  not parse, is not a mapping, is missing) exits 1 on one line, a git, tag or system error exits 2,
+  any other error is a defect and is thrown; `formats` objects are written in byte order of their
+  kinds; an excerpt stops at a thematic break or a table line.
+- 2026-10-11, **spec-002 erratum** (Context): §3.1 says a version's `tag` comes from `catalog.yaml`,
+  whose version entries have no such field (spec-001 §11); the index derives it as
+  `<catalog pack id>@<version>`. To be corrected by the next element that amends spec-002.
+- 2026-10-11: independent review of the build (a subagent with its own context): approve after
+  fixes; two blocking points (an unknown marker pair crashed the index; a fragment or workflow that
+  does not parse made `validate` exit 2), eight should-fix and nits, applied in `6b7772a`.
+  Re-review: one regression (system I/O errors were thrown instead of exiting 2) and two nits,
+  applied in `758c779`. Third pass: approve.
+- 2026-10-11: Acceptance 1–2 on Node.js 22.21.0 and 22.12.0: 724 tests pass; `lint`,
+  `check:pins`, `check:schemas`, `check:packs`, `validate`, the golden `validate` and
+  `npm run index -- --check` exit 0; CB-8 holds against `origin/main`; no dependency added.
+- 2026-10-11, CI (acceptance 14): run 38152404572 on `758c779`, conclusion `success` for
+  `validate (22.12.0)` and `validate (22.21.0)`; run 38151340280 on `6b7772a` was `success` too.

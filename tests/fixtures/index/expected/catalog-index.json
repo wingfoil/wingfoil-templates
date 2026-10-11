@@ -1,0 +1,237 @@
+{
+  "format": 1,
+  "repository": "wingfoil/wingfoil-templates",
+  "install": [],
+  "packs": [
+    {
+      "id": "base",
+      "catalog": "official",
+      "status": "active",
+      "axis": null,
+      "slot": null,
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "base@1.0.0",
+          "wingfoil": "9.0.0",
+          "formats": {
+            "dna": 1,
+            "memory": 1,
+            "roles": 1,
+            "workflow": 1
+          },
+          "requires_capabilities": [],
+          "requires": [],
+          "conflicts": [],
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@1.0.0/packs/base/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@1.0.0/packs/base/pack.yaml"
+        }
+      ],
+      "title": "base",
+      "description": "Test pack base.",
+      "workflows": [
+        "retrospective",
+        "sw-life-cycle"
+      ],
+      "memory_types": [],
+      "directives": [],
+      "parameters": [],
+      "excerpt": "A test fixture of the tooling; never adopted.",
+      "profiles": []
+    },
+    {
+      "id": "methodology/kanban",
+      "catalog": "official",
+      "status": "active",
+      "axis": "methodology",
+      "slot": null,
+      "latest": "1.1.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "methodology/kanban@1.0.0",
+          "wingfoil": "9.0.0",
+          "formats": {
+            "workflow": 1
+          },
+          "requires_capabilities": [],
+          "requires": [
+            "base@^1"
+          ],
+          "conflicts": [],
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/kanban@1.0.0/packs/methodology/kanban/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/kanban@1.0.0/packs/methodology/kanban/pack.yaml"
+        },
+        {
+          "version": "1.1.0",
+          "tag": "methodology/kanban@1.1.0",
+          "wingfoil": "9.0.0",
+          "formats": {
+            "workflow": 1
+          },
+          "requires_capabilities": [],
+          "requires": [
+            "base@^1.0.0"
+          ],
+          "conflicts": [
+            "blueprint/web"
+          ],
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/kanban@1.1.0/packs/methodology/kanban/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/kanban@1.1.0/packs/methodology/kanban/pack.yaml"
+        }
+      ],
+      "title": "Kanban flow",
+      "description": "Kanban, 1.1.0. A pull system with WIP limits.",
+      "workflows": [
+        "delivery"
+      ],
+      "memory_types": [],
+      "directives": [],
+      "parameters": [
+        {
+          "name": "wip_limit",
+          "type": "integer",
+          "default": 3,
+          "description": "The WIP limit."
+        }
+      ],
+      "excerpt": "A team that pulls work through a board with WIP limits, and limits its flow.",
+      "profiles": [
+        "small teams"
+      ]
+    },
+    {
+      "id": "phase/inception/lean",
+      "catalog": "official",
+      "status": "active",
+      "axis": "phase",
+      "slot": "inception",
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "phase/inception/lean@1.0.0",
+          "wingfoil": "9.0.0",
+          "formats": {
+            "workflow": 1
+          },
+          "requires_capabilities": [],
+          "requires": [
+            "base@^1"
+          ],
+          "conflicts": [],
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/phase/inception/lean@1.0.0/packs/phase/inception/lean/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/phase/inception/lean@1.0.0/packs/phase/inception/lean/pack.yaml"
+        }
+      ],
+      "title": "phase/inception/lean",
+      "description": "Test pack phase/inception/lean.",
+      "workflows": [
+        "inception"
+      ],
+      "memory_types": [],
+      "directives": [],
+      "parameters": [],
+      "excerpt": "A test fixture of the tooling; never adopted.",
+      "profiles": [
+        "small teams"
+      ]
+    },
+    {
+      "id": "stage/mvp",
+      "catalog": "official",
+      "status": "active",
+      "axis": "stage",
+      "slot": null,
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "stage/mvp@1.0.0",
+          "wingfoil": "9.0.0",
+          "formats": {},
+          "requires_capabilities": [],
+          "requires": [
+            "base@^1"
+          ],
+          "conflicts": [],
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/stage/mvp@1.0.0/packs/stage/mvp/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/stage/mvp@1.0.0/packs/stage/mvp/pack.yaml"
+        }
+      ],
+      "title": "stage/mvp",
+      "description": "Test pack stage/mvp.",
+      "workflows": [],
+      "memory_types": [],
+      "directives": [],
+      "parameters": [],
+      "excerpt": "A test fixture of the tooling; never adopted.",
+      "profiles": []
+    },
+    {
+      "id": "stage/production",
+      "catalog": "official",
+      "status": "active",
+      "axis": "stage",
+      "slot": null,
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "stage/production@1.0.0",
+          "wingfoil": "9.0.0",
+          "formats": {},
+          "requires_capabilities": [],
+          "requires": [
+            "base@^1"
+          ],
+          "conflicts": [],
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/stage/production@1.0.0/packs/stage/production/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/stage/production@1.0.0/packs/stage/production/pack.yaml"
+        }
+      ],
+      "title": "stage/production",
+      "description": "Test pack stage/production.",
+      "workflows": [],
+      "memory_types": [],
+      "directives": [],
+      "parameters": [],
+      "excerpt": "A test fixture of the tooling; never adopted.",
+      "profiles": []
+    }
+  ],
+  "presets": [
+    {
+      "id": "minimal",
+      "title": "Minimal",
+      "description": "Kanban alone.",
+      "profile": null,
+      "packs": [
+        "methodology/kanban@^1"
+      ],
+      "url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/presets/minimal.yaml"
+    },
+    {
+      "id": "small-team",
+      "title": "Small team",
+      "description": "Kanban with Lean Inception, for a small team.",
+      "profile": "small teams",
+      "packs": [
+        "methodology/kanban@^1",
+        "phase/inception/lean@^1"
+      ],
+      "url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/presets/small-team.yaml"
+    }
+  ],
+  "transitions": [
+    {
+      "id": "mvp-to-production",
+      "from": "stage/mvp",
+      "to": "stage/production",
+      "formats": {},
+      "requires_capabilities": [],
+      "url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/transitions/mvp-to-production.yaml"
+    }
+  ]
+}

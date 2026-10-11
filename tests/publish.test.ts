@@ -13,7 +13,7 @@ import type { TestRepo } from './support/git-repo';
 import { BASE_COMPOSABLE, KANBAN } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 import { REPO_ROOT } from './support/paths';
-import { STUB_RELEASE, treeRepo } from './support/published-repo';
+import { STUB_RELEASE, reindex, treeRepo, writeIndex } from './support/published-repo';
 import { StubWingfoil } from './support/stub-wingfoil';
 
 type Doc = Record<string, unknown>;
@@ -84,12 +84,16 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
       assert.ok(result.lines.some((line) => line.startsWith('CATALOG.md and catalog-index.json '
         + 'not regenerated')));
       assert.equal(repo.git(['status', '--porcelain']).trim(), '');
+      // Until plan-024 task 2b, the publication leaves the index stale.
+      reindex(repo);
       // The published repository passes the lint, tag rules included, and the publication run.
       const lint = runCheckPacks(repo.dir);
       assert.equal(lint.code, 0, lint.lines.join('\n'));
       const validation = runValidate(['--tree', repo.dir, ...WITH_KANBAN],
         { mode: 'publication', install: INSTALL });
       assert.equal(validation.code, 0, validation.lines.join('\n'));
+      assert.ok(validation.lines.some((line) => /^index: checked \d+ files, 0 not up to date$/
+        .test(line)), validation.lines.join('\n'));
     });
   });
 
@@ -228,7 +232,9 @@ function editManifest(repo: TestRepo, pack: string, change: (manifest: Doc) => v
 
 /**
  * Sets base's version in pack.yaml (and its formats, when given), with a CHANGELOG entry; kanban
- * follows base's major, as a methodology requires base@^<major>.
+ * follows base's major, as a methodology requires base@^<major>. It runs the index, as an author
+ * does before a release commit; until plan-024 task 2b this also refreshes the CATALOG.md and
+ * catalog-index.json that a publication leaves stale.
  */
 function bump(repo: TestRepo, version: string, formats?: Record<string, number>): void {
   editManifest(repo, 'base', (manifest) => {
@@ -239,6 +245,7 @@ function bump(repo: TestRepo, version: string, formats?: Record<string, number>)
     manifest['requires'] = [`base@^${version.split('.')[0] ?? ''}`];
   });
   appendFileSync(join(repo.dir, 'packs', 'base', 'CHANGELOG.md'), `- ${version}: next.\n`);
+  writeIndex(repo);
   repo.commitAll(`base ${version}`);
 }
 

@@ -13,6 +13,7 @@ import { runCheckPacks } from './check-packs';
 import { CompatError, loadCompat } from './compat';
 import type { Compat } from './compat';
 import { composeTwice, type DeterminismOptions } from './determinism';
+import { runIndex } from './index';
 import {
   DEFAULT_CACHE, MATRIX_PINS, MatrixIoError, installRelease, runRelease, selectReleases,
 } from './matrix';
@@ -228,6 +229,23 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     for (const line of lint.lines.slice(1)) fail(1, line);
   }
   const linted = new Set(lint.problems.map((problem) => problem.file));
+
+  // The index (task-019, spec-002 §3.1): the committed outputs are what npm run index writes.
+  if (broken.size > 0) {
+    lines.push('index: skipped, the schema check reports problems');
+  } else if (lint.problems.some((problem) => problem.rule === 'parse')) {
+    lines.push('index: skipped, the lint reports files that do not parse');
+  } else {
+    const index = runIndex(['--tree', args.tree, '--check']);
+    if (index.code === 2) {
+      fail(2, index.lines[0] ?? 'index: I/O error');
+    } else {
+      // An input the index refuses is reported on its summary line alone.
+      if (index.code === 1 && index.lines.length === 1) fail(1, index.lines[0] ?? '');
+      else lines.push(index.lines[0] ?? '');
+      for (const line of index.lines.slice(1)) fail(1, line);
+    }
+  }
 
   // Loaded for the matrix; a compat.yaml the loader refuses is the lint's to report.
   let compat: Compat | undefined;

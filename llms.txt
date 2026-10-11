@@ -1,0 +1,23 @@
+# WingFoil template catalog
+
+> The official WingFoil template packs, indexed for agents, each published version pinned to its tag.
+
+## Index
+
+- [catalog-index.json](https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/catalog-index.json): every published pack, preset and transition (format 1); search is a local filter over it
+- [CATALOG.md](https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/CATALOG.md): the same index for people
+
+## Specifications
+
+- [spec-001](https://github.com/wingfoil/wingfoil-templates/blob/main/docs/memory/tech-spec/spec-001-the-pack-format-manifest-fragments-composition-catalog-compatibility-and-digest.md): the pack format
+- [spec-002](https://github.com/wingfoil/wingfoil-templates/blob/main/docs/memory/tech-spec/spec-002-pack-readme-and-catalog-index.md): the pack README and the catalog index
+
+## Reading a pack
+
+- the index: `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/catalog-index.json`
+- a published version's README: `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/<catalog pack id>@<version>/packs/<catalog pack id>/README.md`
+- a published version's manifest: `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/<catalog pack id>@<version>/packs/<catalog pack id>/pack.yaml`
+- resolution: `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/catalog.yaml`
+- compatibility: `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/compat.yaml`
+- a preset: `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/presets/<id>.yaml`
+- a transition: `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/transitions/<id>.yaml`

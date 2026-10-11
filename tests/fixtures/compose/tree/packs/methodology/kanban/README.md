@@ -19,19 +19,51 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 <!-- generated:begin composition -->
 ## Composition
 
-Placeholder until npm run index writes it.
+- **Requires:** `base@^1`
+- **Conflicts:** none
+- **Formats:** `directive` 1, `roles` 1, `workflow` 1
+- **Requires capabilities:** none
+- **Declares:**
+  - Memory types: none
+  - roles: none
+  - states: none
+  - workflows: `delivery`, `replenishment`
 <!-- generated:end composition -->
 
 <!-- generated:begin what-it-adds -->
 ## What it adds
 
-Placeholder until npm run index writes it.
+### Workflows
+
+- `delivery` (sub)
+  - `release`, includes `release`
+  - `retrospective`, includes `retrospective`
+- `replenishment` (sub)
+  - `pick`
+
+### Memory types
+
+None.
+
+### Directives
+
+- `wip-limits`: `developer`
+
+### Fragments
+
+- `roles`
+
+### Memory templates
+
+None.
 <!-- generated:end what-it-adds -->
 
 <!-- generated:begin parameters -->
 ## Parameters
 
-Placeholder until npm run index writes it.
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `wip_limit` | integer | `3` | WIP limit of the in-progress column |
 <!-- generated:end parameters -->
 
 ## Examples
