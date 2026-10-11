@@ -1,11 +1,11 @@
 // `npm run publish:pack` (task-014, pack-release-cycle › publish, after the approval gate): checks the
 // version, re-validates in publication mode at HEAD as a guard, tags `<catalog pack id>@<version>`,
 // then adds the catalog entry in a later commit (spec-001 §11), with the digest (§13), the computed
-// range (§12) and, for a stage pack, its transitions' digests (§14). It never pushes. Until
-// `npm run index` exists (wave W14), CATALOG.md and catalog-index.json are left unchanged (plan-023).
-// The line is decided first (task-016): from a maint/<id>/<major>.x branch, after WingFoil 1.0, the
-// tag goes on that branch and the catalog commit on main. With --dry-run it works in a temporary
-// clone and leaves the repository as it was.
+// range (§12) and, for a stage pack, its transitions' digests (§14), with the CATALOG.md and
+// catalog-index.json that `npm run index` writes for the edited catalog (task-020). It never
+// pushes. The line is decided first (task-016): from a maint/<id>/<major>.x branch, after WingFoil
+// 1.0, the tag goes on that branch and the catalog commit on main. With --dry-run it works in a
+// temporary clone and leaves the repository as it was.
 import { existsSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync }
   from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -22,6 +22,9 @@ import { findFiles } from './check-schemas';
 import { CompatError, loadCompat } from './compat';
 import { DigestError, isCatalogPackId, packDigest, transitionDigest } from './digest';
 import { GitError, callerIdentity, resolveCommit, runGit } from './git';
+import { rootOutputs } from './index';
+import { IndexInputError } from './index-data';
+import { atCommit, overlay, workingTree } from './index-source';
 import { LineError, decideLine, isMaintenanceBranch, lineName } from './lines';
 import type { Line, LineInput, PublishedVersion } from './lines';
 import { computeRange } from './range';
@@ -43,6 +46,9 @@ export interface PublishResult {
 }
 
 type Doc = Record<string, unknown>;
+
+/** The index files a catalog commit carries with catalog.yaml (task-020). */
+const INDEX_FILES = ['CATALOG.md', 'catalog-index.json'];
 
 /** A failure with its exit code: 1 a check, 2 an I/O or git error, 3 bad usage. */
 class PublishError extends Error {
@@ -243,19 +249,22 @@ function decide(input: LineInput): Line {
 }
 
 /**
- * A commit on main that sets catalog.yaml, made with plumbing and a temporary index, so that the
- * checked-out branch (a maintenance line) and its working tree are left as they are.
+ * A commit on main that sets the given files (catalog.yaml and its index), made with plumbing and a
+ * temporary index, so that the checked-out branch (a maintenance line) and its working tree are
+ * left as they are.
  */
-function commitOnMain(tree: string, text: string, message: string,
+function commitOnMain(tree: string, files: Map<string, string>, message: string,
   identity: NodeJS.ProcessEnv): string {
   const parent = git(tree, ['rev-parse', 'refs/heads/main']);
-  const blob = runGit(tree, ['hash-object', '-w', '--stdin'], Buffer.from(text, 'utf8'))
-    .toString('utf8').trim();
   const scratch = mkdtempSync(join(tmpdir(), 'publish-index-'));
   try {
     const env = { ...identity, GIT_INDEX_FILE: join(scratch, 'index') };
     git(tree, ['read-tree', parent], env);
-    git(tree, ['update-index', '--add', '--cacheinfo', `100644,${blob},catalog.yaml`], env);
+    for (const [path, text] of files) {
+      const blob = runGit(tree, ['hash-object', '-w', '--stdin'], Buffer.from(text, 'utf8'))
+        .toString('utf8').trim();
+      git(tree, ['update-index', '--add', '--cacheinfo', `100644,${blob},${path}`], env);
+    }
     const treeId = git(tree, ['write-tree'], env);
     const commit = git(tree, ['commit-tree', '--no-gpg-sign', treeId, '-p', parent, '-m', message],
       env);
@@ -355,7 +364,8 @@ function publishIn(tree: string, args: Args, options: PublishOptions, cache: str
       // The original failure is the one to report.
     }
     const message = error instanceof Error ? error.message : String(error);
-    const code = error instanceof CatalogEditError || error instanceof FeedbackNoteError ? 1 : 2;
+    const code = error instanceof CatalogEditError || error instanceof FeedbackNoteError
+      || error instanceof IndexInputError ? 1 : 2;
     throw new PublishError(code, `${tag}: ${message}; the tag was removed and the branch reset to `
       + 'its head before the tag', lines);
   }
@@ -382,20 +392,28 @@ function afterTag(tree: string, pack: string, tag: string, version: string,
   const edited = addVersion(catalogText, pack, entry);
   let catalogCommit: string;
   if (line.kind === 'maintenance') {
-    // The catalog lives on main: the commit goes there, the maintenance branch is untouched.
-    catalogCommit = commitOnMain(tree, edited, `catalog: ${tag}`, identity);
+    // The catalog lives on main: the commit goes there with the index of main's commit and the
+    // edited catalog.yaml, never of the maintenance working tree; the branch is untouched.
+    const main = resolveCommit(tree, 'refs/heads/main');
+    const files = rootOutputs(tree, overlay(atCommit(tree, main, 'main'),
+      { 'catalog.yaml': edited }));
+    catalogCommit = commitOnMain(tree, new Map([['catalog.yaml', edited], ...files]),
+      `catalog: ${tag}`, identity);
   } else {
     writeFileSync(join(tree, 'catalog.yaml'), edited);
-    git(tree, ['add', '--', 'catalog.yaml']);
+    for (const [path, text] of rootOutputs(tree, workingTree(tree))) {
+      writeFileSync(join(tree, path), text);
+    }
+    git(tree, ['add', '--', 'catalog.yaml', ...INDEX_FILES]);
     git(tree, ['commit', '--quiet', '--no-verify', '--no-gpg-sign', '-m', `catalog: ${tag}`],
       identity);
     catalogCommit = git(tree, ['rev-parse', 'HEAD']);
   }
-  lines.push('', 'CATALOG.md and catalog-index.json not regenerated: npm run index does not exist '
-    + 'yet (wave W14); record it in the pack-release Execution Notes (plan-023).');
+  const onMain = line.kind === 'maintenance' ? ' (on main)' : '';
   lines.push('', '## Publication', '', `- Line: ${lineName(line)}`,
     `- Tag: \`${tag}\` (annotated), at \`${commit}\``,
-    `- Catalog commit: \`${catalogCommit}\`${line.kind === 'maintenance' ? ' (on main)' : ''}`,
+    `- Catalog commit: \`${catalogCommit}\`${onMain}`,
+    `- Index: ${INDEX_FILES.join(', ')}${onMain}`,
     `- Digest: \`${String(entry['digest'])}\``, `- WingFoil range: \`${range}\``);
   for (const [id, digest] of Object.entries((entry['transitions'] as Doc | undefined) ?? {})) {
     lines.push(`- Transition ${id}: \`${String(digest)}\``);

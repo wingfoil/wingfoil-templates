@@ -9,7 +9,7 @@ import { runIndex } from '../src/index';
 import { runValidate } from '../src/validate';
 import type { ValidateOptions, ValidateResult } from '../src/validate';
 import { FIXTURES, REPO_ROOT } from './support/paths';
-import { publishByHand, reindex, treeRepo } from './support/published-repo';
+import { publishByHand, treeRepo } from './support/published-repo';
 import { FORMAT_WARNING, StubWingfoil } from './support/stub-wingfoil';
 import type { StubCommand } from './support/stub-wingfoil';
 
@@ -217,7 +217,6 @@ describe('npm run validate', () => {
     const repo = treeRepo();
     try {
       publishByHand(repo, 'base');
-      reindex(repo);
       repo.git(['tag', '-d', 'base@1.0.0']);
       const result = validate(['--tree', repo.dir, 'methodology/kanban']);
       assert.equal(result.code, 2, result.lines.join('\n'));

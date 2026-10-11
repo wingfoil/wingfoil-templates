@@ -3,7 +3,8 @@ import { join } from 'node:path';
 import { parse, stringify } from 'yaml';
 
 import { packDigest } from '../../src/digest';
-import { runIndex } from '../../src/index';
+import { rootOutputs, runIndex } from '../../src/index';
+import { workingTree } from '../../src/index-source';
 import { TestRepo } from './git-repo';
 import { BASE_COMPOSABLE, KANBAN, writePack } from './pack-tree';
 import type { PackSpec } from './pack-tree';
@@ -40,8 +41,11 @@ export function treeRepo(specs: PackSpec[] = [BASE_COMPOSABLE, KANBAN],
   return repo;
 }
 
-/** Publishes one pack version by hand, as spec-001 §11 orders it: tag, then the catalog commit. */
-export function publishByHand(repo: TestRepo, packId: string): Doc {
+/**
+ * Publishes one pack version by hand, as spec-001 §11 orders it: tag, then the catalog commit,
+ * with the regenerated index unless `index` is false (a test of an index that cannot be built).
+ */
+export function publishByHand(repo: TestRepo, packId: string, { index = true } = {}): Doc {
   const manifest = parse(readFileSync(join(repo.dir, 'packs', packId, 'pack.yaml'), 'utf8')) as Doc;
   const version = String(manifest['version']);
   repo.tag(`${packId}@${version}`);
@@ -62,6 +66,10 @@ export function publishByHand(repo: TestRepo, packId: string): Doc {
     (existing['versions'] as Doc[]).push(entry);
   }
   repo.write('catalog.yaml', stringify(catalog));
+  // The catalog commit carries the regenerated index, as publish:pack's does (task-020).
+  if (index) {
+    for (const [path, text] of rootOutputs(repo.dir, workingTree(repo.dir))) repo.write(path, text);
+  }
   repo.commitAll(`catalog: ${packId}@${version}`);
   return entry;
 }
@@ -72,11 +80,7 @@ export function writeIndex(repo: TestRepo): void {
   if (result.code !== 0) throw new Error(result.lines.join('\n'));
 }
 
-/**
- * Runs the index and commits its outputs. After a publication it refreshes the CATALOG.md and
- * catalog-index.json that publish:pack leaves stale until plan-024 task 2b, which removes those
- * calls.
- */
+/** Runs the index and commits its outputs, for a commit that is not a publication. */
 export function reindex(repo: TestRepo, message = 'index'): void {
   writeIndex(repo);
   repo.commitAll(message);

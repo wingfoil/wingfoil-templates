@@ -153,6 +153,10 @@ describe('npm run publish:pack -- --bundled (F5.4; the W7 exit criterion)', () =
       assert.deepEqual(repo.git(['log', '-3', '--format=%s']).trim().split('\n'),
         ['feedback: F-022 base@1.0.0', 'catalog: base@1.0.0', 'inbox, schemas, changelog']);
       assert.equal(repo.git(['cat-file', '-t', 'refs/tags/base@1.0.0']).trim(), 'tag');
+      // CB-5 (task-020): the catalog, its index and the note, nothing under packs/.
+      const changed = repo.git(['diff', '--name-only', 'base@1.0.0', 'HEAD']).trim().split('\n');
+      assert.deepEqual(changed.filter((file) => !file.startsWith(`${INBOX}/`)),
+        ['CATALOG.md', 'catalog-index.json', 'catalog.yaml']);
       assertInbox(join(repo.dir, INBOX));
       assert.equal(runCheckPacks(repo.dir).code, 0, runCheckPacks(repo.dir).lines.join('\n'));
       assert.equal(repo.git(['status', '--porcelain']).trim(), '');

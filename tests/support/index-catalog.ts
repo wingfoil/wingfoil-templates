@@ -67,7 +67,6 @@ export function indexCatalog(): TestRepo {
   reindex(repo, 'presets and transition');
   for (const id of ['base', 'methodology/kanban', 'phase/inception/lean', 'stage/mvp']) {
     publishByHand(repo, id);
-    reindex(repo);
   }
   publishByHand(repo, 'stage/production');
   const digest = transitionDigest(repo.dir, 'refs/tags/stage/production@1.0.0',
@@ -76,7 +75,7 @@ export function indexCatalog(): TestRepo {
     const production = (catalog['packs'] as Doc[]).find((pack) => pack['id'] === 'stage/production');
     ((production?.['versions'] as Doc[])[0] as Doc)['transitions'] = { 'mvp-to-production': digest };
   });
-  reindex(repo);
+  reindex(repo, 'transition digests');
   writePack(repo.dir, kanban('1.1.0', 'Kanban flow', {
     requires: ['base@^1.0.0'],
     conflicts: ['blueprint/web'],
@@ -86,7 +85,6 @@ export function indexCatalog(): TestRepo {
     'A team that pulls work through a board with WIP limits, and limits its flow.'));
   reindex(repo, 'kanban 1.1.0');
   publishByHand(repo, 'methodology/kanban');
-  reindex(repo);
   writePack(repo.dir, kanban('1.2.0', 'Kanban (unreleased)', {}));
   repo.write('packs/methodology/kanban/README.md', readmeFor('methodology/kanban',
     'Kanban (unreleased)', 'Not released yet.'));

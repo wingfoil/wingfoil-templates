@@ -1,19 +1,17 @@
 // The catalog index of spec-002 §3.3 (task-019): built from catalog.yaml, compat.yaml and the
-// presets of the working tree, and from each published version's tag. Every object is built key
-// by key in the order §3.3 gives, so that the JSON is written as it is built.
-import { join } from 'node:path';
-
+// presets of a view of the tree (the working tree, or main's commit for an N-1 publication), and
+// from each published version's tag. Every object is built key by key in the order §3.3 gives,
+// so that the JSON is written as it is built.
 import { compare as semverCompare, rcompare } from 'semver';
 
-import { CompatError, loadCompat } from './compat';
-import { byBytes, IndexInputError, isDoc, list, sorted, strings, yamlAt } from './index-data';
+import { CompatError, compatFrom } from './compat';
+import { byBytes, IndexInputError, isDoc, list, sorted, strings, yamlAt, yamlIn } from './index-data';
 import type { Doc } from './index-data';
 import { atTag, checkRepositoryTop, IndexError, workingTree } from './index-source';
 import type { TreeSource } from './index-source';
 import { REPOSITORY, rawAtTag, rawMain } from './index-urls';
 import { readmeOutline, sectionNumber } from './readme';
 import { repositorySchemas } from './schemas';
-import { YamlError } from './yaml-load';
 
 export interface IndexParameter {
   name: string;
@@ -237,13 +235,16 @@ function transitionOf(entry: Doc): IndexTransition {
 }
 
 /** The versions of the compat.yaml releases that provide pack-install, ascending. */
-function installReleases(tree: string): string[] {
+function installReleases(source: TreeSource): string[] {
   try {
-    return loadCompat(join(tree, 'compat.yaml')).releases
+    const data = yamlIn(source, 'compat.yaml');
+    if (data === undefined) return [];
+    return compatFrom(data).releases
       .filter((release) => release.capabilities.includes('pack-install'))
       .map((release) => release.wingfoil).sort(semverCompare);
   } catch (error) {
-    if (error instanceof CompatError || error instanceof YamlError) return [];
+    // A compat.yaml the index cannot use is the schema check's and the lint's to report.
+    if (error instanceof CompatError || error instanceof IndexInputError) return [];
     throw error;
   }
 }
@@ -252,24 +253,27 @@ function byId<T extends { id: string }>(items: T[]): T[] {
   return [...items].sort((a, b) => byBytes(a.id, b.id));
 }
 
-/** The index of a tree (spec-002 §3.3); an IndexError when a file or a tag cannot be read. */
-export function buildIndex(tree: string): CatalogIndex {
-  const working = workingTree(tree);
-  if (working.read('catalog.yaml') === undefined) throw new IndexError(`${tree}: no catalog.yaml`);
-  const catalog = yamlAt(working, 'catalog.yaml');
+/**
+ * The index of a tree (spec-002 §3.3), its catalog.yaml, presets and compat.yaml read through
+ * `source` (the working tree by default), its tags from `tree`'s repository; an IndexError when a
+ * tag cannot be read, an IndexInputError when a file cannot be used.
+ */
+export function buildIndex(tree: string, source: TreeSource = workingTree(tree)): CatalogIndex {
+  if (source.read('catalog.yaml') === undefined) throw new IndexError(`${tree}: no catalog.yaml`);
+  const catalog = yamlAt(source, 'catalog.yaml');
   if (repositorySchemas().validate('catalog', catalog).length > 0) {
     throw new IndexInputError('catalog.yaml fails its schema; npm run check:schemas names the '
       + 'problems');
   }
   const entries = list(catalog['packs']).filter(isDoc);
   if (entries.some((entry) => list(entry['versions']).length > 0)) checkRepositoryTop(tree);
-  const presets = byId(list(catalog['presets']).filter(isDoc).map((entry) => presetOf(working,
+  const presets = byId(list(catalog['presets']).filter(isDoc).map((entry) => presetOf(source,
     entry)));
   const packs = byId(entries.flatMap((entry) => packOf(tree, entry, presets) ?? []));
   return {
     format: 1,
     repository: REPOSITORY,
-    install: installReleases(tree),
+    install: installReleases(source),
     packs,
     presets,
     transitions: byId(list(catalog['transitions']).filter(isDoc).map(transitionOf)),

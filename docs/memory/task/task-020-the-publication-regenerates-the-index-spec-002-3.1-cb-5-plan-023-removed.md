@@ -2,7 +2,7 @@
 id: task-020-the-publication-regenerates-the-index-spec-002-3.1-cb-5-plan-023-removed
 type: task
 title: "The publication regenerates the index (spec-002 §3.1, CB-5; the plan-023 skip removed)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-change › deliver, tooling-delivery)
 depends_on: ["task-019-the-index-command-catalog.md-catalog-index.json-llms.txt-and-the-readme-generated-sections-spec-002-3-cb-4-cb-5"]
 tags: ["tooling","W14","F2.8"]
@@ -152,3 +152,27 @@ item gets its failing test before the code that makes it pass.
   source comments) and four nits, all applied while `pending`. Re-review: approve; its
   should-fix (the missing tag of the rollback test is not one of the line's own tags, which the
   line check reads before tagging) and nits applied.
+- 2026-10-11, build on `task/task-020-publish-index` (`cb0af0e`): the tests of acceptance 4–8 and
+  the two rollbacks were written first and failed (8 failures) before the code; the unit tests of
+  `overlay` and `compatFrom` were written after their code, which the red N-1 test drove.
+- 2026-10-11, deviations from the Acceptance and the Design:
+  - acceptance 8 on an N-1 line: the catalog commit lists `catalog-index.json` and `catalog.yaml`,
+    and `CATALOG.md` only when its content changes. Its Latest column shows the N line, which an
+    N-1 publication does not change; "exactly the same three files" cannot hold as written. The
+    test asserts the two files; `llms.txt` and `packs/` are never listed;
+  - acceptance 3: `tests/index.test.ts` changes in one line. Its schema-failure test builds a tag
+    whose index breaks the schema, and `publishByHand` now builds the index, so the test passes
+    `{ index: false }`; the other index suites are unmodified;
+  - Design: `compatFrom(data)` takes no label (`loadCompat`'s messages never carried the path).
+- 2026-10-11: independent review of the build (a subagent with its own context): approve after
+  fixes; nothing blocking; it accepted the three deviations above, asked for them to be recorded,
+  and for two cleanups and nits (a `CatalogError` branch no path reaches, an alias, the current-line
+  dry run's state check, a line wrap), applied in `373bf07`. Not re-reviewed: cleanups only.
+- 2026-10-11: Acceptance 1–2 on Node.js 22.21.0 and 22.12.0: 733 tests pass; `lint`,
+  `check:pins`, `check:schemas`, `check:packs`, `validate`, the golden `validate` and
+  `npm run index -- --check` exit 0; CB-8 holds against `origin/main`; no dependency added; the
+  committed index outputs and `tests/fixtures/index/expected/` are byte-identical to `main`'s.
+  `npm run -s wingfoil -- workflow list` exits 0 with empty stderr; `pack-release-cycle` has no
+  `include` to check by hand.
+- 2026-10-11, CI (acceptance 12): run 38158220050 on `373bf07`, conclusion `success` for
+  `validate (22.12.0)` and `validate (22.21.0)`.

@@ -16,14 +16,18 @@ export interface Compat {
 }
 
 export function loadCompat(path: string): Compat {
-  const loaded = loadYamlFile(path, path);
-  const errors = repositorySchemas().validate('compat', loaded.data);
+  return compatFrom(loadYamlFile(path, path).data);
+}
+
+/** compat.yaml's data, checked as loadCompat checks the file: from any view of a tree. */
+export function compatFrom(data: unknown): Compat {
+  const errors = repositorySchemas().validate('compat', data);
   if (errors.length > 0) {
     const first = errors[0];
     throw new CompatError(`not a valid compat file: ${first?.instancePath ?? ''} `
       + `${first?.message ?? ''}`);
   }
-  const compat = loaded.data as Compat;
+  const compat = data as Compat;
   const [first] = compatMessages(compat);
   if (first !== undefined) throw new CompatError(first.message);
   return compat;
