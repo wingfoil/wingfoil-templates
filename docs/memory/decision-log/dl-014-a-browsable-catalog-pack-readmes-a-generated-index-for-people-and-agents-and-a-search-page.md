@@ -275,3 +275,6 @@ CB-1 and CB-2: the charters of dl-011, dl-012 and dl-013 among them.
   (v4) leaves `CATALOG.md` and `catalog-index.json` unchanged and records the skipped regeneration
   in the `pack-release` element's Execution Notes, as the approver ruled (option "skip and record");
   applied under plan-023 (`600ba9f`). The W7 dry-run publication is not blocked by W14.
+- 2026-10-11: CB-6's offline part is delivered by task-021 (plan-024 task 3). Its live part is
+  recorded in `base`'s first `pack-release`; D7 puts only CB-1 and CB-2 in the charters, so
+  **`base`'s charter must list CB-6 with them.**
