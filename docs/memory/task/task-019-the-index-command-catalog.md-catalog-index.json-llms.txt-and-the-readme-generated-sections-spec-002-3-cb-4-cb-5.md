@@ -114,7 +114,8 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    fixed in the Design and by the expected files:
    1. a level-1 title and one paragraph saying what the catalog is and that the file is generated
       by `npm run index`;
-   2. `## Install`, preceded by `<a id="install"></a>`: the `compat.yaml` releases whose
+   2. `## Install`, preceded by `<a id="install"></a>`, deliberately, so that the anchor READMEs
+      link stays stable if the heading text changes: the `compat.yaml` releases whose
       `capabilities` contain `pack-install`, or the sentence that no released WingFoil installs
       packs yet and that each README's section 3 gives the temporary hand steps;
    3. one section per axis, `base` first, then the axes in `catalog.yaml` order: a table with the
@@ -159,8 +160,8 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
      run of consecutive non-blank top-level text lines after the section 2 heading (not a list, a
      block quote, a code block or a heading); its lines joined by one space, inline Markdown kept
      as written; `""` when section 2 has none. Lengths count Unicode code points. Above 500, it is
-     cut at the last whitespace before the 500th code point, or hard at 499 when there is none,
-     and ends with `…`, 500 code points at most.
+     cut at the last whitespace before the 500th code point (the whitespace dropped), or hard at
+     499 when there is none, and ends with `…`, 500 code points at most.
    - No field holds a date, a commit or a digest.
 8. **`llms.txt` (§3.4):** a level-1 title, a one-line blockquote summary, then `## Index`
    (`catalog-index.json` and `CATALOG.md` at `main`), `## Specifications` (spec-001 and spec-002 on
@@ -206,15 +207,19 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
     the fixture catalog of acceptance 13 and the `README.md` of each of its packs, compared byte
     for byte by a test; they are refreshed only by an explicit command named in that test file,
     never by a normal test run. The test support writes the index outputs of every scratch tree
-    that `validate` or `publish:pack` runs on before the tree's commit; no existing assertion is
-    weakened.
+    that `validate` or `publish:pack` runs on before the tree's commit. Until plan-024 task 2b, a
+    test helper runs the index and commits its outputs after each `publishByHand` and each
+    `runPublish` in the tests, so that a later publication's guard (`validate:publication`, with
+    `index --check`) passes; its comment says that task 2b removes it. No existing assertion is
+    weakened, and no assertion on a publication's own commits changes.
 13. **Tests (CB-4),** red first where the behaviour is new. The fixture catalog is a scratch git
     repository with tags holding at least: `base`; a methodology with two published versions that
-    differ in a per-version field (`requires` or `requires_capabilities`), whose tagged `pack.yaml`
-    also differs from its `catalog.yaml` entry in a field §3.3 takes from the tag; after its latest
+    differ in a per-version field (`requires` or `requires_capabilities`); after its latest
     tag, an unreleased change of its `pack.yaml` title and README section 2 in the working tree; a
     phase pack (slot); a pack with no published version; a preset with a profile and one without; a
-    transition. The tests check: the schema and `format: 1`; every field of acceptance 7, the
+    transition. That catalog passes `check:packs`. A separate test alters a published version's
+    `catalog.yaml` entry (for example its `requires`) after the publication and shows that the
+    index still emits the tag's values. The tests check: the schema and `format: 1`; every field of acceptance 7, the
     per-version ones from each tag and the latest-version ones from the latest tag, while the
     README generated sections show the working-tree values; the `refs/tags/<tag>` URLs; the
     unlisted pack; the missing-tag and not-a-repository errors; determinism; `--check` on a fresh,
@@ -234,4 +239,8 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
   tell per-version fields from the tag from those in `catalog.yaml`), twelve should-fix and nits.
   It proposed a split. The approver ruled the split (the publication moves to plan-024 task 2b,
   with the N-1 point) and the github.com README link in `CATALOG.md`. Every other point is applied
-  while `pending`.
+  while `pending`. Re-review: two new blocking points, applied: until task 2b a test helper
+  regenerates and commits the index after each publication in the tests (a second publication's
+  guard would fail otherwise); the browsable fixture passes `check:packs`, and a separate test
+  alters a catalog entry to show that the index reads the tag. Its should-fix on plan-024 (rows 2
+  and 2b, the Context, the order) and nits are applied too.

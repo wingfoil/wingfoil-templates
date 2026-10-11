@@ -27,7 +27,7 @@ Sources, all `approved` or `done`:
   page), §6 (CB-1…CB-8), §7 (open points P1–P3);
 - **plan-023**: until `npm run index` exists, `pack-release-cycle` › `publish` (v4) and
   `npm run publish:pack` leave `CATALOG.md` and `catalog-index.json` unchanged and record the skip.
-  The index task removes that rule;
+  Task 2b removes that rule;
 - the tooling of plan-015: the composer, `npm run validate` (self-test),
   `npm run validate:publication` (with `--evidence`), `npm run check:packs` (lint),
   `npm run publish:pack` (line policy N/N-1), `npm run feedback:note` and CI
@@ -68,15 +68,15 @@ which stay outside W14.
    | # | Task | Source |
    |---|---|---|
    | 1 | README lint rules: the nine sections in order, no other level-1 or level-2 heading, the generated-section markers, no WingFoil CLI command, the temporary mark while no `compat.yaml` release provides `pack-install` | spec-002 §2.1–§2.3, §6 CB-1, CB-3; dl-014 D7 T1 |
-   | 2 | The index command `npm run index -- [--tree] [--check]`: `CATALOG.md`, `catalog-index.json` and `index/catalog-index.schema.json`, `llms.txt`, the README generated sections; `validate` and `validate:publication` run `--check`; the plan-023 skip is removed from `publish:pack` and `pack-release-cycle` › `publish` | spec-002 §2.2, §3, §6 CB-4, CB-5; dl-014 D7 T2; plan-023 |
-   | 2b | The publication regenerates the index: `publish:pack` on the current line, on an N-1 line (from `main`'s commit) and with `--dry-run`; the plan-023 skip removed from `publish:pack` and `pack-release-cycle` › `publish` (`version:` 4 → 5); publishing changes no file under `packs/` | spec-002 §3.1, §6 CB-5; dl-014 D2, D6; plan-023 |
+   | 2 | The index command `npm run index -- [--tree] [--check]`: `CATALOG.md`, `catalog-index.json` and `index/catalog-index.schema.json`, `llms.txt`, the README generated sections; `validate` and `validate:publication` run `--check` | spec-002 §2.2, §3, §6 CB-4, CB-5; dl-014 D7 T2 |
+   | 2b | The publication regenerates the index: `publish:pack` on the current line, on an N-1 line (from `main`'s commit) and with `--dry-run`; the plan-023 skip removed from `publish:pack` and `pack-release-cycle` › `publish` (`version:` 4 → 5); publishing changes no file under `packs/`; the tests' interim index helper of task 2 removed | spec-002 §3.1, §6 CB-5; dl-014 D2, D6; plan-023 |
    | 3 | The agent path: the procedure in `CATALOG.md` › "For agents" and in `llms.txt`, and offline tests of every URL pattern the index files emit | spec-002 §3.2, §3.4, §4, §6 CB-6; dl-014 D7 T4 |
    | 4 | Examples as fixtures: the fixture layout, the lint rule, the validation step that composes and validates every example, and the temporary exemption while the tree holds no methodology | spec-002 §2.4, §6 CB-2; dl-014 D7 T3 |
    | 5 | A root `README.md` that links `CATALOG.md` and `llms.txt` | dl-014 D7 T6; `dna.yaml` `paths.docs` |
    | 6 | The search page: the site command (spec-002 P3), its tests on the fixture catalog, and its deployment to GitHub Pages from `main` by CI | spec-002 §5, §6 CB-7, P1, P3; dl-014 D4, D7 T5 |
 
    Order: the lint first, because the index writes the generated sections whose markers it checks;
-   the agent path right after the index, because it works on the same generated files; the search
+   2b right after 2, because it needs the index command; the agent path right after them, because it works on the same generated files; the search
    page last, because it builds on the index and needs Pages enabled by the approver, who is asked
    during its build, before the first deployment.
 2. **Wave close.** Once the seven tasks are `done`, the exit criterion of W14 is checked on `main`
