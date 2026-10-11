@@ -333,3 +333,6 @@ hand, the schema is compiled by the Ajv 2020 of adr-003.
   `npm run index -- --check` exit 0; CB-8 holds against `origin/main`; no dependency added.
 - 2026-10-11, CI (acceptance 14): run 38152404572 on `758c779`, conclusion `success` for
   `validate (22.12.0)` and `validate (22.21.0)`; run 38151340280 on `6b7772a` was `success` too.
+- 2026-10-11: approved by the approver; CI run 38152562965 on the branch head `83da610` was
+  `success`. Merged into `main` with `--no-ff` (`59db031`); the branch is removed. Next: plan-024
+  task 2b, the publication that regenerates the index and removes the interim test refreshes.

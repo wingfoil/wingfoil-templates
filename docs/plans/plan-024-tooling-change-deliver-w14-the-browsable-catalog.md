@@ -107,3 +107,9 @@ which stay outside W14.
   tasks: task 2, the index command (task-019), and a new **task 2b**, the publication that
   regenerates the index and removes the plan-023 skip; seven tasks in all. Also ruled: the README
   column of `CATALOG.md` links the README rendered on github.com at the latest tag.
+- 2026-10-11: task 2: task-019 (the index command; spec-002 §3, CB-4, CB-5) done, merged `59db031`.
+  `npm run index` writes `CATALOG.md`, `catalog-index.json`, `llms.txt` and the README
+  generated sections; `validate` runs `--check`. The repository's root holds the outputs of its
+  empty catalog; `tests/fixtures/index/expected/` holds those of a fixture catalog with tags.
+  spec-002 erratum recorded in task-019 (the tag is derived, not read from `catalog.yaml`). Next:
+  task 2b.
