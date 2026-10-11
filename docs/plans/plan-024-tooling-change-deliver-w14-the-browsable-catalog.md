@@ -2,7 +2,7 @@
 id: plan-024-tooling-change-deliver-w14-the-browsable-catalog
 type: plan
 title: "tooling-change deliver: W14, the browsable catalog"
-status: draft
+status: active
 workflow: "tooling-change"
 phase: "deliver"
 tags: ["tooling","W14"]
