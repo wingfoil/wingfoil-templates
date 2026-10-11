@@ -64,9 +64,11 @@ function headingRule(outline: ReadmeOutline, report: Reporter): void {
   }
   for (let number = 1; number <= README_HEADINGS.length + 1; number += 1) {
     if (seen.has(number)) continue;
-    // In its place: the heading right after the last one of a lower section.
-    const previous = numbered.reduce((last, entry, index) => (entry.number !== undefined
-      && entry.number < number ? index : last), -1);
+    // In its place: the heading right after the last one of a lower section, before any higher.
+    const higher = numbered.findIndex((entry) => entry.number !== undefined && entry.number > number);
+    const previous = numbered.slice(0, higher < 0 ? numbered.length : higher)
+      .reduce((last, entry, index) => (entry.number !== undefined && entry.number < number
+        ? index : last), -1);
     const line = numbered[previous + 1]?.section.heading.line ?? outline.lineCount;
     report(Math.max(line, 1), 'readme-heading', `heading "${headingName(number)}" is missing `
       + '(spec-002 §2.1)');
@@ -74,7 +76,7 @@ function headingRule(outline: ReadmeOutline, report: Reporter): void {
   const title = numbered.find((entry) => entry.number === 1)?.section.heading;
   if (title === undefined) return;
   const before = outline.scan.lines.find((line) => line.line < title.line
-    && line.kind !== 'blank' && line.kind !== 'marker');
+    && line.raw.trim() !== '' && line.kind !== 'marker');
   if (before !== undefined) {
     report(before.line, 'readme-heading', 'content comes before the level-1 heading');
   }
@@ -145,7 +147,7 @@ function placement(outline: ReadmeOutline, pair: Pair, report: Reporter): boolea
     return false;
   }
   const filler = (from: number, to: number): number | undefined => outline.scan.lines
-    .find((line) => line.line > from && line.line < to && line.kind !== 'blank'
+    .find((line) => line.line > from && line.line < to && line.raw.trim() !== ''
       && line.kind !== 'marker')?.line;
   const beforeHeading = filler(pair.begin, own.heading.line);
   if (beforeHeading !== undefined) {
@@ -207,7 +209,7 @@ function installMarkRule(outline: ReadmeOutline, listed: boolean, report: Report
   const install = section(outline, 3);
   if (listed || install === undefined) return;
   const first = outline.scan.lines.find((line) => line.line > install.heading.endLine
-    && line.kind !== 'blank' && line.kind !== 'marker');
+    && line.raw.trim() !== '' && line.kind !== 'marker');
   const inside = first !== undefined && first.line <= install.last ? first : undefined;
   if (inside?.raw !== TEMPORARY_MARK) {
     report(inside?.line ?? install.heading.line, 'readme-install-mark', 'while no compat.yaml '

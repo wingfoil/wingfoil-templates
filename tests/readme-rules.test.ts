@@ -96,8 +96,15 @@ describe('README lint rules (task-018)', () => {
       failsWith('readme-heading', `${README}\n# Another title\n`);
     });
 
+    it('reports a missing heading before the next higher one, not at a later duplicate', () => {
+      const readme = `${without(README, '## Install and update', '<!-- generated:begin composition')}`
+        + '\n## When to use it\n';
+      assert.ok(found(readme).includes(`${lineOf(readme, '## Composition')} readme-heading`));
+    });
+
     it('fails content before the level-1 heading, and an empty title', () => {
       failsWith('readme-heading', `Intro.\n\n${README}`);
+      failsWith('readme-heading', `-\n>\n${README}`);
       failsWith('readme-heading', README.replace('# methodology/kanban', '#'));
     });
 
