@@ -60,6 +60,16 @@ None yet.
 Agents read the catalog with no server, through anonymous URLs; [llms.txt](llms.txt) is their
 entry point.
 
+1. Fetch the index at main: `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/catalog-index.json`.
+2. Filter its `packs` locally by `axis`, `slot`, `profiles`, `status`, or text over `title`, `description` and `excerpt` (a case-insensitive substring match is enough).
+3. Take the chosen pack's `latest`, the entry of `versions` whose `version` equals it, and that entry's `readme_url` and `manifest_url`.
+4. Fetch them: they are pinned to the version's tag and never change.
+5. For resolution and compatibility, fetch `catalog.yaml` and `compat.yaml` at main; a preset or a transition at its `url` field.
+
+Every file is anonymous and CORS-enabled and may be up to 5 minutes stale; no server, REST API or code search is needed. A tag is written as is in a URL (`/` and `@` included).
+
+The URL patterns:
+
 - the index: `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/catalog-index.json`
 - a published version's README: `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/<catalog pack id>@<version>/packs/<catalog pack id>/README.md`
 - a published version's manifest: `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/<catalog pack id>@<version>/packs/<catalog pack id>/pack.yaml`

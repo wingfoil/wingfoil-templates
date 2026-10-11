@@ -118,3 +118,7 @@ which stay outside W14.
   `catalog.yaml`, on an N-1 line from `main`'s commit; the plan-023 skip is gone from
   `publish:pack` and `pack-release-cycle` (v5); the tests no longer refresh the index after a
   publication. Next: task 3, the agent path.
+- 2026-10-11, for task 3 (task-021): the live part of CB-6 (an anonymous fetch from `llms.txt` to
+  the index, a filter, and one pack's README and `pack.yaml` at its tag) is recorded as evidence in
+  `base`'s first `pack-release` (spec-002 §6). No charter or workflow carries it yet: **`base`'s
+  charter must list CB-6 with CB-1 and CB-2.**

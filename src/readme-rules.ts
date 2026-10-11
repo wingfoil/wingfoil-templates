@@ -180,23 +180,25 @@ const COMMANDS = ['wingfoil ', 'npx wingfoil', 'npm exec wingfoil', 'npm run win
   'npm run -s wingfoil'];
 const BARE = new Set(['wingfoil', ...COMMANDS.map((command) => command.trim())]);
 
-function command(text: string): string {
-  return text.trimStart().replace(/^\$ /, '');
+/**
+ * A WingFoil CLI command (spec-002 §2.3): after leading whitespace and an optional `$ `, one of the
+ * prefixes; a code-block line (`codeLine`) also counts with no argument. Exported for the agent
+ * path's check of CATALOG.md and llms.txt (task-021).
+ */
+export function isCliCommand(text: string, codeLine: boolean): boolean {
+  const command = text.trimStart().replace(/^\$ /, '');
+  return COMMANDS.some((prefix) => command.startsWith(prefix))
+    || codeLine && BARE.has(command.trimEnd());
 }
 
 /** Acceptance 7: no WingFoil CLI command in code blocks or code spans. */
 function commandRule(outline: ReadmeOutline, report: Reporter): void {
   const message = 'a README holds no WingFoil CLI command; name files and keys (spec-002 §2.3)';
   for (const code of outline.scan.codeLines) {
-    const text = command(code.text);
-    if (COMMANDS.some((prefix) => text.startsWith(prefix)) || BARE.has(text.trimEnd())) {
-      report(code.line, 'readme-command', message);
-    }
+    if (isCliCommand(code.text, true)) report(code.line, 'readme-command', message);
   }
   for (const span of outline.scan.codeSpans) {
-    if (COMMANDS.some((prefix) => command(span.text).startsWith(prefix))) {
-      report(span.line, 'readme-command', message);
-    }
+    if (isCliCommand(span.text, false)) report(span.line, 'readme-command', message);
   }
 }
 
