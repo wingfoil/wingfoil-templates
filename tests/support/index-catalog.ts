@@ -9,6 +9,7 @@ import type { TestRepo } from './git-repo';
 import { BASE_COMPOSABLE, KANBAN, writePack } from './pack-tree';
 import type { PackSpec } from './pack-tree';
 import { publishByHand, reindex, treeRepo } from './published-repo';
+import { exampleSection } from './examples';
 import { conformingReadme } from './readme';
 
 type Doc = Record<string, unknown>;
@@ -31,7 +32,8 @@ function kanban(version: string, title: string, extra: Doc): PackSpec {
 }
 
 function readmeFor(id: string, title: string, situation: string): string {
-  return conformingReadme({ id, title, description: `${title}.` })
+  return conformingReadme({ id, title, description: `${title}.` },
+    exampleSection(id.slice(id.lastIndexOf('/') + 1)))
     .replace('A test fixture of the tooling; never adopted.', situation);
 }
 

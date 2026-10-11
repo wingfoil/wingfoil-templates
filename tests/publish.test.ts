@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { spawnSync } from 'node:child_process';
-import { appendFileSync, chmodSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, chmodSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { after, describe, it } from 'node:test';
 import { parse, stringify } from 'yaml';
@@ -32,8 +32,8 @@ const WITH_KANBAN = ['methodology/kanban'];
 
 /** A repository whose packs carry a CHANGELOG entry for 1.0.0, committed. */
 function repository(specs: PackSpec[] = [BASE_COMPOSABLE, KANBAN],
-  release = STUB_RELEASE): TestRepo {
-  const repo = treeRepo(specs, release);
+  release = STUB_RELEASE, examples = true): TestRepo {
+  const repo = treeRepo(specs, release, { examples });
   for (const spec of specs) {
     appendFileSync(join(repo.dir, 'packs', spec.id, 'CHANGELOG.md'), '\n- 1.0.0: first version.\n');
   }
@@ -55,8 +55,8 @@ function state(repo: TestRepo): string {
 }
 
 function withRepository(body: (repo: TestRepo) => void, specs?: PackSpec[],
-  release?: string): void {
-  const repo = repository(specs, release);
+  release?: string, examples = true): void {
+  const repo = repository(specs, release, examples);
   try {
     body(repo);
   } finally {
@@ -96,6 +96,15 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
       assert.equal(validation.code, 0, validation.lines.join('\n'));
       assert.ok(validation.lines.some((line) => /^index: checked \d+ files, 0 not up to date$/
         .test(line)), validation.lines.join('\n'));
+    });
+  });
+
+  it('counts an example that contains the pack as a composition (task-022)', () => {
+    withRepository((repo) => {
+      const result = publish(repo, ['--pack', 'base']);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      assert.ok(result.lines.some((line) => line.startsWith(
+        'composition tests/fixtures/examples/base/basic/example.yaml: composed twice')));
     });
   });
 
@@ -155,7 +164,8 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
         const result = publish(repo, ['--pack', 'base', ...WITH_KANBAN]);
         assert.equal(result.code, 1);
         assert.match(result.lines.join('\n'), /no entry "- 1\.0\.0"/);
-      });
+      // With no example, kanban is in no composition of the validation (task-022).
+      }, undefined, undefined, false);
     });
 
   it('creates no tag when the publication validation fails', () => {
@@ -246,6 +256,12 @@ function bump(repo: TestRepo, version: string, formats?: Record<string, number>)
     manifest['requires'] = [`base@^${version.split('.')[0] ?? ''}`];
   });
   appendFileSync(join(repo.dir, 'packs', 'base', 'CHANGELOG.md'), `- ${version}: next.\n`);
+  // base's example follows its major, as an author's does (task-022).
+  const example = join(repo.dir, 'tests', 'fixtures', 'examples', 'base', 'basic', 'example.yaml');
+  if (existsSync(example)) {
+    writeFileSync(example, readFileSync(example, 'utf8').replace(/base@\^\d+/,
+      `base@^${version.split('.')[0] ?? ''}`));
+  }
   writeIndex(repo);
   repo.commitAll(`base ${version}`);
 }

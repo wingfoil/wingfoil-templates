@@ -1,0 +1,8 @@
+format: 1
+id: small-board
+title: "Small board"
+description: "Tidewater Games, a fictional two-person studio, pulls work through one board."
+packs:
+  - methodology/kanban@^1
+parameters:
+  wip_limit: 2

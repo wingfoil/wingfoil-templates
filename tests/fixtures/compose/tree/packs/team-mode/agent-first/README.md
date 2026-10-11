@@ -62,7 +62,11 @@ None.
 
 ## Examples
 
-Placeholder until the examples are fixtures.
+### agent-team
+
+Fixture: tests/fixtures/examples/agent-first/agent-team/
+
+A fictional research lab, Quill Lab, lets agents do most of the work. It adds `team-mode/agent-first` to kanban and gets the reviewer role and its agent; every change is reviewed before it is accepted.
 
 ## Sources and adaptations
 

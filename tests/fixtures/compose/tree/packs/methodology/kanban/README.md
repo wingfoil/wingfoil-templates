@@ -68,7 +68,11 @@ None.
 
 ## Examples
 
-Placeholder until the examples are fixtures.
+### small-board
+
+Fixture: tests/fixtures/examples/kanban/small-board/
+
+A fictional two-person studio, Tidewater Games, pulls work through one board. It sets `wip_limit` to 2 and gets the `delivery` and `replenishment` workflows; each replenishment picks the next items within the limit.
 
 ## Sources and adaptations
 

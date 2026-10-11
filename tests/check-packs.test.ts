@@ -35,11 +35,13 @@ CheckPacksResult {
 
 /**
  * The rules reported, without `catalog-tag`: these trees are not git repositories, so a catalog
- * with published versions always gets it (task-014); the tag rules have tests of their own.
+ * with published versions always gets it (task-014); the tag rules have tests of their own. Nor
+ * the example rules: a pack broken on purpose here (its id, name or README) breaks its example
+ * too, and the example rules have their own suite (tests/example-rules.test.ts, task-022).
  */
 function rules(result: CheckPacksResult): string[] {
   return [...new Set(result.problems.map((problem) => problem.rule))]
-    .filter((rule) => rule !== 'catalog-tag').sort();
+    .filter((rule) => rule !== 'catalog-tag' && !rule.startsWith('example-')).sort();
 }
 
 /** The lint fails the tree with exactly these rules (one, or a sorted list). */
@@ -57,8 +59,9 @@ describe('npm run check:packs', () => {
   it('passes a clean tree, counting every file it covers', () => {
     const result = lint(CLEAN);
     assert.equal(result.code, 0, result.lines.join('\n'));
-    // catalog, compat, and each pack's pack.yaml, README.md, CHANGELOG.md, workflows, fragments.
-    assert.equal(result.lines[0], 'lint: checked 14 files, 0 problems');
+    // catalog, compat, each pack's pack.yaml, README.md, CHANGELOG.md, workflows, fragments, and
+    // each pack's example.yaml (task-022).
+    assert.equal(result.lines[0], 'lint: checked 16 files, 0 problems');
   });
 
   it('passes this repository: two files, no problem (acceptance 13)', () => {
@@ -76,7 +79,7 @@ describe('npm run check:packs', () => {
     const result = lint([BASE, { ...KANBAN, version: '0.9.0',
       manifest: { requires_capabilities: ['workflow-engine', 'pack-install'] } }]);
     assert.equal(result.code, 1);
-    assert.equal(result.lines[0], 'lint: checked 14 files, 2 problems');
+    assert.equal(result.lines[0], 'lint: checked 16 files, 2 problems');
     assert.deepEqual(result.lines.slice(1).map((line) => line.replace(/:\d+:\d+:/, ':L:C:')), [
       'packs/methodology/kanban/pack.yaml:L:C: capabilities-sorted: methodology/kanban: '
         + 'requires_capabilities must be sorted and unique',

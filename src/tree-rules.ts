@@ -156,6 +156,18 @@ function presetProblems(context: LintContext, yaml: LoadedYaml): Problem[] {
     problems.push(at(yaml, '/id', 'preset-name', `${yaml.file}: id ${id} must equal the file `
       + `name, ${stem}.yaml (spec-001 §15)`));
   }
+  return [...problems, ...presetChecks(context, yaml)];
+}
+
+/**
+ * The checks of a preset's packs (packs of the tree, cardinalities) and parameter values, under
+ * the preset rule ids or, for an example fixture (task-022), the one id given.
+ */
+export function presetChecks(context: LintContext, yaml: LoadedYaml, rule?: string): Problem[] {
+  const problems: Problem[] = [];
+  const data = yaml.data as Doc;
+  const cardinality = rule ?? 'preset-cardinality';
+  const valueRule = rule ?? 'preset-value';
   if (context.catalog === undefined) return problems;
   const members = new Map<string, LintPack>();
   const add = (pack: LintPack): void => {
@@ -175,7 +187,7 @@ function presetProblems(context: LintContext, yaml: LoadedYaml): Problem[] {
     }
     const pack = context.packs.get(packId);
     if (pack === undefined) {
-      problems.push(at(yaml, `/packs/${index}`, 'preset-cardinality',
+      problems.push(at(yaml, `/packs/${index}`, cardinality,
         `${yaml.file}: ${packId} is not a pack of the tree`));
     } else {
       add(pack);
@@ -183,7 +195,7 @@ function presetProblems(context: LintContext, yaml: LoadedYaml): Problem[] {
   });
   const ordered = [...members.values()].sort((a, b) => byBytes(a.id, b.id));
   for (const message of axesMessages(context.catalog, ordered)) {
-    problems.push(at(yaml, '/packs', 'preset-cardinality', `${yaml.file}: ${message}`));
+    problems.push(at(yaml, '/packs', cardinality, `${yaml.file}: ${message}`));
   }
   const declared = new Map(ordered.flatMap((pack) =>
     Object.entries(pack.manifest.parameters ?? {})));
@@ -192,7 +204,7 @@ function presetProblems(context: LintContext, yaml: LoadedYaml): Problem[] {
     const problem = declaration === undefined ? 'no pack of the preset declares it'
       : checkValue(declaration.type, value);
     if (problem !== undefined) {
-      problems.push(at(yaml, `/parameters/${name}`, 'preset-value',
+      problems.push(at(yaml, `/parameters/${name}`, valueRule,
         `${yaml.file}: parameter ${name}: ${problem}`));
     }
   }

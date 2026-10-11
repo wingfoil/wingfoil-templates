@@ -1,0 +1,7 @@
+format: 1
+id: live-service
+title: "Live service"
+description: "Harbor Parking, a fictional city service, runs in production."
+packs:
+  - methodology/kanban@^1
+  - stage/production@^1

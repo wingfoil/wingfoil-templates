@@ -63,7 +63,11 @@ None.
 
 ## Examples
 
-Placeholder until the examples are fixtures.
+### basic
+
+Fixture: tests/fixtures/examples/base/basic/
+
+A fictional team adopts the pack with kanban.
 
 ## Sources and adaptations
 

@@ -62,7 +62,11 @@ None.
 
 ## Examples
 
-Placeholder until the examples are fixtures.
+### orders-api
+
+Fixture: tests/fixtures/examples/web-service/orders-api/
+
+A fictional shop, Maple Supplies, builds an orders API. It adds `blueprint/web-service` to kanban and gets the endpoint Memory type and the web-service modules in its DNA.
 
 ## Sources and adaptations
 

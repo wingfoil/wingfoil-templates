@@ -13,6 +13,7 @@ import { runCheckPacks } from './check-packs';
 import { CompatError, loadCompat } from './compat';
 import type { Compat } from './compat';
 import { composeTwice, type DeterminismOptions } from './determinism';
+import { exampleFiles } from './examples';
 import { runIndex } from './index';
 import {
   DEFAULT_CACHE, MATRIX_PINS, MatrixIoError, installRelease, runRelease, selectReleases,
@@ -40,11 +41,13 @@ export interface ValidateResult {
 class UsageError extends Error {}
 
 interface Composition {
-  /** `presets/<id>.yaml`, or `entries`. */
+  /** `presets/<id>.yaml`, an example's `tests/fixtures/examples/…/example.yaml`, or `entries`. */
   label: string;
   entries: string[];
   /** Values the preset sets, as text. */
   preset: Record<string, string>;
+  /** The lint reports it: its line says so in its place, and it is not composed. */
+  skip?: boolean;
 }
 
 function parseParams(raw: string[]): Map<string, string> {
@@ -267,8 +270,34 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     // A preset the lint rejects (its values' YAML types among others) is not composed.
     if (linted.has(file)) {
       unjudged = true;
-      lines.push(`composition ${file}: skipped, the lint reports it`);
-      matrixLines.push(`matrix ${file}: skipped`);
+      compositions.push({ label: file, entries: [], preset: {}, skip: true });
+      continue;
+    }
+    try {
+      compositions.push(presetComposition(args.tree, file));
+    } catch (error) {
+      unjudged = true;
+      fail(error instanceof YamlError && error.reason !== 'syntax' ? 2 : 1, messageOf(error));
+    }
+  }
+  // The examples (task-022, spec-002 §2.4), composed as presets are, after them. One is skipped
+  // when the lint reports it, its directory or an ancestor under tests/fixtures/examples/, or when
+  // its pack is skipped by the lint (its pack.yaml fails its schema).
+  const brokenNames = new Set([...broken].flatMap((file) => {
+    const match = /^packs\/(?:.+\/)?([^/]+)\/pack\.yaml$/.exec(file);
+    return match === null ? [] : [match[1] ?? ''];
+  }));
+  const reported = (file: string): boolean => {
+    const dir = file.slice(0, file.lastIndexOf('/'));
+    const packDir = dir.slice(0, dir.lastIndexOf('/'));
+    return brokenNames.has(packDir.slice(packDir.lastIndexOf('/') + 1))
+      || lint.problems.some((problem) => problem.file === file || problem.file === dir
+        || problem.file === packDir || problem.file.startsWith(`${dir}/`));
+  };
+  for (const file of exampleFiles(args.tree)) {
+    if (reported(file)) {
+      unjudged = true;
+      compositions.push({ label: file, entries: [], preset: {}, skip: true });
       continue;
     }
     try {
@@ -284,10 +313,11 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
 
   const used = new Set<string>();
   let catalog: Catalog | undefined;
-  if (compositions.length > 0 && !existsSync(compatPath)) {
+  const active = compositions.filter((composition) => composition.skip !== true);
+  if (active.length > 0 && !existsSync(compatPath)) {
     fail(1, 'compat.yaml: missing, so the matrix cannot select a release');
   }
-  if (compositions.length > 0) {
+  if (active.length > 0) {
     try {
       catalog = loadCatalog(join(args.tree, 'catalog.yaml'));
     } catch (error) {
@@ -298,13 +328,19 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     }
   }
   let composed = 0;
-  for (const composition of catalog === undefined ? [] : compositions) {
+  for (const composition of compositions) {
     const label = `composition ${composition.label}`;
     const skipped = (): void => { matrixLines.push(`matrix ${composition.label}: skipped`); };
+    if (composition.skip === true) {
+      lines.push(`${label}: skipped, the lint reports it`);
+      skipped();
+      continue;
+    }
+    if (catalog === undefined) continue;
     let params: Record<string, string>;
     let requirements: VersionRequirements[];
     try {
-      const { declared, requirements: needs } = packsOf(args.tree, catalog as Catalog,
+      const { declared, requirements: needs } = packsOf(args.tree, catalog,
         composition.entries);
       requirements = needs;
       params = { ...composition.preset };

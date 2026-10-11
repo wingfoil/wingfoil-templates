@@ -14,6 +14,7 @@ import { parseArgs } from 'node:util';
 import { gte, valid } from 'semver';
 
 import { CatalogEditError, addVersion } from './catalog-edit';
+import { exampleFiles } from './examples';
 import { INBOX } from './feedback-inbox';
 import { FeedbackNoteError, fromElement, writePublishedNote } from './feedback-note';
 import { CatalogError, loadCatalog } from './catalog';
@@ -149,11 +150,16 @@ function load<T>(read: () => T, file: string): T {
   }
 }
 
-/** The compositions the validation covers that contain the pack: presets, then the entries. */
+/**
+ * The compositions the validation covers that contain the pack: presets, examples (task-022), then
+ * the entries.
+ */
 function compositionsWith(tree: string, catalog: Catalog, pack: string, entries: string[]):
 string[] {
   const requests: [string, string[]][] = [];
-  for (const { file } of findFiles(tree).filter((found) => found.kind === 'preset')) {
+  const presets = findFiles(tree).filter((found) => found.kind === 'preset')
+    .map((found) => found.file);
+  for (const file of [...presets, ...exampleFiles(tree)]) {
     const data = loadYamlFile(join(tree, file), file).data as Doc;
     requests.push([file, (Array.isArray(data['packs']) ? data['packs'] : []).map(String)]);
   }

@@ -64,7 +64,11 @@ None.
 
 ## Examples
 
-Placeholder until the examples are fixtures.
+### new-product
+
+Fixture: tests/fixtures/examples/lean/new-product/
+
+A fictional startup, Orchard Notes, starts a product from an idea. It adds `phase/inception/lean` to kanban and gets the Lean Inception workflow in the inception slot; its first phase ends with a product brief.
 
 ## Sources and adaptations
 

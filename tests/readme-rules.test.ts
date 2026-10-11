@@ -7,10 +7,12 @@ import { runCheckPacks } from '../src/check-packs';
 import type { CheckPacksResult } from '../src/check-packs';
 import { REPO_ROOT } from './support/paths';
 import { BASE_COMPOSABLE as BASE, KANBAN, withPackTree } from './support/pack-tree';
+import { exampleSection } from './support/examples';
 import { CATALOG_URL, TEMPORARY_MARK, conformingReadme } from './support/readme';
 
+// Section 7 holds an example with its fixture (task-022); the tests' free content goes to section 8.
 const README = conformingReadme({ id: 'methodology/kanban', title: 'methodology/kanban',
-  description: 'Test pack methodology/kanban.' });
+  description: 'Test pack methodology/kanban.' }, exampleSection('kanban'));
 const FILE = 'packs/methodology/kanban/README.md';
 
 interface Options {
@@ -110,7 +112,7 @@ describe('README lint rules (task-018)', () => {
 
     it('accepts setext headings, deeper headings, and headings in code or quotes', () => {
       passes(README.replace('## Examples\n', 'Examples\n--------\n'));
-      passes(README.replace('Placeholder until the examples are fixtures.\n',
+      passes(README.replace('None: written for this catalog.\n',
         '### One\n\n```\n## Extra\n```\n\n> ## Quoted\n'));
     });
   });
@@ -150,27 +152,27 @@ describe('README lint rules (task-018)', () => {
     });
 
     it('does not read a marker-like line inside a multi-line comment', () => {
-      passes(README.replace('Placeholder until the examples are fixtures.\n',
+      passes(README.replace('None: written for this catalog.\n',
         '<!-- a note\n<!-- generated:open x -->\n-->\n'));
     });
 
     it('does not read a marker in a code block', () => {
-      passes(README.replace('Placeholder until the examples are fixtures.\n',
+      passes(README.replace('None: written for this catalog.\n',
         '```\n<!-- generated:begin title -->\n```\n'));
     });
   });
 
   describe('readme-command (acceptance 7)', () => {
-    const inExamples = (text: string): string =>
-      README.replace('Placeholder until the examples are fixtures.\n', text);
+    const inSources = (text: string): string =>
+      README.replace('None: written for this catalog.\n', text);
 
     it('fails a WingFoil command in a code block, indented code, a quote or a span', () => {
-      failsWith('readme-command', inExamples('```\nwingfoil init\n```\n'));
-      failsWith('readme-command', inExamples('    $ npm run -s wingfoil -- memory list\n'));
-      failsWith('readme-command', inExamples('> ```\n> npx wingfoil init\n> ```\n'));
-      failsWith('readme-command', inExamples('Run `npm exec wingfoil init`.\n'));
-      failsWith('readme-command', inExamples('```\nnpm run wingfoil\n```\n'));
-      failsWith('readme-command', inExamples('```\n  wingfoil\n```\n'));
+      failsWith('readme-command', inSources('```\nwingfoil init\n```\n'));
+      failsWith('readme-command', inSources('    $ npm run -s wingfoil -- memory list\n'));
+      failsWith('readme-command', inSources('> ```\n> npx wingfoil init\n> ```\n'));
+      failsWith('readme-command', inSources('Run `npm exec wingfoil init`.\n'));
+      failsWith('readme-command', inSources('```\nnpm run wingfoil\n```\n'));
+      failsWith('readme-command', inSources('```\n  wingfoil\n```\n'));
     });
 
     it('fails a command in a generated section too, naming its line', () => {
@@ -179,7 +181,7 @@ describe('README lint rules (task-018)', () => {
     });
 
     it('accepts the program named in a span, prose, other programs and comments', () => {
-      passes(inExamples('The `wingfoil` CLI. Run wingfoil init. `wingfoilx`\n\n'
+      passes(inSources('The `wingfoil` CLI. Run wingfoil init. `wingfoilx`\n\n'
         + '```\nnpm run validate\n```\n\n<!-- wingfoil init -->\n'));
     });
   });
@@ -225,14 +227,14 @@ describe('README lint rules (task-018)', () => {
     });
 
     it('fails any link to CATALOG.md that is not absolute to main, wherever it is', () => {
-      const inExamples = (text: string): string =>
-        README.replace('Placeholder until the examples are fixtures.\n', text);
-      failsWith('readme-link', inExamples('- [Catalog](../../CATALOG.md#install)\n'));
-      failsWith('readme-link', inExamples('> [Catalog](CATALOG.md)\n'));
-      failsWith('readme-link', inExamples(
+      const inSources = (text: string): string =>
+        README.replace('None: written for this catalog.\n', text);
+      failsWith('readme-link', inSources('- [Catalog](../../CATALOG.md#install)\n'));
+      failsWith('readme-link', inSources('> [Catalog](CATALOG.md)\n'));
+      failsWith('readme-link', inSources(
         '[Catalog](https://github.com/wingfoil/wingfoil-templates/blob/v1/CATALOG.md#install)\n'));
-      failsWith('readme-link', inExamples(`[Catalog](${CATALOG_URL})\n`));
-      passes(inExamples('`[Catalog](CATALOG.md)`\n'));
+      failsWith('readme-link', inSources(`[Catalog](${CATALOG_URL})\n`));
+      passes(inSources('`[Catalog](CATALOG.md)`\n'));
     });
   });
 

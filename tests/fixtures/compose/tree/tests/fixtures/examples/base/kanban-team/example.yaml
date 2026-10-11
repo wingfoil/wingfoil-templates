@@ -1,0 +1,7 @@
+format: 1
+id: kanban-team
+title: "Kanban team"
+description: "Lumen Bakery, a fictional small team, keeps its order tool in one repository."
+packs:
+  - base@^1
+  - methodology/kanban@^1

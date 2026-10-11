@@ -2,7 +2,7 @@
 id: task-022-examples-as-fixtures-the-layout-the-lint-rule-and-the-validation-step-spec-002-2.4-cb-2
 type: task
 title: "Examples as fixtures: the layout, the lint rule and the validation step (spec-002 §2.4, CB-2)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-change › deliver, tooling-delivery)
 depends_on: ["task-021-the-agent-path-the-procedure-in-catalog.md-and-llms.txt-tested-offline-spec-002-4-cb-6"]
 tags: ["tooling","W14","F2.8"]
@@ -167,3 +167,32 @@ Branch `task/task-022-examples`, run through `tooling-delivery` as `developer` (
   It found no reason to split the task. Re-review: approve; its should-fix (the support's example
   packs follow the pack's major, with the opt-out for trees that cannot compose them) and two nits
   applied.
+- 2026-10-11, **spec-002 erratum** (§2.4, the approver's ruling): §2.4 says the exemption holds
+  "until the first methodology is published", §6 CB-2 "while the tree holds no methodology"; the
+  approver chose the second. To be corrected by the next element that amends spec-002.
+- 2026-10-11, build on `task/task-022-examples` (`c408daa`): the rule tests (8 failures) and the
+  validation tests were written before the code; the review fixes too (two failing validate tests
+  before the change).
+- 2026-10-11, deviations, accepted by the review:
+  - acceptance 9: the three index outputs and this repository's root are unchanged; the pack
+    READMEs under `tests/fixtures/index/expected/` change in section 7, which the index does not
+    generate;
+  - `tests/check-packs.test.ts` › `rules()` ignores `example-*` rules: a pack broken on purpose
+    there (its id, name or README) breaks its example too, and the example rules have their own
+    suite; no other assertion changes;
+  - the example rules skip the packs the lint skips (a `pack.yaml` that fails its schema) and the
+    packs with no `README.md` (the layout rule's), so their fixtures are not reported as orphans;
+    `validate` skips the examples of the first kind, and composes those of the second, whose
+    composition fails on the missing README as a preset's does (exit 1);
+  - `tests/publish.test.ts` › `bump()` moves `base`'s example to the new major, as an author does.
+- 2026-10-11: independent review of the build (a subagent with its own context): approve after
+  fixes; nothing blocking; three should-fix (an orphan pack-name directory's example was composed;
+  skip lines printed before the presets; the examples of a schema-broken pack) and nits (a YAML
+  error's line, layout messages, one source for the exemption line, README-line assertions, the
+  golden fixtures' wording), applied in `b077fb5`. Re-review: approve.
+- 2026-10-11: Acceptance 1–2 on Node.js 22.21.0 and 22.12.0: 771 tests pass; `lint`,
+  `check:pins`, `check:schemas`, `check:packs`, `validate`, the golden `validate` (7 compositions)
+  and `npm run index -- --check` exit 0; CB-8 holds; no dependency added; the golden expected
+  composition is unchanged.
+- 2026-10-11, CI (acceptance 12): run 38171213846 on `b077fb5`, conclusion `success` for
+  `validate (22.12.0)` and `validate (22.21.0)`.

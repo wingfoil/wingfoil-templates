@@ -1,0 +1,7 @@
+format: 1
+id: new-product
+title: "New product"
+description: "Orchard Notes, a fictional startup, starts a product from an idea."
+packs:
+  - methodology/kanban@^1
+  - phase/inception/lean@^1
