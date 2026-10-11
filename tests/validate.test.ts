@@ -1,5 +1,7 @@
 import { strict as assert } from 'node:assert';
-import { chmodSync, cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  chmodSync, cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { after, describe, it } from 'node:test';
@@ -290,6 +292,43 @@ describe('npm run validate', () => {
         + 'example.yaml: skipped'));
       assert.ok(result.lines.includes('compositions: 6'));
     });
+  });
+
+  it('skips an orphan example, in path order after the presets (task-022)', () => {
+    withTree((tree) => {
+      for (const dir of ['ghost/x', 'kanban/y']) {
+        const file = join(tree, 'tests', 'fixtures', 'examples', ...dir.split('/'), 'example.yaml');
+        mkdirSync(join(file, '..'), { recursive: true });
+        writeFileSync(file, readFileSync(join(tree, 'tests', 'fixtures', 'examples', 'kanban',
+          'small-board', 'example.yaml'), 'utf8').replace('id: small-board',
+          `id: ${dir.split('/')[1] ?? ''}`));
+      }
+    }, (tree) => {
+      const result = validate(['--tree', tree, ...NAME]);
+      assert.equal(result.code, 1, result.lines.join('\n'));
+      const compositions = result.lines.filter((line) => line.startsWith('composition '));
+      assert.deepEqual(compositions.map((line) => line.slice(0, line.indexOf(':'))), [
+        'composition presets/golden.yaml',
+        ...['agent-first/agent-team', 'base/kanban-team', 'ghost/x', 'kanban/small-board',
+          'kanban/y', 'lean/new-product', 'production/live-service', 'web-service/orders-api']
+          .map((example) => `composition tests/fixtures/examples/${example}/example.yaml`),
+      ]);
+      for (const orphan of ['ghost/x', 'kanban/y']) {
+        assert.ok(result.lines.includes(`composition tests/fixtures/examples/${orphan}/`
+          + 'example.yaml: skipped, the lint reports it'), result.lines.join('\n'));
+      }
+      assert.ok(result.lines.includes('compositions: 7'));
+    }, true);
+  });
+
+  it('skips the examples of a pack whose pack.yaml fails its schema (task-022)', () => {
+    withTree((tree) => replaceIn(join(tree, 'packs', 'methodology', 'kanban', 'pack.yaml'),
+      'format: 1', 'format: 99'), (tree) => {
+      const result = validate(['--tree', tree, ...NAME]);
+      assert.equal(result.code, 1, result.lines.join('\n'));
+      assert.ok(result.lines.includes('composition tests/fixtures/examples/kanban/small-board/'
+        + 'example.yaml: skipped, the lint reports it'), result.lines.join('\n'));
+    }, true);
   });
 
   it('exits 1 on a preset whose packs do not resolve', () => {

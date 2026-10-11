@@ -2,6 +2,8 @@
 // generated sections hold placeholder content until `npm run index` writes them (task-019);
 // section 7 holds the exemption line unless an example is given (task-022).
 
+import { EXEMPTION } from '../../src/examples';
+
 export const CATALOG_URL = 'https://github.com/wingfoil/wingfoil-templates/blob/main/CATALOG.md';
 export const TEMPORARY_MARK = '> **Temporary:** these hand steps are replaced by WingFoil\'s '
   + 'commands once a release provides them.';
@@ -24,9 +26,7 @@ function generated(name: string, body: string): string {
 }
 
 /** Section 7 with no example (spec-002 §2.4), while the tree holds no methodology. */
-const EXEMPTION = 'None yet: no methodology pack is published.\n';
-
-export function conformingReadme(facts: ReadmeFacts, examples = EXEMPTION): string {
+export function conformingReadme(facts: ReadmeFacts, examples = `${EXEMPTION}\n`): string {
   const anchor = `pack-${facts.id.replaceAll('/', '-')}`;
   return [
     generated('title', `# ${facts.title}\n\n${facts.description}\n\n${axisLine(facts.id)}\n`),

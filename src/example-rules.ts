@@ -142,9 +142,14 @@ class Checker {
     }
     for (const name of readdirSync(root).sort(byBytes)) {
       const rel = `${EXAMPLES}/${name}`;
+      if (!isDirectory(join(root, name))) {
+        this.report(rel, undefined, 'example-fixture', `${rel}: tests/fixtures/examples/ holds `
+          + '<pack name>/ directories only');
+        continue;
+      }
       if (this.skipped.has(name)) continue;
       const named = this.named.get(name);
-      if (!isDirectory(join(root, name)) || named === undefined) {
+      if (named === undefined) {
         this.report(rel, undefined, 'example-fixture', `${rel}: not the examples of a pack of the `
           + 'tree; tests/fixtures/examples/ holds <pack name>/<example>/ directories only');
         continue;
@@ -158,7 +163,12 @@ class Checker {
   private fixture(named: Named, example: string): void {
     const rel = `${EXAMPLES}/${named.pack.manifest.name}/${example}`;
     const dir = join(this.context.tree, rel);
-    if (!isDirectory(dir) || !named.examples.has(example)) {
+    if (!isDirectory(dir)) {
+      this.report(rel, undefined, 'example-fixture', `${rel}: tests/fixtures/examples/`
+        + `${named.pack.manifest.name}/ holds <example>/ directories only`);
+      return;
+    }
+    if (!named.examples.has(example)) {
       this.report(rel, undefined, 'example-fixture', `${rel}: no example of ${named.pack.id}'s `
         + 'README names it (spec-002 §6 CB-2)');
       return;
@@ -179,7 +189,9 @@ class Checker {
       yaml = loadYamlFile(join(this.context.tree, file), file);
     } catch (error) {
       if (!(error instanceof YamlError) || error.reason === 'io') throw error;
-      this.report(file, undefined, 'example-fixture', error.message);
+      // As a preset's would be (rule parse), under the example rule's id (acceptance 6).
+      this.problems.push({ file, line: error.position.line, column: error.position.column,
+        rule: 'example-fixture', message: `${file}: ${error.detail}` });
       return;
     }
     const at = (pointer: string, message: string): void => {

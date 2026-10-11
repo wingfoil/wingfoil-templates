@@ -7,7 +7,8 @@ import { runCheckPacks } from '../src/check-packs';
 import type { CheckPacksResult } from '../src/check-packs';
 import { loadCatalog } from '../src/catalog';
 import { resolve } from '../src/resolve';
-import { EXEMPTION, exampleSection } from './support/examples';
+import { EXEMPTION } from '../src/examples';
+import { exampleSection } from './support/examples';
 import { BASE_COMPOSABLE as BASE, KANBAN, withPackTree } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 import { REPO_ROOT } from './support/paths';
@@ -164,7 +165,27 @@ describe('examples as fixtures (task-022)', () => {
     });
   });
 
-  it('keeps the exemption line as written', () => {
+  it('keeps the exemption line as spec-002 §2.4 writes it', () => {
     assert.equal(EXEMPTION, 'None yet: no methodology pack is published.');
+  });
+
+  it('reports each section 7 problem at the README line it is about', () => {
+    const at = (edit: (root: string) => void, text: string): void => {
+      let lines: string[] = [];
+      let readme = '';
+      withPackTree([BASE, KANBAN], (root) => {
+        copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
+        copyFileSync(join(REPO_ROOT, 'compat.yaml'), join(root, 'compat.yaml'));
+        edit(root);
+        readme = readFileSync(join(root, KANBAN_README), 'utf8');
+        lines = runCheckPacks(root).problems.filter((problem) => problem.rule === 'example-section')
+          .map((problem) => `${problem.file}:${problem.line ?? 0}`);
+      });
+      assert.deepEqual(lines, [`${KANBAN_README}:${readme.split('\n').indexOf(text) + 1}`]);
+    };
+    at((root) => replace(root, KANBAN_README, '### basic', '### Bad Name'), '### Bad Name');
+    at((root) => section7(root, `Intro.\n\n${exampleSection('kanban')}`), 'Intro.');
+    at((root) => replace(root, KANBAN_README, 'Fixture: tests/fixtures/examples/kanban/basic/\n',
+      'See below.\n'), 'See below.');
   });
 });

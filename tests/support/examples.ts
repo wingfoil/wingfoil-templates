@@ -6,7 +6,8 @@ import { dirname, join } from 'node:path';
 
 import type { PackSpec } from './pack-tree';
 
-export const EXEMPTION = 'None yet: no methodology pack is published.';
+export { EXEMPTION } from '../../src/examples';
+import { EXEMPTION } from '../../src/examples';
 
 function nameOf(id: string): string {
   return id.slice(id.lastIndexOf('/') + 1);

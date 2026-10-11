@@ -1,7 +1,7 @@
 format: 1
 id: orders-api
-title: "Orders api"
-description: "The example orders-api of the README of web-service."
+title: "Orders API"
+description: "Maple Supplies, a fictional shop, builds an orders API."
 packs:
   - methodology/kanban@^1
   - blueprint/web-service@^1
