@@ -84,6 +84,7 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    `<example>/` that a README example of that pack names; any other entry fails. An example whose
    fixture is missing fails at the README's `Fixture:` line; the exemption line fails once the tree
    holds a methodology; a section 7 with neither examples nor the exemption line fails.
+   A missing fixture is an `example-fixture` problem at the README's `Fixture:` line.
 6. **The rules.** The lint (`check:packs`, `validate`, `validate:publication`) reports them in its
    tree group under the rule ids `example-section` (acceptance 3, the section 7 cases of acceptance
    5), at the README's line, and `example-fixture` (acceptance 4, the layout cases of acceptance
@@ -95,7 +96,8 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    through the matrix; with the report line
    `composition tests/fixtures/examples/<pack name>/<example>/example.yaml: …` and its matrix
    lines. An example is skipped, with `… skipped, the lint reports it`, when the lint reports a
-   problem in its `example.yaml` or at its directory. `compositions: <n>` counts them.
+   problem in its `example.yaml` or at its directory (an orphan's `example.yaml` too).
+   `compositions: <n>` counts them.
    `--param` keeps its semantics (it may not override a value the composition sets).
 8. **Publication.** `npm run publish:pack` counts an example that contains the pack as a
    composition of the validation, like a preset; the pack-release evidence lists examples among
@@ -111,9 +113,10 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
       as for `presets/golden.yaml`). The golden expected composition
       (`tests/fixtures/compose/expected`) is unchanged.
     - `withPackTree` and `treeRepo` write section 7 and the fixtures once all packs are written: if
-      the tree holds `methodology/kanban`, one example `basic` per pack, `packs: [<pack>@^1,
-      methodology/kanban@^1]` (kanban's own: itself only); otherwise the exemption line. A test
-      opts out with `examples: false`. `tests/support/readme.ts` loses the placeholder line.
+      the tree holds `methodology/kanban`, one example `basic` per pack,
+      `packs: [<pack>@^<its major>, methodology/kanban@^1]` (a methodology pack's own: itself
+      only); otherwise the exemption line. A test whose tree cannot compose these (a non-composable
+      `base`, conflicts, missing requires) opts out with `examples: false`. `tests/support/readme.ts` loses the placeholder line.
     - Tests that place content in section 7 move it into an example's free text or into section 8;
       their assertions are kept. Exact counts that now include the examples (`compositions: <n>`,
       matrix runs, evidence lines) are updated to the new counts, which is not weakening them.
@@ -135,4 +138,6 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
   support per tree, README tests that fill section 7, rule ids of the preset checks, text before
   the first example, the layout and where an orphan is reported, the validation order and skip,
   where the rules live, the ruling's cost, updated counts) and nits, all applied while `pending`.
-  It found no reason to split the task.
+  It found no reason to split the task. Re-review: approve; its should-fix (the support's example
+  packs follow the pack's major, with the opt-out for trees that cannot compose them) and two nits
+  applied.
