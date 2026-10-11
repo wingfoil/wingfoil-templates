@@ -180,3 +180,24 @@ subset of acceptance 4 is read by a small line scanner, not a Markdown library.
   `origin/main`, which a clean clone of the task branch has) and one nit (the section 3 heading may
   be setext), applied. The review's hint for the Design: one exported README parser, which
   plan-024 task 2 reuses to rewrite between the same markers the lint checks.
+- 2026-10-11, build on `task/task-018-readme-lint` (`c00f14a`): the tests were
+  written first; with the rules disabled, 15 of the new rule tests failed (red), then passed. The
+  24 fixture READMEs were rewritten to the standard from their `pack.yaml`; three existing tests
+  that write a README of their own (`check-packs` pack-id and secret, `compose-documents` "does not
+  substitute") now write a conforming one, their assertions unchanged. The golden expected output is
+  unchanged.
+- 2026-10-11: independent review of the build (a subagent with its own context): approve after
+  fixes; seven should-fix (a README that is a directory crashed the lint; a fence in a quote or list
+  item did not close with its container; a bare `>` line was not blank; indented code started only
+  after a blank line; lazy lines did not exclude comments; a missing heading was placed at an
+  unknown heading; the invalid `compat.yaml` case had no test) and nits, applied in `1af71d1` with
+  a test of its own for each edge case. Re-review: approve; its two new nits (a line that is only a
+  container prefix; a missing heading placed after a later duplicate) applied in `9655418`. Left as
+  written, consistent with the Acceptance: tab indentation counts as one column, and the command
+  prefixes are literal (`npx wingfoil-foo` matches).
+- 2026-10-11: Acceptance 1–2 on Node.js 22.21.0 and 22.12.0: 667 tests pass, `lint`, `check:pins`,
+  `check:schemas`, `check:packs`, `validate` and the golden `validate` exit 0; CB-8 holds against
+  `origin/main`; no dependency added.
+- 2026-10-11, CI (acceptance 11): run 38143455915 on `9655418`, conclusion `success` for
+  `validate (22.12.0)` and `validate (22.21.0)`; the earlier run 38143204551 on `1af71d1` was
+  `success` too.
