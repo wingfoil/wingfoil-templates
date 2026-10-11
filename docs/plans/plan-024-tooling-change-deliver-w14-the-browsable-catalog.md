@@ -76,9 +76,9 @@ which stay outside W14.
    | 6 | The search page: the site command (spec-002 P3), its tests on the fixture catalog, and its deployment to GitHub Pages from `main` by CI | spec-002 §5, §6 CB-7, P1, P3; dl-014 D4, D7 T5 |
 
    Order: the lint first, because the index writes the generated sections whose markers it checks;
-   2b right after 2, because it needs the index command; the agent path right after them, because it works on the same generated files; the search
-   page last, because it builds on the index and needs Pages enabled by the approver, who is asked
-   during its build, before the first deployment.
+   2b right after 2, because it needs the index command; the agent path right after them, because
+   it works on the same generated files; the search page last, because it builds on the index and
+   needs Pages enabled by the approver, who is asked during its build, before the first deployment.
 2. **Wave close.** Once the seven tasks are `done`, the exit criterion of W14 is checked on `main`
    and the approver closes the wave in chat; this plan goes `active → done`.
 
