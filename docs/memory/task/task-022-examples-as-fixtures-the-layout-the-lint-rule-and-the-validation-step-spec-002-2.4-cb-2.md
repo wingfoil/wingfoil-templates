@@ -128,7 +128,33 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-022-examples`, run through `tooling-delivery` as `developer` (`code-quality`,
+`testing`, `determinism`), under `npm run lint`. Tests first.
+
+- **`src/examples.ts`:** `EXAMPLES = 'tests/fixtures/examples'`, the exemption line, and
+  `exampleFiles(tree)`: every `<pack name>/<example>/example.yaml` under it, in byte order of
+  their path (for `validate` and `publish:pack`).
+- **`src/example-rules.ts`:** `exampleProblems(context)`, a rule group of `check-packs.ts` after
+  `treeProblems`. Section 7 of each pack README is read with `readmeOutline` (task-018): its
+  level-3 headings, their first non-blank line, the exemption line, the text before the first
+  heading (`example-section`). The layout is walked with `lstat` (`example-fixture` for any other
+  entry, an orphan, a pack name of no pack); each `example.yaml` is loaded, checked against the
+  preset schema, for its `id`, its `profile`, the pack among its `packs`, and through the preset
+  checks of task-012.
+- **`src/tree-rules.ts`:** the cardinality and value checks of `presetProblems` move into
+  `presetChecks(context, yaml, rule)`, which reports under the rule id it is given; presets keep
+  `preset-cardinality` and `preset-value`, examples get `example-fixture`. The YAML rules run on
+  each `example.yaml`.
+- **`src/check-packs.ts`:** `checkedFiles` and the secret group cover `tests/fixtures/examples/`.
+- **`src/validate.ts`:** after the presets, each file of `exampleFiles` is composed like a preset
+  (its label is its path), or skipped when the lint reports a problem in it or at its directory.
+- **`src/publish.ts`:** `compositionsWith` reads the example files as it reads the presets.
+- **Fixtures:** `tests/support/readme.ts` › `conformingReadme` takes section 7 (examples or the
+  exemption line); `tests/support/examples.ts` › `writeExamples(root, specs)` writes them once all
+  packs are written, `withPackTree` and `treeRepo` call it unless `examples: false`. The golden
+  tree's six READMEs get a real example each, with its fixture.
+- **Tests:** `tests/example-rules.test.ts` (acceptance 3–6), `tests/validate.test.ts` and
+  `tests/publish.test.ts` (acceptance 7–8); updated counts where examples add compositions.
 
 ## Execution Notes
 
