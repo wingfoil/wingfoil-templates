@@ -69,6 +69,7 @@ which stay outside W14.
    |---|---|---|
    | 1 | README lint rules: the nine sections in order, no other level-1 or level-2 heading, the generated-section markers, no WingFoil CLI command, the temporary mark while no `compat.yaml` release provides `pack-install` | spec-002 §2.1–§2.3, §6 CB-1, CB-3; dl-014 D7 T1 |
    | 2 | The index command `npm run index -- [--tree] [--check]`: `CATALOG.md`, `catalog-index.json` and `index/catalog-index.schema.json`, `llms.txt`, the README generated sections; `validate` and `validate:publication` run `--check`; the plan-023 skip is removed from `publish:pack` and `pack-release-cycle` › `publish` | spec-002 §2.2, §3, §6 CB-4, CB-5; dl-014 D7 T2; plan-023 |
+   | 2b | The publication regenerates the index: `publish:pack` on the current line, on an N-1 line (from `main`'s commit) and with `--dry-run`; the plan-023 skip removed from `publish:pack` and `pack-release-cycle` › `publish` (`version:` 4 → 5); publishing changes no file under `packs/` | spec-002 §3.1, §6 CB-5; dl-014 D2, D6; plan-023 |
    | 3 | The agent path: the procedure in `CATALOG.md` › "For agents" and in `llms.txt`, and offline tests of every URL pattern the index files emit | spec-002 §3.2, §3.4, §4, §6 CB-6; dl-014 D7 T4 |
    | 4 | Examples as fixtures: the fixture layout, the lint rule, the validation step that composes and validates every example, and the temporary exemption while the tree holds no methodology | spec-002 §2.4, §6 CB-2; dl-014 D7 T3 |
    | 5 | A root `README.md` that links `CATALOG.md` and `llms.txt` | dl-014 D7 T6; `dna.yaml` `paths.docs` |
@@ -78,7 +79,7 @@ which stay outside W14.
    the agent path right after the index, because it works on the same generated files; the search
    page last, because it builds on the index and needs Pages enabled by the approver, who is asked
    during its build, before the first deployment.
-2. **Wave close.** Once the six tasks are `done`, the exit criterion of W14 is checked on `main`
+2. **Wave close.** Once the seven tasks are `done`, the exit criterion of W14 is checked on `main`
    and the approver closes the wave in chat; this plan goes `active → done`.
 
 ## Handoff
@@ -90,7 +91,7 @@ which stay outside W14.
   - enables GitHub Pages and its environment protection on the repository, when task 6 asks;
   - closes the wave in chat.
 - A rejected element goes back to `draft`, is corrected under this plan and submitted again.
-- Done when the six tasks are `done`, W14's exit criterion holds on `main` and the approver has
+- Done when the seven tasks are `done`, W14's exit criterion holds on `main` and the approver has
   closed the wave.
 
 ## Execution Notes
@@ -102,3 +103,7 @@ which stay outside W14.
   `readme-heading`, `readme-marker`, `readme-command`, `readme-install-mark` and `readme-link`; the
   fixture READMEs follow the standard with placeholder generated sections. Next: task 2, the index
   command.
+- 2026-10-11: the approver ruled, on task-019's independent review, that dl-014 D7 T2 runs as two
+  tasks: task 2, the index command (task-019), and a new **task 2b**, the publication that
+  regenerates the index and removes the plan-023 skip; seven tasks in all. Also ruled: the README
+  column of `CATALOG.md` links the README rendered on github.com at the latest tag.
