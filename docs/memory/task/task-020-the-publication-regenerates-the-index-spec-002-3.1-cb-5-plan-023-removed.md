@@ -2,7 +2,7 @@
 id: task-020-the-publication-regenerates-the-index-spec-002-3.1-cb-5-plan-023-removed
 type: task
 title: "The publication regenerates the index (spec-002 §3.1, CB-5; the plan-023 skip removed)"
-status: approved
+status: done
 pack: ""            # tooling task (tooling-change › deliver, tooling-delivery)
 depends_on: ["task-019-the-index-command-catalog.md-catalog-index.json-llms.txt-and-the-readme-generated-sections-spec-002-3-cb-4-cb-5"]
 tags: ["tooling","W14","F2.8"]
