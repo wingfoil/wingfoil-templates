@@ -219,8 +219,8 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
     phase pack (slot); a pack with no published version; a preset with a profile and one without; a
     transition. That catalog passes `check:packs`. A separate test alters a published version's
     `catalog.yaml` entry (for example its `requires`) after the publication and shows that the
-    index still emits the tag's values. The tests check: the schema and `format: 1`; every field of acceptance 7, the
-    per-version ones from each tag and the latest-version ones from the latest tag, while the
+    index still emits the tag's values. The tests check: the schema and `format: 1`; every field
+    of acceptance 7, the per-version ones from each tag and the latest-version ones from the latest tag, while the
     README generated sections show the working-tree values; the `refs/tags/<tag>` URLs; the
     unlisted pack; the missing-tag and not-a-repository errors; determinism; `--check` on a fresh,
     a differing and a missing output; a README that fails task-018's rules (nothing written, exit
@@ -243,4 +243,6 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
   regenerates and commits the index after each publication in the tests (a second publication's
   guard would fail otherwise); the browsable fixture passes `check:packs`, and a separate test
   alters a catalog entry to show that the index reads the tag. Its should-fix on plan-024 (rows 2
-  and 2b, the Context, the order) and nits are applied too.
+  and 2b, the Context, the order) and nits are applied too. Third pass: approve, nothing left but a line
+  wrap; its note for the Design: the interim helper runs after each test's assertions on the
+  publication's own commits.
