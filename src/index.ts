@@ -6,7 +6,6 @@ import { existsSync, lstatSync, readFileSync, statSync, writeFileSync } from 'no
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 
-import { CatalogError } from './catalog';
 import { GitError } from './git';
 import { byBytes, IndexInputError, isDoc, yamlAt } from './index-data';
 import { buildIndex } from './index-model';
@@ -142,7 +141,7 @@ export function runIndex(argv: string[]): IndexResult {
     const system = error instanceof Error
       && typeof (error as NodeJS.ErrnoException).code === 'string';
     if (system || error instanceof IndexError || error instanceof GitError
-      || error instanceof YamlError || error instanceof CatalogError) {
+      || error instanceof YamlError) {
       return { code: 2, lines: [first(error.message)] };
     }
     throw error;

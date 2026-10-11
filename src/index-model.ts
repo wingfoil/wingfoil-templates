@@ -1,6 +1,7 @@
 // The catalog index of spec-002 §3.3 (task-019): built from catalog.yaml, compat.yaml and the
-// presets of the working tree, and from each published version's tag. Every object is built key
-// by key in the order §3.3 gives, so that the JSON is written as it is built.
+// presets of a view of the tree (the working tree, or main's commit for an N-1 publication), and
+// from each published version's tag. Every object is built key by key in the order §3.3 gives,
+// so that the JSON is written as it is built.
 import { compare as semverCompare, rcompare } from 'semver';
 
 import { CompatError, compatFrom } from './compat';
@@ -258,16 +259,15 @@ function byId<T extends { id: string }>(items: T[]): T[] {
  * tag cannot be read, an IndexInputError when a file cannot be used.
  */
 export function buildIndex(tree: string, source: TreeSource = workingTree(tree)): CatalogIndex {
-  const working = source;
-  if (working.read('catalog.yaml') === undefined) throw new IndexError(`${tree}: no catalog.yaml`);
-  const catalog = yamlAt(working, 'catalog.yaml');
+  if (source.read('catalog.yaml') === undefined) throw new IndexError(`${tree}: no catalog.yaml`);
+  const catalog = yamlAt(source, 'catalog.yaml');
   if (repositorySchemas().validate('catalog', catalog).length > 0) {
     throw new IndexInputError('catalog.yaml fails its schema; npm run check:schemas names the '
       + 'problems');
   }
   const entries = list(catalog['packs']).filter(isDoc);
   if (entries.some((entry) => list(entry['versions']).length > 0)) checkRepositoryTop(tree);
-  const presets = byId(list(catalog['presets']).filter(isDoc).map((entry) => presetOf(working,
+  const presets = byId(list(catalog['presets']).filter(isDoc).map((entry) => presetOf(source,
     entry)));
   const packs = byId(entries.flatMap((entry) => packOf(tree, entry, presets) ?? []));
   return {

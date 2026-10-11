@@ -3,9 +3,9 @@
 // then adds the catalog entry in a later commit (spec-001 §11), with the digest (§13), the computed
 // range (§12) and, for a stage pack, its transitions' digests (§14), with the CATALOG.md and
 // catalog-index.json that `npm run index` writes for the edited catalog (task-020). It never
-// pushes. The line is decided first (task-016): from a maint/<id>/<major>.x branch, after WingFoil 1.0, the
-// tag goes on that branch and the catalog commit on main. With --dry-run it works in a temporary
-// clone and leaves the repository as it was.
+// pushes. The line is decided first (task-016): from a maint/<id>/<major>.x branch, after WingFoil
+// 1.0, the tag goes on that branch and the catalog commit on main. With --dry-run it works in a
+// temporary clone and leaves the repository as it was.
 import { existsSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync }
   from 'node:fs';
 import { tmpdir } from 'node:os';

@@ -473,8 +473,10 @@ describe('npm run publish:pack, the index in the catalog commit (task-020)', () 
 
   it('--dry-run names the regenerated index on both lines (acceptance 6)', () => {
     withRepository((repo) => {
+      const before = state(repo);
       const result = published(repo, ['--pack', 'base', '--dry-run', ...WITH_KANBAN]);
       assert.ok(result.lines.includes('- Index: CATALOG.md, catalog-index.json'));
+      assert.equal(state(repo), before);
     });
     withTwoMajors((repo) => {
       bump(repo, '1.0.1');
