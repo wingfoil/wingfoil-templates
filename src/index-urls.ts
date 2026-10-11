@@ -24,3 +24,65 @@ export function readmeOnGithub(tag: string, packId: string): string {
 export function githubMain(path: string): string {
   return `${GITHUB}/blob/main/${path}`;
 }
+
+/** The forms of the URLs the index emits (task-021): each one has its builder above. */
+export interface ParsedUrl {
+  form: 'raw-main' | 'raw-tag' | 'readme-github' | 'github-main';
+  tag?: string;
+  path: string;
+}
+
+/** A tag and the path after it: the tag ends at the first `/` after its `@`. */
+function splitTag(rest: string): { tag: string; path: string } | undefined {
+  const at = rest.indexOf('@');
+  const slash = at < 0 ? -1 : rest.indexOf('/', at);
+  if (slash < 0) return undefined;
+  return { tag: rest.slice(0, slash), path: rest.slice(slash + 1) };
+}
+
+/** The pack id of a tag, which a README or pack.yaml path must name too. */
+function sameTagPack(tag: string, path: string): boolean {
+  const id = tag.slice(0, tag.indexOf('@'));
+  return !/^packs\//.test(path) || path.startsWith(`packs/${id}/`) && path.split('/').length === id
+    .split('/').length + 2;
+}
+
+function parsed(form: ParsedUrl['form'], path: string, tag?: string): ParsedUrl {
+  return tag === undefined ? { form, path } : { form, tag, path };
+}
+
+/** The form, tag and path of a URL the index emits, or undefined for any other URL. */
+export function parseUrl(url: string): ParsedUrl | undefined {
+  let result: ParsedUrl | undefined;
+  if (url.startsWith(`${RAW}/main/`)) {
+    result = parsed('raw-main', url.slice(`${RAW}/main/`.length));
+  } else if (url.startsWith(`${RAW}/refs/tags/`)) {
+    const split = splitTag(url.slice(`${RAW}/refs/tags/`.length));
+    if (split !== undefined && sameTagPack(split.tag, split.path)) {
+      result = parsed('raw-tag', split.path, split.tag);
+    }
+  } else if (url.startsWith(`${GITHUB}/blob/main/`)) {
+    result = parsed('github-main', url.slice(`${GITHUB}/blob/main/`.length));
+  } else if (url.startsWith(`${GITHUB}/blob/`)) {
+    const split = splitTag(url.slice(`${GITHUB}/blob/`.length));
+    if (split !== undefined && split.path.endsWith('/README.md')
+      && sameTagPack(split.tag, split.path)) {
+      result = parsed('readme-github', split.path, split.tag);
+    }
+  }
+  return result !== undefined && result.path !== '' && buildUrl(result) === url ? result
+    : undefined;
+}
+
+/** The URL of a parsed form, through its builder. */
+export function buildUrl(url: ParsedUrl): string {
+  switch (url.form) {
+    case 'raw-main': return rawMain(url.path);
+    case 'raw-tag': return rawAtTag(url.tag ?? '', url.path);
+    case 'github-main': return githubMain(url.path);
+    case 'readme-github': {
+      const tag = url.tag ?? '';
+      return readmeOnGithub(tag, tag.slice(0, tag.indexOf('@')));
+    }
+  }
+}

@@ -24,6 +24,26 @@ export const URL_PATTERNS: readonly { label: string; url: string }[] = [
   { label: 'a transition', url: rawMain('transitions/<id>.yaml') },
 ];
 
+/** The agent path of spec-002 §4 (task-021), as CATALOG.md and llms.txt give it. */
+export const AGENT_STEPS: readonly string[] = [
+  `Fetch the index at main: ${code(rawMain('catalog-index.json'))}.`,
+  'Filter its `packs` locally by `axis`, `slot`, `profiles`, `status`, or text over `title`, '
+    + '`description` and `excerpt` (a case-insensitive substring match is enough).',
+  'Take the chosen pack\'s `latest`, the entry of `versions` whose `version` equals it, and that '
+    + 'entry\'s `readme_url` and `manifest_url`.',
+  'Fetch them: they are pinned to the version\'s tag and never change.',
+  'For resolution and compatibility, fetch `catalog.yaml` and `compat.yaml` at main; a preset or a '
+    + 'transition at its `url` field.',
+];
+
+const AGENT_NOTES = 'Every file is anonymous and CORS-enabled and may be up to 5 minutes stale; no '
+  + 'server, REST API or code search is needed. A tag is written as is in a URL (`/` and `@` '
+  + 'included).';
+
+function agentSteps(): string[] {
+  return [...AGENT_STEPS.map((step, i) => `${i + 1}. ${step}`), '', AGENT_NOTES];
+}
+
 /** A table cell: `|` escaped, line breaks folded into one space. */
 export function cell(text: string): string {
   return text.replace(/\s*\r?\n\s*/g, ' ').replaceAll('|', '\\|');
@@ -118,6 +138,10 @@ export function renderCatalog(index: CatalogIndex, axes: string[]): string {
     'Agents read the catalog with no server, through anonymous URLs; [llms.txt](llms.txt) is their',
     'entry point.',
     '',
+    ...agentSteps(),
+    '',
+    'The URL patterns:',
+    '',
     ...URL_PATTERNS.map((pattern) => `- ${pattern.label}: ${code(pattern.url)}`),
   ];
   return `${lines.join('\n')}\n`;
@@ -134,6 +158,8 @@ export function renderLlms(): string {
     '# WingFoil template catalog',
     '',
     '> The official WingFoil template packs, indexed for agents, each published version pinned to its tag.',
+    '',
+    ...agentSteps(),
     '',
     '## Index',
     '',
