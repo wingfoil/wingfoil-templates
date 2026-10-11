@@ -59,7 +59,8 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 3. **One index computation.** The index is computed through one function over a `TreeSource`
    (the working tree, or a commit with `catalog.yaml` overlaid); `npm run index` behaves as before:
    the files under `tests/fixtures/index/expected/` and the committed root outputs are unchanged,
-   byte for byte, and task-019's index tests pass unmodified. `publish:pack` computes only
+   byte for byte, and `tests/index.test.ts`, `tests/index-model.test.ts`,
+   `tests/index-render.test.ts` and `tests/readme-generate.test.ts` pass unmodified. `publish:pack` computes only
    `CATALOG.md` and `catalog-index.json`.
 4. **The current line.** The catalog commit of `npm run publish:pack` holds `catalog.yaml`,
    `CATALOG.md` and `catalog-index.json`, the last two exactly what `npm run index` writes for the
@@ -94,19 +95,20 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    plan-023 skip or name plan-024 task 2b as pending (`src/publish.ts`, `src/index-source.ts`) are
    updated.
 10. **The interim test refreshes are removed.** `reindex` is no longer called after a publication
-   in `tests/publish.test.ts`; `bump()` keeps running the index before its release commit (the
-   README sections follow a change of `pack.yaml`) and its comment no longer names a stale index.
-   `publishByHand` (`tests/support/published-repo.ts`) writes the regenerated index into its
-   catalog commit, as `publish:pack` does, so that no test refreshes the index after it. The
-   `reindex` calls that follow `publishByHand` in `tests/validate.test.ts` and
-   `tests/support/index-catalog.ts` go; `reindex` stays only for commits that are not a
-   publication (its comment no longer names plan-024 task 2b); the edit that adds
-   `stage/production`'s transition digests keeps its refresh. Existing assertions on the catalog
-   commit's files change only to name the two index files.
+    in `tests/publish.test.ts`; `bump()` keeps running the index before its release commit (the
+    README sections follow a change of `pack.yaml`) and its comment no longer names a stale index.
+    `publishByHand` (`tests/support/published-repo.ts`) writes the regenerated index into its
+    catalog commit, as `publish:pack` does, so that no test refreshes the index after it. The
+    `reindex` calls that follow `publishByHand` in `tests/validate.test.ts` and
+    `tests/support/index-catalog.ts` go; `reindex` stays only for commits that are not a
+    publication (its comment no longer names plan-024 task 2b); the edit that adds
+    `stage/production`'s transition digests keeps its refresh. Existing assertions on the catalog
+    commit's files change only to name the two index files.
 11. **Tests,** red first: acceptance 3–8, each on its own; the N-1 case of acceptance 5; the
     rollback of acceptance 7 on an N-1 line whose `main` holds a preset file that does not parse
     (exit 1; the guard on the maintenance branch cannot see it) and one where a tag named by
-    `main`'s `catalog.yaml` is missing (exit 2); in both, the tag is gone and `main`, the branch
+    `main`'s `catalog.yaml`, other than the line's own tags (for example `base@2.0.0`), is missing
+    (exit 2); in both, the tag is gone and `main`, the branch
     and the working tree are as before.
 12. **CI.** The pushed branch `task/<id>` runs `.github/workflows/ci.yml`; its real run's
     conclusion, for both Node.js versions, is recorded in the Execution Notes before `in-review`.
@@ -121,4 +123,6 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
   amendments; one blocking point (the CB-5 diff of acceptance 8 on an N-1 line and with
   `--bundled`), six should-fix (missing interim call sites, the one index computation over a
   `TreeSource`, the rollback's error classes and triggers, a non-public label, the title, stale
-  source comments) and four nits, all applied while `pending`.
+  source comments) and four nits, all applied while `pending`. Re-review: approve; its
+  should-fix (the missing tag of the rollback test is not one of the line's own tags, which the
+  line check reads before tagging) and nits applied.
