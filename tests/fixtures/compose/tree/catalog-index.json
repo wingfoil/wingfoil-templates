@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "repository": "wingfoil/wingfoil-templates",
+  "install": [],
+  "packs": [],
+  "presets": [
+    {
+      "id": "golden",
+      "title": "Golden",
+      "description": "The golden composition: kanban, Lean Inception, a web service, agent-first, production.",
+      "profile": "the reference composer's own tests",
+      "packs": [
+        "methodology/kanban@^1",
+        "phase/inception/lean@^1",
+        "blueprint/web-service@^1",
+        "team-mode/agent-first@^1",
+        "stage/production@^1"
+      ],
+      "url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/presets/golden.yaml"
+    }
+  ],
+  "transitions": []
+}

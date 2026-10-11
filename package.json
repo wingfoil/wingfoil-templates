@@ -22,6 +22,7 @@
     "validate:publication": "node dist/src/validate-publication-cli.js",
     "publish:pack": "node dist/src/publish-cli.js",
     "feedback:note": "node dist/src/feedback-note-cli.js",
+    "index": "node dist/src/index-cli.js",
     "wingfoil": "wingfoil"
   },
   "devDependencies": {

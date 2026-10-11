@@ -19,19 +19,60 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 <!-- generated:begin composition -->
 ## Composition
 
-Placeholder until npm run index writes it.
+- **Requires:** none
+- **Conflicts:** none
+- **Formats:** `directive` 1, `dna` 1, `memory` 1, `memory-template` 1, `roles` 1, `workflow` 1
+- **Requires capabilities:** none
 <!-- generated:end composition -->
 
 <!-- generated:begin what-it-adds -->
 ## What it adds
 
-Placeholder until npm run index writes it.
+### Workflows
+
+- `end-of-life` (sub)
+  - `default`
+- `inception` (sub)
+  - `default`
+- `release` (sub)
+  - `default`
+- `retrospective` (sub)
+  - `review`
+- `specification` (sub)
+  - `default`
+- `sw-life-cycle` (main)
+  - `inception`, includes `inception`
+  - `specification`, includes `specification`
+  - `delivery`, includes `delivery`
+  - `end-of-life`, includes `end-of-life`
+
+### Memory types
+
+- `adr`: defaults, `draft` → `pending` → `approved`; gates `pending` (reject → `draft`)
+- `task`: `draft` → `pending` → `backlog` → `in-progress` → `in-review` → `approved` → `done`; gates `in-review` (reject → `in-progress`), `pending` (reject → `draft`)
+
+### Directives
+
+- `base-rules`: `developer`
+
+### Fragments
+
+- `dna`
+- `roles`
+
+### Memory templates
+
+- `adr`
+- `task`
 <!-- generated:end what-it-adds -->
 
 <!-- generated:begin parameters -->
 ## Parameters
 
-Placeholder until npm run index writes it.
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `adr_path` | path | `docs/memory/adr/{id}.md` | Where ADRs live |
+| `project_name` | string | required | The project name, dna.yaml project.name |
 <!-- generated:end parameters -->
 
 ## Examples

@@ -19,19 +19,45 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 <!-- generated:begin composition -->
 ## Composition
 
-Placeholder until npm run index writes it.
+- **Requires:** `base@^1`
+- **Conflicts:** none
+- **Formats:** `dna` 1, `memory` 1
+- **Requires capabilities:** none
+- **Declares:**
+  - Memory types: `task`
+  - roles: `reviewer`
+  - states: `approved`, `backlog`, `done`, `draft`, `in-progress`, `in-review`, `pending`, `ready`
+  - workflows: none
 <!-- generated:end composition -->
 
 <!-- generated:begin what-it-adds -->
 ## What it adds
 
-Placeholder until npm run index writes it.
+### Workflows
+
+None.
+
+### Memory types
+
+- `task`: `draft` → `pending` → `backlog` → `ready` → `in-progress` → `in-review` → `approved` → `done`; gates `ready` (reject → `backlog`)
+
+### Directives
+
+None.
+
+### Fragments
+
+- `dna`
+
+### Memory templates
+
+None.
 <!-- generated:end what-it-adds -->
 
 <!-- generated:begin parameters -->
 ## Parameters
 
-Placeholder until npm run index writes it.
+None.
 <!-- generated:end parameters -->
 
 ## Examples

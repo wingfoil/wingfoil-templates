@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { parse, stringify } from 'yaml';
 
 import { packDigest } from '../../src/digest';
+import { runIndex } from '../../src/index';
 import { TestRepo } from './git-repo';
 import { BASE_COMPOSABLE, KANBAN, writePack } from './pack-tree';
 import type { PackSpec } from './pack-tree';
@@ -33,6 +34,8 @@ export function treeRepo(specs: PackSpec[] = [BASE_COMPOSABLE, KANBAN],
   repo.write('catalog.yaml', readFileSync(join(REPO_ROOT, 'catalog.yaml'), 'utf8'));
   repo.write('compat.yaml', fixtureCompat(release));
   repo.write('.gitignore', '.cache/\nnode_modules/\n');
+  // The index outputs belong to the tree, as in this repository (task-019).
+  writeIndex(repo);
   repo.commitAll('the tree');
   return repo;
 }
@@ -61,4 +64,20 @@ export function publishByHand(repo: TestRepo, packId: string): Doc {
   repo.write('catalog.yaml', stringify(catalog));
   repo.commitAll(`catalog: ${packId}@${version}`);
   return entry;
+}
+
+/** Runs npm run index on the repository's working tree (task-019), without committing. */
+export function writeIndex(repo: TestRepo): void {
+  const result = runIndex(['--tree', repo.dir]);
+  if (result.code !== 0) throw new Error(result.lines.join('\n'));
+}
+
+/**
+ * Runs the index and commits its outputs. After a publication it refreshes the CATALOG.md and
+ * catalog-index.json that publish:pack leaves stale until plan-024 task 2b, which removes those
+ * calls.
+ */
+export function reindex(repo: TestRepo, message = 'index'): void {
+  writeIndex(repo);
+  repo.commitAll(message);
 }

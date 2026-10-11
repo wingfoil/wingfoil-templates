@@ -5,6 +5,7 @@ import { join, relative } from 'node:path';
 import { after, describe, it } from 'node:test';
 
 import { MatrixIoError } from '../src/matrix';
+import { runIndex } from '../src/index';
 import { runValidate } from '../src/validate';
 import type { ValidateOptions, ValidateResult } from '../src/validate';
 import { FIXTURES, REPO_ROOT } from './support/paths';
@@ -35,6 +36,8 @@ function withTree(edit: (tree: string) => void, body: (tree: string) => void): v
     const tree = join(dir, 'tree');
     cpSync(TREE, tree, { recursive: true });
     edit(tree);
+    // The edit is the test's; the index outputs follow it (task-019), when the tree allows.
+    runIndex(['--tree', tree]);
     body(tree);
   } finally {
     rmSync(dir, { recursive: true, force: true });
@@ -198,6 +201,43 @@ describe('npm run validate', () => {
       assert.ok(result.lines.some((line) => /presets\/golden\.yaml.*version/.test(line)),
         result.lines.join('\n'));
     });
+  });
+
+  it('runs index --check after the lint and before the compositions (task-019)', () => {
+    const result = validate(['--tree', TREE, ...NAME]);
+    const at = (pattern: RegExp): number => result.lines.findIndex((line) => pattern.test(line));
+    assert.ok(at(/^lint: /) < at(/^index: checked 9 files, 0 not up to date$/));
+    assert.ok(at(/^index: checked/) < at(/^composition /), result.lines.join('\n'));
+  });
+
+  it('fails when a pack.yaml, a fragment, a workflow or catalog.yaml changes without the index '
+    + '(CB-5)', () => {
+    const edits: [string[], string, string][] = [
+      [['packs', 'methodology', 'kanban', 'pack.yaml'], 'WIP limit of', 'The WIP limit of'],
+      [['packs', 'base', 'fragments', 'roles.yaml'], 'developer: [base-rules, testing]',
+        'developer: [testing, base-rules]\n  reviewer: [base-rules]'],
+      [['packs', 'methodology', 'kanban', 'workflows', 'replenishment.yaml'], 'name: pick',
+        'name: choose'],
+      [['catalog.yaml'], 'presets:\n  - { id: golden, path: presets/golden.yaml }\n',
+        'presets: []\n'],
+    ];
+    for (const [path, from, to] of edits) {
+      const dir = mkdtempSync(join(tmpdir(), 'validate-index-'));
+      try {
+        const tree = join(dir, 'tree');
+        cpSync(TREE, tree, { recursive: true });
+        replaceIn(join(tree, ...path), from, to);
+        const stale = validate(['--tree', tree, ...NAME]);
+        assert.equal(stale.code, 1, path.join('/'));
+        assert.ok(stale.lines.some((line) => / not up to date: run npm run index$/.test(line)),
+          stale.lines.join('\n'));
+        assert.equal(runIndex(['--tree', tree]).code, 0);
+        const fresh = validate(['--tree', tree, ...NAME]);
+        assert.equal(fresh.code, 0, `${path.join('/')}\n${fresh.lines.join('\n')}`);
+      } finally {
+        rmSync(dir, { recursive: true, force: true });
+      }
+    }
   });
 
   it('exits 1 on a preset whose packs do not resolve', () => {
