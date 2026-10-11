@@ -51,7 +51,7 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    unchanged. The steps:
    1. fetch the index at `main`;
    2. filter its `packs` locally by `axis`, `slot`, `profiles`, `status`, or text over `title`,
-      `description` and `excerpt` (for example a case-insensitive substring match);
+      `description` and `excerpt` (the step advises a case-insensitive substring match, as is);
    3. take the chosen pack's `latest`, the entry of `versions` whose `version` equals it, and that
       entry's `readme_url` and `manifest_url`;
    4. fetch them: they are pinned to the version's tag and never change;
@@ -96,8 +96,8 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    `tests/fixtures/index/expected/`) are regenerated with `npm run index` and `npm run index --
    --check` exits 0 on each; the layouts are fixed by those expected files.
 7. **Tests,** red first: acceptance 3–5.
-8. **The live part, kept.** plan-024's Execution Notes record that `base`'s charter must list
-   CB-6 with CB-1 and CB-2, so that its first `pack-release` records the live check.
+8. **The live part, kept.** plan-024's and dl-014's Execution Notes record that `base`'s charter
+   must list CB-6 with CB-1 and CB-2, so that its first `pack-release` records the live check.
 9. **CI.** The pushed branch `task/<id>` runs `.github/workflows/ci.yml`; its real run's
    conclusion, for both Node.js versions, is recorded in the Execution Notes before `in-review`.
 
@@ -113,4 +113,5 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
   that does not list it; URL extraction, matching, resolving and placeholders undefined; the
   simulated path's expected results; step 3's wording) and nits. For the second blocking point the
   layout of §3.4 is kept: the steps go in the convention's detail block. All applied while
-  `pending`.
+  `pending`. Re-review: approve; its two optional nits (the advice in step 2; the reminder also in
+  dl-014's Execution Notes) applied.
