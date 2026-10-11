@@ -231,7 +231,60 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-019-index`, run through `tooling-delivery` as `developer` (`code-quality`,
+`testing`, `determinism`), under `npm run lint`. No dependency: JSON and Markdown are written by
+hand, the schema is compiled by the Ajv 2020 of adr-003.
+
+- **`src/index-source.ts`:** a read-only view of a tree, `TreeSource` (`read(path)`, `exists`):
+  `workingTree(dir)` and `atRef(repo, ref)` (`git show <ref>:<path>`, `git ls-tree`). The model
+  reads published data only through `atRef(tree, <tag>)`; plan-024 task 2b adds the view of
+  `main`'s commit for an N-1 publication without touching the model.
+- **`src/index-urls.ts`:** the URL helpers of acceptance 9 (`rawMain(path)`, `rawAtTag(tag,
+  path)`, `readmeOnGithub(tag, id)`, `specOnGithub(file)`), the only place a URL is built.
+- **`src/index-model.ts`:** `buildIndex(tree)` returns the `catalog-index.json` object, built key by
+  key in the order of acceptance 7: packs from `catalog.yaml` (only those with versions), each
+  version read at its tag; presets from `presets/<id>.yaml`; transitions from their catalog
+  entries; `install` from `compat.yaml` (`loadCompat`, none when it is missing or refused). It
+  throws `IndexError` with exit 2 for a missing tag or a tree that is not the top level of a git
+  repository (`rev-parse --show-toplevel`). `excerpt` uses `readmeOutline` (task-018): the first
+  top-level text paragraph of section 2.
+- **`src/index-render.ts`:** `renderCatalog(index)`, `renderJson(index)` (`JSON.stringify(…, null,
+  2)` of the ordered object, plus `\n`) and `renderLlms()`. `CATALOG.md`: a title
+  `# WingFoil template catalog`; axis headings `## Foundation` for `base`, then the axis name with
+  `-` read as a space and an initial capital (`## Team mode`); tables as acceptance 6, each Pack
+  cell `` <a id="pack-…"></a>`<id>` ``; Presets (Preset, Title, Profile, Packs), Transitions
+  (Transition, From, To), Profiles (Profile, Packs); For agents a bullet per URL pattern and
+  `[llms.txt](llms.txt)`.
+- **`src/readme-generate.ts`:** `generatedSections(tree, pack)` returns the four bodies, each
+  starting with its heading, from the working tree only. `composition`: bullets **Requires**,
+  **Conflicts**, **Formats** (`` `<kind>` <n> ``), **Requires capabilities**, then, for every pack
+  but `base`, **Declares**: Memory types, roles (`team.roles` of the dna fragment), states and
+  workflows, each a sorted list of code spans or `none`. `what-it-adds`: level-3 headings
+  Workflows (`` `<name>` (<kind>) `` and one sub-bullet per phase: role, gate
+  `approval.by_role`, `include`), Memory types (sequence joined by ` → `, gates as
+  `` `<state>` (reject → `<state>`) ``), Directives, Fragments, Memory templates, each `None.` when
+  empty. `parameters`: a table Name, Type, Default, Description. `rewriteReadme(text, sections)`
+  replaces only the lines strictly between each begin and end marker of `readmeOutline`.
+- **`src/index.ts` and `src/index-cli.ts`:** `runIndex(argv)` computes every output as
+  `path → content`, then writes those that differ or, with `--check`, compares them, with the
+  report lines and exit codes of acceptance 3; `package.json` gains
+  `"index": "node dist/src/index-cli.js"`.
+- **`index/catalog-index.schema.json`:** JSON Schema 2020-12 of acceptance 7, `additionalProperties:
+  false` everywhere; compiled once in `src/index-schema.ts`.
+- **`src/validate.ts`:** after the lint step, `runIndex(['--tree', tree, '--check'])`; its summary
+  line, then each per-file line as a failure of level 1; an exit 2 as a failure of level 2.
+- **Outputs and fixtures:** the root and golden-tree outputs are written with `npm run index`.
+  `tests/support/published-repo.ts` › `treeRepo` runs the index before its commit; a helper
+  `reindex(repo)` in the same file (its comment names plan-024 task 2b, which removes it) runs it
+  and commits after each publication in `tests/publish.test.ts`, after the test's own assertions.
+  `tests/support/index-catalog.ts` builds the fixture catalog of acceptance 13;
+  `tests/fixtures/index/expected/` holds its outputs, refreshed by
+  `REFRESH_INDEX_EXPECTED=1 node --test dist/tests/index.test.js`, named in that test file.
+- **Tests,** red first: `tests/index-model.test.ts` (fields, tags, errors, excerpt cut),
+  `tests/index-render.test.ts` (layouts, escaping, empty catalog), `tests/readme-generate.test.ts`
+  (sections, rewrite inside and outside the pairs, independence of catalog and other packs),
+  `tests/index.test.ts` (command, `--check`, determinism, expected outputs, schema compilation),
+  `tests/validate.test.ts` (acceptance 11). Existing suites are characterization.
 
 ## Execution Notes
 
