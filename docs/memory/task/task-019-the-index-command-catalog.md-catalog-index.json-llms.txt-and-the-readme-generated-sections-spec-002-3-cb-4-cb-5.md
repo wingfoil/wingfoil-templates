@@ -2,7 +2,7 @@
 id: task-019-the-index-command-catalog.md-catalog-index.json-llms.txt-and-the-readme-generated-sections-spec-002-3-cb-4-cb-5
 type: task
 title: "The index command: CATALOG.md, catalog-index.json, llms.txt and the README generated sections (spec-002 §3, CB-4, CB-5)"
-status: draft
+status: pending
 pack: ""            # tooling task (tooling-change › deliver, tooling-delivery)
 depends_on: ["task-018-readme-lint-rules-the-sections-the-generated-markers-and-install-truth-spec-002-2-cb-1-cb-3"]
 tags: ["tooling","W14","F2.8"]
