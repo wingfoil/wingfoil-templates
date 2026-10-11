@@ -75,6 +75,18 @@ describe('npm run compose', () => {
     });
   });
 
+  it('exits 1 on a pack whose README breaks the README rules (task-018)', () => {
+    withTemp((dir) => {
+      const tree = join(dir, 'tree');
+      cpSync(TREE, tree, { recursive: true });
+      const readme = join(tree, 'packs', 'methodology', 'kanban', 'README.md');
+      writeFileSync(readme, readFileSync(readme, 'utf8').replace('## Examples', '## Samples'));
+      const result = run(['--tree', tree, '--out', join(dir, 'out'), ...PARAMS, ...ENTRIES]);
+      assert.equal(result.status, 1);
+      assert.match(result.stderr, /methodology\/kanban: README\.md:.*## Samples/);
+    });
+  });
+
   it('exits 2 on a tree without catalog.yaml, and on an --out that is a file', () => {
     withTemp((dir) => {
       const noCatalog = run(['--tree', dir, '--out', join(dir, 'out'), ...PARAMS, ...ENTRIES]);

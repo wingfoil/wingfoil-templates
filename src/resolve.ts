@@ -12,6 +12,7 @@ import {
   formatKindsProblems, inventoryProblems, manifestProblems, slotProblems,
 } from './pack-rules';
 import type { Problem } from './problems';
+import { installListed, readmeProblems } from './readme-rules';
 import { parseEntry, satisfies } from './requirements';
 import { repositorySchemas } from './schemas';
 import type { SchemaSet } from './schemas';
@@ -297,10 +298,12 @@ export function resolve(tree: string, catalog: Catalog, request: string[]): Reso
   const [axisProblem] = axesMessages(catalog, byId);
   if (axisProblem !== undefined) throw new ResolveError(axisProblem);
   for (const pack of byId) throwFirst(slotProblems(catalog, pack));
+  const listed = installListed(tree);
   for (const pack of byId) {
     throwFirst(inventoryProblems(tree, pack));
     throwFirst(formatKindsProblems(pack));
     throwFirst(packLayoutProblems(tree, pack));
+    throwFirst(readmeProblems(tree, pack, listed));
   }
   return order(catalog, packs);
 }

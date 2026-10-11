@@ -3,6 +3,8 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { stringify } from 'yaml';
 
+import { conformingReadme } from './readme';
+
 /** What a test says about a pack; the helper fills the rest of a schema-valid manifest. */
 export interface PackSpec {
   id: string;
@@ -104,7 +106,8 @@ export function writePack(root: string, spec: PackSpec): void {
     writeFileSync(join(dir, path), text);
   };
   write('pack.yaml', stringify(manifestFor(spec)));
-  write('README.md', `# ${spec.id}\n`);
+  write('README.md', conformingReadme({ id: spec.id, title: spec.id,
+    description: `Test pack ${spec.id}.` }));
   write('CHANGELOG.md', `# ${spec.id}\n`);
   for (const file of contentFiles(spec)) {
     if (!(spec.omitFiles ?? []).includes(file)) write(file, placeholder(file));

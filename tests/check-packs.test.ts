@@ -14,6 +14,10 @@ import type { CheckPacksResult } from '../src/check-packs';
 import { FIXTURES, REPO_ROOT } from './support/paths';
 import { BASE_COMPOSABLE as BASE, DELIVERY, KANBAN, withPackTree } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
+import { conformingReadme } from './support/readme';
+
+const KANBAN_README = conformingReadme({ id: 'methodology/kanban', title: 'kanban',
+  description: 'Kanban.' });
 
 /** A tree with the given packs and this repository's catalog.yaml and compat.yaml. */
 function lint(specs: PackSpec[], edit: (root: string) => void = () => undefined):
@@ -115,10 +119,12 @@ describe('pack.yaml rules', () => {
   it('pack-id: the directory names another id (and so repeats a name)', () => {
     failsWith(['pack-id', 'pack-name-unique'], CLEAN, (root) => {
       mkdirSync(join(root, 'packs', 'methodology', 'scrum'), { recursive: true });
-      for (const file of ['pack.yaml', 'README.md', 'CHANGELOG.md']) {
+      for (const file of ['pack.yaml', 'CHANGELOG.md']) {
         copyFileSync(join(root, 'packs', 'methodology', 'kanban', file),
           join(root, 'packs', 'methodology', 'scrum', file));
       }
+      writeFileSync(join(root, 'packs', 'methodology', 'scrum', 'README.md'),
+        conformingReadme({ id: 'methodology/scrum', title: 'scrum', description: 'Scrum.' }));
       mkdirSync(join(root, 'packs', 'methodology', 'scrum', 'workflows'));
       copyFileSync(join(root, 'packs', 'methodology', 'kanban', 'workflows', 'delivery.yaml'),
         join(root, 'packs', 'methodology', 'scrum', 'workflows', 'delivery.yaml'));
@@ -586,7 +592,7 @@ describe('F3.5 secrets', () => {
 
   it('secret: a private key block in a pack file, and the composer refuses it too', () => {
     const block = ['-----BEGIN ', 'OPENSSH PRIVATE', ' KEY-----'].join('');
-    failsWith('secret', [BASE, { ...KANBAN, extraFiles: { 'README.md': `# kanban\n\n${block}\n` } }]);
+    failsWith('secret', [BASE, { ...KANBAN, extraFiles: { 'README.md': `${KANBAN_README}\n${block}\n` } }]);
     const leaky = withWorkflow('flow', FLOW(`  - { name: a, produces: [x.md], note: "${block}" }\n`));
     withPackTree([BASE, leaky], (root) => {
       copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
