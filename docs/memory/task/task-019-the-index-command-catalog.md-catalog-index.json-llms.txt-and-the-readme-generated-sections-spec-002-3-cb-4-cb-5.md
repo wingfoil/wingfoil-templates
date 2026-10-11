@@ -214,17 +214,18 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
     weakened, and no assertion on a publication's own commits changes.
 13. **Tests (CB-4),** red first where the behaviour is new. The fixture catalog is a scratch git
     repository with tags holding at least: `base`; a methodology with two published versions that
-    differ in a per-version field (`requires` or `requires_capabilities`); after its latest
-    tag, an unreleased change of its `pack.yaml` title and README section 2 in the working tree; a
-    phase pack (slot); a pack with no published version; a preset with a profile and one without; a
+    differ in a per-version field (`requires` or `requires_capabilities`); after its latest tag, an
+    unreleased change of its `pack.yaml` title and README section 2 in the working tree; a phase
+    pack (slot); a pack with no published version; a preset with a profile and one without; a
     transition. That catalog passes `check:packs`. A separate test alters a published version's
-    `catalog.yaml` entry (for example its `requires`) after the publication and shows that the
-    index still emits the tag's values. The tests check: the schema and `format: 1`; every field
-    of acceptance 7, the per-version ones from each tag and the latest-version ones from the latest tag, while the
-    README generated sections show the working-tree values; the `refs/tags/<tag>` URLs; the
-    unlisted pack; the missing-tag and not-a-repository errors; determinism; `--check` on a fresh,
-    a differing and a missing output; a README that fails task-018's rules (nothing written, exit
-    1); bad usage (exit 3); the 500-code-point cut; the empty catalog; and acceptance 11.
+    `catalog.yaml` entry (for example its `requires`) after the publication and shows that the index
+    still emits the tag's values. The tests check: the schema and `format: 1`; every field of
+    acceptance 7, the per-version ones from each tag and the latest-version ones from the latest
+    tag, while the README generated sections show the working-tree values; the `refs/tags/<tag>`
+    URLs; the unlisted pack; the missing-tag and not-a-repository errors; determinism; `--check` on
+    a fresh, a differing and a missing output; a README that fails task-018's rules (nothing
+    written, exit 1); bad usage (exit 3); the 500-code-point cut; the empty catalog; and acceptance
+    11.
 14. **CI.** The pushed branch `task/<id>` runs `.github/workflows/ci.yml`; its real run's
     conclusion, for both Node.js versions, is recorded in the Execution Notes before `in-review`.
 
