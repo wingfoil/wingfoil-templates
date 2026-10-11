@@ -9,6 +9,7 @@ import type { ParameterValues } from '../src/compose-documents';
 import { BASE, KANBAN, withPackTree } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 import { FIXTURES, REPO_ROOT } from './support/paths';
+import { conformingReadme } from './support/readme';
 
 const CATALOG = loadCatalog(join(REPO_ROOT, 'catalog.yaml'));
 type Doc = Record<string, unknown>;
@@ -235,7 +236,9 @@ describe('composeDocuments: parameters (spec-001 §8)', () => {
 
   it('does not substitute pack.yaml, README.md or CHANGELOG.md', () => {
     compose([BASE_M, KANBAN, { id: 'blueprint/r', extraFiles: {
-      'README.md': '{{nobody}}\n', 'CHANGELOG.md': '{{nobody}}\n',
+      'README.md': `${conformingReadme({ id: 'blueprint/r', title: 'r', description: 'R.' })}\n`
+        + '{{nobody}}\n',
+      'CHANGELOG.md': '{{nobody}}\n',
     }, manifest: { description: 'Uses {{nobody}} in text.' } }],
     ['methodology/kanban', 'blueprint/r'], NAME);
   });
