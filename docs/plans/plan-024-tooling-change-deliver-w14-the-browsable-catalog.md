@@ -122,3 +122,10 @@ which stay outside W14.
   the index, a filter, and one pack's README and `pack.yaml` at its tag) is recorded as evidence in
   `base`'s first `pack-release` (spec-002 §6). No charter or workflow carries it yet: **`base`'s
   charter must list CB-6 with CB-1 and CB-2.**
+- 2026-10-11: task 3: task-021 (the agent path; spec-002 §4, CB-6 offline) done, merged `a199d3f`.
+  `CATALOG.md` › "For agents" and `llms.txt` give the five steps of §4; every URL the index files
+  emit is parsed, matched and resolved offline, and the path is played on the fixture catalog.
+- 2026-10-11: the approver confirmed, in chat, a request of the coordinating session (WFCoord) for
+  the end of W14: `docs/wingfoil-feedback/README.md` cites as WingFoil does
+  (`<full service id>/F-<nnn>@<full sha>`), with the full service id next to the short key
+  `svc-018`; through its own task element, after the last task of the wave. Next: task 4.

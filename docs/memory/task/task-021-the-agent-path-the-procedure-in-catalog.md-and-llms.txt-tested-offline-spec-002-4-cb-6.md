@@ -154,3 +154,6 @@ Branch `task/task-021-agent-path`, run through `tooling-delivery` as `developer`
   `npm run index -- --check` (root and golden tree) exit 0; CB-8 holds; no dependency added.
 - 2026-10-11, CI (acceptance 9): run 38165921222 on `18a0d9f`, conclusion `success` for
   `validate (22.12.0)` and `validate (22.21.0)`.
+- 2026-10-11: approved by the approver; CI run 38166061088 on the branch head `a7af90b` was
+  `success`. Merged into `main` with `--no-ff` (`a199d3f`); the branch is removed. Next: plan-024
+  task 4, examples as fixtures.
