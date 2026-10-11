@@ -103,7 +103,30 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-021-agent-path`, run through `tooling-delivery` as `developer`
+(`code-quality`, `testing`, `determinism`), under `npm run lint`. Tests first.
+
+- **`src/index-urls.ts`:** `parseUrl(url)` returns `{ form, tag?, path }` for the forms `raw-main`
+  (`<raw>/main/<path>`), `raw-tag` (`<raw>/refs/tags/<tag>/<path>`), `readme-github`
+  (`https://github.com/…/blob/<tag>/packs/<id>/README.md`) and `github-main`
+  (`https://github.com/…/blob/main/<path>`), or `undefined`; `buildUrl(parsed)` calls the builder
+  of the form, so a URL matches when `buildUrl(parseUrl(url)) === url`. A tag ends at the first `/`
+  after its `@`.
+- **`src/index-render.ts`:** `AGENT_STEPS` (the five steps of acceptance 3) and `AGENT_NOTES` (the
+  anonymous, CORS, staleness, no-server and tag sentences), rendered as a numbered list and a
+  paragraph in `CATALOG.md` › "For agents" (before the URL patterns) and in `llms.txt` between the
+  blockquote and `## Index`.
+- **`src/readme-rules.ts`:** the command detector of `readme-command` is exported as
+  `isCliCommand(text, codeLine)`, so the test of acceptance 3 runs the same rule over the two files.
+- **Tests:** `tests/support/agent-urls.ts` holds the extraction (JSON strings, link targets and code
+  spans through `scanMarkdown`) and the offline resolver of acceptance 4; `tests/agent-path.test.ts`
+  holds acceptance 3–5 (the steps in both files, the command check, the extraction of placeholder
+  URLs, every URL matched and resolved on the fixture catalog and on this repository, the simulated
+  path); `tests/index-urls.test.ts` holds the parser (each form, a tag with `/` and `@`, a URL of no
+  form).
+- **Outputs:** the root, the golden tree and `tests/fixtures/index/expected/` are regenerated.
+- **Acceptance 8:** one line in the Execution Notes of plan-024 and dl-014, committed on the
+  branch.
 
 ## Execution Notes
 
