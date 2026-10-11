@@ -12,6 +12,8 @@ export class IndexError extends Error {}
 export interface TreeSource {
   /** What the view is, for messages: a directory or `<ref>`. */
   readonly label: string;
+  /** The tag the view reads, when it reads one. */
+  readonly tag?: string;
   /** The text of a file, or undefined when there is none. */
   read(path: string): string | undefined;
 }
@@ -65,5 +67,5 @@ export function atTag(tree: string, tag: string): TreeSource {
   } catch {
     throw new IndexError(`tag ${tag} is named by catalog.yaml and missing from the repository`);
   }
-  return atCommit(tree, commit, tag);
+  return { ...atCommit(tree, commit, tag), tag };
 }

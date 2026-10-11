@@ -127,8 +127,11 @@ export function runIndex(argv: string[]): IndexResult {
     // One report line: a message's first line only (a YAML error quotes the source below it).
     const first = (message: string): string => `index: ${message.split('\n')[0] ?? ''}`;
     if (error instanceof IndexInputError) return { code: 1, lines: [first(error.message)] };
-    if (error instanceof IndexError || error instanceof GitError || error instanceof YamlError
-      || error instanceof CatalogError) {
+    // A system error (EACCES, ENOENT, ENOSPC…) is an I/O error too; any other is a defect.
+    const system = error instanceof Error
+      && typeof (error as NodeJS.ErrnoException).code === 'string';
+    if (system || error instanceof IndexError || error instanceof GitError
+      || error instanceof YamlError || error instanceof CatalogError) {
       return { code: 2, lines: [first(error.message)] };
     }
     throw error;

@@ -240,7 +240,9 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     if (index.code === 2) {
       fail(2, index.lines[0] ?? 'index: I/O error');
     } else {
-      lines.push(index.lines[0] ?? '');
+      // An input the index refuses is reported on its summary line alone.
+      if (index.code === 1 && index.lines.length === 1) fail(1, index.lines[0] ?? '');
+      else lines.push(index.lines[0] ?? '');
       for (const line of index.lines.slice(1)) fail(1, line);
     }
   }

@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { spawnSync } from 'node:child_process';
 import {
-  cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
+  chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -132,6 +132,34 @@ describe('npm run index (acceptance 3)', () => {
       const result = runIndex(['--tree', repo.dir, '--check']);
       assert.equal(result.code, 2, result.lines.join('\n'));
       assert.match(result.lines[0] ?? '', /would break its schema/);
+    });
+  });
+
+  it('exits 2 on an I/O error: a README it cannot read, a tree it cannot write', (context) => {
+    if (process.getuid?.() === 0) {
+      context.skip('permissions do not apply to root');
+      return;
+    }
+    withCopy((tree) => {
+      const readme = join(tree, 'packs', 'base', 'README.md');
+      chmodSync(readme, 0o000);
+      try {
+        const unreadable = runIndex(['--tree', tree, '--check']);
+        assert.equal(unreadable.code, 2, unreadable.lines.join('\n'));
+        assert.equal(unreadable.lines.length, 1);
+      } finally {
+        chmodSync(readme, 0o644);
+      }
+      writeFileSync(join(tree, 'CATALOG.md'), 'stale\n');
+      chmodSync(tree, 0o555);
+      chmodSync(join(tree, 'CATALOG.md'), 0o444);
+      try {
+        const unwritable = runIndex(['--tree', tree]);
+        assert.equal(unwritable.code, 2, unwritable.lines.join('\n'));
+      } finally {
+        chmodSync(tree, 0o755);
+        chmodSync(join(tree, 'CATALOG.md'), 0o644);
+      }
     });
   });
 

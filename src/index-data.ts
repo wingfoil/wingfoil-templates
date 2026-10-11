@@ -45,6 +45,16 @@ export function code(value: string): string {
   return `${fence}${pad}${value}${pad}${fence}`;
 }
 
+/** Where a refused file is: a tag's content is the lint's tag rules', the rest the lint's. */
+function where(source: TreeSource, path: string): string {
+  return source.tag === undefined ? `${source.label}: ${path}` : `${path} at tag ${source.tag}`;
+}
+
+function refusal(source: TreeSource, path: string, problem: string): IndexInputError {
+  return new IndexInputError(`${where(source, path)} ${problem}${source.tag === undefined
+    ? '; the lint reports it' : ''}`);
+}
+
 /** A YAML mapping of a view; undefined when the file is missing. */
 export function yamlIn(source: TreeSource, path: string): Doc | undefined {
   const content = source.read(path);
@@ -53,19 +63,15 @@ export function yamlIn(source: TreeSource, path: string): Doc | undefined {
   try {
     data = parseYaml(content);
   } catch {
-    throw new IndexInputError(`${source.label}: ${path} does not parse; the lint reports it`);
+    throw refusal(source, path, 'does not parse');
   }
-  if (!isDoc(data)) {
-    throw new IndexInputError(`${source.label}: ${path} is not a mapping; the lint reports it`);
-  }
+  if (!isDoc(data)) throw refusal(source, path, 'is not a mapping');
   return data;
 }
 
 /** Like yamlIn, a missing file being an input error too. */
 export function yamlAt(source: TreeSource, path: string): Doc {
   const data = yamlIn(source, path);
-  if (data === undefined) {
-    throw new IndexInputError(`${source.label}: ${path} is missing; the lint reports it`);
-  }
+  if (data === undefined) throw refusal(source, path, 'is missing');
   return data;
 }
