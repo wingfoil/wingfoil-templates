@@ -38,6 +38,15 @@ describe('writeEvidence (F5.1, dl-009)', () => {
     }
   });
 
+  it('lists the examples among the compositions (task-022)', () => {
+    const example = 'tests/fixtures/examples/kanban/small-board/example.yaml';
+    const result: ValidateResult = { ...PASSED, lines: PASSED.lines.flatMap((line) =>
+      line.startsWith('composition presets/') ? [line,
+        `composition ${example}: composed twice, 17 files, byte-identical`] : [line]) };
+    const section = writeEvidence(result, { commit: COMMIT, command: COMMAND });
+    assert.ok(section.includes(`Compositions: presets/golden.yaml, ${example}`), section);
+  });
+
   it('refuses a self-test result', () => {
     assert.throws(() => writeEvidence({ ...PASSED, mode: 'self-test' },
       { commit: COMMIT, command: COMMAND }), EvidenceError);

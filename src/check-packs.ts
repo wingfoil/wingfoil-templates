@@ -5,6 +5,8 @@ import { existsSync, lstatSync, readFileSync, readdirSync, statSync } from 'node
 import { join } from 'node:path';
 
 import { CatalogError, loadCatalog } from './catalog';
+import { exampleProblems } from './example-rules';
+import { EXAMPLES } from './examples';
 import type { Catalog } from './catalog';
 import { runCheckSchemas } from './check-schemas';
 import { packLayoutProblems, treeLayout } from './layout-rules';
@@ -48,6 +50,9 @@ export interface LintContext {
   broken: Set<string>;
 }
 
+/** The folders whose every file the lint covers: pack content, and the examples (task-022). */
+const FOLDERS = ['packs', 'presets', 'transitions', EXAMPLES];
+
 function count(n: number, noun: string): string {
   return `${n} ${noun}${n === 1 ? '' : 's'}`;
 }
@@ -57,7 +62,7 @@ function checkedFiles(tree: string): number {
   for (const root of ['catalog.yaml', 'compat.yaml']) {
     if (existsSync(join(tree, root)) && lstatSync(join(tree, root)).isFile()) total += 1;
   }
-  for (const folder of ['packs', 'presets', 'transitions']) total += filesUnder(tree, folder).length;
+  for (const folder of FOLDERS) total += filesUnder(tree, folder).length;
   return total;
 }
 
@@ -135,13 +140,13 @@ function filesUnder(tree: string, rel: string): string[] {
 }
 
 function secretGroup(context: LintContext): Problem[] {
-  return ['packs', 'presets', 'transitions'].flatMap((folder) => filesUnder(context.tree, folder))
+  return FOLDERS.flatMap((folder) => filesUnder(context.tree, folder))
     .flatMap((file) => secretProblems(file, readFileSync(join(context.tree, file), 'utf8')));
 }
 
 /** The rule groups, in order; each sees the context and the problems the ones before it found. */
 const GROUPS: readonly ((context: LintContext, earlier: Problem[]) => Problem[])[] = [
-  packProblems, treeProblems, tagProblems, workflowGroup, overlayProblems, secretGroup,
+  packProblems, treeProblems, exampleProblems, tagProblems, workflowGroup, overlayProblems, secretGroup,
   schemaNoteGroup,
 ];
 

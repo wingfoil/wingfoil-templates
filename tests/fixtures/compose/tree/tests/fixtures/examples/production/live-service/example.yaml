@@ -1,0 +1,7 @@
+format: 1
+id: live-service
+title: "Live service"
+description: "The example live-service of the README of production."
+packs:
+  - methodology/kanban@^1
+  - stage/production@^1

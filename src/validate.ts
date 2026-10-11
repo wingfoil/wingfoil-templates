@@ -13,6 +13,7 @@ import { runCheckPacks } from './check-packs';
 import { CompatError, loadCompat } from './compat';
 import type { Compat } from './compat';
 import { composeTwice, type DeterminismOptions } from './determinism';
+import { exampleFiles } from './examples';
 import { runIndex } from './index';
 import {
   DEFAULT_CACHE, MATRIX_PINS, MatrixIoError, installRelease, runRelease, selectReleases,
@@ -266,6 +267,26 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     if (broken.has(file)) continue;
     // A preset the lint rejects (its values' YAML types among others) is not composed.
     if (linted.has(file)) {
+      unjudged = true;
+      lines.push(`composition ${file}: skipped, the lint reports it`);
+      matrixLines.push(`matrix ${file}: skipped`);
+      continue;
+    }
+    try {
+      compositions.push(presetComposition(args.tree, file));
+    } catch (error) {
+      unjudged = true;
+      fail(error instanceof YamlError && error.reason !== 'syntax' ? 2 : 1, messageOf(error));
+    }
+  }
+  // The examples (task-022, spec-002 §2.4), composed as presets are, after them.
+  const reported = (file: string): boolean => {
+    const dir = file.slice(0, file.lastIndexOf('/'));
+    return lint.problems.some((problem) => problem.file === file || problem.file === dir
+      || problem.file.startsWith(`${dir}/`));
+  };
+  for (const file of exampleFiles(args.tree)) {
+    if (reported(file)) {
       unjudged = true;
       lines.push(`composition ${file}: skipped, the lint reports it`);
       matrixLines.push(`matrix ${file}: skipped`);

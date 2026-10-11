@@ -1,0 +1,7 @@
+format: 1
+id: agent-team
+title: "Agent team"
+description: "The example agent-team of the README of agent-first."
+packs:
+  - methodology/kanban@^1
+  - team-mode/agent-first@^1

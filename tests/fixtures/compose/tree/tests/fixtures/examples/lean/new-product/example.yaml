@@ -1,0 +1,7 @@
+format: 1
+id: new-product
+title: "New product"
+description: "The example new-product of the README of lean."
+packs:
+  - methodology/kanban@^1
+  - phase/inception/lean@^1

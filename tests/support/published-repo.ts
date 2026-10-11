@@ -6,6 +6,7 @@ import { packDigest } from '../../src/digest';
 import { rootOutputs, runIndex } from '../../src/index';
 import { workingTree } from '../../src/index-source';
 import { TestRepo } from './git-repo';
+import { writeExamples } from './examples';
 import { BASE_COMPOSABLE, KANBAN, writePack } from './pack-tree';
 import type { PackSpec } from './pack-tree';
 import { REPO_ROOT } from './paths';
@@ -29,9 +30,10 @@ export function fixtureCompat(release = STUB_RELEASE): string {
 
 /** A scratch repository holding packs, this repository's catalog and the fixture compat file. */
 export function treeRepo(specs: PackSpec[] = [BASE_COMPOSABLE, KANBAN],
-  release = STUB_RELEASE): TestRepo {
+  release = STUB_RELEASE, { examples = true } = {}): TestRepo {
   const repo = new TestRepo();
   for (const spec of specs) writePack(repo.dir, spec);
+  if (examples) writeExamples(repo.dir, specs);
   repo.write('catalog.yaml', readFileSync(join(REPO_ROOT, 'catalog.yaml'), 'utf8'));
   repo.write('compat.yaml', fixtureCompat(release));
   repo.write('.gitignore', '.cache/\nnode_modules/\n');

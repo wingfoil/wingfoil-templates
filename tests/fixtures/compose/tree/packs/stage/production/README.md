@@ -62,7 +62,11 @@ None.
 
 ## Examples
 
-Placeholder until the examples are fixtures.
+### live-service
+
+Fixture: tests/fixtures/examples/production/live-service/
+
+A fictional city service, Harbor Parking, runs in production. It adds `stage/production` to kanban and gets a `qa` state in its task flow and an `archived` state for every element.
 
 ## Sources and adaptations
 

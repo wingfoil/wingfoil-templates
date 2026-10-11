@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { stringify } from 'yaml';
 
+import { writeExamples } from './examples';
 import { conformingReadme } from './readme';
 
 /** What a test says about a pack; the helper fills the rest of a schema-valid manifest. */
@@ -115,11 +116,16 @@ export function writePack(root: string, spec: PackSpec): void {
   for (const [path, text] of Object.entries(spec.extraFiles ?? {})) write(path, text);
 }
 
-/** A temporary tree holding packs/ with the given packs. */
-export function withPackTree(specs: PackSpec[], body: (root: string) => void): void {
+/**
+ * A temporary tree holding packs/ with the given packs and, unless `examples` is false, an example
+ * of each when it holds methodology/kanban (task-022).
+ */
+export function withPackTree(specs: PackSpec[], body: (root: string) => void,
+  { examples = true } = {}): void {
   const root = mkdtempSync(join(tmpdir(), 'pack-tree-'));
   try {
     for (const spec of specs) writePack(root, spec);
+    if (examples) writeExamples(root, specs);
     body(root);
   } finally {
     rmSync(root, { recursive: true, force: true });

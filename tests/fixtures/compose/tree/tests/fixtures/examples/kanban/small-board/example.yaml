@@ -1,0 +1,8 @@
+format: 1
+id: small-board
+title: "Small board"
+description: "The example small-board of the README of kanban."
+packs:
+  - methodology/kanban@^1
+parameters:
+  wip_limit: 2

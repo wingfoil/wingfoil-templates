@@ -1,6 +1,6 @@
 // A pack README that follows spec-002 §2 (task-018), for fixtures and synthesized trees. The
-// generated sections hold placeholder content until `npm run index` writes them (plan-024 task 2);
-// section 7 holds a placeholder line until examples are fixtures (plan-024 task 4).
+// generated sections hold placeholder content until `npm run index` writes them (task-019);
+// section 7 holds the exemption line unless an example is given (task-022).
 
 export const CATALOG_URL = 'https://github.com/wingfoil/wingfoil-templates/blob/main/CATALOG.md';
 export const TEMPORARY_MARK = '> **Temporary:** these hand steps are replaced by WingFoil\'s '
@@ -23,7 +23,10 @@ function generated(name: string, body: string): string {
   return `<!-- generated:begin ${name} -->\n${body}<!-- generated:end ${name} -->\n`;
 }
 
-export function conformingReadme(facts: ReadmeFacts): string {
+/** Section 7 with no example (spec-002 §2.4), while the tree holds no methodology. */
+const EXEMPTION = 'None yet: no methodology pack is published.\n';
+
+export function conformingReadme(facts: ReadmeFacts, examples = EXEMPTION): string {
   const anchor = `pack-${facts.id.replaceAll('/', '-')}`;
   return [
     generated('title', `# ${facts.title}\n\n${facts.description}\n\n${axisLine(facts.id)}\n`),
@@ -33,7 +36,7 @@ export function conformingReadme(facts: ReadmeFacts): string {
     generated('composition', '## Composition\n\nPlaceholder until npm run index writes it.\n'),
     generated('what-it-adds', '## What it adds\n\nPlaceholder until npm run index writes it.\n'),
     generated('parameters', '## Parameters\n\nPlaceholder until npm run index writes it.\n'),
-    '## Examples\n\nPlaceholder until the examples are fixtures.\n',
+    `## Examples\n\n${examples}`,
     '## Sources and adaptations\n\nNone: written for this catalog.\n',
     `## Versions\n\n- [Changelog](CHANGELOG.md)\n- [Catalog entry](${CATALOG_URL}#${anchor})\n`,
   ].join('\n');
