@@ -24,7 +24,11 @@ It comes from:
   reading: spec-002 says "while the tree holds no methodology" (§6 CB-2) and "until the first
   methodology is published" (§2.4); the approver chose the first, stricter reading: the exemption
   holds only while `packs/methodology/` holds no pack. So the first methodology ships with its
-  examples. Recorded as a spec-002 erratum of §2.4 in the Execution Notes;
+  examples. Recorded as a spec-002 erratum of §2.4 in this task's Execution Notes, for the next
+  element that amends spec-002. Its cost, for the record: a README is in its pack's digest, so when
+  the first methodology enters the tree, every published pack whose section 7 holds the exemption
+  line fails the lint; `base` (W9) then needs a new version with examples in the same wave as the
+  first methodology (W10);
 - **task-018:** the README outline and rules; section 7 holds today a placeholder line in every
   fixture README, which this task replaces;
 - **task-012** (the lint of presets: schema, `id` equal to the file name, cardinalities, values)
@@ -39,8 +43,11 @@ Facts the Acceptance relies on:
   `tests/fixtures/examples/` stays absent;
 - the scratch trees of the tests (`tests/support/pack-tree.ts`, `published-repo.ts`) usually hold
   `methodology/kanban`, so the test support writes an example and its fixture for each pack;
-- the rule is a rule of the tree, like the preset rules: the composer, which composes packs, not
-  examples, does not apply it.
+- the rules are rules of the tree, like the preset rules: they run in the lint's tree group, outside
+  `readmeProblems`, so the composer (which applies `readmeProblems` to the packs it composes, and
+  composes packs, not examples) does not apply them;
+- a composition request accepts `base@^1` explicitly (the resolver deduplicates it against the
+  foundation).
 
 Not in scope: examples of real packs (each pack's own tasks); the root `README.md` (plan-024
 task 5); the search page (task 6); CB-8: `catalog.yaml`, `compat.yaml` and `schema/` do not change
@@ -58,39 +65,62 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    task branch.
 3. **Section 7 (§2.4).** In a pack README, section 7 holds either one or more examples, or, while
    the tree holds no methodology, exactly the line `None yet: no methodology pack is published.`
-   (with blank lines only around it). Every level-3 heading of section 7 is an example:
-   `### <example>`, a name of spec-001 §4's grammar, unique in the README, whose first non-blank
-   line is exactly `Fixture: tests/fixtures/examples/<pack name>/<example>/`, `<pack name>` the
-   pack's `name`. Text may follow (the situation, the composition, what the project gets, how a
-   phase runs); it is not checked.
+   with blank lines only around it. Only blank lines precede the first level-3 heading. Every
+   level-3 heading of section 7 is an example: `### <example>`, a name of spec-001 §4's grammar,
+   unique in the README, whose first non-blank line is exactly
+   `Fixture: tests/fixtures/examples/<pack name>/<example>/`, `<pack name>` the pack's `name` (a
+   tightening of §2.4's "followed by"). Text may follow (the situation, the composition, what the
+   project gets, how a phase runs); it is not checked.
 4. **The fixture (§2.4, CB-2).** `<tree>/tests/fixtures/examples/<pack name>/<example>/` holds
-   `example.yaml`, which: passes `schema/preset.schema.json`; has `id` equal to `<example>`; has no
-   `profile`; has `packs` that contain the pack (an entry whose id, before `@`, is the pack's
-   catalog id, `base` included) and name only packs of the tree; passes the preset rules of
-   task-012 on its parameters and cardinalities.
-5. **Both ways (CB-2).** An example whose fixture is missing fails; a directory under
-   `<tree>/tests/fixtures/examples/` that no README example names fails, a `<pack name>` that is
-   no pack of the tree included; the exemption line fails once the tree holds a methodology; a
-   section 7 with neither examples nor the exemption line fails.
-6. **The rules.** The lint (`check:packs`, `validate`, `validate:publication`) reports them under
-   the rule ids `example-section` (acceptance 3, the exemption of acceptance 5) and
-   `example-fixture` (acceptance 4, the rest of acceptance 5), each problem at a file and line.
+   exactly `example.yaml`, which: passes `schema/preset.schema.json`; has `id` equal to
+   `<example>`; has no `profile`; has `packs` that contain the pack (an entry whose id, before
+   `@`, is the pack's id `packs/<id>`, `base` included) and name only packs of the tree; passes
+   the preset checks of task-012 on its cardinalities and parameter values. `preset-name` does not
+   apply (it is replaced by `id` = `<example>`). The YAML rules (integers, no `.nan`/`.inf`) and the
+   secret rules of task-012 cover `tests/fixtures/examples/` too, and the lint's `checked <n> files`
+   counts its files; `check:schemas` and its finder are unchanged.
+5. **Layout and both ways (CB-2).** Every entry under `<tree>/tests/fixtures/examples/` is a
+   directory `<pack name>/` of a pack of the tree, and every entry under it a directory
+   `<example>/` that a README example of that pack names; any other entry fails. An example whose
+   fixture is missing fails at the README's `Fixture:` line; the exemption line fails once the tree
+   holds a methodology; a section 7 with neither examples nor the exemption line fails.
+6. **The rules.** The lint (`check:packs`, `validate`, `validate:publication`) reports them in its
+   tree group under the rule ids `example-section` (acceptance 3, the section 7 cases of acceptance
+   5), at the README's line, and `example-fixture` (acceptance 4, the layout cases of acceptance
+   5), at the `example.yaml` line or, for an entry with no file, at its path with no line. The
+   task-012 checks applied to `example.yaml` report under `example-fixture`.
 7. **Validation (§2.4).** `npm run validate` and `npm run validate:publication` compose every
-   example as they compose a preset: twice, compared byte for byte, then through the matrix, with
-   the report line `composition tests/fixtures/examples/<pack name>/<example>/example.yaml: …`;
-   an example the lint rejects is skipped with the line `… skipped, the lint reports it`, as a
-   preset is. The compositions count (`compositions: <n>`) includes them.
-8. **Not indexed (§2.4).** `catalog-index.json` and `CATALOG.md` do not list examples; the
-   committed index outputs and `tests/fixtures/index/expected/` change only if a README's section 2
-   changes (it does not).
-9. **Fixtures.** Each of the golden tree's six packs has at least one example in its README and its
-   fixture, composable; the golden tree's expected composition (`tests/fixtures/compose/expected`)
-   is unchanged. The test support writes, for each pack it writes, one example and its fixture
-   composable with `methodology/kanban`, unless a test opts out; no existing assertion is weakened.
-10. **Tests,** red first: every rule of acceptance 3–6 with a passing and a failing case; the
-    exemption on both sides of "the tree holds a methodology"; the composition, the skip and the
-    count of acceptance 7.
-11. **CI.** The pushed branch `task/<id>` runs `.github/workflows/ci.yml`; its real run's
+   `example.yaml` found under `tests/fixtures/examples/` as they compose a preset: in the byte order
+   of their path, after the presets and before the `entries`; twice, compared byte for byte, then
+   through the matrix; with the report line
+   `composition tests/fixtures/examples/<pack name>/<example>/example.yaml: …` and its matrix
+   lines. An example is skipped, with `… skipped, the lint reports it`, when the lint reports a
+   problem in its `example.yaml` or at its directory. `compositions: <n>` counts them.
+   `--param` keeps its semantics (it may not override a value the composition sets).
+8. **Publication.** `npm run publish:pack` counts an example that contains the pack as a
+   composition of the validation, like a preset; the pack-release evidence lists examples among
+   its Compositions. The publish test that relies on "no composition" builds its tree with the
+   example opt-out.
+9. **Not indexed (§2.4).** `catalog-index.json` and `CATALOG.md` do not list examples; the
+   committed index outputs and `tests/fixtures/index/expected/` are unchanged (the index does not
+   read section 7).
+10. **Fixtures.**
+    - Each of the golden tree's six packs has at least one example in its README and its fixture,
+      composed and validated by `npm run validate -- --tree tests/fixtures/compose/tree --param
+      project_name=Golden`; the examples do not set `project_name` (the run's `--param` gives it,
+      as for `presets/golden.yaml`). The golden expected composition
+      (`tests/fixtures/compose/expected`) is unchanged.
+    - `withPackTree` and `treeRepo` write section 7 and the fixtures once all packs are written: if
+      the tree holds `methodology/kanban`, one example `basic` per pack, `packs: [<pack>@^1,
+      methodology/kanban@^1]` (kanban's own: itself only); otherwise the exemption line. A test
+      opts out with `examples: false`. `tests/support/readme.ts` loses the placeholder line.
+    - Tests that place content in section 7 move it into an example's free text or into section 8;
+      their assertions are kept. Exact counts that now include the examples (`compositions: <n>`,
+      matrix runs, evidence lines) are updated to the new counts, which is not weakening them.
+11. **Tests,** red first: every rule of acceptance 3–6 with a passing and a failing case; the
+    exemption on both sides of "the tree holds a methodology"; the composition, the order, the skip
+    and the count of acceptance 7; acceptance 8.
+12. **CI.** The pushed branch `task/<id>` runs `.github/workflows/ci.yml`; its real run's
     conclusion, for both Node.js versions, is recorded in the Execution Notes before `in-review`.
 
 ## Design
@@ -99,4 +129,10 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Execution Notes
 
-<!-- Deviations, blockers, decisions taken, WingFoil friction. -->
+- 2026-10-11: independent review of the body (a subagent with its own context): approve after
+  amendments; two blocking points (publication and evidence left undecided for examples; an
+  example setting `project_name` would break the golden `--param` run), nine should-fix (the test
+  support per tree, README tests that fill section 7, rule ids of the preset checks, text before
+  the first example, the layout and where an orphan is reported, the validation order and skip,
+  where the rules live, the ruling's cost, updated counts) and nits, all applied while `pending`.
+  It found no reason to split the task.
