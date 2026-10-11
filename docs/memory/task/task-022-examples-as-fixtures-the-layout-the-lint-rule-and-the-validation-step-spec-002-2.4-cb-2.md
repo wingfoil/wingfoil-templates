@@ -2,7 +2,7 @@
 id: task-022-examples-as-fixtures-the-layout-the-lint-rule-and-the-validation-step-spec-002-2.4-cb-2
 type: task
 title: "Examples as fixtures: the layout, the lint rule and the validation step (spec-002 §2.4, CB-2)"
-status: in-progress
+status: in-review
 pack: ""            # tooling task (tooling-change › deliver, tooling-delivery)
 depends_on: ["task-021-the-agent-path-the-procedure-in-catalog.md-and-llms.txt-tested-offline-spec-002-4-cb-6"]
 tags: ["tooling","W14","F2.8"]
