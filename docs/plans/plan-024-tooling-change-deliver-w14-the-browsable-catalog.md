@@ -97,3 +97,8 @@ which stay outside W14.
 
 - 2026-10-11: presented to the approver, who approved the backlog, the order and the recommended
   rulings above ("come consigli").
+- 2026-10-11: plan submitted `active`. Task 1: task-018 (README lint rules; spec-002 §2, CB-1,
+  CB-3) done, merged `854e353`. `npm run check:packs`, `validate` and the composer apply the rules
+  `readme-heading`, `readme-marker`, `readme-command`, `readme-install-mark` and `readme-link`; the
+  fixture READMEs follow the standard with placeholder generated sections. Next: task 2, the index
+  command.

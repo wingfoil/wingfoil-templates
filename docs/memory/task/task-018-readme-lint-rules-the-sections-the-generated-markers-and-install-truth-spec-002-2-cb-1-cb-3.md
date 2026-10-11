@@ -201,3 +201,7 @@ subset of acceptance 4 is read by a small line scanner, not a Markdown library.
 - 2026-10-11, CI (acceptance 11): run 38143455915 on `9655418`, conclusion `success` for
   `validate (22.12.0)` and `validate (22.21.0)`; the earlier run 38143204551 on `1af71d1` was
   `success` too.
+- 2026-10-11: approved by the approver; CI run 38143603194 on the branch head `a0c7749` was
+  `success`. Merged into `main` with `--no-ff` (`854e353`); the branch is removed. Next: plan-024
+  task 2, the index command, which reuses `readmeOutline` (`src/readme.ts`) to rewrite the
+  generated sections.
