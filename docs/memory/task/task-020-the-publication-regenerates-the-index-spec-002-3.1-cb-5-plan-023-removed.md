@@ -176,3 +176,6 @@ item gets its failing test before the code that makes it pass.
   `include` to check by hand.
 - 2026-10-11, CI (acceptance 12): run 38158220050 on `373bf07`, conclusion `success` for
   `validate (22.12.0)` and `validate (22.21.0)`.
+- 2026-10-11: approved by the approver; CI run 38158364935 on the branch head `69b40f7` was
+  `success`. Merged into `main` with `--no-ff` (`5e56f47`); the branch is removed. Next: plan-024
+  task 3, the agent path.

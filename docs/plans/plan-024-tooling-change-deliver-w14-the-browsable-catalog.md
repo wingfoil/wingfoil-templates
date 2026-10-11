@@ -113,3 +113,8 @@ which stay outside W14.
   empty catalog; `tests/fixtures/index/expected/` holds those of a fixture catalog with tags.
   spec-002 erratum recorded in task-019 (the tag is derived, not read from `catalog.yaml`). Next:
   task 2b.
+- 2026-10-11: task 2b: task-020 (the publication regenerates the index; spec-002 §3.1, CB-5)
+  done, merged `5e56f47`. `publish:pack` commits `CATALOG.md` and `catalog-index.json` with
+  `catalog.yaml`, on an N-1 line from `main`'s commit; the plan-023 skip is gone from
+  `publish:pack` and `pack-release-cycle` (v5); the tests no longer refresh the index after a
+  publication. Next: task 3, the agent path.
