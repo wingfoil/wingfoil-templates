@@ -115,7 +115,33 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-020-publish-index`, run through `tooling-delivery` as `developer`
+(`code-quality`, `testing`, `determinism`), under `npm run lint`. Tests first: each acceptance
+item gets its failing test before the code that makes it pass.
+
+- **`src/index-source.ts`:** `overlay(source, files)` returns a view that reads the given paths
+  from `files` and every other path from `source`; with `atCommit`, it is "`main`'s commit with the
+  edited `catalog.yaml`".
+- **`src/compat.ts`:** `compatFrom(data, label)` holds the schema and §18 checks that `loadCompat`
+  runs today; `loadCompat` calls it, so the index can read `compat.yaml` from any view.
+- **`src/index-model.ts`:** `buildIndex(tree, source = workingTree(tree))` reads `catalog.yaml`,
+  the presets and `compat.yaml` through `source`, and the tags from `tree`'s repository, as now.
+- **`src/index.ts`:** `rootOutputs(tree, source)` returns `CATALOG.md` and `catalog-index.json`
+  (schema check included; the axes from `source`'s `catalog.yaml`); `indexOutputs(tree)` is
+  `rootOutputs(tree, workingTree(tree))` plus `llms.txt` and the READMEs, byte for byte as before.
+- **`src/publish.ts`:** in `afterTag`, the current line writes `catalog.yaml`, then the two files
+  of `rootOutputs(tree, workingTree(tree))`, and commits the three; an N-1 line computes
+  `rootOutputs(tree, overlay(atCommit(tree, main), { 'catalog.yaml': edited }))` and
+  `commitOnMain` writes the three blobs (it takes a map of files). The Publication section gains
+  `- Index: CATALOG.md, catalog-index.json` (` (on main)` on an N-1 line); the plan-023 line and
+  header sentence go. The rollback maps `IndexInputError` to exit 1, the rest as today.
+- **Tests:** `tests/publish.test.ts` (acceptance 4–8, 11: the catalog commit's files and
+  `index --check` after it, the N-1 case with a preset whose title differs on `main`, `--dry-run` on
+  both lines, the CB-5 diffs, the two rollbacks); `tests/index-source.test.ts` (`overlay`);
+  `tests/compat.test.ts` (`compatFrom`). `tests/support/published-repo.ts` › `publishByHand`
+  regenerates the two files into its catalog commit; the post-publication `reindex` calls go
+  (acceptance 10).
+- **Workflow:** `pack-release-cycle` v5, the `publish` description as acceptance 9.
 
 ## Execution Notes
 
