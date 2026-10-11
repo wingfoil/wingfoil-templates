@@ -55,8 +55,8 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    `npm run check:schemas` and `npm run check:packs` exit 0; no dependency is added; `npm test`
    needs no network. `npm run validate` exits 0, and so does
    `npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden`.
-2. **CB-8.** `git diff --exit-code main -- catalog.yaml compat.yaml schema/` is empty on the task
-   branch.
+2. **CB-8.** `git diff --exit-code origin/main -- catalog.yaml compat.yaml schema/` exits 0 on the
+   task branch.
 3. **Scope and report.** The rules apply to the `README.md` at the root of every pack directory
    under `packs/` whose `pack.yaml` passed its schema, in the working tree, in `check:packs`,
    `validate` and `validate:publication` alike. They are skipped when the README is missing
@@ -66,8 +66,10 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    `readme-marker`, `readme-command`, `readme-install-mark` and `readme-link`.
    `npm run publish:pack` may report such a pack as covered by no composition (it skips refused
    compositions, task-014); `validate` and its lint name the README problem.
-4. **Markdown, as the rules read it.** Only top-level blocks count: nothing inside a block quote, a
-   list item, an HTML comment or a code block. A fenced code block opens with three or more
+4. **Markdown, as the rules read it.** For headings and markers only top-level blocks count: nothing
+   inside a block quote, a list item, an HTML comment or a code block. Code spans, code blocks
+   (acceptance 7) and links (acceptance 9) are found at any depth, outside HTML comments; links
+   only outside code. A fenced code block opens with three or more
    `` ` `` or `~` and closes on a fence of the same character at least as long, or at the end of
    the file. An indented code block (four or more spaces) starts only after a blank line or at the
    start of the file; an indented line after a paragraph line continues the paragraph. A heading
@@ -104,10 +106,10 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    `npm run wingfoil` or `npm run -s wingfoil`. A code-block line whose whole text is one of these
    forms with no argument (`wingfoil` included) counts too; an inline code span whose whole text is
    `wingfoil` names the program and passes. Each finding names the line. The check covers the whole
-   file, generated sections included, and here code inside block quotes and list items counts too.
+   file, generated sections included.
 8. **The temporary mark (CB-3, §2.3, `readme-install-mark`).** While no release of the tree's
    `compat.yaml` lists `pack-install` in its `capabilities`, the first non-blank line after
-   `## Install and update` is exactly
+   the section 3 heading is exactly
    `> **Temporary:** these hand steps are replaced by WingFoil's commands once a release provides them.`;
    once such a release is listed, the mark is no longer required (nor forbidden). A tree with no
    `compat.yaml`, or one that fails its schema, is treated as listing none.
@@ -136,5 +138,8 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 - 2026-10-11: independent review of the body (a subagent with its own context): approve after
   amendments; one blocking point (CB-8 missing from the Acceptance), nine should-fix and five nits,
-  all applied while `pending`. The review's hint for the Design: one exported README parser, which
+  all applied while `pending`. Re-review by the same reviewer: every finding resolved; two
+  should-fix (links and code found at any depth, not only top level; CB-8 diffed against
+  `origin/main`, which a clean clone of the task branch has) and one nit (the section 3 heading may
+  be setext), applied. The review's hint for the Design: one exported README parser, which
   plan-024 task 2 reuses to rewrite between the same markers the lint checks.
