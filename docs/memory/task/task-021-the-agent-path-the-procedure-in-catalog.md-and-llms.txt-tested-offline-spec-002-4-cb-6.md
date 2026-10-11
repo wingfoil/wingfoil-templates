@@ -138,3 +138,19 @@ Branch `task/task-021-agent-path`, run through `tooling-delivery` as `developer`
   layout of §3.4 is kept: the steps go in the convention's detail block. All applied while
   `pending`. Re-review: approve; its two optional nits (the advice in step 2; the reminder also in
   dl-014's Execution Notes) applied.
+- 2026-10-11, build on `task/task-021-agent-path` (`532ae5c`): the tests of acceptance 3–5 were
+  written first and run against empty stubs of `parseUrl`, `buildUrl`, `AGENT_STEPS` and
+  `isCliCommand` (12 failures) before the code; code and tests share one commit. The review fixes
+  were written test first (the parser's refusals failed before the whitelist). Acceptance 8:
+  plan-024's and dl-014's Execution Notes say that `base`'s charter must list CB-6 (`52e2e79`).
+- 2026-10-11: independent review of the build (a subagent with its own context): approve after
+  fixes; nothing blocking; three should-fix (the parser accepted paths the index never emits,
+  dot segments included; the text filter's term was also in the title; the notes were checked over
+  the whole file) and nits (empty ids and versions, a guard that every `https://` of the Markdown
+  files is extracted, the exact steps block and its place, a trailing blank line), applied in
+  `18a0d9f`. Not re-reviewed: the fixes tighten the parser and the tests only.
+- 2026-10-11: Acceptance 1–2 on Node.js 22.21.0 and 22.12.0: 752 tests pass; `lint`,
+  `check:pins`, `check:schemas`, `check:packs`, `validate`, the golden `validate` and
+  `npm run index -- --check` (root and golden tree) exit 0; CB-8 holds; no dependency added.
+- 2026-10-11, CI (acceptance 9): run 38165921222 on `18a0d9f`, conclusion `success` for
+  `validate (22.12.0)` and `validate (22.21.0)`.
