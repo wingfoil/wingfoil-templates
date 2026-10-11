@@ -4,17 +4,16 @@
 import { join } from 'node:path';
 
 import { compare as semverCompare, rcompare } from 'semver';
-import { parse as parseYaml } from 'yaml';
 
 import { CompatError, loadCompat } from './compat';
+import { byBytes, IndexInputError, isDoc, list, sorted, strings, yamlAt } from './index-data';
+import type { Doc } from './index-data';
 import { atTag, checkRepositoryTop, IndexError, workingTree } from './index-source';
 import type { TreeSource } from './index-source';
 import { REPOSITORY, rawAtTag, rawMain } from './index-urls';
 import { readmeOutline, sectionNumber } from './readme';
 import { repositorySchemas } from './schemas';
 import { YamlError } from './yaml-load';
-
-type Doc = Record<string, unknown>;
 
 export interface IndexParameter {
   name: string;
@@ -83,37 +82,11 @@ export interface CatalogIndex {
 /** The longest excerpt, in Unicode code points (spec-002 §3.3). */
 export const EXCERPT_LIMIT = 500;
 
-function byBytes(a: string, b: string): number {
-  return Buffer.compare(Buffer.from(a), Buffer.from(b));
-}
-
-function sorted(names: string[]): string[] {
-  return [...new Set(names)].sort(byBytes);
-}
-
-function isDoc(value: unknown): value is Doc {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-function list(value: unknown): unknown[] {
-  return Array.isArray(value) ? value : [];
-}
-
-function strings(value: unknown): string[] {
-  return list(value).map(String);
-}
-
-function yamlAt(source: TreeSource, path: string): Doc {
-  const text = source.read(path);
-  if (text === undefined) throw new IndexError(`${source.label}: ${path} is missing`);
-  try {
-    const data: unknown = parseYaml(text);
-    if (!isDoc(data)) throw new IndexError(`${source.label}: ${path} is not a mapping`);
-    return data;
-  } catch (error) {
-    if (error instanceof IndexError) throw error;
-    throw new IndexError(`${source.label}: ${path} does not parse: ${String(error)}`);
-  }
+/** File kinds → formats, in ascending byte order of the kinds, so that YAML order never shows. */
+function formatsOf(value: unknown): Record<string, number> {
+  const formats = isDoc(value) ? value : {};
+  return Object.fromEntries(Object.keys(formats).sort(byBytes)
+    .map((kind) => [kind, Number(formats[kind])]));
 }
 
 /** The pack id before `@` of a §6.3 entry. */
@@ -137,8 +110,10 @@ export function excerptOf(readme: string | undefined): string {
   if (section === undefined) return '';
   const headingLines = new Set(outline.scan.headings.flatMap((heading) =>
     Array.from({ length: heading.endLine - heading.line + 1 }, (_, i) => heading.line + i)));
-  const qualifies = (line: { line: number; kind: string; container: string }): boolean =>
-    line.kind === 'text' && line.container === 'top' && !headingLines.has(line.line);
+  // Paragraph text only: no heading, thematic break or table line.
+  const qualifies = (line: { line: number; raw: string; kind: string; container: string }):
+  boolean => line.kind === 'text' && line.container === 'top' && !headingLines.has(line.line)
+    && !/^ {0,3}([-*_])(?: *\1){2,} *$/.test(line.raw) && !line.raw.trimStart().startsWith('|');
   const lines = outline.scan.lines.filter((line) => line.line > section.heading.endLine
     && line.line <= section.last);
   const start = lines.findIndex(qualifies);
@@ -195,7 +170,7 @@ function versionOf(tree: string, packId: string, entry: Doc): { version: IndexVe
       version,
       tag,
       wingfoil: String(entry['wingfoil']),
-      formats: isDoc(manifest['formats']) ? manifest['formats'] as Record<string, number> : {},
+      formats: formatsOf(manifest['formats']),
       requires_capabilities: strings(manifest['requires_capabilities']),
       requires: strings(manifest['requires']),
       conflicts: strings(manifest['conflicts']),
@@ -255,7 +230,7 @@ function transitionOf(entry: Doc): IndexTransition {
     id,
     from: String(entry['from']),
     to: String(entry['to']),
-    formats: isDoc(entry['formats']) ? entry['formats'] as Record<string, number> : {},
+    formats: formatsOf(entry['formats']),
     requires_capabilities: strings(entry['requires_capabilities']),
     url: rawMain(`transitions/${id}.yaml`),
   };
@@ -280,9 +255,11 @@ function byId<T extends { id: string }>(items: T[]): T[] {
 /** The index of a tree (spec-002 §3.3); an IndexError when a file or a tag cannot be read. */
 export function buildIndex(tree: string): CatalogIndex {
   const working = workingTree(tree);
+  if (working.read('catalog.yaml') === undefined) throw new IndexError(`${tree}: no catalog.yaml`);
   const catalog = yamlAt(working, 'catalog.yaml');
   if (repositorySchemas().validate('catalog', catalog).length > 0) {
-    throw new IndexError('catalog.yaml fails its schema; npm run check:schemas names the problems');
+    throw new IndexInputError('catalog.yaml fails its schema; npm run check:schemas names the '
+      + 'problems');
   }
   const entries = list(catalog['packs']).filter(isDoc);
   if (entries.some((entry) => list(entry['versions']).length > 0)) checkRepositoryTop(tree);

@@ -17,8 +17,8 @@
           "wingfoil": "9.0.0",
           "formats": {
             "dna": 1,
-            "roles": 1,
             "memory": 1,
+            "roles": 1,
             "workflow": 1
           },
           "requires_capabilities": [],
@@ -72,7 +72,7 @@
           },
           "requires_capabilities": [],
           "requires": [
-            "base@^1"
+            "base@^1.0.0"
           ],
           "conflicts": [
             "blueprint/web"

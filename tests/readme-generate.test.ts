@@ -6,6 +6,7 @@ import { describe, it } from 'node:test';
 
 import { indexOutputs } from '../src/index';
 import { generatedSections, rewriteReadme } from '../src/readme-generate';
+import { withPackTree } from './support/pack-tree';
 import { FIXTURES } from './support/paths';
 
 const TREE = join(FIXTURES, 'compose', 'tree');
@@ -50,6 +51,34 @@ describe('generatedSections (acceptance 10)', () => {
     const kanban = generatedSections(TREE, 'methodology/kanban')['what-it-adds'];
     assert.ok(kanban.includes('  - `release`, includes `release`'));
     assert.ok(kanban.includes('### Memory templates'));
+  });
+
+  it('writes phase roles, gates and includes, global directives, a type without states', () => {
+    withPackTree([{ id: 'governance/review', fragments: ['dna', 'roles', 'memory'],
+      directives: ['careful', 'loose', 'everywhere'], workflows: ['review'],
+      extraFiles: {
+        'fragments/dna.yaml': 'format: 1\nteam:\n  roles:\n    - { name: reviewer, '
+          + 'description: "Reviews." }\n',
+        'fragments/roles.yaml': 'format: 1\nassignments:\n  reviewer: [careful, other]\n'
+          + 'global: [everywhere]\n',
+        'fragments/memory.yaml': 'format: 1\ntypes:\n  note: { path: "docs/{id}.md" }\n',
+        'workflows/review.yaml': 'format: 1\nname: review\nkind: main\nphases:\n'
+          + '  - { name: check, role: reviewer, approval: { by_role: approver }, produces: [x] }\n'
+          + '  - { name: more, include: delivery }\n',
+      } }], (root) => {
+      const adds = generatedSections(root, 'governance/review')['what-it-adds'];
+      assert.ok(adds.includes('- `review` (main)'), adds.join('\n'));
+      assert.ok(adds.includes('  - `check`, role `reviewer`, gate `approver`'));
+      assert.ok(adds.includes('  - `more`, includes `delivery`'));
+      assert.ok(adds.includes('- `careful`: `reviewer`'));
+      assert.ok(adds.includes('- `everywhere`: global'));
+      assert.ok(adds.includes('- `loose`: —'));
+      assert.ok(!adds.some((line) => line.includes('`other`')));
+      assert.ok(adds.includes('- `note`: —'));
+      const composition = generatedSections(root, 'governance/review').composition;
+      assert.ok(composition.includes('  - roles: `reviewer`'));
+      assert.ok(composition.includes('  - Memory types: `note`'));
+    });
   });
 
   it('writes a parameter table, or None.', () => {

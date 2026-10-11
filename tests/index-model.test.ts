@@ -47,11 +47,21 @@ describe('excerptOf (acceptance 7)', () => {
 
   it('cuts above 500 code points at the last whitespace, dropping it, and ends with …', () => {
     const words = Array.from({ length: 120 }, (_, i) => `w${i % 10}xy`).join(' ');
+    // 120 words of 4 code points and their spaces: the last whitespace before point 500 is
+    // point 495 (index 494), so 494 points are kept and `…` makes 495.
     const excerpt = excerptOf(withSection2(`${words}\n`));
-    assert.ok(Array.from(excerpt).length <= 500);
-    assert.ok(excerpt.endsWith('…'));
-    assert.ok(!excerpt.endsWith(' …'));
-    assert.ok(words.startsWith(excerpt.slice(0, -1)));
+    assert.equal(Array.from(excerpt).length, 495);
+    assert.equal(excerpt, `${words.slice(0, 494)}…`);
+  });
+
+  it('keeps exactly 500 code points uncut', () => {
+    const text = `${'a'.repeat(250)} ${'b'.repeat(249)}`;
+    assert.equal(excerptOf(withSection2(`${text}\n`)), text);
+  });
+
+  it('ends a paragraph at a thematic break or a table line', () => {
+    assert.equal(excerptOf(withSection2('Para one\n***\nnext\n')), 'Para one');
+    assert.equal(excerptOf(withSection2('Para one\n| a | b |\n')), 'Para one');
   });
 
   it('cuts hard at 499 code points when there is no whitespace, counting code points', () => {
@@ -104,8 +114,9 @@ describe('buildIndex on the fixture catalog (CB-4)', () => {
   it('reads per-version fields at each tag', () => {
     const kanban = pack('methodology/kanban');
     assert.deepEqual(kanban.versions.map((version) => [version.version, version.tag,
-      version.conflicts]), [['1.0.0', 'methodology/kanban@1.0.0', []],
-      ['1.1.0', 'methodology/kanban@1.1.0', ['blueprint/web']]]);
+      version.requires, version.conflicts]), [
+      ['1.0.0', 'methodology/kanban@1.0.0', ['base@^1'], []],
+      ['1.1.0', 'methodology/kanban@1.1.0', ['base@^1.0.0'], ['blueprint/web']]]);
     assert.equal(kanban.versions[1]?.readme_url,
       `${RAW}/refs/tags/methodology/kanban@1.1.0/packs/methodology/kanban/README.md`);
     assert.equal(kanban.versions[1]?.manifest_url,
@@ -161,9 +172,9 @@ describe('buildIndex on the fixture catalog (CB-4)', () => {
       const catalog = parse(original) as Doc;
       const kanban = (catalog['packs'] as Doc[]).find((entry) =>
         entry['id'] === 'methodology/kanban');
-      ((kanban?.['versions'] as Doc[])[1] as Doc)['conflicts'] = [];
+      ((kanban?.['versions'] as Doc[])[1] as Doc)['requires'] = ['base@^1'];
       writeFileSync(file, stringify(catalog));
-      assert.deepEqual(buildIndex(repo.dir).packs[1]?.versions[1]?.conflicts, ['blueprint/web']);
+      assert.deepEqual(buildIndex(repo.dir).packs[1]?.versions[1]?.requires, ['base@^1.0.0']);
     } finally {
       writeFileSync(file, original);
     }
@@ -177,6 +188,17 @@ describe('buildIndex on the fixture catalog (CB-4)', () => {
         && /tag stage\/mvp@1\.0\.0/.test(error.message));
     } finally {
       repo.git(['tag', '-a', 'stage/mvp@1.0.0', '-m', 'stage/mvp@1.0.0', commit]);
+    }
+  });
+
+  it('fails on a tree with published versions below the top level of its repository', () => {
+    const nested = join(repo.dir, 'nested');
+    cpSync(join(repo.dir, 'catalog.yaml'), join(nested, 'catalog.yaml'));
+    try {
+      assert.throws(() => buildIndex(nested), (error: unknown) => error instanceof IndexError
+        && /not the top level/.test(error.message));
+    } finally {
+      rmSync(nested, { recursive: true, force: true });
     }
   });
 

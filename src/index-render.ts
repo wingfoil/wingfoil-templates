@@ -1,5 +1,6 @@
 // The three root files of the index (spec-002 §3.2–§3.4, task-019): CATALOG.md for people,
 // catalog-index.json for agents and llms.txt, their entry point. Pure functions of the index.
+import { byBytes, code } from './index-data';
 import type { CatalogIndex, IndexPack } from './index-model';
 import { entryId } from './index-model';
 import { githubMain, rawAtTag, rawMain, readmeOnGithub } from './index-urls';
@@ -32,10 +33,6 @@ export function cell(text: string): string {
 export function firstSentence(text: string): string {
   const match = /^([\s\S]*?[.!?])(?=\s|$)/.exec(text);
   return match?.[1] ?? text;
-}
-
-function code(text: string): string {
-  return `\`${text}\``;
 }
 
 function row(cells: string[]): string {
@@ -92,7 +89,6 @@ function profilesOf(index: CatalogIndex): string[][] {
     for (const entry of preset.packs) packs.add(entryId(entry));
     profiles.set(preset.profile, packs);
   }
-  const byBytes = (a: string, b: string): number => Buffer.compare(Buffer.from(a), Buffer.from(b));
   return [...profiles.keys()].sort(byBytes).map((profile) => [cell(profile),
     [...(profiles.get(profile) ?? [])].sort(byBytes).map(code).join(', ')]);
 }
@@ -137,8 +133,7 @@ export function renderLlms(): string {
   const lines = [
     '# WingFoil template catalog',
     '',
-    '> The official WingFoil template packs, indexed for agents: anonymous raw URLs, each published',
-    '> version pinned to its tag.',
+    '> The official WingFoil template packs, indexed for agents, each published version pinned to its tag.',
     '',
     '## Index',
     '',

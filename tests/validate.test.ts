@@ -9,6 +9,7 @@ import { runIndex } from '../src/index';
 import { runValidate } from '../src/validate';
 import type { ValidateOptions, ValidateResult } from '../src/validate';
 import { FIXTURES, REPO_ROOT } from './support/paths';
+import { publishByHand, reindex, treeRepo } from './support/published-repo';
 import { FORMAT_WARNING, StubWingfoil } from './support/stub-wingfoil';
 import type { StubCommand } from './support/stub-wingfoil';
 
@@ -30,14 +31,16 @@ function validate(argv: string[], options: Partial<ValidateOptions> = {}): Valid
   return runValidate(argv, { mode: 'self-test', install: () => WINGFOIL.cli, ...options });
 }
 
-function withTree(edit: (tree: string) => void, body: (tree: string) => void): void {
+function withTree(edit: (tree: string) => void, body: (tree: string) => void,
+  expectIndexRefusal = false): void {
   const dir = mkdtempSync(join(tmpdir(), 'validate-'));
   try {
     const tree = join(dir, 'tree');
     cpSync(TREE, tree, { recursive: true });
     edit(tree);
     // The edit is the test's; the index outputs follow it (task-019), when the tree allows.
-    runIndex(['--tree', tree]);
+    const index = runIndex(['--tree', tree]);
+    assert.ok(index.code === 0 || expectIndexRefusal, index.lines.join('\n'));
     body(tree);
   } finally {
     rmSync(dir, { recursive: true, force: true });
@@ -210,6 +213,33 @@ describe('npm run validate', () => {
     assert.ok(at(/^index: checked/) < at(/^composition /), result.lines.join('\n'));
   });
 
+  it('exits 2 when the index cannot read a tag that catalog.yaml names (task-019)', () => {
+    const repo = treeRepo();
+    try {
+      publishByHand(repo, 'base');
+      reindex(repo);
+      repo.git(['tag', '-d', 'base@1.0.0']);
+      const result = validate(['--tree', repo.dir, 'methodology/kanban']);
+      assert.equal(result.code, 2, result.lines.join('\n'));
+      assert.ok(result.lines.includes('index: tag base@1.0.0 is named by catalog.yaml and missing '
+        + 'from the repository'), result.lines.join('\n'));
+    } finally {
+      repo.dispose();
+    }
+  });
+
+  it('skips the index when the lint reports a file that does not parse (task-019)', () => {
+    withTree((tree) => {
+      const workflow = join(tree, 'packs', 'methodology', 'kanban', 'workflows',
+        'replenishment.yaml');
+      writeFileSync(workflow, `${readFileSync(workflow, 'utf8')}name: [unclosed\n`);
+    }, (tree) => {
+      const result = validate(['--tree', tree, ...NAME]);
+      assert.equal(result.code, 1, result.lines.join('\n'));
+      assert.ok(result.lines.includes('index: skipped, the lint reports files that do not parse'));
+    }, true);
+  });
+
   it('fails when a pack.yaml, a fragment, a workflow or catalog.yaml changes without the index '
     + '(CB-5)', () => {
     const edits: [string[], string, string][] = [
@@ -229,6 +259,7 @@ describe('npm run validate', () => {
         replaceIn(join(tree, ...path), from, to);
         const stale = validate(['--tree', tree, ...NAME]);
         assert.equal(stale.code, 1, path.join('/'));
+        assert.ok(stale.lines.some((line) => /^compositions: /.test(line)), 'later steps run');
         assert.ok(stale.lines.some((line) => / not up to date: run npm run index$/.test(line)),
           stale.lines.join('\n'));
         assert.equal(runIndex(['--tree', tree]).code, 0);

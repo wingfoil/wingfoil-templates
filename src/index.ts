@@ -6,7 +6,9 @@ import { existsSync, lstatSync, readFileSync, statSync, writeFileSync } from 'no
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 
-import { loadCatalog } from './catalog';
+import { CatalogError, loadCatalog } from './catalog';
+import { GitError } from './git';
+import { byBytes, IndexInputError } from './index-data';
 import { buildIndex } from './index-model';
 import { IndexError } from './index-source';
 import { renderCatalog, renderJson, renderLlms } from './index-render';
@@ -26,10 +28,6 @@ export interface IndexResult {
 
 function count(n: number, noun: string): string {
   return `${n} ${noun}${n === 1 ? '' : 's'}`;
-}
-
-function byBytes(a: string, b: string): number {
-  return Buffer.compare(Buffer.from(a), Buffer.from(b));
 }
 
 /** The packs whose pack.yaml passes its schema and that have a README.md file. */
@@ -83,14 +81,17 @@ function check(tree: string, outputs: Map<string, string>): IndexResult {
   };
 }
 
-function write(tree: string, outputs: Map<string, string>): IndexResult {
+/** The README rules of task-018 over the READMEs the index rewrites; undefined when none fails. */
+function readmeRefusal(tree: string): IndexResult | undefined {
   const listed = installListed(tree);
   const problems = sortProblems(readmePacks(tree).flatMap((id) =>
     readmeProblems(tree, { id, path: `packs/${id}` }, listed)));
-  if (problems.length > 0) {
-    return { code: 1, lines: [`index: ${count(problems.length, 'README problem')}, nothing written`,
-      ...problems.map(formatProblem)] };
-  }
+  if (problems.length === 0) return undefined;
+  return { code: 1, lines: [`index: ${count(problems.length, 'README problem')}, nothing written`,
+    ...problems.map(formatProblem)] };
+}
+
+function write(tree: string, outputs: Map<string, string>): IndexResult {
   let wrote = 0;
   for (const [path, text] of outputs) {
     if (current(tree, path) === text) continue;
@@ -116,13 +117,20 @@ export function runIndex(argv: string[]): IndexResult {
     return { code: 2, lines: [`${tree}: not a directory`] };
   }
   try {
+    if (!checking) {
+      const refusal = readmeRefusal(tree);
+      if (refusal !== undefined) return refusal;
+    }
     const outputs = indexOutputs(tree);
     return checking ? check(tree, outputs) : write(tree, outputs);
   } catch (error) {
-    if (error instanceof IndexError || error instanceof YamlError) {
-      return { code: 2, lines: [`index: ${error.message}`] };
+    // One report line: a message's first line only (a YAML error quotes the source below it).
+    const first = (message: string): string => `index: ${message.split('\n')[0] ?? ''}`;
+    if (error instanceof IndexInputError) return { code: 1, lines: [first(error.message)] };
+    if (error instanceof IndexError || error instanceof GitError || error instanceof YamlError
+      || error instanceof CatalogError) {
+      return { code: 2, lines: [first(error.message)] };
     }
-    const message = error instanceof Error ? error.message : String(error);
-    return { code: 2, lines: [`index: ${message}`] };
+    throw error;
   }
 }

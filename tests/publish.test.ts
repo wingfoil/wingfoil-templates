@@ -92,6 +92,8 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
       const validation = runValidate(['--tree', repo.dir, ...WITH_KANBAN],
         { mode: 'publication', install: INSTALL });
       assert.equal(validation.code, 0, validation.lines.join('\n'));
+      assert.ok(validation.lines.some((line) => /^index: checked \d+ files, 0 not up to date$/
+        .test(line)), validation.lines.join('\n'));
     });
   });
 

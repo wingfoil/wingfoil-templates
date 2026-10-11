@@ -1,15 +1,13 @@
 // The generated sections of a pack README (spec-002 §2.1, §2.2; task-019 acceptance 10): written
 // from the pack's own files in the working tree only, and put between the markers that
 // `readmeOutline` finds, every other byte of the README unchanged.
-import { parse as parseYaml } from 'yaml';
-
+import { byBytes, code, isDoc, list, sorted, strings, text, yamlIn } from './index-data';
+import type { Doc } from './index-data';
 import { axisAndSlot } from './index-model';
 import { workingTree } from './index-source';
 import type { TreeSource } from './index-source';
 import { cell } from './index-render';
-import { readmeOutline } from './readme';
-
-type Doc = Record<string, unknown>;
+import { GENERATED_SECTIONS, readmeOutline } from './readme';
 
 export interface GeneratedSections {
   title: string[];
@@ -18,46 +16,12 @@ export interface GeneratedSections {
   parameters: string[];
 }
 
-function isDoc(value: unknown): value is Doc {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-/** A scalar as text; anything else as JSON, so that a malformed file never prints [object]. */
-function text(value: unknown): string {
-  if (typeof value === 'string') return value;
-  if (typeof value === 'number' || typeof value === 'boolean') return `${value}`;
-  return JSON.stringify(value) ?? '';
-}
-
-function list(value: unknown): unknown[] {
-  return Array.isArray(value) ? value : [];
-}
-
-function strings(value: unknown): string[] {
-  return list(value).map(String);
-}
-
-function byBytes(a: string, b: string): number {
-  return Buffer.compare(Buffer.from(a), Buffer.from(b));
-}
-
-function sorted(names: string[]): string[] {
-  return [...new Set(names)].sort(byBytes);
-}
-
-function code(text: string): string {
-  return `\`${text}\``;
-}
-
 function codes(names: string[], none = 'none'): string {
   return names.length === 0 ? none : names.map(code).join(', ');
 }
 
-function yamlOf(source: TreeSource, path: string): Doc {
-  const text = source.read(path);
-  if (text === undefined) return {};
-  const data: unknown = parseYaml(text);
-  return isDoc(data) ? data : {};
+function yamlOrEmpty(source: TreeSource, path: string): Doc {
+  return yamlIn(source, path) ?? {};
 }
 
 interface PackFiles {
@@ -72,16 +36,16 @@ interface PackFiles {
 
 function readPack(source: TreeSource, id: string): PackFiles {
   const dir = `packs/${id}`;
-  const manifest = yamlOf(source, `${dir}/pack.yaml`);
+  const manifest = yamlOrEmpty(source, `${dir}/pack.yaml`);
   const contents = isDoc(manifest['contents']) ? manifest['contents'] : {};
   const fragments = strings(contents['fragments']);
   const fragment = (kind: string): Doc => fragments.includes(kind)
-    ? yamlOf(source, `${dir}/fragments/${kind}.yaml`) : {};
+    ? yamlOrEmpty(source, `${dir}/fragments/${kind}.yaml`) : {};
   return {
     id, manifest, contents,
     dna: fragment('dna'), roles: fragment('roles'), memory: fragment('memory'),
     workflows: sorted(strings(contents['workflows']))
-      .map((name) => ({ name, ...yamlOf(source, `${dir}/workflows/${name}.yaml`) })),
+      .map((name) => ({ name, ...yamlOrEmpty(source, `${dir}/workflows/${name}.yaml`) })),
   };
 }
 
@@ -221,7 +185,7 @@ function parametersSection(pack: PackFiles): string[] {
   return ['## Parameters', '', '| Name | Type | Default | Description |', '|---|---|---|---|',
     ...names.map((name) => {
       const spec = isDoc(raw[name]) ? raw[name] : {};
-      return `| ${code(name)} | ${text(spec['type'])} | ${cell(defaultOf(spec))} | `
+      return `| ${code(name)} | ${cell(text(spec['type']))} | ${cell(defaultOf(spec))} | `
         + `${cell(text(spec['description']))} |`;
     })];
 }
@@ -248,7 +212,7 @@ export function rewriteReadme(text: string, sections: GeneratedSections): string
   const begins = new Map<number, string>();
   const ends = new Set<number>();
   let open: { name: string; line: number } | undefined;
-  for (const marker of outline.markers) {
+  for (const marker of outline.markers.filter((entry) => GENERATED_SECTIONS.has(entry.name))) {
     if (marker.verb === 'begin') open = { name: marker.name, line: marker.line };
     else if (open?.name === marker.name) {
       begins.set(open.line, marker.name);

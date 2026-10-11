@@ -43,7 +43,8 @@ function editCatalog(repo: TestRepo, edit: (catalog: Doc) => void): void {
 }
 
 /**
- * base, a methodology with two versions (1.1.0 adds a conflict, a parameter and a new title), a
+ * base, a methodology with two versions (1.1.0 changes its requires, adds a conflict, a parameter
+ * and a new title), a
  * phase pack, two stage packs and their transition, one pack never published, two presets (one
  * with a profile); after the last tag, an unreleased title and section 2 in the working tree.
  */
@@ -77,6 +78,7 @@ export function indexCatalog(): TestRepo {
   });
   reindex(repo);
   writePack(repo.dir, kanban('1.1.0', 'Kanban flow', {
+    requires: ['base@^1.0.0'],
     conflicts: ['blueprint/web'],
     parameters: { wip_limit: { type: 'integer', default: 3, description: 'The WIP limit.' } },
   }));

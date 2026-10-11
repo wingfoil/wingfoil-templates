@@ -1,7 +1,6 @@
 # WingFoil template catalog
 
-> The official WingFoil template packs, indexed for agents: anonymous raw URLs, each published
-> version pinned to its tag.
+> The official WingFoil template packs, indexed for agents, each published version pinned to its tag.
 
 ## Index
 

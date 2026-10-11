@@ -233,6 +233,8 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
   // The index (task-019, spec-002 §3.1): the committed outputs are what npm run index writes.
   if (broken.size > 0) {
     lines.push('index: skipped, the schema check reports problems');
+  } else if (lint.problems.some((problem) => problem.rule === 'parse')) {
+    lines.push('index: skipped, the lint reports files that do not parse');
   } else {
     const index = runIndex(['--tree', args.tree, '--check']);
     if (index.code === 2) {
