@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { copyFileSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
@@ -15,7 +15,7 @@ const FILE = 'packs/methodology/kanban/README.md';
 
 interface Options {
   /** compat.yaml of the tree: this repository's, one whose release lists pack-install, none. */
-  compat?: 'repository' | 'pack-install' | 'none';
+  compat?: 'repository' | 'pack-install' | 'invalid' | 'none';
 }
 
 function lintReadme(readme: string, options: Options = {}): CheckPacksResult {
@@ -25,8 +25,9 @@ function lintReadme(readme: string, options: Options = {}): CheckPacksResult {
     const compat = options.compat ?? 'repository';
     if (compat !== 'none') {
       const text = readFileSync(join(REPO_ROOT, 'compat.yaml'), 'utf8');
-      writeFileSync(join(root, 'compat.yaml'), compat === 'repository' ? text
-        : text.replace('capabilities: []', 'capabilities: [pack-install]'));
+      const written = { repository: text, invalid: text.replace('format: 1', 'format: one'),
+        'pack-install': text.replace('capabilities: []', 'capabilities: [pack-install]') };
+      writeFileSync(join(root, 'compat.yaml'), written[compat]);
     }
     result = runCheckPacks(root);
   });
@@ -76,6 +77,13 @@ describe('README lint rules (task-018)', () => {
     it('reports a missing last heading at the last line of the file', () => {
       const readme = README.slice(0, README.indexOf('## Versions'));
       assert.deepEqual(found(readme), [`${readme.split('\n').length - 1} readme-heading`]);
+    });
+
+    it('reports a missing heading in its place, not at an unknown heading before it', () => {
+      const readme = README.slice(0, README.indexOf('## Versions'))
+        .replace('## When to use it', '## Foo\n\n## When to use it');
+      assert.deepEqual(found(readme).sort(), [`${lineOf(readme, '## Foo')} readme-heading`,
+        `${readme.split('\n').length - 1} readme-heading`].sort());
     });
 
     it('fails a heading out of order, duplicated, misspelled or not of the standard', () => {
@@ -134,6 +142,11 @@ describe('README lint rules (task-018)', () => {
       failsWith('readme-marker', `${README}\n<!-- generated:open x -->\n`);
     });
 
+    it('does not read a marker-like line inside a multi-line comment', () => {
+      passes(README.replace('Placeholder until the examples are fixtures.\n',
+        '<!-- a note\n<!-- generated:open x -->\n-->\n'));
+    });
+
     it('does not read a marker in a code block', () => {
       passes(README.replace('Placeholder until the examples are fixtures.\n',
         '```\n<!-- generated:begin title -->\n```\n'));
@@ -170,6 +183,8 @@ describe('README lint rules (task-018)', () => {
     it('requires the mark while no release provides pack-install, or with no compat.yaml', () => {
       failsWith('readme-install-mark', unmarked);
       failsWith('readme-install-mark', unmarked, { compat: 'none' });
+      assert.deepEqual(found(unmarked, { compat: 'invalid' }).map((entry) => entry.split(' ')[1]),
+        ['readme-install-mark']);
       failsWith('readme-install-mark', README.replace(TEMPORARY_MARK, `${TEMPORARY_MARK} `));
       passes(README, { compat: 'none' });
     });
@@ -177,6 +192,13 @@ describe('README lint rules (task-018)', () => {
     it('no longer requires it, nor forbids it, once a release provides pack-install', () => {
       passes(unmarked, { compat: 'pack-install' });
       passes(README, { compat: 'pack-install' });
+    });
+
+    it('reports an empty section 3 at its heading', () => {
+      const readme = README.replace(`${TEMPORARY_MARK}\n\nSee the [Install block](${CATALOG_URL}#install) `
+        + 'of the catalog.\n', '');
+      assert.deepEqual(found(readme), [`${lineOf(readme, '## Install and update')} readme-install-mark`,
+        `${lineOf(readme, '## Install and update')} readme-link`]);
     });
 
     it('reads it after a setext section 3 heading', () => {
@@ -205,6 +227,18 @@ describe('README lint rules (task-018)', () => {
       failsWith('readme-link', inExamples(`[Catalog](${CATALOG_URL})\n`));
       passes(inExamples('`[Catalog](CATALOG.md)`\n'));
     });
+  });
+
+  it('checks nothing when README.md is a directory: the layout rule reports it', () => {
+    let result: CheckPacksResult | undefined;
+    withPackTree([BASE, KANBAN], (root) => {
+      copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
+      rmSync(join(root, FILE));
+      mkdirSync(join(root, FILE));
+      result = runCheckPacks(root);
+    });
+    assert.equal(result?.code, 1, result?.lines.join('\n'));
+    assert.deepEqual([...new Set(result?.problems.map((problem) => problem.rule))], ['layout']);
   });
 
   it('checks nothing in a pack without README.md: the layout rule reports it', () => {

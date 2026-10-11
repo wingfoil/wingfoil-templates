@@ -4,7 +4,8 @@
 // their container, so that the rules can count the top-level ones only.
 
 export type Container = 'top' | 'quote' | 'list';
-export type LineKind = 'blank' | 'fence' | 'code' | 'comment' | 'marker' | 'text';
+/** `comment` opens an HTML comment; `comment-body` continues it, up to its closing line. */
+export type LineKind = 'blank' | 'fence' | 'code' | 'comment' | 'comment-body' | 'marker' | 'text';
 
 export interface MarkdownLine {
   /** 1-based. */
@@ -71,32 +72,42 @@ interface Paragraph {
 
 interface State {
   fence: Fence | undefined;
-  comment: boolean;
+  /** The container of the open HTML comment, if any. */
+  comment: Container | undefined;
   /** The content indent of the open list item, if any. */
   list: number | undefined;
   /** A blank line was seen inside the open list item. */
   listBlank: boolean;
   paragraph: Paragraph | undefined;
-  /** The previous line, in the same container, could start an indented code block before it. */
-  codeMayStart: boolean;
 }
 
 function indentOf(text: string): number {
   return text.length - text.trimStart().length;
 }
 
+function stripQuote(raw: string): string {
+  let content = raw;
+  while (QUOTE.test(content)) content = content.replace(QUOTE, '');
+  return content;
+}
+
+/** A line that can continue an open paragraph lazily: one that starts no other block. */
+function lazyLine(raw: string): boolean {
+  return ![FENCE, ATX, LIST_ITEM, THEMATIC_BREAK, SETEXT, QUOTE].some((block) => block.test(raw))
+    && !raw.trimStart().startsWith('<!--');
+}
+
 /** The container of a non-blank line and its content without the container's prefix. */
 function containerOf(raw: string, state: State): { container: Container; content: string } {
-  if (QUOTE.test(raw)) {
-    let content = raw;
-    while (QUOTE.test(content)) content = content.replace(QUOTE, '');
-    return { container: 'quote', content };
-  }
+  if (QUOTE.test(raw)) return { container: 'quote', content: stripQuote(raw) };
   if (state.list !== undefined) {
     if (indentOf(raw) >= state.list) return { container: 'list', content: raw.slice(state.list) };
-    const lazy = !state.listBlank && state.paragraph?.container === 'list'
-      && !FENCE.test(raw) && !ATX.test(raw) && !LIST_ITEM.test(raw);
-    if (lazy) return { container: 'list', content: raw.trimStart() };
+    if (!state.listBlank && state.paragraph?.container === 'list' && lazyLine(raw)) {
+      return { container: 'list', content: raw.trimStart() };
+    }
+  }
+  if (state.paragraph?.container === 'quote' && lazyLine(raw)) {
+    return { container: 'quote', content: raw.trimStart() };
   }
   const item = LIST_ITEM.exec(raw);
   if (item !== null && !THEMATIC_BREAK.test(raw)) {
@@ -105,7 +116,6 @@ function containerOf(raw: string, state: State): { container: Container; content
     state.list = marker + (spaces === 0 || spaces > 4 ? 1 : spaces);
     state.listBlank = false;
     state.paragraph = undefined;
-    state.codeMayStart = false;
     return { container: 'list', content: raw.slice(Math.min(raw.length, state.list)) };
   }
   state.list = undefined;
@@ -119,15 +129,15 @@ function closesFence(content: string, fence: Fence): boolean {
   return run.startsWith(fence.char) && run.length >= fence.length && (match[2] ?? '').trim() === '';
 }
 
+/** A fence opened in a quote or a list item closes with its container (it takes no lazy line). */
+function containerEnds(raw: string, fence: Fence): boolean {
+  if (fence.container === 'quote') return !QUOTE.test(raw);
+  return fence.container === 'list' && raw.trim() !== '' && indentOf(raw) < fence.indent;
+}
+
 function fenceContent(raw: string, fence: Fence): string {
-  if (fence.container === 'quote') {
-    let content = raw;
-    while (QUOTE.test(content)) content = content.replace(QUOTE, '');
-    return content;
-  }
-  if (fence.container === 'list') {
-    return indentOf(raw) >= fence.indent ? raw.slice(fence.indent) : raw.trimStart();
-  }
+  if (fence.container === 'quote') return stripQuote(raw);
+  if (fence.container === 'list') return raw.slice(Math.min(indentOf(raw), fence.indent));
   return raw;
 }
 
@@ -140,8 +150,8 @@ class Scanner {
   readonly scan: MarkdownScan = { lines: [], headings: [], codeLines: [], codeSpans: [],
     links: [] };
 
-  private readonly state: State = { fence: undefined, comment: false, list: undefined,
-    listBlank: false, paragraph: undefined, codeMayStart: true };
+  private readonly state: State = { fence: undefined, comment: undefined, list: undefined,
+    listBlank: false, paragraph: undefined };
 
   /** Text lines and their content, for code spans and links once every line is classified. */
   private readonly texts: MarkdownText[] = [];
@@ -152,6 +162,10 @@ class Scanner {
 
   line(line: number, raw: string): void {
     const state = this.state;
+    if (state.fence !== undefined && containerEnds(raw, state.fence)) {
+      if (state.fence.container === 'list') state.list = undefined;
+      state.fence = undefined;
+    }
     if (state.fence !== undefined) {
       const fence = state.fence;
       const content = fenceContent(raw, fence);
@@ -164,39 +178,41 @@ class Scanner {
       }
       return;
     }
-    if (state.comment) {
-      if (raw.includes('-->')) state.comment = false;
-      this.push(line, raw, 'comment', 'top');
+    if (state.comment !== undefined) {
+      this.push(line, raw, 'comment-body', state.comment);
+      if (raw.includes('-->')) state.comment = undefined;
       return;
     }
     if (raw.trim() === '') {
       if (state.list !== undefined) state.listBlank = true;
       state.paragraph = undefined;
-      state.codeMayStart = true;
       this.push(line, raw, 'blank', state.list === undefined ? 'top' : 'list');
       return;
     }
     if (MARKER.test(raw)) {
       state.list = undefined;
       state.paragraph = undefined;
-      state.codeMayStart = true;
       this.push(line, raw, 'marker', 'top');
       return;
     }
     const { container, content } = containerOf(raw, state);
     if (container === 'list' && indentOf(raw) >= (state.list ?? 0)) state.listBlank = false;
+    if (content.trim() === '') {
+      state.paragraph = undefined;
+      this.push(line, raw, 'blank', container);
+      return;
+    }
     this.block(line, raw, container, content);
   }
 
   private block(line: number, raw: string, container: Container, content: string): void {
     const state = this.state;
     const paragraph = state.paragraph?.container === container ? state.paragraph : undefined;
-    if (indentOf(content) >= 4 && paragraph === undefined && state.codeMayStart) {
+    if (indentOf(content) >= 4 && paragraph === undefined) {
       this.push(line, raw, 'code', container);
       this.scan.codeLines.push({ line, text: content.replace(/^ {4}/, '') });
       return;
     }
-    state.codeMayStart = false;
     const fence = FENCE.exec(content);
     if (fence !== null && !(fence[1]?.startsWith('`') === true && (fence[2] ?? '').includes('`'))) {
       const run = fence[1] ?? '';
@@ -208,7 +224,7 @@ class Scanner {
     }
     if (content.trimStart().startsWith('<!--')) {
       const rest = content.slice(content.indexOf('<!--') + 4);
-      if (!rest.includes('-->')) state.comment = true;
+      if (!rest.includes('-->')) state.comment = container;
       state.paragraph = undefined;
       this.push(line, raw, 'comment', container);
       return;
@@ -297,7 +313,7 @@ function codeSpans(text: string): { spans: string[]; rest: string } {
   return { spans, rest };
 }
 
-const INLINE = /\[[^\]]*\]\([ \t]*(<[^>]*>|[^\s)]+)(?:[ \t]+(?:"[^"]*"|'[^']*'|\([^)]*\)))?[ \t]*\)/g;
+const INLINE = /\[(?:[^[\]]|\[[^[\]]*\])*\]\([ \t]*(<[^>]*>|(?:[^\s()]|\([^\s()]*\))+)(?:[ \t]+(?:"[^"]*"|'[^']*'|\([^)]*\)))?[ \t]*\)/g;
 const AUTOLINK = /<([A-Za-z][A-Za-z0-9+.-]{1,31}:[^\s<>]*)>/g;
 const REFERENCE = /\[([^\]]+)\](?:\[([^\]]*)\])?(?![(:[])/g;
 

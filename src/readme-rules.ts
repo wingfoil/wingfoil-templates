@@ -1,7 +1,7 @@
 // The README lint rules of spec-002 §2 and §6 CB-1, CB-3 (task-018): headings, generated markers,
 // no WingFoil CLI command, the temporary mark, and the links to CATALOG.md. Every rule returns all
 // its problems, each with a line; the composer throws the first (spec-001 §18).
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, lstatSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { CompatError, loadCompat } from './compat';
@@ -64,8 +64,10 @@ function headingRule(outline: ReadmeOutline, report: Reporter): void {
   }
   for (let number = 1; number <= README_HEADINGS.length + 1; number += 1) {
     if (seen.has(number)) continue;
-    const after = numbered.find((entry) => entry.number === undefined || entry.number > number);
-    const line = after?.section.heading.line ?? outline.lineCount;
+    // In its place: the heading right after the last one of a lower section.
+    const previous = numbered.reduce((last, entry, index) => (entry.number !== undefined
+      && entry.number < number ? index : last), -1);
+    const line = numbered[previous + 1]?.section.heading.line ?? outline.lineCount;
     report(Math.max(line, 1), 'readme-heading', `heading "${headingName(number)}" is missing `
       + '(spec-002 §2.1)');
   }
@@ -82,7 +84,7 @@ function headingRule(outline: ReadmeOutline, report: Reporter): void {
 function malformedMarkers(outline: ReadmeOutline, report: Reporter): void {
   for (const line of outline.scan.lines) {
     if (line.container !== 'top' || line.kind === 'code' || line.kind === 'fence'
-      || line.kind === 'marker') continue;
+      || line.kind === 'marker' || line.kind === 'comment-body') continue;
     const text = line.raw.trimStart();
     if (text.startsWith('<!-- generated') || text.startsWith('<!--generated')) {
       report(line.line, 'readme-marker', `malformed marker "${line.raw.trim()}": a marker is `
@@ -205,9 +207,10 @@ function installMarkRule(outline: ReadmeOutline, listed: boolean, report: Report
   const install = section(outline, 3);
   if (listed || install === undefined) return;
   const first = outline.scan.lines.find((line) => line.line > install.heading.endLine
-    && line.kind !== 'blank');
-  if (first?.raw !== TEMPORARY_MARK || first.line > install.last) {
-    report(first?.line ?? install.heading.line, 'readme-install-mark', 'while no compat.yaml '
+    && line.kind !== 'blank' && line.kind !== 'marker');
+  const inside = first !== undefined && first.line <= install.last ? first : undefined;
+  if (inside?.raw !== TEMPORARY_MARK) {
+    report(inside?.line ?? install.heading.line, 'readme-install-mark', 'while no compat.yaml '
       + `release provides pack-install, section 3 opens with "${TEMPORARY_MARK}" (spec-002 §2.3)`);
   }
 }
@@ -246,11 +249,11 @@ function linkRule(outline: ReadmeOutline, id: string, report: Reporter): void {
   }
 }
 
-/** The README problems of one pack; none when it has no README.md (the layout rule's). */
+/** The README problems of one pack; none when README.md is not a file (the layout rule's). */
 export function readmeProblems(tree: string, pack: { id: string; path: string },
   listed: boolean): Problem[] {
   const file = `${pack.path}/README.md`;
-  if (!existsSync(join(tree, file))) return [];
+  if (!existsSync(join(tree, file)) || !lstatSync(join(tree, file)).isFile()) return [];
   const outline = readmeOutline(readFileSync(join(tree, file), 'utf8'));
   const problems: Problem[] = [];
   const report: Reporter = (line, rule, message) => {
