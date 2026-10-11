@@ -13,7 +13,8 @@ import type { TestRepo } from './support/git-repo';
 import { BASE_COMPOSABLE, KANBAN } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 import { REPO_ROOT } from './support/paths';
-import { STUB_RELEASE, reindex, treeRepo, writeIndex } from './support/published-repo';
+import { runIndex } from '../src/index';
+import { STUB_RELEASE, treeRepo, writeIndex } from './support/published-repo';
 import { StubWingfoil } from './support/stub-wingfoil';
 
 type Doc = Record<string, unknown>;
@@ -22,6 +23,9 @@ type Doc = Record<string, unknown>;
 const RELEASE = new StubWingfoil({}, STUB_RELEASE);
 after(() => RELEASE.dispose());
 const INSTALL = (): string => RELEASE.cli;
+
+/** The files of a catalog commit (task-020): the catalog and the index it changes. */
+const INDEXED = ['CATALOG.md', 'catalog-index.json', 'catalog.yaml'];
 
 const DATES = { GIT_AUTHOR_DATE: '2026-10-10T12:00:00Z', GIT_COMMITTER_DATE: '2026-10-10T12:00:00Z' };
 const WITH_KANBAN = ['methodology/kanban'];
@@ -69,7 +73,8 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
       assert.equal(repo.git(['cat-file', '-t', 'refs/tags/base@1.0.0']).trim(), 'tag');
       assert.equal(repo.git(['rev-parse', 'refs/tags/base@1.0.0^{commit}']).trim(), release);
       assert.equal(repo.git(['log', '-1', '--format=%s']).trim(), 'catalog: base@1.0.0');
-      assert.equal(repo.git(['diff', '--name-only', 'HEAD~1', 'HEAD']).trim(), 'catalog.yaml');
+      assert.deepEqual(repo.git(['diff', '--name-only', 'HEAD~1', 'HEAD']).trim().split('\n'),
+        INDEXED);
       assert.match(repo.git(['tag', '-l', '--format=%(contents)', 'base@1.0.0']),
         /- 1\.0\.0: first version\./);
       const [entry] = catalogOf(repo);
@@ -81,11 +86,8 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
       for (const line of ['## Publication', `- WingFoil range: \`${STUB_RELEASE}\``]) {
         assert.ok(result.lines.includes(line), result.lines.join('\n'));
       }
-      assert.ok(result.lines.some((line) => line.startsWith('CATALOG.md and catalog-index.json '
-        + 'not regenerated')));
+      assert.ok(!result.lines.some((line) => line.includes('not regenerated')));
       assert.equal(repo.git(['status', '--porcelain']).trim(), '');
-      // Until plan-024 task 2b, the publication leaves the index stale.
-      reindex(repo);
       // The published repository passes the lint, tag rules included, and the publication run.
       const lint = runCheckPacks(repo.dir);
       assert.equal(lint.code, 0, lint.lines.join('\n'));
@@ -233,8 +235,7 @@ function editManifest(repo: TestRepo, pack: string, change: (manifest: Doc) => v
 /**
  * Sets base's version in pack.yaml (and its formats, when given), with a CHANGELOG entry; kanban
  * follows base's major, as a methodology requires base@^<major>. It runs the index, as an author
- * does before a release commit; until plan-024 task 2b this also refreshes the CATALOG.md and
- * catalog-index.json that a publication leaves stale.
+ * does before a release commit: the README sections follow pack.yaml.
  */
 function bump(repo: TestRepo, version: string, formats?: Record<string, number>): void {
   editManifest(repo, 'base', (manifest) => {
@@ -404,3 +405,115 @@ describe('npm run publish:pack, the lines (task-016, F5.3)', () => {
   });
 });
 
+/** The index of the checked-out tree is what npm run index writes. */
+function indexFresh(repo: TestRepo): void {
+  const check = runIndex(['--tree', repo.dir, '--check']);
+  assert.equal(check.code, 0, check.lines.join('\n'));
+}
+
+function diffNames(repo: TestRepo, from: string, to: string): string[] {
+  return repo.git(['diff', '--name-only', from, to]).trim().split('\n');
+}
+
+const PRESET = (title: string): string => `format: 1\nid: small\ntitle: "${title}"\n`
+  + 'description: "Kanban."\npacks:\n  - methodology/kanban@^1\n';
+
+describe('npm run publish:pack, the index in the catalog commit (task-020)', () => {
+  it('on the current line, commits the regenerated index with catalog.yaml (acceptance 4, 7)',
+    () => {
+      withRepository((repo) => {
+        const result = published(repo, ['--pack', 'base', ...WITH_KANBAN]);
+        assert.deepEqual(diffNames(repo, 'HEAD~1', 'HEAD'), INDEXED);
+        indexFresh(repo);
+        assert.equal(repo.git(['status', '--porcelain']).trim(), '');
+        assert.ok(result.lines.includes('- Index: CATALOG.md, catalog-index.json'),
+          result.lines.join('\n'));
+        assert.match(readFileSync(join(repo.dir, 'CATALOG.md'), 'utf8'), /pack-base.*1\.0\.0/);
+      });
+    });
+
+  it('changes no file under packs/, nor llms.txt (CB-5, acceptance 8)', () => {
+    withRepository((repo) => {
+      published(repo, ['--pack', 'base', ...WITH_KANBAN]);
+      assert.deepEqual(diffNames(repo, 'base@1.0.0', 'HEAD'), INDEXED);
+    });
+  });
+
+  it('on an N-1 line, computes the index from main\'s commit (acceptance 5, 8)', () => {
+    withRepository((repo) => {
+      // A preset both branches hold, with another title on main once the line is cut.
+      repo.write('presets/small.yaml', PRESET('Small'));
+      const catalog = parse(readFileSync(join(repo.dir, 'catalog.yaml'), 'utf8')) as Doc;
+      catalog['presets'] = [{ id: 'small', path: 'presets/small.yaml' }];
+      repo.write('catalog.yaml', stringify(catalog));
+      writeIndex(repo);
+      repo.commitAll('a preset');
+      published(repo, ['--pack', 'base', ...WITH_KANBAN]);
+      bump(repo, '2.0.0');
+      published(repo, ['--pack', 'base', ...WITH_KANBAN]);
+      repo.write('presets/small.yaml', PRESET('Small on main'));
+      writeIndex(repo);
+      repo.commitAll('the preset on main');
+      repo.git(['checkout', '--quiet', '-b', 'maint/base/1.x', 'base@1.0.0']);
+      bump(repo, '1.0.1');
+      const head = repo.git(['rev-parse', 'HEAD']).trim();
+      const result = published(repo, ['--pack', 'base', ...WITH_KANBAN]);
+      assert.ok(result.lines.includes('- Index: CATALOG.md, catalog-index.json (on main)'),
+        result.lines.join('\n'));
+      assert.equal(repo.git(['rev-parse', 'HEAD']).trim(), head);
+      assert.equal(repo.git(['status', '--porcelain']).trim(), '');
+      // CATALOG.md shows the latest version, which an N-1 publication does not change.
+      assert.deepEqual(diffNames(repo, 'main^', 'main'), ['catalog-index.json', 'catalog.yaml']);
+      repo.git(['checkout', '--quiet', 'main']);
+      indexFresh(repo);
+      assert.match(readFileSync(join(repo.dir, 'CATALOG.md'), 'utf8'), /Small on main/);
+      assert.match(readFileSync(join(repo.dir, 'catalog-index.json'), 'utf8'), /"1\.0\.1"/);
+    });
+  });
+
+  it('--dry-run names the regenerated index on both lines (acceptance 6)', () => {
+    withRepository((repo) => {
+      const result = published(repo, ['--pack', 'base', '--dry-run', ...WITH_KANBAN]);
+      assert.ok(result.lines.includes('- Index: CATALOG.md, catalog-index.json'));
+    });
+    withTwoMajors((repo) => {
+      bump(repo, '1.0.1');
+      const before = [state(repo), repo.git(['rev-parse', 'main'])];
+      const result = published(repo, ['--pack', 'base', '--dry-run', ...WITH_KANBAN]);
+      assert.ok(result.lines.includes('- Index: CATALOG.md, catalog-index.json (on main)'),
+        result.lines.join('\n'));
+      assert.deepEqual([state(repo), repo.git(['rev-parse', 'main'])], before);
+    });
+  });
+
+  it('rolls back when main\'s preset cannot be read after the tag: exit 1 (acceptance 7)', () => {
+    withTwoMajors((repo) => {
+      repo.git(['checkout', '--quiet', 'main']);
+      repo.write('presets/broken.yaml', 'title: [\n');
+      const catalog = parse(readFileSync(join(repo.dir, 'catalog.yaml'), 'utf8')) as Doc;
+      catalog['presets'] = [{ id: 'broken', path: 'presets/broken.yaml' }];
+      repo.write('catalog.yaml', stringify(catalog));
+      repo.commitAll('a preset that does not parse, on main only');
+      repo.git(['checkout', '--quiet', 'maint/base/1.x']);
+      bump(repo, '1.0.1');
+      const before = [state(repo), repo.git(['rev-parse', 'main'])];
+      const result = publish(repo, ['--pack', 'base', ...WITH_KANBAN]);
+      assert.equal(result.code, 1, result.lines.join('\n'));
+      assert.match(result.lines.join('\n'), /presets\/broken\.yaml does not parse.*the tag was removed/);
+      assert.deepEqual([state(repo), repo.git(['rev-parse', 'main'])], before);
+    });
+  });
+
+  it('rolls back when a tag main\'s catalog names is missing after the tag: exit 2 (acceptance 7)',
+    () => {
+      withTwoMajors((repo) => {
+        bump(repo, '1.0.1');
+        repo.git(['tag', '-d', 'base@2.0.0']);
+        const before = [state(repo), repo.git(['rev-parse', 'main'])];
+        const result = publish(repo, ['--pack', 'base', ...WITH_KANBAN]);
+        assert.equal(result.code, 2, result.lines.join('\n'));
+        assert.match(result.lines.join('\n'), /tag base@2\.0\.0 .*missing.*the tag was removed/);
+        assert.deepEqual([state(repo), repo.git(['rev-parse', 'main'])], before);
+      });
+    });
+});

@@ -6,11 +6,12 @@ import { existsSync, lstatSync, readFileSync, statSync, writeFileSync } from 'no
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 
-import { CatalogError, loadCatalog } from './catalog';
+import { CatalogError } from './catalog';
 import { GitError } from './git';
-import { byBytes, IndexInputError } from './index-data';
+import { byBytes, IndexInputError, isDoc, yamlAt } from './index-data';
 import { buildIndex } from './index-model';
-import { IndexError } from './index-source';
+import { IndexError, workingTree } from './index-source';
+import type { TreeSource } from './index-source';
 import { renderCatalog, renderJson, renderLlms } from './index-render';
 import { indexSchemaErrors } from './index-schema';
 import { treeLayout } from './layout-rules';
@@ -45,19 +46,29 @@ function readmePacks(tree: string): string[] {
   }).sort(byBytes);
 }
 
-/** Every output, path relative to the tree → content. */
-export function indexOutputs(tree: string): Map<string, string> {
-  const index = buildIndex(tree);
+/**
+ * CATALOG.md and catalog-index.json, the files a publication changes (task-020), for the tree
+ * seen through `source`: the working tree, or main's commit with the edited catalog.yaml.
+ */
+export function rootOutputs(tree: string, source: TreeSource): Map<string, string> {
+  const index = buildIndex(tree, source);
   const errors = indexSchemaErrors(index);
   if (errors.length > 0) {
     throw new IndexError(`catalog-index.json would break its schema: ${errors.join('; ')}`);
   }
-  const axes = loadCatalog(join(tree, 'catalog.yaml')).axes.map((axis) => axis.name);
-  const outputs = new Map<string, string>([
+  // Axes in catalog.yaml order (spec-001 §7.1); buildIndex has checked the catalog's schema.
+  const declared = yamlAt(source, 'catalog.yaml')['axes'];
+  const axes = Object.keys(isDoc(declared) ? declared : {});
+  return new Map([
     ['CATALOG.md', renderCatalog(index, axes)],
     ['catalog-index.json', renderJson(index)],
-    ['llms.txt', renderLlms()],
   ]);
+}
+
+/** Every output, path relative to the tree → content. */
+export function indexOutputs(tree: string): Map<string, string> {
+  const outputs = rootOutputs(tree, workingTree(tree));
+  outputs.set('llms.txt', renderLlms());
   for (const id of readmePacks(tree)) {
     const path = `packs/${id}/README.md`;
     outputs.set(path, rewriteReadme(readFileSync(join(tree, path), 'utf8'),

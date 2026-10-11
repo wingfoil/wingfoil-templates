@@ -128,7 +128,7 @@ describe('npm run index (acceptance 3)', () => {
       writeFileSync(manifest, `${readFileSync(manifest, 'utf8')}parameters:\n  p: { type: weird, `
         + 'description: "x" }\n');
       repo.commitAll('base');
-      publishByHand(repo, 'base');
+      publishByHand(repo, 'base', { index: false });
       const result = runIndex(['--tree', repo.dir, '--check']);
       assert.equal(result.code, 2, result.lines.join('\n'));
       assert.match(result.lines[0] ?? '', /would break its schema/);

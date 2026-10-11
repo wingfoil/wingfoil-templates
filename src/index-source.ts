@@ -1,6 +1,6 @@
-// A read-only view of a tree for the index (task-019): the working tree, or a git ref of the
-// tree's repository. The index reads published data only at each version's tag (spec-002 §3.1);
-// plan-024 task 2b adds the view of main's commit for an N-1 publication.
+// A read-only view of a tree for the index (task-019): the working tree, or a commit of the tree's
+// repository, with files overlaid. The index reads published data only at each version's tag
+// (spec-002 §3.1); an N-1 publication reads main's commit with the edited catalog.yaml (task-020).
 import { existsSync, lstatSync, readFileSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -68,4 +68,15 @@ export function atTag(tree: string, tag: string): TreeSource {
     throw new IndexError(`tag ${tag} is named by catalog.yaml and missing from the repository`);
   }
   return { ...atCommit(tree, commit, tag), tag };
+}
+
+/** A view that reads the given files from `files` and every other one from `source`. */
+export function overlay(source: TreeSource, files: Record<string, string>): TreeSource {
+  return {
+    label: source.label,
+    ...(source.tag === undefined ? {} : { tag: source.tag }),
+    read(path: string): string | undefined {
+      return Object.hasOwn(files, path) ? files[path] : source.read(path);
+    },
+  };
 }

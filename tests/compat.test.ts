@@ -3,8 +3,9 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
+import { parse } from 'yaml';
 
-import { CompatError, loadCompat } from '../src/compat';
+import { CompatError, compatFrom, loadCompat } from '../src/compat';
 import { FIXTURES, REPO_ROOT } from './support/paths';
 
 const REAL = join(REPO_ROOT, 'compat.yaml');
@@ -85,5 +86,13 @@ describe('compat.yaml', () => {
     withCompat((text) => text.replace('format_key: false', 'format_key: maybe'), (path) => {
       assert.throws(() => loadCompat(path), CompatError);
     });
+  });
+});
+
+describe('compatFrom (task-020)', () => {
+  it('checks data as loadCompat checks the file', () => {
+    const data: unknown = parse(readFileSync(REAL, 'utf8'));
+    assert.deepEqual(compatFrom(data), loadCompat(REAL));
+    assert.throws(() => compatFrom({ format: 1 }), CompatError);
   });
 });
