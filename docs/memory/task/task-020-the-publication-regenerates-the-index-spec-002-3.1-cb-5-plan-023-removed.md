@@ -56,12 +56,12 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    `npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden`.
 2. **CB-8.** `git diff --exit-code origin/main -- catalog.yaml compat.yaml schema/` exits 0 on the
    task branch.
-3. **One index computation.** The index is computed through one function over a `TreeSource`
-   (the working tree, or a commit with `catalog.yaml` overlaid); `npm run index` behaves as before:
-   the files under `tests/fixtures/index/expected/` and the committed root outputs are unchanged,
-   byte for byte, and `tests/index.test.ts`, `tests/index-model.test.ts`,
-   `tests/index-render.test.ts` and `tests/readme-generate.test.ts` pass unmodified. `publish:pack` computes only
-   `CATALOG.md` and `catalog-index.json`.
+3. **One index computation.** The index is computed through one function over a `TreeSource` (the
+   working tree, or a commit with `catalog.yaml` overlaid); `npm run index` behaves as before: the
+   files under `tests/fixtures/index/expected/` and the committed root outputs are unchanged, byte
+   for byte, and `tests/index.test.ts`, `tests/index-model.test.ts`, `tests/index-render.test.ts`
+   and `tests/readme-generate.test.ts` pass unmodified. `publish:pack` computes only `CATALOG.md`
+   and `catalog-index.json`.
 4. **The current line.** The catalog commit of `npm run publish:pack` holds `catalog.yaml`,
    `CATALOG.md` and `catalog-index.json`, the last two exactly what `npm run index` writes for the
    tree with the edited `catalog.yaml`; after it, `npm run index -- --check` exits 0 and the
@@ -90,10 +90,10 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 9. **The workflow and the source comments.** `pack-release-cycle` › `publish` drops the three
    plan-023 sentences and names `npm run publish:pack` as the command that makes the tag and the
    catalog commit with the regenerated index; its `version:` goes 4 → 5 (`doc-versioning`). The
-   includes are checked by hand (`wingfoil-cli` W-08); `npm run -s wingfoil -- workflow list` exits 0 and prints nothing on stderr beyond the known
-   W-01 warnings. `wingfoil-release-intake` is unchanged. The source comments that describe the
-   plan-023 skip or name plan-024 task 2b as pending (`src/publish.ts`, `src/index-source.ts`) are
-   updated.
+   includes are checked by hand (`wingfoil-cli` W-08); `npm run -s wingfoil -- workflow list` exits
+   0 and prints nothing on stderr beyond the known W-01 warnings. `wingfoil-release-intake` is
+   unchanged. The source comments that describe the plan-023 skip or name plan-024 task 2b as
+   pending (`src/publish.ts`, `src/index-source.ts`) are updated.
 10. **The interim test refreshes are removed.** `reindex` is no longer called after a publication
     in `tests/publish.test.ts`; `bump()` keeps running the index before its release commit (the
     README sections follow a change of `pack.yaml`) and its comment no longer names a stale index.
