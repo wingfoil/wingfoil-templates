@@ -132,7 +132,44 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-018-readme-lint`, run through `tooling-delivery` as `developer`
+(`code-quality`, `testing`, `determinism`), under `npm run lint`. No dependency: the Markdown
+subset of acceptance 4 is read by a small line scanner, not a Markdown library.
+
+- **`src/markdown-lines.ts`** (acceptance 4): `scanMarkdown(text)` classifies every line once, in
+  order: blank, fence (open or close, with its character and length), code (inside a fence or an
+  indented block), HTML comment (from a line opening `<!--` with no `-->` up to the line that
+  closes it), and text; and gives each line its container: `top`, `quote` (a `>` after at most
+  three spaces) or `list` (a `-`, `*`, `+` or `1.`/`1)` marker and a space, continued by indented
+  or lazy lines, closed by a blank line followed by a non-indented line). From it: `headings`
+  (level, text, line, ATX or setext; top-level only; a `---` after a blank line is a thematic
+  break, not a heading), `codeLines` and `codeSpans` (line and text, at any depth, outside HTML
+  comments) and `links` (inline, autolink, and reference links resolved through their definitions;
+  outside code and HTML comments; target with `<…>` and title removed). A marker line
+  (acceptance 6) is classified as such before the HTML-comment rule, so it never opens a comment.
+- **`src/readme.ts`**, exported for plan-024 task 2: the nine headings of spec-002 §2.1, the four
+  generated names, the temporary mark, the `CATALOG.md` URL and the pack anchor
+  (`pack-<id with / → ->`); `readmeOutline(text)` returns the sections (heading, line, first and
+  last line) and the generated pairs (name, begin and end lines) with their structural problems, so
+  the index rewrites between exactly the pairs the lint accepts.
+- **`src/readme-rules.ts`:** `readmeProblems(tree, pack, installListed)` returns the problems of
+  acceptance 5–9 under the ids `readme-heading`, `readme-marker`, `readme-command`,
+  `readme-install-mark` and `readme-link`, each with a line; nothing when `README.md` is missing.
+  `installListed(tree)` is true when the tree's `compat.yaml` loads (`loadCompat`) and a release
+  lists `pack-install`; false when the file is missing or fails its schema or checks.
+- **Wiring** (acceptance 3): `check-packs.ts` › `packProblems` adds `readmeProblems` per pack;
+  `resolve.ts` › `resolve` throws the first, after `packLayoutProblems`, so `compose`, `validate`'s
+  compositions and the overlay combinations refuse the same READMEs. `publish.ts` is not changed.
+- **Fixtures** (acceptance 10): `tests/support/readme.ts` › `conformingReadme(id, title)` writes a
+  README of the standard with placeholder generated content and a section 7 placeholder line;
+  `pack-tree.ts` uses it. The 24 fixture READMEs under `tests/fixtures/` are rewritten to the same
+  shape (their `pack.yaml` title and id). Tests that write their own README are updated to a
+  conforming one, their assertions unchanged.
+- **Tests,** red first: `tests/markdown-lines.test.ts` (each edge case of acceptance 4, unit);
+  `tests/readme-rules.test.ts` (a passing and a failing case per rule of acceptance 5–9 through
+  `runCheckPacks` on synthesized trees, both sides of `pack-install`); one composition refusal in
+  `tests/compose-cli.test.ts`. The existing suites are characterization: they pass unchanged once
+  the fixtures conform.
 
 ## Execution Notes
 
