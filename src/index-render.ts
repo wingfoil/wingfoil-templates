@@ -36,7 +36,7 @@ export const AGENT_STEPS: readonly string[] = [
     + 'transition at its `url` field.',
 ];
 
-const AGENT_NOTES = 'Every file is anonymous and CORS-enabled and may be up to 5 minutes stale; no '
+export const AGENT_NOTES = 'Every file is anonymous and CORS-enabled and may be up to 5 minutes stale; no '
   + 'server, REST API or code search is needed. A tag is written as is in a URL (`/` and `@` '
   + 'included).';
 

@@ -39,6 +39,25 @@ describe('parseUrl and buildUrl (task-021 acceptance 4)', () => {
     }
   });
 
+  it('refuses paths the index never emits, and empty or dot segments', () => {
+    for (const url of [`${RAW}/refs/tags/base@1.0.0/catalog.yaml`,
+      `${RAW}/refs/tags/base@1.0.0/packs/base/anything.txt`,
+      `${RAW}/main/packs/methodology/kanban/README.md`, `${RAW}/main/../../etc/passwd`,
+      `${RAW}/main/x?y=1`, `${RAW}/main/presets/a b.yaml`, `${RAW}/main/presets/../x.yaml`,
+      `${GITHUB}/blob/main/a b`, `${GITHUB}/blob/main/README.md`,
+      `${RAW}/refs/tags/@1.0/packs//README.md`, `${RAW}/refs/tags/base@/packs/base/README.md`,
+      `${GITHUB}/blob/@1/packs//README.md`]) {
+      assert.equal(parseUrl(url), undefined, url);
+    }
+  });
+
+  it('accepts the files of main the index names, presets and transitions', () => {
+    for (const path of ['catalog-index.json', 'CATALOG.md', 'catalog.yaml', 'compat.yaml',
+      'presets/small-team.yaml', 'transitions/mvp-to-production.yaml', 'presets/<id>.yaml']) {
+      assert.deepEqual(parseUrl(`${RAW}/main/${path}`), { form: 'raw-main', path });
+    }
+  });
+
   it('refuses a README link whose tag names another pack', () => {
     assert.equal(parseUrl(`${GITHUB}/blob/base@1.0.0/packs/stage/mvp/README.md`), undefined);
     assert.equal(parseUrl(`${RAW}/refs/tags/base@1.0.0/packs/stage/mvp/README.md`), undefined);

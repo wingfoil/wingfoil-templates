@@ -270,4 +270,3 @@ export function readmeProblems(tree: string, pack: { id: string; path: string },
   linkRule(outline, pack.id, report);
   return problems;
 }
-

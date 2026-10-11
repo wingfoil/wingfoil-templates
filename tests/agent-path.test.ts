@@ -1,10 +1,10 @@
 import { strict as assert } from 'node:assert';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { after, before, describe, it } from 'node:test';
 
 import type { CatalogIndex, IndexPack } from '../src/index-model';
-import { AGENT_STEPS } from '../src/index-render';
+import { AGENT_NOTES, AGENT_STEPS, URL_PATTERNS } from '../src/index-render';
 import { parseUrl } from '../src/index-urls';
 import { scanMarkdown } from '../src/markdown-lines';
 import { isCliCommand } from '../src/readme-rules';
@@ -34,11 +34,17 @@ describe('the agent path (task-021, CB-6 offline)', () => {
       const agents = catalog.slice(catalog.indexOf('## For agents'));
       const llms = read(repo.dir, 'llms.txt');
       const detail = llms.slice(llms.indexOf('\n> '), llms.indexOf('## Index'));
-      AGENT_STEPS.forEach((step, i) => {
-        assert.ok(agents.includes(`${i + 1}. ${step}\n`), step);
-        assert.ok(detail.includes(`${i + 1}. ${step}\n`), step);
-      });
+      const block = [...AGENT_STEPS.map((step, i) => `${i + 1}. ${step}`), '', AGENT_NOTES]
+        .join('\n');
       assert.equal(AGENT_STEPS.length, 5);
+      // In CATALOG.md the steps and notes come before the URL patterns.
+      assert.ok(agents.indexOf(block) >= 0 && agents.indexOf(block) < agents.indexOf(
+        'The URL patterns:'), agents);
+      // In llms.txt they are the whole detail block between the blockquote and ## Index.
+      const blockquote = llms.split('\n').find((line) => line.startsWith('> ')) ?? '';
+      assert.equal(llms.slice(llms.indexOf(blockquote) + blockquote.length, llms.indexOf('## Index')),
+        `\n\n${block}\n\n`);
+      assert.ok(detail.length > 0);
     });
 
     it('keeps llms.txt\'s three sections, with no heading for the steps', () => {
@@ -48,12 +54,9 @@ describe('the agent path (task-021, CB-6 offline)', () => {
     });
 
     it('says the files are anonymous, CORS-enabled, up to 5 minutes stale, with no server', () => {
-      for (const file of ['CATALOG.md', 'llms.txt']) {
-        const text = read(repo.dir, file);
-        for (const words of ['anonymous', 'CORS', '5 minutes', 'no server', 'REST API',
-          'code search', '`/` and `@`']) {
-          assert.ok(text.includes(words), `${file}: ${words}`);
-        }
+      for (const words of ['anonymous', 'CORS', '5 minutes', 'no server', 'REST API',
+        'code search', '`/` and `@`']) {
+        assert.ok(AGENT_NOTES.includes(words), words);
       }
     });
 
@@ -67,12 +70,13 @@ describe('the agent path (task-021, CB-6 offline)', () => {
   });
 
   describe('every URL the index files emit (acceptance 4)', () => {
-    it('extracts the placeholder URLs whole', () => {
+    it('extracts the placeholder URLs whole, and every URL of the Markdown files', () => {
       const urls = urlsOf('llms.txt', read(repo.dir, 'llms.txt'));
-      assert.ok(urls.includes('https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/'
-        + 'tags/<catalog pack id>@<version>/packs/<catalog pack id>/README.md'), urls.join('\n'));
-      assert.ok(urls.includes('https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/'
-        + 'presets/<id>.yaml'));
+      for (const pattern of URL_PATTERNS) assert.ok(urls.includes(pattern.url), pattern.url);
+      for (const file of ['CATALOG.md', 'llms.txt']) {
+        const text = read(repo.dir, file);
+        assert.equal(urlsOf(file, text).length, text.split('https://').length - 1, file);
+      }
     });
 
     it('matches a form and resolves to a file, on the fixture catalog with tags', () => {
@@ -94,8 +98,7 @@ describe('the agent path (task-021, CB-6 offline)', () => {
       for (const file of ['CATALOG.md', 'llms.txt']) {
         for (const target of relativeLinks(read(repo.dir, file))) {
           assert.ok(!target.includes('/'), target);
-          assert.ok(resolveOffline(`https://raw.githubusercontent.com/wingfoil/wingfoil-templates/`
-            + `main/${target}`, repo.dir, REPO_ROOT) !== undefined, target);
+          assert.ok(existsSync(join(repo.dir, target)), target);
         }
       }
     });
@@ -133,9 +136,12 @@ describe('the agent path (task-021, CB-6 offline)', () => {
         ['methodology/kanban', 'phase/inception/lean']);
       const text = (pack: IndexPack): string =>
         `${pack.title} ${pack.description} ${pack.excerpt}`.toLowerCase();
-      assert.deepEqual(ids(found.packs.filter((pack) => text(pack).includes('flow'))),
+      // A term only kanban's excerpt holds: not its title or description, nor another pack's.
+      assert.deepEqual(ids(found.packs.filter((pack) => text(pack).includes('board'))),
         ['methodology/kanban']);
       const kanban = found.packs.find((pack) => pack.id === 'methodology/kanban');
+      assert.ok(!`${kanban?.title ?? ''} ${kanban?.description ?? ''}`.toLowerCase()
+        .includes('board'));
       const latest = kanban?.versions.find((version) => version.version === kanban.latest);
       assert.equal(latest?.version, '1.1.0');
       const readme = fetch(latest?.readme_url ?? '');
