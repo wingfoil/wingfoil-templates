@@ -196,3 +196,6 @@ Branch `task/task-022-examples`, run through `tooling-delivery` as `developer` (
   composition is unchanged.
 - 2026-10-11, CI (acceptance 12): run 38171213846 on `b077fb5`, conclusion `success` for
   `validate (22.12.0)` and `validate (22.21.0)`.
+- 2026-10-11: approved by the approver; CI run 38171989336 on the branch head `c3e6254` was
+  `success`. Merged into `main` with `--no-ff` (`d784e32`); the branch is removed. Next: plan-024
+  task 5, the root README.

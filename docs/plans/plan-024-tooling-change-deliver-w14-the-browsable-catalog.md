@@ -129,3 +129,9 @@ which stay outside W14.
   the end of W14: `docs/wingfoil-feedback/README.md` cites as WingFoil does
   (`<full service id>/F-<nnn>@<full sha>`), with the full service id next to the short key
   `svc-018`; through its own task element, after the last task of the wave. Next: task 4.
+- 2026-10-11: task 4: task-022 (examples as fixtures; spec-002 §2.4, CB-2) done, merged `d784e32`.
+  Rules `example-section` and `example-fixture`; `validate` composes every example and
+  `publish:pack` counts it; the exemption holds while the tree holds no methodology (the
+  approver's ruling; spec-002 §2.4 erratum in task-022). The golden tree's six packs have
+  examples. Owed at W10: `base` needs a version with examples when the first methodology enters
+  the tree. Next: task 5.
