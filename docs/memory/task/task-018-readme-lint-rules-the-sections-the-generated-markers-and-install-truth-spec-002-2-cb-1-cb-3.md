@@ -2,7 +2,7 @@
 id: task-018-readme-lint-rules-the-sections-the-generated-markers-and-install-truth-spec-002-2-cb-1-cb-3
 type: task
 title: "README lint rules: the sections, the generated markers and install truth (spec-002 §2, CB-1, CB-3)"
-status: draft
+status: pending
 pack: ""            # tooling task (tooling-change › deliver, tooling-delivery)
 depends_on: []
 tags: ["tooling","W14","F2.8"]
