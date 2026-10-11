@@ -2,7 +2,7 @@
 id: task-021-the-agent-path-the-procedure-in-catalog.md-and-llms.txt-tested-offline-spec-002-4-cb-6
 type: task
 title: "The agent path: the procedure in CATALOG.md and llms.txt, tested offline (spec-002 §4, CB-6)"
-status: in-review
+status: approved
 pack: ""            # tooling task (tooling-change › deliver, tooling-delivery)
 depends_on: ["task-020-the-publication-regenerates-the-index-spec-002-3.1-cb-5-plan-023-removed"]
 tags: ["tooling","W14","F2.8"]
