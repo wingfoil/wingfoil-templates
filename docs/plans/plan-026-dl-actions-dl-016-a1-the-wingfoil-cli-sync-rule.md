@@ -70,3 +70,9 @@ All on the branch `config/dl-016-actions`, from `main` at `274dd76`, shared with
   letter; (b) needs `wingfoil-release-intake` too), amended. Presented to the approver, who chose
   option (a) in chat, ruling the reading of `release-planning` as WingFoil's release planning, and
   asked to proceed.
+- 2026-10-12, step 1: rule 7 reworded as option (a), `wingfoil-cli` 1.2 → 1.3 (`4d1819a`).
+  Step 2: `directives list` exit 0 with no warning; the inbox tests 6 of 6; `npm test` 803 of 803
+  and `npm run lint` exit 0. Step 3: reviewed independently with plan-027's change (approve after
+  amendments; no finding on rule 7).
+- 2026-10-13, branch close: CI run 38314131196 on `93be5c1`, conclusion `success` for
+  `validate (22.21.0)` and `validate (22.12.0)`. Waiting for the approver's merge OK.

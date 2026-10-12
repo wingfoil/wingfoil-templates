@@ -82,3 +82,19 @@ On the branch `config/dl-016-actions`, shared with plan-026; one commit per step
 - 2026-10-12: independent review (approve after amendments: `pack-cycle` › `design` dropped as not
   in dl-017's list; `sunset` added; a concrete comparison of the two loops), amended. Presented to
   the approver, who approved it in chat and asked to proceed.
+- 2026-10-12, steps 1–5: `920ea72` (delivery loops: `tooling-delivery` v2, `kanban-delivery` v4),
+  `76bef1c` (steps 2 and 3 in one commit, since `sw-life-cycle` carries both in one version bump:
+  `decision-log-ingest` v2, `adr-ingest` v2, `bug-ingest` v3, `pack-cycle` v3,
+  `pack-release-cycle` v6, `sw-life-cycle` v5, `tooling-change` v3), `dff8bac` and `7629f22`
+  (templates), `4df2a1a` (`traceability`).
+- 2026-10-12, step 6: `workflow list`, `dna show` and `directives list` exit 0 with empty stderr;
+  every `include` names a declared workflow (checked by script, W-08); the two loops, parsed as
+  YAML without `name`, `version`, roles and descriptions, are equal; `npm test` 803 of 803, `lint`,
+  `check:packs` and `validate` exit 0.
+- 2026-10-12, step 7: independent review: approve after amendments, 0 blocking, 3 should-fix (the
+  text was stronger than dl-020: "folded back" for "listed", and the approver's "none is needed"
+  missing in three places), 4 nits (dl-019's wait in `build`, dl-018 R2's characterization
+  exception, dl-018 R4's wording, the task template scoped to tooling tasks). All fixed
+  (`93be5c1`); re-review (dl-017 R2): approve, no finding.
+- 2026-10-13, branch close: CI run 38314131196 on `93be5c1`, conclusion `success` for
+  `validate (22.21.0)` and `validate (22.12.0)`. Waiting for the approver's merge OK.
