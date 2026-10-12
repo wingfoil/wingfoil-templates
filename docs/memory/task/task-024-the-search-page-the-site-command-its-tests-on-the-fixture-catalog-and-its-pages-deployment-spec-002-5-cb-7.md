@@ -35,7 +35,7 @@ site is `index.html`, `site.css`, `search.js`, `catalog-index.json` and `llms.tx
 Execution Notes with the P1 ruling, as task-019 and task-022 recorded their errata. A static site
 with relative links needs no `actions/configure-pages`.
 
-**The approver's action**, asked during the build and done before the merge:
+**The approver's action**, asked during the build and done before `in-review`:
 **Settings › Pages › Build and deployment › Source: GitHub Actions** (with *Enforce HTTPS*, on by
 default for github.io); then **Settings › Environments › `github-pages` › Deployment branches and
 tags: Selected branches and tags**, with exactly one rule, branch `main`, and no tag rule. GitHub
@@ -81,7 +81,8 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
    - **Safety:** every text from the index is HTML-escaped, in text nodes and in attribute values;
      no Markdown is rendered; the excerpt is text. The page loads nothing from another origin: no
      font, no script, no style, no analytics, no protocol-relative URL, no `url(` with a scheme in
-     `site.css`. The first child of `<head>` is
+     `site.css`. `<head>` starts with `<meta charset="utf-8">`, then, before any `<link>` or
+     `<script>`,
      `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">`;
      there is no inline script, no `<style>` and no `style=` attribute. A meta CSP ignores
      `frame-ancestors` and Pages sets no response header, so the page has no clickjacking
@@ -142,7 +143,8 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
      conclusion `success`;
    - `curl -sI https://wingfoil.github.io/wingfoil-templates/` returning 200;
    - `curl -sI -H 'Origin: https://example.org'` on `…/catalog-index.json` and `…/llms.txt`
-     returning 200 with `access-control-allow-origin: *`, both files byte-equal to `main`'s.
+     returning 200 with `access-control-allow-origin: *`; and `curl -s <url> | cmp - <file>`
+     against `main`'s `catalog-index.json` and `llms.txt` exiting 0.
 
    If one fails, the task stays `approved`, the failure is recorded and a bug element is opened;
    its fix is a tooling task of its own, and this task goes `done` after it.
@@ -162,4 +164,6 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
   exact), eleven should-fix (dispatch on other branches, stale or malformed input, the exact CSP,
   testing `matches` on the built site, slot and status coverage, the escaping test, other
   origins, line endings of the checksummed file, lint and the output folder, the documentation
-  directive, the scope of the Pages URLs) and nits, all applied while `pending`.
+  directive, the scope of the Pages URLs) and nits, all applied while `pending`. Re-review:
+  approve; its should-fix (served bytes compared with `cmp`, not with a HEAD request) and nits
+  (the charset meta first; "before `in-review`") applied.
