@@ -5,7 +5,7 @@ title: "The feedback inbox cites as WingFoil does: the full service id and the f
 status: pending
 pack: ""            # tooling task (tooling-change › deliver, tooling-delivery)
 depends_on: ["task-017-record-the-wingfoil-source-key-svc-018-in-the-feedback-inbox"]
-tags: ["tooling","feedback"]
+tags: ["tooling","W14","feedback"]
 ---
 
 ## Context
@@ -38,16 +38,20 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 1. `npm ci`, `npm run build`, `npm test`, `npm run lint`, `npm run check:pins`,
    `npm run check:schemas` and `npm run check:packs` exit 0; no dependency is added.
-2. **CB-8.** `git diff --exit-code origin/main -- catalog.yaml compat.yaml schema/` exits 0 on the
-   task branch.
-3. **The README.** In `docs/wingfoil-feedback/README.md`, the source-key paragraph:
-   - keeps `svc-018` as the short key and names next to it the full service id
-     `svc-018-github-repository-wingfoil-templates-a-consumer-project-and-its-feedback-inbox`;
-   - says that WingFoil cites a note as `<service id>/F-<nnn>@<sha>`, with the full service id and
-     the full sha of the commit it read, citing WingFoil's `COLLABORATION.md` › `## Credit`
-     (task-271), with the example
-     `svc-018-github-repository-wingfoil-templates-a-consumer-project-and-its-feedback-inbox/F-001@<full sha>`.
-4. **Nothing else changes:** `git diff --name-only origin/main` on the task branch lists only
+2. **CB-8.** `git diff --exit-code origin/main...HEAD -- catalog.yaml compat.yaml schema/` exits 0
+   on the task branch.
+3. **The README.** In `docs/wingfoil-feedback/README.md`, the source-key paragraph keeps its
+   `**Source key:**` label (`tests/support/inbox.ts` reads it) and becomes:
+
+   > **Source key:** `svc-018` — the `svc-NNN` id WingFoil assigns when it registers this repository
+   > as a feedback source (WingFoil task-269); its full service id is
+   > `svc-018-github-repository-wingfoil-templates-a-consumer-project-and-its-feedback-inbox`.
+   > WingFoil cites a note as `<service id>/F-<nnn>@<sha>`, with the full service id and the full
+   > sha of the commit it read (WingFoil `COLLABORATION.md` › Credit, task-271), for example
+   > `svc-018-github-repository-wingfoil-templates-a-consumer-project-and-its-feedback-inbox/F-001@<full sha>`.
+
+   No other paragraph of the README changes.
+4. **Nothing else changes:** `git diff --name-only origin/main...HEAD` on the task branch lists only
    `docs/wingfoil-feedback/README.md` and this element; the ledger and its tests are untouched.
 5. **CI.** The pushed branch `task/<id>` runs `.github/workflows/ci.yml`; its real run's
    conclusion, for both Node.js versions, is recorded in the Execution Notes before `in-review`.
@@ -60,4 +64,9 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Execution Notes
 
-<!-- Deviations, blockers, decisions taken, WingFoil friction. -->
+- 2026-10-12: independent review of the body (a subagent with its own context; WingFoil's
+  repository checked public, its `COLLABORATION.md` › Credit and task-271 read, the full service id
+  matched to WingFoil's service element): approvable as written; two should-fix (diffs against the
+  merge base; the label the tests read, one paragraph only) and nits (the target sentence, the
+  wave tag), applied while `pending`. Unlike task-017, which was committed on `main`, this task
+  runs on its own branch, as every task does.
