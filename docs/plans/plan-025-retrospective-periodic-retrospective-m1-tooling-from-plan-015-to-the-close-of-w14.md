@@ -136,3 +136,15 @@ All on the branch `retro/2026-10-12-periodic`, from `main` at `62979cd`.
   amendments, eleven findings) and amended. Every relayed input was confirmed on its sources except
   the GitHub Pages confirmation on the wrong repository, which no element records (marked `?`).
   Next: the approver's checkpoint (`additional-points`).
+- 2026-10-12, `additional-points`: the approver added no point; recorded in the inventory
+  (`8ccf70f`).
+- 2026-10-12, `capture`: dl-016 (the retrospective) and dl-017 … dl-020 (one per change of
+  process) added, bodies committed (`2cf6dfc`), each reviewed independently (approve after
+  amendments) and amended (`e4ef8bf`, and the commit after it). **Deviation from step 3:** the five
+  new feedback notes F-022 … F-026 are not written in `capture` but by task-026, hosted by this
+  plan: `tests/support/inbox.ts` requires a new note's first line to name a task or a
+  pack-release, and the approver chose on 2026-10-12 a task of its own over a change of that rule.
+  task-026 also fixes F-012's title and F-018's evidence (dl-016 W2); its body was reviewed
+  independently and amended. A first draft of the notes, written before that choice and parked
+  outside the repository, was lost when the session restarted; the notes are written again in
+  task-026's build.
