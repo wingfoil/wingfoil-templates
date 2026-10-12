@@ -2,7 +2,7 @@
 id: plan-027-dl-actions-dl-016-a2-the-configuration-changes-of-dl-017-to-dl-020
 type: plan
 title: "dl actions: dl-016 A2, the configuration changes of dl-017 to dl-020"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "rule"
 tags: ["config","retrospective"]
