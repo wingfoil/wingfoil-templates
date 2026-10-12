@@ -18,6 +18,28 @@ WingFoil 0.2.2 from npm, 2026-10-06, found at the first real iteration of this r
 print the `pack` field; nothing lists the elements a phase iterates over. The iteration is followed
 by hand, reading each task's frontmatter.
 
+Reproduced on 2026-10-12 (task-026) with WingFoil 0.2.2 from npm, in a scratch project (`git init`,
+then `wingfoil init --template Kanban`), its `sw-life-cycle` › `delivery` phase given
+`iterate_over: task` and `where: { pack: "" }`, and one task with `pack: ""`:
+
+```
+$ wingfoil workflow list                                    # exit 0, no warning
+      ...
+          "where": {
+            "pack": ""
+          }
+$ wingfoil memory search --help
+Options:
+  --tag <tag>        keep documents carrying this tag
+  --status <status>  keep documents in this state
+  --type <type>      keep documents of this Memory type
+$ wingfoil memory search --type task                        # exit 0; no pack field
+{ "query": "", "matches": [ { "path": "docs/memory/task/task-002-tooling.md",
+  "id": "task-002-tooling", "title": "Tooling", "type": "task", "status": "draft", "tags": [] } ] }
+$ wingfoil memory search --type task --pack ""
+error: unknown option '--pack'                                                  # exit 2
+```
+
 ## Expected
 
 A command that lists an iteration's elements (for example `wingfoil workflow elements <workflow>

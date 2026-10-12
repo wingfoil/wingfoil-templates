@@ -35,6 +35,11 @@ function withTree(body: (tree: string) => void): void {
   }
 }
 
+/** The number the tool gives the next note of this repository's inbox, which the tests copy:
+ *  the highest number plus one (bug-002). */
+const NEXT = `F-${String(Math.max(0, ...notesOf(join(REPO_ROOT, INBOX))
+  .map((note) => Number(note.file.slice(2, 5)))) + 1).padStart(3, '0')}`;
+
 const last = (tree: string): { file: string; body: string; title: string } => {
   const notes = notesOf(join(tree, INBOX));
   const note = notes[notes.length - 1];
@@ -60,7 +65,7 @@ describe('npm run feedback:note -- --schema (wingfoil-cli rule 8)', () => {
       const result = runFeedbackNote(['--schema', '--from', 'task-015-feedback', '--tree', tree]);
       assert.equal(result.code, 0, result.lines.join('\n'));
       const note = last(tree);
-      assert.match(note.file, /^F-022-schema-[0-9a-f]{12}\.md$/);
+      assert.match(note.file, new RegExp(`^${NEXT}-schema-[0-9a-f]{12}\\.md$`));
       assert.match(note.title, /^The pack schemas changed \(sha256:[0-9a-f]{12}\)$/);
       assert.match(note.body, /^\nNew note \(task-015\)\./);
       assert.match(note.body, /Changed since F-017:\n\n- changed: `schema\/pack\.schema\.json`/);
@@ -98,7 +103,7 @@ describe('npm run feedback:note -- --published', () => {
         '--tree', repo.dir]);
       assert.equal(result.code, 0, result.lines.join('\n'));
       const note = last(repo.dir);
-      assert.equal(note.file, 'F-022-pack-base-1.0.0-published.md');
+      assert.equal(note.file, `${NEXT}-pack-base-1.0.0-published.md`);
       assert.equal(note.title, 'Pack `base@1.0.0` published, for the bundled copy');
       assert.match(note.body, /^\nNew note \(prel-001\)\./);
       assert.match(note.body, new RegExp(`computed WingFoil range \`${STUB_RELEASE}\``));
@@ -149,9 +154,9 @@ describe('npm run publish:pack -- --bundled (F5.4; the W7 exit criterion)', () =
     try {
       const result = publish(repo, ['--bundled', '--from', 'prel-001']);
       assert.equal(result.code, 0, result.lines.join('\n'));
-      assert.ok(result.lines.includes('- Feedback note: F-022'), result.lines.join('\n'));
+      assert.ok(result.lines.includes(`- Feedback note: ${NEXT}`), result.lines.join('\n'));
       assert.deepEqual(repo.git(['log', '-3', '--format=%s']).trim().split('\n'),
-        ['feedback: F-022 base@1.0.0', 'catalog: base@1.0.0', 'inbox, schemas, changelog']);
+        [`feedback: ${NEXT} base@1.0.0`, 'catalog: base@1.0.0', 'inbox, schemas, changelog']);
       assert.equal(repo.git(['cat-file', '-t', 'refs/tags/base@1.0.0']).trim(), 'tag');
       // CB-5 (task-020): the catalog, its index and the note, nothing under packs/.
       const changed = repo.git(['diff', '--name-only', 'base@1.0.0', 'HEAD']).trim().split('\n');
