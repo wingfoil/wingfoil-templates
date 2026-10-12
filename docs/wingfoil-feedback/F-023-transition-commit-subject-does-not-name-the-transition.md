@@ -26,8 +26,9 @@ wf(task): add task-001-demo
 Every forward step has the same subject. In this repository a task walks
 `draft → pending → backlog → in-progress → in-review → approved → done` with four `submit`s; by
 2026-10-12 its history held 100 commits `wf(task): submit task-…`, one subject for four different
-transitions. The state is read from the frontmatter or from `memory history`, not from the log.
-`approve` subjects already carry the transition, for example `[in-review → approved]`.
+transitions (before this note's own task). The state is read from the frontmatter or from
+`memory history`, not from the log. `approve` and `deprecate` subjects already carry the
+transition, for example `[in-review → approved]` and `[pending → deprecated]`.
 
 ## Expected
 

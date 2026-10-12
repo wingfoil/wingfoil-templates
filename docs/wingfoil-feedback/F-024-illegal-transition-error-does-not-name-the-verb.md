@@ -15,10 +15,10 @@ WingFoil 0.2.2 from npm, in a scratch project (`git init`, then `wingfoil init -
 Kanban`), default state machine `draft → pending (gate) → approved`:
 
 ```
-$ wingfoil memory add --type decision-log --title "D"
+$ wingfoil memory add --type decision-log --title "D"        # JSON output omitted
 $ wingfoil memory approve dl-001-d --reason x
 error: illegal transition draft -> approved for type 'decision-log'          # exit 1
-$ wingfoil memory submit dl-001-d                           # draft -> pending, exit 0
+$ wingfoil memory submit dl-001-d                           # draft -> pending, exit 0, JSON omitted
 $ wingfoil memory submit dl-001-d
 error: illegal transition pending -> (none) for type 'decision-log'           # exit 1
 ```

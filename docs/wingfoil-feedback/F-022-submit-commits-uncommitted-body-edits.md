@@ -15,14 +15,15 @@ WingFoil 0.2.2 from npm, in a scratch project (`git init`, then `wingfoil init -
 Kanban`):
 
 ```
-$ wingfoil memory add --type task --title "Demo"
+$ wingfoil memory add --type task --title "Demo"                # JSON output omitted
 $ echo "Body edit" >> docs/memory/task/task-001-demo.md
 $ git status --short
  M docs/memory/task/task-001-demo.md
-$ wingfoil memory submit task-001-demo                      # exit 0
+$ wingfoil memory submit task-001-demo                      # exit 0, JSON output omitted
 $ git show --stat --format=%s HEAD
 wf(task): submit task-001-demo
  docs/memory/task/task-001-demo.md | 3 ++-
+ ...
 $ git status --short                                        # clean
 ```
 
