@@ -2,7 +2,7 @@
 id: dl-020-errata-of-an-approved-specification-are-folded-back-at-wave-close
 type: decision-log
 title: "Errata of an approved specification are folded back at wave close"
-status: draft
+status: pending
 tags: ["process","retrospective"]
 ---
 
