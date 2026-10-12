@@ -280,4 +280,4 @@ vocabulary (W4's open point in `08_mvp-canvas.md`).
 
 ## Points to analyse (additional-points)
 
-Filled after the approver's checkpoint.
+The approver added no point at the checkpoint (2026-10-12). Capture: dl-016 … dl-020 and task-026.
