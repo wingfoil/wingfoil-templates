@@ -2,7 +2,7 @@
 id: task-026-feedback-notes-f-022-to-f-026-from-the-periodic-retrospective-and-the-inbox-fixes-of-f-012-and-f-018
 type: task
 title: "Feedback notes F-022 to F-026 from the periodic retrospective, and the inbox fixes of F-012 and F-018"
-status: draft
+status: pending
 pack: ""            # no pack: the feedback inbox (hosted by plan-025, tooling-delivery)
 depends_on: []
 tags: ["feedback","retrospective"]
