@@ -127,3 +127,6 @@ All on the branch `retro/2026-10-12-periodic`, from `main` at `62979cd`.
 
 - 2026-10-12: `memory add --set workflow=… --set phase=…` refused (`wingfoil-cli` W-02, F-011);
   `workflow` and `phase` filled by editing the draft.
+- 2026-10-12: independent review of this plan (approve after amendments, eleven findings), amended
+  before the body commit; presented to the approver, who approved it in chat and asked to submit
+  it and start `explore`.
