@@ -21,11 +21,13 @@ extracts of this repository's own texts.
 
 ## 1. Independent reviews
 
-- `+` Every task, decision-log and ADR of the period was reviewed by an independent subagent while `pending`, and
-  amended rather than rejected: no `memory reject` and no revert in the period (git log). Examples:
+- `+` (**relayed point confirmed**, with the counts below) Almost every element of the period was
+  reviewed by an independent subagent while `pending`, and amended rather than rejected: no
+  `memory reject` and no revert in the period (git log). Examples:
   task-001 … task-008 each have an "amend … while pending (independent review)" commit (`ac70259`,
   `6819e25`, …); dl-009/dl-010 `4a9390f`; task-011 … task-016 (`067f519` … `21aa93a`); dl-011 …
   dl-014 (plan-020 › Execution Notes).
+- `−` Exceptions: task-017 records no review; dl-015 and plan-022 record no independent review.
 - `+` Body reviews caught design defects before any code. task-012: the stricter "no empty phase"
   reading "failed 34 of the 51 phases of this repository's own workflows" (task-012 › Execution
   Notes). W14: every task body had at least one should-fix, and task-018 … task-024 had one or
@@ -48,7 +50,8 @@ extracts of this repository's own texts.
   cleanups or tightening only (their Execution Notes), with no written criterion for when a
   re-review may be skipped.
 - `−` Cost: about 12–15 commits per task (add, body, amendments, submits, design, build notes,
-  delivered); task-019 has 13, including two line-wrap commits (`f8abe45`, `cf488b7`). See also §7
+  delivered); task-019 has 15, including a line-wrap commit (`f8abe45`); line wraps also got their
+  own commits in plan-024 (`cf488b7`), task-023 (`abeb59f`) and task-020 (`9dc7096`). See also §7
   (W-04, W-05).
 
 ## 2. Red-first testing
@@ -81,13 +84,13 @@ extracts of this repository's own texts.
   stays unmodified, and it changes in one line; `compatFrom(data)` takes no label. The build review
   "accepted the three deviations above, asked for them to be recorded" (task-020 › Execution Notes).
 - `−` task-022 (**relayed point confirmed**): Acceptance 9 said the expected files stay unchanged,
-  and the fixture READMEs changed in section 7; the example rules skip packs with a broken schema
-  or no README; `bump()` moves `base`'s example to the new major (task-022 › Execution Notes,
-  "deviations, accepted by the review").
-- `−` The same pattern before W14: task-012 (five deviations, among them Acceptance 2's "silently"
-  turned into failing closed), task-014 (Acceptance 5: exit 1, not 2; `transition-stages` relaxed
-  because "the stricter reading made such a publication impossible"), task-016 (Acceptance 3),
-  task-015 (rollback beyond task-014's).
+  and the fixture READMEs changed in section 7; the example rules skip packs with a broken schema or
+  no README; `check-packs.test.ts` › `rules()` ignores `example-*`; `bump()` moves `base`'s example
+  to the new major (task-022 › Execution Notes, "deviations, accepted by the review").
+- `−` The same pattern before W14: task-012 (six deviations, and a review fix that turned Acceptance
+  2's "silently" into failing closed), task-014 (Acceptance 5: exit 1, not 2; `transition-stages`
+  relaxed because "the stricter reading made such a publication impossible"), task-016 (Acceptance
+  3), task-015 (rollback beyond task-014's).
 - `+` Every deviation is written down, reviewed and accepted before `in-review`; none was silent.
 - Insight: the Acceptance is fixed at `backlog`, before the Design meets the code; when it turns
   out unsatisfiable, the only path is a deviation note. No step lets the Acceptance be amended
@@ -106,10 +109,11 @@ extracts of this repository's own texts.
     grew from six to seven tasks (plan-024, 2026-10-11; `6d90b9c`);
   - the CB-2 exemption read as "the tree holds no methodology", with a cost recorded: `base`
     needs a version with examples at W10 (task-022);
-  - the root README names no published state of its own, which settled two blocking review points
-    (task-023 › Context);
-  - spec-002 P1–P3 (no third-party search library, excerpt = first paragraph, the site command),
-    ruled when plan-024 was presented;
+  - the root README names no published state of its own, which settled one of the two blocking
+    review points of its body review (task-023 › Context);
+  - spec-002 P1 (no third-party search library) ruled when plan-024 was presented, P2 (the
+    excerpt is the first paragraph) by the approver on 2026-10-11, P3 (the site command) fixed by
+    task-024 (spec-002 › Execution Notes);
   - the CATALOG README column links github.com at the tag (task-019 › Context).
 - `−` Earlier in the period: ESLint was not in adr-003 although `code-quality` asks for a linter;
   task-001 found the gap, and plan-019, adr-004 and a new task 4b (task-005) followed (plan-015,
@@ -148,9 +152,9 @@ extracts of this repository's own texts.
   in **failure** on both jobs (ISO dates `Z` on the runner, `+00:00` locally); corrected in
   `f3eebc5` (task-014 › Execution Notes). From then on every task records run ids and their
   conclusion (task-018 … task-025: all `success`).
-- `−` An untracked working note committed by mistake inside an Execution Notes commit (`8b7f782`,
-  a broad `git add`), against dl-005 G3; removed in `1aa50c3`, readable in the history because
-  `main`'s protection forbids rewriting it (plan-022). Since then files are staged by name.
+- `−` An untracked working note committed by mistake inside an Execution Notes commit (`8b7f782`),
+  against dl-005 G3 and the existing rule to stage files by name (plan-001, dl-005); removed in
+  `1aa50c3`, readable in the history because `main`'s protection forbids rewriting it (plan-022).
 - `?` The GitHub Pages confirmation first made on the wrong repository (relayed by the approver):
   not recorded in any element. task-024 records only the check of this repository's Pages
   settings (`build_type: workflow`, `https_enforced: true`); no commit message names another
@@ -158,8 +162,8 @@ extracts of this repository's own texts.
 - `−` Scope creep in a configuration commit: `b0291ad` added a `tooling` module beyond plan-018's
   scope, found by its review (plan-018).
 - `−` Commit hygiene: a "(WIP)" subject (`5949edf`) and a `test:` commit carrying a fix
-  (`4982426`) in task-007; adr-004 and task-002 amended in one commit (`ab39f37`); line-wrap and
-  wording fixes as separate commits (`fb63ee1`, `7b495aa`, `f8abe45`, `cf488b7`).
+  (`4982426`) in task-007; adr-004 and task-002 amended in one commit (`ab39f37`); line-wrap fixes
+  as separate commits (§1).
 - `−` Pushes from the agent session were blocked by its permissions on 2026-10-06; the approver
   pushed (plan-015). Resolved from 2026-10-07.
 - `+` Acceptance re-run from a clean clone on Node 22.21 and on the floor 22.12.0 for every task;
@@ -194,9 +198,11 @@ State of each known behaviour of the `wingfoil-cli` directive and of the related
   word for word.
 - `−` Our side: the ledger title of F-012 is truncated ("Format key distinct from version:",
   `docs/wingfoil-feedback/README.md`).
-- `−` F-018's evidence is weaker than the inbox format asks (dl-163 R4: command, output, version):
+- `−` F-018's evidence is weaker than the inbox format asks (WingFoil dl-163 R4: command, output,
+  version):
   no output block.
-- `+` The period mostly catalogued friction met earlier and made it actionable: task-010 seeded
+- `+` (**relayed point confirmed**: W-01 … W-12, F-011, F-018 … F-021 as tabled above) The
+  period mostly catalogued friction met earlier and made it actionable: task-010 seeded
   W-01 … W-12, every new note was "reproduced with WingFoil 0.2.2 alone in a scratch git
   repository" (task-010), and task-025 aligned the inbox citation with WingFoil's
   (`<full service id>/F-<nnn>@<full sha>`).
@@ -263,11 +269,12 @@ vocabulary (W4's open point in `08_mvp-canvas.md`).
 
 ## 10. What went well, in short
 
-- M1 delivered in seven days: W5 in two (task-001 … task-008, 62 → 424 tests), W6–W7 between 2026-10-09
-  and 2026-10-10, W14 in two, with a phase gate approved at the first review (plan-015, clean clone at `21dc7dc`).
+- M1 delivered in seven days: W5 in two (task-001 … task-008, 62 → 424 tests), W6–W7 between
+  2026-10-09 and 2026-10-10, W14 in two, with a phase gate approved at the first review
+  (plan-015, clean clone at `21dc7dc`).
 - No element rejected; every review finding fixed or written down; no CI failure left unexplained.
-- One merge discipline throughout: task branch, real CI run recorded, approver's OK, `--no-ff`
-  merge, push, branch removed.
+- One merge discipline (task-017, on `main` by its Design, aside): task branch, real CI run
+  recorded, approver's OK, `--no-ff` merge, push, branch removed.
 - The feedback loop with WingFoil exists and is aligned with its format and citation (task-009,
   task-010, task-017, task-025), in time for WingFoil's v0.3 retrospective.
 
