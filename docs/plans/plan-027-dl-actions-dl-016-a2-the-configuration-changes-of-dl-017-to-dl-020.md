@@ -98,3 +98,4 @@ On the branch `config/dl-016-actions`, shared with plan-026; one commit per step
   (`93be5c1`); re-review (dl-017 R2): approve, no finding.
 - 2026-10-13, branch close: CI run 38314131196 on `93be5c1`, conclusion `success` for
   `validate (22.21.0)` and `validate (22.12.0)`. Waiting for the approver's merge OK.
+- 2026-10-13: the approver gave the merge OK in chat; `--no-ff` merge into `main`, push, branch removed. This plan goes `active → done`.
