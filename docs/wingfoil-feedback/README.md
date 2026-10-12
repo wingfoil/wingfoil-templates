@@ -51,6 +51,11 @@ sha of the commit it read (WingFoil `COLLABORATION.md` › Credit, task-271), fo
 | [F-019](F-019-built-in-directive-ids-not-readable.md) | WingFoil's built-in directive ids cannot be read without a project | gap | open | |
 | [F-020](F-020-composed-configuration-must-satisfy-unexposed-schemas.md) | A composed .wingfoil/ must satisfy WingFoil's own schemas, which nothing exposes | gap | open | |
 | [F-021](F-021-runs-only-at-a-git-root.md) | WingFoil runs only at the root of a git repository | request | open | |
+| [F-022](F-022-submit-commits-uncommitted-body-edits.md) | memory submit commits uncommitted edits of the element's body in its own transition commit | defect | open | |
+| [F-023](F-023-transition-commit-subject-does-not-name-the-transition.md) | The commit subject of memory submit does not name the transition | request | open | |
+| [F-024](F-024-illegal-transition-error-does-not-name-the-verb.md) | The illegal-transition error does not say which verb or state is expected | gap | open | |
+| [F-025](F-025-no-verb-leaves-a-waiting-state.md) | No verb leaves a waiting state except deprecate | gap | open | |
+| [F-026](F-026-a-phase-has-one-role.md) | A workflow phase has one role, so the role cannot depend on the element | request | open | |
 
 ## Context
 
