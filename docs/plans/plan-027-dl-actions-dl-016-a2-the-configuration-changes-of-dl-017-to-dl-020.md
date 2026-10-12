@@ -18,9 +18,10 @@ phase hosts this work: the changes are actions of approved elements.
 Sources, each with the changes it lists:
 - **dl-017** (independent review, build re-review): R1 in `tooling-delivery` and `kanban-delivery`
   › `plan` (the body) and › `review` (the build), R2 and R3 in › `review`; R1 in the phase before
-  the approval of `decision-log-ingest`, `adr-ingest`, `bug-ingest`, `pack-cycle` (charter, and
-  design for a tech-spec), `pack-release-cycle` and `sw-life-cycle` (inception, specification); the
-  plan template's Handoff comment names R1;
+  the approval, or in the gated phase itself where the approval sits inside it, of
+  `decision-log-ingest`, `adr-ingest`, `bug-ingest`, `pack-cycle` (charter), `pack-release-cycle`
+  and `sw-life-cycle` (its phase gates: inception, specification, sunset); the plan template's
+  Handoff comment names R1;
 - **dl-018** (red first, `tooling-delivery` only): R3 in › `design`, R1 and R2 in › `build`, R4 in
   › `review`; the task template's Execution Notes comment names the red run;
 - **dl-019** (an unsatisfiable Acceptance goes to the approver): R1 in `tooling-delivery` and
@@ -38,7 +39,10 @@ Wording: each description states the rule briefly and cites the decision-log (fo
 independent review, re-reviewed after any fix that changes behaviour, a test or an Acceptance
 command (dl-017)"), so the descriptions stay short and the decision-log stays the source.
 
-Not in this plan: dl-016 A1 (plan-026); any change of tooling or code; WingFoil's built-in
+Not in this plan: dl-016 A1 (plan-026); gated phases dl-017's list does not name
+(`retrospective`, `wingfoil-release-intake` › `record`, `pack-deprecation`, `templates-inception`,
+`pack-cycle` › `design`), although R1 covers their elements: the plan applies the list as
+approved; any change of tooling or code; WingFoil's built-in
 `testing` directive, which is not edited (dl-018).
 
 ## Steps
@@ -50,16 +54,17 @@ On the branch `config/dl-016-actions`, shared with plan-026; one commit per step
    R3). `kanban-delivery` (3 → 4): the same without dl-018.
 2. **Capture and gate phases** (dl-017 R1): `decision-log-ingest` (1 → 2) › `capture`,
    `adr-ingest` (1 → 2) › `capture`, `bug-ingest` (2 → 3) › `capture`, `pack-cycle` (2 → 3) ›
-   `charter` and `design`, `pack-release-cycle` (5 → 6) › `validate`, `sw-life-cycle` (4 → 5) ›
-   `inception` and `specification`.
+   `charter`, `pack-release-cycle` (5 → 6) › `validate`, `sw-life-cycle` (4 → 5) › `inception`,
+   `specification` and `sunset`.
 3. **Wave close** (dl-020 R2): `sw-life-cycle` › `tooling` (in the same version bump as step 2)
    and `tooling-change` (2 → 3) › `deliver`.
-4. **Templates:** `memory/templates/plan.md` (Context: dl-020 R3; Handoff: dl-017 R1; Execution
-   Notes: dl-020 R2) and `memory/templates/task.md` (Execution Notes: dl-018 R1, dl-019 R2).
-5. **Directive:** `traceability` gets dl-020 R1.
+4. **Templates:** `.wingfoil/memory/templates/plan.md` (Context: dl-020 R3; Handoff: dl-017 R1; Execution
+   Notes: dl-020 R2) and `.wingfoil/memory/templates/task.md` (Execution Notes: dl-018 R1, dl-019 R2).
+5. **Directive:** `traceability` gets dl-020 R1; it has no version line, so none is bumped.
 6. **Checks:** `npm run -s wingfoil -- workflow list`, `dna show` and `directives list` exit 0 with
    no warning; the includes checked by hand (`wingfoil-cli` W-08); `tooling-delivery` and
-   `kanban-delivery` compared, differing only in roles and descriptions; `npm test`,
+   `kanban-delivery` parsed as YAML, with `name`, `version`, every `role` and every `description`
+   removed, give equal trees (bug-001); `npm test`,
    `npm run lint`, `npm run check:packs` and `npm run validate` exit 0.
 7. **Review:** an independent review of the whole change (dl-017 R1), its findings fixed; a
    re-review when a fix changes a rule (dl-017 R2 applied to configuration).

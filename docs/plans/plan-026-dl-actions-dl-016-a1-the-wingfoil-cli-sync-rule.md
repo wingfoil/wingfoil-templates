@@ -27,15 +27,21 @@ does is already fixed by rule 6 and the README: it sets `answered_by` and every 
 `open` "only … from what WingFoil published".
 
 Options for the wording, to be chosen by the approver when this plan is presented:
-- **(a) Keep the cadence (recommended).** `release-planning` is read as WingFoil's release
-  planning, the moment dl-006 R3 and dl-001 D6 already tie this inbox to: "7. Sync the inbox at
-  every release planning of WingFoil and at every bump of the WingFoil pin: read what WingFoil
-  published about this repository's notes (source key `svc-018`), set `status` and `answered_by`
-  from it (rule 6), and record the sync under **Last sync** in `docs/wingfoil-feedback/README.md`."
-  No name that does not exist; no new cadence; no decision-log.
-- **(b) Tie the sync to this repository's workflows.** A `sync` step in `wingfoil-release-intake`
-  (at each WingFoil release) and at every pin bump. It moves the sync from WingFoil's planning to
-  its release, a change of cadence: a decision-log first (dl-016 A1), then the change.
+- **(a) Read `release-planning` as WingFoil's (recommended).** Rule 8 of the same directive already
+  says "WingFoil's release planning", and dl-006 R3 and dl-001 D6 time this inbox by it (for the
+  notes reaching WingFoil). Text: "7. Sync the inbox at every release planning of WingFoil and at
+  every bump of the WingFoil pin: read what WingFoil published about this repository's notes
+  (source key `svc-018`), set `status` and `answered_by` from it (rule 6), and record the sync
+  under **Last sync** in `docs/wingfoil-feedback/README.md`." It removes the two missing names
+  without a workflow change. It is a reading of the shared text, not its letter: the approver's
+  choice of (a) in chat rules that reading; otherwise it goes to a decision-log (dl-016 A1). Cost:
+  nothing in this repository sees when WingFoil plans a release, so the sync depends on WingFoil's
+  announcement and "Last sync" can stay stale.
+- **(b) Tie the sync to an event this repository sees.** A `sync` step in
+  `wingfoil-release-intake` (`version` 3 → 4), run at each WingFoil release, and at every pin bump.
+  It moves the sync from WingFoil's planning to its release, a change of cadence: a decision-log
+  first (dl-016 A1), then the change. If chosen, plan-026 waits for that decision-log on a branch of
+  its own, and plan-027 closes `config/dl-016-actions` alone.
 
 ## Steps
 
@@ -43,17 +49,19 @@ All on the branch `config/dl-016-actions`, from `main` at `274dd76`, shared with
 
 1. **claude:** rule 7 of `.wingfoil/directives/custom/wingfoil-cli.md` reworded as the approver
    chose; the directive's version 1.2 → 1.3, dated the day of the change; *Checked against* stays
-   `wingfoil@0.2.2`. One commit. With option (b), this step waits for the decision-log's approval.
+   `wingfoil@0.2.2`. One commit. With option (b), this step and the change to
+   `wingfoil-release-intake` wait for the decision-log's approval.
 2. **claude:** checks: `npm run -s wingfoil -- directives list` exits 0 with no warning; `npm test`
    (the inbox tests read the directive's table) and `npm run lint` exit 0.
-3. **claude:** an independent review of the change (dl-017 R1), its findings fixed.
+3. **claude:** an independent review of the change (dl-017 R1), its findings fixed; a re-review
+   when a fix changes the rule (dl-017 R2).
 4. **Branch close,** with plan-027: push, the real CI run's conclusion recorded here; on the
    approver's OK, `--no-ff` merge into `main`, push, the branch removed.
 
 ## Handoff
 
 - **claude:** steps 1–4, except the merge OK. It never runs `memory approve` or `memory reject`.
-- **Approver:** the choice of wording (a) or (b) when this plan is presented; the merge OK.
+- **Approver:** this plan, with the choice of (a) or (b), before it is submitted; the merge OK.
 - Done when the reworded rule is on `main`, pushed. The plan then goes `active → done`.
 
 ## Execution Notes
