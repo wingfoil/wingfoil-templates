@@ -2,7 +2,7 @@
 id: dl-019-an-acceptance-found-unsatisfiable-during-the-build-goes-to-the-approver-when-it-is-found
 type: decision-log
 title: "An Acceptance found unsatisfiable during the build goes to the approver when it is found"
-status: pending
+status: approved
 tags: ["process","retrospective"]
 ---
 
