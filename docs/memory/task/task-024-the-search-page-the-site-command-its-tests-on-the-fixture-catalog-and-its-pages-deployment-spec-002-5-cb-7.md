@@ -215,3 +215,13 @@ Branch `task/task-024-site`, run through `tooling-delivery` as `developer` (`cod
   added.
 - 2026-10-12, CI (acceptance 11): run 38217775205 on `eea09d0`, conclusion `success` for
   `validate (22.12.0)` and `validate (22.21.0)`, each building the site.
+- 2026-10-12: approved by the approver; CI run 38219774196 on the branch head `d124f2d` was
+  `success`. Merged into `main` with `--no-ff` (`280e78c`) and pushed; the branch is removed.
+- 2026-10-12, acceptance 9, the deployed site (CB-7), checked before `done`:
+  - `pages.yml` run 38220457129 on the merge commit `280e78c`: conclusion `success` (jobs
+    `build` and `deploy` both `success`);
+  - `curl -sI https://wingfoil.github.io/wingfoil-templates/`: `HTTP/2 200`,
+    `content-type: text/html; charset=utf-8`; the page starts with the charset meta and the CSP;
+  - `curl -sI -H 'Origin: https://example.org'` on `…/catalog-index.json` and `…/llms.txt`:
+    `HTTP/2 200` and `access-control-allow-origin: *` for both; `curl -s <url> | cmp` against
+    `main`'s `catalog-index.json` and `llms.txt`: equal for both.

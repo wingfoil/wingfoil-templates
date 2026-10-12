@@ -138,3 +138,9 @@ which stay outside W14.
 - 2026-10-12: task 5: task-023 (the root README; dl-014 D7 T6) done, merged `dafd120`. The README
   links `CATALOG.md`, `llms.txt` and the specifications and names no published state of its own
   (the approver's ruling). Next: task 6, the search page.
+- 2026-10-12: task 6: task-024 (the search page; spec-002 §5, CB-7) done, merged `280e78c`. The site
+  is live at `https://wingfoil.github.io/wingfoil-templates/`, deployed by `pages.yml` (run
+  38220457129, `success`), serving `catalog-index.json` and `llms.txt` with CORS `*`. The
+  approver enabled Pages with the `github-pages` environment restricted to `main`. **All seven
+  tasks of the plan are done.** Next: the citation task the coordinating session asked for (the
+  approver's confirmation), then the check of W14's exit criterion and the wave close.
