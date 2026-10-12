@@ -130,3 +130,9 @@ All on the branch `retro/2026-10-12-periodic`, from `main` at `62979cd`.
 - 2026-10-12: independent review of this plan (approve after amendments, eleven findings), amended
   before the body commit; presented to the approver, who approved it in chat and asked to submit
   it and start `explore`.
+- 2026-10-12, `explore`: plan submitted `active` (`7be574e`). Four read-only subagents mined the
+  sources (W5; W6–W7 and the inbox; W14 and spec-002; the three divergences); the inventory was
+  committed (`62616d4`), checked by an independent review (about 60 citations, approve after
+  amendments, eleven findings) and amended. Every relayed input was confirmed on its sources except
+  the GitHub Pages confirmation on the wrong repository, which no element records (marked `?`).
+  Next: the approver's checkpoint (`additional-points`).
