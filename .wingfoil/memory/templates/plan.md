@@ -28,4 +28,5 @@ phase: ""
 
 <!-- Filled while the plan runs: deviations, blockers, decisions taken, WingFoil friction
      (also recorded in docs/wingfoil-feedback/). At wave close: per tech-spec, the errata and
-     rulings recorded in the wave, and the element the approver names to fold them back (dl-020). -->
+     rulings recorded in the wave, and the element the approver names to fold them back
+     (dl-020). -->
