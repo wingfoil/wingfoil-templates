@@ -2,7 +2,7 @@
 id: task-025-the-feedback-inbox-cites-as-wingfoil-does-the-full-service-id-and-the-full-sha
 type: task
 title: "The feedback inbox cites as WingFoil does: the full service id and the full sha"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-change › deliver, tooling-delivery)
 depends_on: ["task-017-record-the-wingfoil-source-key-svc-018-in-the-feedback-inbox"]
 tags: ["tooling","W14","feedback"]
@@ -73,3 +73,12 @@ read the README (the ledger and the `**Source key:**` label) and must pass uncha
   merge base; the label the tests read, one paragraph only) and nits (the target sentence, the
   wave tag), applied while `pending`. Unlike task-017, which was committed on `main`, this task
   runs on its own branch, as every task does.
+- 2026-10-12, build on `task/task-025-citation` (`8b0c028`): the paragraph of acceptance 3; no
+  test changed (the inbox tests read the ledger and the `**Source key:**` label, and pass).
+  `git diff --name-only origin/main...HEAD` lists `docs/wingfoil-feedback/README.md` only.
+- 2026-10-12: independent review of the build (a subagent with its own context; the paragraph
+  compared with the target text, the full service id with WingFoil's service element): approve.
+- 2026-10-12: Acceptance 1–2 on Node.js 22.21.0 and 22.12.0: 803 tests pass; `lint`,
+  `check:pins`, `check:schemas` and `check:packs` exit 0; CB-8 holds; no dependency added.
+- 2026-10-12, CI (acceptance 5): run 38222096312 on `8b0c028`, conclusion `success` for
+  `validate (22.12.0)` and `validate (22.21.0)`.
