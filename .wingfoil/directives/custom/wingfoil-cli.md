@@ -9,7 +9,7 @@ tags: [custom, wingfoil, cli, governance]
 
 # Directive — Using the pinned WingFoil CLI
 
-**Version:** 1.2 · **Date:** 2026-10-12 · **Checked against:** `wingfoil@0.2.2`
+**Version:** 1.3 · **Date:** 2026-10-12 · **Checked against:** `wingfoil@0.2.2`
 
 Global. Applies to every role, human or agent, that runs the WingFoil CLI in this repository.
 
@@ -26,7 +26,9 @@ Global. Applies to every role, human or agent, that runs the WingFoil CLI in thi
 6. `answered_by` and the statuses `needs-info`, `captured`, `resolved`, `declined` and `duplicate`
    are set only by the sync, from what WingFoil published, never by judgement. WingFoil cites a note
    as `<service id>/F-<nnn>@<sha>`.
-7. Run `wingfoil-sync` at every `release-planning` and at every pin bump, and record the sync in
+7. Sync the inbox at every release planning of WingFoil and at every bump of the WingFoil pin:
+   read what WingFoil published about this repository's notes (source key `svc-018`), set `status`
+   and `answered_by` from it (rule 6), and record the sync under **Last sync** in
    `docs/wingfoil-feedback/README.md`.
 8. A change to `schema/` (the contract with the WingFoil CLI) and the publication of a pack that
    WingFoil bundles each produce a note, so that WingFoil's release planning sees them.
