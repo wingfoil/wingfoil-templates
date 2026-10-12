@@ -35,8 +35,10 @@ function withTree(body: (tree: string) => void): void {
   }
 }
 
-/** The number the next note takes in this repository's inbox, which the tests copy (bug-002). */
-const NEXT = `F-${String(notesOf(join(REPO_ROOT, INBOX)).length + 1).padStart(3, '0')}`;
+/** The number the tool gives the next note of this repository's inbox, which the tests copy:
+ *  the highest number plus one (bug-002). */
+const NEXT = `F-${String(Math.max(0, ...notesOf(join(REPO_ROOT, INBOX))
+  .map((note) => Number(note.file.slice(2, 5)))) + 1).padStart(3, '0')}`;
 
 const last = (tree: string): { file: string; body: string; title: string } => {
   const notes = notesOf(join(tree, INBOX));
