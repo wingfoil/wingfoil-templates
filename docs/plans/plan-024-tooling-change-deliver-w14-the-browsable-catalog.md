@@ -144,3 +144,6 @@ which stay outside W14.
   approver enabled Pages with the `github-pages` environment restricted to `main`. **All seven
   tasks of the plan are done.** Next: the citation task the coordinating session asked for (the
   approver's confirmation), then the check of W14's exit criterion and the wave close.
+- 2026-10-12: task-025 (the inbox cites as WingFoil does: the full service id and the full sha),
+  hosted here after task 6 at the approver's confirmation, done, merged `1a08bb8`; the
+  coordinating session has its reply. Next: the check of W14's exit criterion and the wave close.

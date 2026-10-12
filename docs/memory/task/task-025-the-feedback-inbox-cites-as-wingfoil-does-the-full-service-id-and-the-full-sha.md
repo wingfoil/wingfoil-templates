@@ -82,3 +82,8 @@ read the README (the ledger and the `**Source key:**` label) and must pass uncha
   `check:pins`, `check:schemas` and `check:packs` exit 0; CB-8 holds; no dependency added.
 - 2026-10-12, CI (acceptance 5): run 38222096312 on `8b0c028`, conclusion `success` for
   `validate (22.12.0)` and `validate (22.21.0)`.
+- 2026-10-12: approved by the approver; CI run 38223990309 on the branch head `9249d0b` was
+  `success`. Merged into `main` with `--no-ff` (`1a08bb8`) and pushed; the branch is removed.
+- 2026-10-12, acceptance 6: the coordinating session got this element's id, the commit of the
+  change (`8b0c0287e3400a07256d291ef78aba5291bb2243`, merged as
+  `1a08bb8e2059c8cfd5156e8738e9ab8ec783603d`) and the push state (`origin/main` at the merge).
