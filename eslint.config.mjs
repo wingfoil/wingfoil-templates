@@ -8,7 +8,7 @@ const DETERMINISM = 'determinism directive: no wall-clock and no randomness in t
 const RANDOM_OR_CLOCK = ['randomUUID', 'randomBytes'];
 
 export default defineConfig(
-  { ignores: ['dist/', 'node_modules/', '.cache/', 'tests/fixtures/'] },
+  { ignores: ['dist/', 'node_modules/', '.cache/', 'tests/fixtures/', '_site/'] },
   js.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
   {
@@ -55,4 +55,12 @@ export default defineConfig(
   },
   // JavaScript files are outside tsconfig.json, so they are linted without type information.
   { files: ['**/*.{js,mjs,cjs}'], extends: [tseslint.configs.disableTypeChecked] },
+  {
+    // The search page's script (task-024): a browser script, with the globals it reads.
+    files: ['index/vendor/**/*.js'],
+    languageOptions: {
+      sourceType: 'script',
+      globals: { document: 'readonly', globalThis: 'readonly' },
+    },
+  },
 );

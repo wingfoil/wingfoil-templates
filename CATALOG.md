@@ -73,3 +73,9 @@ The URL patterns:
 - compatibility: `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/compat.yaml`
 - a preset: `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/presets/<id>.yaml`
 - a transition: `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/transitions/<id>.yaml`
+
+- the search page: `https://wingfoil.github.io/wingfoil-templates/`
+- the index, on the search page: `https://wingfoil.github.io/wingfoil-templates/catalog-index.json`
+- llms.txt, on the search page: `https://wingfoil.github.io/wingfoil-templates/llms.txt`
+
+The search page serves `main` only, with no file pinned to a tag.

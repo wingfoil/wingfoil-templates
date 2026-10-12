@@ -21,6 +21,13 @@ describe('parseUrl and buildUrl (task-021 acceptance 4)', () => {
       { form: 'github-main', path: 'docs/memory/tech-spec/spec-002-pack-readme-and-catalog-index.md' }],
   ];
 
+  cases.push(
+    ['https://wingfoil.github.io/wingfoil-templates/', { form: 'pages', path: '' }],
+    ['https://wingfoil.github.io/wingfoil-templates/catalog-index.json',
+      { form: 'pages', path: 'catalog-index.json' }],
+    ['https://wingfoil.github.io/wingfoil-templates/llms.txt', { form: 'pages', path: 'llms.txt' }],
+  );
+
   for (const [url, parsed] of cases) {
     it(`parses and rebuilds ${url.replace(/^https:\/\/[^/]+\/wingfoil\/wingfoil-templates/, '…')}`,
       () => {
@@ -34,7 +41,9 @@ describe('parseUrl and buildUrl (task-021 acceptance 4)', () => {
   it('refuses a URL of no form', () => {
     for (const url of ['https://example.org/x', `${RAW}/develop/catalog.yaml`,
       `${GITHUB}/blob/base@1.0.0/packs/base/pack.yaml`, `${RAW}/refs/tags/no-at/packs/x`,
-      `${GITHUB}/tree/main/docs`]) {
+      `${GITHUB}/tree/main/docs`, 'https://wingfoil.github.io/wingfoil-templates/index.html',
+      'https://wingfoil.github.io/wingfoil-templates/catalog.yaml',
+      'https://wingfoil.github.io/other/']) {
       assert.equal(parseUrl(url), undefined, url);
     }
   });

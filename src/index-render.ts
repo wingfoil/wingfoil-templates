@@ -3,7 +3,7 @@
 import { byBytes, code } from './index-data';
 import type { CatalogIndex, IndexPack } from './index-model';
 import { entryId } from './index-model';
-import { githubMain, rawAtTag, rawMain, readmeOnGithub } from './index-urls';
+import { githubMain, pagesUrl, rawAtTag, rawMain, readmeOnGithub } from './index-urls';
 import { packAnchor } from './readme';
 
 export const SPEC_001 = 'docs/memory/tech-spec/'
@@ -23,6 +23,15 @@ export const URL_PATTERNS: readonly { label: string; url: string }[] = [
   { label: 'a preset', url: rawMain('presets/<id>.yaml') },
   { label: 'a transition', url: rawMain('transitions/<id>.yaml') },
 ];
+
+/** The search page and the index files it serves (spec-002 §4, task-024), main only. */
+export const PAGES_URLS: readonly { label: string; url: string }[] = [
+  { label: 'the search page', url: pagesUrl('') },
+  { label: 'the index, on the search page', url: pagesUrl('catalog-index.json') },
+  { label: 'llms.txt, on the search page', url: pagesUrl('llms.txt') },
+];
+
+const PAGES_NOTE = 'The search page serves `main` only, with no file pinned to a tag.';
 
 /** The agent path of spec-002 §4 (task-021), as CATALOG.md and llms.txt give it. */
 export const AGENT_STEPS: readonly string[] = [
@@ -63,7 +72,7 @@ function table(header: string[], rows: string[][]): string[] {
   return [row(header), row(header.map(() => '---')), ...rows.map(row)];
 }
 
-function axisHeading(axis: string | null): string {
+export function axisHeading(axis: string | null): string {
   if (axis === null) return 'Foundation';
   const words = axis.replaceAll('-', ' ');
   return words.charAt(0).toUpperCase() + words.slice(1);
@@ -101,7 +110,8 @@ function installSection(index: CatalogIndex): string[] {
   return ['<a id="install"></a>', '', '## Install', '', text, ''];
 }
 
-function profilesOf(index: CatalogIndex): string[][] {
+/** Each profile a preset names, in byte order, with the packs of those presets, in byte order. */
+export function profilePacks(index: CatalogIndex): Map<string, string[]> {
   const profiles = new Map<string, Set<string>>();
   for (const preset of index.presets) {
     if (preset.profile === null) continue;
@@ -109,8 +119,13 @@ function profilesOf(index: CatalogIndex): string[][] {
     for (const entry of preset.packs) packs.add(entryId(entry));
     profiles.set(preset.profile, packs);
   }
-  return [...profiles.keys()].sort(byBytes).map((profile) => [cell(profile),
-    [...(profiles.get(profile) ?? [])].sort(byBytes).map(code).join(', ')]);
+  return new Map([...profiles.keys()].sort(byBytes).map((profile) => [profile,
+    [...(profiles.get(profile) ?? [])].sort(byBytes)]));
+}
+
+function profilesOf(index: CatalogIndex): string[][] {
+  return [...profilePacks(index)].map(([profile, packs]) => [cell(profile),
+    packs.map(code).join(', ')]);
 }
 
 /** CATALOG.md (spec-002 §3.2), for the axes of catalog.yaml in their order. */
@@ -143,6 +158,10 @@ export function renderCatalog(index: CatalogIndex, axes: string[]): string {
     'The URL patterns:',
     '',
     ...URL_PATTERNS.map((pattern) => `- ${pattern.label}: ${code(pattern.url)}`),
+    '',
+    ...PAGES_URLS.map((pattern) => `- ${pattern.label}: ${code(pattern.url)}`),
+    '',
+    PAGES_NOTE,
   ];
   return `${lines.join('\n')}\n`;
 }
@@ -175,6 +194,10 @@ export function renderLlms(): string {
     '## Reading a pack',
     '',
     ...URL_PATTERNS.map((pattern) => `- ${pattern.label}: ${code(pattern.url)}`),
+    '',
+    ...PAGES_URLS.map((pattern) => `- ${pattern.label}: ${code(pattern.url)}`),
+    '',
+    PAGES_NOTE,
   ];
   return `${lines.join('\n')}\n`;
 }

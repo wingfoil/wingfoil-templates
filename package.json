@@ -23,6 +23,7 @@
     "publish:pack": "node dist/src/publish-cli.js",
     "feedback:note": "node dist/src/feedback-note-cli.js",
     "index": "node dist/src/index-cli.js",
+    "site": "node dist/src/site-cli.js",
     "wingfoil": "wingfoil"
   },
   "devDependencies": {

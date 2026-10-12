@@ -10,6 +10,8 @@ and the team-mode and stage overlays, all on top of the foundation pack `base`.
 
 - **For people:** [`CATALOG.md`](CATALOG.md) lists the published packs, by axis, with their
   presets, transitions and adoption profiles; each pack links its README at its latest version.
+  The [search page](https://wingfoil.github.io/wingfoil-templates/) finds them by text, axis, slot,
+  profile and status.
 - **For agents:** [`llms.txt`](llms.txt) is the entry point, also at
   `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/llms.txt`. It leads to the
   machine index [`catalog-index.json`](catalog-index.json) and to each published version's README
@@ -37,6 +39,7 @@ After `npm ci` and `npm run build`, the main commands are:
 - `npm run index`: writes `CATALOG.md`, `catalog-index.json`, `llms.txt` and the generated
   sections of each pack README (`--check` compares them);
 - `npm run compose`: composes packs into a `.wingfoil/` configuration;
+- `npm run site`: builds the search page from `catalog-index.json` and `llms.txt`;
 - `npm run publish:pack`: publishes a pack version, after its release is approved.
 
 The work follows the repository's own process:

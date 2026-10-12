@@ -9,6 +9,13 @@ import type { ValidateFunction } from 'ajv';
 export const INDEX_SCHEMA = join(__dirname, '..', '..', 'index', 'catalog-index.schema.json');
 
 let compiled: { validate: ValidateFunction; warnings: string[] } | undefined;
+let document: Record<string, unknown> | undefined;
+
+/** The schema as data, for what it declares (the site reads its axis order, task-024). */
+export function indexSchemaDocument(): Record<string, unknown> {
+  document ??= JSON.parse(readFileSync(INDEX_SCHEMA, 'utf8')) as Record<string, unknown>;
+  return document;
+}
 
 export function indexSchema(): { validate: ValidateFunction; warnings: string[] } {
   if (compiled === undefined) {

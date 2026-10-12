@@ -47,12 +47,18 @@ export function filled(url: string, index: CatalogIndex): string[] {
 
 /**
  * The bytes a URL serves, offline: at main from the working tree of `tree` (the github.com links
- * at main from this repository's), at a tag from `git show`; undefined when there is none.
+ * at main from this repository's), at a tag from `git show`, on the search page from the site
+ * built from `tree` (task-024); undefined when there is none.
  */
 export function resolveOffline(url: string, tree: string, repository: string,
-  repo?: TestRepo): string | undefined {
+  repo?: TestRepo, site?: string): string | undefined {
   const parsed = parseUrl(url);
   if (parsed === undefined) return undefined;
+  if (parsed.form === 'pages') {
+    if (site === undefined) return undefined;
+    const file = join(site, parsed.path === '' ? 'index.html' : parsed.path);
+    return existsSync(file) ? readFileSync(file, 'utf8') : undefined;
+  }
   if (parsed.form === 'raw-main' || parsed.form === 'github-main') {
     const root = parsed.form === 'github-main' ? repository : tree;
     const file = join(root, parsed.path);

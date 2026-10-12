@@ -83,7 +83,8 @@ describe('the CI workflow (task-013)', () => {
 
   it('runs every check, on every path', () => {
     for (const command of ['npm ci', 'npm run build', 'npm test', 'npm run lint',
-      'npm run check:pins', 'npm run check:schemas', 'npm run check:packs', 'npm audit']) {
+      'npm run check:pins', 'npm run check:schemas', 'npm run check:packs', 'npm audit',
+      'npm run site -- --out "$RUNNER_TEMP/site"']) {
       const step = stepRunning(command);
       assert.ok(step !== undefined, command);
       assert.equal(step.if, undefined, `${command} runs on every path`);

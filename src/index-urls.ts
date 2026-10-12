@@ -4,6 +4,15 @@
 export const REPOSITORY = 'wingfoil/wingfoil-templates';
 const RAW = `https://raw.githubusercontent.com/${REPOSITORY}`;
 const GITHUB = `https://github.com/${REPOSITORY}`;
+/** The search page on GitHub Pages (task-024); it serves main only. */
+const PAGES = 'https://wingfoil.github.io/wingfoil-templates';
+/** The files of main the search page serves besides itself. */
+const PAGES_FILES = new Set(['catalog-index.json', 'llms.txt']);
+
+/** A file the search page serves, or the page itself for ''. */
+export function pagesUrl(path: string): string {
+  return `${PAGES}/${path}`;
+}
 
 /** A file of the repository at main, raw. */
 export function rawMain(path: string): string {
@@ -27,7 +36,7 @@ export function githubMain(path: string): string {
 
 /** The forms of the URLs the index emits (task-021): each one has its builder above. */
 export interface ParsedUrl {
-  form: 'raw-main' | 'raw-tag' | 'readme-github' | 'github-main';
+  form: 'raw-main' | 'raw-tag' | 'readme-github' | 'github-main' | 'pages';
   tag?: string;
   path: string;
 }
@@ -74,6 +83,11 @@ function atTagForm(form: 'raw-tag' | 'readme-github', rest: string,
 /** The form, tag and path of a URL the index emits, or undefined for any other URL. */
 export function parseUrl(url: string): ParsedUrl | undefined {
   let result: ParsedUrl | undefined;
+  if (url.startsWith(`${PAGES}/`)) {
+    const path = url.slice(`${PAGES}/`.length);
+    if (path === '' || PAGES_FILES.has(path)) return { form: 'pages', path };
+    return undefined;
+  }
   if (url.startsWith(`${RAW}/main/`)) {
     const path = url.slice(`${RAW}/main/`.length);
     if (isMainFile(path)) result = parsed('raw-main', path);
@@ -94,6 +108,7 @@ export function parseUrl(url: string): ParsedUrl | undefined {
 /** The URL of a parsed form, through its builder. */
 export function buildUrl(url: ParsedUrl): string {
   switch (url.form) {
+    case 'pages': return pagesUrl(url.path);
     case 'raw-main': return rawMain(url.path);
     case 'raw-tag': return rawAtTag(url.tag ?? '', url.path);
     case 'github-main': return githubMain(url.path);

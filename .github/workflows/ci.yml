@@ -59,6 +59,8 @@ jobs:
         run: npm run check:schemas
       - name: Pack lint (spec-001 §18, F3.5)
         run: npm run check:packs
+      - name: Build the search page (task-024), as pages.yml does
+        run: npm run site -- --out "$RUNNER_TEMP/site"
       - name: Audit the root lockfile
         run: npm audit
       - name: Audit every matrix release's lockfile

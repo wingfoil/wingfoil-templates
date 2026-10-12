@@ -1,0 +1,63 @@
+# The search page (task-024, spec-002 §5, dl-014 D4): built from main's catalog-index.json and
+# llms.txt and deployed to GitHub Pages on every change of main. The build reads the repository
+# only; the deployment job alone may write Pages, and only from main (the github-pages environment
+# allows main only too). Every action is pinned to a commit SHA of a release tag.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Check out, with every tag (spec-002 §3.1)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22.21.0'
+          check-latest: false
+      - name: Install
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: The committed index is what npm run index writes
+        run: npm run index -- --check
+      - name: Build the site
+        run: npm run site -- --out _site
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
