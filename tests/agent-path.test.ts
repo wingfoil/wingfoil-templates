@@ -1,5 +1,6 @@
 import { strict as assert } from 'node:assert';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, before, describe, it } from 'node:test';
 
@@ -8,6 +9,7 @@ import { AGENT_NOTES, AGENT_STEPS, URL_PATTERNS } from '../src/index-render';
 import { parseUrl } from '../src/index-urls';
 import { scanMarkdown } from '../src/markdown-lines';
 import { isCliCommand } from '../src/readme-rules';
+import { runSite } from '../src/site';
 import { filled, relativeLinks, resolveOffline, urlsOf } from './support/agent-urls';
 import type { TestRepo } from './support/git-repo';
 import { indexCatalog } from './support/index-catalog';
@@ -22,11 +24,23 @@ function read(tree: string, file: string): string {
 describe('the agent path (task-021, CB-6 offline)', () => {
   let repo: TestRepo;
   let index: CatalogIndex;
+  let sites: string;
+  let site: string;
+  let repositorySite: string;
   before(() => {
     repo = indexCatalog();
     index = JSON.parse(read(repo.dir, 'catalog-index.json')) as CatalogIndex;
+    // The search page each tree deploys, which the Pages URLs resolve to (task-024).
+    sites = mkdtempSync(join(tmpdir(), 'agent-sites-'));
+    site = join(sites, 'fixture');
+    repositorySite = join(sites, 'repository');
+    assert.equal(runSite(['--tree', repo.dir, '--out', site]).code, 0);
+    assert.equal(runSite(['--tree', REPO_ROOT, '--out', repositorySite]).code, 0);
   });
-  after(() => repo.dispose());
+  after(() => {
+    repo.dispose();
+    rmSync(sites, { recursive: true, force: true });
+  });
 
   describe('the procedure (acceptance 3)', () => {
     it('gives the same numbered steps in CATALOG.md › For agents and in llms.txt', () => {
@@ -85,7 +99,7 @@ describe('the agent path (task-021, CB-6 offline)', () => {
         for (const url of urlsOf(file, read(repo.dir, file))) {
           assert.ok(parseUrl(url) !== undefined, `${file}: ${url} matches no form`);
           for (const concrete of filled(url, index)) {
-            assert.ok(resolveOffline(concrete, repo.dir, REPO_ROOT, repo) !== undefined,
+            assert.ok(resolveOffline(concrete, repo.dir, REPO_ROOT, repo, site) !== undefined,
               `${file}: ${concrete} resolves to nothing`);
             checked += 1;
           }
@@ -119,7 +133,8 @@ describe('the agent path (task-021, CB-6 offline)', () => {
         for (const url of urlsOf(file, read(REPO_ROOT, file))) {
           assert.ok(parseUrl(url) !== undefined, `${file}: ${url}`);
           if (!url.includes('<')) {
-            assert.ok(resolveOffline(url, REPO_ROOT, REPO_ROOT) !== undefined, url);
+            const body = resolveOffline(url, REPO_ROOT, REPO_ROOT, undefined, repositorySite);
+            assert.ok(body !== undefined, url);
           }
         }
       }

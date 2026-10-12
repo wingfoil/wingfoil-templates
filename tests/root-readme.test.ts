@@ -50,6 +50,6 @@ describe('the root README.md (task-023)', () => {
     assert.doesNotMatch(prose, /\S+@\S+\.\S+/);
     // Only relative links: github.com would turn a bare URL in prose into an absolute one.
     assert.doesNotMatch(prose.replace(/\]\([^)]*\)/g, ']'), /https?:\/\/|www\./);
-    assert.ok(named.includes('site'), 'npm run site');
+    assert.match(readme(), /^- `npm run site`: /m, 'npm run site in the command list');
   });
 });

@@ -110,7 +110,8 @@ function installSection(index: CatalogIndex): string[] {
   return ['<a id="install"></a>', '', '## Install', '', text, ''];
 }
 
-function profilesOf(index: CatalogIndex): string[][] {
+/** Each profile a preset names, in byte order, with the packs of those presets, in byte order. */
+export function profilePacks(index: CatalogIndex): Map<string, string[]> {
   const profiles = new Map<string, Set<string>>();
   for (const preset of index.presets) {
     if (preset.profile === null) continue;
@@ -118,8 +119,13 @@ function profilesOf(index: CatalogIndex): string[][] {
     for (const entry of preset.packs) packs.add(entryId(entry));
     profiles.set(preset.profile, packs);
   }
-  return [...profiles.keys()].sort(byBytes).map((profile) => [cell(profile),
-    [...(profiles.get(profile) ?? [])].sort(byBytes).map(code).join(', ')]);
+  return new Map([...profiles.keys()].sort(byBytes).map((profile) => [profile,
+    [...(profiles.get(profile) ?? [])].sort(byBytes)]));
+}
+
+function profilesOf(index: CatalogIndex): string[][] {
+  return [...profilePacks(index)].map(([profile, packs]) => [cell(profile),
+    packs.map(code).join(', ')]);
 }
 
 /** CATALOG.md (spec-002 §3.2), for the axes of catalog.yaml in their order. */

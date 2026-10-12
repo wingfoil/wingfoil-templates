@@ -30,6 +30,7 @@ describe('the Pages workflow (task-024, dl-014 D4, spec-002 §5)', () => {
   it('grants nothing at the top, and reads no secret', () => {
     assert.deepEqual(workflow['permissions'], {});
     assert.ok(!text.includes('secrets.'));
+    assert.ok(!text.includes('github.token'));
   });
 
   it('never cancels a running deployment', () => {
@@ -61,6 +62,7 @@ describe('the Pages workflow (task-024, dl-014 D4, spec-002 §5)', () => {
     assert.deepEqual(deploy['permissions'], { pages: 'write', 'id-token': 'write' });
     assert.deepEqual(deploy['environment'], { name: 'github-pages',
       url: '${{ steps.deployment.outputs.page_url }}' });
+    assert.equal(steps('deploy').length, 1, 'the deploy action only, no checkout');
     const action = steps('deploy').find((step) => step.uses?.startsWith('actions/deploy-pages@'));
     assert.equal(action?.id, 'deployment');
   });

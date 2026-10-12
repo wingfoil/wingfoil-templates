@@ -9,11 +9,10 @@ import { parseArgs } from 'node:util';
 
 import { byBytes, isDoc } from './index-data';
 import type { CatalogIndex, IndexPack } from './index-model';
-import { axisHeading, firstSentence } from './index-render';
-import { indexSchemaErrors } from './index-schema';
+import { axisHeading, firstSentence, profilePacks } from './index-render';
+import { indexSchemaDocument, indexSchemaErrors } from './index-schema';
 import { readmeOnGithub } from './index-urls';
 import { packAnchor } from './readme';
-import { YamlError, loadYamlFile } from './yaml-load';
 
 /** index/vendor/ at the repository root, from the compiled module under dist/src/. */
 export const VENDOR = join(__dirname, '..', '..', 'index', 'vendor');
@@ -62,16 +61,18 @@ function axisOf(pack: IndexPack): string {
   return pack.axis ?? 'foundation';
 }
 
-/** The axes in catalog.yaml's order when the tree has one, else in the packs' order. */
-function axesOf(tree: string, index: CatalogIndex): string[] {
-  try {
-    const catalog = loadYamlFile(join(tree, 'catalog.yaml'), 'catalog.yaml').data;
-    if (isDoc(catalog) && isDoc(catalog['axes'])) return ['foundation', ...Object.keys(catalog['axes'])];
-  } catch (error) {
-    if (!(error instanceof YamlError)) throw error;
-  }
-  return ['foundation', ...[...new Set(index.packs.map(axisOf))].filter((axis) =>
-    axis !== 'foundation').sort(byBytes)];
+/**
+ * The axes in the order of the index schema's `axis` enum (catalog.yaml's order, null being the
+ * foundation): the site reads the index only, and the schema has checked every pack's axis.
+ */
+function axesOf(): string[] {
+  const schema = indexSchemaDocument();
+  const pack = isDoc(schema['$defs']) && isDoc(schema['$defs']['pack']) ? schema['$defs']['pack']
+    : {};
+  const axis = isDoc(pack['properties']) && isDoc(pack['properties']['axis'])
+    ? pack['properties']['axis'] : {};
+  const values = Array.isArray(axis['enum']) ? axis['enum'] : [];
+  return values.map((value) => value === null ? 'foundation' : String(value));
 }
 
 function code(text: string): string {
@@ -118,16 +119,8 @@ function uniqueSorted(values: string[]): string[] {
 }
 
 function profilesSection(index: CatalogIndex): string[] {
-  const profiles = new Map<string, Set<string>>();
-  for (const preset of index.presets) {
-    if (preset.profile === null) continue;
-    const packs = profiles.get(preset.profile) ?? new Set<string>();
-    for (const entry of preset.packs) packs.add(entry.slice(0, entry.indexOf('@') < 0 ? undefined
-      : entry.indexOf('@')));
-    profiles.set(preset.profile, packs);
-  }
-  const rows = [...profiles.keys()].sort(byBytes).map((profile) => `<tr><td>${html(profile)}</td>`
-    + `<td>${[...(profiles.get(profile) ?? [])].sort(byBytes).map(code).join(', ')}</td></tr>`);
+  const rows = [...profilePacks(index)].map(([profile, packs]) => `<tr><td>${html(profile)}</td>`
+    + `<td>${packs.map(code).join(', ')}</td></tr>`);
   return ['<h2>Profiles</h2>', ...(rows.length === 0 ? ['<p>None yet.</p>']
     : table(['Profile', 'Packs'], rows))];
 }
@@ -204,6 +197,12 @@ function build(tree: string, out: string, vendor: string): string[] {
     throw new SiteError(1, `catalog-index.json: breaks index/catalog-index.schema.json: `
       + errors.join('; '));
   }
+  for (const pack of (index as CatalogIndex).packs) {
+    if (!pack.versions.some((version) => version.version === pack.latest)) {
+      throw new SiteError(1, `catalog-index.json: ${pack.id}: latest ${pack.latest} is none of `
+        + 'its versions');
+    }
+  }
   const script = read(join(vendor, 'search.js'), 'index/vendor/search.js');
   const recorded = read(join(vendor, 'search.js.sha256'), 'index/vendor/search.js.sha256')
     .toString('utf8');
@@ -213,8 +212,7 @@ function build(tree: string, out: string, vendor: string): string[] {
   }
   const files = new Map<string, Buffer>([
     ['catalog-index.json', indexBytes],
-    ['index.html', Buffer.from(renderSite(index as CatalogIndex, axesOf(tree, index as
-      CatalogIndex)), 'utf8')],
+    ['index.html', Buffer.from(renderSite(index as CatalogIndex, axesOf()), 'utf8')],
     ['llms.txt', llms],
     ['search.js', script],
     ['site.css', Buffer.from(CSS, 'utf8')],

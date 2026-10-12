@@ -21,6 +21,16 @@
     return;
   }
 
+  /** A row's profiles; a malformed attribute is no profile, never an error for the whole page. */
+  function profilesOf(row) {
+    try {
+      const profiles = JSON.parse(row.dataset.profiles || '[]');
+      return Array.isArray(profiles) ? profiles.map(String) : [];
+    } catch {
+      return [];
+    }
+  }
+
   const form = document.getElementById('search');
   const query = document.getElementById('query');
   const selects = ['axis', 'slot', 'profile', 'status'].map((name) => document.getElementById(name));
@@ -30,7 +40,7 @@
     axis: row.dataset.axis || '',
     slot: row.dataset.slot || '',
     status: row.dataset.status || '',
-    profiles: JSON.parse(row.dataset.profiles || '[]'),
+    profiles: profilesOf(row),
   }));
 
   function apply() {

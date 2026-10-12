@@ -103,6 +103,38 @@ describe('npm run site (task-024)', () => {
       assert.equal(runSite(['--nope']).code, 3);
     });
 
+    it('lists every pack whatever the tree\'s catalog.yaml says: it reads only the index', () => {
+      for (const catalog of [undefined, 'axes:\n  methodology: {}\n', 'not: [yaml']) {
+        const tree = join(dir, `axes-${String(catalog?.length ?? 0)}`);
+        mkdirSync(tree);
+        for (const file of ['catalog-index.json', 'llms.txt']) cpSync(join(repo.dir, file), join(tree, file));
+        if (catalog !== undefined) writeFileSync(join(tree, 'catalog.yaml'), catalog);
+        const site = join(tree, 'site');
+        assert.equal(runSite(['--tree', tree, '--out', site]).code, 0);
+        assert.equal(readFileSync(join(site, 'index.html'), 'utf8'), html, String(catalog));
+      }
+    });
+
+    it('writes LF endings and nothing of the tree\'s absolute path', () => {
+      for (const file of FILES) {
+        assert.ok(!readFileSync(join(out, file), 'utf8').includes('\r'), file);
+      }
+      assert.ok(!html.includes(repo.dir) && !html.includes(dir));
+    });
+
+    it('refuses an index whose latest version is not among its versions', () => {
+      const tree = join(dir, 'no-latest');
+      mkdirSync(tree);
+      cpSync(join(repo.dir, 'llms.txt'), join(tree, 'llms.txt'));
+      const index = JSON.parse(readFileSync(join(repo.dir, 'catalog-index.json'), 'utf8')) as
+        CatalogIndex;
+      const pack = index.packs[0];
+      assert.ok(pack !== undefined);
+      pack.latest = '9.9.9';
+      writeFileSync(join(tree, 'catalog-index.json'), `${JSON.stringify(index, null, 2)}\n`);
+      assert.equal(runSite(['--tree', tree, '--out', join(tree, 'site')]).code, 1);
+    });
+
     it('refuses an index that breaks its schema', () => {
       const tree = join(dir, 'bad-index');
       mkdirSync(tree);
@@ -188,6 +220,11 @@ describe('npm run site (task-024)', () => {
       assert.deepEqual(found('').length, 5);
     });
 
+    it('searches titles and profiles too', () => {
+      assert.deepEqual(found('KANBAN FLOW'), ['methodology/kanban']);
+      assert.deepEqual(found('teams'), ['methodology/kanban', 'phase/inception/lean']);
+    });
+
     it('filters by axis, slot and profile', () => {
       assert.deepEqual(found('', { axis: 'phase' }), ['phase/inception/lean']);
       assert.deepEqual(found('', { slot: 'inception' }), ['phase/inception/lean']);
@@ -202,6 +239,68 @@ describe('npm run site (task-024)', () => {
       assert.equal(matches(pack, '', { status: 'active' }), false);
       assert.equal(matches(pack, '', { profile: 'small teams' }), false);
       assert.equal(matches(pack, 'OLD', {}), true);
+    });
+  });
+
+  describe('the wiring, on a fake document (acceptance 4)', () => {
+    interface Fake {
+      hidden: boolean;
+      id?: string;
+      value?: string;
+      dataset?: Record<string, string>;
+      listeners: Record<string, (event: { preventDefault: () => void }) => void>;
+      addEventListener: (type: string, listener: (event: { preventDefault: () => void }) =>
+        void) => void;
+    }
+    const element = (extra: Partial<Fake> = {}): Fake => {
+      const fake: Fake = { hidden: false, listeners: {}, addEventListener: (type, listener) => {
+        fake.listeners[type] = listener;
+      }, ...extra };
+      return fake;
+    };
+
+    it('shows the form, filters the rows, and keeps the form from submitting', () => {
+      const parsed = rows(html);
+      const trs = parsed.map((row) => element({ dataset: { pack: row.id, text: row.text,
+        axis: row.axis, slot: row.slot, status: row.status,
+        profiles: JSON.stringify(row.profiles) } }));
+      const byId: Record<string, Fake> = { search: element({ hidden: true }),
+        query: element({ value: '' }) };
+      for (const name of ['axis', 'slot', 'profile', 'status']) byId[name] = element({ id: name, value: '' });
+      const document = {
+        getElementById: (id: string): Fake | undefined => byId[id],
+        querySelectorAll: (): Fake[] => trs,
+      };
+      runInNewContext(readFileSync(join(out, 'search.js'), 'utf8'), { document });
+      assert.equal(byId['search']?.hidden, false);
+      let prevented = false;
+      byId['search']?.listeners['submit']?.({ preventDefault: () => { prevented = true; } });
+      assert.ok(prevented);
+      const query = byId['query'];
+      assert.ok(query !== undefined);
+      query.value = 'board';
+      query.listeners['input']?.({ preventDefault: () => undefined });
+      assert.deepEqual(trs.filter((tr) => !tr.hidden).map((tr) => tr.dataset?.['pack']),
+        ['methodology/kanban']);
+      query.value = '';
+      const axis = byId['axis'];
+      assert.ok(axis !== undefined);
+      axis.value = 'stage';
+      axis.listeners['change']?.({ preventDefault: () => undefined });
+      assert.deepEqual(trs.filter((tr) => !tr.hidden).map((tr) => tr.dataset?.['pack']),
+        ['stage/mvp', 'stage/production']);
+    });
+
+    it('treats a malformed data-profiles as no profile', () => {
+      const tr = element({ dataset: { pack: 'x', text: 'x', axis: '', slot: '', status: 'active',
+        profiles: '{not json' } });
+      const byId: Record<string, Fake> = { search: element({ hidden: true }), query: element({ value: '' }) };
+      for (const name of ['axis', 'slot', 'profile', 'status']) byId[name] = element({ id: name, value: '' });
+      const document = { getElementById: (id: string): Fake | undefined => byId[id],
+        querySelectorAll: (): Fake[] => [tr] };
+      assert.doesNotThrow(() => runInNewContext(readFileSync(join(out, 'search.js'), 'utf8'),
+        { document }));
+      assert.equal(byId['search']?.hidden, false);
     });
   });
 });
