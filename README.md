@@ -1,9 +1,9 @@
 # WingFoil-Templates
 
 The official catalog of template packs for WingFoil: the WingFoil CLI downloads them to configure
-a project's `.wingfoil/` (its DNA, Memory types, directives and workflows). Packs come on the axes of [`catalog.yaml`](catalog.yaml):
-methodologies, phase methods, project blueprints, governance packs, and the team-mode and stage
-overlays, all on top of the foundation pack `base`.
+a project's `.wingfoil/` (its DNA, Memory types, directives and workflows). Packs come on the axes
+of [`catalog.yaml`](catalog.yaml): methodologies, phase methods, project blueprints, governance
+packs, and the team-mode and stage overlays, all on top of the foundation pack `base`.
 
 ## The catalog
 
