@@ -83,6 +83,23 @@ task-001.
 
 ## Design
 
-Filled at the start of the work.
+On `retro/2026-10-12-periodic` (Context), through `tooling-delivery` as `developer`
+(`documentation`, `wingfoil-cli`). Content only: no code, no new test. The checks are the existing
+`tests/wingfoil-feedback.test.ts` and `tests/support/inbox.ts` (numbering, first line, sections,
+ledger as the note says, directive Note column linking existing notes), unchanged.
+
+Red steps (dl-018 R1, ahead of its configuration change):
+1. The ledger rows and the directive's Note cells for F-022 … F-026 first, without the notes:
+   `tests/wingfoil-feedback.test.ts` fails on the ledger and on the directive's links (red,
+   counted in the notes).
+2. The five notes, from reproductions run with WingFoil 0.2.2 from npm (`node_modules/.bin`, the
+   governance pin) in a scratch `git init` + `wingfoil init --template Kanban` project outside the
+   repository; outputs copied with neutral paths: green.
+3. F-012's title in the note and the ledger together; F-018's output block from a reproduction
+   (`workflow list` accepts `where:`; `memory search --help` has no field filter): stays green; a
+   mutation (ledger title left truncated) shows the ledger test guards the title.
+
+Commits: one for steps 1–2 (notes, ledger, directive), one for step 3; the Execution Notes list
+them.
 
 ## Execution Notes
