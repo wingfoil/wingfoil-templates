@@ -29,6 +29,8 @@ export interface SiteResult {
 export interface SiteOptions {
   /** The folder of search.js and search.js.sha256; tests give a copy. */
   vendor?: string;
+  /** The axes, in order, in place of the index schema's; tests give a short list. */
+  axes?: string[];
 }
 
 class SiteError extends Error {
@@ -180,7 +182,7 @@ function read(path: string, what: string): Buffer {
   return readFileSync(path);
 }
 
-function build(tree: string, out: string, vendor: string): string[] {
+function build(tree: string, out: string, vendor: string, axes: string[]): string[] {
   if (existsSync(out) && (!statSync(out).isDirectory() || readdirSync(out).length > 0)) {
     throw new SiteError(2, `${out}: exists and is not an empty directory`);
   }
@@ -198,6 +200,9 @@ function build(tree: string, out: string, vendor: string): string[] {
       + errors.join('; '));
   }
   for (const pack of (index as CatalogIndex).packs) {
+    if (!axes.includes(axisOf(pack))) {
+      throw new SiteError(1, `catalog-index.json: ${pack.id}: no section for its axis ${axisOf(pack)}`);
+    }
     if (!pack.versions.some((version) => version.version === pack.latest)) {
       throw new SiteError(1, `catalog-index.json: ${pack.id}: latest ${pack.latest} is none of `
         + 'its versions');
@@ -212,7 +217,7 @@ function build(tree: string, out: string, vendor: string): string[] {
   }
   const files = new Map<string, Buffer>([
     ['catalog-index.json', indexBytes],
-    ['index.html', Buffer.from(renderSite(index as CatalogIndex, axesOf()), 'utf8')],
+    ['index.html', Buffer.from(renderSite(index as CatalogIndex, axes), 'utf8')],
     ['llms.txt', llms],
     ['search.js', script],
     ['site.css', Buffer.from(CSS, 'utf8')],
@@ -235,7 +240,7 @@ export function runSite(argv: string[], options: SiteOptions = {}): SiteResult {
     return { code: 3, lines: [error instanceof Error ? error.message : String(error)] };
   }
   try {
-    return { code: 0, lines: build(tree, out, options.vendor ?? VENDOR) };
+    return { code: 0, lines: build(tree, out, options.vendor ?? VENDOR, options.axes ?? axesOf()) };
   } catch (error) {
     if (error instanceof SiteError) return { code: error.code, lines: [`site: ${error.message}`] };
     const system = error instanceof Error

@@ -135,6 +135,12 @@ describe('the agent path (task-021, CB-6 offline)', () => {
           if (!url.includes('<')) {
             const body = resolveOffline(url, REPO_ROOT, REPO_ROOT, undefined, repositorySite);
             assert.ok(body !== undefined, url);
+            const page = parseUrl(url);
+            if (page?.form === 'pages') {
+              assert.equal(body, page.path === '' ? read(repositorySite, 'index.html')
+                : read(REPO_ROOT, page.path), url);
+              if (page.path === '') assert.ok(body.startsWith('<!DOCTYPE html>'), url);
+            }
           }
         }
       }

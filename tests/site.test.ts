@@ -221,8 +221,30 @@ describe('npm run site (task-024)', () => {
     });
 
     it('searches titles and profiles too', () => {
-      assert.deepEqual(found('KANBAN FLOW'), ['methodology/kanban']);
       assert.deepEqual(found('teams'), ['methodology/kanban', 'phase/inception/lean']);
+      // A word only one pack's title holds.
+      const tree = join(dir, 'title');
+      mkdirSync(tree);
+      cpSync(join(repo.dir, 'llms.txt'), join(tree, 'llms.txt'));
+      const index = JSON.parse(readFileSync(join(repo.dir, 'catalog-index.json'), 'utf8')) as
+        CatalogIndex;
+      const pack = index.packs[2];
+      assert.ok(pack !== undefined);
+      pack.title = 'Zebrafoil';
+      writeFileSync(join(tree, 'catalog-index.json'), `${JSON.stringify(index, null, 2)}\n`);
+      assert.equal(runSite(['--tree', tree, '--out', join(tree, 'site')]).code, 0);
+      const page = readFileSync(join(tree, 'site', 'index.html'), 'utf8');
+      assert.deepEqual(rows(page).filter((row) => matches(row, 'ZEBRAFOIL', {})).map((row) => row.id),
+        [pack.id]);
+    });
+
+    it('refuses a pack whose axis it has no section for', () => {
+      const tree = join(dir, 'axis');
+      mkdirSync(tree);
+      cpSync(join(repo.dir, 'llms.txt'), join(tree, 'llms.txt'));
+      cpSync(join(repo.dir, 'catalog-index.json'), join(tree, 'catalog-index.json'));
+      assert.equal(runSite(['--tree', tree, '--out', join(tree, 'site')], { axes: ['foundation'] })
+        .code, 1);
     });
 
     it('filters by axis, slot and profile', () => {
