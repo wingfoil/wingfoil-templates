@@ -79,3 +79,6 @@ On the branch `config/dl-016-actions`, shared with plan-026; one commit per step
 - Done when the changes are on `main`, pushed. The plan then goes `active → done`.
 
 ## Execution Notes
+- 2026-10-12: independent review (approve after amendments: `pack-cycle` › `design` dropped as not
+  in dl-017's list; `sunset` added; a concrete comparison of the two loops), amended. Presented to
+  the approver, who approved it in chat and asked to proceed.

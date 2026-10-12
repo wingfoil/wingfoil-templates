@@ -66,3 +66,7 @@ All on the branch `config/dl-016-actions`, from `main` at `274dd76`, shared with
 - Done when the reworded rule is on `main`, pushed. The plan then goes `active → done`.
 
 ## Execution Notes
+- 2026-10-12: independent review (approve after amendments: option (a) is a reading, not the
+  letter; (b) needs `wingfoil-release-intake` too), amended. Presented to the approver, who chose
+  option (a) in chat, ruling the reading of `release-planning` as WingFoil's release planning, and
+  asked to proceed.
