@@ -41,7 +41,7 @@ sha of the commit it read (WingFoil `COLLABORATION.md` › Credit, task-271), fo
 | [F-009](F-009-agent-first-overlay-depends-on-agent-work.md) | The agent-first overlay depends on v0.3/v0.4 agent work | request | open | |
 | [F-010](F-010-first-packs-fix-scaffold-gaps.md) | The first packs fix known scaffold gaps | request | open | |
 | [F-011](F-011-memory-add-set-fills-only-id-tokens.md) | memory add --set fills only id tokens, so required fields cannot be set at creation | defect | open | |
-| [F-012](F-012-format-key-distinct-from-version.md) | Format key distinct from version: | request | open | |
+| [F-012](F-012-format-key-distinct-from-version.md) | Format key distinct from `version:` | request | open | |
 | [F-013](F-013-migrate-and-capabilities-commands.md) | wingfoil migrate and wingfoil capabilities | request | open | |
 | [F-014](F-014-agents-md-marker-format.md) | The base pack depends on the AGENTS.md marker format of dl-137's tech-spec | request | open | |
 | [F-015](F-015-one-composer-for-packs.md) | One composer for packs, written in WingFoil-Templates and proposed to WingFoil | request | open | |

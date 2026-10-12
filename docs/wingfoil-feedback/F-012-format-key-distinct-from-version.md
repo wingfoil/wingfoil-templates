@@ -1,6 +1,6 @@
 ---
 id: F-012
-title: "Format key distinct from version:"
+title: "Format key distinct from `version:`"
 kind: request
 status: open
 wingfoil_version: 0.2.2-1778-g30f06016
