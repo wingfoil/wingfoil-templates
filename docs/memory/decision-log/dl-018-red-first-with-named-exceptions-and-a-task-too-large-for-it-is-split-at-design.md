@@ -2,7 +2,7 @@
 id: dl-018-red-first-with-named-exceptions-and-a-task-too-large-for-it-is-split-at-design
 type: decision-log
 title: "Red first with named exceptions, and a task too large for it is split at design"
-status: draft
+status: pending
 tags: ["process","retrospective"]
 ---
 
