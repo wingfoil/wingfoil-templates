@@ -154,7 +154,32 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-024-site`, run through `tooling-delivery` as `developer` (`code-quality`,
+`testing`, `determinism`, `security`), under `npm run lint`. Tests first.
+
+- **`index/vendor/search.js`:** an IIFE: `matches(pack, query, filters)` (pack: `{ text, axis,
+  slot, status, profiles }`), then, when `document` exists, the wiring that reads the rows'
+  `data-` attributes, builds nothing but the controls already in the HTML (a search input and four
+  `<select>`s), and sets `hidden`; otherwise `globalThis.wingfoilSearch = { matches }`.
+  `index/vendor/search.js.sha256` in `sha256sum` format.
+- **`src/site.ts`, `src/site-cli.ts`:** `runSite(argv)` (acceptance 3); `renderSite(index)`
+  writes `index.html` from the index (escaping with one `html()` helper; the tables of
+  `CATALOG.md`; each pack row a `<tr>` with `data-text`, `data-axis`, `data-slot`, `data-status`,
+  `data-profiles`; the filter options from the index's own values) and `site.css` (a constant).
+  `package.json` gains `"site": "node dist/src/site-cli.js"`.
+- **`src/index-urls.ts`:** `pagesUrl(path)` and a `pages` form in `parseUrl`/`buildUrl`;
+  `src/index-render.ts` lists the three Pages URLs in "For agents" and `llms.txt`, noted as `main`
+  only.
+- **`.github/workflows/pages.yml`:** as acceptance 8, with `actions/checkout` and
+  `actions/setup-node` at `ci.yml`'s SHAs, `actions/upload-pages-artifact` at v5.0.0
+  (`fc324d3547104276b827a68afc52ff2a11cc49c9`) and `actions/deploy-pages` at v5.0.1
+  (`368f82528645a54fb793d4d04e342629a3f51346`). `ci.yml` gains the site step.
+- **Repository files:** `.gitattributes` `index/vendor/** -text`; `.gitignore` and ESLint ignore
+  `_site/`; ESLint declares browser globals for `index/vendor/*.js`; the root README links the
+  site and names `npm run site`; spec-002's Execution Notes record P1 and P3.
+- **Tests:** `tests/site.test.ts` (acceptance 3–6, the fixture catalog), `tests/pages-workflow.test.ts`
+  (acceptance 8), and the agent-path, index-urls, root-readme and ci-workflow tests extended
+  (acceptance 7, 8).
 
 ## Execution Notes
 
