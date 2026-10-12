@@ -58,8 +58,9 @@ On the branch `config/dl-016-actions`, shared with plan-026; one commit per step
    `specification` and `sunset`.
 3. **Wave close** (dl-020 R2): `sw-life-cycle` › `tooling` (in the same version bump as step 2)
    and `tooling-change` (2 → 3) › `deliver`.
-4. **Templates:** `.wingfoil/memory/templates/plan.md` (Context: dl-020 R3; Handoff: dl-017 R1; Execution
-   Notes: dl-020 R2) and `.wingfoil/memory/templates/task.md` (Execution Notes: dl-018 R1, dl-019 R2).
+4. **Templates:** `.wingfoil/memory/templates/plan.md` (Context: dl-020 R3; Handoff: dl-017 R1;
+   Execution Notes: dl-020 R2) and `.wingfoil/memory/templates/task.md` (Execution Notes: dl-018
+   R1, dl-019 R2).
 5. **Directive:** `traceability` gets dl-020 R1; it has no version line, so none is bumped.
 6. **Checks:** `npm run -s wingfoil -- workflow list`, `dna show` and `directives list` exit 0 with
    no warning; the includes checked by hand (`wingfoil-cli` W-08); `tooling-delivery` and

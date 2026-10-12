@@ -15,11 +15,12 @@ approver's request in chat on 2026-10-12. Like plan-011, no workflow phase hosts
 change is an action of an approved element.
 
 Rule 7 of the `wingfoil-cli` directive (version 1.2) reads: "Run `wingfoil-sync` at every
-`release-planning` and at every pin bump, and record the sync in `docs/wingfoil-feedback/README.md`".
-No workflow of this repository is named `wingfoil-sync`, and none has a `release-planning` phase
-(task-010 and plan-020 › Execution Notes; inventory §7). The text came word for word from the shared
-directive text task-010's Acceptance 6 required, written for consumers whose own release cycle has a
-`release-planning` phase. The inbox README still says "Last sync: none".
+`release-planning` and at every pin bump, and record the sync in
+`docs/wingfoil-feedback/README.md`". No workflow of this repository is named `wingfoil-sync`, and
+none has a `release-planning` phase (task-010 and plan-020 › Execution Notes; inventory §7). The
+text came word for word from the shared directive text task-010's Acceptance 6 required, written for
+consumers whose own release cycle has a `release-planning` phase. The inbox README still says "Last
+sync: none".
 
 dl-016 A1: a correction of names that do not exist in the configuration; if choosing where the
 sync runs changes when it runs, that choice is a decision-log of its own (dl-006 R2). What a sync
