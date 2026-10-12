@@ -4,3 +4,5 @@ packs/** -text
 tests/fixtures/** -text
 # schema/ is hashed by the schema-note rule (task-015): the bytes as committed.
 schema/** -text
+# The search page's script is checked against its sha256 (task-024): the bytes as committed.
+index/vendor/** -text

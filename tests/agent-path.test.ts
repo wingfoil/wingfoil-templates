@@ -94,6 +94,17 @@ describe('the agent path (task-021, CB-6 offline)', () => {
       assert.ok(checked > 30, `${checked} URLs`);
     });
 
+    it('lists the search page\'s URLs, which serve main only (task-024)', () => {
+      for (const file of ['CATALOG.md', 'llms.txt']) {
+        const urls = urlsOf(file, read(repo.dir, file));
+        for (const path of ['', 'catalog-index.json', 'llms.txt']) {
+          assert.ok(urls.includes(`https://wingfoil.github.io/wingfoil-templates/${path}`),
+            `${file}: ${path}`);
+        }
+        assert.match(read(repo.dir, file), /serves `main` only/);
+      }
+    });
+
     it('names root files in its relative links', () => {
       for (const file of ['CATALOG.md', 'llms.txt']) {
         for (const target of relativeLinks(read(repo.dir, file))) {

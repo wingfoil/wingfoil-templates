@@ -53,6 +53,11 @@ export function resolveOffline(url: string, tree: string, repository: string,
   repo?: TestRepo): string | undefined {
   const parsed = parseUrl(url);
   if (parsed === undefined) return undefined;
+  // The search page serves main's index files and index.html (task-024).
+  if (parsed.form === 'pages') {
+    const file = join(tree, parsed.path === '' ? 'CATALOG.md' : parsed.path);
+    return existsSync(file) ? readFileSync(file, 'utf8') : undefined;
+  }
   if (parsed.form === 'raw-main' || parsed.form === 'github-main') {
     const root = parsed.form === 'github-main' ? repository : tree;
     const file = join(root, parsed.path);

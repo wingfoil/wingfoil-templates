@@ -6,6 +6,8 @@ import { describe, it } from 'node:test';
 import { scanMarkdown } from '../src/markdown-lines';
 import { REPO_ROOT } from './support/paths';
 
+const SITE = 'https://wingfoil.github.io/wingfoil-templates/';
+
 function readme(): string {
   return readFileSync(join(REPO_ROOT, 'README.md'), 'utf8');
 }
@@ -14,7 +16,9 @@ describe('the root README.md (task-023)', () => {
   it('links only relative targets that exist in the repository (acceptance 4)', () => {
     const targets = scanMarkdown(readme()).links.map((link) => link.target);
     assert.ok(targets.length > 0);
-    for (const target of targets) {
+    // The one absolute link: the search page (task-024).
+    assert.equal(targets.filter((target) => target === SITE).length, 1);
+    for (const target of targets.filter((entry) => entry !== SITE)) {
       assert.doesNotMatch(target, /^[a-z][a-z0-9+.-]*:/i, `${target}: a scheme`);
       assert.ok(!target.startsWith('/'), `${target}: an absolute path`);
       const bare = target.replace(/#.*$/, '');
@@ -46,5 +50,6 @@ describe('the root README.md (task-023)', () => {
     assert.doesNotMatch(prose, /\S+@\S+\.\S+/);
     // Only relative links: github.com would turn a bare URL in prose into an absolute one.
     assert.doesNotMatch(prose.replace(/\]\([^)]*\)/g, ']'), /https?:\/\/|www\./);
+    assert.ok(named.includes('site'), 'npm run site');
   });
 });

@@ -3,7 +3,7 @@
 import { byBytes, code } from './index-data';
 import type { CatalogIndex, IndexPack } from './index-model';
 import { entryId } from './index-model';
-import { githubMain, rawAtTag, rawMain, readmeOnGithub } from './index-urls';
+import { githubMain, pagesUrl, rawAtTag, rawMain, readmeOnGithub } from './index-urls';
 import { packAnchor } from './readme';
 
 export const SPEC_001 = 'docs/memory/tech-spec/'
@@ -23,6 +23,15 @@ export const URL_PATTERNS: readonly { label: string; url: string }[] = [
   { label: 'a preset', url: rawMain('presets/<id>.yaml') },
   { label: 'a transition', url: rawMain('transitions/<id>.yaml') },
 ];
+
+/** The search page and the index files it serves (spec-002 §4, task-024), main only. */
+export const PAGES_URLS: readonly { label: string; url: string }[] = [
+  { label: 'the search page', url: pagesUrl('') },
+  { label: 'the index, on the search page', url: pagesUrl('catalog-index.json') },
+  { label: 'llms.txt, on the search page', url: pagesUrl('llms.txt') },
+];
+
+const PAGES_NOTE = 'The search page serves `main` only, with no file pinned to a tag.';
 
 /** The agent path of spec-002 §4 (task-021), as CATALOG.md and llms.txt give it. */
 export const AGENT_STEPS: readonly string[] = [
@@ -63,7 +72,7 @@ function table(header: string[], rows: string[][]): string[] {
   return [row(header), row(header.map(() => '---')), ...rows.map(row)];
 }
 
-function axisHeading(axis: string | null): string {
+export function axisHeading(axis: string | null): string {
   if (axis === null) return 'Foundation';
   const words = axis.replaceAll('-', ' ');
   return words.charAt(0).toUpperCase() + words.slice(1);
@@ -143,6 +152,10 @@ export function renderCatalog(index: CatalogIndex, axes: string[]): string {
     'The URL patterns:',
     '',
     ...URL_PATTERNS.map((pattern) => `- ${pattern.label}: ${code(pattern.url)}`),
+    '',
+    ...PAGES_URLS.map((pattern) => `- ${pattern.label}: ${code(pattern.url)}`),
+    '',
+    PAGES_NOTE,
   ];
   return `${lines.join('\n')}\n`;
 }
@@ -175,6 +188,10 @@ export function renderLlms(): string {
     '## Reading a pack',
     '',
     ...URL_PATTERNS.map((pattern) => `- ${pattern.label}: ${code(pattern.url)}`),
+    '',
+    ...PAGES_URLS.map((pattern) => `- ${pattern.label}: ${code(pattern.url)}`),
+    '',
+    PAGES_NOTE,
   ];
   return `${lines.join('\n')}\n`;
 }
