@@ -142,3 +142,7 @@ them.
   is computed from this repository's inbox rather than from the copied tree, equivalent while the
   tree is a straight copy. Not re-reviewed (dl-017 R2): the fixes change wording only, no behaviour,
   test or Acceptance command.
+- 2026-10-12, CI (Acceptance 7): run 38287775681 on `da2843e`, conclusion `success` for both
+  `validate (22.21.0)` and `validate (22.12.0)`; the earlier run 38287205946 on `f834b0a` was
+  `success` too, and 38284275227 on `c966e12` the `failure` that bug-002 explains. Submitted
+  `in-review`.
