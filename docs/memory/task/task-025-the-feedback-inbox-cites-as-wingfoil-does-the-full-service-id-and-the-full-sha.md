@@ -60,7 +60,10 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-025-citation`, run through `tooling-delivery` as `developer` (`documentation`).
+One paragraph of `docs/wingfoil-feedback/README.md` is replaced by the target text of acceptance
+3; no code and no new test: `tests/wingfoil-feedback.test.ts` and `tests/support/inbox.ts` already
+read the README (the ledger and the `**Source key:**` label) and must pass unchanged.
 
 ## Execution Notes
 
