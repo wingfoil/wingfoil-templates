@@ -33,18 +33,19 @@ CI run 38284275227 on `c966e12` ended in `failure` for the same reason.
 
 ## Expected
 
-The tests derive the expected number from the inbox they copy (the number of notes plus one), so
-adding a note never breaks them; the tooling is unchanged.
+The tests derive the expected number from the inbox they copy as the tool does
+(`src/feedback-inbox.ts`: the highest note number plus one), so adding a note never breaks them;
+the tooling is unchanged. `F-017` in the same file is not part of this bug: it is the schema
+baseline note the tool reads, and moves only when a new schema note is written.
 
 ## Reproduction
 
-1. On `main` at `62979cd`, add any note `docs/wingfoil-feedback/F-022-x.md` in the inbox format,
-   with its ledger row.
-2. `npm test`: the three tests above fail.
+1. Check out `c966e12` (it adds F-022 … F-026 to the inbox).
+2. `npm test`: tests 44, 46 and 47 fail.
 
 ## Execution Notes
 
 - 2026-10-12: captured under plan-025 (the periodic retrospective), which hosts task-026; the
   approver ruled, on 2026-10-12, that task-026 fixes it (dl-019 R1: the conflict between task-026's
   Acceptance 1 and 6 was raised when found). Severity minor: tests only, no tooling behaviour is
-  wrong; it blocks every new note until fixed.
+  wrong; its cost is that CI fails on any branch that adds a note until it is fixed.
