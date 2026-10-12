@@ -80,7 +80,15 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-023-root-readme`, run through `tooling-delivery` as `developer` (`code-quality`,
+`testing`, `documentation`), under `npm run lint`. Tests first.
+
+- **`README.md`** at the root, written by hand, in the order of acceptance 3. No Version line: it
+  is not a vision document (`doc-versioning`). The list of pack kinds follows the axes of
+  `catalog.yaml`.
+- **`tests/root-readme.test.ts`:** acceptance 4 (link targets through `scanMarkdown`, each relative
+  and existing) and 5 (the `npm run` scripts against `package.json`, no email outside code spans).
+  It fails while `README.md` is missing, which is the red.
 
 ## Execution Notes
 
