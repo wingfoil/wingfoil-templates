@@ -2,7 +2,7 @@
 id: dl-016-retrospective-periodic-2026-10-12
 type: decision-log
 title: "Retrospective periodic 2026-10-12"
-status: pending
+status: approved
 tags: ["process","retrospective"]
 ---
 
