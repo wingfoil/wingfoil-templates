@@ -9,13 +9,14 @@
 name: kanban-delivery
 kind: sub
 description: "Kanban delivery loop"
-version: 3
+version: 4
 element: task
 phases:
   - name: plan
     description: >-
-      Pick the next work within the WIP limits; create the task (pack, Context, Acceptance) and
-      submit it; the approver accepts it into the backlog or rejects it.
+      Pick the next work within the WIP limits; create the task (pack, Context, Acceptance); an
+      independent review of the body, amended while pending (dl-017); submit it; the approver
+      accepts it into the backlog or rejects it.
     role: product-owner
     actions:
       - 'memory.add(type: task)'
@@ -23,19 +24,27 @@ phases:
       - memory.approve           # pending → backlog (approver)
     approval: { by_role: approver }
   - name: design
-    description: "Write the Design section, open branch task/<id>, start the task (backlog → in-progress)."
+    description: >-
+      Write the Design section. An Acceptance criterion that cannot hold as written goes to the
+      approver when found, and the work on it waits for the ruling (dl-019). Open branch
+      task/<id>, start the task (backlog → in-progress).
     role: pack-author
     actions:
       - memory.submit            # backlog → in-progress
   - name: build
     description: >-
-      Write the pack content (pack-authoring). Every changed pack composes and validates with the
-      pinned WingFoil CLI before review.
+      Write the pack content (pack-authoring). An Acceptance criterion that cannot hold goes to the
+      approver when found (dl-019). Every changed pack composes and validates with the pinned
+      WingFoil CLI before review.
     role: pack-author
   - name: review
     description: >-
-      Check against the directives of the roles involved; the Acceptance commands pass. Then
-      in-progress → in-review; the approver accepts (→ approved) or sends it back (→ in-progress).
+      An independent review of the build against the directives of the roles involved; the
+      Acceptance commands pass; an Acceptance deviation with no ruling is a blocking finding
+      (dl-019). After its fixes, a re-review when a fix changes behaviour, a test or an Acceptance
+      command; the notes record each verdict, its findings by severity and the fixing commit
+      (dl-017). Then in-progress → in-review; the approver accepts (→ approved) or sends it back
+      (→ in-progress).
     role: reviewer
     actions:
       - memory.submit            # in-progress → in-review
