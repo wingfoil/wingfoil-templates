@@ -99,3 +99,16 @@ Branch `task/task-023-root-readme`, run through `tooling-delivery` as `developer
   link test's edge cases and the review-only clause; no email) and nits. The approver ruled the
   published state out of the README (Context); every other point applied while `pending`.
   Re-review: approve; its nits (the email check, the pull-request sentence) applied.
+- 2026-10-12, build on `task/task-023-root-readme` (`f4ae5fe`): the test was written first and
+  failed (3 of 3) while `README.md` did not exist; README and test share one commit. The review
+  fixes were checked by mutation (a misspelled script name now fails the test).
+- 2026-10-12: independent review of the build (a subagent with its own context): approve after
+  one should-fix (the script pattern stopped at the first character outside `[a-z:-]`, so a wrong
+  name could pass) and nits (a bare URL in prose; a trailing slash on a file link; the
+  installation tense against `CATALOG.md`; wording), applied in `eb9da79`. Not re-reviewed: the
+  fixes tighten the test and the wording only.
+- 2026-10-12: Acceptance 1–2 on Node.js 22.21.0 and 22.12.0: 774 tests pass; `lint`,
+  `check:pins`, `check:schemas`, `check:packs` and `validate` exit 0; CB-8 holds; no dependency
+  added. Review check of acceptance 5: no local path, private repository, email or person.
+- 2026-10-12, CI (acceptance 7): run 38208505161 on `eb9da79`, conclusion `success` for
+  `validate (22.12.0)` and `validate (22.21.0)`.
