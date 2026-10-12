@@ -1,9 +1,10 @@
 # WingFoil-Templates
 
-The official catalog of template packs for WingFoil: the WingFoil CLI downloads them to configure
-a project's `.wingfoil/` (its DNA, Memory types, directives and workflows). Packs come on the axes
-of [`catalog.yaml`](catalog.yaml): methodologies, phase methods, project blueprints, governance
-packs, and the team-mode and stage overlays, all on top of the foundation pack `base`.
+The official catalog of template packs for WingFoil: the WingFoil CLI downloads them to configure a
+project's `.wingfoil/` (its DNA, Memory types, directives and workflows), once a release provides
+it; until then each pack README gives the hand steps. Packs come on the axes of
+[`catalog.yaml`](catalog.yaml): methodologies, phase methods, project blueprints, governance packs,
+and the team-mode and stage overlays, all on top of the foundation pack `base`.
 
 ## The catalog
 
@@ -29,8 +30,9 @@ The first pack, `base`, is published only after WingFoil v0.3 is released.
 The tooling is TypeScript on Node.js 22.12 or later ([adr-002](docs/memory/adr/adr-002-repository-tooling-in-typescript-on-node.js-22.12-or-later.md)).
 After `npm ci` and `npm run build`, the main commands are:
 
-- `npm run validate`: the one validation command: schemas, lint, the index, and every preset and
-  example composed twice and run through the compatibility matrix;
+- `npm run validate`: the one validation command, which checks the schemas, the lint and the
+  index, and composes every preset and example twice and runs them through the compatibility
+  matrix;
 - `npm run check:packs`: the lint rules alone;
 - `npm run index`: writes `CATALOG.md`, `catalog-index.json`, `llms.txt` and the generated
   sections of each pack README (`--check` compares them);
@@ -43,7 +45,7 @@ The work follows the repository's own process:
 - the decisions, specifications, tasks and other Memory elements: [`docs/memory/`](docs/memory/);
 - the phase plans: [`docs/plans/`](docs/plans/);
 - the workflows: [`.wingfoil/workflows/`](.wingfoil/workflows/);
-- the notes for WingFoil: [`docs/wingfoil-feedback/`](docs/wingfoil-feedback/).
+- the feedback inbox for WingFoil: [`docs/wingfoil-feedback/`](docs/wingfoil-feedback/).
 
 The repository does not take outside pull requests for now; contributions open later as Memory
 elements ([`03_is-isnot.md`](docs/01_vision/03_is-isnot.md)).

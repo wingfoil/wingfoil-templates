@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { join, normalize } from 'node:path';
 import { describe, it } from 'node:test';
 
@@ -17,10 +17,13 @@ describe('the root README.md (task-023)', () => {
     for (const target of targets) {
       assert.doesNotMatch(target, /^[a-z][a-z0-9+.-]*:/i, `${target}: a scheme`);
       assert.ok(!target.startsWith('/'), `${target}: an absolute path`);
-      const path = target.replace(/#.*$/, '').replace(/\/$/, '');
+      const bare = target.replace(/#.*$/, '');
+      const path = bare.replace(/\/$/, '');
       const resolved = normalize(path);
       assert.ok(resolved !== '..' && !resolved.startsWith('../'), `${target}: out of the root`);
       assert.ok(path === '' || existsSync(join(REPO_ROOT, path)), `${target}: no such file`);
+      // A trailing slash names a directory only: github.com breaks a file link that has one.
+      if (bare.endsWith('/')) assert.ok(statSync(join(REPO_ROOT, path)).isDirectory(), target);
     }
   });
 
@@ -34,11 +37,14 @@ describe('the root README.md (task-023)', () => {
   it('names only scripts of package.json, and no email address (acceptance 5)', () => {
     const scripts = (JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8')) as
       { scripts: Record<string, string> }).scripts;
-    const named = [...readme().matchAll(/npm run (?:-s )?([a-z][a-z:-]*)/g)].map((match) => match[1]);
+    const named = [...readme().matchAll(/npm run (?:-s )?([^\s`]+)/g)]
+      .map((match) => (match[1] ?? '').replace(/[.,;:]+$/, ''));
     assert.ok(named.length >= 5, named.join(', '));
     for (const script of named) assert.ok(Object.hasOwn(scripts, script ?? ''), script);
     const prose = scanMarkdown(readme()).codeSpans.reduce((text, span) =>
       text.replace(`\`${span.text}\``, ''), readme());
     assert.doesNotMatch(prose, /\S+@\S+\.\S+/);
+    // Only relative links: github.com would turn a bare URL in prose into an absolute one.
+    assert.doesNotMatch(prose.replace(/\]\([^)]*\)/g, ']'), /https?:\/\/|www\./);
   });
 });
