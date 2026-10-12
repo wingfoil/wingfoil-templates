@@ -147,3 +147,12 @@ which stay outside W14.
 - 2026-10-12: task-025 (the inbox cites as WingFoil does: the full service id and the full sha),
   hosted here after task 6 at the approver's confirmation, done, merged `1a08bb8`; the
   coordinating session has its reply. Next: the check of W14's exit criterion and the wave close.
+- 2026-10-12, wave close: W14's exit criterion holds on `main` (`1e3d7fe`): the fixture catalog
+  with tags is browsable in `tests/fixtures/index/expected/` (`CATALOG.md`, `catalog-index.json`,
+  `llms.txt`, the pack READMEs) and in a search page built in the tests (`tests/site.test.ts`);
+  CI run 38224999958 and Pages run 38224999879 on that commit are `success`, and the live site
+  serves `main`'s files. The seven tasks of the plan (task-018 … task-024) and the hosted task-025
+  are `done`. Owed after the wave: `base`'s charter lists CB-6 with CB-1 and CB-2; `base` gets
+  examples when the first methodology enters the tree (W10); an amendment of spec-002 carries the
+  errata and the rulings on P1–P3 its Execution Notes record. The approver closed W14 in chat; this
+  plan goes `active → done`.
