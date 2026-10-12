@@ -2,7 +2,7 @@
 id: task-024-the-search-page-the-site-command-its-tests-on-the-fixture-catalog-and-its-pages-deployment-spec-002-5-cb-7
 type: task
 title: "The search page: the site command, its tests on the fixture catalog, and its Pages deployment (spec-002 §5, CB-7)"
-status: pending
+status: backlog
 pack: ""            # tooling task (tooling-change › deliver, tooling-delivery)
 depends_on: ["task-023-a-root-readme.md-that-links-the-catalog-dl-014-d7-t6"]
 tags: ["tooling","W14","F2.9"]
