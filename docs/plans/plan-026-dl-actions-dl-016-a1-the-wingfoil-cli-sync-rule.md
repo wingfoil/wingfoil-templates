@@ -76,4 +76,5 @@ All on the branch `config/dl-016-actions`, from `main` at `274dd76`, shared with
   amendments; no finding on rule 7).
 - 2026-10-13, branch close: CI run 38314131196 on `93be5c1`, conclusion `success` for
   `validate (22.21.0)` and `validate (22.12.0)`. Waiting for the approver's merge OK.
-- 2026-10-13: the approver gave the merge OK in chat; `--no-ff` merge into `main`, push, branch removed. This plan goes `active → done`.
+- 2026-10-13: the approver gave the merge OK in chat; `--no-ff` merge into `main`, push, branch
+  removed. This plan goes `active → done`.
