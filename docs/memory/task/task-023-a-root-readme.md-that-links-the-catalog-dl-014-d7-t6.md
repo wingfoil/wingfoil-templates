@@ -2,7 +2,7 @@
 id: task-023-a-root-readme.md-that-links-the-catalog-dl-014-d7-t6
 type: task
 title: "A root README.md that links the catalog (dl-014 D7 T6)"
-status: in-review
+status: approved
 pack: ""            # tooling task (tooling-change › deliver, tooling-delivery)
 depends_on: ["task-022-examples-as-fixtures-the-layout-the-lint-rule-and-the-validation-step-spec-002-2.4-cb-2"]
 tags: ["tooling","W14","F2.8"]
