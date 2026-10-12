@@ -2,7 +2,7 @@
 id: plan-025-retrospective-periodic-retrospective-m1-tooling-from-plan-015-to-the-close-of-w14
 type: plan
 title: "retrospective-periodic retrospective: M1 Tooling, from plan-015 to the close of W14"
-status: active
+status: done
 workflow: "retrospective-periodic"
 phase: "retrospective"
 tags: ["process","retrospective","M1"]
