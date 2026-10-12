@@ -2,7 +2,7 @@
 id: plan-026-dl-actions-dl-016-a1-the-wingfoil-cli-sync-rule
 type: plan
 title: "dl actions: dl-016 A1, the wingfoil-cli sync rule"
-status: active
+status: done
 workflow: "decision-log-ingest"
 phase: "rule"
 tags: ["config","retrospective"]
