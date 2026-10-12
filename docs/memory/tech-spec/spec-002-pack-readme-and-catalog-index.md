@@ -312,3 +312,16 @@ command (F3.1):
   every tag; example fixtures are not presets. Additions dl-014 does not state, for the ruling: the
   site command's name (P3), and section 4 listing what a pack declares without telling an addition
   from a tightening (§2.2).
+- 2026-10-12, the open points and errata of wave W14 (plan-024), recorded for the next element
+  that amends this specification:
+  - **P1** (the approver, 2026-10-11): no third-party search library; the page's script is
+    written in this repository, `index/vendor/search.js`, its sha256 in
+    `index/vendor/search.js.sha256` and checked by the build (task-024);
+  - **P2** (the approver, 2026-10-11): `excerpt` carries section 2's first paragraph only, no
+    profile text (task-019);
+  - **P3** (task-024): `npm run site -- [--tree <dir>] --out <dir>`, writing `index.html`,
+    `site.css`, `search.js`, `catalog-index.json` and `llms.txt`;
+  - **§3.1 erratum** (task-019): a version's `tag` is derived as `<catalog pack id>@<version>`;
+    `catalog.yaml` has no such field;
+  - **§2.4 erratum** (the approver, 2026-10-11, task-022): the exemption holds while the tree holds
+    no methodology (§6 CB-2's reading), not "until the first methodology is published".
