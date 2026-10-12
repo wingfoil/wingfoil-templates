@@ -61,8 +61,11 @@ Each change of process takes effect only when its own decision-log is approved.
 
 ### Change: WingFoil-side points, as feedback notes
 
-- **W1 —** Five new notes, each reproduced with WingFoil 0.2.2 alone, written by task-026 (hosted
-  by plan-025; the inbox's rule that a new note names the task it comes from):
+- **W1 —** Five new notes, each reproduced with WingFoil 0.2.2 alone, `status: open`, with their
+  ledger rows and `wingfoil-cli` entries (rule 3). They are written by task-026, hosted by plan-025,
+  not directly in `capture` as plan-025 step 3 says: `tests/support/inbox.ts` requires a new note's
+  first line to be "New note (task-NNN).", and the approver chose, on 2026-10-12, a task of its own
+  over a change of that rule.
   - F-022 — `memory submit` commits uncommitted body edits in its transition commit (W-04);
   - F-023 — the `submit` commit subject does not name the transition (W-05);
   - F-024 — the illegal-transition error does not name the expected verb or state (W-06);
@@ -71,14 +74,18 @@ Each change of process takes effect only when its own decision-log is approved.
     W-13 in `wingfoil-cli`).
 - **W2 —** The same task fixes two notes before WingFoil reads them: the truncated ledger title of
   F-012, and an output block for F-018's evidence (WingFoil dl-163 R4).
-- **W3 —** task-026 is merged and pushed to `main` before 2026-10-20 (dl-006 R3).
+- **W3 —** task-026 is `done`, merged and pushed to `main` before 2026-10-20 (dl-006 R3); this is
+  part of plan-025's completion criterion.
+- **W4 —** The other entries of §7 get no new note: W-01 is expected until a release reads the
+  `format:` key (F-017, dl-009); W-03 is a behaviour, not a defect; W-08 is WingFoil's bug-145,
+  already open; W-02 and W-09 … W-12 have their notes (F-011, F-018 … F-021).
 
 ### Change: this repository's configuration, as actions
 
 - **A1 —** `wingfoil-cli` rule 7 names `wingfoil-sync` and `release-planning`, which no workflow of
-  this repository defines (§7); the inbox README still says "Last sync: none". The rule is reworded
-  to name where this repository syncs (for example `wingfoil-release-intake` and every pin bump)
-  and what a sync does. Applied through its own element.
+  this repository defines (§7); the inbox README still says "Last sync: none". A correction of
+  names that do not exist in the configuration, through its own element. If choosing where the sync
+  runs changes when it runs, that choice is a decision-log of its own (dl-006 R2).
 - **A2 —** The configuration changes of dl-017 … dl-020, once approved, applied through one
   configuration-actions plan.
 
@@ -88,8 +95,14 @@ Each change of process takes effect only when its own decision-log is approved.
   the Execution Notes record the drift, which is enough (§5).
 - **N2 —** The id collision between parallel sessions (plan-022, §5): it happened once, and the
   worktree practice (K6) already avoids it.
-- **N3 —** About 12–15 commits per task (§1): mostly the hand body commits and the `submit`s of
-  W-04 and W-05, now reported to WingFoil (F-022, F-023).
+- **N3 —** About 12–15 commits per task (§1): partly the hand body commits W-04 requires, and line
+  wraps fixed in separate commits; W-04 and W-05 (identical `submit` subjects) are reported to
+  WingFoil by W1 (F-022, F-023).
+- **N5 —** Process slips, each corrected when found and recorded in its element: work hosted
+  outside a plan's backlog (task-017 on `main`, task-025, bug-001 without a `bug-ingest` plan, §5);
+  the untracked note committed by mistake (`8b7f782`, removed in `1aa50c3`), scope creep in
+  `b0291ad`, commit hygiene, pushes blocked on 2026-10-06 (§6); wording slips in approved elements,
+  the ESLint gap of adr-003 and the stop after W5 (§4). No change beyond K3 and K6.
 - **N4 —** The GitHub Pages confirmation first made on the wrong repository, relayed by the
   approver: no element records it (§6); no action.
 
@@ -103,6 +116,7 @@ Each change of process takes effect only when its own decision-log is approved.
 - **O2 —** The debts carried past M1 (§9) stay with their owners or with the approver: `base`'s
   charter lists CB-6; `base`'s examples at W10; the spec-002 amendment (C4 covers the rule, not
   this amendment); the `0.x` clauses and bug-001's `deliver`/`author` slip (plan-018); the
-  `LICENSE` file.
+  `LICENSE` file; dl-007, dl-011 … dl-013 and dl-015 waiting for WingFoil's contracts or
+  `base`'s charter; `validate:publication` failing until a release reads the `format:` key (dl-009).
 
 ## Execution Notes
