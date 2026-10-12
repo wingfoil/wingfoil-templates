@@ -34,8 +34,8 @@ phases:
   - name: build
     description: >-
       Write the pack content (pack-authoring). An Acceptance criterion that cannot hold goes to the
-      approver when found (dl-019). Every changed pack composes and validates with the pinned
-      WingFoil CLI before review.
+      approver when found, and the work on it waits (dl-019). Every changed pack composes and
+      validates with the pinned WingFoil CLI before review.
     role: pack-author
   - name: review
     description: >-

@@ -15,4 +15,4 @@ Keep the chain decision → pack charter → task → pack-release across every 
 - Every pack-release lists the tasks and bugs it ships.
 - A rule taken from WingFoil (an element of the WingFoil repository) cites that element's id.
 - An erratum of an approved tech-spec, found during a wave, is recorded in the tech-spec's Execution
-  Notes with the element that found it, and folded back at wave close (dl-020).
+  Notes with the element that found it, and listed at wave close (dl-020).

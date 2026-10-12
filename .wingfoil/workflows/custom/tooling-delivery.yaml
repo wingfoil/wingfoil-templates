@@ -37,20 +37,21 @@ phases:
       - memory.submit            # backlog → in-progress
   - name: build
     description: >-
-      Write the tooling (code-quality, testing, determinism), test first: the Execution Notes
-      record each red run (command and failing count); a test written after the change only for
-      third-party tool configuration or content, checked by mutation (dl-018). An Acceptance
-      criterion that cannot hold goes to the approver when found (dl-019). The build, the tests and
-      the Acceptance commands pass before review.
+      Write the tooling (code-quality, testing, determinism), test first: the Execution Notes record
+      each red run (command and failing count); beyond the testing directive's characterization of
+      existing behaviour, a test written after the change only for third-party tool configuration or
+      content, checked by mutation (dl-018). An Acceptance criterion that cannot hold goes to the
+      approver when found, and the work on it waits (dl-019). The build, the tests and the
+      Acceptance commands pass before review.
     role: developer
   - name: review
     description: >-
       An independent review of the build against the reviewer's directives and the developer's
-      (code-quality, testing), red first included (dl-018); the Acceptance commands pass; an
-      Acceptance deviation with no ruling is a blocking finding (dl-019). After its fixes, a
-      re-review when a fix changes behaviour, a test or an Acceptance command; the notes record
-      each verdict, its findings by severity and the fixing commit (dl-017). Then in-progress →
-      in-review; the approver accepts (→ approved) or sends it back (→ in-progress).
+      (code-quality, testing); red first checked, a departure is a finding (dl-018); the Acceptance
+      commands pass; an Acceptance deviation with no ruling is a blocking finding (dl-019). After
+      its fixes, a re-review when a fix changes behaviour, a test or an Acceptance command; the
+      notes record each verdict, its findings by severity and the fixing commit (dl-017). Then
+      in-progress → in-review; the approver accepts (→ approved) or sends it back (→ in-progress).
     role: reviewer
     actions:
       - memory.submit            # in-progress → in-review

@@ -40,7 +40,7 @@ phases:
       The repository tooling (reference composer, validation command, CI), one tooling-delivery
       iteration per task with no pack (dl-005 G7, bug-001). Later tooling changes run through
       tooling-change. At each wave close, the plan lists per tech-spec the errata and rulings of the
-      wave and the approver names who folds them back (dl-020).
+      wave, and the approver names who folds them back or rules that none is needed (dl-020).
     iterate_over: task
     where: { pack: "" }
     include: tooling-delivery
