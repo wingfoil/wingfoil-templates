@@ -4,10 +4,13 @@
 name: tooling-change
 kind: main
 description: "Change the repository tooling, one tooling-delivery iteration per tooling task"
-version: 2
+version: 3
 phases:
   - name: deliver
-    description: "One tooling-delivery iteration per tooling task (a task whose `pack` is empty)."
+    description: >-
+      One tooling-delivery iteration per tooling task (a task whose `pack` is empty). At each wave
+      close, the plan lists per tech-spec the errata and rulings of the wave and the approver names
+      who folds them back (dl-020).
     iterate_over: task
     where: { pack: "" }
     include: tooling-delivery

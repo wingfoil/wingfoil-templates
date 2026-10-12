@@ -2,10 +2,12 @@
 name: adr-ingest
 kind: main
 description: "Capture an architecture decision record into Memory."
-version: 1
+version: 2
 phases:
   - name: capture
-    description: "Record the context, the decision and its consequences."
+    description: >-
+      Record the context, the decision and its consequences; an independent review, amended
+      while pending (dl-017).
     role: architect
     actions:
       - 'memory.add(type: adr)'

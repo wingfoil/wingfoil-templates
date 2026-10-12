@@ -4,7 +4,7 @@
 name: pack-release-cycle
 kind: sub
 description: "Classify, validate, approve and publish one pack version"
-version: 5
+version: 6
 element: pack-release
 phases:
   - name: prepare
@@ -29,7 +29,8 @@ phases:
       combination that includes the pack, with the oldest and the newest released WingFoil that
       compat.yaml lists as compatible; each must validate with zero errors, and two compositions
       must be byte-identical.
-      Record commands and exit codes in the Validation section.
+      Record commands and exit codes in the Validation section. An independent review of the
+      pack-release before the approver's gate (dl-017).
     role: reviewer
     actions:
       - memory.submit            # validating → releasing
