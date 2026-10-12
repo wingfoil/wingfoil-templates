@@ -2,7 +2,7 @@
 id: task-025-the-feedback-inbox-cites-as-wingfoil-does-the-full-service-id-and-the-full-sha
 type: task
 title: "The feedback inbox cites as WingFoil does: the full service id and the full sha"
-status: approved
+status: done
 pack: ""            # tooling task (tooling-change › deliver, tooling-delivery)
 depends_on: ["task-017-record-the-wingfoil-source-key-svc-018-in-the-feedback-inbox"]
 tags: ["tooling","W14","feedback"]
