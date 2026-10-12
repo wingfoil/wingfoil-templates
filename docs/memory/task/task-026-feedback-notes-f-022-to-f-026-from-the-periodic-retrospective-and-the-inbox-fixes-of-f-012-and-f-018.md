@@ -129,7 +129,16 @@ them.
   (approve after amendments: "highest plus one", not "count plus one"; a minimal reproduction)
   and amended, then submitted `pending`.
 - Task commits: `31c6f78` (notes, ledger, directive), `c966e12` (F-012, F-018), `a6bfcd3` and
-  `76372e2` (bug-002 fix); with this element's own commits and bug-002's (`de41b71`, `f5d8177`).
+  `76372e2` (bug-002 fix), `4c6fd64` (note wording after the build review); with this element's own
+  commits and bug-002's (`5f976ad` add, `de41b71` body, `f5d8177` amendments, `633aeee` submit).
 - 2026-10-12, Acceptance from a clean clone at `633aeee`, on Node.js 22.21.0 and 22.12.0: `npm ci`,
   `build`, `test` (803 tests, 803 pass), `lint`, `check:pins`, `check:schemas`, `check:packs` exit
   0; CB-8 `git diff --exit-code origin/main...HEAD -- catalog.yaml compat.yaml schema/` exits 0.
+- 2026-10-12, build review (independent subagent): approve after amendments, 0 blocking, 2
+  should-fix, 3 nits. It re-ran the reproductions of F-022 … F-026 and F-018 with WingFoil 0.2.2
+  and found them exact; the test fix matches `src/feedback-inbox.ts` and weakens nothing. Fixed:
+  the commit list above (should-fix), F-023's count dated before this task and `deprecate`
+  subjects, the omitted JSON output marked in F-022 and F-024 (`4c6fd64`). Not fixed, nit: `NEXT`
+  is computed from this repository's inbox rather than from the copied tree, equivalent while the
+  tree is a straight copy. Not re-reviewed (dl-017 R2): the fixes change wording only, no behaviour,
+  test or Acceptance command.
