@@ -148,3 +148,15 @@ All on the branch `retro/2026-10-12-periodic`, from `main` at `62979cd`.
   independently and amended. A first draft of the notes, written before that choice and parked
   outside the repository, was lost when the session restarted; the notes are written again in
   task-026's build.
+- 2026-10-12, `approve`: the approver approved dl-016 … dl-020 and accepted task-026 into the
+  backlog. Their actions are applied later, each through its own element: dl-016 A1 (`wingfoil-cli`
+  rule 7) and A2 (one configuration-actions plan for dl-017 … dl-020).
+- 2026-10-12, task-026 (hosted): F-022 … F-026 written, F-012's title and F-018's evidence fixed.
+  Its build met bug-002 (`tests/feedback-note.test.ts` pinned the next note to `F-022`; CI run
+  38284275227 on `c966e12` failed); raised when found (dl-019 R1), the approver ruled bug-002
+  captured here and fixed in task-026. bug-002 and task-026 were reviewed independently and
+  approved; task-026 is `done`.
+- 2026-10-12, branch close: CI run 38288837508 on `b7e3234` (task-026 `done`), conclusion `success`
+  for `validate (22.21.0)` and `validate (22.12.0)`. The approver gave the merge OK in chat. Next:
+  `--no-ff` merge into `main`, push, remote and local branch removed; with it the WingFoil-side
+  notes reach `main` before 2026-10-20 (dl-006 R3). This plan goes `active → done`.
