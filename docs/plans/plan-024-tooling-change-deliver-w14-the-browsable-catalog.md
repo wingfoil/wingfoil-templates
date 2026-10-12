@@ -135,3 +135,6 @@ which stay outside W14.
   approver's ruling; spec-002 §2.4 erratum in task-022). The golden tree's six packs have
   examples. Owed at W10: `base` needs a version with examples when the first methodology enters
   the tree. Next: task 5.
+- 2026-10-12: task 5: task-023 (the root README; dl-014 D7 T6) done, merged `dafd120`. The README
+  links `CATALOG.md`, `llms.txt` and the specifications and names no published state of its own
+  (the approver's ruling). Next: task 6, the search page.

@@ -112,3 +112,6 @@ Branch `task/task-023-root-readme`, run through `tooling-delivery` as `developer
   added. Review check of acceptance 5: no local path, private repository, email or person.
 - 2026-10-12, CI (acceptance 7): run 38208505161 on `eb9da79`, conclusion `success` for
   `validate (22.12.0)` and `validate (22.21.0)`.
+- 2026-10-12: approved by the approver; CI run 38208805468 on the branch head `8afdae6` was
+  `success`. Merged into `main` with `--no-ff` (`dafd120`); the branch is removed. Next: plan-024
+  task 6, the search page.
