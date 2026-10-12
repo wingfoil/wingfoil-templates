@@ -192,3 +192,26 @@ Branch `task/task-024-site`, run through `tooling-delivery` as `developer` (`cod
   directive, the scope of the Pages URLs) and nits, all applied while `pending`. Re-review:
   approve; its should-fix (served bytes compared with `cmp`, not with a HEAD request) and nits
   (the charset meta first; "before `in-review`") applied.
+- 2026-10-12, build on `task/task-024-site` (`73f2dff`): the tests of acceptance 3–8 were written
+  first and failed to compile, then ran red against the missing modules; the review fixes were
+  written test first (three failing site tests before them). Deviation from the Design: the site
+  takes its axis order from the index schema's `axis` enum and reads no `catalog.yaml`, so it
+  lists every pack of the index whatever the tree holds (review); it also refuses a pack whose
+  `latest` is none of its versions, or whose axis it has no section for. spec-002's Execution
+  Notes record P1, P3 and the W14 errata (`b000e9d`).
+- 2026-10-12: independent review of the build (a subagent with its own context, the pinned SHAs
+  checked against their release tags): approve after fixes; two should-fix (packs dropped by a
+  partial `catalog.yaml`; the Pages root resolved to the wrong file in the tests), two surviving
+  mutations and nits, applied in `24f31b5`. Re-review: approve; its three nits (a title-only
+  search word, the Pages bodies compared, an axis guard) applied in `eea09d0`.
+- 2026-10-12, the approver's action (acceptance 9, before `in-review`): GitHub Pages enabled on
+  the repository. `gh api repos/wingfoil/wingfoil-templates/pages` prints `build_type: workflow`,
+  `html_url: https://wingfoil.github.io/wingfoil-templates/`, `https_enforced: true`,
+  `public: true`; the `github-pages` environment has `custom_branch_policies: true` and one branch
+  policy, `main`.
+- 2026-10-12: Acceptance 1–2 on Node.js 22.21.0 and 22.12.0: 803 tests pass; `lint`,
+  `check:pins`, `check:schemas`, `check:packs`, `validate`, the golden `validate`,
+  `npm run index -- --check` and `npm run site -- --out _site` exit 0; CB-8 holds; no dependency
+  added.
+- 2026-10-12, CI (acceptance 11): run 38217775205 on `eea09d0`, conclusion `success` for
+  `validate (22.12.0)` and `validate (22.21.0)`, each building the site.
