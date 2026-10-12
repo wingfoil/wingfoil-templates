@@ -2,7 +2,7 @@
 id: bug-002-the-feedback-note-tests-expect-the-next-note-to-be-f-022-so-any-new-note-in-the-inbox-breaks-them
 type: bug
 title: "The feedback-note tests expect the next note to be F-022, so any new note in the inbox breaks them"
-status: draft
+status: pending
 severity: minor
 pack: ""
 tags: ["tooling","feedback","tests"]
