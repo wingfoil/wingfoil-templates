@@ -103,3 +103,33 @@ Commits: one for steps 1–2 (notes, ledger, directive), one for step 3; the Exe
 them.
 
 ## Execution Notes
+- 2026-10-12, design: written (`git log` "task-026 design"), task started (backlog → in-progress).
+- 2026-10-12, build, red: with the ledger rows and the directive's Note cells for F-022 … F-026 but
+  no notes, `node --test dist/tests/wingfoil-feedback.test.js` gave 6 tests, 4 pass, 2 fail ("lists
+  every note in the README ledger as the note says", "links every known behaviour of wingfoil-cli
+  to existing notes"). Green after the notes (6 of 6). Every note was reproduced again with
+  WingFoil 0.2.2 from npm in a scratch project outside the repository (`git init`, then
+  `wingfoil init --template Kanban`); paths shown as `/tmp/x`. A first draft of the notes, written
+  before the task existed, had been lost with a session restart (plan-025 › Execution Notes).
+- 2026-10-12, F-012 and F-018: mutation, the ledger left at the truncated title while the note has
+  the restored one: the ledger test fails (1 of 6), so it guards the title. F-018's output block
+  is from a reproduction: `workflow list` exit 0 with no warning and the `where` clause echoed;
+  `memory search` has no field filter (`--pack` exit 2) and prints no `pack`.
+- 2026-10-12, **Acceptance 1 against 6, raised when found (dl-019 R1).** In a clean clone at
+  `c966e12`, `npm test` gave 803 tests, 3 failing, on both Node.js versions, and CI run
+  38284275227 on `c966e12` ended in `failure`: `tests/feedback-note.test.ts` (task-015) pins the
+  next note's number to `F-022`. Acceptance 1 (`npm test` exits 0) and 6 (nothing outside the
+  inbox and the directive changes) could not both hold. The approver ruled on 2026-10-12: capture
+  the defect as **bug-002** and fix it in this task; Acceptance 6 therefore also admits
+  `tests/feedback-note.test.ts` and bug-002's element. The Acceptance text stays as approved
+  (dl-019 R2).
+- 2026-10-12, bug-002 fix: the tests derive the next number as the tool does (the highest note
+  number plus one, `src/feedback-inbox.ts`), red already shown by the three failures above; a
+  mutation (plus two instead of one) fails the same three tests. bug-002 reviewed independently
+  (approve after amendments: "highest plus one", not "count plus one"; a minimal reproduction)
+  and amended, then submitted `pending`.
+- Task commits: `31c6f78` (notes, ledger, directive), `c966e12` (F-012, F-018), `a6bfcd3` and
+  `76372e2` (bug-002 fix); with this element's own commits and bug-002's (`de41b71`, `f5d8177`).
+- 2026-10-12, Acceptance from a clean clone at `633aeee`, on Node.js 22.21.0 and 22.12.0: `npm ci`,
+  `build`, `test` (803 tests, 803 pass), `lint`, `check:pins`, `check:schemas`, `check:packs` exit
+  0; CB-8 `git diff --exit-code origin/main...HEAD -- catalog.yaml compat.yaml schema/` exits 0.
