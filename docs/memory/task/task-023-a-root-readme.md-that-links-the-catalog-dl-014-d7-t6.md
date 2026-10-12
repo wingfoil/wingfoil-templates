@@ -64,12 +64,14 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
       to the project documents (`docs/01_vision/`, the Memory elements under `docs/memory/`, the
       plans under `docs/plans/`, the workflows under `.wingfoil/workflows/`) and to the feedback
       inbox (`docs/wingfoil-feedback/`); and that the repository does not take outside pull
-      requests for now (`03_is-isnot.md`);
+      requests for now, contributions opening later as Memory elements (`03_is-isnot.md`);
    5. **the license:** MIT, as `package.json` declares; the README names no email address.
 4. **Links (a test).** The link targets, extracted with `scanMarkdown` (`src/markdown-lines.ts`),
    are all relative: no scheme, no absolute path, no `../` out of the root. With a `#fragment`
    stripped, each target exists in the repository, a directory with or without a trailing slash.
-5. **Commands (a test).** Every `npm run <script>` the README names is a script of `package.json`.
+5. **Commands and addresses (a test).** Every `npm run <script>` the README names is a script of
+   `package.json`, and the README holds no email address (no match of `\S+@\S+\.\S+` outside
+   code spans).
    **Review check:** the README names no local path, no private repository, and no person other
    than the copyright holder, if named at all.
 6. **Tests,** red first: the tests of acceptance 4 and 5.
@@ -88,3 +90,4 @@ Run from a clean clone of the task branch; Node.js 22.21 and the floor 22.12.0 a
   to break at the first release, the approver's to rule; the build step; outside pull requests; the
   link test's edge cases and the review-only clause; no email) and nits. The approver ruled the
   published state out of the README (Context); every other point applied while `pending`.
+  Re-review: approve; its nits (the email check, the pull-request sentence) applied.
