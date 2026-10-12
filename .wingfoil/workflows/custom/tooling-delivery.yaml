@@ -11,14 +11,15 @@
 name: tooling-delivery
 kind: sub
 description: "Tooling delivery loop"
-version: 1
+version: 2
 element: task
 phases:
   - name: plan
     description: >-
       Pick the next tooling work within the WIP limits; create the task (empty pack, Context citing
-      the feature, spec or ADR it comes from, Acceptance with the commands) and submit it; the
-      approver accepts it into the backlog or rejects it.
+      the feature, spec or ADR it comes from, Acceptance with the commands); an independent review
+      of the body, amended while pending (dl-017); submit it; the approver accepts it into the
+      backlog or rejects it.
     role: product-owner
     actions:
       - 'memory.add(type: task)'
@@ -26,20 +27,31 @@ phases:
       - memory.approve           # pending → backlog (approver)
     approval: { by_role: approver }
   - name: design
-    description: "Write the Design section, open branch task/<id>, start the task (backlog → in-progress)."
+    description: >-
+      Write the Design section, listing the red steps of the work; a Design that cannot list them
+      proposes a split, through plan, before in-progress (dl-018). An Acceptance criterion that
+      cannot hold as written goes to the approver when found, and the work on it waits for the
+      ruling (dl-019). Open branch task/<id>, start the task (backlog → in-progress).
     role: developer
     actions:
       - memory.submit            # backlog → in-progress
   - name: build
     description: >-
-      Write the tooling (code-quality, testing, determinism). The build, the tests and the
+      Write the tooling (code-quality, testing, determinism), test first: the Execution Notes record
+      each red run (command and failing count); beyond the testing directive's characterization of
+      existing behaviour, a test written after the change only for third-party tool configuration or
+      content, checked by mutation (dl-018). An Acceptance criterion that cannot hold goes to the
+      approver when found, and the work on it waits (dl-019). The build, the tests and the
       Acceptance commands pass before review.
     role: developer
   - name: review
     description: >-
-      Check against the reviewer's directives and the developer's (code-quality, testing); the
-      Acceptance commands pass. Then in-progress → in-review; the approver accepts (→ approved) or
-      sends it back (→ in-progress).
+      An independent review of the build against the reviewer's directives and the developer's
+      (code-quality, testing); red first checked, a departure is a finding (dl-018); the Acceptance
+      commands pass; an Acceptance deviation with no ruling is a blocking finding (dl-019). After
+      its fixes, a re-review when a fix changes behaviour, a test or an Acceptance command; the
+      notes record each verdict, its findings by severity and the fixing commit (dl-017). Then
+      in-progress → in-review; the approver accepts (→ approved) or sends it back (→ in-progress).
     role: reviewer
     actions:
       - memory.submit            # in-progress → in-review

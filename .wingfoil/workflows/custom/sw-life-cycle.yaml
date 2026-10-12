@@ -9,13 +9,14 @@
 name: sw-life-cycle
 kind: main
 description: "The end-to-end life cycle of the WingFoil-Templates repository"
-version: 4
+version: 5
 phases:
   - name: inception
     description: >-
       Frame the repository as a product (vision, personas, journeys, features, sequencer) and fix
       the pack model: the axes, the composition rules, the versioning and distribution model, the
-      first catalog scope.
+      first catalog scope. Each element and the phase gate are reviewed independently before the
+      approver rules (dl-017).
     role: product-owner
     include: templates-inception
     approval: { by_role: approver }
@@ -23,7 +24,8 @@ phases:
     description: >-
       Specify the pack format (pack.yaml, fragments, catalog.yaml, presets, transitions) as a
       tech-spec and its JSON Schemas under schema/. The schemas are the contract with the WingFoil
-      CLI: a change to them is reported to WingFoil (wingfoil-cli directive, rule 8).
+      CLI: a change to them is reported to WingFoil (wingfoil-cli directive, rule 8). An
+      independent review, amended while pending (dl-017).
     role: architect
     actions:
       - 'memory.add(type: tech-spec)'
@@ -37,7 +39,8 @@ phases:
     description: >-
       The repository tooling (reference composer, validation command, CI), one tooling-delivery
       iteration per task with no pack (dl-005 G7, bug-001). Later tooling changes run through
-      tooling-change.
+      tooling-change. At each wave close, the plan lists per tech-spec the errata and rulings of the
+      wave, and the approver names who folds them back or rules that none is needed (dl-020).
     iterate_over: task
     where: { pack: "" }
     include: tooling-delivery
@@ -49,7 +52,7 @@ phases:
   - name: sunset
     description: >-
       Retire the whole repository (only if WingFoil stops consuming it): announce on WingFoil, keep
-      every tag, archive.
+      every tag, archive. An independent review before the approver rules (dl-017).
     role: product-owner
     optional: true
     approval: { by_role: approver }
