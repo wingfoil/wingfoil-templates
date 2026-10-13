@@ -147,3 +147,15 @@ Changes this decision implies, each applied later through its own element:
   (`wingfoil-cli` rule 6).
 
 ## Execution Notes
+- 2026-10-13, after the submit: WingFoil's approver ruled on the default-set resolution, relayed by
+  a WingFoil session as input for the default-set note, to be recorded in WingFoil dl-138 (not yet
+  merged there): no packs in the npm package; F-003's `advance-bundled-packs` and F-005's
+  `--offline` with bundled packs are superseded by D1, offline use coming from vendoring and the
+  lock (the first `init` needs the network); the default set is an open question of dl-138's
+  Action 2 tech-spec, where WingFoil recommends (b): each WingFoil release pins a commit of this
+  repository's catalog that names the default set, `init` uses it unless a source or version is
+  given, with a forward-only advance step on WingFoil's side; (a), always the latest default set,
+  is not recommended. On this side it needs a catalog commit that resolves the default set and is
+  never rewritten (`main`'s protection already forbids rewriting). The approver confirmed in chat:
+  the default-set note of R1 proposes (b); F-003 and F-005 get an update line pointing to D1 and
+  to the new notes, their status and body otherwise unchanged. The rulings R1–R4 do not change.
