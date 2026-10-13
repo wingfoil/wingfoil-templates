@@ -83,3 +83,11 @@ step.
   with dl-016 O2 as trigger; §18 quoted from its body; the spec-001 §4 erratum recorded under
   dl-020; a `diff` check for the license text), amended. Submitted `active` on the approver's
   request, with the choices already given in chat.
+- 2026-10-13, steps 1–4: `6e31de5` (`LICENSE`, the README's "License" section), `4f74759`
+  (`pack-semver`), `9bf1f18` (`pack-cycle` v4), `57228ee` (notes on bug-001 and spec-001).
+- 2026-10-13, step 5: `diff LICENSE node_modules/wingfoil/LICENSE` empty; `workflow list` and
+  `directives list` exit 0 with empty stderr; no `0.x` left under `.wingfoil/`; `npm test` 803 of
+  803, `lint`, `check:packs` and `validate` exit 0. The license check on GitHub follows the merge.
+- 2026-10-13, step 6: independent review: approve, no finding.
+- 2026-10-13, step 7: CI run 38360863825 on `57228ee`, conclusion `success` for
+  `validate (22.21.0)` and `validate (22.12.0)`. Waiting for the approver's merge OK.
