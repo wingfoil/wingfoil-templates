@@ -10,8 +10,8 @@ tags: ["spec","W14"]
 
 ## Context
 
-The element dl-020 R2 asks for: it folds back into spec-002's body the errata and rulings of wave W14
-that spec-002's Execution Notes record (2026-10-12), before wave W8, which builds on spec-002
+The element dl-020 R2 asks for: it folds back into spec-002's body the errata and rulings of wave
+W14 that spec-002's Execution Notes record (2026-10-12), before wave W8, which builds on spec-002
 (`base`'s README, CB-1, CB-2, CB-6; dl-020 R3). Opened on the approver's request in chat on
 2026-10-13. Hosted by `sw-life-cycle` › `specification`, the phase that produces tech-specs; it
 reopens only for this amendment.
