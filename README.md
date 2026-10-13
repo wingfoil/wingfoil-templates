@@ -55,4 +55,4 @@ elements ([`03_is-isnot.md`](docs/01_vision/03_is-isnot.md)).
 
 ## License
 
-MIT, as [`package.json`](package.json) declares.
+MIT, see [`LICENSE`](LICENSE).

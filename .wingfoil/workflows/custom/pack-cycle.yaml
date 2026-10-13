@@ -3,7 +3,7 @@
 name: pack-cycle
 kind: sub
 description: "Charter, author and first-release one pack"
-version: 3
+version: 4
 element: pack
 phases:
   - name: charter
@@ -37,7 +37,7 @@ phases:
     where: { pack: "{pack.id}" }
     include: kanban-delivery
   - name: first-release
-    description: "Publish the pack's first version (normally 1.0.0, or 0.x while spec-001 is a draft)."
+    description: "Publish the pack's first version, `1.0.0` or later (spec-001 §4)."
     include: pack-release-cycle
   - name: retrospective
     description: "Learn from the pack's whole charter-to-release cycle (dl-006 R1)."
