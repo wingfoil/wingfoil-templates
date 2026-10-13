@@ -91,3 +91,25 @@ Red steps (dl-018 R1):
 Commits: one for steps 1–2, one for step 3; the Execution Notes list them.
 
 ## Execution Notes
+- 2026-10-13, design written, task started (backlog → in-progress).
+- 2026-10-13, build, red: with the three ledger rows and no notes, the inbox tests gave 6, 5 pass,
+  1 fail ("lists every note in the README ledger as the note says"); green (6 of 6) after F-027,
+  F-028 and F-029, written from WingFoil 0.2.2's output in a scratch project outside the
+  repository (`init --help`, `pack add`, `stage set`, `upgrade` exit 2; `.wingfoil/directives` and
+  `.wingfoil/workflows` hold `built-in` and `custom` only). Step 3 (update lines, README pointers)
+  checked by characterization: tests 6 of 6; a mutation, an update line placed before
+  "Formerly T3.", fails the opening rule (1 of 6). `git diff origin/main` on F-003 and F-005 shows
+  added lines only (3 each).
+- 2026-10-13, build review (independent subagent): approve after amendments, 0 blocking, 6 minor
+  or nits, all applied (`ddc7784`): three phrases taken from WingFoil's relayed statements of
+  2026-10-13 attributed to them (dl-138 Q2 (i), dl-164's origin template-update, "same version and
+  same answers"); the `--help` outputs marked as excerpts, with `wingfoil --help` in F-028 as
+  Acceptance 3 asks; F-027's and F-028's requests marked not commitments. Not re-reviewed
+  (dl-017 R2): wording only.
+- 2026-10-13, Acceptance from a clean clone at `250f7e3`, on Node.js 22.21.0 and 22.12.0: `npm ci`,
+  `build`, `test` (803 of 803), `lint`, `check:pins`, `check:schemas`, `check:packs` exit 0; CB-8
+  exits 0; besides this element and plan-030, only `docs/wingfoil-feedback/` changes.
+- Task commits: `00bb6f9` (F-027 … F-029, ledger), `250f7e3` (update lines, README), `ddc7784`
+  (wording after the review).
+- 2026-10-13, CI (Acceptance 8): run 38398003590 on `ddc7784`, conclusion `success` for
+  `validate (22.21.0)` and `validate (22.12.0)`. Submitted `in-review`.
