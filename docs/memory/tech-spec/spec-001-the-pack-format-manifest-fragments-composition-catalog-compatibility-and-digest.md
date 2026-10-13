@@ -969,3 +969,8 @@ check the rest, and the composer refuses what they reject.
 - 2026-10-10: §8.3 cites `docs/notes/base-regeneration-inputs.md` §2 for the project tokens
   `{release}` and `{scope}`. That note was removed (plan-022); the per-type path conventions it
   held are in dl-015 C10.
+- 2026-10-13, erratum (plan-028, dl-020 R1): §4 says "`0.x` is allowed only while this
+  specification is not approved (`pack-semver`)". `pack-semver` no longer states that clause, dead
+  since this specification's approval; it now reads "Every published version is `1.0.0` or later
+  (spec-001 §4, §18)". §4's citation of `pack-semver` is folded back by the next amendment of
+  this specification.

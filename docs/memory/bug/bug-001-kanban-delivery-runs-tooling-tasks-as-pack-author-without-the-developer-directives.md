@@ -74,3 +74,6 @@ The fix is a configuration change, applied with the follow-ups of plan-015 step 
   amended while `pending` after an independent review (plan-015 Execution Notes): the scope of a
   configuration defect as a `bug`, and how the two loops are kept in step. The fix is applied with
   the configuration follow-ups of plan-015 step 2.
+- 2026-10-13, plan-028: the Observed's "`pack-cycle` › `deliver`" is `pack-cycle` › `author`, the
+  phase that includes `kanban-delivery` (slip recorded in plan-018 › Execution Notes); the body
+  stays as approved.
