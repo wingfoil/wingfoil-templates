@@ -29,11 +29,11 @@ or erratum already recorded:
 | Section | Change | Source |
 |---|---|---|
 | §2.4 | the exemption holds while the tree holds no methodology, not until the first is published | approver's ruling 2026-10-11, task-022 |
-| §3.1, §3.3 | a version's `tag` is derived as `<catalog pack id>@<version>`, not read from `catalog.yaml` | task-019 |
+| §3.1, §3.3 | a version's `tag` is derived as `<catalog pack id>@<version>`, not read from `catalog.yaml`; a derived tag missing from the repository is the error | task-019 |
 | §3.2 | the README column links the README rendered on github.com at the latest version's tag | approver's ruling, task-019 |
 | §3.3 (P2) | `excerpt` is section 2's first paragraph only, no profile text | approver's ruling 2026-10-11, task-019 |
 | §5 (P1) | no third-party library: the page's own script `index/vendor/search.js`, its sha256 in `index/vendor/search.js.sha256`, checked by the build | approver's ruling 2026-10-11, task-024 |
-| §5 | the page renders no README Markdown: the excerpt is escaped text, each result links the README on github.com | approver's ruling at plan-024's presentation |
+| §5 | the page renders no README Markdown: the excerpt is escaped text, each result links the README rendered on github.com at the latest version's tag (as §3.2) | approver's ruling at plan-024's presentation, task-019 |
 | §5 (P3) | `npm run site -- [--tree <dir>] --out <dir>`, writing `index.html`, `site.css`, `search.js`, `catalog-index.json`, `llms.txt` | task-024 |
 | §5 | the sentence on the deployment waiting for CI dropped: Pages deploys from `main` since 2026-10-12 | task-024 |
 | §6 CB-7 | "the vendored library's checksum" becomes the vendored script's | follows from P1 |
@@ -66,3 +66,8 @@ On the branch `spec/spec-002-amendment`, from `main` at `a15b053`.
 ## Execution Notes
 
 - 2026-10-13: written; `workflow` and `phase` filled by editing the draft (W-02).
+- 2026-10-13, step 1: spec-002 amended (`d791931`), the Execution Note listing the changes and
+  the approver's choice (b). Step 3: independent review: approve after amendments (§5's first
+  bullet still linked the raw README; §3.1 still spoke of a tag "named by" `catalog.yaml`; the note
+  to name task-019, task-024 and plan-024 as sources too), fixed (`6593542`); re-review: approve.
+  The two follow-ups of the §3.1 and §5 rows are added to the table above.
