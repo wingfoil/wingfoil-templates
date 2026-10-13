@@ -58,3 +58,7 @@ On the branch `dl/dl-021-wingfoil-divergences`, from `main` at `6b84e18`.
   an R3 sentence beyond the rulings removed, the transition kind left open for the spec-001
   amendment), amended (`415c558`), re-reviewed (approve; one wording fix, applied). Checks:
   `workflow list` and `npm run lint` exit 0. dl-021 submitted `pending`.
+- 2026-10-13: an execution note added to dl-021 while `pending` (WingFoil's default-set ruling);
+  the approver approved dl-021 (`ebe9437`). CI run 38392198663 on `ebe9437`, conclusion `success`.
+  The approver gave the merge OK in chat; `--no-ff` merge into `main`, push, branch removed. This
+  plan goes `active → done`.
