@@ -56,6 +56,9 @@ sha of the commit it read (WingFoil `COLLABORATION.md` › Credit, task-271), fo
 | [F-024](F-024-illegal-transition-error-does-not-name-the-verb.md) | The illegal-transition error does not say which verb or state is expected | gap | open | |
 | [F-025](F-025-no-verb-leaves-a-waiting-state.md) | No verb leaves a waiting state except deprecate | gap | open | |
 | [F-026](F-026-a-phase-has-one-role.md) | A workflow phase has one role, so the role cannot depend on the element | request | open | |
+| [F-027](F-027-a-pinned-default-set-of-packs-at-init.md) | A pinned default set of packs at init, read from this repository's catalog | request | open | |
+| [F-028](F-028-stage-changes-as-pack-updates.md) | Stage changes as pack updates of the stage overlay, with no stage set verb | request | open | |
+| [F-029](F-029-packs-land-in-remote-with-the-lock.md) | Packs land in the remote asset class, mapped by pack-install and pinned by the lock | request | open | |
 
 ## Context
 
@@ -83,7 +86,7 @@ packs" idea, `docs/04_memory/planning/rl-v1/minor-v0.4.md:45-50`).
 |---|---|
 | D1 | The AI-agent variants of the methodologies are an **overlay** (`team-mode`), applied on top of any methodology, not separate methodology packs. |
 | D2 | The lifecycle **stage** axis uses the full scale: `prototype` → `mvp` → `production` → `maintenance` → `sunset`. |
-| D3 | Every **pack has its own semver**. The base packs **stay bundled in the npm package** as offline fallback. **Before each WingFoil release, WingFoil advances its bundled packs to the newest version published on WingFoil-Templates** (F-003). |
+| D3 | Every **pack has its own semver**. The base packs **stay bundled in the npm package** as offline fallback. **Before each WingFoil release, WingFoil advances its bundled packs to the newest version published on WingFoil-Templates** (F-003). *Superseded on 2026-10-13 by this repository's dl-021 R1 (WingFoil dl-138 Action 3): no bundled packs; see F-027.* |
 | D4 | First scope of WingFoil-Templates: methodologies `scrum`, `kanban`; overlay `team-mode/agent-first`; phase methods `inception/lean-inception`, `specification/bdd-sbe`; blueprints `web-service`, `cli-library`; stages `prototype`, `production`, plus the transition between them. |
 | D5 | The WingFoil-side changes go through WingFoil's own process (these notes → retrospective/planning), not as direct edits from this repository. |
 | D6 | A pack's compatibility contract is the **file formats** its content is written in plus the WingFoil **capabilities** it needs, not a hand-written range of WingFoil versions; a `compat.yaml` maps each WingFoil release to the formats it reads and the capabilities it provides, and the range is computed from it. Before WingFoil 1.0, one living line per pack; from 1.0, lines N and N-1 for a declared window. Depends on F-012 and F-013. (Recorded on `main` as dl-002.) |
@@ -98,6 +101,7 @@ the bundled-pack release step (F-003).
 **Open questions for WingFoil's planning** not tied to a single note (the others are in F-003,
 F-004, F-005, F-007, F-008):
 - Which packs are bundled as fallback: exactly the D4 set, or only `scrum` + `kanban` + the
-  `prototype` stage?
+  `prototype` stage? *Superseded on 2026-10-13 by dl-021 R1: no bundled packs; the default set
+  at `init` is F-027.*
 - Which release: everything in v0.4 alongside P4.18–P4.20, or `stage` and `upgrade` in a later
   minor?

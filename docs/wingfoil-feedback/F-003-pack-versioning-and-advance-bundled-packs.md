@@ -9,6 +9,9 @@ answered_by: []
 
 Formerly T3.
 
+Update 2026-10-13: superseded by this repository's dl-021 R1 (WingFoil dl-138 Action 3);
+see F-027.
+
 ## Observed
 
 WingFoil bundles its templates in the npm package and has no step that refreshes them from an

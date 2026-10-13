@@ -9,6 +9,9 @@ answered_by: []
 
 Formerly T5.
 
+Update 2026-10-13: superseded by this repository's dl-021 R1 and R3 (WingFoil dl-138); see
+F-027 (`--offline`) and F-029 (the lock).
+
 ## Observed
 
 Nothing in a project records which template produced its `.wingfoil/`, apart from
