@@ -71,3 +71,9 @@ On the branch `spec/spec-002-amendment`, from `main` at `a15b053`.
   bullet still linked the raw README; §3.1 still spoke of a tag "named by" `catalog.yaml`; the note
   to name task-019, task-024 and plan-024 as sources too), fixed (`6593542`); re-review: approve.
   The two follow-ups of the §3.1 and §5 rows are added to the table above.
+- 2026-10-13, step 2: `npm test` 803 of 803, `lint`, `index -- --check` and `validate` exit 0; the
+  diff of spec-002 is limited to the table's sections and its Execution Notes.
+- 2026-10-13, step 4: CI run 38403780631 on `fd69aa0`, conclusion `success` for
+  `validate (22.21.0)` and `validate (22.12.0)`. The approver gave the merge OK in chat, which
+  approves spec-002's edited text; `--no-ff` merge into `main`, push, branch removed. This plan
+  goes `active → done`.
