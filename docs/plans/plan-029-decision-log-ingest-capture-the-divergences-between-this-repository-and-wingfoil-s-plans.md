@@ -53,3 +53,8 @@ On the branch `dl/dl-021-wingfoil-divergences`, from `main` at `6b84e18`.
 - Done when dl-021 is `approved` and on `main`. The plan then goes `active → done`.
 
 ## Execution Notes
+- 2026-10-13: dl-021 and this plan written (`dc0e67a`), reviewed independently (approve after
+  amendments, 12 findings: dl-001 D1/D5 for transitions, missing dependencies in the changes list,
+  an R3 sentence beyond the rulings removed, the transition kind left open for the spec-001
+  amendment), amended (`415c558`), re-reviewed (approve; one wording fix, applied). Checks:
+  `workflow list` and `npm run lint` exit 0. dl-021 submitted `pending`.

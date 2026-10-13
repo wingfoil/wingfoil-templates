@@ -139,9 +139,10 @@ Changes this decision implies, each applied later through its own element:
   `compat.yaml` (drop `stage-transitions`);
 - **Tooling**, through a tooling task: `npm run publish:pack -- --bundled`, the bundled-pack note of
   `src/feedback-note.ts`, and their tests, removed;
-- **Feedback inbox**, through a task: new notes for the pinned default set at `init` (R1) and for
-  stage changes as pack updates (R2), each saying which earlier requests it supersedes (F-001,
-  F-003, F-005's `--offline`, F-007's `built-in/`, F-008); the README's decision D3 and its open
+- **Feedback inbox**, through a task: three new notes, each naming the earlier requests it
+  supersedes: the pinned default set at `init`, with offline use by vendoring (R1; F-001, F-003,
+  F-005's `--offline`); stage changes as pack updates (R2; F-008); packs landing in `remote/` with
+  dl-138's lock (R3; F-005's lock, F-007's `built-in/`). The README's decision D3 and its open
   question updated. Earlier notes stay, and only WingFoil's answers change their status
   (`wingfoil-cli` rule 6).
 
