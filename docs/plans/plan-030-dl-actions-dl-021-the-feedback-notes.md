@@ -46,3 +46,7 @@ On the branch `feedback/dl-021-notes`, from `main` at `83156df`.
 - Done when task-027 is `done` and on `main`. The plan then goes `active → done`.
 
 ## Execution Notes
+- 2026-10-13: plan-030 and task-027 written (`21406e3`) and reviewed independently: plan-030
+  approve; task-027 approve after amendments (its branch and delivery stated, the update lines'
+  exact text and check, Observed limited to WingFoil 0.2.2's output), amended (`db55683`). Plan
+  submitted `active`, task-027 `pending`, at the approver's request in chat.
