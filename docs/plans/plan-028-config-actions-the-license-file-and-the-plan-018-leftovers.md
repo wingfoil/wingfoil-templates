@@ -91,3 +91,5 @@ step.
 - 2026-10-13, step 6: independent review: approve, no finding.
 - 2026-10-13, step 7: CI run 38360863825 on `57228ee`, conclusion `success` for
   `validate (22.21.0)` and `validate (22.12.0)`. Waiting for the approver's merge OK.
+- 2026-10-13: the approver gave the merge OK in chat; `--no-ff` merge into `main`, push, branch
+  removed, then the license checked on GitHub. This plan goes `active → done`.
