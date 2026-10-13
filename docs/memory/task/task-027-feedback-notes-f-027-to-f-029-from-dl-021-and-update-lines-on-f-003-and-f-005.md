@@ -2,7 +2,7 @@
 id: task-027-feedback-notes-f-027-to-f-029-from-dl-021-and-update-lines-on-f-003-and-f-005
 type: task
 title: "Feedback notes F-027 to F-029 from dl-021, and update lines on F-003 and F-005"
-status: pending
+status: backlog
 pack: ""            # no pack: the feedback inbox (hosted by plan-030, tooling-delivery)
 depends_on: []
 tags: ["feedback","wingfoil"]
