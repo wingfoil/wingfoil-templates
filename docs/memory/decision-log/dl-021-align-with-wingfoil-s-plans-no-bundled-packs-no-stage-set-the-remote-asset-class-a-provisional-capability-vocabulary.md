@@ -43,8 +43,10 @@ D1 and D3 fix how `base` is written and what it promises, so they come before `b
 ### D2 — `wingfoil stage set`
 
 - **Ours:** a lifecycle stage axis with transitions this repository defines and WingFoil runs
-  (`wingfoil stage set <stage>`): dl-001 D3, F-008, spec-001 §14, the `stage-transitions`
-  capability in `compat.yaml`, `dna.yaml`, the brief, the personas and journey J8; wave W12.
+  (`wingfoil stage set <stage>`): dl-001 D1 ("Transitions move a project…") and D5 (the
+  `prototype-to-production` transition), F-008, spec-001 §11 and §14, the `stage-transitions`
+  capability in `compat.yaml`, `dna.yaml`, the brief, the personas and journey J8; wave W12. dl-001
+  D3, the stage scale itself, stays.
 - **WingFoil:** confirmed, nothing planned, at any release: no stage axis, command or overlay in
   its vision, decision-logs, specifications or code. Its proposal: a stage change as a
   governance-change or pack update (dl-164's mechanism), not a new verb; transitions stay
@@ -55,9 +57,9 @@ D1 and D3 fix how `base` is written and what it promises, so they come before `b
 
 ### D3 — dl-138's `remote` asset class against dl-003
 
-- **Ours:** packs install only into `.wingfoil/<kind>/built-in/` today, into `remote/` "if
-  ratified" (dl-003 › Execution Notes, `pack-authoring`, spec-001 §7.6 and its install mapping;
-  the folder changes the composer, not the pack format); F-005 (a project lock), F-007.
+- **Ours:** packs install only into `.wingfoil/<kind>/built-in/` today, into `remote/` "if ratified"
+  (dl-003 › its configuration changes, `pack-authoring`, spec-001 §7.6 and its install mapping; the
+  folder changes the composer, not the pack format); F-005 (a project lock), F-007.
 - **WingFoil:** partly confirmed. The class is decided (dl-138 Q3, `32d58132`: "a third class,
   `remote`, vendored under its own folder with its own removability and override rules"); the
   folder name, layout, lock and mapping wait for dl-138's Action 2 tech-spec. `built-in/` holds
@@ -84,7 +86,8 @@ D1 and D3 fix how `base` is written and what it promises, so they come before `b
 
 ## Decision
 
-**Ruled by the approver in chat on 2026-10-13**; they take effect when this element is approved.
+**Ruled by the approver in chat on 2026-10-13.** The rulings below take effect when this element
+is approved.
 
 - **R1 (D1) — No bundled packs; option (A), with a request.** `base` and every other pack are
   installed from this repository by WingFoil's `pack-install`, as a `remote` source pinned by its
@@ -97,14 +100,19 @@ D1 and D3 fix how `base` is written and what it promises, so they come before `b
   verb. A feedback note supersedes F-008's request.
 - **R3 (D3) — The `remote` class; option (A).** `built-in/` stays WingFoil's own. Packs use
   kind-relative paths and land where `pack-install` maps them; the composer follows dl-138's
-  tech-spec once it fixes the folder, layout and lock. Until then the composer keeps `built-in/`
-  for its own tests. F-005's lock is covered by dl-138's lock.
+  tech-spec once it fixes the folder, layout and lock. F-005's lock is covered by dl-138's lock.
 - **R4 (D4) — A provisional vocabulary; option (A), reduced.** `requires_capabilities` and
   `compat.yaml` › `capabilities` stay; the vocabulary is `pack-install` and `workflow-engine`,
   provisional until WingFoil publishes one; `stage-transitions` leaves it (R2). At
   `wingfoil-release-intake` a release is recorded as providing a capability only when its
   CHANGELOG names the feature or command behind it (for example the `pack-install` command).
   F-013 stays open as input to WingFoil dl-149 Action 3.
+
+**Open, for the spec-001 amendment:** whether the `transition` kind
+(`schema/transition.schema.json`, `catalog.yaml` › `transitions`, spec-001 §11 and §14, the
+`transitions/` module, the tooling) stays as a kind of its own or folds into the workflows of the
+`stage/*` packs (R2). The approver rules it when that amendment is written; a schema change also
+produces a note (`wingfoil-cli` rule 8).
 
 **Requests to WingFoil, pending its v0.4 release-planning, not commitments** (WingFoil's
 precision): the dl-138 Action 2 tech-spec (how `init` installs `base` as a pinned `remote` source;
@@ -113,19 +121,28 @@ notice to this repository when the `remote/` folder is fixed; the capabilities q
 3), with F-013.
 
 Changes this decision implies, each applied later through its own element:
-- **Decision-logs:** dl-001 D3 and D4, dl-003 D7 and its install-folder note, dl-002 (the
-  vocabulary), each through an amending element;
+- **Decision-logs:** dl-001 D1, D4, D5 and its Execution Notes (bundling, transitions), dl-002 (the
+  vocabulary), dl-003 D7 and its install-folder line, dl-012 (the bundling note of the feedback
+  pack), each through an amending element;
 - **Vision:** `01_product-brief.md` (purpose 2, success signals, `stage set`),
-  `02_product-vision.md`, `03_is-isnot.md`, `04_personas.md`, `05_journeys.md` (J3, J8),
-  `06_features.md` (F4.7, F5.4), `07_sequencer.md` (W7's "note" criterion, W10, W12),
-  `08_mvp-canvas.md` (the success metric);
-- **spec-001:** §7.6 and the install mapping (R3), §12 the vocabulary (R4), §14 transitions (R2),
-  with its §4 erratum, in one amendment next to spec-002's, before W8 (dl-020);
+  `02_product-vision.md`, `03_is-isnot.md`, `04_personas.md`, `05_journeys.md` (J1 step 7, J2 and
+  J7 step 3, J3, J4 step 1, J8), `06_features.md` (F2.4, F4.7, F5.4), `07_sequencer.md` (W7's
+  "note" criterion, W10, W12), `08_mvp-canvas.md` (J3 and its persona, the success metric, W4's
+  open point);
+- **spec-001**, in one amendment next to spec-002's, before W8 (dl-020): §6.2 (which packs WingFoil
+  bundles), §7.6, §7.7 and the install mapping (R3), §11 and §14 (R2 and the open point above),
+  §12 the vocabulary (R4), §16 O3, O5 and O12, and its §4 erratum;
 - **Configuration:** `wingfoil-cli` rule 8 (no bundled packs), `pack-release-cycle` › `publish`
-  and the `pack-release` template (no bundling note), `pack-authoring` (kind-relative paths, no
-  install folder), `dna.yaml` (description, stage set), `compat.yaml` (drop `stage-transitions`);
-- **Tooling:** `npm run publish:pack -- --bundled` and its tests removed, through a tooling task;
-- **Feedback notes**, through a task: the pinned default set at `init` (R1); stage changes as pack
-  updates, superseding F-008's request (R2).
+  and the `pack-release` template (no bundling note), `wingfoil-release-intake` (R4's rule in
+  `record`; its header's `advance-bundled-packs`), `templates-inception` (its bundling mention),
+  `pack-authoring` (kind-relative paths, no install folder), `dna.yaml` (description, `stage set`),
+  `compat.yaml` (drop `stage-transitions`);
+- **Tooling**, through a tooling task: `npm run publish:pack -- --bundled`, the bundled-pack note of
+  `src/feedback-note.ts`, and their tests, removed;
+- **Feedback inbox**, through a task: new notes for the pinned default set at `init` (R1) and for
+  stage changes as pack updates (R2), each saying which earlier requests it supersedes (F-001,
+  F-003, F-005's `--offline`, F-007's `built-in/`, F-008); the README's decision D3 and its open
+  question updated. Earlier notes stay, and only WingFoil's answers change their status
+  (`wingfoil-cli` rule 6).
 
 ## Execution Notes

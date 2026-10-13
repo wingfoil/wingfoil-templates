@@ -36,9 +36,12 @@ On the branch `dl/dl-021-wingfoil-divergences`, from `main` at `6b84e18`.
 1. **claude (facilitator):** dl-021 (`memory add`, body committed by hand): per divergence, this
    repository's assumption with its sources, WingFoil's position with its citations, the options of
    both sides, the approver's ruling, and the changes it implies.
-2. **claude:** an independent review of dl-021 and of this plan (dl-017), amended; then `submit`
+2. **claude:** an independent review of dl-021 and of this plan (dl-017), amended while still
+   `draft` (as plan-026 … plan-028 did), with a re-review when a fix changes a ruling; checks:
+   `npm run -s wingfoil -- workflow list` exit 0 and `npm run lint` exit 0; then `submit`
    (`draft → pending`).
-3. **Approver (`rule`):** `memory approve` of dl-021, from the command claude hands over.
+3. **Approver (`rule`, the next phase, under this same plan):** `memory approve` of dl-021, from the
+   command claude hands over.
 4. **Branch close:** push, the real CI run's conclusion recorded here; on the approver's OK,
    `--no-ff` merge into `main`, push, the branch removed.
 
