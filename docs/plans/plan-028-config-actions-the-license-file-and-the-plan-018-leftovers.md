@@ -2,7 +2,7 @@
 id: plan-028-config-actions-the-license-file-and-the-plan-018-leftovers
 type: plan
 title: "config actions: the LICENSE file and the plan-018 leftovers"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "rule"
 tags: ["config"]
