@@ -2,7 +2,7 @@
 id: plan-030-dl-actions-dl-021-the-feedback-notes
 type: plan
 title: "dl actions: dl-021, the feedback notes"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "rule"
 tags: ["feedback","wingfoil"]
