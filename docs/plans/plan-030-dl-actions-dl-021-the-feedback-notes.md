@@ -3,31 +3,46 @@ id: plan-030-dl-actions-dl-021-the-feedback-notes
 type: plan
 title: "dl actions: dl-021, the feedback notes"
 status: draft
-workflow: ""
-phase: ""
+workflow: "decision-log-ingest"
+phase: "rule"
 tags: ["feedback","wingfoil"]
 ---
 
 ## Context
 
-<!-- Why this phase runs now, its preconditions, and what it produces. Keep it coherent with the
-     workflow definition's phases, roles and produces. A plan that opens a wave names the
-     tech-specs its work builds on and their errata not yet folded back; the wave starts after
-     their amendment, or after the approver rules it may start without (dl-020). -->
+The feedback-inbox actions of dl-021 (the divergences with WingFoil's plans, `approved` on
+2026-10-13), opened on the approver's request in chat on 2026-10-13. As plan-026 and plan-027 host
+dl-016's actions, no workflow phase hosts this work: it is filed under `decision-log-ingest` ›
+`rule`. dl-021's other changes (decision-log amendments, vision, spec-001, configuration, tooling)
+are not in this plan; each gets its own element later.
+
+dl-021 › Changes › Feedback inbox: three new notes, each naming the earlier requests it supersedes
+(R1 the pinned default set at `init`, offline by vendoring; R2 stage changes as pack updates; R3
+packs landing in `remote/` with dl-138's lock); the README's decision D3 and its open question
+updated. dl-021 › Execution Notes: the default-set note proposes WingFoil's option (b) (each
+WingFoil release pins a commit of this catalog naming the default set, never rewritten here); F-003
+and F-005 get an update line pointing to D1 and to the new notes, their status and body otherwise
+unchanged (the approver's choice (i), 2026-10-13). WingFoil asked for that update; it cites notes
+by `reported_by` and does not edit them.
+
+A new note opens with "New note (task-NNN)." (`tests/support/inbox.ts`), so the notes are written by
+a task, task-027, hosted by this plan, as task-026 was hosted by plan-025.
 
 ## Steps
 
-<!-- The ordered steps, with the role of each and the artifact it produces. -->
+On the branch `feedback/dl-021-notes`, from `main` at `83156df`.
+
+1. **task-027** through `tooling-delivery` (v2): body reviewed independently (dl-017), accepted into
+   the backlog by the approver, built, reviewed, approved, `done`. Its `deliver` is this branch's
+   merge.
+2. **Branch close:** push, the real CI run's conclusion recorded here; on the approver's OK,
+   `--no-ff` merge into `main`, push, the branch removed.
 
 ## Handoff
 
-<!-- What needs the approver and what the agent does alone; checkpoints and completion criteria.
-     Every element the plan creates, and the plan itself, gets an independent review before the
-     approver's gate (dl-017). -->
+- **claude:** steps 1–2, except the approver's gates and the merge OK. It never runs
+  `memory approve` or `memory reject`.
+- **Approver:** task-027's two gates; the merge OK.
+- Done when task-027 is `done` and on `main`. The plan then goes `active → done`.
 
 ## Execution Notes
-
-<!-- Filled while the plan runs: deviations, blockers, decisions taken, WingFoil friction
-     (also recorded in docs/wingfoil-feedback/). At wave close: per tech-spec, the errata and
-     rulings recorded in the wave, and the element the approver names to fold them back, or the
-     ruling that none is needed (dl-020). -->
