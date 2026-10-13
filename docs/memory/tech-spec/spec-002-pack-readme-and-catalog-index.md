@@ -113,8 +113,8 @@ not indexed (§3) and names no profile.
 **Temporary exemption** (the approver's ruling, 2026-10-10): every composition needs a methodology
 (spec-001 §3), and none exists before wave W10. A pack whose examples cannot compose yet, because
 the tree holds no methodology, writes `None yet: no methodology pack is published.` as section 7;
-CB-2 accepts it until the first methodology is published, and the pack adds its examples in a later
-version.
+CB-2 accepts it while the tree holds no methodology (`packs/methodology/` holds no pack), and the
+pack adds its examples in a later version, once one exists.
 
 Examples name no real project, person or adopter (`pack-authoring`, dl-003 D10). Their fictional
 names are not project values: the "no project values" review rule of `pack-authoring` does not
@@ -144,13 +144,13 @@ Determinism (`determinism` directive): no clock, no randomness, no environment; 
 presets and transitions in ascending byte order of their ids, versions in semver order; LF line
 endings and a final newline; JSON with two-space indentation and keys in the order §3.3 gives.
 
-Reading published data: a published version is a `versions[]` entry of `catalog.yaml`. Its
-`version`, `tag` and `wingfoil` (the computed range) come from `catalog.yaml` at the working commit,
-because a tag precedes its own catalog entry (spec-001 §11); the fields taken from its `pack.yaml`
-and README are read at its tag `<catalog pack id>@<version>` (`git show <tag>:…`), never from
-`main`. A tag named by `catalog.yaml` and missing from the repository is an error (exit 2), so CI
-checks out with every tag (`fetch-depth: 0`). A pack with no published version is not listed in
-`CATALOG.md` or `catalog-index.json`.
+Reading published data: a published version is a `versions[]` entry of `catalog.yaml`. Its `version`
+and `wingfoil` (the computed range) come from `catalog.yaml` at the working commit, because a tag
+precedes its own catalog entry (spec-001 §11); its `tag` is derived as `<catalog pack id>@<version>`
+(dl-004), since `catalog.yaml` has no such field; the fields taken from its `pack.yaml` and README
+are read at that tag (`git show <tag>:…`), never from `main`. A derived tag missing from the
+repository is an error (exit 2), so CI checks out with every tag (`fetch-depth: 0`). A pack with no
+published version is not listed in `CATALOG.md` or `catalog-index.json`.
 
 Exit codes as the other commands: 1 a check fails, 2 an I/O or git error, 3 bad usage.
 
@@ -166,7 +166,8 @@ The human index, in this order:
    preceded by `<a id="pack-<id with / replaced by ->"></a>`, the anchor READMEs link (§2.5);
    Summary is `description`'s first sentence;
    Latest and WingFoil are the last published version and its computed range; README links the
-   README at the latest version's tag (§4);
+   README rendered on github.com at the latest version's tag,
+   `https://github.com/wingfoil/wingfoil-templates/blob/<tag>/packs/<catalog pack id>/README.md`;
 4. **Presets**: id, title, profile, packs;
 5. **Transitions**: id, from, to;
 6. **Profiles**: each profile named by a preset, with the packs of the presets that name it;
@@ -187,14 +188,15 @@ A pack object holds, in order:
 - `id`, `catalog` and `status` from `catalog.yaml`; `axis` and `slot` derived from the id
   (spec-001 §4), both `null` for `base` and `slot` `null` for every pack but a phase pack; `latest`,
   the highest published version in semver order;
-- `versions`: one object per published version, ascending: `version`, `tag` and `wingfoil` (the
-  computed range) from `catalog.yaml`, and from the tag's `pack.yaml`: `formats`,
+- `versions`: one object per published version, ascending: `version` and `wingfoil` (the computed
+  range) from `catalog.yaml`, `tag` derived as `<catalog pack id>@<version>` (§3.1), and from the
+  tag's `pack.yaml`: `formats`,
   `requires_capabilities`, `requires`, `conflicts`; plus `readme_url` and `manifest_url` pinned to
   the tag (§4);
 - from the latest version's tag: `title`, `description`, `workflows`, `memory_types` and
   `directives` (each a sorted list of names), `parameters` (name, type, default when there is one,
-  description), and `excerpt`, the first paragraph of the README's section 2, at most 500
-  characters, cut at a word;
+  description), and `excerpt`, the first paragraph of the README's section 2 only, with no
+  adoption-profile text, at most 500 characters, cut at a word;
 - `profiles`: the profiles of the presets whose `packs` name the pack.
 
 No field holds a date or a commit of `main`. The file changes only at a publication, a WingFoil
@@ -242,21 +244,25 @@ feedback note is written (`wingfoil-cli` rule 8).
 
 ## 5. The search page
 
-A static site built from `catalog-index.json` and the README excerpts, by a command of the tooling
-(`npm run site -- --out <dir>`), deployed to GitHub Pages by CI on every change of `main`:
+A static site built from `catalog-index.json` and the README excerpts, by a command of the tooling,
+`npm run site -- [--tree <dir>] --out <dir>`, which writes `index.html`, `site.css`, `search.js`,
+`catalog-index.json` and `llms.txt` into `<dir>`; deployed to GitHub Pages by CI on every change of
+`main`:
 - a search field over title, description, excerpt and profile, and filters by axis, slot, profile
-  and status; each result links the README of the latest version (§4);
-- client-side only: no external service, no analytics, no external fonts; the search library is
-  vendored under `index/vendor/` with its sha256 recorded and checked by the build; any external
-  script carries Subresource Integrity;
+  and status; each result links the README rendered on github.com at the latest version's tag
+  (§3.2);
+- client-side only: no external service, no analytics, no external fonts, no third-party library;
+  the page's script is written in this repository, `index/vendor/search.js`, its sha256 recorded in
+  `index/vendor/search.js.sha256` and checked by the build;
 - without JavaScript the page shows the full list, with the content of `CATALOG.md`'s tables;
-- Markdown from READMEs is sanitized when rendered to HTML;
+- the page renders no README Markdown: the excerpt is shown as escaped text, and each result links
+  the README rendered on github.com;
 - the site also serves `catalog-index.json` and `llms.txt`;
 - the deployment job pins every action to a commit SHA and holds only the permissions
   `pages: write` and `id-token: write`.
 
 The build is deterministic like the index (§3.1). Enabling Pages and its environment protection is
-the approver's action; the deployment runs once CI exists (plan-015 task 10).
+the approver's action.
 
 ## 6. Checks
 
@@ -288,18 +294,20 @@ command (F3.1):
   `pack-release` (the first tag).
 - **CB-7 Search page.** A site built from the fixture catalog returns the expected packs for a text
   query, an axis filter and a profile filter, and its no-JavaScript HTML lists all of them; the
-  vendored library's checksum is verified. On the deployed site, the page loads, and
+  vendored script's checksum is verified. On the deployed site, the page loads, and
   `catalog-index.json` and `llms.txt` are served with CORS.
 - **CB-8 No contract change.** `catalog.yaml`, `compat.yaml` and the files under `schema/` are
   unchanged by this specification and by the tasks that implement it.
 
 ## 7. Open points
 
-| # | Point | Decided by |
+All closed in wave W14 (plan-024):
+
+| # | Point | Decision |
 |---|---|---|
-| P1 | The vendored search library, and whether the page needs any script beyond it. | the task of the search page (W14) |
-| P2 | Whether `excerpt` should also carry section 2's adoption profiles as text, for search. | the task of the index command (W14) |
-| P3 | The name of the site command (`npm run site` here) and its output layout. | the task of the search page (W14) |
+| P1 | The vendored search library, and whether the page needs any script beyond it. | No third-party library: the page's own script, vendored with its sha256 (§5); the approver, 2026-10-11 |
+| P2 | Whether `excerpt` should also carry section 2's adoption profiles as text, for search. | No: the first paragraph only (§3.3); the approver, 2026-10-11 |
+| P3 | The name of the site command (`npm run site` here) and its output layout. | `npm run site -- [--tree <dir>] --out <dir>` and its five files (§5); task-024 |
 
 ## Execution Notes
 
@@ -325,3 +333,13 @@ command (F3.1):
     `catalog.yaml` has no such field;
   - **§2.4 erratum** (the approver, 2026-10-11, task-022): the exemption holds while the tree holds
     no methodology (§6 CB-2's reading), not "until the first methodology is published".
+- 2026-10-13, **amended in place** (plan-031): the errata and rulings above, and those of task-019,
+  task-024 and plan-024, are folded into the body, as dl-020 R2 asks before wave W8. The approver
+  chose, on 2026-10-13, to edit this approved body in place under a plan (option (b) of plan-031)
+  rather than to supersede it, and approved the content ("tabella ok"); the merge OK of plan-031 is
+  the approval of the edited text. Changes: §2.4 (the exemption while the tree holds no
+  methodology); §3.1 and §3.3 (`tag` derived; a derived tag missing is an error); §3.2 (the README
+  column on github.com at the tag); §3.3 (`excerpt`, P2); §5 (results link the README on github.com;
+  P1: the page's own script; no Markdown rendered; P3: the command and its files; the CI-pending
+  sentence dropped); §6 CB-7 (the vendored script); §7 (P1–P3 closed). Nothing else changed; no
+  code, test or generated file changes, since the tooling already implements this text.
