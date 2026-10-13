@@ -50,3 +50,8 @@ On the branch `feedback/dl-021-notes`, from `main` at `83156df`.
   approve; task-027 approve after amendments (its branch and delivery stated, the update lines'
   exact text and check, Observed limited to WingFoil 0.2.2's output), amended (`db55683`). Plan
   submitted `active`, task-027 `pending`, at the approver's request in chat.
+- 2026-10-13: task-027 built, reviewed, approved by the approver and `done` (F-027 … F-029, update
+  lines on F-003 and F-005, README pointers). CI run 38398003590 on `ddc7784`, conclusion
+  `success`; the approver gave the merge OK in chat; `--no-ff` merge into `main`, push, branch
+  removed; WingFoil then gets the notes' numbers and the merge commit for its follow-up on dl-138
+  and dl-178. This plan goes `active → done`.
