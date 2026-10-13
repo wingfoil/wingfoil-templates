@@ -28,6 +28,10 @@ It comes from:
 - the approver's choice (i) of 2026-10-13: F-003 and F-005 get an update line pointing to D1 and
   to the new notes; status, title and body otherwise unchanged (`wingfoil-cli` rule 6).
 
+**Branch and delivery.** As task-026, this task runs on its plan's branch, `feedback/dl-021-notes`,
+not on `task/<id>`; its `done` commit lands on that branch, and its `deliver` is the branch's
+`--no-ff` merge into `main` at plan-030 step 2, after the approver's OK.
+
 Not in scope: the other changes of dl-021; F-001, F-007 and F-008 stay untouched (the new notes
 name them); the sync; CB-8: `catalog.yaml`, `compat.yaml` and `schema/` do not change.
 
@@ -42,23 +46,30 @@ Run from a clean clone of `feedback/dl-021-notes`; Node.js 22.21 and the floor 2
    format (README › Rules, WingFoil dl-163 R4): `kind: request`, `status: open`,
    `wingfoil_version: 0.2.2`, `answered_by: []`; the first line "New note (task-027)." followed by
    the decision it comes from (dl-021 R1, R2 or R3) and the earlier notes it supersedes; an
-   `## Observed` with WingFoil 0.2.2's current behaviour, reproduced from npm in a scratch project
-   (`git init`, then `wingfoil init --template Kanban`; paths shown neutral or elided); an
-   `## Expected` stating the request, with the WingFoil elements it is input for:
+   `## Observed` holding only WingFoil 0.2.2's command output, reproduced from npm in a scratch
+   project (`git init`, then `wingfoil init --template Kanban`; paths shown neutral or elided);
+   an `## Expected` stating the request, with WingFoil's plans and the elements it is input for
+   (WingFoil dl-138, dl-164, dl-149), which WingFoil alone cannot reproduce:
    - F-027, the pinned default set at `init`, option (b) (R1; supersedes F-001's bundled copy,
-     F-003's `advance-bundled-packs`, F-005's `--offline`);
+     F-003's `advance-bundled-packs`, F-005's `--offline`). Observed: `wingfoil init --help` has
+     no source, version or offline option. Expected also says that the first `init` needs the
+     network, that this repository commits to a default-set catalog commit never rewritten, and
+     that WingFoil's default-set ruling is as relayed, not yet recorded in WingFoil dl-138;
    - F-028, stage changes as pack updates of `stage/*` overlays (R2; supersedes F-008's
-     `stage set`);
+     `stage set`). Observed: `wingfoil --help` has no `stage` or `pack` command;
    - F-029, packs landing in `remote/` with dl-138's lock, mapped by `pack-install` (R3; supersedes
-     F-005's lock and F-007's `built-in/`).
+     F-005's lock and F-007's `built-in/`). Observed: after `init`, `ls .wingfoil/directives`
+     shows `built-in` and `custom` only.
 4. **Ledger:** a row per new note, as the note says.
-5. **Update lines:** F-003 and F-005 gain, right after their first line, one line "Update
-   2026-10-13: superseded by D1 (WingFoil dl-138; this repository's dl-021); see F-027…" naming
-   the new notes that cover them; nothing else in either file changes.
-6. **README:** the Context's decision D3 and its open question on bundled packs gain a pointer to
-   dl-021 and F-027; no other paragraph changes.
-7. **Nothing else changes:** besides this element, the task's commits touch only
-   `docs/wingfoil-feedback/`; the Execution Notes list them.
+5. **Update lines:** F-003 and F-005 gain, after their first line and a blank line, one paragraph:
+   F-003 "Update 2026-10-13: superseded by this repository's dl-021 R1 (WingFoil dl-138 Action 3);
+   see F-027."; F-005 "Update 2026-10-13: superseded by this repository's dl-021 R1 and R3
+   (WingFoil dl-138); see F-027 (`--offline`) and F-029 (the lock)." `git diff origin/main --
+   docs/wingfoil-feedback/F-003-*.md docs/wingfoil-feedback/F-005-*.md` shows added lines only.
+6. **README:** the Context's decision D3 (a table row, kept a single row) and its open question on
+   bundled packs gain a pointer to dl-021 and F-027; no other paragraph changes.
+7. **Nothing else changes:** besides this element and plan-030's own commits, the task's commits
+   touch only `docs/wingfoil-feedback/`; the Execution Notes list them.
 8. **CI:** the pushed branch's real run conclusion, for both Node.js versions, recorded in the
    Execution Notes before `in-review`.
 
