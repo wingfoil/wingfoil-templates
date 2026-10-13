@@ -2,7 +2,7 @@
 id: plan-029-decision-log-ingest-capture-the-divergences-between-this-repository-and-wingfoil-s-plans
 type: plan
 title: "decision-log-ingest capture: the divergences between this repository and WingFoil's plans"
-status: active
+status: done
 workflow: "decision-log-ingest"
 phase: "capture"
 tags: ["process","decision-log","wingfoil"]
