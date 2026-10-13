@@ -148,10 +148,9 @@ Reading published data: a published version is a `versions[]` entry of `catalog.
 and `wingfoil` (the computed range) come from `catalog.yaml` at the working commit, because a tag
 precedes its own catalog entry (spec-001 §11); its `tag` is derived as `<catalog pack id>@<version>`
 (dl-004), since `catalog.yaml` has no such field; the fields taken from its `pack.yaml` and README
-are read at that tag (`git show <tag>:…`), never from `main`. A tag named by `catalog.yaml` and
-missing from the repository is an error (exit 2), so CI checks out with every tag
-(`fetch-depth: 0`). A pack with no published version is not listed in `CATALOG.md` or
-`catalog-index.json`.
+are read at that tag (`git show <tag>:…`), never from `main`. A derived tag missing from the
+repository is an error (exit 2), so CI checks out with every tag (`fetch-depth: 0`). A pack with no
+published version is not listed in `CATALOG.md` or `catalog-index.json`.
 
 Exit codes as the other commands: 1 a check fails, 2 an I/O or git error, 3 bad usage.
 
@@ -250,7 +249,8 @@ A static site built from `catalog-index.json` and the README excerpts, by a comm
 `catalog-index.json` and `llms.txt` into `<dir>`; deployed to GitHub Pages by CI on every change of
 `main`:
 - a search field over title, description, excerpt and profile, and filters by axis, slot, profile
-  and status; each result links the README of the latest version (§4);
+  and status; each result links the README rendered on github.com at the latest version's tag
+  (§3.2);
 - client-side only: no external service, no analytics, no external fonts, no third-party library;
   the page's script is written in this repository, `index/vendor/search.js`, its sha256 recorded in
   `index/vendor/search.js.sha256` and checked by the build;
@@ -333,12 +333,13 @@ All closed in wave W14 (plan-024):
     `catalog.yaml` has no such field;
   - **§2.4 erratum** (the approver, 2026-10-11, task-022): the exemption holds while the tree holds
     no methodology (§6 CB-2's reading), not "until the first methodology is published".
-- 2026-10-13, **amended in place** (plan-031): the errata and rulings above are folded into the
-  body, as dl-020 R2 asks before wave W8. The approver chose, on 2026-10-13, to edit this approved
-  body in place under a plan (option (b) of plan-031) rather than to supersede it, and approved the
-  content ("tabella ok"); the merge OK of plan-031 is the approval of the edited text. Changes:
-  §2.4 (the exemption while the tree holds no methodology); §3.1 and §3.3 (`tag` derived); §3.2
-  (the README column on github.com at the tag); §3.3 (`excerpt`, P2); §5 (P1: the page's own
-  script; no Markdown rendered; P3: the command and its files; the CI-pending sentence dropped);
-  §6 CB-7 (the vendored script); §7 (P1–P3 closed). Nothing else changed; no code, test or
-  generated file changes, since the tooling already implements this text.
+- 2026-10-13, **amended in place** (plan-031): the errata and rulings above, and those of task-019,
+  task-024 and plan-024, are folded into the body, as dl-020 R2 asks before wave W8. The approver
+  chose, on 2026-10-13, to edit this approved body in place under a plan (option (b) of plan-031)
+  rather than to supersede it, and approved the content ("tabella ok"); the merge OK of plan-031 is
+  the approval of the edited text. Changes: §2.4 (the exemption while the tree holds no
+  methodology); §3.1 and §3.3 (`tag` derived; a derived tag missing is an error); §3.2 (the README
+  column on github.com at the tag); §3.3 (`excerpt`, P2); §5 (results link the README on github.com;
+  P1: the page's own script; no Markdown rendered; P3: the command and its files; the CI-pending
+  sentence dropped); §6 CB-7 (the vendored script); §7 (P1–P3 closed). Nothing else changed; no
+  code, test or generated file changes, since the tooling already implements this text.
