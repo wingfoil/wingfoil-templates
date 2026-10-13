@@ -79,3 +79,7 @@ step.
 - 2026-10-13: the approver asked in chat for the `LICENSE` file (MIT, their name, aligned with
   WingFoil) and the plan-018 leftovers, and gave the choices above; `memory add --set` not used
   (W-02), `workflow` and `phase` filled by editing the draft.
+- 2026-10-13: independent review (approve after amendments: host `decision-log-ingest` › `rule`
+  with dl-016 O2 as trigger; §18 quoted from its body; the spec-001 §4 erratum recorded under
+  dl-020; a `diff` check for the license text), amended. Submitted `active` on the approver's
+  request, with the choices already given in chat.
