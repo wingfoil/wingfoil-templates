@@ -75,6 +75,19 @@ Run from a clean clone of `feedback/dl-021-notes`; Node.js 22.21 and the floor 2
 
 ## Design
 
-Filled at the start of the work.
+On `feedback/dl-021-notes` (Context), through `tooling-delivery` v2 as `developer`
+(`documentation`, `wingfoil-cli`). Content only, no code and no new test: the checks are the
+existing `tests/wingfoil-feedback.test.ts` and `tests/support/inbox.ts`, unchanged.
+
+Red steps (dl-018 R1):
+1. The three ledger rows first, without the notes: the inbox test "lists every note in the README
+   ledger as the note says" fails (red, counted in the notes).
+2. The three notes, from outputs of WingFoil 0.2.2 from npm in a scratch project outside the
+   repository (`git init`, `wingfoil init --template Kanban`): green.
+3. The update lines on F-003 and F-005 and the README pointers: content checked by
+   characterization (dl-018 R2): the inbox tests stay green, and a mutation (an update line placed
+   before "Formerly T3.") fails the opening rule, so the tests guard the first line.
+
+Commits: one for steps 1–2, one for step 3; the Execution Notes list them.
 
 ## Execution Notes
