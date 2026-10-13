@@ -2,7 +2,7 @@
 id: plan-031-spec-002-amendment-fold-back-the-errata-and-rulings-of-wave-w14
 type: plan
 title: "spec-002 amendment: fold back the errata and rulings of wave W14"
-status: active
+status: done
 workflow: "sw-life-cycle"
 phase: "specification"
 tags: ["spec","W14"]
