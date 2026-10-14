@@ -61,3 +61,11 @@ On the branch `dl/dl-022-base-scope`, from `main` at `52f8221`.
   `description`, `tags`); WingFoil2 now names the phases of its release workflows (dl-015 C5); the
   `{line}` token of C6 appears in no governed configuration; the governed repositories name the
   agent differently, and WingFoil2 also records its email (C9).
+- 2026-10-14: dl-022 and this plan written (`2409349`), reviewed independently (approve after
+  amendments: S3's open points against dl-003 D4 and spec-001 §6.3, dl-001 D5 and dl-006 R2
+  amendments, the implied changes to spec-001, spec-002, the schemas and the vision, facts on
+  `claim-evidence` and WingFoil2-Benchmark, public-repo hygiene), amended (`52f18e4`) with the
+  approver's two rulings on S3; re-reviewed (no must-fix; schemas, the M2 row, hygiene), amended
+  with the approver's ruling on `delivery` (`c8c92a9`); re-reviewed (one line too long, and the
+  open points of the conditional `delivery` for the spec-001 amendment), amended. Checks:
+  `workflow list` and `npm run lint` exit 0.

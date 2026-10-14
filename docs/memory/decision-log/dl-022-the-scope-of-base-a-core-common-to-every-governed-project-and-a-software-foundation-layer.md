@@ -88,7 +88,8 @@ the software layer ("come consigli ma muovi adr e adr-ingest nel livello softwar
 `governance-evolution` is in `base`, because every WingFoil project needs it sooner or later. On
 the open points of S3 the approver then ruled that a methodology does not always require
 `software`, that the `methodology` axis is not required in a composition without it, and that a
-methodology's `delivery` exists only in a composition with `software`. The points below take effect when this element is approved.
+methodology's `delivery` exists only in a composition with `software`.
+The points below take effect when this element is approved.
 
 - **S1 — `base` serves every project governed by WingFoil**, software or not. It holds only what
   all of them use.
@@ -128,7 +129,12 @@ methodology's `delivery` exists only in a composition with `software`. The point
   `delivery` exists only in a composition with `software`**. A methodology requires `software`
   only for its `delivery`; in a composition without `software` it contributes the rest of its
   content and no `delivery`. The spec-001 amendment that follows this decision fixes how a pack
-  declares that conditional part, and amends §3, §9, §11 and §18 accordingly.
+  declares that conditional part, and amends §3, §9, §11 and §18 accordingly. Its open points:
+  `requires` has no conditional form (§6.3, and the catalog entries that copy it); `contents` is
+  unconditional (§6.4); the generated `include` leaves out `delivery` without `software` (§7.7);
+  a lint check that the rest of a methodology uses nothing from `software` (§18); each
+  methodology is validated with and without `software` (§15, `pack-compatibility`); its
+  AGENTS.md section may name `delivery` (§10).
 - **S4 — `governance-evolution` in `base`:** `kind: main`, only the keys of the WingFoil workflow
   format, no `waiting` state:
   1. **assess** (facilitator): a plan, made `active`; its inputs are Execution Notes,
