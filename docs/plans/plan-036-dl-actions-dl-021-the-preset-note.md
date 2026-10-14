@@ -3,31 +3,43 @@ id: plan-036-dl-actions-dl-021-the-preset-note
 type: plan
 title: "dl actions: dl-021, the preset note"
 status: draft
-workflow: ""
-phase: ""
+workflow: "decision-log-ingest"
+phase: "rule"
 tags: ["feedback","wingfoil"]
 ---
 
 ## Context
 
-<!-- Why this phase runs now, its preconditions, and what it produces. Keep it coherent with the
-     workflow definition's phases, roles and produces. A plan that opens a wave names the
-     tech-specs its work builds on and their errata not yet folded back; the wave starts after
-     their amendment, or after the approver rules it may start without (dl-020). -->
+A point found while reviewing plan-033 (dl-021's configuration changes) and left out of it: the
+`presets` module of `.wingfoil/dna.yaml` describes presets as "selectable with `wingfoil init
+--preset`", a verb WingFoil has not planned (its closest element is dl-164, in discussion). F-006
+already asks for `wingfoil init --preset <name>`, written before dl-021. The approver ruled on
+2026-10-14: a feedback note that refines F-006's request in the light of dl-021 R1 and F-027 (a
+preset selected at `init` and resolved like the default set), and the `presets` module reworded so
+that it does not present the verb as existing.
+
+As plan-030 hosts dl-021's first notes, no workflow phase hosts this work: it is filed under
+`decision-log-ingest` › `rule`. A new note opens with "New note (task-NNN)."
+(`tests/support/inbox.ts`), so it is written by a task, task-030, hosted by this plan.
 
 ## Steps
 
-<!-- The ordered steps, with the role of each and the artifact it produces. -->
+On the branch `feedback/f-030-preset`, from `main` at `fa51e0f`.
+
+1. **task-030** through `tooling-delivery` v2: body reviewed independently (dl-017), accepted into
+   the backlog by the approver, built, reviewed, approved, `done` on this branch; its `deliver` is
+   this branch's merge.
+2. **Branch close:** push, the real CI run's conclusion recorded here; on the approver's OK,
+   `--no-ff` merge into `main`, push, the branch removed; then WingFoil gets the note's number and
+   the merge commit, as for F-027 … F-029.
 
 ## Handoff
 
-<!-- What needs the approver and what the agent does alone; checkpoints and completion criteria.
-     Every element the plan creates, and the plan itself, gets an independent review before the
-     approver's gate (dl-017). -->
+- **claude:** steps 1–2, except the approver's gates and the merge OK. It never runs
+  `memory approve` or `memory reject`.
+- **Approver:** the ruling above (given 2026-10-14); task-030's two gates; the merge OK.
+- Done when task-030 is `done` and on `main`. The plan then goes `active → done`.
 
 ## Execution Notes
 
-<!-- Filled while the plan runs: deviations, blockers, decisions taken, WingFoil friction
-     (also recorded in docs/wingfoil-feedback/). At wave close: per tech-spec, the errata and
-     rulings recorded in the wave, and the element the approver names to fold them back, or the
-     ruling that none is needed (dl-020). -->
+- 2026-10-14: written; `workflow` and `phase` filled by editing the draft (W-02).
