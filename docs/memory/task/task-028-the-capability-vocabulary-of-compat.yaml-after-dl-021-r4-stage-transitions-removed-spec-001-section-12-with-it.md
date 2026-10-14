@@ -54,6 +54,13 @@ Run from a clean clone of `spec/spec-001-dl-021`; Node.js 22.21 and the floor 22
 
 ## Design
 
-Filled at the start of the work.
+On `spec/spec-001-dl-021` (Context), through `tooling-delivery` v2 as `developer`. Red steps
+(dl-018 R1):
+1. `tests/compat.test.ts` expects `pack-install`, `workflow-engine`: the vocabulary assertion fails
+   against the current `compat.yaml` (red, counted).
+2. spec-001 §12 (example and the two bullets), `compat.yaml` and the compose fixture's
+   `compat.yaml` edited together: green, the equality checks of the same test included.
+
+One commit for the whole change; the Execution Notes list it.
 
 ## Execution Notes
