@@ -77,4 +77,18 @@ Then:
 
 ## Execution Notes
 
-<!-- Filled while the plan runs. -->
+- 2026-10-14: rows 1–9 on `dl/dl-021-vision`, in a separate worktree, since the shared working
+  tree held plan-033's branch (coordinated with the session running plan-033: no file in common,
+  this plan takes plan-034, that one task-029). Rows 2–4 went into one commit (`4b7fcfb`), not one
+  each. Beyond row 2, `02_product-vision.md` also names the directive by its current name,
+  `wingfoil-cli` (it said `wingfoil-feedback`).
+- 2026-10-14: independent review of the branch (a subagent with its own context, dl-017): approve
+  after fixes; nothing blocking; six should-fix, applied: format 1's mapping stays until dl-138's
+  tech-spec fixes the `remote` folder (spec-001 O12, O13), in `03_is-isnot.md` and J2 step 3; F2.4's
+  CHANGELOG rule names the feature or command, not the capability; J3 step 1 no longer relies on
+  publication notes, and F5.4 traces to J1.7; a stage moves by a pack update that replaces the
+  `stage/*` overlay, not by a named verb; W7's criterion names the note only for a schema change;
+  the brief cites F-013 for T13. Nits applied (a reflow, the inbox named as this repository's).
+  The Checks grep hits `wingfoil-feedback` only as the folder path `docs/wingfoil-feedback/`, which
+  is correct. Not re-reviewed: the fixes follow the review's own wording and change no reading of
+  dl-021.
