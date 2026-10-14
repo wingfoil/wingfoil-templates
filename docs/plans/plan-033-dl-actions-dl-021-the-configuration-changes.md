@@ -69,3 +69,4 @@ On the branch `config/dl-021-actions`, from `main` at `4b1f481`; one commit per 
   review: approve after amendments (`dna.yaml`'s version; rule 8 kept at number 8 and its version
   line; where `record` takes the formats; a complete grep; positive wording; the `--preset`
   module left out with an owner), amended.
+- 2026-10-14: presented to the approver, who approved it in chat; submitted `active`.
