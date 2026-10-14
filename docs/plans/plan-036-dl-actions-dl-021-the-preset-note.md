@@ -50,3 +50,7 @@ On the branch `feedback/f-030-preset`, from `main` at `fa51e0f`.
   0.2.2 output; spec-001 §15's `init --preset` recorded as an erratum by the task; plan-036's
   commits excluded from the task's file check), amended. Plan submitted `active`, task-030
   `pending`.
+- 2026-10-14: task-030 built, reviewed (approve after amendments, wording fixed), approved by the
+  approver and `done`. CI run 38630873854 on `f20b61f`, conclusion `success`. The approver gave
+  the merge OK in chat; `--no-ff` merge into `main`, push, branch removed; then WingFoil gets
+  F-030's number and the merge commit. This plan goes `active → done`.
