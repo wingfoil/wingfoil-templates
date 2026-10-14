@@ -38,7 +38,7 @@ spec-001's changes, from dl-021 › Changes (spec-001):
 
 | Section | Change | Source |
 |---|---|---|
-| §4 | the `0.x` sentence states the rule directly: every published version is `1.0.0` or later | spec-001's erratum of 2026-10-13 (plan-028) |
+| §4, §18 | the `0.x` sentence states the rule directly, without the circular citation of `pack-semver`; §18's "once this specification is approved" dropped | spec-001's erratum of 2026-10-13 (plan-028) |
 | §6.2 | `pack.yaml` has no `bundled` field because no pack is bundled in WingFoil's npm package; the "dl-001 D4, D6" citation dropped | dl-021 R1 |
 | §7.6 | packs name no install folder, paths are relative to each kind; the table is the reference composer's format-1 mapping; `pack-install` maps packs into WingFoil's `remote` class once dl-138's tech-spec fixes it; `built-in/` is WingFoil's own | dl-021 R3, F-029 |
 | §7.6, §16 | the one path a pack writes that names a folder, `template.file` in a `memory.yaml` fragment: the format-1 rule (`memory/templates/built-in/<type>.md`) stays until it is settled, recorded as a new open point O13 owned by WingFoil dl-138's Action 2 tech-spec | dl-021 R3, F-029 (found while drafting) |
@@ -55,7 +55,8 @@ together, through **task-028**, a tooling task hosted by this plan.
 Not in this plan: `pack-authoring` (kind-relative paths), the rest of dl-021's configuration and
 tooling, the vision and the other decision-logs; the schema fixtures and the `TRANSITION` fixture of
 `tests/check-packs.test.ts` that still name `stage-transitions` as a free capability string, which
-stay valid (the `spec-11` and `spec-14` schema fixtures will no longer mirror the spec's examples).
+stay valid (the `spec-11`, `spec-12` and `spec-14` schema fixtures and the two compat invalid
+fixtures will no longer mirror the spec's examples).
 
 ## Steps
 

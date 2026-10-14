@@ -101,8 +101,7 @@ A composition holds `base` and packs chosen along these axes (dl-001 D1, dl-003 
 - **Maintenance branch** of an N-1 line, from WingFoil 1.0 only (dl-002):
   `maint/<catalog pack id>/<major>.x`, for example `maint/methodology/kanban/1.x` (dl-004 3(b)).
 - **Version:** SemVer 2.0 `MAJOR.MINOR.PATCH`, with no pre-release or build part. `pack-semver`
-  gives the bump classes. Every published version is `1.0.0` or later (`pack-semver`); `0.x` is
-  not used.
+  gives the bump classes. Every published version is `1.0.0` or later; `0.x` is not used.
 
 ## 5. The `format:` key
 
@@ -876,7 +875,7 @@ check the rest, and the composer refuses what they reject.
   integer, so the schemas cannot reject it.
 
 **`pack.yaml` and the pack directory:**
-- once this specification is approved, `version` is `1.0.0` or later (§4);
+- `version` is `1.0.0` or later (§4);
 - `id` equals the directory path under `packs/`, and `name` equals its last segment (§4, §6.2);
 - the pack name is unique across the catalog (dl-004 1(a));
 - `requires` has exactly one `base@^<major>` entry (§3) and at most one entry per pack id; no pack
@@ -987,11 +986,11 @@ check the rest, and the composer refuses what they reject.
   (spec-001 §4, §18)". §4's citation of `pack-semver` is folded back by the next amendment of
   this specification.
 - 2026-10-14, **amended in place** (plan-032, the approver's choice of 2026-10-14, as plan-031 did
-  for spec-002; the merge OK of plan-032 is the approval of the edited text), after dl-021: §4 (the
-  `0.x` erratum of 2026-10-13 folded back); §6.2 (no bundled packs, R1); §7.6 (no install folder in
-  a pack, the `remote` class, R3; the `template.file` rule kept for format 1); §7.7 (the `include`
-  folder follows §7.6); §11 and §14 (no `stage set`, no `stage-transitions`; a transition is the
-  target overlay's workflow on a pack update, R2; the `transition` kind stays, descriptive, the
-  approver's ruling); §16 (O3, O5, O12 re-owned; O13 new). §12 changes through task-028 with
+  for spec-002; the merge OK of plan-032 is the approval of the edited text), after dl-021: §4 and
+  §18 (the `0.x` erratum of 2026-10-13 folded back); §6.2 (no bundled packs, R1); §7.6 (no install
+  folder in a pack, the `remote` class, R3; the `template.file` rule kept for format 1); §7.7 (the
+  `include` folder follows §7.6); §11 and §14 (no `stage set`, no `stage-transitions`; a transition
+  is the target overlay's workflow on a pack update, R2; the `transition` kind stays, descriptive,
+  the approver's ruling); §16 (O3, O5, O12 re-owned; O13 new). §12 changes through task-028 with
   `compat.yaml`. WingFoil dl-177 (`b34f827f`) and dl-178 (`4d4c3221`, `662f6a4c`) are cited where
   dl-021 named dl-149 Action 3 and dl-164's mechanism.
