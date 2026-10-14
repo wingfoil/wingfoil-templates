@@ -97,3 +97,8 @@ Then:
   04 1.2, 05 1.2, 06 1.4, 07 1.3, 08 1.2), dated 2026-10-14; `npm test` (803 pass) and
   `npm run lint` exit 0. CI run 38585668570 on `e5e53e0`: conclusion `success` for
   `validate (22.12.0)` and `validate (22.21.0)`.
+- 2026-10-14: the approver approved the merge in chat. plan-033 was merged first (`e2bd554`); the two
+  branches share no file, and `pack-authoring`'s new install rule matches the vision's (format 1's
+  mapping until dl-138's tech-spec). CI run of the branch head `a384109`: `success`. Merged into
+  `main` with `--no-ff` (`e2de1fd`) and pushed; the branch and the worktree removed. dl-021's
+  Execution Notes record the actions applied.

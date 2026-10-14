@@ -159,3 +159,9 @@ Changes this decision implies, each applied later through its own element:
   never rewritten (`main`'s protection already forbids rewriting). The approver confirmed in chat:
   the default-set note of R1 proposes (b); F-003 and F-005 get an update line pointing to D1 and
   to the new notes, their status and body otherwise unchanged. The rulings R1–R4 do not change.
+- 2026-10-14, plan-034 (merged `e2de1fd`): the vision changes are applied (`01_product-brief.md`
+  1.1, `02_product-vision.md` 1.3, `03_is-isnot.md` 1.4, `04_personas.md` 1.2, `05_journeys.md`
+  1.2 with J3 "Pin this catalog in a WingFoil release" and J8 as a pack update, `06_features.md`
+  1.4, `07_sequencer.md` 1.3, `08_mvp-canvas.md` 1.2), and dl-001, dl-002 and dl-012 carry an
+  Execution Note each. With plan-032, plan-033, task-027 and task-028, every change of this
+  decision is applied except the tooling one (the removal of `publish:pack --bundled`).
