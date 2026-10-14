@@ -2,7 +2,7 @@
 id: task-030-feedback-note-f-030-selecting-a-preset-at-init-pinned-like-the-default-set-and-the-presets-module-of-dna.yaml
 type: task
 title: "Feedback note F-030, selecting a preset at init pinned like the default set, and the presets module of dna.yaml"
-status: in-review
+status: approved
 pack: ""            # no pack: the feedback inbox (hosted by plan-036, tooling-delivery)
 depends_on: []
 tags: ["feedback","wingfoil"]
