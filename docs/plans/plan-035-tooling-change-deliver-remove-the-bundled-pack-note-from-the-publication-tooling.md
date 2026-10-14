@@ -46,3 +46,7 @@ On the branch `tooling/task-029-no-bundled`, from `main` at `0a1139c`.
 ## Execution Notes
 
 - 2026-10-14: written; `workflow` and `phase` filled by editing the draft (W-02).
+- 2026-10-14: plan-035 and task-029 reviewed independently: plan-035 approve; task-029 approve
+  after amendments (the W7 test is a publication in a fixture repository, not a dry run; the note
+  committed before it passes; dead code named; the branch wording of the precedents), amended.
+  Plan submitted `active`, task-029 `pending`.
