@@ -59,6 +59,7 @@ sha of the commit it read (WingFoil `COLLABORATION.md` › Credit, task-271), fo
 | [F-027](F-027-a-pinned-default-set-of-packs-at-init.md) | A pinned default set of packs at init, read from this repository's catalog | request | open | |
 | [F-028](F-028-stage-changes-as-pack-updates.md) | Stage changes as pack updates of the stage overlay, with no stage set verb | request | open | |
 | [F-029](F-029-packs-land-in-remote-with-the-lock.md) | Packs land in the remote asset class, mapped by pack-install and pinned by the lock | request | open | |
+| [F-030](F-030-selecting-a-preset-at-init-pinned-like-the-default-set.md) | Selecting a preset of this repository's catalog at init, pinned like the default set | request | open | |
 
 ## Context
 

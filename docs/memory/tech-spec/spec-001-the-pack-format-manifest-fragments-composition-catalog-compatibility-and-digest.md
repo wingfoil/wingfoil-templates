@@ -994,3 +994,7 @@ check the rest, and the composer refuses what they reject.
   the approver's ruling); §16 (O3, O5, O12 re-owned; O13 new). §12 changes through task-028 with
   `compat.yaml`. WingFoil dl-177 (`b34f827f`) and dl-178 (`4d4c3221`, `662f6a4c`) are cited where
   dl-021 named dl-149 Action 3 and dl-164's mechanism.
+- 2026-10-14, erratum (task-030, dl-020 R1): §15 says a preset is "selectable with
+  `wingfoil init --preset <id>`", a verb WingFoil has not planned; how `init` selects a preset is
+  this repository's request F-030 (refining F-006). Folded back by the next amendment of this
+  specification.
