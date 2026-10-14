@@ -1,7 +1,7 @@
 # Features — WingFoil-Templates
 
-**Version:** 1.3
-**Date:** 2026-10-10
+**Version:** 1.4
+**Date:** 2026-10-14
 **Status:** Approved
 **Traces to:** [05_journeys.md](05_journeys.md), [03_is-isnot.md](03_is-isnot.md), [01_product-brief.md](01_product-brief.md) §8
 
@@ -42,7 +42,7 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 | F2.1 | **`catalog.yaml`:** axes, packs, published versions with commit, digest, formats, capabilities and the computed WingFoil range. | J3.1, J6.1 | H | M | L |
 | F2.2 | **Tag per pack version**, never moved or deleted. | J1.7, J3.2 | H | L | M |
 | F2.3 | **Pack digest:** sha256 over a canonical listing of the pack's files. The procedure (ordering, line endings, exclusions) is fixed in spec-001. | J1.7, J3.2 | H | L | M |
-| F2.4 | **`compat.yaml`:** for each WingFoil release, the formats it reads and the capabilities it provides. The vocabulary belongs to WingFoil (notes T13), and until WingFoil publishes it this repository holds a proposal. | J4.1, J6.3 | H | L | **H** |
+| F2.4 | **`compat.yaml`:** for each WingFoil release, the formats it reads and the capabilities it provides. The vocabulary belongs to WingFoil (its capabilities query, WingFoil dl-177); until WingFoil publishes it, this repository holds a provisional one, `pack-install` and `workflow-engine`, and records a capability only when a release's CHANGELOG names it (dl-021 R4). | J4.1, J6.3 | H | L | **H** |
 | F2.5 | **Computed WingFoil range** in the catalog, derived from `compat.yaml`. It is never written by hand. | J1.6, J3.1 | M | L | L |
 | F2.6 | **Presets:** named combinations, organized by the adoption profiles (personas §2). | J6.1 | M | L | L |
 | ~~F2.7~~ | ~~**Release assets.**~~ Dropped in the features review: versions are not published as GitHub Release assets. | brief §8 | — | — | — |
@@ -70,7 +70,7 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 | F4.4 | **`team-mode/agent-first`:** depends on WingFoil's agent work (notes T9). | J6.1 | M | M | **H** |
 | F4.5 | **Phase packs:** `inception/lean-inception`, `specification/bdd-sbe`. | J6.1 | M | M | L |
 | F4.6 | **Blueprints:** `web-service`, `cli-library`. The `service` Memory type is renamed, because it clashes with WingFoil dl-088. | J6.1 | M | M | M |
-| F4.7 | **Stages:** `prototype`, `production`, and the transition `prototype-to-production`. Running transitions belongs to WingFoil. | J8 | M | M | M |
+| F4.7 | **Stages:** `prototype`, `production`, and the transition `prototype-to-production`. A stage is an overlay: the project moves by a pack update of the `stage/*` overlay, whose workflow runs the transition (dl-021 R2, WingFoil dl-178). | J8 | M | M | M |
 
 ## F5 — Release process
 
@@ -79,7 +79,7 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 | F5.1 | **`pack-release` with evidence:** commands, WingFoil versions and exit codes are recorded in the element (already configured). | J1.6 | H | L | L |
 | F5.2 | **`wingfoil-release-intake` workflow:** updates `compat.yaml`, rechecks the active packs, and opens a task for each migration (journeys review). | J4 | H | L | L |
 | F5.3 | **Line policy:** one living line before WingFoil 1.0; lines N and N-1 after it. | J4.3, J7.1 | M | L | M |
-| F5.4 | **Feedback notes on publication:** a note for every schema change and for every published pack that WingFoil bundles. | J3.1 | M | L | L |
+| F5.4 | **Feedback notes on publication:** a note for every schema change; no pack is bundled in WingFoil, so a publication needs no note of its own (dl-021 R1). | J3.1 | M | L | L |
 
 ## F6 — Adoption (until the CLI installs packs)
 
@@ -105,7 +105,8 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
     be exact in spec-001. They are the core of determinism.
   - **F1.6 (AGENTS.md markers):** the syntax waits for WingFoil dl-137's part-(b) tech-spec (notes
     T14).
-  - **F2.4 (capability vocabulary):** WingFoil owns the names (notes T13).
+  - **F2.4 (capability vocabulary):** WingFoil owns the names (its capabilities query, WingFoil
+    dl-177); the vocabulary here stays provisional until then (dl-021 R4).
   - **F3.2 (reference composer):** see open question 1.
   - **F4.4 (agent-first):** it depends on WingFoil's agent features (notes T9).
   - **F7.1 (community location):** it depends on WingFoil's sources and allowlist (dl-138 Q4).
