@@ -2,7 +2,7 @@
 id: plan-032-spec-001-amendment-and-dl-003-notes-the-alignment-with-wingfoil-s-plans-of-dl-021
 type: plan
 title: "spec-001 amendment and dl-003 notes: the alignment with WingFoil's plans of dl-021"
-status: active
+status: done
 workflow: "sw-life-cycle"
 phase: "specification"
 tags: ["spec","wingfoil","base"]
