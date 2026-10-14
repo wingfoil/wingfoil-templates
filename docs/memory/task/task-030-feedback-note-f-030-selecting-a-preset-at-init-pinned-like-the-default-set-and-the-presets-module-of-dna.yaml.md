@@ -69,6 +69,14 @@ Run from a clean clone of `feedback/f-030-preset`; Node.js 22.21 and the floor 2
 
 ## Design
 
-Filled at the start of the work.
+On `feedback/f-030-preset` (Context), through `tooling-delivery` v2 as `developer`
+(`documentation`, `wingfoil-cli`). Content and configuration only, no code and no new test.
+
+Red steps (dl-018 R1): the ledger row first, without the note: the inbox test "lists every note in
+the README ledger as the note says" fails (red, counted); then the note, from WingFoil 0.2.2's
+output in a scratch project outside the repository: green. `dna.yaml` and spec-001's note by
+characterization (dl-018 R2): `dna show` exits 0 with no warning, and the tests stay green.
+
+Commits: one for the note and the ledger, one for `dna.yaml`, one for spec-001's note.
 
 ## Execution Notes
