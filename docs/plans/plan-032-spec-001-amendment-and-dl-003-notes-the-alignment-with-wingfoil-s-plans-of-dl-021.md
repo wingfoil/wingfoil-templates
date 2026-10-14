@@ -89,3 +89,12 @@ On the branch `spec/spec-001-dl-021`, from `main` at `b8786d6`.
   dl-177 and dl-178 sourced by their public commits; dl-003's note limited to D7's second
   sentence; O13 with the format-1 rule kept and its owner; the scope lists and task-028's
   Acceptance 6 made checkable), amended. Plan submitted `active`, task-028 `pending`.
+- 2026-10-14, steps 1–5: spec-001 amended (`e4ef7ad`, §12 through task-028 in `d0b873b`, review
+  fixes in `fe6c0cb`: §4 without the circular citation, §18's conditional dropped); dl-003's note
+  (`df624da`); task-028 built, reviewed, approved by the approver and `done`. Checks from a clean
+  clone on both Node.js versions: 803 of 803, `lint`, `check:*`, `index -- --check`, `validate`
+  exit 0; `workflow list` exit 0. Independent review: dl-003 and task-028 approve; spec-001
+  approve after amendments, applied (wording only, no re-review).
+- 2026-10-14, step 6: CI run 38531987510 on `fe6c0cb`, conclusion `success`. The approver gave the
+  merge OK in chat, which approves spec-001's edited text; `--no-ff` merge into `main`, push, branch
+  removed. This plan goes `active → done`.
