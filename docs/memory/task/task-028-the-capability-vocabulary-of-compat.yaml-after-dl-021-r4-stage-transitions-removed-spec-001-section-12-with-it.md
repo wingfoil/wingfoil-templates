@@ -2,7 +2,7 @@
 id: task-028-the-capability-vocabulary-of-compat.yaml-after-dl-021-r4-stage-transitions-removed-spec-001-section-12-with-it
 type: task
 title: "The capability vocabulary of compat.yaml after dl-021 R4: stage-transitions removed, spec-001 section 12 with it"
-status: pending
+status: backlog
 pack: ""            # tooling task (hosted by plan-032, tooling-delivery)
 depends_on: []
 tags: ["tooling","compat","wingfoil"]
