@@ -9,7 +9,7 @@ import { parseArgs } from 'node:util';
 import { InboxError, newestSchemaRecord, readNotes, writeNote } from './feedback-inbox';
 import { schemaListing } from './schema-digest';
 
-export class FeedbackNoteError extends Error {
+class FeedbackNoteError extends Error {
   constructor(readonly code: number, message: string) {
     super(message);
   }
@@ -19,7 +19,7 @@ export class FeedbackNoteError extends Error {
 const FROM = /^((?:task|prel)-\d{3})(?:-[a-z0-9.-]+)?$/;
 
 /** The element a note comes from, as the note's first line names it: `task-<nnn>` or `prel-<nnn>`. */
-export function fromElement(value: string | undefined): string {
+function fromElement(value: string | undefined): string {
   const id = value === undefined ? undefined : FROM.exec(value)?.[1];
   if (id === undefined) {
     throw new FeedbackNoteError(3, '--from <task-<nnn> | prel-<nnn>> is required');

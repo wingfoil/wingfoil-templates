@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { appendFileSync, cpSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { appendFileSync, cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, describe, it } from 'node:test';
@@ -140,6 +140,11 @@ describe('npm run publish:pack (F5.4, the W7 exit criterion; dl-021 R1)', () => 
       assert.deepEqual(repo.git(['log', '-2', '--format=%s']).trim().split('\n'),
         ['catalog: base@1.0.0', 'inbox, schemas, changelog']);
       assert.equal(repo.git(['cat-file', '-t', 'refs/tags/base@1.0.0']).trim(), 'tag');
+      // The catalog entry, with its digest (spec-001 §11, §13).
+      assert.match(readFileSync(join(repo.dir, 'catalog.yaml'), 'utf8'),
+        /- version: 1\.0\.0\n[\s\S]*?digest: sha256:[0-9a-f]{64}/);
+      assert.ok(result.lines.some((line) => line.startsWith('- Digest: `sha256:')),
+        result.lines.join('\n'));
       // CB-5 (task-020): the catalog and its index, nothing under packs/ and no note.
       assert.deepEqual(repo.git(['diff', '--name-only', 'base@1.0.0', 'HEAD']).trim().split('\n'),
         ['CATALOG.md', 'catalog-index.json', 'catalog.yaml']);
