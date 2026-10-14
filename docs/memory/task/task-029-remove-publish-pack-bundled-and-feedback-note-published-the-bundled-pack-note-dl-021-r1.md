@@ -2,7 +2,7 @@
 id: task-029-remove-publish-pack-bundled-and-feedback-note-published-the-bundled-pack-note-dl-021-r1
 type: task
 title: "Remove publish:pack --bundled and feedback:note --published, the bundled-pack note (dl-021 R1)"
-status: in-progress
+status: in-review
 pack: ""            # tooling task (tooling-change › deliver, plan-035)
 depends_on: []
 tags: ["tooling","feedback"]
