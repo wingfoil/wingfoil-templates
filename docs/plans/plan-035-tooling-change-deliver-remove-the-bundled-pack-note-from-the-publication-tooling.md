@@ -3,31 +3,46 @@ id: plan-035-tooling-change-deliver-remove-the-bundled-pack-note-from-the-public
 type: plan
 title: "tooling-change deliver: remove the bundled-pack note from the publication tooling"
 status: draft
-workflow: ""
-phase: ""
+workflow: "tooling-change"
+phase: "deliver"
 tags: ["tooling","wingfoil"]
 ---
 
 ## Context
 
-<!-- Why this phase runs now, its preconditions, and what it produces. Keep it coherent with the
-     workflow definition's phases, roles and produces. A plan that opens a wave names the
-     tech-specs its work builds on and their errata not yet folded back; the wave starts after
-     their amendment, or after the approver rules it may start without (dl-020). -->
+The tooling change of dl-021 (`approved` 2026-10-13) › Changes › Tooling: `npm run publish:pack --
+--bundled`, the bundled-pack note of `src/feedback-note.ts` and their tests, removed. dl-021 R1: no
+pack is bundled in WingFoil's npm package. The configuration no longer asks for the note
+(plan-033: `wingfoil-cli` rule 8 at 1.4, `pack-release-cycle` v7, the `pack-release` template), and
+the sequencer's W7 exit criterion is now "a dry-run publication of a fixture pack produces tag,
+catalog entry and digest, and a feedback note when it changes a schema" (plan-034). Requested by
+the approver in chat on 2026-10-14; opened after plan-034's merge (the approver's choice, to avoid
+a plan-034 collision).
+
+The work runs through `tooling-change` › `deliver`: one `tooling-delivery` iteration (v2) for one
+tooling task, task-029.
+
+Not in this plan: `feedback:note --schema` and the `schema-note` lint rule, which stay (rule 8);
+approved elements that mention `--bundled` (task-014 … task-016, task-020, bug-002), which stay as
+approved.
 
 ## Steps
 
-<!-- The ordered steps, with the role of each and the artifact it produces. -->
+On the branch `tooling/task-029-no-bundled`, from `main` at `0a1139c`.
+
+1. **task-029** through `tooling-delivery` v2: body reviewed independently (dl-017), accepted into
+   the backlog by the approver, built red first (dl-018), reviewed and re-reviewed as dl-017 R2
+   asks, approved, `done` on this branch; its `deliver` is this branch's merge.
+2. **Branch close:** push, the real CI run's conclusion recorded here; on the approver's OK,
+   `--no-ff` merge into `main`, push, the branch removed.
 
 ## Handoff
 
-<!-- What needs the approver and what the agent does alone; checkpoints and completion criteria.
-     Every element the plan creates, and the plan itself, gets an independent review before the
-     approver's gate (dl-017). -->
+- **claude:** steps 1–2, except the approver's gates and the merge OK. It never runs
+  `memory approve` or `memory reject`.
+- **Approver:** task-029's two gates; the merge OK.
+- Done when task-029 is `done` and on `main`. The plan then goes `active → done`.
 
 ## Execution Notes
 
-<!-- Filled while the plan runs: deviations, blockers, decisions taken, WingFoil friction
-     (also recorded in docs/wingfoil-feedback/). At wave close: per tech-spec, the errata and
-     rulings recorded in the wave, and the element the approver names to fold them back, or the
-     ruling that none is needed (dl-020). -->
+- 2026-10-14: written; `workflow` and `phase` filled by editing the draft (W-02).
