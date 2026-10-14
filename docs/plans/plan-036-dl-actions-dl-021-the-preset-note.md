@@ -45,3 +45,8 @@ On the branch `feedback/f-030-preset`, from `main` at `fa51e0f`.
 ## Execution Notes
 
 - 2026-10-14: written; `workflow` and `phase` filled by editing the draft (W-02).
+- 2026-10-14: plan-036 and task-030 reviewed independently (approve after amendments: the
+  "explicit preset replaces the default set" recorded as presented to the approver; the exact
+  0.2.2 output; spec-001 §15's `init --preset` recorded as an erratum by the task; plan-036's
+  commits excluded from the task's file check), amended. Plan submitted `active`, task-030
+  `pending`.
