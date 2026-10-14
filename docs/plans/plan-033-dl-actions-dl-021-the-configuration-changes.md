@@ -82,3 +82,6 @@ On the branch `config/dl-021-actions`, from `main` at `4b1f481`; one commit per 
   (dl-017 R2).
 - 2026-10-14, step 4: CI run 38585709680 on `1b9e875`, conclusion `success` for both Node.js
   versions. Waiting for the approver's merge OK.
+- 2026-10-14: the approver gave the merge OK in chat; `--no-ff` merge into `main`, push, branch
+  removed. This plan goes `active → done`. Next: the tooling task that removes `--bundled`
+  (task-029).
