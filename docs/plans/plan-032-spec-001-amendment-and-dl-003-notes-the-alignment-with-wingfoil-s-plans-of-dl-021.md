@@ -17,10 +17,10 @@ on the approver's request in chat on 2026-10-14: spec-001's amendment and dl-003
 
 The approver ruled on 2026-10-14:
 - **the `transition` kind stays**, descriptive (dl-021's open point):
-  `transitions/<from>-to-<to>.yaml`, its schema, `catalog.yaml` › `transitions` and the index keep their form; a transition is no
-  longer run by a `stage set` verb but by the workflow of the target `stage/*` overlay, when the
-  project replaces the overlay through a pack update (dl-021 R2, WingFoil dl-178); no schema change,
-  so no note under `wingfoil-cli` rule 8;
+  `transitions/<from>-to-<to>.yaml`, its schema, `catalog.yaml` › `transitions` and the index keep
+  their form; a transition is no longer run by a `stage set` verb but by the workflow of the target
+  `stage/*` overlay, when the project replaces the overlay through a pack update (dl-021 R2,
+  WingFoil dl-178); no schema change, so no note under `wingfoil-cli` rule 8;
 - **spec-001 is amended in place**, as spec-002 was (option (b) of plan-031): the body edited under
   this plan, its Execution Notes listing the changes, the approver's merge OK as the approval;
 - **dl-003 is not edited**: an Execution Note records that D7 ("`base` is bundled in WingFoil's npm
