@@ -31,7 +31,8 @@ Global. Applies to every role, human or agent, that runs the WingFoil CLI in thi
    and `answered_by` from it (rule 6), and record the sync under **Last sync** in
    `docs/wingfoil-feedback/README.md`.
 8. A change to `schema/` (the contract with the WingFoil CLI) produces a note, so that WingFoil's
-   release planning sees it. No pack is bundled in WingFoil's npm package (dl-021 R1).
+   release planning sees it. Packs reach WingFoil projects from this repository through
+   `pack-install`, not through WingFoil's npm package (dl-021 R1).
 
 ## Known behaviours (0.2.2)
 
