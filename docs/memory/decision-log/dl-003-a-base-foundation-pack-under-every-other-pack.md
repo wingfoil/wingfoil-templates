@@ -154,3 +154,9 @@ Configuration changes this decision implies. Each is applied after approval and 
   (plan-022). Its inputs for `base`'s charter are in dl-015 (per-type paths, `paths.governance`,
   the bug state `fixed`, the agent name, and the naming points of the governed repositories); the `{release}`/`{scope}` tokens are in spec-001 §8.3, the `service` clash in
   `06_features.md` F4.6, and the `format:` key in spec-001 §5.
+- 2026-10-14, plan-032: D7's second sentence ("`base` is bundled in WingFoil's npm package") is
+  superseded by dl-021 R1: no pack is bundled; WingFoil installs `base` from this repository as a
+  pinned `remote` source (WingFoil dl-138). The rest of D7 stands (the first scope gains `base` and
+  `governance/wingfoil-dogfood`). The install-folder line of the configuration changes ("`built-in/`
+  today, `remote/` if ratified") is settled by dl-021 R3: dl-138 ratified the `remote` class, and
+  `built-in/` stays WingFoil's own. The body stays as approved.
