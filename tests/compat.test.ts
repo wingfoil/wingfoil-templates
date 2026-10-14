@@ -48,7 +48,7 @@ describe('compat.yaml', () => {
     assert.deepEqual(compat.releases.map((release) => [release.wingfoil, release.format_key]),
       [['0.2.2', false]]);
     assert.deepEqual(Object.keys(compat.capabilities),
-      ['pack-install', 'workflow-engine', 'stage-transitions']);
+      ['pack-install', 'workflow-engine']);
   });
 
   it('loads releases in ascending order', () => {

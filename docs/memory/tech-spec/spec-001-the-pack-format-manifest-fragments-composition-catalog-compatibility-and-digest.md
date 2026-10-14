@@ -658,7 +658,6 @@ kinds:
 capabilities:
   pack-install: "init, pack add and upgrade install packs from this repository"
   workflow-engine: "WingFoil executes workflows"
-  stage-transitions: "wingfoil stage set runs a transition from transitions/"
 releases:
   - wingfoil: 0.2.2
     format_key: false
@@ -669,13 +668,16 @@ releases:
 
 - **`kinds`** are dl-149's seven file kinds, all of them required. `workflows` is listed even though
   packs ship no fragment of it, because the composed file has a format (§7.7).
-- **`capabilities`** are this repository's proposal until WingFoil publishes its vocabulary
-  (feedback notes T13). WingFoil owns the final names.
+- **`capabilities`** are this repository's provisional vocabulary (dl-021 R4) until WingFoil's
+  capabilities query publishes one (WingFoil dl-177; F-013). WingFoil owns the final names.
 - **`releases[]`:**
   - only released WingFoil versions (`MAJOR.MINOR.PATCH`, no pre-release), in ascending order;
   - `format_key` says whether the release accepts the `format:` key without a warning;
   - `reads` maps each kind to the formats that release reads;
   - `capabilities` lists what it provides, from the `capabilities` vocabulary above;
+    `wingfoil-release-intake` records a capability for a release only when its CHANGELOG names
+    the feature or command behind it (dl-021 R4), since WingFoil names features and commands, not
+    capabilities;
   - `notes` is optional free text for people, never read by a resolver.
 
   WingFoil 0.2.2 predates dl-149. It reads format 1, which is files with no key, but warns on the
