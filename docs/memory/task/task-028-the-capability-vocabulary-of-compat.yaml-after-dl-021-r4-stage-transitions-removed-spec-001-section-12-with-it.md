@@ -64,3 +64,16 @@ On `spec/spec-001-dl-021` (Context), through `tooling-delivery` v2 as `developer
 One commit for the whole change; the Execution Notes list it.
 
 ## Execution Notes
+- 2026-10-14, design written, task started (backlog → in-progress).
+- 2026-10-14, build, red: `tests/compat.test.ts` expecting `pack-install`, `workflow-engine` gave 8
+  tests, 7 pass, 1 fail ("loads the releases of the real file"); green (8 of 8) after spec-001 §12,
+  `compat.yaml` and the compose fixture's `compat.yaml` changed together.
+- Task commit: `d0b873b` (spec-001 §12, `compat.yaml`, `tests/fixtures/compose/tree/compat.yaml`,
+  `tests/compat.test.ts`), plus this element's own commits.
+- 2026-10-14, Acceptance from a clean clone at `d0b873b`, on Node.js 22.21.0 and 22.12.0: `npm ci`,
+  `build`, `test` (803 of 803), `lint`, `check:pins`, `check:schemas`, `check:packs`,
+  `index -- --check`, `validate` exit 0; `schema/` unchanged.
+- 2026-10-14, build review (independent subagent, with plan-032's steps 1 and 3): approve; nothing
+  else in the repository depends on `stage-transitions` being in the real vocabulary.
+- 2026-10-14, CI (Acceptance 7): run 38531987510 on `fe6c0cb`, conclusion `success` for both
+  Node.js versions. Submitted `in-review`.
