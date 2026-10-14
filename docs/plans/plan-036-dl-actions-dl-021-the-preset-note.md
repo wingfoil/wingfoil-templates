@@ -15,8 +15,10 @@ A point found while reviewing plan-033 (dl-021's configuration changes) and left
 --preset`", a verb WingFoil has not planned (its closest element is dl-164, in discussion). F-006
 already asks for `wingfoil init --preset <name>`, written before dl-021. The approver ruled on
 2026-10-14: a feedback note that refines F-006's request in the light of dl-021 R1 and F-027 (a
-preset selected at `init` and resolved like the default set), and the `presets` module reworded so
-that it does not present the verb as existing.
+preset selected at `init` and resolved like the default set, an explicit preset replacing the
+default set, as presented to the approver), and the `presets` module reworded so that it does not
+present the verb as existing. spec-001 §15 also names `wingfoil init --preset <id>`: an erratum
+recorded in spec-001's Execution Notes (dl-020 R1), folded back by its next amendment.
 
 As plan-030 hosts dl-021's first notes, no workflow phase hosts this work: it is filed under
 `decision-log-ingest` › `rule`. A new note opens with "New note (task-NNN)."

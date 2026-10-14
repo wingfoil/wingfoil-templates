@@ -28,6 +28,10 @@ It comes from:
 
 Kind: `request`, as F-027 … F-029 (WingFoil plans no such option yet).
 
+spec-001 §15 says presets are "selectable with `wingfoil init --preset <id>`": an erratum of an
+approved tech-spec, recorded in spec-001's Execution Notes by this task (dl-020 R1) and folded back
+by its next amendment (dl-020 R2).
+
 Not in scope: F-006, which stays as written (status changes only by the sync, `wingfoil-cli`
 rule 6); any other `dna.yaml` module; `schema/`, `catalog.yaml` and `compat.yaml`.
 
@@ -43,21 +47,24 @@ Run from a clean clone of `feedback/f-030-preset`; Node.js 22.21 and the floor 2
    `answered_by: []`; the first line "New note (task-030)." followed by its origin (plan-036,
    dl-021 R1) and "refines F-006's `--preset` request"; an `## Observed` with only WingFoil 0.2.2's
    output, reproduced from npm in a scratch project (`git init`; `wingfoil init --help`;
-   `wingfoil init --preset startup-mvp`, exit 2), paths neutral or elided; an `## Expected` stating
+   `wingfoil init --preset startup-mvp` printing `unknown option '--preset'`, exit 2, nothing
+   written), paths neutral or elided; an `## Expected` stating
    the request, pending WingFoil's v0.4 release-planning and not a commitment, as input for
    WingFoil dl-138's Action 2 tech-spec and dl-164: `init` selects a preset of this repository's
-   catalog by id and resolves it like the default set of F-027 (the catalog commit the WingFoil
-   release pins, unless a source or version is given), an explicit preset replacing the default
-   set.
+   catalog by id and resolves it like the default set of F-027, inheriting its rule (the catalog
+   commit the WingFoil release pins, unless a source or version is given); an explicit preset
+   replaces the default set (presented to the approver with the ruling of plan-036).
 3. **Ledger:** a row for F-030, as the note says.
 4. **`dna.yaml`** (`version` 8 → 9): the `presets` module reads "Named, curated pack combinations,
    selectable at `init` once WingFoil supports it (F-030)."; nothing else in the file changes;
    `npm run -s wingfoil -- dna show` exits 0 with no warning.
 5. `git diff --exit-code origin/main...HEAD -- schema/ catalog.yaml compat.yaml` exits 0.
-6. **Nothing else changes:** `git diff --name-only` over the task's commits (listed in the
-   Execution Notes) shows only this element, `docs/wingfoil-feedback/F-030-*.md`,
-   `docs/wingfoil-feedback/README.md` and `.wingfoil/dna.yaml`.
-7. **CI:** the pushed branch's real run conclusion, for both Node.js versions, recorded before
+6. **spec-001:** an Execution Note records the §15 erratum; its body does not change.
+7. **Nothing else changes:** besides this element and plan-036's own commits, `git diff
+   --name-only` over the task's commits (listed in the Execution Notes) shows only
+   `docs/wingfoil-feedback/F-030-*.md`, `docs/wingfoil-feedback/README.md`, `.wingfoil/dna.yaml`
+   and spec-001.
+8. **CI:** the pushed branch's real run conclusion, for both Node.js versions, recorded before
    `in-review`.
 
 ## Design
