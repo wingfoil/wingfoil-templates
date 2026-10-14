@@ -50,3 +50,8 @@ On the branch `tooling/task-029-no-bundled`, from `main` at `0a1139c`.
   after amendments (the W7 test is a publication in a fixture repository, not a dry run; the note
   committed before it passes; dead code named; the branch wording of the precedents), amended.
   Plan submitted `active`, task-029 `pending`.
+- 2026-10-14: task-029 built, reviewed (approve after amendments, re-reviewed: approve), approved
+  by the approver and `done`; the approver ruled the reading of its Acceptance 6 (no occurrence
+  outside the refusal tests). CI run 38621778153 on `2eea798`, conclusion `success`. The approver
+  gave the merge OK in chat; `--no-ff` merge into `main`, push, branch removed. This plan goes
+  `active → done`.
