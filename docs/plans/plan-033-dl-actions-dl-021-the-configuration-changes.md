@@ -2,7 +2,7 @@
 id: plan-033-dl-actions-dl-021-the-configuration-changes
 type: plan
 title: "dl actions: dl-021, the configuration changes"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "rule"
 tags: ["config","wingfoil"]
