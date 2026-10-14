@@ -1,7 +1,7 @@
 # Product Vision — WingFoil-Templates
 
-**Version:** 1.2
-**Date:** 2026-10-06
+**Version:** 1.3
+**Date:** 2026-10-14
 **Status:** Approved
 **Traces to:** [01_product-brief.md](01_product-brief.md)
 
@@ -34,7 +34,7 @@ constraints.
 | What is the product? | **The packs and their format**, not the tool that installs them. Resolving and installing packs belongs to the WingFoil CLI. This repository holds content, the format's schemas and the tooling that validates them. |
 | Quality bar | **The north star:** every pack combination composes deterministically into a `.wingfoil/` that every compatible WingFoil release validates with zero errors. A pack that fails it is not published. |
 | Versioning | **One semver per pack**, with no repository-wide version (`pack-semver` directive). |
-| Where WingFoil changes happen | **In WingFoil, through its own process.** A WingFoil defect or gap found here becomes a note in `docs/wingfoil-feedback/`, never an edit to WingFoil (`wingfoil-feedback` directive). |
+| Where WingFoil changes happen | **In WingFoil, through its own process.** A WingFoil defect or gap found here becomes a note in `docs/wingfoil-feedback/`, never an edit to WingFoil (`wingfoil-cli` directive). |
 | Dogfooding | **This repository is a WingFoil project** and adopts its own packs. Its history is the first evidence that the packs work. |
 | Timing | **The MVP is ready when WingFoil v0.4 installs packs** (WingFoil dl-138). `base` waits for the formats of v0.3. |
 | Official and community packs | **Two catalogs** (vision review). The official one is curated; the community one is broader, written and maintained by external contributors, and opens later. |
@@ -56,7 +56,7 @@ discussion and the first attempt; they are not yet approved elements.
 | Audience | What they get |
 |---|---|
 | Adopter | A working process in one `init`: methodology, team mode, phase methods, blueprint and stage. They can upgrade it later without losing their own overrides in `custom/`. |
-| WingFoil maintainer | A versioned, validated source for the bundled packs, in place of templates compiled into the CLI. A compatibility table tells which release reads what. |
+| WingFoil maintainer | A versioned, validated source of the packs WingFoil installs, in place of templates compiled into the CLI; no pack is bundled in WingFoil's npm package (dl-021 R1). A compatibility table tells which release reads what. |
 | Governed-repository maintainer | One shared foundation (`base`) for Memory types, life cycles, capture workflows and directives across the four repositories. The project-specific parts stay their own. |
 | Pack author | A documented format with schemas, authoring rules and a validation that tells whether a pack is publishable. |
 | External contributor (later) | A way to propose changes to official packs as Memory elements, with credit, on WingFoil's contribution model. A community catalog where they publish and maintain their own packs. |

@@ -1,7 +1,7 @@
 # MVP Canvas — WingFoil-Templates
 
-**Version:** 1.1
-**Date:** 2026-10-10
+**Version:** 1.2
+**Date:** 2026-10-14
 **Status:** Approved
 **Traces to:** [07_sequencer.md](07_sequencer.md) (milestones M0–M3), [01_product-brief.md](01_product-brief.md)
 
@@ -24,7 +24,8 @@
 
 - **Governed-repository maintainer** (primary until v0.4): one shared foundation across the four
   repositories.
-- **WingFoil maintainer** (primary until v0.4): versioned packs to bundle, and a true `compat.yaml`.
+- **WingFoil maintainer** (primary until v0.4): versioned packs WingFoil installs as a pinned
+  source, and a true `compat.yaml`; no pack is bundled in its npm package (dl-021 R1).
 - **Adopter** (primary from v0.4): a validated project from one `init`.
 - **Pack author** and **agent**: the format, the tooling and content written for an agent reader.
 
@@ -32,7 +33,7 @@
 
 - J1 — Author and publish a pack
 - J2 — Adopt `base` by hand
-- J3 — Bundle packs into a WingFoil release
+- J3 — Pin this catalog in a WingFoil release, if WingFoil adopts the proposed default set (F-027)
 - J4 — Record a WingFoil release
 - J5 — Work a phase under a composed configuration
 - J6, J7 — Start from a preset; add a pack, upgrade (from v0.4)
@@ -51,7 +52,7 @@ The 34 features of waves W1–W12 and W14 in [07_sequencer.md](07_sequencer.md).
 ## Expected result
 
 - The four governed repositories run on `base` and record its version.
-- WingFoil bundles packs published here instead of its compiled templates.
+- A WingFoil release installs packs published here instead of its compiled templates.
 - From v0.4, a new project validates on its first `init` from a preset.
 
 ## Metrics to validate the MVP
@@ -59,7 +60,7 @@ The 34 features of waves W1–W12 and W14 in [07_sequencer.md](07_sequencer.md).
 | Hypothesis | Metric | Target |
 |---|---|---|
 | The format is enough for real projects | governed repositories on `base`, recorded in their Memory | 4 of 4 |
-| Packs replace the compiled templates | WingFoil release that bundles packs from here | the first release that installs packs |
+| Packs replace the compiled templates | WingFoil release that installs packs from here | the first release that installs packs |
 | Composition is deterministic | presets composed twice from a clean state, byte-identical | 100% |
 | Packs validate where they claim | compositions passing the matrix with exit 0 and no warning | 100% of published versions |
 | Packs work for an agent | phases completed in a composed project with no process correction from the approver | observed in the governed repositories (no target yet) |
@@ -70,7 +71,8 @@ The 34 features of waves W1–W12 and W14 in [07_sequencer.md](07_sequencer.md).
 - **Build effort:** 12 waves. No dates are fixed.
 - **Main uncertainty:**
   - W2: the fragment merge;
-  - W4: the capability vocabulary;
+  - W4: the capability vocabulary, provisional until WingFoil publishes one (dl-021 R4, WingFoil
+    dl-177);
   - W5: the reference composer;
   - W8: the AGENTS.md markers;
   - W12: `agent-first`.
@@ -78,8 +80,8 @@ The 34 features of waves W1–W12 and W14 in [07_sequencer.md](07_sequencer.md).
   - the v0.3 formats, for W8;
   - the v0.3 release, to publish `base`;
   - dl-137's part-(b) tech-spec, for the AGENTS.md markers;
-  - the capability names (notes T13);
-  - v0.4, for J6–J7;
+  - the capability names (WingFoil dl-177; provisional here, dl-021 R4);
+  - v0.4, for J6–J8: `pack-install` and dl-138's `remote` folder, layout and lock (dl-021 R3);
   - the composer proposal (notes T15).
 - **Run cost:** the validation matrix installs pinned WingFoil releases, and there are no paid
   services.
