@@ -92,3 +92,8 @@ Then:
   The Checks grep hits `wingfoil-feedback` only as the folder path `docs/wingfoil-feedback/`, which
   is correct. Not re-reviewed: the fixes follow the review's own wording and change no reading of
   dl-021.
+- 2026-10-14, checks: the grep of the Checks gives no hit beyond the folder path and the passages
+  that state what dl-021 superseded; the eight documents bumped once (01 1.1, 02 1.3, 03 1.4,
+  04 1.2, 05 1.2, 06 1.4, 07 1.3, 08 1.2), dated 2026-10-14; `npm test` (803 pass) and
+  `npm run lint` exit 0. CI run 38585668570 on `e5e53e0`: conclusion `success` for
+  `validate (22.12.0)` and `validate (22.21.0)`.
