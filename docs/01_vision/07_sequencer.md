@@ -1,7 +1,7 @@
 # Sequencer — WingFoil-Templates
 
-**Version:** 1.2
-**Date:** 2026-10-10
+**Version:** 1.3
+**Date:** 2026-10-14
 **Status:** Approved
 **Traces to:** [06_features.md](06_features.md), [05_journeys.md](05_journeys.md), [04_personas.md](04_personas.md)
 
@@ -53,7 +53,7 @@ Tooling work that waits for nothing in WingFoil.
 |---|---|---|---|
 | W5 — Composer | F3.2 reference composer · F3.4 determinism check · F3.1 one validation command | F3.2 | a fixture pack composes twice into byte-identical files, through one command |
 | W6 — Matrix and lint | F3.3 compatibility matrix · F3.5 lint rules · F3.6 CI | — | a fixture validates against pinned WingFoil releases, in CI |
-| W7 — Release process | F5.1 evidence in `pack-release` · F5.4 feedback notes on publication · F5.3 line policy | — | a dry-run publication of a fixture pack produces tag, catalog entry, digest and note |
+| W7 — Release process | F5.1 evidence in `pack-release` · F5.4 feedback notes on publication · F5.3 line policy | — | a dry-run publication of a fixture pack produces tag, catalog entry, digest and note (the note is the schema-change note since dl-021 R1: no pack is bundled) |
 | W14 — Browsable catalog | F2.8 browsable catalog · F2.9 search page | — | a fixture catalog is browsable in `CATALOG.md`, `catalog-index.json` and a search page built in the tests |
 
 ## M2 — Foundation
@@ -69,9 +69,9 @@ Starts when the approver confirms that the v0.3 formats are final.
 
 | Wave | Features | High unc. | Ends with |
 |---|---|---|---|
-| W10 — Methodologies | F4.3 `scrum`, `kanban` · F2.6 presets | — | the bundled methodologies published, with a first preset each |
+| W10 — Methodologies | F4.3 `scrum`, `kanban` · F2.6 presets | — | the first methodologies published, with a first preset each |
 | W11 — Phases and blueprints | F4.5 `lean-inception`, `bdd-sbe` · F4.6 `web-service`, `cli-library` | — | every slot and blueprint of the first scope published |
-| W12 — Stages and agent mode | F4.7 `prototype`, `production`, transition · F4.4 `agent-first` | F4.4 | **first catalog complete** |
+| W12 — Stages and agent mode | F4.7 `prototype`, `production`, transition (run by the target stage's workflow, dl-021 R2) · F4.4 `agent-first` | F4.4 | **first catalog complete** |
 
 ## M4 — Community (later)
 
