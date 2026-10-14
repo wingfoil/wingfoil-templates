@@ -2,7 +2,7 @@
 id: plan-034-dl-actions-dl-021-the-vision-and-the-decision-log-notes
 type: plan
 title: "dl actions: dl-021, the vision and the decision-log notes"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "rule"
 tags: ["vision","wingfoil"]
