@@ -23,7 +23,7 @@ Options:
   -h, --help         display help for command
 ...
 $ wingfoil init --preset startup-mvp
-Error: unknown option '--preset'                                                # exit 2
+error: unknown option '--preset'                                                # exit 2
 $ ls -a
 .  ..  .git                                                                     # nothing written
 ```
@@ -33,10 +33,10 @@ combination of packs.
 
 ## Expected
 
-This repository's catalog lists presets (`catalog.yaml` › `presets`, `presets/<id>.yaml`,
-this repository's spec-001 §11 and §15): named combinations of packs, each with a profile. F-006,
-written before WingFoil dl-138, asks for `wingfoil init --preset <name>` among other `init`
-options. Since then WingFoil installs packs from this repository through `pack-install`, as a
+This repository's catalog defines presets (`catalog.yaml` › `presets` and `presets/<id>.yaml`,
+this repository's spec-001 §11 and §15), empty today: named combinations of packs, each with a
+profile. F-006, written before this repository's dl-021, asks for `wingfoil init --preset <name>` among other `init`
+options. Since then (dl-021, after WingFoil dl-138) WingFoil installs packs from this repository through `pack-install`, as a
 `remote` source pinned by a lock (dl-138), and F-027 proposes that `init` read a default set of
 packs from a catalog commit that each WingFoil release pins.
 
