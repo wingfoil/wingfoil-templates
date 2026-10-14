@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { appendFileSync, cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { appendFileSync, cpSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, describe, it } from 'node:test';
@@ -12,7 +12,7 @@ import type { TestRepo } from './support/git-repo';
 import { assertInbox, notesOf } from './support/inbox';
 import { BASE_COMPOSABLE, KANBAN } from './support/pack-tree';
 import { REPO_ROOT } from './support/paths';
-import { STUB_RELEASE, publishByHand, treeRepo } from './support/published-repo';
+import { STUB_RELEASE, treeRepo } from './support/published-repo';
 import { StubWingfoil } from './support/stub-wingfoil';
 
 const INBOX = join('docs', 'wingfoil-feedback');
@@ -93,31 +93,11 @@ describe('the digest of schema/', () => {
   });
 });
 
-describe('npm run feedback:note -- --published', () => {
-  it('writes the note of a published version, read from catalog.yaml', () => {
-    const repo = treeRepo();
-    try {
-      publishByHand(repo, 'base');
-      addRepositoryFiles(repo.dir);
-      const result = runFeedbackNote(['--published', 'base@1.0.0', '--from', 'prel-001',
-        '--tree', repo.dir]);
-      assert.equal(result.code, 0, result.lines.join('\n'));
-      const note = last(repo.dir);
-      assert.equal(note.file, `${NEXT}-pack-base-1.0.0-published.md`);
-      assert.equal(note.title, 'Pack `base@1.0.0` published, for the bundled copy');
-      assert.match(note.body, /^\nNew note \(prel-001\)\./);
-      assert.match(note.body, new RegExp(`computed WingFoil range \`${STUB_RELEASE}\``));
-      assertInbox(join(repo.dir, INBOX));
-      assert.equal(runFeedbackNote(['--published', 'base@9.9.9', '--from', 'prel-001',
-        '--tree', repo.dir]).code, 1, 'a version catalog.yaml does not list');
-    } finally {
-      repo.dispose();
-    }
-  });
-
+describe('npm run feedback:note -- usage', () => {
   it('exits 3 on bad usage and 2 on a missing or malformed inbox', () => {
     withTree((tree) => {
       for (const argv of [[], ['--schema', '--published', 'base@1.0.0', '--from', 'task-015'],
+        ['--published', 'base@1.0.0', '--from', 'prel-001'],
         ['--schema'], ['--schema', '--from', 'issue-1'], ['--schema', '--from', 'task-0159xyz'],
         ['--bogus']]) {
         assert.equal(runFeedbackNote([...argv, '--tree', tree]).code, 3, argv.join(' '));
@@ -148,55 +128,56 @@ function publish(repo: TestRepo, extra: string[]): ReturnType<typeof runPublish>
     { install: () => RELEASE.cli, env: repo.env });
 }
 
-describe('npm run publish:pack -- --bundled (F5.4; the W7 exit criterion)', () => {
-  it('the dry-run publication produces tag, catalog entry, digest and note', () => {
+describe('npm run publish:pack (F5.4, the W7 exit criterion; dl-021 R1: no bundled pack)', () => {
+  it('a publication produces tag, catalog entry and digest, and no note', () => {
     const repo = bundledRepository();
     try {
-      const result = publish(repo, ['--bundled', '--from', 'prel-001']);
+      const notes = notesOf(join(repo.dir, INBOX)).length;
+      const result = publish(repo, []);
       assert.equal(result.code, 0, result.lines.join('\n'));
-      assert.ok(result.lines.includes(`- Feedback note: ${NEXT}`), result.lines.join('\n'));
-      assert.deepEqual(repo.git(['log', '-3', '--format=%s']).trim().split('\n'),
-        [`feedback: ${NEXT} base@1.0.0`, 'catalog: base@1.0.0', 'inbox, schemas, changelog']);
+      assert.ok(!result.lines.some((line) => line.startsWith('- Feedback note')),
+        result.lines.join('\n'));
+      assert.deepEqual(repo.git(['log', '-2', '--format=%s']).trim().split('\n'),
+        ['catalog: base@1.0.0', 'inbox, schemas, changelog']);
       assert.equal(repo.git(['cat-file', '-t', 'refs/tags/base@1.0.0']).trim(), 'tag');
-      // CB-5 (task-020): the catalog, its index and the note, nothing under packs/.
-      const changed = repo.git(['diff', '--name-only', 'base@1.0.0', 'HEAD']).trim().split('\n');
-      assert.deepEqual(changed.filter((file) => !file.startsWith(`${INBOX}/`)),
+      // CB-5 (task-020): the catalog and its index, nothing under packs/ and no note.
+      assert.deepEqual(repo.git(['diff', '--name-only', 'base@1.0.0', 'HEAD']).trim().split('\n'),
         ['CATALOG.md', 'catalog-index.json', 'catalog.yaml']);
-      assertInbox(join(repo.dir, INBOX));
-      assert.equal(runCheckPacks(repo.dir).code, 0, runCheckPacks(repo.dir).lines.join('\n'));
+      assert.equal(notesOf(join(repo.dir, INBOX)).length, notes);
       assert.equal(repo.git(['status', '--porcelain']).trim(), '');
     } finally {
       repo.dispose();
     }
   });
 
-  it('writes no note without --bundled, and needs --from with it', () => {
+  it('refuses --bundled and --from (exit 3)', () => {
     const repo = bundledRepository();
     try {
-      assert.equal(publish(repo, ['--bundled']).code, 3);
-      assert.equal(publish(repo, ['--bundled', '--from', 'task-015']).code, 3,
-        'a publication note comes from a pack-release');
-      assert.equal(publish(repo, ['--dry-run', '--bundled', '--from', 'prel-001']).code, 0);
-      assert.equal(publish(repo, []).code, 0);
-      assert.equal(repo.git(['log', '-1', '--format=%s']).trim(), 'catalog: base@1.0.0');
-    } finally {
-      repo.dispose();
-    }
-  });
-
-  it('a failure after the catalog commit resets the branch and removes the tag', () => {
-    const repo = bundledRepository();
-    try {
-      const readme = join(repo.dir, INBOX, 'README.md');
-      writeFileSync(readme, readFileSync(readme, 'utf8').replace(/^\| \[F-.*\n/gm, ''));
-      repo.commitAll('a ledger with no row');
-      const head = repo.git(['rev-parse', 'HEAD']).trim();
-      const result = publish(repo, ['--bundled', '--from', 'prel-001']);
-      assert.equal(result.code, 2, result.lines.join('\n'));
-      assert.match(result.lines.join('\n'), /branch reset to its head before the tag/);
-      assert.equal(repo.git(['rev-parse', 'HEAD']).trim(), head);
+      for (const extra of [['--bundled'], ['--from', 'prel-001'],
+        ['--bundled', '--from', 'prel-001'], ['--dry-run', '--bundled', '--from', 'prel-001']]) {
+        assert.equal(publish(repo, extra).code, 3, extra.join(' '));
+      }
       assert.equal(repo.git(['tag', '-l']).trim(), '');
-      assert.equal(repo.git(['status', '--porcelain']).trim(), '');
+    } finally {
+      repo.dispose();
+    }
+  });
+
+  it('a schema change fails the publication until its note is written and committed', () => {
+    const repo = bundledRepository();
+    try {
+      appendFileSync(join(repo.dir, 'schema', 'pack.schema.json'), '\n');
+      repo.commitAll('a schema change');
+      const refused = publish(repo, []);
+      assert.equal(refused.code, 1, refused.lines.join('\n'));
+      assert.match(refused.lines.join('\n'), /schema-note/);
+      assert.equal(repo.git(['tag', '-l']).trim(), '');
+      const note = runFeedbackNote(['--schema', '--from', 'task-029', '--tree', repo.dir]);
+      assert.equal(note.code, 0, note.lines.join('\n'));
+      repo.commitAll('the schema note');
+      const result = publish(repo, []);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      assert.equal(repo.git(['cat-file', '-t', 'refs/tags/base@1.0.0']).trim(), 'tag');
     } finally {
       repo.dispose();
     }

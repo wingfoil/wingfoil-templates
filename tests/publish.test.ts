@@ -364,7 +364,6 @@ describe('npm run publish:pack, the lines (task-016, F5.3)', () => {
       refused(repo, /format move/);
       repo.git(['reset', '--quiet', '--hard', 'HEAD~1']);
       bump(repo, '1.0.1');
-      refused(repo, /--bundled on the line 1\.x/, 3, ['--bundled', '--from', 'prel-001']);
       repo.git(['checkout', '--quiet', '-b', 'maint/base/1.x-old', 'base@1.0.0~1']);
       repo.git(['branch', '--quiet', '-D', 'maint/base/1.x']);
       repo.git(['checkout', '--quiet', '-b', 'maint/base/1.x']);
