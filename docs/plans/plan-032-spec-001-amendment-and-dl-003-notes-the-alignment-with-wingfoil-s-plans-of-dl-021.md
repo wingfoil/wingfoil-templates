@@ -84,3 +84,7 @@ On the branch `spec/spec-001-dl-021`, from `main` at `b8786d6`.
 ## Execution Notes
 
 - 2026-10-14: written; `workflow` and `phase` filled by editing the draft (W-02).
+- 2026-10-14: plan-032 and task-028 reviewed independently (approve after amendments: WingFoil
+  dl-177 and dl-178 sourced by their public commits; dl-003's note limited to D7's second
+  sentence; O13 with the format-1 rule kept and its owner; the scope lists and task-028's
+  Acceptance 6 made checkable), amended. Plan submitted `active`, task-028 `pending`.
