@@ -1,14 +1,14 @@
 # Project DNA (P2.4) — scaffolded by `wingfoil init` (Kanban template), then customized for this
 # repository. Structural map of the project: modules, stacks, team + roles, resource paths.
-version: 7
+version: 8
 
 project:
   name: wingfoil-templates
   description: >-
     The official, live source of WingFoil template packs: methodologies, team-mode overlays, phase
-    methods, project blueprints and lifecycle stages, with the transitions between stages. The
-    WingFoil CLI downloads them at init, pack add, upgrade and stage set; its npm package bundles the
-    base packs as offline fallback.
+    methods, project blueprints and lifecycle stages, with the transitions between stages.
+    WingFoil's pack-install installs them from this repository as a source pinned by a lock, read
+    offline from the vendored copy after a first fetch.
   license: MIT
   repository: https://github.com/wingfoil/wingfoil-templates
   methodology: Kanban        # Continuous flow: every pack is semver'd and released on its own, no timeboxed iterations.
@@ -29,7 +29,7 @@ modules:
     description: "One directory per pack: base, then grouped by axis: methodology, phase/<slot>, blueprint, governance, team-mode, stage."
     path: packs
   - name: transitions
-    description: "Stage transitions run by `wingfoil stage set`: pre-checks, actions, the decision-log they record."
+    description: "Descriptive stage transitions, run as the target stage overlay's workflow on a pack update: pre-checks, actions, the decision-log they record."
     path: transitions
   - name: presets
     description: "Named, curated pack combinations selectable with `wingfoil init --preset`."

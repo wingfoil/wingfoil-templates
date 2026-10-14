@@ -4,7 +4,7 @@
 name: pack-release-cycle
 kind: sub
 description: "Classify, validate, approve and publish one pack version"
-version: 6
+version: 7
 element: pack-release
 phases:
   - name: prepare
@@ -50,8 +50,6 @@ phases:
       WingFoil range) and regenerate CATALOG.md and catalog-index.json with npm run index
       (spec-002 §3); no file under packs/ changes. npm run publish:pack makes the tag and that
       catalog commit with the regenerated index (task-020). Push the tag and the commit.
-      If WingFoil bundles the pack, add a note to docs/wingfoil-feedback/ for WingFoil's
-      advance-bundled-packs release step.
     role: tech-lead
     produces:
       - "catalog.yaml"
