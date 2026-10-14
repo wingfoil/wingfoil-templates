@@ -90,3 +90,28 @@ Red steps (dl-018 R1):
 One commit for the tests, one for the code; the Execution Notes list them.
 
 ## Execution Notes
+- 2026-10-14, design written, task started (backlog → in-progress).
+- 2026-10-14, build, red: the tests first (`a1f32f9`): 30 tests, 28 pass, 2 fail (the refusal of
+  `feedback:note --published`; the refusal of `publish:pack --bundled` and `--from`). The W7 test
+  passed at once, a characterization (dl-018 R2): with the `schema-note` rule switched off it
+  fails (mutation, 1 of 1). Green after the code (`68f8ed2`): 30 of 30, `lint` 0.
+- 2026-10-14, the rollback after a failure past the tag stays covered by "removes the tag and
+  restores catalog.yaml when a step after the tag fails (exit 2)" in `tests/publish.test.ts`. The
+  removed test was the only one failing after the catalog commit; no step can fail there any
+  more.
+- 2026-10-14, **Acceptance 6, raised when found (dl-019 R1):** its grep of `src/` and `tests/` for
+  `bundled` and `--published` cannot give no hit, since Acceptance 2–4 test their refusal. The
+  approver ruled on 2026-10-14: no occurrence outside the refusal tests. `src/` has none; `tests/`
+  only in the refusal tests of `tests/feedback-note.test.ts`.
+- 2026-10-14, build review (independent subagent): approve after amendments, 0 blocking, 3 minor
+  (unused exports `fromElement` and `FeedbackNoteError`; a dead `bump` step left by the removed
+  maintenance-line refusal; the W7 test to check the catalog entry and its digest explicitly),
+  fixed in `2eea798`; re-review (dl-017 R2, a test and an export changed): approve.
+- 2026-10-14, Acceptance from a clean clone at `68f8ed2`, on Node.js 22.21.0 and 22.12.0: `npm ci`,
+  `build`, `test` (802 of 802), `lint`, `check:pins`, `check:schemas`, `check:packs`,
+  `index -- --check`, `validate` exit 0; `schema/`, `catalog.yaml` and `compat.yaml` unchanged;
+  besides this element and plan-035, only `src/publish.ts`, `src/feedback-note.ts`,
+  `src/feedback-note-cli.ts`, `tests/feedback-note.test.ts` and `tests/publish.test.ts` change.
+- Task commits: `a1f32f9` (tests), `68f8ed2` (code), `2eea798` (review fixes).
+- 2026-10-14, CI (Acceptance 7): run 38621778153 on `2eea798`, conclusion `success` for
+  `validate (22.21.0)` and `validate (22.12.0)`. Submitted `in-review`.
