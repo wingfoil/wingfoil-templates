@@ -2,7 +2,7 @@
 id: plan-035-tooling-change-deliver-remove-the-bundled-pack-note-from-the-publication-tooling
 type: plan
 title: "tooling-change deliver: remove the bundled-pack note from the publication tooling"
-status: active
+status: done
 workflow: "tooling-change"
 phase: "deliver"
 tags: ["tooling","wingfoil"]
