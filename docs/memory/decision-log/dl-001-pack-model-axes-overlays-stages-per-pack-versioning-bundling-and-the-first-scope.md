@@ -105,3 +105,13 @@ Consequences:
   - where community packs live, how they are told apart from official packs, and how they relate to
     WingFoil's third-party sources (WingFoil dl-138 Q4). For the features phase of M4.
 - The candidate axis `stack` (feedback notes T2) is not in the model yet.
+- 2026-10-14, plan-034: dl-021 supersedes parts of this decision; the body stays as approved.
+  **D4**'s bundling ("the base packs stay bundled in WingFoil's npm package as offline fallback",
+  and WingFoil advancing its bundled packs before each release) is superseded by dl-021 R1: no pack
+  is bundled; WingFoil installs packs from this repository as a pinned `remote` source (WingFoil
+  dl-138), offline use coming from the vendored copy; the default set `init` installs is the
+  request F-027 (WingFoil's option (b), open in dl-138's tech-spec). D4's one semver per pack
+  stands. **D1**'s transitions and **D5**'s `prototype-to-production`: the `transition` kind stays,
+  descriptive (plan-032); a project changes stage by a pack update of its `stage/*` overlay, whose
+  workflow runs the transition, with no `stage set` verb (dl-021 R2, WingFoil dl-178). The open
+  question "which packs WingFoil bundles" becomes the default set of F-027.

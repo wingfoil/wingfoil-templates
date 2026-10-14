@@ -86,3 +86,9 @@ Configuration changes this decision implies. Each is applied after approval and 
 - The first attempt applied these changes on `archive/draft-2026-10-05`, commits `35e6788` and
   `de4e2d6`. They are a source to re-read. They are not cherry-picked, and none of them bumped
   `version:`.
+- 2026-10-14, plan-034: the capabilities of `requires_capabilities` and `compat.yaml` use a
+  provisional vocabulary, `pack-install` and `workflow-engine`, until WingFoil publishes one (its
+  capabilities query, WingFoil dl-177); `stage-transitions` left it (dl-021 R2, R4; applied by
+  task-028). At `wingfoil-release-intake` a release is recorded as providing a capability only
+  when its CHANGELOG names the feature or command behind it (dl-021 R4). The rest of this decision
+  stands; the body stays as approved.

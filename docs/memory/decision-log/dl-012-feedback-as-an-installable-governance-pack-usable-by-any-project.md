@@ -272,3 +272,8 @@ dl-012 and dl-013 (their **[E]** criteria).
   WingFoil has released stable configuration contracts (at least v0.3, preferably later); dl-014 may
   be ruled earlier. The element stays `pending` until then (precedent: dl-007). At the ruling, the
   text is re-checked against the formats that WingFoil release defines.
+- 2026-10-14, plan-034: the line "the feedback note owed to WingFoil when the pack is published is
+  the one `wingfoil-cli` rule 8 already requires for a pack WingFoil bundles" is superseded by
+  dl-021 R1: no pack is bundled in WingFoil's npm package, so the publication of
+  `governance/feedback` owes WingFoil no note of its own. The text is re-checked at the ruling, as
+  the note of 2026-10-09 says; the element stays `pending`.
