@@ -1,6 +1,6 @@
 # Project DNA (P2.4) — scaffolded by `wingfoil init` (Kanban template), then customized for this
 # repository. Structural map of the project: modules, stacks, team + roles, resource paths.
-version: 8
+version: 9
 
 project:
   name: wingfoil-templates
@@ -32,7 +32,7 @@ modules:
     description: "Descriptive stage transitions, run as the target stage overlay's workflow on a pack update: pre-checks, actions, the decision-log they record."
     path: transitions
   - name: presets
-    description: "Named, curated pack combinations selectable with `wingfoil init --preset`."
+    description: "Named, curated pack combinations, selectable at `init` once WingFoil supports it (F-030)."
     path: presets
   - name: compat
     description: "compat.yaml: per WingFoil release, the file formats it reads and the capabilities it provides (dl-002)."
