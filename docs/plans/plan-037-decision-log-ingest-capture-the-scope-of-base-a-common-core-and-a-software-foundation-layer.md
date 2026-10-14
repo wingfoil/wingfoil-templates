@@ -15,7 +15,7 @@ chat, before `base`'s charter (wave W8, milestone M2).
 
 While the charter's inputs were prepared, the approver observed that they came only from the four
 governed software repositories (dl-003), while WingFoil also governs projects that are not
-software. On 2026-10-14 this session compared, at the approver's request:
+software. On 2026-10-14 this repository's session compared, at the approver's request:
 - the `.wingfoil/` configurations of three private, non-software projects governed by WingFoil
   0.2.2 with what dl-003 D2 puts in `base`;
 - how each governed repository changes its own governance (its `.wingfoil/`, directives, roles and
@@ -24,7 +24,8 @@ software. On 2026-10-14 this session compared, at the approver's request:
 The approver ruled in chat on 2026-10-14 on the proposal built from the two comparisons ("come
 consigli ma muovi adr e adr-ingest nel livello software"; `governance-evolution` in `base`; "come
 consigli, prepara dl-022"), and then on two open points of the proposal: a methodology does not
-always require the software layer, and the `methodology` axis is not required without it.
+always require the software layer, and the `methodology` axis is not required without it; then
+that a methodology's `delivery` exists only in a composition with the software layer.
 
 It produces dl-022, which records the comparison, the options and the rulings. It decides nothing
 beyond them: each change it implies is applied later through its own element. `base`'s charter

@@ -34,8 +34,8 @@ governed software repositories were read at `wingfoil/wingfoil@32d8871b`,
 - **Harmful:** `sw-life-cycle` and its four slot defaults. None of the three has a life cycle;
   each runs a flat set of `main` workflows under Kanban.
 - **Variants:** `traceability` names a chain specific to each project; claims are sourced by a
-  directive of their own (URL and access date, `<repository>@<sha>:<path>`, inference kept apart
-  from fact), where WingFoil2 and WingFoil-UI have a command-centric `claim-evidence`.
+  project-specific directive, where WingFoil2 and WingFoil-UI have a command-centric
+  `claim-evidence`.
 
 Since a pack only adds to `base` or tightens it (dl-003 D1), every unused or harmful element would
 be carried by every non-software project that adopts `base`.
@@ -52,7 +52,8 @@ be carried by every non-software project that adopts `base`.
   tooling changes run through `tooling-change`.
 
 Every project but WingFoil2-Benchmark records the ruling as a decision-log, never as an `adr` or a
-change-proposal; in every project the approver rules it. They differ on whether the change is
+change-proposal; in every project the approver rules it (in WingFoil2-Benchmark, by accepting
+the fixing task). They differ on whether the change is
 applied directly or through a task.
 
 The question has to be answered before `base`'s charter, because the charter fixes what `base`
@@ -86,8 +87,8 @@ comparison: **1(b), 2(a), 3(b)**, with two changes to the proposal: `adr` and `a
 the software layer ("come consigli ma muovi adr e adr-ingest nel livello software"), and
 `governance-evolution` is in `base`, because every WingFoil project needs it sooner or later. On
 the open points of S3 the approver then ruled that a methodology does not always require
-`software`, and that the `methodology` axis is not required in a composition without it. The
-points below take effect when this element is approved.
+`software`, that the `methodology` axis is not required in a composition without it, and that a
+methodology's `delivery` exists only in a composition with `software`. The points below take effect when this element is approved.
 
 - **S1 — `base` serves every project governed by WingFoil**, software or not. It holds only what
   all of them use.
@@ -118,14 +119,16 @@ points below take effect when this element is approved.
   - the `methodology` axis is not required in a composition without `software` (approver,
     2026-10-14). With `software`, a methodology still fills `delivery`.
 
-  Under today's rules these two rulings cannot both hold: the methodology's `delivery` includes
+  Under today's rules the first ruling cannot hold: the methodology's `delivery` includes
   `release` by name (dl-003 D4, spec-001 §9), a pack that includes a workflow it does not ship
   must require the pack that ships it (spec-001 §6.3), and `release` moves to `software`; so every
-  methodology that ships `delivery` would require `software`. The spec-001 amendment that follows
-  this decision settles it, together with the axis's `required: true` (§3, §11) and the presets'
-  "one methodology" rule (§18): either `delivery` is shipped only in a composition with `software`,
-  or a methodology ships it apart from the rest of its content. dl-003 D4 stands on this
-  condition.
+  methodology that ships `delivery` would require `software`. The second contradicts the axis's
+  `required: true` (§3, §11) and the presets' "one methodology" rule (§18). The approver ruled
+  (2026-10-14, "delivery esiste solo nelle composizioni con software"): **a methodology's
+  `delivery` exists only in a composition with `software`**. A methodology requires `software`
+  only for its `delivery`; in a composition without `software` it contributes the rest of its
+  content and no `delivery`. The spec-001 amendment that follows this decision fixes how a pack
+  declares that conditional part, and amends §3, §9, §11 and §18 accordingly.
 - **S4 — `governance-evolution` in `base`:** `kind: main`, only the keys of the WingFoil workflow
   format, no `waiting` state:
   1. **assess** (facilitator): a plan, made `active`; its inputs are Execution Notes,
@@ -149,8 +152,8 @@ points below take effect when this element is approved.
   - changes that other repositories must also make are out of scope.
 - **S5 — Not in `base` or in the software layer**, recorded as proposals for later elements and
   outside milestone M2:
-  - a blueprint for coordination work across repositories;
-  - a `governance`-axis pack for projects that need anonymity;
+  - a blueprint and a `governance`-axis pack for needs that the software repositories do not have,
+    recorded outside this repository until their own elements;
   - the Kanban work rules belong to `methodology/kanban`; the WingFoil CLI rules and the feedback
     inbox stay in `governance/wingfoil-dogfood` (dl-003 D6, unchanged).
 - **S6 — Validation** (amends W8's exit criterion): `base` validates with the parameters of every
@@ -163,7 +166,8 @@ points below take effect when this element is approved.
 Amendments of other elements, effective with this approval:
 - **dl-001 D5:** the first scope also gains `software`, as dl-003 D7 added `base`.
 - **dl-003:** D2 is replaced by S2 and S3. D4 and D11 stand, with `software` in place of `base` as
-  the pack that ships `sw-life-cycle` and the slot defaults, and D4 on S3's condition. D10 also
+  the pack that ships `sw-life-cycle` and the slot defaults; D4's methodology `delivery` exists
+  only in a composition with `software` (S3). D10 also
   applies to `software`: this repository and the software adopters adopt it with `base`. D5
   gains "the software life cycle and the software Memory types, which belong to `software`". D1
   stands, and also applies to `software` for the packs that require it.
@@ -175,8 +179,9 @@ Amendments of other elements, effective with this approval:
   names.
 - **dl-015** (pending): its points split between the two charters. C1 (decision-log), C3, C4, C7,
   C8, C9 and C11 go to `base`'s; C1 (adr and tech-spec), C2, C5 and C6 go to `software`'s; C10 is
-  split by type, the paths of `adr`, `tech-spec` and `bug` and the `{release}` token going to
-  `software`'s. dl-015 is ruled with both charters.
+  split by type, the paths of `adr`, `tech-spec` and `bug` going to `software`'s; the meaning of
+  the `{release}` token (a release) is `software`'s, and `base`'s path parameters pass it through
+  (spec-001 §8.3). dl-015 is ruled with both charters.
 
 Changes this decision implies, each applied later through its own element:
 - **spec-001**, in the amendment that dl-021 and dl-020 already require before W8: §3 (two
@@ -186,19 +191,20 @@ Changes this decision implies, each applied later through its own element:
   (`catalog.yaml`'s `foundation`), §15 (presets that omit the foundation packs), §18
   (`sw-life-cycle` and the slot defaults only from `software`, `retrospective` and
   `governance-evolution` only from `base`), the `methodology` axis required only with `software`,
-  and how a methodology ships `delivery` (S3);
+  and how a methodology declares its `delivery` as present only with `software` (S3);
 - **spec-002** §2: the README of a foundation pack (`Axis: foundation`, what `software` adds or
   tightens over `base`) and the index sections;
 - **`catalog.yaml`** and its schema: `foundation` names both packs, the slots' `default` names
   `software`, and the `methodology` axis is required only with `software`; the schema change also
-  produces a feedback note (`wingfoil-cli` rule 8); `schema/pack.schema.json` (no `axis` and the
-  `base` requirement for both foundation packs) and `schema/preset.schema.json` (the pack-id
-  pattern);
+  produces a feedback note (`wingfoil-cli` rule 8); the pack-id, entry and path patterns of the
+  `pack`, `catalog` and `preset` schemas, `catalog.schema.json`'s `foundation` rule, and
+  `pack.schema.json`'s foundation branch (no `axis`; `software` requires `base@^<major>`, `base`
+  requires nothing);
 - **the tooling:** the composer's order and the lint rules on the foundation (spec-001 §18);
 - **vision:** `06_features.md` F4.1 (and a feature for `software`), F6.1 and F6.2 (the
   hand-adoption steps and the parameters, for both packs and every governed project);
-  `07_sequencer.md` W8 (its scope holds both foundation packs, and S6's criterion) and W9 (this
-  repository adopts both);
+  `07_sequencer.md` the M2 milestone row, W8 (its scope holds both foundation packs, and S6's
+  criterion) and W9 (this repository adopts both);
 - **configuration:** `pack-authoring` (the foundation rule, `foundation` no longer reserved to
   `base`, and the slot rule naming `software`); the `pack` type's comment in
   `.wingfoil/memory.yaml`; `retrospective.yaml` (its `capture` phase, dl-006 R2 as amended);
