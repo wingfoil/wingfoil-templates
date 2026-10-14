@@ -1,4 +1,4 @@
-// `npm run feedback:note -- (--published <id>@<version> | --schema) --from <task-nnn | prel-nnn>
+// `npm run feedback:note -- --schema --from <task-nnn | prel-nnn>
 // [--tree <dir>]` (task-015).
 import { runFeedbackNote } from './feedback-note';
 
