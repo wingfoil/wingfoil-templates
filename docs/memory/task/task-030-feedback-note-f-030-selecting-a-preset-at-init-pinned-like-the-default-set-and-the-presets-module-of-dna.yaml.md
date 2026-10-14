@@ -80,3 +80,21 @@ characterization (dl-018 R2): `dna show` exits 0 with no warning, and the tests 
 Commits: one for the note and the ledger, one for `dna.yaml`, one for spec-001's note.
 
 ## Execution Notes
+- 2026-10-14, design written, task started (backlog → in-progress).
+- 2026-10-14, build, red: with the ledger row and no note, the inbox tests gave 6, 5 pass, 1 fail
+  ("lists every note in the README ledger as the note says"); green (6 of 6) after F-030, written
+  from WingFoil 0.2.2's output in a scratch project outside the repository (`init --help`;
+  `init --preset startup-mvp` exit 2, nothing written). `dna.yaml` v9: `dna show` exit 0, empty
+  stderr. spec-001: the §15 erratum noted, body unchanged.
+- 2026-10-14, build review (independent subagent): approve after amendments, 2 medium (the error
+  line's casing, re-captured piped: `error:`; "the catalog lists presets" where it defines an empty
+  list) and 1 low (F-006 "written before dl-138" → before dl-021), fixed in `26cf035` and a line
+  wrap; wording only, not re-reviewed (dl-017 R2).
+- 2026-10-14, Acceptance from a clean clone at `1be8d62`, on Node.js 22.21.0 and 22.12.0: `npm ci`,
+  `build`, `test` (802 of 802), `lint`, `check:pins`, `check:schemas`, `check:packs`,
+  `index -- --check`, `validate` exit 0; `schema/`, `catalog.yaml`, `compat.yaml` unchanged;
+  besides this element and plan-036, only F-030, the inbox README, `dna.yaml` and spec-001 change.
+- Task commits: `405c9af` (F-030, ledger), `f24b8f8` (`dna.yaml`), `1be8d62` (spec-001's note),
+  `26cf035` and `f20b61f` (wording after the review).
+- 2026-10-14, CI: run 38630873854 on `f20b61f`, conclusion `success` for both Node.js versions.
+  Submitted `in-review`.
