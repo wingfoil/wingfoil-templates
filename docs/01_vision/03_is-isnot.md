@@ -1,7 +1,7 @@
 # Is / Is Not / Does / Does Not — WingFoil-Templates
 
-**Version:** 1.3
-**Date:** 2026-10-10
+**Version:** 1.4
+**Date:** 2026-10-14
 **Status:** Approved
 **Traces to:** [01_product-brief.md](01_product-brief.md), [02_product-vision.md](02_product-vision.md)
 
@@ -22,7 +22,8 @@ Items marked *(pack-model)* depend on proposals ruled in the pack-model phase.
   reads and provides *(pack-model)*.
 - A **browsable index for people and agents** (`CATALOG.md`, `catalog-index.json`), generated from
   the catalog (dl-014).
-- The **source of the packs WingFoil bundles** as offline fallback.
+- The **source WingFoil installs packs from**: a project pins it as a `remote` source and vendors
+  what it installs, so no pack is bundled in WingFoil's npm package (dl-021 R1, WingFoil dl-138).
 - The **tooling that validates** packs: composition, schema checks, the compatibility matrix,
   determinism.
 - A **WingFoil-managed project** that adopts its own packs.
@@ -53,15 +54,16 @@ Items marked *(pack-model)* depend on proposals ruled in the pack-model phase.
 - **Validates before publishing.** Every preset and documented combination that contains the pack is
   composed with the oldest and the newest compatible WingFoil release. Each must validate with exit 0
   and no warning, and two compositions must be byte-identical (`pack-compatibility`).
-- **Writes into WingFoil-managed folders only** (`built-in/`). It never writes `custom/`, so a
-  project's overrides survive an upgrade (`pack-authoring`).
+- **Ships files at kind-relative paths**, which land where WingFoil's `pack-install` maps them
+  (WingFoil dl-138's `remote` class). A pack never writes `built-in/`, which stays WingFoil's own,
+  nor `custom/`, so a project's overrides survive an upgrade (dl-021 R3, `pack-authoring`).
 - **Declares what each pack requires and conflicts with**, and has overlays only add or tighten,
   never remove (`pack-authoring`).
 - **Keeps older versions resolvable.** A published tag is never moved or deleted (`pack-semver`).
 - **Records its decisions in Memory**, and every pack, task and release traces back to them
   (`traceability`).
-- **Reports to WingFoil** every schema change and every publication of a bundled pack, as a note
-  (`wingfoil-feedback`).
+- **Reports to WingFoil** every schema change, as a note in its feedback inbox (`wingfoil-cli`); no
+  pack is bundled, so a publication needs no note of its own (dl-021 R1).
 
 ## DOES NOT
 

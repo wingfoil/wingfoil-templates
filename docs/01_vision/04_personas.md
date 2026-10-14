@@ -1,7 +1,7 @@
 # Personas — WingFoil-Templates
 
-**Version:** 1.1
-**Date:** 2026-10-06
+**Version:** 1.2
+**Date:** 2026-10-14
 **Status:** Approved
 **Traces to:** [01_product-brief.md](01_product-brief.md) §3–§5, [02_product-vision.md](02_product-vision.md) "Value by Audience"
 
@@ -9,7 +9,7 @@
 
 This document describes two different sets of people, and they must not be confused:
 
-- **Personas** (§1): the people, and the agent, who *use this repository*. They adopt packs, bundle
+- **Personas** (§1): the people, and the agent, who *use this repository*. They adopt packs, install
   them, write them, contribute to them, or work under them. They drive this repository's features.
 - **Adoption profiles** (§2): the kinds of WingFoil user a project can have. The catalog and the
   presets are organized by them, so that an adopter can find "packs for teams like mine". They are a
@@ -25,7 +25,7 @@ This document describes two different sets of people, and they must not be confu
   into an existing project.
 - **Real from:** WingFoil v0.4, when the CLI installs packs.
 - **Goal:** a working process in one `init` that fits the team and the project. Kai wants to change
-  it later, through `pack add`, `upgrade` and `stage set`, without rewriting it.
+  it later, through `pack add` and `upgrade`, without rewriting it.
 - **Pain today:** `init` offers Scrum or Kanban, and everything else is hand-editing `.wingfoil/`.
   After that, nothing updates the configuration, and nothing says what produced it.
 - **Needs from the packs:**
@@ -35,24 +35,24 @@ This document describes two different sets of people, and they must not be confu
   - upgrades that leave Kai's own overrides in `custom/` alone;
   - a clear line between official and community packs.
 - **Success:** Kai's project validates on the first `init`. Kai moves from prototype to production
-  with one `stage set`.
+  with one `upgrade` of the stage overlay, whose workflow runs the transition (dl-021 R2).
 - **Serves purpose:** 1.
 
 ### Persona 2 — The WingFoil Maintainer
 
 - **Who:** WingFoil's maintainer, who is also the approver of this repository.
 - **Real from:** now.
-- **Goal:** replace the templates compiled into the CLI with packs published here. Before each
-  WingFoil release, advance the bundled packs to the newest compatible version.
+- **Goal:** replace the templates compiled into the CLI with packs published here, which WingFoil
+  installs as a pinned source. If WingFoil adopts the proposed default set (F-027), each WingFoil
+  release pins a commit of this catalog that names what `init` installs (dl-021 R1).
 - **Pain today:** templates are TypeScript strings with no version, and each format change in
   WingFoil means rewriting them by hand.
 - **Needs from the packs:**
   - a catalog with versions, digests and a computed WingFoil range;
   - `compat.yaml`, kept true at each WingFoil release;
-  - a feedback note for every schema change and every published bundled pack;
+  - a feedback note for every schema change;
   - packs that never assume an unreleased WingFoil.
-- **Success:** a WingFoil release bundles packs from here, with one commit that touches only the
-  vendored packs and their lock.
+- **Success:** a WingFoil release installs packs from here; no pack file is edited inside WingFoil.
 - **Serves purpose:** 2.
 
 ### Persona 3 — The Governed-Repository Maintainer
