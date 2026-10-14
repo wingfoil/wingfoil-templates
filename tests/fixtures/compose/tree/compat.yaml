@@ -10,7 +10,6 @@ kinds:
 capabilities:
   pack-install: "init, pack add and upgrade install packs from this repository"
   workflow-engine: "WingFoil executes workflows"
-  stage-transitions: "wingfoil stage set runs a transition from transitions/"
 releases:
   - wingfoil: 0.2.2
     format_key: false

@@ -101,8 +101,7 @@ A composition holds `base` and packs chosen along these axes (dl-001 D1, dl-003 
 - **Maintenance branch** of an N-1 line, from WingFoil 1.0 only (dl-002):
   `maint/<catalog pack id>/<major>.x`, for example `maint/methodology/kanban/1.x` (dl-004 3(b)).
 - **Version:** SemVer 2.0 `MAJOR.MINOR.PATCH`, with no pre-release or build part. `pack-semver`
-  gives the bump classes. `0.x` is allowed only while this specification is not approved
-  (`pack-semver`), so the first published version of every pack is `1.0.0` or later.
+  gives the bump classes. Every published version is `1.0.0` or later; `0.x` is not used.
 
 ## 5. The `format:` key
 
@@ -213,7 +212,8 @@ rest; §18 lists them for every file kind.
 
 `pack.yaml` has no `status` and no `bundled` field:
 - the state of a pack is its Memory element's, and its published versions are in `catalog.yaml`;
-- which packs WingFoil bundles is WingFoil's decision (dl-001 D4, D6).
+- no pack is bundled in WingFoil's npm package: WingFoil installs packs from this repository
+  (dl-021 R1, WingFoil dl-138 Action 3).
 
 ### 6.3 `requires` and `conflicts`
 
@@ -428,13 +428,18 @@ Asset files are copied whole, after parameter substitution (§8). They are never
 | `workflows/<name>.yaml` | `.wingfoil/workflows/built-in/<name>.yaml` |
 | `memory-templates/<type>.md` | `.wingfoil/memory/templates/built-in/<type>.md` |
 
-- A pack writes only WingFoil-managed asset folders, never `custom/`, which belongs to the project
-  (`pack-authoring`). If WingFoil dl-138 Q3 ratifies a `remote` asset class, `built-in/` above
-  becomes `remote/`. That changes the composer, not the pack format.
+- A pack names no install folder: its asset paths are relative to each kind, and the table is the
+  reference composer's mapping in format 1. A pack writes only WingFoil-managed asset folders,
+  never `custom/`, which belongs to the project (`pack-authoring`). WingFoil dl-138 ratified a
+  `remote` asset class (Q3): `built-in/` stays WingFoil's own, and `pack-install` maps a pack into
+  the `remote` class once dl-138's Action 2 tech-spec fixes its folder, layout and lock; the
+  reference composer then follows it. That changes the composer, not the pack format (dl-021 R3,
+  F-029).
 - **One owner per file.** Two packs of a composition **must not** ship the same directive id,
   workflow name or Memory template. The one exception is a slot workflow (§9).
 - A Memory template is shipped by the pack that defines its type. The type's `template.file` in that
-  pack's `memory.yaml` fragment **must** be `memory/templates/built-in/<type>.md`. WingFoil reads the
+  pack's `memory.yaml` fragment **must** be `memory/templates/built-in/<type>.md` in format 1: the
+  one path a pack writes that names a folder, kept until O13 is settled. WingFoil reads the
   template from the path the type declares, so the `built-in/` folder keeps pack files apart from
   the project's own templates, as for directives and workflows.
 - A directive id that equals one of WingFoil's own built-in directives (for example
@@ -447,7 +452,8 @@ Packs ship no `workflows.yaml` fragment (§1, deviation). The composer generates
 - `format: 1` and `version: 1`. This specification fixes the composed `workflows.yaml` at format 1,
   so no pack declares the `workflows` kind; the compatibility check includes it (§12). When WingFoil
   bumps that kind, this specification is revised;
-- `include`: one entry `workflows/built-in/<name>.yaml` per composed workflow, in composition
+- `include`: one entry `workflows/built-in/<name>.yaml` per composed workflow (the folder follows
+  §7.6's mapping), in composition
   order, then in each pack's `contents.workflows` order.
 
 A slot workflow appears once, at the position of the pack whose file is used.
@@ -603,7 +609,7 @@ transitions:
     from: stage/prototype
     to: stage/production
     formats: {}
-    requires_capabilities: [stage-transitions]
+    requires_capabilities: []
 presets:
   - { id: startup-mvp, path: presets/startup-mvp.yaml }
 ```
@@ -651,7 +657,6 @@ kinds:
 capabilities:
   pack-install: "init, pack add and upgrade install packs from this repository"
   workflow-engine: "WingFoil executes workflows"
-  stage-transitions: "wingfoil stage set runs a transition from transitions/"
 releases:
   - wingfoil: 0.2.2
     format_key: false
@@ -662,13 +667,16 @@ releases:
 
 - **`kinds`** are dl-149's seven file kinds, all of them required. `workflows` is listed even though
   packs ship no fragment of it, because the composed file has a format (§7.7).
-- **`capabilities`** are this repository's proposal until WingFoil publishes its vocabulary
-  (feedback notes T13). WingFoil owns the final names.
+- **`capabilities`** are this repository's provisional vocabulary (dl-021 R4) until WingFoil's
+  capabilities query publishes one (WingFoil dl-177; F-013). WingFoil owns the final names.
 - **`releases[]`:**
   - only released WingFoil versions (`MAJOR.MINOR.PATCH`, no pre-release), in ascending order;
   - `format_key` says whether the release accepts the `format:` key without a warning;
   - `reads` maps each kind to the formats that release reads;
   - `capabilities` lists what it provides, from the `capabilities` vocabulary above;
+    `wingfoil-release-intake` records a capability for a release only when its CHANGELOG names
+    the feature or command behind it (dl-021 R4), since WingFoil names features and commands, not
+    capabilities;
   - `notes` is optional free text for people, never read by a resolver.
 
   WingFoil 0.2.2 predates dl-149. It reads format 1, which is files with no key, but warns on the
@@ -756,8 +764,10 @@ byte-identical) compares composed trees and is recorded in `pack-release`, not i
 
 ## 14. Transitions
 
-A transition moves a project from one stage to the next, run by `wingfoil stage set` (feedback notes
-T8). It lives in `transitions/<from>-to-<to>.yaml`:
+A transition describes the move of a project from one stage to the next. No `stage set` verb runs
+it: the project replaces its `stage/*` overlay through a pack update, and the transition is run as
+the workflow the target overlay ships (dl-021 R2, F-028, WingFoil dl-178). It lives in
+`transitions/<from>-to-<to>.yaml`:
 
 ```yaml
 format: 1
@@ -765,7 +775,7 @@ id: prototype-to-production
 from: stage/prototype
 to: stage/production
 formats: {}
-requires_capabilities: [stage-transitions]
+requires_capabilities: []
 pre_checks:
   - { id: approver-declared, description: "dna.yaml team.members has at least one approver." }
 actions:
@@ -784,8 +794,8 @@ actions:
   to the digest of the transition file. That digest is §13 applied to a listing of one file, whose
   path is the file name.
 - `pre_checks` and `actions` are descriptive in format 1: an `id` and a `description`. They get an
-  executable form when WingFoil defines `stage set` (capability `stage-transitions`); that will be
-  a format bump of the transition kind.
+  executable form when WingFoil defines how a pack update runs a transition (WingFoil dl-178); that
+  will be a format bump of the transition kind.
 
 ## 15. Presets
 
@@ -823,16 +833,17 @@ Each has an owner outside this specification. None blocks format 1.
 |---|---|---|
 | O1 | Where community packs live, and how they relate to WingFoil's third-party sources. | M4 features (dl-001 D7; WingFoil dl-138 Q4) |
 | O2 | The final AGENTS.md markers. | WingFoil dl-137 part (b) (notes T14) |
-| O3 | The capability vocabulary. | WingFoil (notes T13) |
+| O3 | The capability vocabulary. This repository's is provisional (dl-021 R4, §12). | WingFoil dl-177, the capabilities query (F-013) |
 | O4 | `workflows/bindings.yaml` (v0.3): whether it becomes a dl-149 kind, and whether packs ship it. | WingFoil dl-153 (`ready`, recommends making it a kind) and task-251 "Layer 3"; re-read with the v0.3 formats |
-| O5 | A pack directive that shares its id with a WingFoil built-in directive. In format 1 it is an error; overriding a built-in is the project's `custom/` folder. | WingFoil (dl-138 Q3, built-in precedence) |
+| O5 | A pack directive that shares its id with a WingFoil built-in directive. In format 1 it is an error; overriding a built-in is the project's `custom/` folder. | WingFoil dl-138's Action 2 tech-spec (the override rules of the `remote` class) |
 | O6 | Overlays cannot patch a workflow, only add workflows and tighten Memory, roles and DNA. A workflow-patch mechanism is a later format. | this repository, when a stage charter needs it |
 | O7 | A canonical YAML serialization of composed files, so that two different composers give the same bytes. Format 1 requires determinism of one composer only (adr-001). | WingFoil, with notes T15 |
 | O8 | The `{{` escape. Not needed so far. | this repository, when a pack needs it |
 | O9 | The `method` entry per workflow and phase. | dl-007 (`pending`) |
 | O10 | No released WingFoil has `format_key: true` before v0.3 is released, so the tooling's fixtures (sequencer W5–W7) cannot pass the zero-warning matrix on 0.2.2. Whether the matrix then runs against an unreleased v0.3 build, for tooling only and never for a publication, is the tooling phase's decision. | the tooling phase (M1) |
 | O11 | task-251 decision 4, held for the WingFoil approver: `memory add` copies a template's `format: 1` into the elements it creates. If ruled so, the `format:` that §5 requires in a pack's Memory templates also appears in every project element. | WingFoil (task-251) |
-| O12 | WingFoil's `init` writes its own built-in directives into `directives/built-in/`, the folder packs write to. Whether a composed `.wingfoil/` still holds them, who owns that folder, and how an upgrade tells them apart. | WingFoil (dl-138 Q2–Q3), with O5 |
+| O12 | WingFoil's `init` writes its own built-in directives into `directives/built-in/`, the folder the reference composer writes packs to in format 1. Settled in principle by WingFoil dl-138 Q3 (dl-021 R3): `built-in/` is WingFoil's own and packs land in the `remote` class; what remains is the folder and how an upgrade tells them apart. | WingFoil dl-138's Action 2 tech-spec, with O5 and O13 |
+| O13 | A pack's `memory.yaml` fragment names its template as `memory/templates/built-in/<type>.md` (§7.6), the one path a pack writes that names a folder. How it reads under the `remote` class: rewritten by `pack-install`, or a kind-relative form. The format-1 rule stays until then. | WingFoil dl-138's Action 2 tech-spec (F-029) |
 
 ## 17. What the reference composer does
 
@@ -864,7 +875,7 @@ check the rest, and the composer refuses what they reject.
   integer, so the schemas cannot reject it.
 
 **`pack.yaml` and the pack directory:**
-- once this specification is approved, `version` is `1.0.0` or later (§4);
+- `version` is `1.0.0` or later (§4);
 - `id` equals the directory path under `packs/`, and `name` equals its last segment (§4, §6.2);
 - the pack name is unique across the catalog (dl-004 1(a));
 - `requires` has exactly one `base@^<major>` entry (§3) and at most one entry per pack id; no pack
@@ -974,3 +985,12 @@ check the rest, and the composer refuses what they reject.
   since this specification's approval; it now reads "Every published version is `1.0.0` or later
   (spec-001 §4, §18)". §4's citation of `pack-semver` is folded back by the next amendment of
   this specification.
+- 2026-10-14, **amended in place** (plan-032, the approver's choice of 2026-10-14, as plan-031 did
+  for spec-002; the merge OK of plan-032 is the approval of the edited text), after dl-021: §4 and
+  §18 (the `0.x` erratum of 2026-10-13 folded back); §6.2 (no bundled packs, R1); §7.6 (no install
+  folder in a pack, the `remote` class, R3; the `template.file` rule kept for format 1); §7.7 (the
+  `include` folder follows §7.6); §11 and §14 (no `stage set`, no `stage-transitions`; a transition
+  is the target overlay's workflow on a pack update, R2; the `transition` kind stays, descriptive,
+  the approver's ruling); §16 (O3, O5, O12 re-owned; O13 new). §12 changes through task-028 with
+  `compat.yaml`. WingFoil dl-177 (`b34f827f`) and dl-178 (`4d4c3221`, `662f6a4c`) are cited where
+  dl-021 named dl-149 Action 3 and dl-164's mechanism.
