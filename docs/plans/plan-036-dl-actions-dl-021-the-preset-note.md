@@ -2,7 +2,7 @@
 id: plan-036-dl-actions-dl-021-the-preset-note
 type: plan
 title: "dl actions: dl-021, the preset note"
-status: active
+status: done
 workflow: "decision-log-ingest"
 phase: "rule"
 tags: ["feedback","wingfoil"]
