@@ -69,6 +69,24 @@ Run from a clean clone of `tooling/task-029-no-bundled`; Node.js 22.21 and the f
 
 ## Design
 
-Filled at the start of the work.
+On `tooling/task-029-no-bundled` (Context), through `tooling-delivery` v2 as `developer`
+(`code-quality`, `testing`, `determinism`).
+
+Red steps (dl-018 R1):
+1. The tests first: `publish:pack` with `--bundled` or `--from`, and `feedback:note --published`,
+   expected to exit 3 as unknown or refused options; they fail against today's code (red,
+   counted). The W7 test (a publication in a fixture repository with this repository's inbox;
+   a committed `schema/` change fails it on `schema-note` until the note is written and
+   committed) is new as a whole but checks behaviour that exists: a characterization test
+   (dl-018 R2, the `testing` directive), checked by mutation (the `schema-note` rule switched off
+   makes it fail).
+2. The code: `src/publish.ts` without `--bundled`, `--from`, the note commit, the inbox clean-up
+   of the rollback and their imports; `src/feedback-note.ts` without `--published`,
+   `writePublishedNote`, `fromElement`'s `only` and the imports they alone used; the usage and
+   header comments. Green.
+3. `npm run lint` catches any unused import or helper; `publishByHand` goes if no other test uses
+   it.
+
+One commit for the tests, one for the code; the Execution Notes list them.
 
 ## Execution Notes
