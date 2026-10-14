@@ -2,7 +2,7 @@
 id: dl-022-the-scope-of-base-a-core-common-to-every-governed-project-and-a-software-foundation-layer
 type: decision-log
 title: "The scope of base: a core common to every governed project, and a software foundation layer"
-status: draft
+status: pending
 tags: ["packs","base","conventions","process","governance"]
 ---
 
