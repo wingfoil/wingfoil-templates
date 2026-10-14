@@ -70,3 +70,15 @@ On the branch `config/dl-021-actions`, from `main` at `4b1f481`; one commit per 
   line; where `record` takes the formats; a complete grep; positive wording; the `--preset`
   module left out with an owner), amended.
 - 2026-10-14: presented to the approver, who approved it in chat; submitted `active`.
+- 2026-10-14, step 1: rows 1–7 in `235a1eb`, `3f4b569`, `e41e0df`, `2545da7`, `7a9ec8b`,
+  `d2da0ae`, `15940aa`, then a wording commit for rows 2 and 3.
+- 2026-10-14, step 2: `workflow list`, `dna show` and `directives list` exit 0 with empty stderr;
+  no `include` names an undeclared workflow (script); `npm test` 803 of 803, `lint`,
+  `check:packs` and `validate` exit 0; the grep of `.wingfoil/` finds none of the listed terms
+  (one generic "WingFoil capabilities" in the `pack` template, not the command).
+- 2026-10-14, step 3: independent review: approve after amendments (1 medium: the personas'
+  maintainers "install" packs, now "whose pack-install installs them"; 2 low: `pack-authoring`'s
+  tense, the intake's capability sentence), fixed in `1b9e875`; wording only, not re-reviewed
+  (dl-017 R2).
+- 2026-10-14, step 4: CI run 38585709680 on `1b9e875`, conclusion `success` for both Node.js
+  versions. Waiting for the approver's merge OK.
