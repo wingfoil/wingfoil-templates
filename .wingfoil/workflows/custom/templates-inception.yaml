@@ -19,7 +19,7 @@ phases:
       - docs/01_vision/02_product-vision.md
       - docs/01_vision/03_is-isnot.md
   - name: personas
-    description: "Personas: the projects that adopt packs, the pack authors, the WingFoil maintainers who install them."
+    description: "Personas: the projects that adopt packs, the pack authors, the WingFoil maintainers whose pack-install installs them."
     role: facilitator
     produces:
       - docs/01_vision/04_personas.md

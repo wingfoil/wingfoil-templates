@@ -8,11 +8,11 @@ version: 4
 phases:
   - name: record
     description: >-
-      Add the release to compat.yaml: the format versions it reads, from its format: keys and its
-      CHANGELOG, and the capabilities it provides, recorded only when its CHANGELOG names the
-      feature or command behind one (dl-021 R4). A new format kind enters kinds here; a new
-      capability enters the provisional vocabulary only as spec-001 §12 allows, WingFoil owning the
-      final names (WingFoil dl-177). Commit
+      Add the release to compat.yaml: the format versions it reads, from the format: keys its files
+      accept and its CHANGELOG, and the capabilities it provides, recorded only when its CHANGELOG
+      names the feature or command behind one (dl-021 R4). A new format kind enters kinds here; a
+      new capability enters the provisional vocabulary (spec-001 §12), WingFoil owning the final
+      names (WingFoil dl-177). Commit
       src/matrix/wingfoil-<version>/package.json, pinning wingfoil to exactly that version, and its
       lockfile (npm install --package-lock-only --ignore-scripts in that folder), so that the
       compatibility matrix can install the release (task-011); npm run check:pins checks them, and
