@@ -1,16 +1,13 @@
-// `npm run feedback:note` (task-015, F5.4, wingfoil-cli rule 8): the feedback note a publication of a
-// pack WingFoil bundles, or a change of schema/, produces, so that WingFoil's release planning sees
-// it. Whether a pack is bundled is WingFoil's decision (dl-001), stated at each release.
+// `npm run feedback:note` (task-015, F5.4, wingfoil-cli rule 8): the feedback note a change of
+// schema/ produces, so that WingFoil's release planning sees it. WingFoil installs packs from
+// this repository, not from its npm package, so a publication writes no note (dl-021 R1,
+// task-029).
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 
-import { CatalogError, loadCatalog } from './catalog';
 import { InboxError, newestSchemaRecord, readNotes, writeNote } from './feedback-inbox';
 import { schemaListing } from './schema-digest';
-import { YamlError } from './yaml-load';
-
-type Doc = Record<string, unknown>;
 
 export class FeedbackNoteError extends Error {
   constructor(readonly code: number, message: string) {
@@ -22,11 +19,10 @@ export class FeedbackNoteError extends Error {
 const FROM = /^((?:task|prel)-\d{3})(?:-[a-z0-9.-]+)?$/;
 
 /** The element a note comes from, as the note's first line names it: `task-<nnn>` or `prel-<nnn>`. */
-export function fromElement(value: string | undefined, only?: 'prel'): string {
+export function fromElement(value: string | undefined): string {
   const id = value === undefined ? undefined : FROM.exec(value)?.[1];
-  if (id === undefined || (only !== undefined && !id.startsWith(`${only}-`))) {
-    const expected = only === undefined ? '<task-<nnn> | prel-<nnn>>' : '<prel-<nnn>>';
-    throw new FeedbackNoteError(3, `--from ${expected} is required`);
+  if (id === undefined) {
+    throw new FeedbackNoteError(3, '--from <task-<nnn> | prel-<nnn>> is required');
   }
   return id;
 }
@@ -37,52 +33,6 @@ function governancePin(tree: string): string {
     devDependencies?: Record<string, string>;
   };
   return manifest.devDependencies?.['wingfoil'] ?? '0.0.0';
-}
-
-/** The note of a published pack that WingFoil bundles; its id. */
-export function writePublishedNote(tree: string, release: string, from: string): string {
-  const at = release.lastIndexOf('@');
-  const packId = release.slice(0, at);
-  const version = release.slice(at + 1);
-  if (at <= 0 || version === '') {
-    throw new FeedbackNoteError(3, `--published ${JSON.stringify(release)} is not <id>@<version>`);
-  }
-  let catalog;
-  try {
-    catalog = loadCatalog(join(tree, 'catalog.yaml'));
-  } catch (error) {
-    if (error instanceof CatalogError || error instanceof YamlError) {
-      throw new FeedbackNoteError(2, `catalog.yaml: ${error.message}`);
-    }
-    throw error;
-  }
-  const pack = ((catalog.raw['packs'] as Doc[] | undefined) ?? []).find((entry) =>
-    entry['id'] === packId);
-  const entry = ((pack?.['versions'] as Doc[] | undefined) ?? []).find((candidate) =>
-    candidate['version'] === version);
-  if (entry === undefined) {
-    throw new FeedbackNoteError(1, `catalog.yaml lists no version ${version} of ${packId}`);
-  }
-  for (const field of ['commit', 'digest', 'wingfoil']) {
-    if (typeof entry[field] !== 'string') {
-      throw new FeedbackNoteError(1, `catalog.yaml: ${release} has no ${field}`);
-    }
-  }
-  return writeNote(tree, {
-    title: `Pack \`${release}\` published, for the bundled copy`,
-    slug: `pack-${packId.replace(/\//g, '-')}-${version}-published`,
-    from,
-    wingfoilVersion: governancePin(tree),
-    observed: [
-      `WingFoil-Templates published \`${release}\`:`,
-      `- tag \`${release}\`, at commit \`${String(entry['commit'])}\`;`,
-      `- digest \`${String(entry['digest'])}\`;`,
-      `- computed WingFoil range \`${String(entry['wingfoil'])}\` (\`catalog.yaml\`).`,
-    ].join('\n'),
-    expected: 'WingFoil bundles this pack in its npm package (dl-001). Its advance-bundled-packs '
-      + `release step considers \`${release}\` as the newest compatible version of the bundled `
-      + 'copy.',
-  });
 }
 
 function changedFiles(previous: string, current: string): string[] {
@@ -135,20 +85,15 @@ export function runFeedbackNote(argv: string[]): FeedbackNoteResult {
   try {
     let values;
     try {
-      values = parseArgs({ args: argv, options: { published: { type: 'string' },
+      values = parseArgs({ args: argv, options: {
         schema: { type: 'boolean' }, from: { type: 'string' }, tree: { type: 'string' } },
       strict: true, allowPositionals: false }).values;
     } catch (error) {
       throw new FeedbackNoteError(3, error instanceof Error ? error.message : String(error));
     }
-    if ((values.published === undefined) === (values.schema !== true)) {
-      throw new FeedbackNoteError(3, 'give exactly one of --published <id>@<version> and --schema');
-    }
+    if (values.schema !== true) throw new FeedbackNoteError(3, '--schema is required');
     const from = fromElement(values.from);
     const tree = values.tree ?? process.cwd();
-    if (values.published !== undefined) {
-      return { code: 0, lines: [`${writePublishedNote(tree, values.published, from)} written`] };
-    }
     const id = writeSchemaNote(tree, from);
     return { code: 0, lines: [id === undefined
       ? 'schema/ is as the newest schema note records: no note written' : `${id} written`] };

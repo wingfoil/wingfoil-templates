@@ -115,7 +115,7 @@ const RELEASE = new StubWingfoil({}, STUB_RELEASE);
 after(() => RELEASE.dispose());
 
 /** A repository like task-014's, with this repository's inbox and package.json committed. */
-function bundledRepository(): TestRepo {
+function publishRepository(): TestRepo {
   const repo = treeRepo([BASE_COMPOSABLE, KANBAN]);
   appendFileSync(join(repo.dir, 'packs', 'base', 'CHANGELOG.md'), '\n- 1.0.0: first version.\n');
   addRepositoryFiles(repo.dir);
@@ -128,9 +128,9 @@ function publish(repo: TestRepo, extra: string[]): ReturnType<typeof runPublish>
     { install: () => RELEASE.cli, env: repo.env });
 }
 
-describe('npm run publish:pack (F5.4, the W7 exit criterion; dl-021 R1: no bundled pack)', () => {
+describe('npm run publish:pack (F5.4, the W7 exit criterion; dl-021 R1)', () => {
   it('a publication produces tag, catalog entry and digest, and no note', () => {
-    const repo = bundledRepository();
+    const repo = publishRepository();
     try {
       const notes = notesOf(join(repo.dir, INBOX)).length;
       const result = publish(repo, []);
@@ -151,7 +151,7 @@ describe('npm run publish:pack (F5.4, the W7 exit criterion; dl-021 R1: no bundl
   });
 
   it('refuses --bundled and --from (exit 3)', () => {
-    const repo = bundledRepository();
+    const repo = publishRepository();
     try {
       for (const extra of [['--bundled'], ['--from', 'prel-001'],
         ['--bundled', '--from', 'prel-001'], ['--dry-run', '--bundled', '--from', 'prel-001']]) {
@@ -164,7 +164,7 @@ describe('npm run publish:pack (F5.4, the W7 exit criterion; dl-021 R1: no bundl
   });
 
   it('a schema change fails the publication until its note is written and committed', () => {
-    const repo = bundledRepository();
+    const repo = publishRepository();
     try {
       appendFileSync(join(repo.dir, 'schema', 'pack.schema.json'), '\n');
       repo.commitAll('a schema change');
