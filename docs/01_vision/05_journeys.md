@@ -13,9 +13,8 @@ Each journey lists:
 - the pain or opportunity at that step.
 
 The opportunities feed the feature brainstorm (`06_features.md`). The commands of the WingFoil CLI
-named here are WingFoil's to design (`init --preset`, `pack add`, `upgrade`; no `stage set`, dl-021
-R2). A journey
-states only what the packs must make possible.
+named here are WingFoil's to design (`init --preset`, `pack add`, `upgrade`; no `stage set`,
+dl-021 R2). A journey states only what the packs must make possible.
 
 | ID | Journey | Persona | Priority |
 |---|---|---|---|
@@ -58,7 +57,7 @@ and nobody had to fix it after publication.
 |---|---|---|---|
 | 1 | Reads what changes | `base` README and CHANGELOG | What the repository gains, what it must rename, which parameters it sets. |
 | 2 | Sets the parameters | its own paths, id conventions, agent name | WingFoil2 and UI keep their path per type (`design/dls`, …) without forking `base`. |
-| 3 | Applies the files | `.wingfoil/` of the repository | The files go where `pack-install` will map them (WingFoil dl-138's `remote` class), never into `built-in/`, which is WingFoil's own; the repository's `custom/` overrides stay (dl-021 R3). |
+| 3 | Applies the files | `.wingfoil/` of the repository | The files go where `pack-install` will map them in WingFoil dl-138's `remote` class; until its tech-spec fixes that folder, format 1's mapping applies (spec-001 §7.6, O12). The repository's `custom/` overrides stay (dl-021 R3). |
 | 4 | Writes the `AGENTS.md` section | the marked region | Markers in place from the start, so the later export finds them. |
 | 5 | Validates | the pinned WingFoil CLI of that repository | Zero errors with the WingFoil version the repository actually runs. |
 | 6 | Records the adoption | a decision-log or task in that repository, the adopted version | The version is recorded, so the next `base` release has a known starting point. |
@@ -79,7 +78,7 @@ journey below holds if WingFoil adopts it.
 
 | # | Step | Touchpoint | Pain / opportunity |
 |---|---|---|---|
-| 1 | Finds the commit to pin | `catalog.yaml` at `main`: the newest compatible version of each pack of the default set | One query instead of reading changelogs; feedback notes list what was published since. |
+| 1 | Finds the commit to pin | `catalog.yaml` at `main`: the newest compatible version of each pack of the default set | One query instead of reading changelogs; the catalog's versions show what was published since. |
 | 2 | Verifies | the tag and digest of each version | What `init` will install is exactly what was published. |
 | 3 | Pins | the catalog commit in WingFoil's release | One change of one pinned commit; `main` is never rewritten here, so the commit stays resolvable. |
 | 4 | Tests | WingFoil's test suite with the pinned default set | A failure here is a pack defect: it comes back here as a bug, not as a patch in WingFoil. |
@@ -152,7 +151,7 @@ pack version is published.
 
 **Trigger:** the project moves from prototype to production.
 
-A stage is an overlay: the move is an `upgrade` that replaces the `stage/*` overlay, and the target
+A stage is an overlay: the move is a pack update that replaces the `stage/*` overlay, and the target
 stage's workflow runs the transition (dl-021 R2, WingFoil dl-178). No `stage set` verb is needed.
 
 | # | Step | Touchpoint | Pain / opportunity |

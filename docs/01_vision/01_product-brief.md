@@ -63,8 +63,8 @@ first adopters and the first test of the format.
 
 **From WingFoil v0.4:**
 - **adopters:** projects that run `wingfoil init` with a preset or with one pack per axis, then
-  `pack add` and `upgrade`. A stage changes through an `upgrade` of the `stage/*` overlay, whose
-  workflow runs the transition (dl-021 R2, WingFoil dl-178).
+  `pack add` and `upgrade`. A stage changes through a pack update that replaces the `stage/*`
+  overlay, whose workflow runs the transition (dl-021 R2, WingFoil dl-178).
 
 **Later:**
 - **external contributors:** see §5.
@@ -147,7 +147,7 @@ The sequencer (`07_sequencer.md`) sets the order and the first publishable set.
 - **WingFoil v0.4 may slip or change direction.** It is expected to install packs, decided in
   dl-138, ready. If it slips, the adopters of purpose 1 wait with it.
 - **WingFoil formats keep changing up to 1.0.** The line policy and `wingfoil migrate` (notes D6,
-  T13) mitigate this.
+  F-013) mitigate this.
 - **The AGENTS.md marker syntax is provisional** until WingFoil dl-137's part-(b) tech-spec is
   published (notes T14).
 - **The approver is a single point.** The repository has one approver for every gate.

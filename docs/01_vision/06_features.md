@@ -42,7 +42,7 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 | F2.1 | **`catalog.yaml`:** axes, packs, published versions with commit, digest, formats, capabilities and the computed WingFoil range. | J3.1, J6.1 | H | M | L |
 | F2.2 | **Tag per pack version**, never moved or deleted. | J1.7, J3.2 | H | L | M |
 | F2.3 | **Pack digest:** sha256 over a canonical listing of the pack's files. The procedure (ordering, line endings, exclusions) is fixed in spec-001. | J1.7, J3.2 | H | L | M |
-| F2.4 | **`compat.yaml`:** for each WingFoil release, the formats it reads and the capabilities it provides. The vocabulary belongs to WingFoil (its capabilities query, WingFoil dl-177); until WingFoil publishes it, this repository holds a provisional one, `pack-install` and `workflow-engine`, and records a capability only when a release's CHANGELOG names it (dl-021 R4). | J4.1, J6.3 | H | L | **H** |
+| F2.4 | **`compat.yaml`:** for each WingFoil release, the formats it reads and the capabilities it provides. The vocabulary belongs to WingFoil (its capabilities query, WingFoil dl-177); until WingFoil publishes it, this repository holds a provisional one, `pack-install` and `workflow-engine`, and records a capability only when a release's CHANGELOG names the feature or command behind it (dl-021 R4). | J4.1, J6.3 | H | L | **H** |
 | F2.5 | **Computed WingFoil range** in the catalog, derived from `compat.yaml`. It is never written by hand. | J1.6, J3.1 | M | L | L |
 | F2.6 | **Presets:** named combinations, organized by the adoption profiles (personas §2). | J6.1 | M | L | L |
 | ~~F2.7~~ | ~~**Release assets.**~~ Dropped in the features review: versions are not published as GitHub Release assets. | brief §8 | — | — | — |
@@ -79,7 +79,7 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 | F5.1 | **`pack-release` with evidence:** commands, WingFoil versions and exit codes are recorded in the element (already configured). | J1.6 | H | L | L |
 | F5.2 | **`wingfoil-release-intake` workflow:** updates `compat.yaml`, rechecks the active packs, and opens a task for each migration (journeys review). | J4 | H | L | L |
 | F5.3 | **Line policy:** one living line before WingFoil 1.0; lines N and N-1 after it. | J4.3, J7.1 | M | L | M |
-| F5.4 | **Feedback notes on publication:** a note for every schema change; no pack is bundled in WingFoil, so a publication needs no note of its own (dl-021 R1). | J3.1 | M | L | L |
+| F5.4 | **Feedback notes on publication:** a note for every schema change; no pack is bundled in WingFoil, so a publication needs no note of its own (dl-021 R1). | J1.7 | M | L | L |
 
 ## F6 — Adoption (until the CLI installs packs)
 

@@ -54,15 +54,17 @@ Items marked *(pack-model)* depend on proposals ruled in the pack-model phase.
 - **Validates before publishing.** Every preset and documented combination that contains the pack is
   composed with the oldest and the newest compatible WingFoil release. Each must validate with exit 0
   and no warning, and two compositions must be byte-identical (`pack-compatibility`).
-- **Ships files at kind-relative paths**, which land where WingFoil's `pack-install` maps them
-  (WingFoil dl-138's `remote` class). A pack never writes `built-in/`, which stays WingFoil's own,
-  nor `custom/`, so a project's overrides survive an upgrade (dl-021 R3, `pack-authoring`).
+- **Ships files at kind-relative paths**, which land where WingFoil's `pack-install` maps them, in
+  dl-138's `remote` class; `built-in/` stays WingFoil's own (spec-001 O12, format 1's mapping
+  applying until dl-138's tech-spec fixes the folder), and a pack never writes `custom/`, so a
+  project's overrides survive an upgrade (dl-021 R3, `pack-authoring`).
 - **Declares what each pack requires and conflicts with**, and has overlays only add or tighten,
   never remove (`pack-authoring`).
 - **Keeps older versions resolvable.** A published tag is never moved or deleted (`pack-semver`).
 - **Records its decisions in Memory**, and every pack, task and release traces back to them
   (`traceability`).
-- **Reports to WingFoil** every schema change, as a note in its feedback inbox (`wingfoil-cli`); no
+- **Reports to WingFoil** every schema change, as a note in this repository's feedback inbox
+  (`docs/wingfoil-feedback/`, `wingfoil-cli`); no
   pack is bundled, so a publication needs no note of its own (dl-021 R1).
 
 ## DOES NOT

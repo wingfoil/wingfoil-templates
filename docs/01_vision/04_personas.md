@@ -35,7 +35,8 @@ This document describes two different sets of people, and they must not be confu
   - upgrades that leave Kai's own overrides in `custom/` alone;
   - a clear line between official and community packs.
 - **Success:** Kai's project validates on the first `init`. Kai moves from prototype to production
-  with one `upgrade` of the stage overlay, whose workflow runs the transition (dl-021 R2).
+  with one pack update that replaces the stage overlay, whose workflow runs the transition (dl-021
+  R2).
 - **Serves purpose:** 1.
 
 ### Persona 2 — The WingFoil Maintainer

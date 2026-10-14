@@ -53,7 +53,7 @@ Tooling work that waits for nothing in WingFoil.
 |---|---|---|---|
 | W5 — Composer | F3.2 reference composer · F3.4 determinism check · F3.1 one validation command | F3.2 | a fixture pack composes twice into byte-identical files, through one command |
 | W6 — Matrix and lint | F3.3 compatibility matrix · F3.5 lint rules · F3.6 CI | — | a fixture validates against pinned WingFoil releases, in CI |
-| W7 — Release process | F5.1 evidence in `pack-release` · F5.4 feedback notes on publication · F5.3 line policy | — | a dry-run publication of a fixture pack produces tag, catalog entry, digest and note (the note is the schema-change note since dl-021 R1: no pack is bundled) |
+| W7 — Release process | F5.1 evidence in `pack-release` · F5.4 feedback notes on publication · F5.3 line policy | — | a dry-run publication of a fixture pack produces tag, catalog entry and digest, and a feedback note when it changes a schema (dl-021 R1: no pack is bundled) |
 | W14 — Browsable catalog | F2.8 browsable catalog · F2.9 search page | — | a fixture catalog is browsable in `CATALOG.md`, `catalog-index.json` and a search page built in the tests |
 
 ## M2 — Foundation
