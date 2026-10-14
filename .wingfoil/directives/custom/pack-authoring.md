@@ -25,10 +25,13 @@ Applies to every role that writes or reviews pack content under `packs/`.
 - Every example in a README is a fixture, `tests/fixtures/examples/<pack name>/<example>/`, that the
   validation command composes and validates, about a clearly fictional project (spec-002 §2.4,
   dl-014 CB-2). Its fictional names are not project values.
-- A pack only ever writes into the WingFoil-managed asset folders of a project: `built-in/` today
-  (`directives/built-in/`, `workflows/built-in/`, Memory templates), or a `remote/` class if
-  WingFoil's dl-138 Q3 ratifies one (dl-003). It never writes `custom/`: that is where projects
-  override it, and an update must be able to replace pack files without touching theirs.
+- A pack names no install folder: its asset paths are relative to each kind (directives,
+  workflows, Memory templates), and `pack-install` maps them into WingFoil's `remote` class, as
+  WingFoil dl-138's Action 2 tech-spec fixes it (dl-021 R3, spec-001 §7.6). `built-in/` is
+  WingFoil's own. Until then the reference composer maps packs as spec-001 §7.6 states for format
+  1, and a Memory template's `template.file` keeps its format-1 path (spec-001 O13). A pack never
+  writes `custom/`: that is where projects override it, and an update must be able to replace pack
+  files without touching theirs.
 - `pack.yaml` declares the `formats` of every file kind the pack ships and the WingFoil
   `requires_capabilities` it relies on, from the `compat.yaml` vocabulary (dl-002). Content uses
   only what those formats and capabilities provide.
