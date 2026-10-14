@@ -1,7 +1,7 @@
 # Product Brief — WingFoil-Templates
 
-**Version:** 1.0
-**Date:** 2026-10-06
+**Version:** 1.1
+**Date:** 2026-10-14
 **Status:** Approved
 **Source:** the approver's answers (Roberto Pompermaier), 2026-10-06; the design discussion of
 2026-10-01..05; the first attempt on `archive/draft-2026-10-05` (unapproved drafts, source material
@@ -18,8 +18,10 @@ WingFoil-Templates is the official, public catalog of **template packs** for Win
 - project blueprints;
 - lifecycle stages, with the transitions between them.
 
-The WingFoil CLI downloads the packs to configure a project's `.wingfoil/`: DNA, Memory types,
-directives, workflows. WingFoil's npm package bundles the base packs as offline fallback.
+The WingFoil CLI installs the packs from this repository to configure a project's `.wingfoil/`: DNA,
+Memory types, directives, workflows. No pack is bundled in WingFoil's npm package: a project pins
+this repository as a `remote` source and vendors what it installs, which also covers offline use
+(dl-021 R1, WingFoil dl-138).
 
 ## 2. Problem
 
@@ -43,8 +45,8 @@ and no remote origin. As a consequence:
 
 1. **Offer adopters a catalog of process building blocks.** Methodologies, overlays, phase methods,
    blueprints and stages, which a project composes instead of writing its `.wingfoil/` by hand.
-2. **Be the single source of the packs WingFoil downloads and bundles.** They replace the templates
-   compiled into the CLI.
+2. **Be the single source of the packs WingFoil installs.** They replace the templates compiled into
+   the CLI.
 3. **Align the four WingFoil-governed repositories** through the foundation pack `base`.
 
 Purposes 2 and 3 serve purpose 1. The CLI is the delivery channel, and the four repositories are the
@@ -53,14 +55,16 @@ first adopters and the first test of the format.
 ## 4. Consumers and audiences
 
 **Until WingFoil v0.4** (the release that installs packs, WingFoil dl-138) the real consumers are:
-- **the WingFoil CLI and its maintainers:** WingFoil reads the catalog and bundles the base packs.
-  Before each release it advances its bundled packs to the newest published version (notes D3);
+- **the WingFoil CLI and its maintainers:** WingFoil reads the catalog. If it adopts the default set
+  this repository proposed (F-027, WingFoil's option (b), open in dl-138's tech-spec), each WingFoil
+  release pins a commit of this catalog that names the packs `init` installs (dl-021 R1);
 - **the four governed repositories:** they adopt packs by hand, copying them, and record the version
   they adopted.
 
 **From WingFoil v0.4:**
 - **adopters:** projects that run `wingfoil init` with a preset or with one pack per axis, then
-  `pack add`, `upgrade` and `stage set`.
+  `pack add` and `upgrade`. A stage changes through an `upgrade` of the `stage/*` overlay, whose
+  workflow runs the transition (dl-021 R2, WingFoil dl-178).
 
 **Later:**
 - **external contributors:** see §5.
@@ -124,7 +128,7 @@ The sequencer (`07_sequencer.md`) sets the order and the first publishable set.
 
 ## 8. Success signals
 
-- **WingFoil bundles packs published here** instead of its compiled templates.
+- **A WingFoil release installs packs published here** instead of its compiled templates.
 - **All four governed repositories** declare the `base` version they adopted.
 - **Every preset validates.** It composes deterministically (byte-identical twice) and passes
   WingFoil's validation on every compatible WingFoil release.
@@ -160,7 +164,7 @@ The sequencer (`07_sequencer.md`) sets the order and the first publishable set.
   - move stage;
   - author a pack;
   - publish a version;
-  - WingFoil advances its bundled packs;
+  - a WingFoil release pins this catalog;
   - later, contribute an element.
 - **pack-model:** the decisions D0–D6 of the design discussion, and the identifier conventions of
   the first attempt as proposals.
