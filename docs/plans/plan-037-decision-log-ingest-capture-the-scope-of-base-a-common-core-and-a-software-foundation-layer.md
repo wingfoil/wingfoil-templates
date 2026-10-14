@@ -2,7 +2,7 @@
 id: plan-037-decision-log-ingest-capture-the-scope-of-base-a-common-core-and-a-software-foundation-layer
 type: plan
 title: "decision-log-ingest capture: the scope of base, a common core and a software foundation layer"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "capture"
 tags: ["process","decision-log","base"]
