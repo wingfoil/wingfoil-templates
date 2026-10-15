@@ -4,7 +4,8 @@
 // memory), and a refusal is a problem. Without software no methodology is needed (spec-001 §3,
 // task-031), so base + T + S is composed too when neither overlay needs software. Every other pack
 // no combination reaches is composed once: base alone; a pack that does not need software, with
-// base; one that does, with the first methodology, and not at all when the tree holds none. A pack
+// base; one that does, with the first methodology, and not at all when the tree holds none. A
+// combination holding a conditional part is composed with and without software (task-032). A pack
 // that already has a problem is left out: its own rule has reported it.
 import type { LintContext } from './check-packs';
 import { corePack, softwarePack } from './catalog';
@@ -69,13 +70,32 @@ export function overlayProblems(context: LintContext, earlier: Problem[]): Probl
   };
   const needsSoftware = (pack: LintPack): boolean =>
     reachable(pack, context.packs).includes(softwarePack(catalog));
+  const software = sound.find((pack) => pack.id === softwarePack(catalog));
+  /**
+   * A combination holding a conditional part and no software also gets its leg with software
+   * (spec-001 §15, plan-039 R2); software needs a methodology, so a combination without one takes
+   * the first methodology no pack of it conflicts with, or gets no such leg.
+   */
+  const withSoftware = (request: LintPack[]): LintPack[] | undefined => {
+    if (software === undefined || request.some(needsSoftware)
+      || !request.some((pack) => pack.manifest.conditional !== undefined)) return undefined;
+    if (request.some((pack) => pack.manifest.axis === 'methodology')) return [software, ...request];
+    const allowed = methodologies.find((methodology) => !request.some((pack) =>
+      (pack.manifest.conflicts ?? []).some((entry) => entry.split('@')[0] === methodology.id)));
+    return allowed === undefined ? undefined : [software, allowed, ...request];
+  };
+  const both = (request: LintPack[], rule: string, blamed: LintPack[]): void => {
+    compose(request, rule, blamed);
+    const leg = withSoftware(request);
+    if (leg !== undefined) compose(leg, rule, blamed);
+  };
   for (const methodology of [undefined, ...methodologies]) {
     for (const teamMode of teamModes) {
       for (const stage of stages) {
         const overlays = [teamMode, stage].filter((pack) => pack !== undefined);
         if (overlays.length === 0) continue;
         if (methodology === undefined && overlays.some(needsSoftware)) continue;
-        compose([...(methodology === undefined ? [] : [methodology]), ...overlays], 'overlay',
+        both([...(methodology === undefined ? [] : [methodology]), ...overlays], 'overlay',
           overlays);
       }
     }
@@ -89,7 +109,7 @@ export function overlayProblems(context: LintContext, earlier: Problem[]): Probl
     else if (pack.manifest.axis === 'methodology' || !needsSoftware(pack)) request = [pack];
     else if (first !== undefined) request = [first, pack];
     else continue;
-    compose(request, 'compose', [pack]);
+    both(request, 'compose', [pack]);
   }
   return problems;
 }

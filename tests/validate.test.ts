@@ -26,6 +26,10 @@ const GOLDEN_EXAMPLES = ['agent-first/agent-team', 'base/core-only', 'base/kanba
   'flow/core-team', 'flow/delivery-team', 'kanban/small-board', 'lean/new-product',
   'production/live-service', 'software/delivery-team', 'web-service/orders-api']
   .map((example) => `tests/fixtures/examples/${example}/example.yaml`);
+/** The compositions of the golden tree: flow's examples with their other leg (task-032). */
+const GOLDEN_LEGS = GOLDEN_EXAMPLES.flatMap((example) => [example,
+  ...example.includes('/flow/core-team/') ? [`${example}[+software]`] : [],
+  ...example.includes('/flow/delivery-team/') ? [`${example}[-software]`] : []]);
 
 /** WingFoil 0.2.2 as the tests see it: exit 0, one format warning per command (W-01). */
 function stubbed(command: StubCommand): StubWingfoil {
@@ -71,8 +75,8 @@ describe('npm run validate', () => {
     assert.ok(result.lines.some((line) =>
       /^composition presets\/golden\.yaml: composed twice, 19 files, byte-identical$/.test(line)),
     result.lines.join('\n'));
-    // The golden preset and the ten examples of its packs (task-022, task-031, task-032).
-    assert.ok(result.lines.includes('compositions: 11'));
+    // The golden preset, the ten examples of its packs, and flow's two other legs (task-032).
+    assert.ok(result.lines.includes('compositions: 13'));
   });
 
   it('runs the golden preset against wingfoil@0.2.2 in self-test mode, reporting the tolerance',
@@ -81,10 +85,10 @@ describe('npm run validate', () => {
       assert.equal(result.code, 0, result.lines.join('\n'));
       // The golden preset, then its packs' examples in path order (task-022).
       assert.deepEqual(result.lines.filter((line) => line.startsWith('matrix')), [
-        ...['presets/golden.yaml', ...GOLDEN_EXAMPLES].flatMap((label) =>
+        ...['presets/golden.yaml', ...GOLDEN_LEGS].flatMap((label) =>
           ['workflow list', 'dna show', 'directives list'].map((command) =>
             `matrix ${label} wingfoil@0.2.2 ${command}: pass (self-test, tolerated 1)`)),
-        'matrix: self-test, 11 runs, 0 failed, tolerance applied: 0.2.2',
+        'matrix: self-test, 13 runs, 0 failed, tolerance applied: 0.2.2',
       ]);
       assert.equal(result.mode, 'self-test');
       assert.deepEqual(result.tolerated, ['0.2.2']);
@@ -109,7 +113,7 @@ describe('npm run validate', () => {
         'matrix presets/golden.yaml wingfoil@0.2.2 workflow list: fail (self-test)')),
       result.lines.join('\n'));
       assert.ok(result.lines.includes(
-        'matrix: self-test, 11 runs, 11 failed, tolerance applied: none'),
+        'matrix: self-test, 13 runs, 13 failed, tolerance applied: none'),
         result.lines.join('\n'));
     } finally {
       noisy.dispose();
@@ -124,7 +128,7 @@ describe('npm run validate', () => {
     assert.ok(result.lines.some((line) => /wingfoil@0\.2\.2: npm ci failed/.test(line)),
       result.lines.join('\n'));
     assert.ok(result.lines.includes(
-      'matrix: self-test, 11 runs, 11 failed, tolerance applied: none'),
+      'matrix: self-test, 13 runs, 13 failed, tolerance applied: none'),
       result.lines.join('\n'));
   });
 
@@ -182,7 +186,7 @@ describe('npm run validate', () => {
     assert.equal(result.code, 1, 'wip_limit is set by the preset');
     const entries = validate(['--tree', TREE, ...NAME, ...ENTRIES]);
     assert.equal(entries.code, 0, entries.lines.join('\n'));
-    assert.ok(entries.lines.includes('compositions: 12'));
+    assert.ok(entries.lines.includes('compositions: 14'));
     assert.ok(entries.lines.some((line) => line.startsWith('composition entries: composed twice')));
   });
 
@@ -208,7 +212,7 @@ describe('npm run validate', () => {
         assert.equal(result.code, 1);
         assert.ok(result.lines.some((line) => line.startsWith('presets/golden.yaml:')));
         // The examples still compose (task-022); the failing preset does not.
-        assert.ok(result.lines.includes('compositions: 10'), result.lines.join('\n'));
+        assert.ok(result.lines.includes('compositions: 12'), result.lines.join('\n'));
       });
   });
 
@@ -295,7 +299,7 @@ describe('npm run validate', () => {
         + 'example.yaml: skipped, the lint reports it'), result.lines.join('\n'));
       assert.ok(result.lines.includes('matrix tests/fixtures/examples/kanban/small-board/'
         + 'example.yaml: skipped'));
-      assert.ok(result.lines.includes('compositions: 10'));
+      assert.ok(result.lines.includes('compositions: 12'));
     });
   });
 
@@ -317,13 +321,16 @@ describe('npm run validate', () => {
         ...['agent-first/agent-team', 'base/core-only', 'base/kanban-team', 'flow/core-team',
           'flow/delivery-team', 'ghost/x', 'kanban/small-board', 'kanban/y', 'lean/new-product',
           'production/live-service', 'software/delivery-team', 'web-service/orders-api']
-          .map((example) => `composition tests/fixtures/examples/${example}/example.yaml`),
+          .map((example) => `composition tests/fixtures/examples/${example}/example.yaml`)
+          .flatMap((label) => [label,
+            ...label.includes('/flow/core-team/') ? [`${label}[+software]`] : [],
+            ...label.includes('/flow/delivery-team/') ? [`${label}[-software]`] : []]),
       ]);
       for (const orphan of ['ghost/x', 'kanban/y']) {
         assert.ok(result.lines.includes(`composition tests/fixtures/examples/${orphan}/`
           + 'example.yaml: skipped, the lint reports it'), result.lines.join('\n'));
       }
-      assert.ok(result.lines.includes('compositions: 11'));
+      assert.ok(result.lines.includes('compositions: 13'));
     }, true);
   });
 
@@ -395,7 +402,7 @@ describe('npm run validate', () => {
     }, (tree) => {
       const result = validate(['--tree', tree, ...NAME, '--param', 'api_prefix=/v2']);
       assert.equal(result.code, 0, result.lines.join('\n'));
-      assert.ok(result.lines.includes('compositions: 12'));
+      assert.ok(result.lines.includes('compositions: 14'));
     });
   });
 

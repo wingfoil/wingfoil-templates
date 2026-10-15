@@ -6,7 +6,7 @@ import { existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 
-import { CatalogError, loadCatalog } from './catalog';
+import { CatalogError, loadCatalog, softwarePack } from './catalog';
 import type { Catalog } from './catalog';
 import { findFiles, runCheckSchemas } from './check-schemas';
 import { runCheckPacks } from './check-packs';
@@ -21,6 +21,7 @@ import {
 import type { MatrixMode } from './matrix';
 import type { VersionRequirements } from './range';
 import { ResolveError, resolve } from './resolve';
+import type { ResolvedPack } from './resolve';
 import { YamlError, loadYamlFile } from './yaml-load';
 
 export interface ValidateOptions extends Omit<DeterminismOptions, 'use'> {
@@ -48,6 +49,8 @@ interface Composition {
   preset: Record<string, string>;
   /** The lint reports it: its line says so in its place, and it is not composed. */
   skip?: boolean;
+  /** A leg without software: the preset's values it dropped (plan-039 R5). */
+  dropped?: string[];
 }
 
 function parseParams(raw: string[]): Map<string, string> {
@@ -101,9 +104,10 @@ function presetComposition(tree: string, file: string): Composition {
 
 /** The parameters a composition's packs declare, and what each pack needs of a release. */
 function packsOf(tree: string, catalog: Catalog, entries: string[]):
-{ declared: Set<string>; requirements: VersionRequirements[] } {
+{ packs: ResolvedPack[]; declared: Set<string>; requirements: VersionRequirements[] } {
   const packs = resolve(tree, catalog, entries);
   return {
+    packs,
     declared: new Set(packs.flatMap((pack) => Object.keys(pack.manifest.parameters ?? {}))),
     requirements: packs.map((pack) => ({
       formats: pack.manifest.formats,
@@ -328,24 +332,28 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     }
   }
   let composed = 0;
-  for (const composition of compositions) {
+  // plan-039 R6: the packs with a conditional part, and whether a composition with software ran.
+  const parted = new Map<string, boolean>();
+  /** Composes one composition twice and runs the matrix; its packs when they resolved. */
+  const runOne = (composition: Composition): { packs?: ResolvedPack[]; ran: boolean } => {
     const label = `composition ${composition.label}`;
     const skipped = (): void => { matrixLines.push(`matrix ${composition.label}: skipped`); };
     if (composition.skip === true) {
       lines.push(`${label}: skipped, the lint reports it`);
       skipped();
-      continue;
+      return { ran: false };
     }
-    if (catalog === undefined) continue;
+    if (catalog === undefined) return { ran: false };
     let params: Record<string, string>;
     let requirements: VersionRequirements[];
+    let packs: ResolvedPack[];
     try {
-      const { declared, requirements: needs } = packsOf(args.tree, catalog,
-        composition.entries);
-      requirements = needs;
+      const resolved = packsOf(args.tree, catalog, composition.entries);
+      packs = resolved.packs;
+      requirements = resolved.requirements;
       params = { ...composition.preset };
       for (const [name, value] of args.params) {
-        if (!declared.has(name)) continue;
+        if (!resolved.declared.has(name)) continue;
         used.add(name);
         if (Object.hasOwn(composition.preset, name)) {
           throw new ResolveError(`--param ${name} overrides the value the preset sets`);
@@ -356,7 +364,7 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
       unjudged = true;
       fail(1, `${label}: ${messageOf(error)}`);
       skipped();
-      continue;
+      return { ran: false };
     }
     // The matrix runs inside the determinism check, on its first output.
     let ran = false;
@@ -371,11 +379,68 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     if (result.code !== 0) {
       fail(result.code, `${label}: ${result.message}`);
       skipped();
-      continue;
+      return { packs, ran: false };
     }
     composed += 1;
-    lines.push(`${label}: composed twice, ${count(result.files, 'file')}, ${result.message}`);
+    const dropped = composition.dropped === undefined || composition.dropped.length === 0 ? ''
+      : `, dropped ${composition.dropped.join(', ')}`;
+    lines.push(`${label}: composed twice, ${count(result.files, 'file')}, ${result.message}`
+      + dropped);
     if (!ran) skipped();
+    return { packs, ran };
+  };
+  for (const composition of compositions) {
+    const { packs, ran } = runOne(composition);
+    if (packs === undefined || catalog === undefined) continue;
+    const software = softwarePack(catalog);
+    const holdsSoftware = (resolved: ResolvedPack[]): boolean =>
+      resolved.some((pack) => pack.id === software);
+    const record = (resolved: ResolvedPack[] | undefined, ran: boolean): void => {
+      for (const pack of resolved ?? []) {
+        if (pack.manifest.conditional === undefined) continue;
+        parted.set(pack.id, (parted.get(pack.id) ?? false)
+          || (ran && holdsSoftware(resolved ?? [])));
+      }
+    };
+    record(packs, ran);
+    if (!packs.some((pack) => pack.manifest.conditional !== undefined)) continue;
+    // The other leg (spec-001 §15, plan-039 R2): with software added, or without it.
+    if (!holdsSoftware(packs)) {
+      const label = `${composition.label}[+software]`;
+      if (!packs.some((pack) => pack.manifest.axis === 'methodology')) {
+        matrixLines.push(`matrix ${label}: skipped, no methodology`);
+        continue;
+      }
+      const leg = runOne({ ...composition, label, entries: [...composition.entries, software] });
+      record(leg.packs, leg.ran);
+      continue;
+    }
+    const entries = composition.entries.filter((entry) =>
+      entry !== software && !entry.startsWith(`${software}@`));
+    let without: ResolvedPack[];
+    try {
+      without = resolve(args.tree, catalog, entries);
+    } catch {
+      continue;
+    }
+    // A pack requires software unconditionally: this composition has no leg without it.
+    if (holdsSoftware(without)) continue;
+    // plan-039 R5: the values a preset sets for parameters of absent packs are dropped.
+    const declared = new Set(without.flatMap((pack) =>
+      Object.keys(pack.manifest.parameters ?? {})));
+    const dropped = Object.keys(composition.preset).filter((name) => !declared.has(name)).sort();
+    const preset = Object.fromEntries(Object.entries(composition.preset)
+      .filter(([name]) => declared.has(name)));
+    const leg = runOne({ label: `${composition.label}[-software]`, entries, preset, dropped });
+    record(leg.packs, leg.ran);
+  }
+  if (mode === 'publication') {
+    for (const [id, ran] of [...parted].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
+      if (!ran) {
+        fail(1, `matrix: ${id} has a conditional part and no composition with software that ran `
+          + '(plan-039 R6)');
+      }
+    }
   }
   for (const name of unjudged ? [] : args.params.keys()) {
     if (!used.has(name)) fail(1, `--param ${name}: no composition declares it`);
