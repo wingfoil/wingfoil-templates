@@ -224,6 +224,14 @@ describe('output: the conditional part (spec-001 §6.5, §7.7, §17 step 5)', ()
     }
   });
 
+  it('refuses, with software only, a part file another pack ships (one owner, §7.6)', () => {
+    const software: PackSpec = { ...SOFTWARE_COMPOSABLE, directives: ['wip'],
+      extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'directives/wip.md': directive('wip') } };
+    assert.ok(plan([BASE, software, FLOW], ['methodology/flow']).size > 0);
+    fails([BASE, software, FLOW], ['software', 'methodology/flow'],
+      /directives\/built-in\/wip\.md is shipped by software and by methodology\/flow/);
+  });
+
   it('substitutes software\'s parameters in the entry only (§8.1, per part)', () => {
     const software: PackSpec = { ...SOFTWARE_COMPOSABLE, manifest: { parameters: {
       adr_path: { type: 'path', default: 'docs/adr/{id}.md', description: 'x' } } } };

@@ -6,7 +6,7 @@ import { describe, it } from 'node:test';
 import { loadCatalog } from '../src/catalog';
 import { composeDocuments } from '../src/compose-documents';
 import type { ParameterValues } from '../src/compose-documents';
-import { BASE, KANBAN, SOFTWARE, withPackTree } from './support/pack-tree';
+import { BASE, DELIVERY, KANBAN, SOFTWARE, withPackTree } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 import { FIXTURES, REPO_ROOT } from './support/paths';
 import { conformingReadme } from './support/readme';
@@ -275,3 +275,66 @@ describe('composeDocuments: determinism', () => {
       JSON.stringify([two.dna, two.roles, two.memory]));
   });
 });
+
+describe('composeDocuments: the conditional part\'s rules (spec-001 §6.5, §17, §18)', () => {
+  const directive = (id: string): string => `---\nid: ${id}\nformat: 1\n---\n# ${id}\n`;
+  const flow = (entry: Record<string, string[]>, files: Record<string, string>,
+    extra: Partial<PackSpec> = {}): PackSpec => ({ id: 'methodology/flow', workflows: ['board'],
+    ...extra, manifest: { formats: { workflow: 1, directive: 1 },
+      conditional: [{ with: 'software@^1', contents: entry }], ...extra.manifest },
+    extraFiles: { ...files, ...extra.extraFiles } });
+  const DELIVERING = { workflows: ['delivery'] };
+  const DELIVERY_FILE = { 'workflows/delivery.yaml': DELIVERY };
+  const board = (phase: string): Partial<PackSpec> => ({ extraFiles: { 'workflows/board.yaml':
+    `format: 1\nname: board\nkind: sub\nphases:\n  - { name: a, ${phase} }\n` } });
+
+  it('refuses an always-composed workflow including a slot, without software', () => {
+    fails([BASE_M, SOFTWARE, flow(DELIVERING, DELIVERY_FILE, board('include: release'))],
+      ['methodology/flow'], /board\.yaml.*slot release/, NAME);
+  });
+
+  it('refuses an always-composed workflow including a workflow of the part', () => {
+    fails([BASE_M, SOFTWARE, flow({ workflows: ['delivery', 'side'] }, { ...DELIVERY_FILE,
+      'workflows/side.yaml': 'format: 1\nname: side\nkind: sub\n' }, board('include: side'))],
+    ['software', 'methodology/flow'], /board\.yaml.*side.*conditional part/, NAME);
+  });
+
+  it('refuses a roles fragment assigning a directive of the part', () => {
+    fails([BASE_M, SOFTWARE, flow({ workflows: ['delivery'], directives: ['d'] },
+      { ...DELIVERY_FILE, 'directives/d.md': directive('d') }, { fragments: ['roles'],
+        manifest: { formats: { roles: 1, workflow: 1, directive: 1 } },
+        extraFiles: { 'fragments/roles.yaml': 'format: 1\nglobal: [d]\n' } })],
+    ['software', 'methodology/flow'], /roles\.yaml.*d.*conditional part/, NAME);
+  });
+
+  it('refuses a file listed in both parts, or in neither', () => {
+    fails([BASE_M, SOFTWARE, flow({ workflows: ['delivery'], directives: ['d'] },
+      { ...DELIVERY_FILE, 'directives/d.md': directive('d') }, { directives: ['d'] })],
+    ['methodology/flow'], /directives\/d\.md is listed in contents and in the conditional/, NAME);
+    fails([BASE_M, SOFTWARE, flow(DELIVERING, { ...DELIVERY_FILE,
+      'workflows/extra.yaml': 'format: 1\nname: extra\nkind: sub\n' })],
+    ['methodology/flow'], /extra\.yaml is present but not listed/, NAME);
+  });
+
+  it('refuses delivery placed against whether the methodology requires software', () => {
+    fails([BASE_M, SOFTWARE, { id: 'methodology/flow', workflows: ['delivery'] }],
+      ['methodology/flow'], /does not require software.*conditional part/, NAME);
+  });
+
+  it('refuses a reserved name in the part', () => {
+    const reserved = 'workflows/sw-life-cycle.yaml';
+    fails([BASE_M, SOFTWARE, KANBAN, { id: 'blueprint/x', workflows: ['x'],
+      manifest: { conditional: [{ with: 'software@^1',
+        contents: { workflows: ['sw-life-cycle'] } }] },
+      extraFiles: { [reserved]: 'format: 1\nname: sw-life-cycle\nkind: main\n' } }],
+    ['methodology/kanban', 'blueprint/x'], /blueprint\/x.*sw-life-cycle.*only software/, NAME);
+  });
+
+  it('refuses a part file whose kind formats does not list, with software', () => {
+    fails([BASE_M, SOFTWARE, flow({ workflows: ['delivery'], directives: ['d'] },
+      { ...DELIVERY_FILE, 'directives/d.md': directive('d') },
+      { manifest: { formats: { workflow: 1 } } })],
+    ['software', 'methodology/flow'], /directives\/d\.md.*format/, NAME);
+  });
+});
+
