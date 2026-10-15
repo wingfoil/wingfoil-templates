@@ -79,7 +79,7 @@ export function loadCatalog(path: string): Catalog {
   return { foundation: raw['foundation'] as string[], axes, slots, raw };
 }
 
-/** The core foundation pack, in every composition (spec-001 §3): `base`. */
+/** The core foundation pack, base, in every composition (spec-001 §3). */
 export function corePack(catalog: Catalog): string {
   return catalog.foundation[0] ?? '';
 }
