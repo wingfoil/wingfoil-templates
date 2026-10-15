@@ -1,7 +1,7 @@
 # Features — WingFoil-Templates
 
-**Version:** 1.4
-**Date:** 2026-10-14
+**Version:** 1.5
+**Date:** 2026-10-15
 **Status:** Approved
 **Traces to:** [05_journeys.md](05_journeys.md), [03_is-isnot.md](03_is-isnot.md), [01_product-brief.md](01_product-brief.md) §8
 
@@ -30,7 +30,7 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 | F1.1 | **`pack.yaml` manifest:** id, axis, slot, version, `formats` and `requires_capabilities`, `requires` and `conflicts` with semver ranges, contents, parameters. | J1.3, J6.1 | H | M | M |
 | F1.2 | **Fragments:** pieces of `dna.yaml`, `roles.yaml`, `memory.yaml` and `workflows.yaml` that are merged in a defined order. The merge rule for Memory state machines is "add or tighten, never remove". | J1.3, J5.3 | H | H | **H** |
 | F1.3 | **Parameters** `{{name}}`: typed, each with a default, and with no project values inside packs. Path and id parameters accept the project's tokens (`{release}`, `{scope}`). | J2.2, J6.2 | H | M | M |
-| F1.4 | **Slots:** each slot is included by name. `sw-life-cycle` includes `inception`, `specification`, `delivery` and `end-of-life`, and the methodology's `delivery` includes `release` (dl-003 D4, D11). A phase pack fills a slot by shipping the workflow of that name. | J1.3, J6.1 | H | M | M |
+| F1.4 | **Slots:** each slot is included by name. `sw-life-cycle` includes `inception`, `specification`, `delivery` and `end-of-life`, and the methodology's `delivery` includes `release` (dl-003 D4, D11). A phase pack fills a slot by shipping the workflow of that name. Slots exist only in a composition with `software` (dl-022 S3). | J1.3, J6.1 | H | M | M |
 | F1.5 | **`format:` key** on every file a pack ships, and on this repository's own files (`pack.yaml`, catalog, compat, presets, transitions), per WingFoil dl-149. | J4.1, J3.1 | H | L | M |
 | F1.6 | **AGENTS.md section** (`agents_section`): a pack contributes text inside a marked region and never ships the file itself. | J2.4, J5.1 | M | L | **H** |
 | F1.7 | **JSON Schemas** for every file kind above, published under `schema/`. | J1.3, J1.4 | H | M | L |
@@ -64,13 +64,14 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 
 | ID | Feature | Journey | Value | Effort | Unc. |
 |---|---|---|---|---|---|
-| F4.1 | **`base`:** shared Memory types and life cycles, capture workflows, the `sw-life-cycle` skeleton with its slots, retrospective, global directives, and the DNA and roles fragments. It waits for the v0.3 formats. | J2, J5 | H | H | M |
+| F4.1 | **`base`:** the core of every project governed by WingFoil, software or not (dl-022 S1, S2): the Memory types `decision-log`, `task` and `plan`; the workflows `decision-log-ingest`, `retrospective` and `governance-evolution`; the generic directives (traceability, doc-versioning, security-secrets, the sources of claims); the DNA and roles fragments; the path and id parameters. | J2, J5 | H | H | M |
 | F4.2 | **`governance/wingfoil-dogfood`:** the feedback channel to WingFoil and the known behaviours of the pinned CLI. | J2, J5 | M | L | L |
 | F4.3 | **Methodologies:** `scrum`, `kanban`. | J6.1 | H | M | L |
 | F4.4 | **`team-mode/agent-first`:** depends on WingFoil's agent work (notes T9). | J6.1 | M | M | **H** |
 | F4.5 | **Phase packs:** `inception/lean-inception`, `specification/bdd-sbe`. | J6.1 | M | M | L |
 | F4.6 | **Blueprints:** `web-service`, `cli-library`. The `service` Memory type is renamed, because it clashes with WingFoil dl-088. | J6.1 | M | M | M |
 | F4.7 | **Stages:** `prototype`, `production`, and the transition `prototype-to-production`. A stage is an overlay: the project moves by a pack update of the `stage/*` overlay, whose workflow runs the transition (dl-021 R2, WingFoil dl-178). | J8 | M | M | M |
+| F4.8 | **`software`:** the software foundation layer, composed right after `base` (dl-022 S3): the Memory types `adr`, `tech-spec`, `bug`, `release` and `release-line`; `adr-ingest`, `bug-ingest`, and `sw-life-cycle` with its slots and their defaults; the `determinism` directive; the release id parameters. Every phase pack requires it; a methodology's `delivery` exists only with it. | J2, J5 | H | M | M |
 
 ## F5 — Release process
 
@@ -85,8 +86,8 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 
 | ID | Feature | Journey | Value | Effort | Unc. |
 |---|---|---|---|---|---|
-| F6.1 | **Hand-adoption steps in the `base` README,** in its section 3 "Install and update" (spec-002 §2.3). They are temporary: they are removed when the CLI installs packs, and a generic procedure stays in the user docs (vision review). | J2.1–J2.5 | H | L | L |
-| F6.2 | **Parameters for the governed repositories:** paths per Memory type, plan ids, agent name, the `governance` path meaning. | J2.2 | H | M | M |
+| F6.1 | **Hand-adoption steps in the READMEs of `base` and `software`,** each in its section 3 "Install and update" (spec-002 §2.3). They are temporary: they are removed when the CLI installs packs, and a generic procedure stays in the user docs (vision review). | J2.1–J2.5 | H | L | L |
+| F6.2 | **Parameters for every governed project:** for `base`, the project name, the paths of its Memory types, plan ids, the agent name, an optional agent email and the `governance` path meaning, for every project governed by WingFoil, software or not; for `software`, the paths of its Memory types and the release ids, for the governed software repositories (dl-022 S2, S3, S6). | J2.2 | H | M | M |
 
 ## F7 — Community and metrics (later)
 
@@ -119,7 +120,7 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 
   Whether the WingFoil CLI fetches release assets or the tag is WingFoil's choice. If it fetches the
   tag, only the traffic signal remains.
-- **Dependency on WingFoil:** F1.5, F1.6, F2.4, F4.1 and F4.4 wait for WingFoil decisions or
+- **Dependency on WingFoil:** F1.5, F1.6, F2.4, F4.1, F4.8 and F4.4 wait for WingFoil decisions or
   releases. The sequencer has to put work that does not wait first.
 
 ## Open questions for the features review
