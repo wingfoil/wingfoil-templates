@@ -264,11 +264,14 @@ the commits, the adapted tests, and the interim `Axis: software`.
   `KANBAN` and a phase pack's default `requires` name `software@^1`; expected id lists gain
   `software`; the reserved-workflow tests split by owner (`base-only`, `software-only`); the index
   fixtures' kanban 1.1.0 requires `software@^1`; publication's `bump` moves `software`'s and
-  kanban's `requires` with `base`'s major; counts: `validate` (examples 6 → 8, compositions 7 → 9
-  and 8 → 10, runs 7 → 9, failing-preset compositions 6 → 8, lint 54 → 62, index 9 → 10, golden
-  files 18 → 19), `check-packs` and `example-rules` (16 → 20 files), `index` (unchanged 7 → 8 and 9
-  → 10, checked 9 → 10); `readme-generate` (kanban's requires; `adr` now `software`'s, its line `` -
-  `adr`: — `` until task-033); the feedback-note test asserts "Changed since F-031".
+  kanban's `requires` with `base`'s major; `readme-generate` (kanban's requires; `adr` now
+  `software`'s, its line `` - `adr`: — `` until task-033); the feedback-note test asserts
+  "Changed since F-031".
+- **Counts the split changes** (`ff17b18`): `validate` (schemas checked 9 → 10, examples 6 → 8,
+  compositions 7 → 9 and 8 → 10, runs 7 → 9, failing-preset compositions 6 → 8, lint 54 → 61,
+  index checked 9 → 10); `check-packs` and `example-rules` (16 → 20 files); `index` (unchanged
+  7 → 8 and 9 → 10, checked 9 → 10). **Counts `9d291d9` changes** (base's `governance-evolution`):
+  `validate` (lint 61 → 62, the golden preset's files 18 → 19).
 - **Interim `Axis: software`:** the golden tree's `packs/software/README.md`, the resolve and merge
   fixtures' `software` READMEs and `tests/fixtures/index/expected/packs/software/README.md` read
   `Axis: software`, as `npm run index` generates it until task-033 (spec-002 §2.1).
@@ -294,3 +297,6 @@ the commits, the adapted tests, and the interim `Axis: software`.
   (`kind: main`) `base`'s, so the golden `base` ships it (`9d291d9`); the expected outputs and
   counts follow. For W8: `base`'s charter must keep a `kind: main` workflow, or a composition
   without `software` does not load.
+- 2026-10-15, **re-review** (dl-017 R2, after `40a5493`, `9d291d9` and the notes): approve after
+  amendments; findings 1–9 of the build review resolved or raised; one minor, the counts above
+  split by cause and the schemas count added. Fixed in these notes; no rule changed.
