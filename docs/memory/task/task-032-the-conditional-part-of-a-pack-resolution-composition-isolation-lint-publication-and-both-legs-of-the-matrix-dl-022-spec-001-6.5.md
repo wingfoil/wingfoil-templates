@@ -261,3 +261,5 @@ commits, the adapted tests and counts, and the interim of the generated README a
   tests/fixtures/compose/tree --param project_name=Golden` (13 compositions, against WingFoil
   0.2.2) and `npx wingfoil workflow list` exit 0. No dependency added; `schema/`, the root
   `catalog.yaml`, `compat.yaml` and `index/` unchanged.
+- 2026-10-15, **CI** (Acceptance 10): run 38795573963 on `b66f246`, conclusion `success`
+  (`validate (22.12.0)` and `validate (22.21.0)` both `success`). Submitted `in-review`.
