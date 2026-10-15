@@ -148,24 +148,38 @@ export function resolveParameters(
   return parameters;
 }
 
-/** Per pack, the parameters it may use: its own and those of the packs it transitively requires. */
+/** The parameters a pack's files may use, per part (spec-001 §8.1, §6.5). */
+export interface PackScopes {
+  /** Its own, and those of the packs it transitively requires. */
+  always: Set<string>;
+  /** Its conditional part's: those, and those of the `with` pack and of the packs it requires. */
+  conditional: Set<string>;
+}
+
+/** Per pack, the parameters each part may use (§8.1, §6.5). */
 export function parameterScopes(
   packs: ResolvedPack[],
   parameters: Map<string, Parameter>,
-): Map<string, Set<string>> {
+): Map<string, PackScopes> {
   const byId = new Map(packs.map((pack) => [pack.id, pack]));
-  const scopes = new Map<string, Set<string>>();
-  for (const pack of packs) {
-    const reachable = new Set<string>([pack.id]);
-    const queue = [...pack.requiredIds];
+  const reach = (start: string[]): Set<string> => {
+    const reachable = new Set<string>();
+    const queue = [...start];
     for (let id = queue.shift(); id !== undefined; id = queue.shift()) {
       if (reachable.has(id)) continue;
       reachable.add(id);
       queue.push(...(byId.get(id)?.requiredIds ?? []));
     }
-    scopes.set(pack.id, new Set([...parameters.values()]
-      .filter((parameter) => reachable.has(parameter.pack))
-      .map((parameter) => parameter.name)));
+    return reachable;
+  };
+  const names = (reachable: Set<string>): Set<string> => new Set([...parameters.values()]
+    .filter((parameter) => reachable.has(parameter.pack)).map((parameter) => parameter.name));
+  const scopes = new Map<string, PackScopes>();
+  for (const pack of packs) {
+    const withIds = (pack.manifest.conditional ?? [])
+      .map((entry) => entry.with.slice(0, entry.with.indexOf('@')));
+    scopes.set(pack.id, { always: names(reach([pack.id])),
+      conditional: names(reach([pack.id, ...withIds])) });
   }
   return scopes;
 }

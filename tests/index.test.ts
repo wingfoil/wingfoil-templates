@@ -49,9 +49,9 @@ describe('npm run index (acceptance 3)', () => {
     withCopy((tree) => {
       rmSync(join(tree, 'CATALOG.md'));
       writeFileSync(join(tree, 'llms.txt'), 'stale\n');
-      assert.deepEqual(runIndex(['--tree', tree]).lines, ['index: wrote 2 files, 8 unchanged']);
+      assert.deepEqual(runIndex(['--tree', tree]).lines, ['index: wrote 2 files, 9 unchanged']);
       const first = indexOutputs(tree);
-      assert.deepEqual(runIndex(['--tree', tree]).lines, ['index: wrote 0 files, 10 unchanged']);
+      assert.deepEqual(runIndex(['--tree', tree]).lines, ['index: wrote 0 files, 11 unchanged']);
       assert.deepEqual(indexOutputs(tree), first);
     });
   });
@@ -63,7 +63,7 @@ describe('npm run index (acceptance 3)', () => {
       writeFileSync(readme, readFileSync(readme, 'utf8').replace('Axis: foundation', 'Axis: x'));
       const result = runIndex(['--tree', tree, '--check']);
       assert.equal(result.code, 1);
-      assert.deepEqual(result.lines, ['index: checked 10 files, 2 not up to date',
+      assert.deepEqual(result.lines, ['index: checked 11 files, 2 not up to date',
         'catalog-index.json: not up to date: run npm run index',
         'packs/base/README.md: not up to date: run npm run index']);
       assert.equal(existsSync(join(tree, 'catalog-index.json')), false);
@@ -173,7 +173,7 @@ describe('npm run index (acceptance 3)', () => {
     const result = spawnSync(process.execPath, [CLI, '--tree', TREE, '--check'],
       { encoding: 'utf8' });
     assert.equal(result.status, 0, result.stdout);
-    assert.match(result.stdout, /^index: checked 10 files, 0 not up to date\n$/);
+    assert.match(result.stdout, /^index: checked 11 files, 0 not up to date\n$/);
   });
 });
 

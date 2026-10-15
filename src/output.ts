@@ -176,7 +176,10 @@ function checkTemplates(composed: ComposedDocuments, plan: Plan): void {
 function workflowsYaml(composed: ComposedDocuments, plan: Plan): Doc {
   const include: string[] = [];
   for (const pack of composed.packs) {
-    for (const name of pack.manifest.contents.workflows ?? []) {
+    // The conditional part's workflows follow the pack's own, only with software (§6.5, §7.7).
+    const entry = pack.conditionalActive
+      ? pack.manifest.conditional?.[0]?.contents.workflows ?? [] : [];
+    for (const name of [...pack.manifest.contents.workflows ?? [], ...entry]) {
       const target = `workflows/built-in/${name}.yaml`;
       if (plan.targets.get(target)?.pack.id === pack.id) include.push(target);
     }

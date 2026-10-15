@@ -19,15 +19,15 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 <!-- generated:begin composition -->
 ## Composition
 
-- **Requires:** `base@^1`, `software@^1`
+- **Requires:** `base@^1`
 - **Conflicts:** none
-- **Formats:** `directive` 1, `roles` 1, `workflow` 1
+- **Formats:** `workflow` 1
 - **Requires capabilities:** none
 - **Declares:**
   - Memory types: none
   - roles: none
   - states: none
-  - workflows: `delivery`, `replenishment`
+  - workflows: `flow-board`
 <!-- generated:end composition -->
 
 <!-- generated:begin what-it-adds -->
@@ -35,11 +35,8 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 
 ### Workflows
 
-- `delivery` (sub)
-  - `release`, includes `release`
-  - `retrospective`, includes `retrospective`
-- `replenishment` (sub)
-  - `pick`
+- `flow-board` (sub)
+  - `pull`
 
 ### Memory types
 
@@ -47,11 +44,11 @@ None.
 
 ### Directives
 
-- `wip-limits`: `developer`
+None.
 
 ### Fragments
 
-- `roles`
+None.
 
 ### Memory templates
 
@@ -61,9 +58,7 @@ None.
 <!-- generated:begin parameters -->
 ## Parameters
 
-| Name | Type | Default | Description |
-|---|---|---|---|
-| `wip_limit` | integer | `3` | WIP limit of the in-progress column |
+None.
 <!-- generated:end parameters -->
 
 ## Examples

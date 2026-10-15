@@ -148,10 +148,10 @@ describe('pack.yaml rules', () => {
   });
 
   it('requires-self and requires-twice', () => {
-    failsWith('requires-self', [...FOUNDATION, { ...KANBAN, requires: ['base@^1',
+    failsWith('requires-self', [...FOUNDATION, { ...KANBAN, requires: ['base@^1', 'software@^1',
       'methodology/kanban@^1'] }]);
     failsWith('requires-twice', [...FOUNDATION, { id: 'blueprint/api' }, { ...KANBAN,
-      requires: ['base@^1', 'blueprint/api@^1', 'blueprint/api@^1.2'] }]);
+      requires: ['base@^1', 'software@^1', 'blueprint/api@^1', 'blueprint/api@^1.2'] }]);
   });
 
   it('conflicts-self', () => {
@@ -313,7 +313,9 @@ describe('the conditional part (spec-001 §6.5, §18)', () => {
   });
 
   it('slot: a methodology without software shipping delivery in contents', () => {
-    failsWith('slot', [...CLEAN, { id: 'methodology/flow', workflows: ['delivery'] }]);
+    // Its delivery, always composed, also includes the slot release (isolation).
+    failsWith(['isolation', 'slot'], [...CLEAN, { id: 'methodology/flow',
+      workflows: ['delivery'] }]);
   });
 
   it('slot, software-only, base-only: an entry shipping a reserved name', () => {
@@ -367,9 +369,11 @@ describe('slot rules', () => {
 
   it('software-only: sw-life-cycle from any pack but software; a slot default from base (§9)',
     () => {
-      failsWith('software-only', [...CLEAN, { id: 'blueprint/web', workflows: ['sw-life-cycle'] }]);
-      failsWith('software-only', [{ ...BASE, workflows: ['retrospective', 'sw-life-cycle'] },
-        SOFTWARE_COMPOSABLE, KANBAN]);
+      // Its sw-life-cycle also includes the slots, without software (isolation).
+      failsWith(['isolation', 'software-only'], [...CLEAN, { id: 'blueprint/web',
+        workflows: ['sw-life-cycle'] }]);
+      failsWith(['isolation', 'software-only'], [{ ...BASE,
+        workflows: ['retrospective', 'sw-life-cycle'] }, SOFTWARE_COMPOSABLE, KANBAN]);
       failsWith('slot', [{ ...BASE, workflows: ['retrospective', 'inception'] },
         SOFTWARE_COMPOSABLE, KANBAN]);
     });
@@ -562,7 +566,8 @@ describe('preset rules', () => {
   });
 
   it('preset-cardinality: two methodologies, or a pack the tree does not hold', () => {
-    failsWith('preset-cardinality', [...CLEAN, { id: 'methodology/scrum', workflows: ['delivery'] }],
+    failsWith('preset-cardinality', [...CLEAN, { id: 'methodology/scrum',
+      requires: ['base@^1', 'software@^1'], workflows: ['delivery'] }],
       (root) => write(root, 'presets/small.yaml',
         `${GOLDEN_PRESET}  - methodology/scrum@^1\n`));
     failsWith('preset-cardinality', CLEAN, (root) => write(root, 'presets/small.yaml',

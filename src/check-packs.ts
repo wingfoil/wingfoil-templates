@@ -4,13 +4,13 @@
 import { existsSync, lstatSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { CatalogError, loadCatalog } from './catalog';
+import { CatalogError, loadCatalog, softwarePack } from './catalog';
 import { exampleProblems } from './example-rules';
 import { EXAMPLES } from './examples';
 import type { Catalog } from './catalog';
 import { runCheckSchemas } from './check-schemas';
 import { packLayoutProblems, treeLayout } from './layout-rules';
-import { readPackFiles } from './pack-files';
+import { reachable, readPackFiles } from './pack-files';
 import type { LintPack, PackFile } from './pack-files';
 import {
   formatKindsProblems, foundationProblems, inventoryProblems, manifestProblems, slotProblems,
@@ -107,10 +107,12 @@ function packProblems(context: LintContext): Problem[] {
       ...formatKindsProblems(pack), ...packLayoutProblems(context.tree, pack),
       ...readmeProblems(context.tree, pack, listed));
     if (context.catalog !== undefined) {
-      problems.push(...foundationProblems(context.catalog, pack),
-        ...slotProblems(context.catalog, pack));
+      const reached = reachable(pack, context.packs);
+      problems.push(...foundationProblems(context.catalog, pack, reached),
+        ...slotProblems(context.catalog, pack, reached));
     }
-    const read = readPackFiles(context.tree, pack, context.packs, slots);
+    const read = readPackFiles(context.tree, pack, context.packs, slots,
+      context.catalog === undefined ? undefined : softwarePack(context.catalog));
     context.files.set(pack.id, read.files);
     problems.push(...read.problems);
   }
