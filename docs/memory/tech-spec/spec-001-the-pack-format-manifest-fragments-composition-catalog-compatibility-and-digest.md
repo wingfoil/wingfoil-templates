@@ -875,8 +875,9 @@ parameters: {}
 ```
 
 - `packs` uses the entry syntax of §6.3. `base` may be omitted, because every pack requires it.
-  `software` may be omitted only when a listed pack requires it unconditionally (a phase pack, for
-  example); a preset that wants the software layer and lists no such pack names it.
+  `software` is in a preset's composition when the preset names it or a listed pack requires it
+  unconditionally (a phase pack, for example); otherwise the preset is a composition without the
+  software layer. A conditional part never brings `software` in (§6.5).
 - Whether a preset holds `software` is judged on its resolved composition: with `software` it holds
   exactly one methodology, without it at most one, which contributes no `delivery` (§3, §6.5).
 - `parameters` may set only generic values. A project value, such as a name or a person, is never in
@@ -977,7 +978,6 @@ check the rest, and the composer refuses what they reject.
 - the resolved packs satisfy the cardinalities of §3: with `software`, exactly one methodology;
   without it, at most one methodology and no phase pack; at most one pack per slot, team-mode and
   stage;
-- `software` is omitted only when a listed pack requires it unconditionally (§15);
 - every parameter value passes the type of the parameter it sets (§8.1).
 
 **Transitions:**
