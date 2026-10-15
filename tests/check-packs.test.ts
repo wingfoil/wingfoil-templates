@@ -825,6 +825,40 @@ describe('F3.5 overlays and lone packs', () => {
       extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'agents/section.md': '# Software\n' } }]);
     assert.deepEqual(messages(result), [], result.lines.join('\n'));
   });
+
+  // Both legs of a pack with a conditional part (spec-001 §15, plan-039 R2): its part ships the
+  // directive determinism, which software ships too, so only the leg with software is refused.
+  const clashing = { workflows: ['delivery'], directives: ['determinism'] };
+  const clashFiles = { 'workflows/delivery.yaml': DELIVERY,
+    'directives/determinism.md': '---\nid: determinism\nformat: 1\n---\n# determinism\n' };
+  const clashFormats = { manifest: { formats: { workflow: 1, directive: 1 } } };
+
+  it('compose: a methodology with a conditional part, with and without software', () => {
+    const result = lint([BASE, SOFTWARE_FULL, KANBAN, flow(clashing, clashFiles, clashFormats)]);
+    assert.deepEqual(messages(result),
+      ['packs/methodology/flow/pack.yaml: base + software + methodology/flow'],
+      result.lines.join('\n'));
+  });
+
+  it('overlay: a combination holding a conditional part gets its leg with software', () => {
+    const result = lint([BASE, SOFTWARE_FULL, KANBAN, flow(clashing, clashFiles, clashFormats),
+      overlay('stage/mvp')]);
+    assert.deepEqual(messages(result).filter((line) => line.startsWith('packs/stage/')),
+      ['packs/stage/mvp/pack.yaml: base + software + methodology/flow + stage/mvp'],
+      result.lines.join('\n'));
+  });
+
+  it('compose: another pack\'s leg with software takes the first methodology it allows', () => {
+    const blueprint: PackSpec = { id: 'blueprint/x', workflows: ['x'],
+      conflicts: ['methodology/flow'],
+      manifest: { formats: { workflow: 1, directive: 1 }, conditional: [{ with: 'software@^1',
+        contents: { directives: ['determinism'] } }] },
+      extraFiles: { 'directives/determinism.md': clashFiles['directives/determinism.md'] } };
+    const result = lint([BASE, SOFTWARE_FULL, KANBAN, flow(), blueprint]);
+    assert.deepEqual(messages(result),
+      ['packs/blueprint/x/pack.yaml: base + software + methodology/kanban + blueprint/x'],
+      result.lines.join('\n'));
+  });
 });
 
 describe('F3.5 secrets', () => {
