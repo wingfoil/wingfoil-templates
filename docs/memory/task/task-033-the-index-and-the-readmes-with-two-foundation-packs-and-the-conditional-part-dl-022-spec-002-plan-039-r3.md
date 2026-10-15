@@ -28,29 +28,48 @@ The text it implements:
   its `workflows` and `directives` keep what is always composed; in `CATALOG.md`, the Summary cell
   of such a pack ends with ` (… only with software)` naming the part's workflows (its directives
   when it has no workflow); `catalog-index.json` stays at `format: 1`; R3 is recorded in
-  spec-002's Execution Notes (dl-020 R1), to be folded back at the wave's close.
+  spec-002's Execution Notes (dl-020 R1), to be folded back at the wave's close;
+- plan-039 R8 (the approver, 2026-10-15): section 5 lists the conditional part's workflows and
+  directives too, marked as present only with `software`.
 
 What exists, at `main` `d52fb91` (task-031 and task-032 done):
-- `axisAndSlot` (`src/index-model.ts:97`) returns `null` only for the literal `base`; it serves
-  the index and `readme-generate.ts` (`titleSection`), so `software` gets `Axis: software` and an
-  `axis` of `software` in the index, which `index/catalog-index.schema.json` refuses (its `packId`
-  pattern and `axis` enum name `base` only): task-031 and task-032 left `software` unpublished in
-  every test for that reason;
-- `compositionSection` (`src/readme-generate.ts:92`) writes "Declares" for every pack whose id is
-  not the literal `base`, from the pack's own files; the files read (`src/index-source.ts`, the
-  `PackFiles` of `readme-generate.ts`) are `contents` only, so a conditional part's workflows
-  appear nowhere in a README or in the index;
+- `axisAndSlot` (`src/index-model.ts:97`, the literal on line 98) returns `null` only for
+  `base`; it serves the index and `readme-generate.ts` (`titleSection`), so `software` gets
+  `Axis: software` and an `axis` of `software` in the index, which
+  `index/catalog-index.schema.json` refuses (its `packId` pattern, line 21, names `base` alone;
+  its `axis` enum, line 71, is `null` and the axes): task-031 and task-032 left `software`
+  unpublished in every test for that reason;
+- `compositionSection` (`src/readme-generate.ts:83`) writes "Declares" for every pack whose id is
+  not the literal `base` (line 92), from the pack's own files; `readPack`
+  (`readme-generate.ts:37`) and `packOf` (`index-model.ts:191`) read `contents` only, so a
+  conditional part's workflows appear nowhere in a README or in the index;
 - `packOf` (`src/index-model.ts:180`) fills `workflows` and `directives` from `contents`, and a
   version object (`versionOf`) copies `formats`, `requires_capabilities`, `requires`, `conflicts`;
 - `renderCatalog` (`src/index-render.ts`) writes the foundation section from the packs with a
-  `null` axis, in the index's byte order of ids;
+  `null` axis, in the index's byte order of ids (which `base`, `software` already follows);
+- `src/site.ts` builds its axis filter from the schema's `axis` enum (lines 70–77) and writes the
+  no-JavaScript table's Summary as the description's first sentence (line 89), as `CATALOG.md`
+  does today (spec-002 §5);
 - the fixtures: the golden tree's `software` and `flow` READMEs (task-031's interim `Axis:
   software`; flow's sections without its part), `tests/support/index-catalog.ts` (`software` in the
   tree, unpublished) and `tests/fixtures/index/expected/`.
 
+Readings, stated so that the approver sees them at the gate:
+- a README's generated sections read only the pack's own files (§2.2): a `pack.yaml` with no
+  `axis` is a foundation pack (`Axis: foundation`), and one with no `axis` and no `requires` is the
+  core, `base` (no "Declares"), as `pack.schema.json`'s foundation branch makes certain; the name
+  of the layer a conditional part needs comes from its `with` entry;
+- the index's new keys: `conditional` after `conflicts` in a version object, present only for a
+  pack that carries one (as in the catalog version entry), read from the tag's `pack.yaml` as
+  `requires` is; `conditional_workflows` right after `workflows`, `conditional_directives` right
+  after `directives` in a pack object, both always present;
+- the mark, in `CATALOG.md`'s and the search page's Summary cell (the same helper, §5's
+  no-JavaScript table shows `CATALOG.md`'s content), and in a README's sections 4 and 5:
+  `` Golden fixture pack methodology/flow. (`delivery`, `flow-delivery` only with `software`) ``,
+  the names in code spans, the layer's name from the part's `with`.
+
 Not in scope: `schema/`, `catalog.yaml`, `compat.yaml`; the `memory.yaml` keys (task-034); a pack
-of `packs/` (W8). A README's generated sections read only the pack's own files (§2.2), so they
-tell a foundation pack from its own `pack.yaml` (no `axis`), never from `catalog.yaml`.
+of `packs/` (W8).
 
 ## Acceptance
 
@@ -58,34 +77,41 @@ Run from a clean clone of `task/task-033-index`, on Node.js 22.21 and the floor 
 
 1. `npm ci`, `npm run build`, `npm test`, `npm run lint`, `npm run check:pins`,
    `npm run check:schemas`, `npm run check:packs`, `npm run index -- --check`, `npm run validate`
-   and `npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden` exit 0;
-   no dependency is added.
+   and `npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden` (whose
+   `index --check` covers the golden tree's READMEs and index) exit 0; `npm run site -- --out
+   <tmp>` exits 0; no dependency is added.
 2. **READMEs** (tests in `tests/readme-generate.test.ts`): `software`'s title line reads
    `Axis: foundation`, as `base`'s does, read from its `pack.yaml` having no `axis`; section 4
    writes "Declares" for `software` and not for `base`; for a pack with a conditional part,
-   section 4 lists that part's workflows and directives as present only with `software`, and
-   section 5 lists its workflows with the same mark (a reading of §2.1, whose section 5 names the
-   workflows a pack adds); the golden tree's READMEs are regenerated and reviewed by diff, the
-   interims of task-031 and task-032 gone.
+   sections 4 and 5 list that part's workflows and directives with the mark (R8); the golden
+   tree's READMEs are regenerated and reviewed by diff, the interims of task-031 and task-032
+   gone.
 3. **The index** (tests in `tests/index-model.test.ts`, `tests/index-render.test.ts`): `axis` and
    `slot` `null` for `base` and `software`, read from `catalog.yaml`'s `foundation`; a version
    object of a pack with a conditional part carries `conditional: [{ with }]`, and one of a pack
    without it carries none; a pack object carries `conditional_workflows` and
    `conditional_directives` (sorted; empty without a part), its `workflows` and `directives`
-   leaving the part out; `CATALOG.md`'s foundation section lists `base` then `software` in
-   `catalog.yaml`'s order, and a pack with a part has its Summary cell marked (R3).
+   leaving the part out, each key at the place the readings above give; `CATALOG.md`'s foundation
+   section lists `base` then `software` in `catalog.yaml`'s order, `software`'s row carrying the
+   `pack-software` anchor and its README link at its tag; a pack with a part has its Summary cell
+   marked (R3), naming its workflows, or its directives when it has no workflow.
 4. **The index schema** (`index/catalog-index.schema.json`) admits `software` in its `packId`
    pattern, the version object's optional `conditional` (its `with` only) and the pack object's two
-   new required lists; `catalog-index.json` and the schema stay `format: 1`; an index of a tree
+   new required lists; its `axis` enum stays `null` and the axes, so the search page gains no
+   `software` filter; `catalog-index.json` and the schema stay `format: 1`; an index of a tree
    that publishes `software` and a pack with a conditional part validates against it.
-5. **The index fixtures:** `tests/support/index-catalog.ts` publishes `software` and a methodology
-   with a conditional part; `tests/fixtures/index/expected/` is regenerated with
-   `REFRESH_INDEX_EXPECTED=1` and reviewed by diff; the site tests (`tests/site.test.ts`) pass on
-   it, `software` listed under the foundation filter.
+5. **The index fixtures:** `tests/support/index-catalog.ts` publishes `software`, a second
+   methodology whose conditional part holds workflows and a directive, and a pack whose part holds
+   directives only (kanban requires `software`, so it carries none); `tests/fixtures/index/
+   expected/` is regenerated with `REFRESH_INDEX_EXPECTED=1` and reviewed by diff, its `llms.txt`
+   unchanged; the site's no-JavaScript Summary cell carries the same mark as `CATALOG.md`'s, tested;
+   the counts of `tests/site.test.ts` and `tests/agent-path.test.ts` that the new published packs
+   change are updated, each listed in the Execution Notes, `software` under the foundation filter;
+   `index/vendor/search.js` and its sha256 unchanged.
 6. **No foundation literal:** `git grep -nE "['\"\`](base|software)(['\"\`@/]|$)" -- src/` gives
    no hit.
-7. **spec-002's Execution Notes** record R3 (dl-020 R1), as task-019 recorded its erratum; no other
-   line of spec-002 changes.
+7. **spec-002's Execution Notes** record R3 and R8 (dl-020 R1), as plan-024 recorded W14's
+   rulings; no other line of spec-002 changes.
 8. **Nothing else changes:** `git diff --name-only` over the task's commits shows only `src/`,
    `tests/`, `index/catalog-index.schema.json`, spec-002 (Execution Notes) and this element;
    `schema/`, the root `catalog.yaml`, `compat.yaml`, `CATALOG.md`, `catalog-index.json` and
@@ -103,3 +129,12 @@ Run from a clean clone of `task/task-033-index`, on Node.js 22.21 and the floor 
      command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019). -->
+- 2026-10-15: written under plan-039; independent review of the body: approve after amendments
+  ("What exists" corrected; the `axis` enum unchanged; the search page's Summary marked as
+  `CATALOG.md`'s; the readings on how a README tells the core from its own files, the index keys'
+  places and source, the mark's format; fixtures with a directive in a part and a directives-only
+  part; the site and agent-path counts; `llms.txt` and the vendored script unchanged). Section 5's
+  marking was ruled by the approver (plan-039 R8). Size: the Design splits the red in two steps
+  (the foundation packs, then R3 and R8); the assertions already green (the "Declares" of
+  `software`, the foundation order) are characterizations.
+

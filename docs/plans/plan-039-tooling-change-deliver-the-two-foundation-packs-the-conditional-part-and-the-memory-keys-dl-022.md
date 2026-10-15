@@ -22,8 +22,8 @@ adoption (W9) come after this plan. Opened on the approver's request in chat on 
 §15, §17 and §18, and spec-002 §2.1, §2.2, §3.2 and §3.3, as amended on 2026-10-15. No erratum
 of either is pending. An error found in their text during this plan is an erratum (dl-020): it goes
 to the approver when found (dl-019), never corrected silently. The rulings recorded under this plan
-(R3 and R7 at least) are named by W8's opening plan, which starts after their fold-back or after the
-approver rules it may start without (dl-020 R3).
+(R3, R7 and R8 at least) are named by W8's opening plan, which starts after their fold-back or
+after the approver rules it may start without (dl-020 R3).
 
 **The rulings this plan applies.** plan-038's rulings 1–9 hold here, in particular:
 - ruling 1: §11's example block, `catalog.yaml` and `schema/catalog.schema.json` change in one
@@ -81,6 +81,11 @@ Then, at task-032's body review, on 2026-10-15:
   pack with a conditional part has no composition with `software` that ran.
 - **R7, an empty conditional part is refused** by the lint, a rule the specification does not
   state: folded back into spec-001 at the wave's close with R3 (dl-020 R2).
+
+And at task-033's body review, on 2026-10-15:
+- **R8, a README tells what each pack adds and what only `software` brings.** Section 5 of a
+  pack's README lists its conditional part's workflows and directives too, each marked as present
+  only with `software`, as section 4 does: an addition to spec-002 §2.1, folded back with R3.
 
 **The tasks.** Four tooling tasks (`pack: ""`), split at proposal so that each has its own red
 first and a reviewable diff (dl-018 R3):
@@ -151,7 +156,7 @@ from `main`, in the order task-031, task-032, task-033, task-034, one after the 
       into `main`, then `approved → done` on `main` with the task's delivery notes; `main` pushed,
       the branch removed remotely and locally; this plan's Execution Notes record the merge.
 3. **Close:** dl-022's Execution Notes record the tooling actions applied; this plan's Execution
-   Notes list, for spec-001 and spec-002, the errata and rulings recorded under it (R3 and R7 at
+   Notes list, for spec-001 and spec-002, the errata and rulings recorded under it (R3, R7 and R8 at
    least), and the element the approver names to fold them back. The plan goes `active → done`.
 
 ## Handoff
