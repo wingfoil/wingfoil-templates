@@ -80,6 +80,15 @@ Read at `ffa9bf6b` on 2026-10-15:
    published and no reader of them exists, and the specification is amended in place before the
    first publication. §5's rule applies from the first publication.
 
+Then, at the branch review, on 2026-10-15:
+7. **A methodology that requires `software`** ships `delivery` in `contents`; only a pack that does
+   not require `software` carries a conditional part (spec-001 §6.5, §9, §18). dl-022 S3 lets a
+   methodology require `software` or not.
+8. **The `pack` template and `dna.yaml`** (row 9b) name both foundation packs, so that W8 creates
+   `pack-foundation-software` from a template that allows it.
+9. **The other vision documents** (row 11) name both foundation packs, so the vision is coherent
+   before W8.
+
 **The conditional part of a pack** (ruling 5). An optional `conditional` list in `pack.yaml`, with
 at most one entry in format 1:
 
@@ -115,8 +124,9 @@ conditional:
 - The one-owner rule (§7.6) and the slot rule (§9) are checked on the composition with `software`,
   the matrix's leg with `software` (§15). No phase pack carries the entry, since it requires
   `software` (§9 says so).
-- A methodology ships `delivery` in its conditional entry, never in `contents`. A composition with
-  `software` holds exactly one methodology; a composition without it holds at most one, which
+- A methodology that does not require `software` ships `delivery` in its conditional entry, never
+  in `contents`; one that requires `software` ships it in `contents` and carries no conditional part
+  (ruling 7). A composition with `software` holds exactly one methodology; a composition without it holds at most one, which
   contributes no `delivery`.
 
 Errata to fold back in this amendment: spec-001 §15's `wingfoil init --preset` (task-030, F-030).
@@ -143,7 +153,9 @@ All work happens on branch `dl/dl-022-actions`, from `main` at `b296a40`, one co
 | 7 | `06_features.md` (Version 1.4 → 1.5, Date set) | F4.1 rewritten as dl-022 S2; a new F4.8 for `software` (S3); F6.1 the hand-adoption steps of both packs; F6.2 the parameters of both packs for every governed project, software or not; the review note's dependency list | S1–S3, S6 |
 | 8 | `07_sequencer.md` (Version 1.3 → 1.4, Date set) | the M2 row (both foundation packs and `governance/wingfoil-dogfood`); W8 (both packs; S6's criterion); W9 (this repository adopts both); the note "The first publication is `base`" | S6, dl-003 D10 as amended |
 | 9 | `pack-authoring`; `.wingfoil/memory.yaml` (4 → 5), the `pack` type's comment; `retrospective.yaml` (2 → 3), its `capture` phase and header comment | `foundation` is the axis value of both foundation packs' elements; every pack requires `base`, and the packs of row 1 require `software`; the conditional part; the slot rule names `software`; `capture` as ruling 3 | dl-004 1(a), dl-006 R2 as amended, rulings 3, 5 |
+| 9b | `.wingfoil/memory/templates/pack.md`; `.wingfoil/dna.yaml` (9 → 10) | `axis`: `foundation` for `base` and `software`; `pack_path` and `requires` comments; the `packs` path's description | ruling 8 |
 | 10 | dl-001, dl-003, dl-004, dl-006, dl-015 | an Execution Note each, for the amendment dl-022 makes: dl-001 D5, dl-003 D1/D2/D4/D5/D10/D11, dl-004 1(a), dl-006 R2; dl-015 (`pending`): the split of C1–C11 between the two charters. The bodies stay as written | dl-022 › Amendments |
+| 11 | `01_product-brief.md` (1.1 → 1.2), `02_product-vision.md` (1.3 → 1.4), `03_is-isnot.md` (1.4 → 1.5), `04_personas.md` (1.2 → 1.3), `05_journeys.md` (1.2 → 1.3), `08_mvp-canvas.md` (1.2 → 1.3), each Version bumped once and Date set | purpose 3, the first scope and the constraints; the composition and the maintainer's value; the publication constraint; the governed-repository maintainer; J2 adopts the foundation packs; the canvas's scope, results, metric and dependencies | S1–S3, S6, ruling 9 |
 
 Then:
 - **Checks:** `npm test`, `npm run lint`, `npm run check:pins`, `npm run check:schemas`,
@@ -182,3 +194,12 @@ Then:
   set-once keys under §7.2; the order of the conditional part's files; `with` under §7.1, §6.3, §7.6
   and §9; §12's kinds; §3.3's `null`) make the rulings exact without changing them, so no further
   re-review; amended. Plan submitted.
+- 2026-10-15, rows 1–10: applied (`d366e4f` … `8f67161`, wraps in `110ebb1`). Checks on Node.js
+  22.21.0 at `8f67161`: 802 of 802 tests, `lint`, `check:pins`, `check:schemas`, `check:packs`,
+  `validate`, `index -- --check` and `workflow list` exit 0. Leftovers grep: the other vision
+  documents, the `pack` template and `dna.yaml` still named `base` alone; put to the approver.
+- 2026-10-15: independent review of the branch: approve after amendments. Wording, the namespace of
+  a conditional part (§8.1), `retrospective` without `software` left to `base`'s charter (§9), the
+  Execution Notes completed, wraps (`b797ce7`). Its finding that a methodology requiring `software`
+  could not ship `delivery` changed a rule: the approver ruled 7, and 8 and 9 on the leftovers;
+  applied (rows 9b and 11, `b01240b`). Re-review requested.
