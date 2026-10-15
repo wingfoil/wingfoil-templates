@@ -680,6 +680,49 @@ describe('F3.5 overlays and lone packs', () => {
     failsWith('compose', [...FOUNDATION, KANBAN, { id: 'blueprint/web',
       ...directive('security') }]);
   });
+
+  // spec-001 §3: without software, a composition needs no methodology (task-031).
+  const messages = (result: CheckPacksResult): string[] =>
+    result.problems.filter((problem) => problem.rule === 'compose' || problem.rule === 'overlay')
+      .map((problem) => `${problem.file}: ${problem.message.slice(0, problem.message.indexOf(':'))}`)
+      .sort();
+
+  it('compose: base alone, when the tree holds no methodology', () => {
+    const files = { ...BASE.extraFiles, 'fragments/dna.yaml': 'format: 1\nproject:\n  name: x\n'
+      + 'team:\n  agents:\n    - { name: a, approval_authority: true }\n' };
+    const result = lint([{ ...BASE, extraFiles: files }]);
+    assert.deepEqual(messages(result), ['packs/base/pack.yaml: base'], result.lines.join('\n'));
+  });
+
+  it('overlay: a team-mode and a stage that ship one directive, with no methodology', () => {
+    const result = lint([BASE, overlay('team-mode/solo', directive('review')),
+      overlay('stage/mvp', directive('review'))]);
+    assert.deepEqual(messages(result), ['packs/stage/mvp/pack.yaml: base + team-mode/solo + '
+      + 'stage/mvp', 'packs/team-mode/solo/pack.yaml: base + team-mode/solo + stage/mvp'],
+    result.lines.join('\n'));
+  });
+
+  it('compose: a pack that does not need software is composed with base alone', () => {
+    const result = lint([...FOUNDATION, KANBAN, { id: 'blueprint/web',
+      ...directive('security') }]);
+    assert.deepEqual(messages(result), ['packs/blueprint/web/pack.yaml: base + blueprint/web'],
+      result.lines.join('\n'));
+  });
+
+  it('compose: software is composed with the first methodology, and base alone is clean', () => {
+    const result = lint([BASE, { ...SOFTWARE_COMPOSABLE, agentsSection: true,
+      extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'agents/section.md': '# Software\n' } },
+    KANBAN]);
+    assert.deepEqual(messages(result), [
+      'packs/methodology/kanban/pack.yaml: base + methodology/kanban',
+      'packs/software/pack.yaml: base + methodology/kanban + software']);
+  });
+
+  it('compose: nothing needing software is composed when the tree holds no methodology', () => {
+    const result = lint([BASE, { ...SOFTWARE_COMPOSABLE, agentsSection: true,
+      extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'agents/section.md': '# Software\n' } }]);
+    assert.deepEqual(messages(result), [], result.lines.join('\n'));
+  });
 });
 
 describe('F3.5 secrets', () => {
