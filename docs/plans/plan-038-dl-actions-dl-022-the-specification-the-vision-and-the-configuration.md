@@ -206,3 +206,9 @@ Then:
 - 2026-10-15: re-review: request changes, one blocker: a reflow had merged J2 of `05_journeys.md`
   into one paragraph; the file rebuilt from `b296a40` with row 11's wording. `pack-authoring`'s
   conditional bullet aligned with ruling 7; wraps. The fixes change no rule: no further re-review.
+- 2026-10-15, checks: from clean clones at `c2c0e7f`, on Node.js 22.21.0 and 22.12.0: 802 of 802
+  tests, `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check` and
+  `workflow list` exit 0 (the later commits change text only). Privacy: the diff names no
+  non-software project, no local path and no private repository.
+- 2026-10-15, branch pushed: CI run 38710168749 on `30dabd2`, conclusion `success` (`validate
+  (22.12.0)` and `validate (22.21.0)` both `success`). Waiting for the approver's merge OK.
