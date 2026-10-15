@@ -197,16 +197,16 @@ describe('inventory and formats rules', () => {
   });
 });
 
-describe('foundation rules (spec-001 §3, §6.5, §10, §18)', () => {
-  /** software with a Memory type, a directive and a parameter of its own. */
-  const SOFTWARE_FULL: PackSpec = { ...SOFTWARE_COMPOSABLE, fragments: ['memory'],
-    directives: ['determinism'], memoryTemplates: ['adr'],
-    manifest: { parameters: { adr_path: { type: 'path', default: 'docs/adr/{id}.md',
-      description: 'x' } } },
-    extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'fragments/memory.yaml': 'format: 1\n'
-      + 'types:\n  adr:\n    path: "{{adr_path}}"\n    id_pattern: "adr-{n}-{slug}"\n'
-      + '    template: { file: memory/templates/built-in/adr.md }\n' } };
+/** software with a Memory type, a directive and a parameter of its own. */
+const SOFTWARE_FULL: PackSpec = { ...SOFTWARE_COMPOSABLE, fragments: ['memory'],
+  directives: ['determinism'], memoryTemplates: ['adr'],
+  manifest: { parameters: { adr_path: { type: 'path', default: 'docs/adr/{id}.md',
+    description: 'x' } } },
+  extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'fragments/memory.yaml': 'format: 1\n'
+    + 'types:\n  adr:\n    path: "{{adr_path}}"\n    id_pattern: "adr-{n}-{slug}"\n'
+    + '    template: { file: memory/templates/built-in/adr.md }\n' } };
 
+describe('foundation rules (spec-001 §3, §6.5, §10, §18)', () => {
   it('requires-software: a phase pack that does not require software', () => {
     failsWith('requires-software', [...CLEAN, { id: 'phase/inception/lean',
       requires: ['base@^1'], workflows: ['inception'] }]);
@@ -232,10 +232,6 @@ describe('foundation rules (spec-001 §3, §6.5, §10, §18)', () => {
     KANBAN]);
   });
 
-  it('conditional: refused until spec-001 §6.5 is implemented (task-032)', () => {
-    failsWith('conditional', [...FOUNDATION, { ...KANBAN,
-      manifest: { conditional: [{ with: 'software@^1', contents: { workflows: [] } }] } }]);
-  });
 
   // Characterizations (dl-018 R2): the existing reference rules apply to software's content once
   // software is a pack of its own, so a pack that uses it must require it.
@@ -256,6 +252,98 @@ describe('foundation rules (spec-001 §3, §6.5, §10, §18)', () => {
         { ...spec, requires: ['base@^1', 'software@^1'] }]).code, 0);
     });
   }
+});
+
+/**
+ * A methodology that does not require software, its delivery in its conditional part (spec-001
+ * §6.5): `entry` is the part's contents, `files` the files written besides those `contents` lists.
+ */
+function flow(entry: Record<string, string[]> = { workflows: ['delivery'] },
+  files: Record<string, string> = { 'workflows/delivery.yaml': DELIVERY },
+  extra: Partial<PackSpec> = {}): PackSpec {
+  return { id: 'methodology/flow', workflows: ['board'], ...extra,
+    manifest: { conditional: [{ with: 'software@^1', contents: entry }], ...extra.manifest },
+    extraFiles: { ...files, ...extra.extraFiles } };
+}
+
+describe('the conditional part (spec-001 §6.5, §18)', () => {
+  const directiveFile = (id: string): string => `---\nid: ${id}\nformat: 1\n---\n# ${id}\n`;
+  const BOARD = (phases: string): Record<string, string> => ({
+    'workflows/board.yaml': `format: 1\nname: board\nkind: sub\nphases:\n${phases}` });
+
+  it('passes a methodology with its delivery in a conditional part (R1 lifted)', () => {
+    const result = lint([...CLEAN, flow()]);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+  });
+
+  it('conditional: a pack that requires software and carries one', () => {
+    failsWith(['conditional', 'slot'], [...CLEAN,
+      flow(undefined, undefined, { requires: ['base@^1', 'software@^1'] })]);
+  });
+
+  it('conditional: an entry that lists no workflow and no directive (R7)', () => {
+    failsWith(['conditional', 'slot'], [...CLEAN, flow({}, {})]);
+    failsWith(['conditional', 'slot'], [...CLEAN, flow({ workflows: [], directives: [] }, {})]);
+  });
+
+  it('contents: a file listed in both parts, or in neither', () => {
+    failsWith('contents', [...CLEAN, flow({ workflows: ['delivery'], directives: ['d'] },
+      { 'workflows/delivery.yaml': DELIVERY, 'directives/d.md': directiveFile('d') },
+      { directives: ['d'] })]);
+    failsWith('contents', [...CLEAN, flow(undefined, { 'workflows/delivery.yaml': DELIVERY,
+      'workflows/extra.yaml': 'format: 1\nname: extra\nkind: sub\n' })]);
+  });
+
+  it('isolation: an always-composed workflow including a workflow of the entry, or a slot', () => {
+    failsWith('isolation', [...CLEAN, flow({ workflows: ['delivery', 'side'] },
+      { 'workflows/delivery.yaml': DELIVERY, 'workflows/side.yaml':
+        'format: 1\nname: side\nkind: sub\nphases:\n  - { name: a, produces: [x.md] }\n' },
+      { extraFiles: BOARD('  - { name: a, include: side }\n') })]);
+    for (const slot of ['delivery', 'release']) {
+      failsWith('isolation', [...CLEAN, flow(undefined, undefined,
+        { extraFiles: BOARD(`  - { name: a, include: ${slot} }\n`) })]);
+    }
+  });
+
+  it('isolation: a roles fragment assigning a directive of the entry', () => {
+    failsWith('isolation', [...CLEAN, flow({ workflows: ['delivery'], directives: ['d'] },
+      { 'workflows/delivery.yaml': DELIVERY, 'directives/d.md': directiveFile('d') },
+      { fragments: ['roles'], manifest: { formats: { roles: 1, workflow: 1, directive: 1 } },
+        extraFiles: { 'fragments/roles.yaml': 'format: 1\nglobal: [d]\n' } })]);
+  });
+
+  it('slot: a methodology without software shipping delivery in contents', () => {
+    failsWith('slot', [...CLEAN, { id: 'methodology/flow', workflows: ['delivery'] }]);
+  });
+
+  it('slot, software-only, base-only: an entry shipping a reserved name', () => {
+    const user = (name: string): PackSpec => ({ id: 'blueprint/x', workflows: ['x'],
+      manifest: { conditional: [{ with: 'software@^1', contents: { workflows: [name] } }] },
+      extraFiles: { [`workflows/${name}.yaml`]: `format: 1\nname: ${name}\nkind: sub\n` } });
+    failsWith('slot', [...CLEAN, user('inception')]);
+    failsWith('software-only', [...CLEAN, user('sw-life-cycle')]);
+    failsWith('base-only', [...CLEAN, user('governance-evolution')]);
+  });
+
+  it('formats: both parts count, a kind only the entry ships included', () => {
+    const entry = { workflows: ['delivery'], directives: ['d'] };
+    const files = { 'workflows/delivery.yaml': DELIVERY, 'directives/d.md': directiveFile('d') };
+    failsWith('formats', [...CLEAN, flow(entry, files)]);
+    const declared = flow(entry, files, { manifest: { formats: { workflow: 1, directive: 1 } } });
+    assert.equal(lint([...CLEAN, declared]).code, 0, lint([...CLEAN, declared]).lines.join('\n'));
+  });
+
+  it('the entry may use software\'s types, workflows and parameters', () => {
+    const delivery = DELIVERY.replace('kind: sub\n', 'kind: sub\nelement: adr\n')
+      .replace('phases:\n', 'phases:\n  - { name: record, produces: ["{{adr_path}}"] }\n');
+    const result = lint([BASE, SOFTWARE_FULL, KANBAN,
+      flow(undefined, { 'workflows/delivery.yaml': delivery })]);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    failsWith(['memory-type', 'parameter-scope'], [BASE, SOFTWARE_FULL, KANBAN,
+      flow(undefined, undefined, { extraFiles: { 'workflows/board.yaml':
+        'format: 1\nname: board\nkind: sub\nelement: adr\nphases:\n'
+        + '  - { name: a, produces: ["{{adr_path}}"] }\n' } })]);
+  });
 });
 
 describe('slot rules', () => {
