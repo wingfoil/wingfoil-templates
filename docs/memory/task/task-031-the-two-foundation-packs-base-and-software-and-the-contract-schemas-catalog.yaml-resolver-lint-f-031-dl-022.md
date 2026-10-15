@@ -238,3 +238,59 @@ the commits, the adapted tests, and the interim `Axis: software`.
   existing rules; resolution-only methodologies without `software`; F-031 in the same push as the
   schema). Amended; no finding changed a rule, so no re-review. Size: the Design lists the red
   steps by group, or proposes a split (031a contract and composer, 031b lint) through plan-039.
+- 2026-10-15, design written and committed on `main` (`ab97185`); task started
+  (backlog → in-progress); branch `task/task-031-foundation` from `e39ae90`.
+- 2026-10-15, **step 1**, red on `09aadea` (the tests, the golden split, the helpers and the
+  existing tests adapted): `npx tsc -p tsconfig.json` 7 errors (exit 2), then
+  `node --test "dist/tests/**/*.test.js"`: 837 tests, 501 pass, 291 fail, 45 cancelled. Green in
+  `ff17b18` (schemas, `catalog.yaml` and §11's example and bullet in one commit, the code, the
+  regenerated fixtures), then F-031 in `17ee0ce`; `ff17b18` alone fails `schema-note`, a local
+  commit pushed only with `17ee0ce`. A fixture error of mine found after the red, before the code
+  passed: the resolve fixture's `software` README linked `#pack-base` (corrected in `ff17b18`).
+- 2026-10-15, **step 2**, red on `81c87ef`: `node --test dist/tests/check-packs.test.js
+  dist/tests/resolve.test.js`: 132 tests, 10 fail. Three of them were wrong tests, corrected
+  before the code in `d163577` (software's `adr` template missing; `base` defined `defaults`
+  already, so software's were a tightening; a `pack.yaml` failing its schema is not loaded, so the
+  lint's compositions report it too): 4 fail. Green in `9b54526`. The four tests of a pack using
+  `software`'s content without requiring it are characterizations (dl-018 R2): renaming each rule
+  id in `dist/` (`memory-type`, `include`, `directive`, `parameter-scope`) makes its test fail, 4
+  of 4.
+- 2026-10-15, **step 3**, red on `1a0ea8c`: the F3.5 overlays suite, 8 tests, 4 fail (the case
+  "nothing needing software without a methodology" is a characterization: it passed). Green in
+  `febe15e`, where one expectation was corrected: `software` is reached through the methodology
+  that requires it, so it is not composed alone.
+- **Adapted tests** (only as the split requires): `[BASE, KANBAN…]` trees gain `software`
+  (`FOUNDATION`, `FOUNDATION_COMPOSABLE`, `SOFTWARE_COMPOSABLE` in `tests/support/pack-tree.ts`);
+  `KANBAN` and a phase pack's default `requires` name `software@^1`; expected id lists gain
+  `software`; the reserved-workflow tests split by owner (`base-only`, `software-only`); the
+  index fixtures' kanban 1.1.0 requires `software@^1`; publication's `bump` moves `software`'s
+  and kanban's `requires` with `base`'s major; counts: `validate` (examples 6 → 8, compositions
+  7 → 9 and 8 → 10, runs 7 → 9, failing-preset compositions 6 → 8, lint 54 → 62, index 9 → 10,
+  golden files 18 → 19), `check-packs` and `example-rules` (16 → 20 files), `index` (unchanged 7 → 8 and
+  9 → 10, checked 9 → 10); `readme-generate` (kanban's requires; `adr` now `software`'s, its
+  line `` - `adr`: — `` until task-033); the feedback-note test asserts "Changed since F-031".
+- **Interim `Axis: software`:** the golden tree's `packs/software/README.md`, the resolve and merge
+  fixtures' `software` READMEs and `tests/fixtures/index/expected/packs/software/README.md` read
+  `Axis: software`, as `npm run index` generates it until task-033 (spec-002 §2.1).
+- **Acceptance 8:** `git grep -nE "['\"\`](base|software)(['\"\`@/]|$)" -- src/` gives
+  `src/index-model.ts:98` and `src/readme-generate.ts:92` only (task-033); `e4437e0` rewords a
+  comment of `src/catalog.ts` that matched.
+- **Acceptance 3, a deviation raised (dl-019):** the golden tree's
+  `tests/fixtures/compose/tree/catalog.yaml` changed in the red commit `09aadea`, with the other
+  test fixtures, not in `ff17b18` with `schema/catalog.schema.json`, `catalog.yaml` and §11's
+  example, which are together as plan-038 ruling 1 asks. It was not moved, so that the red run
+  stays on the commit it was counted on. For the approver's ruling.
+- 2026-10-15, **build review** (independent subagent): approve after amendments, nothing
+  blocking. Major: the lint's leg composing a pack that needs `software` with the first
+  methodology had no test (a test added; mutating `else if (first !== undefined)` makes it fail);
+  these notes. Minor: Acceptance 3's deviation (above); a test the base-alone case duplicated
+  (replaced by the new one); the F-031 and `adr` assertions made exact; a preset of two
+  methodologies without `software`. Nit: `catalog.ts`'s comment; `conditional[].contents` of
+  `{}` passes the schema, left to task-032. Fixed in `40a5493`.
+- 2026-10-15, **found at the acceptance run** (WingFoil 0.2.2, `npm run validate -- --tree
+  tests/fixtures/compose/tree`): the example `base/core-only` failed the matrix,
+  `E_NO_MAIN_WORKFLOW … at least one included workflow must be kind: main (REQ-STATE-03)`: a
+  composition of `base` alone needs a main workflow. dl-022 S4 makes `governance-evolution`
+  (`kind: main`) `base`'s, so the golden `base` ships it (`9d291d9`); the expected outputs and
+  counts follow. For W8: `base`'s charter must keep a `kind: main` workflow, or a composition
+  without `software` does not load.
