@@ -126,8 +126,8 @@ conditional:
   `software` (§9 says so).
 - A methodology that does not require `software` ships `delivery` in its conditional entry, never
   in `contents`; one that requires `software` ships it in `contents` and carries no conditional
-  part (ruling 7). A composition with `software` holds exactly one methodology; a composition without it holds at most one, which
-  contributes no `delivery`.
+  part (ruling 7). A composition with `software` holds exactly one methodology; a composition
+  without it holds at most one, which contributes no `delivery`.
 
 Errata to fold back in this amendment: spec-001 §15's `wingfoil init --preset` (task-030, F-030).
 §4's `0.x` erratum was folded back by plan-032.
