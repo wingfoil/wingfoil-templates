@@ -56,7 +56,8 @@ describe('writeEvidence (F5.1, dl-009)', () => {
         'matrix presets/other.yaml[+software]: skipped, no methodology'] : [line]) };
     const section = writeEvidence(result, { commit: COMMIT, command: COMMAND });
     assert.ok(section.includes(`Compositions: presets/golden.yaml, ${leg}`), section);
-    assert.ok(section.includes('WingFoil releases: 9.0.0, 9.1.0'), section);
+    // In the order the lines name them: the leg's line comes before the preset's matrix lines.
+    assert.ok(section.includes('WingFoil releases: 9.1.0, 9.0.0'), section);
   });
 
   it('refuses a self-test result', () => {
