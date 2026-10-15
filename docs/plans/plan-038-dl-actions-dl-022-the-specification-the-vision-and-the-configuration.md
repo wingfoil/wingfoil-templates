@@ -2,7 +2,7 @@
 id: plan-038-dl-actions-dl-022-the-specification-the-vision-and-the-configuration
 type: plan
 title: "dl actions: dl-022, the specification, the vision and the configuration"
-status: active
+status: done
 workflow: "decision-log-ingest"
 phase: "rule"
 tags: ["spec","base","process"]
