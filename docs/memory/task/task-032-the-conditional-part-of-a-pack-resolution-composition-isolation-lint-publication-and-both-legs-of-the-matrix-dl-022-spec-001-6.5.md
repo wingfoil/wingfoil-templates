@@ -143,7 +143,47 @@ Run from a clean clone of `task/task-032-conditional`, on Node.js 22.21 and the 
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+On `task/task-032-conditional`, through `tooling-delivery` v2 as `developer` (`code-quality`,
+`testing`, `determinism`). Three red steps (dl-018 R3), each a test commit run red and counted,
+then the code commit that makes it green, and the directive; one task, no split.
+
+**Step 1: rules, resolution and composition.**
+- Tests, red: in `tests/check-packs.test.ts` and `tests/resolve.test.ts`, Acceptance 2 and 3 (the
+  R1 refusal gone; each rule, by the lint and by the composer; the entry's files using
+  `software`'s content and parameters); in `tests/compose-documents.test.ts` and
+  `tests/output.test.ts`, Acceptance 4 (with and without `software`, the include order, the
+  per-part scope in `parameterScopes`); the golden `methodology/flow` of Acceptance 5, its README,
+  CHANGELOG, two examples, and `expected-flow/` and `expected-flow-software/` written by hand
+  before the code, checked in `tests/compose-cli.test.ts`. The existing rules on using
+  `software`'s content stay characterizations, already mutation-checked by task-031.
+- Code, green: a helper giving a pack's parts (`contents`, and the entry when the composition holds
+  `software`); `inventoryProblems`, `formatKindsProblems`, `slotProblems` and the reserved names
+  reading both parts; `foundationProblems` without the R1 refusal, with the new `conditional`
+  rules (a pack requiring `software`; an empty entry, R7; the `delivery` placement); the resolver
+  checking `with`; `readPackFiles` and `parameterScopes` per part; `workflowProblems` per part
+  (isolation, and the slot hole closed for an always-composed workflow of a pack that does not
+  require `software`); `readFiles` and `workflowsYaml` with the entry after the pack's own;
+  `checkRoleDirectives` and the fragment checks against always-composed content. Then
+  `npm run index` over the golden tree, the generated files reviewed by diff.
+
+**Step 2: both legs.**
+- Tests, red: in `tests/validate.test.ts`, Acceptance 6 (the derived leg and its label, the skip
+  line without a methodology, R5's dropped values named, R6 in publication mode); in
+  `tests/check-packs.test.ts`, the lint's legs and its choice of methodology; in
+  `tests/evidence.test.ts`, the legs' lines (a characterization of the existing regexes, checked
+  by mutation of `MATRIX_LINE`).
+- Code, green: `src/validate.ts` (the legs, R5, R6), `src/overlay-rules.ts`.
+
+**Step 3: publication.**
+- Tests, red: in `tests/publish.test.ts` and `tests/tag-rules.test.ts`, Acceptance 7.
+- Code, green: `src/publish.ts`, `src/tag-rules.ts`.
+
+**The directive** (R4, Acceptance 8): one commit editing `pack-compatibility.md`, a documentation
+change (dl-018 R2), checked by `workflow list`.
+
+Then: the checks of Acceptance 1 from clean clones on both Node.js versions, against WingFoil 0.2.2
+too; the independent review; the push and the CI run. The Execution Notes list each red run, the
+commits, the adapted tests and counts, and the interim of the generated README and index.
 
 ## Execution Notes
 
