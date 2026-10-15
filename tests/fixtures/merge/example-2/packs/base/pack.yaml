@@ -13,7 +13,6 @@ contents:
     - memory
   directives: []
   workflows:
-    - sw-life-cycle
     - retrospective
   memory_templates: []
   agents_section: false

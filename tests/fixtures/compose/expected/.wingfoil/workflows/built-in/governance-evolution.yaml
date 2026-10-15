@@ -1,0 +1,9 @@
+format: 1
+# A change of the project's own governance (dl-022 S4): the main workflow of a composition
+# without software.
+name: governance-evolution
+kind: main
+version: 1
+phases:
+  - name: assess
+    produces: [docs/governance.md]

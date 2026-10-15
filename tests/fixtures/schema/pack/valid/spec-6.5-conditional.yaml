@@ -1,0 +1,19 @@
+# spec-001 §6.5: a methodology whose delivery exists only with software.
+format: 1
+id: methodology/kanban
+axis: methodology
+name: kanban
+title: "Kanban"
+description: "Continuous flow under explicit WIP limits."
+version: 1.0.0
+formats: { workflow: 1 }
+requires_capabilities: []
+requires:
+  - base@^1
+contents:
+  workflows: [replenishment]
+conditional:
+  - with: software@^1
+    contents:
+      workflows: [delivery, kanban-delivery]
+      directives: []

@@ -3,6 +3,7 @@
 // slot; the life cycle's includes; every role, Memory type and directive id a pack references is
 // declared by the pack or by a pack it requires directly. The lint applies them to every pack of
 // the tree; the composer, to every pack it composes.
+import { softwarePack } from './catalog';
 import type { Catalog } from './catalog';
 import { BUILTIN_DIRECTIVE_IDS } from './wingfoil-builtins';
 import type { Problem } from './problems';
@@ -152,13 +153,13 @@ export function workflowProblems(
   return problems;
 }
 
-/** §9: base's sw-life-cycle includes its slots; a methodology's delivery includes its own. */
+/** §9: software's sw-life-cycle includes its slots; a methodology's delivery includes its own. */
 function lifeCycleProblems(catalog: Catalog | undefined, pack: RulePack, file: RuleFile,
   includes: string[]): Problem[] {
   if (catalog === undefined) return [];
   const stem = file.path.slice('workflows/'.length, -'.yaml'.length);
   let expected: string[] = [];
-  if (pack.id === catalog.foundation && stem === 'sw-life-cycle') {
+  if (pack.id === softwarePack(catalog) && stem === 'sw-life-cycle') {
     expected = catalog.slots.filter((slot) => slot.includedBy === 'sw-life-cycle')
       .map((slot) => slot.name);
   } else if (pack.manifest.axis === 'methodology' && stem === 'delivery') {

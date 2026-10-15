@@ -1,5 +1,6 @@
-// catalog.yaml (spec-001 §11): the axes, cardinalities and slots are read from it, never
-// hard-coded (§3). The order of `axes` is the composition order after base (§7.1).
+// catalog.yaml (spec-001 §11): the foundation packs, axes, cardinalities and slots are read from
+// it, never hard-coded (§3). `foundation` names the core and the software layer, in composition
+// order; the order of `axes` is the composition order after them (§7.1).
 import { repositorySchemas } from './schemas';
 import { loadYamlFile } from './yaml-load';
 
@@ -9,7 +10,10 @@ export class CatalogError extends Error {}
 export interface AxisSpec {
   name: string;
   cardinality: 'one' | 'one-per-slot' | 'many';
+  /** Required in every composition. */
   required: boolean;
+  /** Required only in a composition holding this foundation pack (`required_with`). */
+  requiredWith?: string;
   overlay: boolean;
   /** The slots of an axis of cardinality one-per-slot, in composition order. */
   slots?: string[];
@@ -25,7 +29,8 @@ export interface SlotSpec {
 }
 
 export interface Catalog {
-  foundation: string;
+  /** The foundation packs in composition order: the core, then the software layer (§3). */
+  foundation: string[];
   axes: AxisSpec[];
   slots: SlotSpec[];
   /** The file as parsed, for checks that compare it with spec-001. */
@@ -34,7 +39,8 @@ export interface Catalog {
 
 interface RawAxis {
   cardinality: AxisSpec['cardinality'];
-  required: boolean;
+  required?: boolean;
+  required_with?: string;
   overlay?: boolean;
   slots?: string[];
 }
@@ -58,9 +64,10 @@ export function loadCatalog(path: string): Catalog {
     const spec: AxisSpec = {
       name,
       cardinality: axis.cardinality,
-      required: axis.required,
+      required: axis.required ?? false,
       overlay: axis.overlay ?? false,
     };
+    if (axis.required_with !== undefined) spec.requiredWith = axis.required_with;
     if (axis.slots !== undefined) spec.slots = axis.slots;
     return spec;
   });
@@ -69,5 +76,20 @@ export function loadCatalog(path: string): Catalog {
     if (slot.default !== undefined) spec.default = slot.default;
     return spec;
   });
-  return { foundation: raw['foundation'] as string, axes, slots, raw };
+  return { foundation: raw['foundation'] as string[], axes, slots, raw };
+}
+
+/** The core foundation pack, base, in every composition (spec-001 §3). */
+export function corePack(catalog: Catalog): string {
+  return catalog.foundation[0] ?? '';
+}
+
+/** The software foundation layer, in a composition when asked for or required (spec-001 §3). */
+export function softwarePack(catalog: Catalog): string {
+  return catalog.foundation[1] ?? '';
+}
+
+/** Whether a catalog pack id is a foundation pack, outside the axes (spec-001 §3, §6.2). */
+export function isFoundation(catalog: Catalog, id: string): boolean {
+  return catalog.foundation.includes(id);
 }

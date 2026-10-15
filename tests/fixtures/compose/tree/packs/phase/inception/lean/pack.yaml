@@ -11,6 +11,7 @@ formats:
 requires_capabilities: []
 requires:
   - base@^1
+  - software@^1
 contents:
   workflows: [inception]
   agents_section: true

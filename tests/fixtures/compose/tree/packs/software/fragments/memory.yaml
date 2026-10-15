@@ -1,0 +1,8 @@
+format: 1
+types:
+  adr:
+    path: "{{adr_path}}"
+    id_pattern: "adr-{n}-{slug}"
+    template:
+      file: memory/templates/built-in/adr.md
+      frontmatter: { required: [id, title] }

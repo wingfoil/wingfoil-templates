@@ -30,9 +30,23 @@ describe('the real catalog.yaml', () => {
     assert.deepEqual(catalog.raw['slots'], example.slots);
   });
 
-  it('loads although foundation names a pack not yet listed (dl-010)', () => {
-    assert.equal(catalog.foundation, 'base');
+  it('loads although foundation names packs not yet listed (dl-010)', () => {
+    assert.deepEqual(catalog.foundation, ['base', 'software']);
     assert.deepEqual(catalog.raw['packs'], []);
+  });
+
+  it('requires the methodology axis only with software, the slots defaulting to software', () => {
+    const methodology = catalog.axes.find((axis) => axis.name === 'methodology');
+    assert.equal(methodology?.required, false);
+    assert.equal(methodology?.requiredWith, 'software');
+    for (const axis of catalog.axes.filter((candidate) => candidate.name !== 'methodology')) {
+      assert.equal(axis.required, false, axis.name);
+      assert.equal(axis.requiredWith, undefined, axis.name);
+    }
+    assert.deepEqual(catalog.slots.map((slot) => [slot.name, slot.default]), [
+      ['inception', 'software'], ['specification', 'software'], ['delivery', undefined],
+      ['release', 'software'], ['end-of-life', 'software'],
+    ]);
   });
 
   it('keeps the axes in file order, the composition order of §7.1', () => {

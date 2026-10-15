@@ -30,25 +30,13 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 
 ### Workflows
 
-- `end-of-life` (sub)
-  - `default`
-- `inception` (sub)
-  - `default`
-- `release` (sub)
-  - `default`
+- `governance-evolution` (main)
+  - `assess`
 - `retrospective` (sub)
   - `review`
-- `specification` (sub)
-  - `default`
-- `sw-life-cycle` (main)
-  - `inception`, includes `inception`
-  - `specification`, includes `specification`
-  - `delivery`, includes `delivery`
-  - `end-of-life`, includes `end-of-life`
 
 ### Memory types
 
-- `adr`: defaults, `draft` → `pending` → `approved`; gates `pending` (reject → `draft`)
 - `task`: `draft` → `pending` → `backlog` → `in-progress` → `in-review` → `approved` → `done`; gates `in-review` (reject → `in-progress`), `pending` (reject → `draft`)
 
 ### Directives
@@ -62,7 +50,6 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 
 ### Memory templates
 
-- `adr`
 - `task`
 <!-- generated:end what-it-adds -->
 
@@ -71,7 +58,6 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `adr_path` | path | `docs/memory/adr/{id}.md` | Where ADRs live |
 | `project_name` | string | required | The project name, dna.yaml project.name |
 <!-- generated:end parameters -->
 
@@ -81,7 +67,13 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 
 Fixture: tests/fixtures/examples/base/kanban-team/
 
-A fictional bakery, Lumen Bakery, keeps its order tool in one repository with a small team. It composes `base` with `methodology/kanban` and gets the life cycle, the Memory types and the roles every pack builds on; its inception phase runs `base`'s default workflow.
+A fictional bakery, Lumen Bakery, keeps its order tool in one repository with a small team. It composes `base` with `methodology/kanban` and gets the Memory types and the roles every pack builds on.
+
+### core-only
+
+Fixture: tests/fixtures/examples/base/core-only/
+
+The same bakery keeps its tasks without a life cycle: `base` alone, with no methodology and no `software`.
 
 ## Sources and adaptations
 

@@ -1,7 +1,7 @@
 # spec-001 §6.2 example.
 format: 1
 id: methodology/kanban          # catalog pack id (§4)
-axis: methodology               # absent for base
+axis: methodology               # absent for the foundation packs
 name: kanban                    # equals the last segment of id
 # slot: release                 # phase packs only; equals the middle segment of id
 title: "Kanban"
@@ -22,6 +22,10 @@ parameters:                     # §8
 contents:                       # §6.4
   fragments: [roles, memory]
   directives: [wip-limits]
-  workflows: [delivery, kanban-delivery, replenishment]
+  workflows: [replenishment]
   memory_templates: []
   agents_section: false
+conditional:                    # §6.5: counts only in a composition with software
+  - with: software@^1
+    contents:
+      workflows: [delivery, kanban-delivery]

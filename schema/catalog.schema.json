@@ -20,7 +20,11 @@
       "const": 1
     },
     "foundation": {
-      "const": "base"
+      "const": [
+        "base",
+        "software"
+      ],
+      "description": "the foundation packs in composition order (spec-001 §3, §11; dl-022)"
     },
     "axes": {
       "type": "object",
@@ -33,7 +37,7 @@
         "stage"
       ],
       "additionalProperties": false,
-      "description": "spec-001 §3; key order is the composition order after base (§7.1)",
+      "description": "spec-001 §3; key order is the composition order after the foundation packs (§7.1)",
       "properties": {
         "methodology": {
           "allOf": [
@@ -46,18 +50,19 @@
                 "cardinality": {
                   "const": "one"
                 },
-                "required": {
-                  "const": true
-                },
+                "required": false,
                 "overlay": {
                   "const": false
                 },
                 "slots": false,
-                "scale": false
+                "scale": false,
+                "required_with": {
+                  "const": "software"
+                }
               },
               "required": [
                 "cardinality",
-                "required"
+                "required_with"
               ]
             }
           ]
@@ -87,7 +92,8 @@
                 "overlay": {
                   "const": false
                 },
-                "scale": false
+                "scale": false,
+                "required_with": false
               },
               "required": [
                 "cardinality",
@@ -115,7 +121,8 @@
                   "const": false
                 },
                 "slots": false,
-                "scale": false
+                "scale": false,
+                "required_with": false
               },
               "required": [
                 "cardinality",
@@ -142,7 +149,8 @@
                   "const": false
                 },
                 "slots": false,
-                "scale": false
+                "scale": false,
+                "required_with": false
               },
               "required": [
                 "cardinality",
@@ -169,7 +177,8 @@
                   "const": true
                 },
                 "slots": false,
-                "scale": false
+                "scale": false,
+                "required_with": false
               },
               "required": [
                 "cardinality",
@@ -205,7 +214,8 @@
                     "sunset"
                   ]
                 },
-                "slots": false
+                "slots": false,
+                "required_with": false
               },
               "required": [
                 "cardinality",
@@ -242,7 +252,7 @@
                   "const": "sw-life-cycle"
                 },
                 "default": {
-                  "const": "base"
+                  "const": "software"
                 },
                 "filled_by": {
                   "const": "phase"
@@ -268,7 +278,7 @@
                   "const": "sw-life-cycle"
                 },
                 "default": {
-                  "const": "base"
+                  "const": "software"
                 },
                 "filled_by": {
                   "const": "phase"
@@ -317,7 +327,7 @@
                   "const": "delivery"
                 },
                 "default": {
-                  "const": "base"
+                  "const": "software"
                 },
                 "filled_by": {
                   "const": "phase"
@@ -343,7 +353,7 @@
                   "const": "sw-life-cycle"
                 },
                 "default": {
-                  "const": "base"
+                  "const": "software"
                 },
                 "filled_by": {
                   "const": "phase"
@@ -433,7 +443,7 @@
     },
     "packId": {
       "type": "string",
-      "pattern": "^(?:base|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$",
+      "pattern": "^(?:base|software|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$",
       "description": "catalog pack id (spec-001 §4)"
     },
     "version": {
@@ -443,12 +453,12 @@
     },
     "requiresEntry": {
       "type": "string",
-      "pattern": "^(?:base|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)@(?:\\^(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?)?|~(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?|(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|(?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?: (?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*))*)$",
+      "pattern": "^(?:base|software|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)@(?:\\^(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?)?|~(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?|(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|(?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?: (?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*))*)$",
       "description": "<catalog pack id>@<range> (spec-001 §6.3)"
     },
     "conflictsEntry": {
       "type": "string",
-      "pattern": "^(?:base|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)(?:@(?:\\^(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?)?|~(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?|(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|(?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?: (?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*))*))?$",
+      "pattern": "^(?:base|software|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)(?:@(?:\\^(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?)?|~(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?|(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|(?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?: (?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*))*))?$",
       "description": "<catalog pack id>[@<range>] (spec-001 §6.3)"
     },
     "formats": {
@@ -481,8 +491,7 @@
     "axis": {
       "type": "object",
       "required": [
-        "cardinality",
-        "required"
+        "cardinality"
       ],
       "additionalProperties": false,
       "properties": {
@@ -517,6 +526,10 @@
             "$ref": "#/$defs/name"
           },
           "uniqueItems": true
+        },
+        "required_with": {
+          "const": "software",
+          "description": "required only in a composition holding this foundation pack (spec-001 §11)"
         }
       }
     },
@@ -535,7 +548,7 @@
           ]
         },
         "default": {
-          "const": "base"
+          "const": "software"
         },
         "filled_by": {
           "enum": [
@@ -561,7 +574,7 @@
         },
         "path": {
           "type": "string",
-          "pattern": "^packs/(?:base|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$"
+          "pattern": "^packs/(?:base|software|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$"
         },
         "catalog": {
           "enum": [
@@ -677,6 +690,24 @@
             "$ref": "#/$defs/conflictsEntry"
           },
           "uniqueItems": true
+        },
+        "conditional": {
+          "type": "array",
+          "maxItems": 1,
+          "description": "copied from pack.yaml, its with only (spec-001 §6.5, §11)",
+          "items": {
+            "type": "object",
+            "required": [
+              "with"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "with": {
+                "type": "string",
+                "pattern": "^software@\\^(?:0|[1-9][0-9]*)$"
+              }
+            }
+          }
         },
         "wingfoil": {
           "type": "string",

@@ -1,0 +1,16 @@
+# expect: pattern /conditional/0/with
+format: 1
+id: methodology/kanban
+axis: methodology
+name: kanban
+title: "Kanban"
+description: "Continuous flow under explicit WIP limits."
+version: 1.0.0
+formats: { workflow: 1 }
+requires_capabilities: []
+requires:
+  - base@^1
+contents: {}
+conditional:
+  - with: blueprint/web@^1
+    contents: { workflows: [delivery] }

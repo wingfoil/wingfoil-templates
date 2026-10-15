@@ -14,9 +14,3 @@ types:
       gates:
         pending: { reject: draft }
         in-review: { reject: in-progress }
-  adr:
-    path: "{{adr_path}}"
-    id_pattern: "adr-{n}-{slug}"
-    template:
-      file: memory/templates/built-in/adr.md
-      frontmatter: { required: [id, title] }

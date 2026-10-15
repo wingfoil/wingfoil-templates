@@ -9,7 +9,9 @@ import { loadCatalog } from '../src/catalog';
 import { resolve } from '../src/resolve';
 import { EXEMPTION } from '../src/examples';
 import { exampleSection } from './support/examples';
-import { BASE_COMPOSABLE as BASE, KANBAN, withPackTree } from './support/pack-tree';
+import {
+  BASE_COMPOSABLE as BASE, FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN, withPackTree,
+} from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 import { REPO_ROOT } from './support/paths';
 
@@ -33,7 +35,8 @@ function replace(root: string, path: string, from: string, to: string): void {
   writeFileSync(join(root, path), text.replace(from, to));
 }
 
-function lint({ specs = [BASE, KANBAN], examples = true, edit = () => undefined }: Edit = {}):
+function lint({ specs = [...FOUNDATION, KANBAN], examples = true,
+  edit = () => undefined }: Edit = {}):
 CheckPacksResult {
   let result: CheckPacksResult | undefined;
   withPackTree(specs, (root) => {
@@ -74,7 +77,7 @@ describe('examples as fixtures (task-022)', () => {
   });
 
   it('counts the example files among the files it checks', () => {
-    assert.equal(lint().lines[0], 'lint: checked 16 files, 0 problems');
+    assert.equal(lint().lines[0], 'lint: checked 20 files, 0 problems');
   });
 
   describe('example-section (acceptance 3, 5)', () => {
@@ -157,7 +160,7 @@ describe('examples as fixtures (task-022)', () => {
   });
 
   it('leaves the composer alone: a pack composes with its fixture missing', () => {
-    withPackTree([BASE, KANBAN], (root) => {
+    withPackTree([...FOUNDATION, KANBAN], (root) => {
       copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
       rmSync(join(root, FIXTURE));
       assert.doesNotThrow(() => resolve(root, loadCatalog(join(root, 'catalog.yaml')),
@@ -173,7 +176,7 @@ describe('examples as fixtures (task-022)', () => {
     const at = (edit: (root: string) => void, text: string): void => {
       let lines: string[] = [];
       let readme = '';
-      withPackTree([BASE, KANBAN], (root) => {
+      withPackTree([...FOUNDATION, KANBAN], (root) => {
         copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
         copyFileSync(join(REPO_ROOT, 'compat.yaml'), join(root, 'compat.yaml'));
         edit(root);

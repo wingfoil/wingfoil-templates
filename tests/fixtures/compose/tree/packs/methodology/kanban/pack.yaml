@@ -12,6 +12,7 @@ formats:
 requires_capabilities: []
 requires:
   - base@^1
+  - software@^1
 parameters:
   wip_limit: { type: integer, default: 3, description: "WIP limit of the in-progress column" }
 contents:

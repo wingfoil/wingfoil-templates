@@ -13,7 +13,7 @@ import { packLayoutProblems, treeLayout } from './layout-rules';
 import { readPackFiles } from './pack-files';
 import type { LintPack, PackFile } from './pack-files';
 import {
-  formatKindsProblems, inventoryProblems, manifestProblems, slotProblems,
+  formatKindsProblems, foundationProblems, inventoryProblems, manifestProblems, slotProblems,
 } from './pack-rules';
 import { installListed, readmeProblems } from './readme-rules';
 import { parseEntry } from './requirements';
@@ -106,7 +106,10 @@ function packProblems(context: LintContext): Problem[] {
     problems.push(...manifestProblems(pack), ...inventoryProblems(context.tree, pack),
       ...formatKindsProblems(pack), ...packLayoutProblems(context.tree, pack),
       ...readmeProblems(context.tree, pack, listed));
-    if (context.catalog !== undefined) problems.push(...slotProblems(context.catalog, pack));
+    if (context.catalog !== undefined) {
+      problems.push(...foundationProblems(context.catalog, pack),
+        ...slotProblems(context.catalog, pack));
+    }
     const read = readPackFiles(context.tree, pack, context.packs, slots);
     context.files.set(pack.id, read.files);
     problems.push(...read.problems);

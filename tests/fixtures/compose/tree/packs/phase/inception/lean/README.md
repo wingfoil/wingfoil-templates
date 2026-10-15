@@ -19,7 +19,7 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 <!-- generated:begin composition -->
 ## Composition
 
-- **Requires:** `base@^1`
+- **Requires:** `base@^1`, `software@^1`
 - **Conflicts:** none
 - **Formats:** `workflow` 1
 - **Requires capabilities:** none

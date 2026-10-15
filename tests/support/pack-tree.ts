@@ -45,7 +45,7 @@ function including(names: string[]): string {
   return `phases:\n${names.map((name) => `  - { name: ${name}, include: ${name} }\n`).join('')}`;
 }
 
-/** base's life cycle and a methodology's delivery, including their slots (spec-001 §9). */
+/** software's life cycle and a methodology's delivery, including their slots (spec-001 §9). */
 export const SW_LIFE_CYCLE = 'format: 1\nname: sw-life-cycle\nkind: main\n'
   + including(['inception', 'specification', 'delivery', 'end-of-life']);
 export const DELIVERY = `format: 1\nname: delivery\nkind: sub\n${including(['release',
@@ -67,8 +67,9 @@ function placeholder(file: string): string {
 export function manifestFor(spec: PackSpec): Record<string, unknown> {
   const segments = spec.id.split('/');
   const isBase = spec.id === 'base';
+  const isFoundation = isBase || spec.id === 'software';
   const manifest: Record<string, unknown> = { format: 1, id: spec.id };
-  if (!isBase) manifest['axis'] = segments[0];
+  if (!isFoundation) manifest['axis'] = segments[0];
   manifest['name'] = segments[segments.length - 1];
   if (segments[0] === 'phase') manifest['slot'] = segments[1];
   Object.assign(manifest, {
@@ -78,7 +79,11 @@ export function manifestFor(spec: PackSpec): Record<string, unknown> {
     formats: formatsFor(spec),
     requires_capabilities: [],
   });
-  if (!isBase) manifest['requires'] = spec.requires ?? ['base@^1'];
+  // A phase pack requires software (spec-001 §3); every other pack but base requires base.
+  if (!isBase) {
+    manifest['requires'] = spec.requires
+      ?? (segments[0] === 'phase' ? ['base@^1', 'software@^1'] : ['base@^1']);
+  }
   if (spec.conflicts !== undefined) manifest['conflicts'] = spec.conflicts;
   manifest['contents'] = {
     fragments: spec.fragments ?? [],
@@ -132,19 +137,33 @@ export function withPackTree(specs: PackSpec[], body: (root: string) => void,
   }
 }
 
-/** The packs every valid composition needs: base, and a methodology shipping delivery. */
-export const BASE: PackSpec = { id: 'base', workflows: ['sw-life-cycle', 'retrospective'] };
-export const KANBAN: PackSpec = { id: 'methodology/kanban', workflows: ['delivery'] };
+/**
+ * The foundation packs (spec-001 §3, §9): base ships retrospective, software the life cycle; a
+ * methodology that requires software ships delivery in contents (plan-038 ruling 7).
+ */
+export const BASE: PackSpec = { id: 'base', workflows: ['retrospective'] };
+export const SOFTWARE: PackSpec = { id: 'software', workflows: ['sw-life-cycle'] };
+export const FOUNDATION: PackSpec[] = [BASE, SOFTWARE];
+export const KANBAN: PackSpec = {
+  id: 'methodology/kanban', requires: ['base@^1', 'software@^1'], workflows: ['delivery'],
+};
 
-/** base with the three fragments every composition needs, and a Memory type it defines. */
+/** base with the three fragments every composition needs. */
 export const BASE_COMPOSABLE: PackSpec = {
   id: 'base',
-  workflows: ['sw-life-cycle', 'retrospective'],
+  workflows: ['retrospective'],
   fragments: ['dna', 'roles', 'memory'],
   extraFiles: {
-    'workflows/sw-life-cycle.yaml': SW_LIFE_CYCLE,
     'fragments/dna.yaml': 'format: 1\nproject:\n  name: test\n',
     'fragments/roles.yaml': 'format: 1\nglobal: [security]\n',
     'fragments/memory.yaml': 'format: 1\ndefaults:\n  states:\n    sequence: [draft, done]\n',
   },
 };
+
+/** software with its life cycle; with BASE_COMPOSABLE, the foundation of a composition. */
+export const SOFTWARE_COMPOSABLE: PackSpec = {
+  id: 'software',
+  workflows: ['sw-life-cycle'],
+  extraFiles: { 'workflows/sw-life-cycle.yaml': SW_LIFE_CYCLE },
+};
+export const FOUNDATION_COMPOSABLE: PackSpec[] = [BASE_COMPOSABLE, SOFTWARE_COMPOSABLE];

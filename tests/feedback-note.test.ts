@@ -10,7 +10,7 @@ import { runPublish } from '../src/publish';
 import { schemaListing } from '../src/schema-digest';
 import type { TestRepo } from './support/git-repo';
 import { assertInbox, notesOf } from './support/inbox';
-import { BASE_COMPOSABLE, KANBAN } from './support/pack-tree';
+import { FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN } from './support/pack-tree';
 import { REPO_ROOT } from './support/paths';
 import { STUB_RELEASE, treeRepo } from './support/published-repo';
 import { StubWingfoil } from './support/stub-wingfoil';
@@ -48,7 +48,7 @@ const last = (tree: string): { file: string; body: string; title: string } => {
 };
 
 describe('npm run feedback:note -- --schema (wingfoil-cli rule 8)', () => {
-  it('writes nothing while schema/ is as F-017 records it (the baseline)', () => {
+  it('writes nothing while schema/ is as the newest schema note records it', () => {
     withTree((tree) => {
       const result = runFeedbackNote(['--schema', '--from', 'task-015', '--tree', tree]);
       assert.equal(result.code, 0, result.lines.join('\n'));
@@ -68,7 +68,8 @@ describe('npm run feedback:note -- --schema (wingfoil-cli rule 8)', () => {
       assert.match(note.file, new RegExp(`^${NEXT}-schema-[0-9a-f]{12}\\.md$`));
       assert.match(note.title, /^The pack schemas changed \(sha256:[0-9a-f]{12}\)$/);
       assert.match(note.body, /^\nNew note \(task-015\)\./);
-      assert.match(note.body, /Changed since F-017:\n\n- changed: `schema\/pack\.schema\.json`/);
+      // Since the newest schema note of the inbox: F-017, the baseline, then F-031 (task-031).
+      assert.match(note.body, /Changed since F-031:\n\n- changed: `schema\/pack\.schema\.json`/);
       assertInbox(join(tree, INBOX));
       assert.equal(runCheckPacks(tree).code, 0, runCheckPacks(tree).lines.join('\n'));
       assert.match(runFeedbackNote(['--schema', '--from', 'task-015', '--tree', tree]).lines
@@ -116,7 +117,7 @@ after(() => RELEASE.dispose());
 
 /** A repository like task-014's, with this repository's inbox and package.json committed. */
 function publishRepository(): TestRepo {
-  const repo = treeRepo([BASE_COMPOSABLE, KANBAN]);
+  const repo = treeRepo([...FOUNDATION, KANBAN]);
   appendFileSync(join(repo.dir, 'packs', 'base', 'CHANGELOG.md'), '\n- 1.0.0: first version.\n');
   addRepositoryFiles(repo.dir);
   repo.commitAll('inbox, schemas, changelog');
@@ -124,7 +125,8 @@ function publishRepository(): TestRepo {
 }
 
 function publish(repo: TestRepo, extra: string[]): ReturnType<typeof runPublish> {
-  return runPublish(['--tree', repo.dir, '--pack', 'base', 'methodology/kanban', ...extra],
+  return runPublish(['--tree', repo.dir, '--pack', 'base', 'software', 'methodology/kanban',
+    ...extra],
     { install: () => RELEASE.cli, env: repo.env });
 }
 

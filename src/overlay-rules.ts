@@ -1,10 +1,13 @@
 // F3.5, no contradictions between overlays (task-012, the approver's ruling of 2026-10-09): for
 // every methodology M, team-mode T or none and stage S or none, except none and none, base + M + T
 // + S is composed as the composer composes it (merge §7.2–§7.5 and the output plan §7.6, §7.7, in
-// memory), and a refusal is a problem. Every other pack no combination reaches is composed once,
-// as base + the first methodology + the pack, so that its fragments get the composer's checks too.
-// A pack that already has a problem is left out: its own rule has reported it.
+// memory), and a refusal is a problem. Without software no methodology is needed (spec-001 §3,
+// task-031), so base + T + S is composed too when neither overlay needs software. Every other pack
+// no combination reaches is composed once: base alone; a pack that does not need software, with
+// base; one that does, with the first methodology, and not at all when the tree holds none. A pack
+// that already has a problem is left out: its own rule has reported it.
 import type { LintContext } from './check-packs';
+import { corePack, softwarePack } from './catalog';
 import type { Catalog } from './catalog';
 import { composeDocuments } from './compose-documents';
 import { CompositionError } from './composition-error';
@@ -42,13 +45,13 @@ function refusal(tree: string, catalog: Catalog, request: string[]): string | un
 
 export function overlayProblems(context: LintContext, earlier: Problem[]): Problem[] {
   const { catalog, tree } = context;
-  if (catalog === undefined || !context.packs.has(catalog.foundation)) return [];
+  if (catalog === undefined || !context.packs.has(corePack(catalog))) return [];
   const troubled = new Set([...context.packs.values()]
     .filter((pack) => earlier.some((problem) => problem.file.startsWith(`${pack.path}/`)))
     .map((pack) => pack.id));
   const sound = [...context.packs.values()].sort((a, b) => byBytes(a.id, b.id))
     .filter((pack) => !reachable(pack, context.packs).some((id) => troubled.has(id))
-      && !troubled.has(catalog.foundation));
+      && !troubled.has(corePack(catalog)));
   const methodologies = ofAxis(sound, 'methodology');
   const teamModes = [undefined, ...ofAxis(sound, 'team-mode')];
   const stages = [undefined, ...ofAxis(sound, 'stage')];
@@ -61,24 +64,31 @@ export function overlayProblems(context: LintContext, earlier: Problem[]): Probl
     if (message === undefined) return;
     for (const pack of blamed) {
       problems.push({ file: `${pack.path}/pack.yaml`, rule,
-        message: `${[catalog.foundation, ...ids].join(' + ')}: ${message}` });
+        message: `${[corePack(catalog), ...ids].join(' + ')}: ${message}` });
     }
   };
-  for (const methodology of methodologies) {
+  const needsSoftware = (pack: LintPack): boolean =>
+    reachable(pack, context.packs).includes(softwarePack(catalog));
+  for (const methodology of [undefined, ...methodologies]) {
     for (const teamMode of teamModes) {
       for (const stage of stages) {
         const overlays = [teamMode, stage].filter((pack) => pack !== undefined);
-        if (overlays.length > 0) compose([methodology, ...overlays], 'overlay', overlays);
+        if (overlays.length === 0) continue;
+        if (methodology === undefined && overlays.some(needsSoftware)) continue;
+        compose([...(methodology === undefined ? [] : [methodology]), ...overlays], 'overlay',
+          overlays);
       }
     }
   }
   const [first] = methodologies;
-  if (first === undefined) return problems;
   for (const pack of sound) {
     if (reached.has(pack.id)) continue;
     // base comes with every composition; a methodology is composed alone (one per composition).
-    const request = pack.id === catalog.foundation ? [first]
-      : pack.manifest.axis === 'methodology' ? [pack] : [first, pack];
+    let request: LintPack[];
+    if (pack.id === corePack(catalog)) request = [];
+    else if (pack.manifest.axis === 'methodology' || !needsSoftware(pack)) request = [pack];
+    else if (first !== undefined) request = [first, pack];
+    else continue;
     compose(request, 'compose', [pack]);
   }
   return problems;

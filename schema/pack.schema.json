@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/wingfoil/wingfoil-templates/schema/pack.schema.json",
   "title": "WingFoil-Templates pack manifest (pack.yaml)",
-  "$comment": "Format 1, specified by spec-001 (docs/memory/tech-spec/). A change to this schema is a change of the contract with the WingFoil CLI and produces a feedback note (wingfoil-feedback directive). Not expressible here, checked by the lint rules: id equals the directory path, name equals the last segment of id, every file kind shipped is in formats, every file listed in contents exists and none is unlisted.",
+  "$comment": "Format 1, specified by spec-001 (docs/memory/tech-spec/). A change to this schema is a change of the contract with the WingFoil CLI and produces a feedback note (wingfoil-feedback directive). Not expressible here, checked by the lint rules: id equals the directory path, name equals the last segment of id, every file kind shipped is in formats, every file listed in contents or in the conditional part exists and none is unlisted, and the conditional part's rules (spec-001 §6.5, §18).",
   "type": "object",
   "required": [
     "format",
@@ -33,7 +33,7 @@
         "team-mode",
         "stage"
       ],
-      "description": "absent for base (dl-004 1(a))"
+      "description": "absent for the foundation packs, base and software (dl-004 1(a), dl-022)"
     },
     "name": {
       "$ref": "#/$defs/name"
@@ -74,7 +74,7 @@
     "conflicts": {
       "type": "array",
       "uniqueItems": true,
-      "description": "never base (spec-001 §6.3)",
+      "description": "never a foundation pack (spec-001 §6.3)",
       "items": {
         "allOf": [
           {
@@ -83,7 +83,7 @@
           {
             "type": "string",
             "not": {
-              "pattern": "^base(?:@|$)"
+              "pattern": "^(?:base|software)(?:@|$)"
             }
           }
         ]
@@ -255,6 +255,46 @@
           "type": "boolean"
         }
       }
+    },
+    "conditional": {
+      "type": "array",
+      "maxItems": 1,
+      "description": "spec-001 §6.5: content that counts only in a composition with software; at most one entry in format 1, on a non-foundation pack",
+      "items": {
+        "type": "object",
+        "required": [
+          "with",
+          "contents"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "with": {
+            "type": "string",
+            "pattern": "^software@\\^(?:0|[1-9][0-9]*)$",
+            "description": "software@^<major> only, in format 1"
+          },
+          "contents": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "workflows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/name"
+                },
+                "uniqueItems": true
+              },
+              "directives": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/name"
+                },
+                "uniqueItems": true
+              }
+            }
+          }
+        }
+      }
     }
   },
   "allOf": [
@@ -262,7 +302,10 @@
       "if": {
         "properties": {
           "id": {
-            "const": "base"
+            "enum": [
+              "base",
+              "software"
+            ]
           }
         },
         "required": [
@@ -273,10 +316,7 @@
         "properties": {
           "axis": false,
           "slot": false,
-          "requires": {
-            "type": "array",
-            "maxItems": 0
-          }
+          "conditional": false
         }
       },
       "else": {
@@ -305,6 +345,54 @@
                 "maxContains": 1
               }
             ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "id": {
+            "const": "base"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "requires": {
+            "type": "array",
+            "maxItems": 0
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "id": {
+            "const": "software"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "then": {
+        "required": [
+          "requires"
+        ],
+        "properties": {
+          "requires": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^base@\\^(?:0|[1-9][0-9]*)$"
+            }
           }
         }
       }
@@ -543,7 +631,7 @@
     },
     "packId": {
       "type": "string",
-      "pattern": "^(?:base|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$",
+      "pattern": "^(?:base|software|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$",
       "description": "catalog pack id (spec-001 §4)"
     },
     "version": {
@@ -553,12 +641,12 @@
     },
     "requiresEntry": {
       "type": "string",
-      "pattern": "^(?:base|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)@(?:\\^(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?)?|~(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?|(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|(?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?: (?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*))*)$",
+      "pattern": "^(?:base|software|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)@(?:\\^(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?)?|~(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?|(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|(?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?: (?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*))*)$",
       "description": "<catalog pack id>@<range> (spec-001 §6.3)"
     },
     "conflictsEntry": {
       "type": "string",
-      "pattern": "^(?:base|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)(?:@(?:\\^(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?)?|~(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?|(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|(?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?: (?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*))*))?$",
+      "pattern": "^(?:base|software|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)(?:@(?:\\^(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?)?|~(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*))?|(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)|(?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?: (?:>=|>|<=|<)(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*))*))?$",
       "description": "<catalog pack id>[@<range>] (spec-001 §6.3)"
     },
     "formats": {

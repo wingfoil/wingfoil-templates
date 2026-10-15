@@ -53,6 +53,20 @@ describe('npm run compose', () => {
     });
   });
 
+  it('composes base alone, the example base/core-only, into expected-base (spec-001 §3)', () => {
+    withTemp((dir) => {
+      const out = join(dir, 'out');
+      const result = run(['--tree', TREE, '--out', out, '--param', 'project_name=Golden', 'base']);
+      assert.equal(result.status, 0, result.stderr);
+      const expected = join(FIXTURES, 'compose', 'expected-base');
+      const files = filesUnder(out);
+      assert.deepEqual(files, filesUnder(expected));
+      for (const file of files) {
+        assert.ok(readFileSync(join(out, file)).equals(readFileSync(join(expected, file))), file);
+      }
+    });
+  });
+
   it('exits 1 on a resolution error and on an undeclared parameter', () => {
     withTemp((dir) => {
       assert.equal(run(['--tree', TREE, '--out', join(dir, 'a'), ...PARAMS, 'blueprint/nope'])

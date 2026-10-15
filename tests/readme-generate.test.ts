@@ -35,7 +35,7 @@ describe('generatedSections (acceptance 10)', () => {
 
   it('writes the composition, with what a pack declares except for base', () => {
     const kanban = generatedSections(TREE, 'methodology/kanban').composition;
-    assert.ok(kanban.includes('- **Requires:** `base@^1`'));
+    assert.ok(kanban.includes('- **Requires:** `base@^1`, `software@^1`'));
     assert.ok(kanban.includes('- **Formats:** `directive` 1, `roles` 1, `workflow` 1'));
     assert.ok(kanban.includes('  - workflows: `delivery`, `replenishment`'));
     assert.ok(!generatedSections(TREE, 'base').composition.includes('- **Declares:**'));
@@ -46,7 +46,10 @@ describe('generatedSections (acceptance 10)', () => {
   it('writes what a pack adds: workflow phases, Memory types, directives and their roles', () => {
     const base = generatedSections(TREE, 'base')['what-it-adds'];
     assert.ok(base.some((line) => line.startsWith('- `task`: `draft` → `pending`')), base.join('\n'));
-    assert.ok(base.some((line) => line.startsWith('- `adr`: defaults, `draft`')), base.join('\n'));
+    // adr is software's since task-031; its line reads only software's own fragments (spec-002 §2.2).
+    const software = generatedSections(TREE, 'software')['what-it-adds'];
+    assert.ok(software.includes('- `adr`: —'), software.join('\n'));
+    assert.ok(!base.some((line) => line.startsWith('- `adr`:')), base.join('\n'));
     assert.ok(base.includes('- `base-rules`: `developer`'), base.join('\n'));
     const kanban = generatedSections(TREE, 'methodology/kanban')['what-it-adds'];
     assert.ok(kanban.includes('  - `release`, includes `release`'));

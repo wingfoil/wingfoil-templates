@@ -5,11 +5,12 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { corePack, isFoundation, softwarePack } from './catalog';
 import type { AxisSpec, Catalog } from './catalog';
 import { isCatalogPackId } from './digest';
 import { packLayoutProblems } from './layout-rules';
 import {
-  formatKindsProblems, inventoryProblems, manifestProblems, slotProblems,
+  formatKindsProblems, foundationProblems, inventoryProblems, manifestProblems, slotProblems,
 } from './pack-rules';
 import type { Problem } from './problems';
 import { installListed, readmeProblems } from './readme-rules';
@@ -53,6 +54,8 @@ export interface PackManifest {
   conflicts?: string[];
   parameters?: Record<string, ParameterDeclaration>;
   contents: PackContents;
+  /** Content that counts only in a composition with software (spec-001 §6.5). */
+  conditional?: { with: string; contents: Pick<PackContents, 'workflows' | 'directives'> }[];
 }
 
 export interface ResolvedPack {
@@ -142,14 +145,16 @@ function collect(tree: string, catalog: Catalog, requested: Constraint[], schema
   packs: Map<string, ResolvedPack>;
   constraints: Constraint[];
 } {
-  if (!isCatalogPackId(catalog.foundation)) {
-    throw new ResolveError(`catalog foundation ${JSON.stringify(catalog.foundation)} is not a `
-      + 'catalog pack id');
+  for (const id of catalog.foundation) {
+    if (!isCatalogPackId(id)) {
+      throw new ResolveError(`catalog foundation ${JSON.stringify(id)} is not a catalog pack id`);
+    }
   }
   const packs = new Map<string, ResolvedPack>();
   const constraints = requested.filter((constraint) => constraint.range !== '');
+  // The core is in every composition; the software layer only when asked for or required (§3).
   const queue: { id: string; requiredBy: string }[] = [
-    { id: catalog.foundation, requiredBy: 'the foundation of every composition' },
+    { id: corePack(catalog), requiredBy: 'the foundation of every composition' },
     ...[...new Set(requested.map((constraint) => constraint.id))].sort(byBytes)
       .map((id) => ({ id, requiredBy: 'requested' })),
   ];
@@ -209,15 +214,21 @@ export function axesMessages(
   const messages: string[] = [];
   const known = new Set(catalog.axes.map((axis) => axis.name));
   for (const pack of ordered) {
-    if (pack.id !== catalog.foundation && !known.has(pack.manifest.axis ?? '')) {
+    if (!isFoundation(catalog, pack.id) && !known.has(pack.manifest.axis ?? '')) {
       messages.push(`${pack.id}: axis ${String(pack.manifest.axis)} is not in the catalog`);
     }
   }
+  const present = new Set(ordered.map((pack) => pack.id));
   for (const axis of catalog.axes) {
     const members = membersOf(axis, ordered);
     const names = (packs: typeof ordered): string => packs.map((pack) => pack.id).join(', ');
     if (axis.required && members.length === 0) {
       messages.push(`axis ${axis.name} is required, and no pack of it is given`);
+    }
+    if (axis.requiredWith !== undefined && present.has(axis.requiredWith)
+      && members.length === 0) {
+      messages.push(`axis ${axis.name} is required with ${axis.requiredWith}, and no pack of it `
+        + 'is given');
     }
     if (axis.cardinality === 'one' && members.length > 1) {
       messages.push(`axis ${axis.name} takes one pack: ${names(members)}`);
@@ -257,11 +268,11 @@ function kahn(members: ResolvedPack[]): ResolvedPack[] {
   return placed;
 }
 
-/** spec-001 §7.1: base, then each catalog axis in order. */
+/** spec-001 §7.1: the foundation packs present, then each catalog axis in order. */
 function order(catalog: Catalog, packs: Map<string, ResolvedPack>): ResolvedPack[] {
   const all = [...packs.values()].sort((a, b) => byBytes(a.id, b.id));
-  const foundation = packs.get(catalog.foundation);
-  const ordered: ResolvedPack[] = foundation === undefined ? [] : [foundation];
+  const ordered: ResolvedPack[] = [corePack(catalog), softwarePack(catalog)]
+    .map((id) => packs.get(id)).filter((pack) => pack !== undefined);
   for (const axis of catalog.axes) {
     const members = membersOf(axis, all);
     if (axis.cardinality === 'many') {
@@ -287,7 +298,7 @@ function order(catalog: Catalog, packs: Map<string, ResolvedPack>): ResolvedPack
 
 /**
  * The packs of a composition in composition order. `request` holds catalog pack ids or §6.3
- * entries; the foundation is added, and so is every pack required, transitively.
+ * entries; the core foundation pack is added, and so is every pack required, transitively.
  */
 export function resolve(tree: string, catalog: Catalog, request: string[]): ResolvedPack[] {
   const schemas = repositorySchemas();
@@ -297,7 +308,10 @@ export function resolve(tree: string, catalog: Catalog, request: string[]): Reso
   checkConflicts(byId, packs);
   const [axisProblem] = axesMessages(catalog, byId);
   if (axisProblem !== undefined) throw new ResolveError(axisProblem);
-  for (const pack of byId) throwFirst(slotProblems(catalog, pack));
+  for (const pack of byId) {
+    throwFirst(foundationProblems(catalog, pack));
+    throwFirst(slotProblems(catalog, pack));
+  }
   const listed = installListed(tree);
   for (const pack of byId) {
     throwFirst(inventoryProblems(tree, pack));

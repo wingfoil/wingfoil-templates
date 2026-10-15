@@ -6,7 +6,7 @@ import { describe, it } from 'node:test';
 import { runCheckPacks } from '../src/check-packs';
 import type { CheckPacksResult } from '../src/check-packs';
 import { REPO_ROOT } from './support/paths';
-import { BASE_COMPOSABLE as BASE, KANBAN, withPackTree } from './support/pack-tree';
+import { FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN, withPackTree } from './support/pack-tree';
 import { exampleSection } from './support/examples';
 import { CATALOG_URL, TEMPORARY_MARK, conformingReadme } from './support/readme';
 
@@ -22,7 +22,7 @@ interface Options {
 
 function lintReadme(readme: string, options: Options = {}): CheckPacksResult {
   let result: CheckPacksResult | undefined;
-  withPackTree([BASE, { ...KANBAN, extraFiles: { 'README.md': readme } }], (root) => {
+  withPackTree([...FOUNDATION, { ...KANBAN, extraFiles: { 'README.md': readme } }], (root) => {
     copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
     const compat = options.compat ?? 'repository';
     if (compat !== 'none') {
@@ -240,7 +240,7 @@ describe('README lint rules (task-018)', () => {
 
   it('checks nothing when README.md is a directory: the layout rule reports it', () => {
     let result: CheckPacksResult | undefined;
-    withPackTree([BASE, KANBAN], (root) => {
+    withPackTree([...FOUNDATION, KANBAN], (root) => {
       copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
       rmSync(join(root, FILE));
       mkdirSync(join(root, FILE));
@@ -252,7 +252,7 @@ describe('README lint rules (task-018)', () => {
 
   it('checks nothing in a pack without README.md: the layout rule reports it', () => {
     let result: CheckPacksResult | undefined;
-    withPackTree([BASE, KANBAN], (root) => {
+    withPackTree([...FOUNDATION, KANBAN], (root) => {
       copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
       rmSync(join(root, FILE));
       result = runCheckPacks(root);

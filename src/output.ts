@@ -7,6 +7,7 @@ import {
 import { dirname, join, resolve as resolvePath } from 'node:path';
 import { isScalar } from 'yaml';
 
+import { corePack } from './catalog';
 import type { Catalog } from './catalog';
 import type { ComposedDocuments, ComposedFile } from './compose-documents';
 import { CompositionError } from './composition-error';
@@ -201,7 +202,7 @@ function proseLines(text: string): string[] {
 /** §10: the generated region, from the agents sections in composition order. */
 export function agentsRegion(
   sections: { pack: string; text: string }[],
-  foundation: string,
+  core: string,
 ): string {
   const bodies = sections.map(({ pack, text }) => {
     // Blank lines around a section are dropped: sections are separated by one blank line.
@@ -211,14 +212,15 @@ export function agentsRegion(
     }
     const lines = body.split('\n');
     const first = lines.find((line) => line.trim() !== '') ?? '';
-    const heading = pack === foundation ? /^# \S/ : /^## \S/;
+    // The core's section opens the file; every other, the software layer's included, is level 2.
+    const heading = pack === core ? /^# \S/ : /^## \S/;
     if (!heading.test(first)) {
       throw new CompositionError(`${pack}: agents/section.md must open with a level-`
-        + `${pack === foundation ? '1' : '2'} heading (spec-001 §10)`);
+        + `${pack === core ? '1' : '2'} heading (spec-001 §10)`);
     }
-    if (pack !== foundation && proseLines(body).some((line) => /^# /.test(line))) {
+    if (pack !== core && proseLines(body).some((line) => /^# /.test(line))) {
       throw new CompositionError(`${pack}: agents/section.md contains a level-1 heading; only `
-        + `${foundation}'s section has one (spec-001 §10)`);
+        + `${core}'s section has one (spec-001 §10)`);
     }
     return body;
   });
@@ -249,7 +251,7 @@ export function planOutput(composed: ComposedDocuments, catalog: Catalog): Outpu
     files.push({ path: `.wingfoil/${target}`, text: normalizeText(asset.file.text) });
   }
   const sections = composed.files.filter((file) => file.path === 'agents/section.md');
-  files.push({ path: 'AGENTS.region.md', text: agentsRegion(sections, catalog.foundation) });
+  files.push({ path: 'AGENTS.region.md', text: agentsRegion(sections, corePack(catalog)) });
   return files.sort((a, b) => Buffer.compare(Buffer.from(a.path), Buffer.from(b.path)));
 }
 

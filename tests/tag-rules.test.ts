@@ -10,7 +10,7 @@ import { transitionDigest } from '../src/digest';
 import type { CheckPacksResult } from '../src/check-packs';
 import type { TestRepo } from './support/git-repo';
 import { FIXTURES } from './support/paths';
-import { BASE_COMPOSABLE, KANBAN } from './support/pack-tree';
+import { FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN } from './support/pack-tree';
 import { publishByHand, treeRepo } from './support/published-repo';
 
 type Doc = Record<string, unknown>;
@@ -78,7 +78,7 @@ describe('tag-dependent catalog rules (spec-001 §18, task-014)', () => {
 
   it('catalog-transition-digest: a stage version\'s transition digest must recompute at its tag',
     () => {
-      const repo = treeRepo([BASE_COMPOSABLE, KANBAN, { id: 'stage/mvp' },
+      const repo = treeRepo([...FOUNDATION, KANBAN, { id: 'stage/mvp' },
         { id: 'stage/production' }]);
       try {
         repo.write('transitions/mvp-to-production.yaml', TRANSITION);

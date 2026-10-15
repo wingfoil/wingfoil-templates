@@ -1,0 +1,15 @@
+# expect: not /conflicts/0
+format: 1
+id: methodology/kanban
+axis: methodology
+name: kanban
+title: "Kanban"
+description: "Continuous flow under explicit WIP limits."
+version: 1.0.0
+formats: { workflow: 1 }
+requires_capabilities: []
+requires:
+  - base@^1
+conflicts:
+  - software
+contents: { workflows: [delivery] }
