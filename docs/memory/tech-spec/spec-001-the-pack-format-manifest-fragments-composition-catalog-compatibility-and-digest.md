@@ -138,7 +138,11 @@ This specification applies it twice.
    - In `pack.yaml`, `version:` stays the pack's semver: its content revision, coherent with dl-149.
    - `catalog.yaml`, `compat.yaml`, presets and transitions have no `version:`. Their history is
      git's.
-   - Every file of this section is format 1 in this specification.
+   - Every file of this section is format 1 in this specification. `pack.yaml` and `catalog.yaml`
+     stayed at format 1 through the amendment of dl-022, which added `conditional` and gave
+     `foundation` two packs: nothing was published and no reader of them existed, and the
+     specification was amended in place before the first publication. This section's rule applies
+     from the first publication on.
 
 A schema under `schema/` validates the current format of its file kind, and checks `format` as a
 constant. When a format is bumped, the previous schema is kept, frozen, as
@@ -198,9 +202,13 @@ parameters:                     # §8
 contents:                       # §6.4
   fragments: [roles, memory]
   directives: [wip-limits]
-  workflows: [delivery, kanban-delivery, replenishment]
+  workflows: [replenishment]
   memory_templates: []
   agents_section: false
+conditional:                    # §6.5: counts only in a composition with software
+  - with: software@^1
+    contents:
+      workflows: [delivery, kanban-delivery]
 ```
 
 | Field | Required | Rule |
@@ -218,6 +226,7 @@ contents:                       # §6.4
 | `conflicts` | no | §6.3. |
 | `parameters` | no | §8. |
 | `contents` | yes | §6.4. |
+| `conditional` | no | §6.5. At most one entry in format 1, on a non-foundation pack only. |
 
 `schema/pack.schema.json` checks what JSON Schema can express. The lint rules (F3.5) check the
 rest; §18 lists them for every file kind.
@@ -258,8 +267,50 @@ appear in the composed files:
 
 An absent list is empty, and an absent `agents_section` is `false`.
 
-Every listed file **must** exist, and every file present under those directories **must** be listed.
-The composer reads only what `contents` lists.
+Every listed file **must** exist, and every file present under those directories **must** be listed
+exactly once, in `contents` or in a conditional part's `contents` (§6.5). The composer reads only
+what they list.
+
+### 6.5 The conditional part
+
+A pack's `delivery` exists only in a composition with `software` (dl-022 S3). A pack declares such
+content in an optional `conditional` list, with at most one entry in format 1:
+
+```yaml
+conditional:
+  - with: software@^1           # format 1 allows only software@^<major>
+    contents:
+      workflows: [delivery, kanban-delivery]
+      directives: []
+```
+
+- **Who.** Only a non-foundation pack may carry `conditional`. A pack that requires `software`
+  gains nothing from it, so a phase pack carries none.
+- **`with`** is an entry of §6.3's syntax, and names `software` only in format 1. It is a
+  requirement that counts only when the composition holds `software`:
+  - it never adds a pack, so resolution stays one pass;
+  - when the composition holds `software` at a version outside the range, the requirement is
+    unsatisfied, an error, never a reason to leave the part out;
+  - it names no pack of the pack's `requires`, and the pack does not `conflict` with it;
+  - it counts as a requirement for §7.1's rule against requiring a later pack.
+- **`contents`** may list `workflows` and `directives` only, by file stem, as §6.4.
+  - In a composition with `software`, the entry's workflows and directives come after the pack's
+    own, each list in its written order (§7.7).
+  - In a composition without `software`, the composer leaves them out, and the generated `include`
+    with them.
+- **Isolation.** What is always composed uses nothing that exists only with `software`:
+  - no fragment, unconditional workflow or roles assignment references a workflow or a directive of
+    the entry;
+  - `software`'s parameters, Memory types, workflows and directives are used only inside the
+    entry's files, so the parameter scope of §8.1 is checked per part;
+  - the AGENTS.md section is always composed (§10).
+- **Fragments are never conditional.** A pack therefore cannot tighten `software`'s Memory types
+  through this part (O14).
+- **One owner, slots.** §7.6's one-owner rule and §9's slot rule are checked on the composition with
+  `software`.
+- A methodology ships `delivery` in its entry, never in `contents`. A composition with `software`
+  holds exactly one methodology; one without it holds at most one, which contributes no `delivery`
+  (§3).
 
 ## 7. Composition and the merge of fragments
 
@@ -492,8 +543,8 @@ Packs ship no `workflows.yaml` fragment (§1, deviation). The composer generates
   so no pack declares the `workflows` kind; the compatibility check includes it (§12). When WingFoil
   bumps that kind, this specification is revised;
 - `include`: one entry `workflows/built-in/<name>.yaml` per composed workflow (the folder follows
-  §7.6's mapping), in composition
-  order, then in each pack's `contents.workflows` order.
+  §7.6's mapping), in composition order, then in each pack's `contents.workflows` order, followed,
+  in a composition with `software`, by its conditional part's `contents.workflows` (§6.5).
 
 A slot workflow appears once, at the position of the pack whose file is used.
 
@@ -683,7 +734,7 @@ presets:
   - `versions[]`: one entry per published version, in ascending semver order. An entry is never
     edited after publication, except its `wingfoil` field (§12).
 - **A version entry** copies from the published `pack.yaml`: `formats`, `requires_capabilities`,
-  `requires` and `conflicts`. A resolver can therefore check compatibility and dependencies without
+  `requires`, `conflicts` and, when present, `conditional` with its `with` only (§6.5). A resolver can therefore check compatibility and dependencies without
   fetching the pack. It adds:
   - `commit`: the full id of the commit the tag points at;
   - `digest` (§13);
@@ -741,6 +792,9 @@ releases:
   `false`.
 
   `wingfoil-release-intake` appends one entry per WingFoil release (dl-002).
+
+`V.formats` counts the kinds of both parts of a pack with a conditional part (§6.5), so the check
+below holds for either composition.
 
 **Compatibility.** A pack version V is compatible with release R when all four hold:
 - `R.format_key` is `true`, because every file a pack ships declares `format:` (§5), and validation
@@ -886,6 +940,8 @@ parameters: {}
 - A preset has no version. It is a curated pointer to version ranges, and its history is git's.
 - Every preset is part of the compatibility matrix of every pack it contains
   (`pack-compatibility`).
+- A pack with a conditional part is validated in compositions with and without `software`
+  (`pack-compatibility`).
 
 ## 16. Open points
 
@@ -905,6 +961,7 @@ Each has an owner outside this specification. None blocks format 1.
 | O10 | No released WingFoil has `format_key: true` before v0.3 is released, so the tooling's fixtures (sequencer W5–W7) cannot pass the zero-warning matrix on 0.2.2. Whether the matrix then runs against an unreleased v0.3 build, for tooling only and never for a publication, is the tooling phase's decision. | the tooling phase (M1) |
 | O11 | task-251 decision 4, held for the WingFoil approver: `memory add` copies a template's `format: 1` into the elements it creates. If ruled so, the `format:` that §5 requires in a pack's Memory templates also appears in every project element. | WingFoil (task-251) |
 | O12 | WingFoil's `init` writes its own built-in directives into `directives/built-in/`, the folder the reference composer writes packs to in format 1. Settled in principle by WingFoil dl-138 Q3 (dl-021 R3): `built-in/` is WingFoil's own and packs land in the `remote` class; what remains is the folder and how an upgrade tells them apart. | WingFoil dl-138's Action 2 tech-spec, with O5 and O13 |
+| O14 | Fragments are never conditional (§6.5), so no pack can tighten `software`'s Memory types (for example `bug` or `release`) only in a composition with `software`. A conditional fragment is a later format. | this repository, when a methodology's charter needs it |
 | O13 | A pack's `memory.yaml` fragment names its template as `memory/templates/built-in/<type>.md` (§7.6), the one path a pack writes that names a folder. How it reads under the `remote` class: rewritten by `pack-install`, or a kind-relative form. The format-1 rule stays until then. | WingFoil dl-138's Action 2 tech-spec (F-029) |
 
 ## 17. What the reference composer does
@@ -913,12 +970,13 @@ adr-001 makes the composer implement this specification and nothing more. Given 
 pack ids with ranges, or local paths), parameter values and an output directory, it:
 
 1. resolves the packs and their `requires`, and fails on a missing pack, an unsatisfied range or a
-   conflict (§6.3);
+   conflict (§6.3); a conditional part's `with` is checked when the composition holds `software`,
+   and never adds a pack (§6.5);
 2. validates every `pack.yaml`, and the files of this repository, against `schema/` (§5, §6);
-3. checks the cardinalities, the slots and the inventories (§3, §6.4, §9);
+3. checks the cardinalities, the slots and the inventories (§3, §6.4, §6.5, §9);
 4. orders the packs (§7.1);
-5. substitutes parameters (§8), merges the fragments (§7.2–§7.5), copies the asset files (§7.6) and
-   generates `workflows.yaml` (§7.7);
+5. substitutes parameters (§8), merges the fragments (§7.2–§7.5), copies the asset files (§7.6),
+   those of a conditional part only with `software` (§6.5), and generates `workflows.yaml` (§7.7);
 6. writes `.wingfoil/` with UTF-8, `LF` line endings and a final newline;
 7. produces the AGENTS.md generated region as a separate output (§10).
 
@@ -949,13 +1007,18 @@ check the rest, and the composer refuses what they reject.
   `lists` name only fields the same fragment adds to `required` (§7.5);
 - `requires_capabilities` is sorted;
 - `contents.fragments` is in the order `dna`, `roles`, `memory`;
-- `contents` matches the files present, both ways (§6.4);
+- `contents` and the conditional part's `contents` together match the files present, both ways,
+  each file listed once (§6.4);
+- `conditional`: at most one entry, on a non-foundation pack, `with` naming `software@^<major>` and
+  no pack of `requires` or `conflicts`; its `contents` holds `workflows` and `directives` only; the
+  isolation rules of §6.5; a methodology's `delivery` only in it;
 - `formats` lists exactly the kinds of the files shipped, with the value each file declares (§5);
 - the layout and path segments of §6.1, with no symbolic link or submodule;
 - asset identifiers equal their file stems (§6.1);
-- every `{{name}}` is in the pack's parameter scope (§8.1), and every default passes its type (§8);
-- a phase pack ships its slot workflow, a methodology ships `delivery`, and no other pack ships a
-  slot name (§9);
+- every `{{name}}` is in the pack's parameter scope (§8.1), checked per part (§6.5), and every
+  default passes its type (§8);
+- a phase pack ships its slot workflow, a methodology ships `delivery` in its conditional part, and
+  no other pack ships a slot name (§9);
 - no pack other than `software` ships `sw-life-cycle` or a slot default, and no pack other than
   `base` ships `retrospective` or `governance-evolution` (§9, dl-022).
 
