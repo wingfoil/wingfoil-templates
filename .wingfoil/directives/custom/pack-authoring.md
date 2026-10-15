@@ -54,9 +54,11 @@ Applies to every role that writes or reviews pack content under `packs/`.
   `software` outside a conditional part (spec-001 §3, §6.3; dl-022 S3). Overlays (`team-mode`,
   `stage`) only add or tighten relative to everything else; they never remove what a methodology
   ships. In a Memory state machine, adding a state or a gate is allowed; removing either is not.
-- A pack whose content only makes sense with `software` (a methodology's `delivery`) declares it in
-  a `conditional` entry, `with: software@^<major>` (spec-001 §6.5): it counts only in a composition
-  holding `software`, and nothing outside it uses that content or anything of `software`'s.
+- A pack that does not require `software`, and whose content only makes sense with it (a
+  methodology's `delivery`), declares that content in a `conditional` entry,
+  `with: software@^<major>` (spec-001 §6.5): it counts only in a composition holding `software`,
+  and nothing outside it uses that content or anything of `software`'s. A pack that requires
+  `software` ships everything in `contents`.
 - Slots (dl-003 D4, D11). They exist only with `software`. `sw-life-cycle` and the slot defaults
   belong to `software`, `retrospective` and `governance-evolution` to `base` (dl-022).
   `sw-life-cycle` includes `inception`, `specification`, `delivery` and `end-of-life` by name; the

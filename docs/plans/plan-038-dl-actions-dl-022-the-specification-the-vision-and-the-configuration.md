@@ -125,8 +125,8 @@ conditional:
   the matrix's leg with `software` (§15). No phase pack carries the entry, since it requires
   `software` (§9 says so).
 - A methodology that does not require `software` ships `delivery` in its conditional entry, never
-  in `contents`; one that requires `software` ships it in `contents` and carries no conditional part
-  (ruling 7). A composition with `software` holds exactly one methodology; a composition without it holds at most one, which
+  in `contents`; one that requires `software` ships it in `contents` and carries no conditional
+  part (ruling 7). A composition with `software` holds exactly one methodology; a composition without it holds at most one, which
   contributes no `delivery`.
 
 Errata to fold back in this amendment: spec-001 §15's `wingfoil init --preset` (task-030, F-030).
@@ -203,3 +203,6 @@ Then:
   Execution Notes completed, wraps (`b797ce7`). Its finding that a methodology requiring `software`
   could not ship `delivery` changed a rule: the approver ruled 7, and 8 and 9 on the leftovers;
   applied (rows 9b and 11, `b01240b`). Re-review requested.
+- 2026-10-15: re-review: request changes, one blocker: a reflow had merged J2 of `05_journeys.md`
+  into one paragraph; the file rebuilt from `b296a40` with row 11's wording. `pack-authoring`'s
+  conditional bullet aligned with ruling 7; wraps. The fixes change no rule: no further re-review.

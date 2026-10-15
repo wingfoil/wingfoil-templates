@@ -318,9 +318,8 @@ conditional:
   `software`.
 - A methodology that does not require `software` ships `delivery` in its entry, never in
   `contents`; a methodology that requires `software` ships it in `contents` (dl-022 S3: a
-  methodology does not always require `software`). A composition with `software`
-  holds exactly one methodology; one without it holds at most one, which contributes no `delivery`
-  (§3).
+  methodology does not always require `software`). A composition with `software` holds exactly
+  one methodology; one without it holds at most one, which contributes no `delivery` (§3).
 
 ## 7. Composition and the merge of fragments
 
@@ -638,10 +637,9 @@ only in a composition with `software`:
 - `base` ships `retrospective` and `governance-evolution` (dl-022 S2, S4).
 - The methodology ships `delivery` (`kind: sub`): in its conditional part, with
   `with: software@^<major>` (§6.5), when it does not require `software`; in its `contents` when it
-  does. `delivery` includes `release` and
-  `retrospective` by name, at its own cadence (dl-003 D11, dl-006). `retrospective` is not a slot,
-  so no pack replaces it. In a composition without `software`, what runs `retrospective` is fixed
-  by `base`'s charter.
+  does. `delivery` includes `release` and `retrospective` by name, at its own cadence (dl-003 D11,
+  dl-006). `retrospective` is not a slot, so no pack replaces it. In a composition without
+  `software`, what runs `retrospective` is fixed by `base`'s charter.
 - A phase pack of slot `<slot>` **must** ship `workflows/<slot>.yaml`, with `name: <slot>` and
   `kind: sub`. Its file replaces `software`'s default. This is the only case in which a pack's file
   replaces another's (§7.6). A phase pack requires `software` (§3), so it carries no conditional
