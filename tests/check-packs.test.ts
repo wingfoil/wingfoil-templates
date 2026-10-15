@@ -848,6 +848,18 @@ describe('F3.5 overlays and lone packs', () => {
       result.lines.join('\n'));
   });
 
+  it('compose: the methodology\'s own conflicts count too in that choice', () => {
+    const blueprint: PackSpec = { id: 'blueprint/x', workflows: ['x'],
+      manifest: { formats: { workflow: 1, directive: 1 }, conditional: [{ with: 'software@^1',
+        contents: { directives: ['determinism'] } }] },
+      extraFiles: { 'directives/determinism.md': clashFiles['directives/determinism.md'] } };
+    const result = lint([BASE, SOFTWARE_FULL, KANBAN,
+      flow(undefined, undefined, { conflicts: ['blueprint/x'] }), blueprint]);
+    assert.deepEqual(messages(result),
+      ['packs/blueprint/x/pack.yaml: base + software + methodology/kanban + blueprint/x'],
+      result.lines.join('\n'));
+  });
+
   it('compose: another pack\'s leg with software takes the first methodology it allows', () => {
     const blueprint: PackSpec = { id: 'blueprint/x', workflows: ['x'],
       conflicts: ['methodology/flow'],

@@ -248,3 +248,10 @@ commits, the adapted tests and counts, and the interim of the generated README a
   conflicts both ways; `reached` required; one `reachableIds` helper for four walks over
   `requires`; a stale comment; R6's passing case asserted in the publication test. Re-review
   requested (dl-017 R2).
+- 2026-10-15, **re-review** (dl-017 R2): approve; findings 1–11 fixed or recorded. Three minor
+  findings: a test where only the methodology declares the conflict, added in the next commit
+  (written after `00eafa5`, so checked by mutation: dropping `conflicting(methodology, pack)`
+  makes it fail); the `[-software]` leg that cannot resolve is not reachable with the current
+  rules (removing `software` from a composition that resolved only lowers what it requires, and a
+  pack that requires `software` brings it back), so its failure line stays untested; `validate.ts`
+  keeps a local `byBytes`, as every other module of `src/` does but `index-data.ts`.
