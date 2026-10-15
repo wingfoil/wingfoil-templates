@@ -306,3 +306,6 @@ the commits, the adapted tests, and the interim `Axis: software`.
   tests/fixtures/compose/tree --param project_name=Golden` exits 0 against WingFoil 0.2.2 (9
   compositions, 9 runs, 0 failed, the self-test tolerance applied). No dependency added;
   `compat.yaml` and `index/` unchanged; no `schema/*.v<N>.schema.json`.
+- 2026-10-15, **CI** (Acceptance 12): run 38747567111 on `be06b62`, conclusion `success`
+  (`validate (22.12.0)` and `validate (22.21.0)` both `success`). F-031 is in the same push as the
+  schema change, so no pushed head fails `schema-note`. Submitted `in-review`.
