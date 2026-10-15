@@ -309,3 +309,7 @@ the commits, the adapted tests, and the interim `Axis: software`.
 - 2026-10-15, **CI** (Acceptance 12): run 38747567111 on `be06b62`, conclusion `success`
   (`validate (22.12.0)` and `validate (22.21.0)` both `success`). F-031 is in the same push as the
   schema change, so no pushed head fails `schema-note`. Submitted `in-review`.
+- 2026-10-15: the approver accepted the build (`in-review → approved`, `dc62554`), with the
+  Acceptance 3 deviation raised above and recommended for acceptance, and gave the merge OK in
+  chat. CI run 38748325395 on `e29093d`, conclusion `success`. `--no-ff` merge into `main`
+  (`51094a8`); this task goes `approved → done`.

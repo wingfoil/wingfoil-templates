@@ -171,3 +171,10 @@ from `main`, in the order task-031, task-032, task-033, task-034, one after the 
   findings (the publication leg and the skip line in task-032's scope, the evidence reading it, the
   lint's choice of methodology, R3's format reason) are amended without changing a rule, so no
   further re-review. Plan submitted.
+- 2026-10-15, task-031 (the two foundation packs and the contract): accepted into the backlog,
+  designed, built red first in three steps, reviewed and re-reviewed, CI run 38747567111 on
+  `be06b62` `success`; approved by the approver, merged `--no-ff` into `main` (`51094a8`), `done`.
+  F-031 written (R1). Found at its acceptance run, for W8: WingFoil 0.2.2 refuses a composition
+  with no `kind: main` workflow (`E_NO_MAIN_WORKFLOW`), so `base`'s charter keeps
+  `governance-evolution` as a main workflow (dl-022 S4). Raised to the approver: Acceptance 3's
+  golden-tree `catalog.yaml` in the red commit (dl-019).
