@@ -280,7 +280,7 @@ describe('composeDocuments: the conditional part\'s rules (spec-001 §6.5, §17,
   const directive = (id: string): string => `---\nid: ${id}\nformat: 1\n---\n# ${id}\n`;
   const flow = (entry: Record<string, string[]>, files: Record<string, string>,
     extra: Partial<PackSpec> = {}): PackSpec => ({ id: 'methodology/flow', workflows: ['board'],
-    ...extra, manifest: { formats: { workflow: 1, directive: 1 },
+    ...extra, manifest: { formats: { workflow: 1 },
       conditional: [{ with: 'software@^1', contents: entry }], ...extra.manifest },
     extraFiles: { ...files, ...extra.extraFiles } });
   const DELIVERING = { workflows: ['delivery'] };
@@ -309,7 +309,8 @@ describe('composeDocuments: the conditional part\'s rules (spec-001 §6.5, §17,
 
   it('refuses a file listed in both parts, or in neither', () => {
     fails([BASE_M, SOFTWARE, flow({ workflows: ['delivery'], directives: ['d'] },
-      { ...DELIVERY_FILE, 'directives/d.md': directive('d') }, { directives: ['d'] })],
+      { ...DELIVERY_FILE, 'directives/d.md': directive('d') }, { directives: ['d'],
+        manifest: { formats: { workflow: 1, directive: 1 } } })],
     ['methodology/flow'], /directives\/d\.md is listed in contents and in the conditional/, NAME);
     fails([BASE_M, SOFTWARE, flow(DELIVERING, { ...DELIVERY_FILE,
       'workflows/extra.yaml': 'format: 1\nname: extra\nkind: sub\n' })],
@@ -328,13 +329,6 @@ describe('composeDocuments: the conditional part\'s rules (spec-001 §6.5, §17,
         contents: { workflows: ['sw-life-cycle'] } }] },
       extraFiles: { [reserved]: 'format: 1\nname: sw-life-cycle\nkind: main\n' } }],
     ['methodology/kanban', 'blueprint/x'], /blueprint\/x.*sw-life-cycle.*only software/, NAME);
-  });
-
-  it('refuses a part file whose kind formats does not list, with software', () => {
-    fails([BASE_M, SOFTWARE, flow({ workflows: ['delivery'], directives: ['d'] },
-      { ...DELIVERY_FILE, 'directives/d.md': directive('d') },
-      { manifest: { formats: { workflow: 1 } } })],
-    ['software', 'methodology/flow'], /directives\/d\.md.*format/, NAME);
   });
 });
 

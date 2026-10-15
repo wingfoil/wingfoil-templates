@@ -232,6 +232,12 @@ describe('output: the conditional part (spec-001 §6.5, §7.7, §17 step 5)', ()
       /directives\/built-in\/wip\.md is shipped by software and by methodology\/flow/);
   });
 
+  it('refuses, with software, a part file whose kind formats does not list (§5)', () => {
+    fails([BASE, SOFTWARE_COMPOSABLE, { ...FLOW, manifest: { ...FLOW.manifest,
+      formats: { workflow: 1 } } }], ['software', 'methodology/flow'],
+    /directives\/wip\.md: format 1, but its pack\.yaml formats\.directive is undefined/);
+  });
+
   it('substitutes software\'s parameters in the entry only (§8.1, per part)', () => {
     const software: PackSpec = { ...SOFTWARE_COMPOSABLE, manifest: { parameters: {
       adr_path: { type: 'path', default: 'docs/adr/{id}.md', description: 'x' } } } };
