@@ -709,13 +709,12 @@ describe('F3.5 overlays and lone packs', () => {
       result.lines.join('\n'));
   });
 
-  it('compose: software is composed with the first methodology, and base alone is clean', () => {
+  it('compose: software, reached through the methodology that requires it; base alone clean', () => {
     const result = lint([BASE, { ...SOFTWARE_COMPOSABLE, agentsSection: true,
       extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'agents/section.md': '# Software\n' } },
     KANBAN]);
-    assert.deepEqual(messages(result), [
-      'packs/methodology/kanban/pack.yaml: base + methodology/kanban',
-      'packs/software/pack.yaml: base + methodology/kanban + software']);
+    assert.deepEqual(messages(result),
+      ['packs/methodology/kanban/pack.yaml: base + methodology/kanban'], result.lines.join('\n'));
   });
 
   it('compose: nothing needing software is composed when the tree holds no methodology', () => {
