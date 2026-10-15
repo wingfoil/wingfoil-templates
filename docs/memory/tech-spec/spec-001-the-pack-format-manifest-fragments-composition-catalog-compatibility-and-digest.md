@@ -292,8 +292,8 @@ conditional:
       directives: []
 ```
 
-- **Who.** Only a non-foundation pack may carry `conditional`. A pack that requires `software`
-  gains nothing from it, so a phase pack carries none.
+- **Who.** Only a non-foundation pack that does not require `software` may carry `conditional`. A
+  pack that requires `software` ships everything in `contents`, so a phase pack carries none.
 - **`with`** is an entry of §6.3's syntax, and names only `software@^<major>` in format 1. It is a
   requirement that counts only when the composition holds `software`:
   - it never adds a pack, so resolution stays one pass;
@@ -316,7 +316,9 @@ conditional:
   through this part (O14).
 - **One owner, slots.** §7.6's one-owner rule and §9's slot rule are checked on the composition with
   `software`.
-- A methodology ships `delivery` in its entry, never in `contents`. A composition with `software`
+- A methodology that does not require `software` ships `delivery` in its entry, never in
+  `contents`; a methodology that requires `software` ships it in `contents` (dl-022 S3: a
+  methodology does not always require `software`). A composition with `software`
   holds exactly one methodology; one without it holds at most one, which contributes no `delivery`
   (§3).
 
@@ -634,8 +636,9 @@ only in a composition with `software`:
 - `software` ships `sw-life-cycle` (`kind: main`). It includes `inception`, `specification`,
   `delivery` and `end-of-life` by name, and ships the defaults above.
 - `base` ships `retrospective` and `governance-evolution` (dl-022 S2, S4).
-- The methodology ships `delivery` (`kind: sub`) in its conditional part, with
-  `with: software@^<major>` (§6.5), never in its `contents`. `delivery` includes `release` and
+- The methodology ships `delivery` (`kind: sub`): in its conditional part, with
+  `with: software@^<major>` (§6.5), when it does not require `software`; in its `contents` when it
+  does. `delivery` includes `release` and
   `retrospective` by name, at its own cadence (dl-003 D11, dl-006). `retrospective` is not a slot,
   so no pack replaces it. In a composition without `software`, what runs `retrospective` is fixed
   by `base`'s charter.
@@ -1024,16 +1027,17 @@ check the rest, and the composer refuses what they reject.
 - `contents.fragments` is in the order `dna`, `roles`, `memory`;
 - `contents` and the conditional part's `contents` together match the files present, both ways,
   each file listed once (§6.4);
-- `conditional`: at most one entry, on a non-foundation pack, `with` naming `software@^<major>` and
-  no pack of `requires` or `conflicts`; its `contents` holds `workflows` and `directives` only; the
-  isolation rules of §6.5; a methodology's `delivery` only in it;
+- `conditional`: at most one entry, on a non-foundation pack that does not require `software`,
+  `with` naming `software@^<major>` and no pack of `requires` or `conflicts`; its `contents` holds
+  `workflows` and `directives` only; the isolation rules of §6.5; a methodology's `delivery` in it
+  when the methodology does not require `software`, in `contents` when it does;
 - `formats` lists exactly the kinds of the files shipped, with the value each file declares (§5);
 - the layout and path segments of §6.1, with no symbolic link or submodule;
 - asset identifiers equal their file stems (§6.1);
 - every `{{name}}` is in the pack's parameter scope (§8.1), checked per part (§6.5), and every
   default passes its type (§8);
-- a phase pack ships its slot workflow, a methodology ships `delivery` in its conditional part, and
-  no other pack ships a slot name (§9);
+- a phase pack ships its slot workflow, a methodology ships `delivery` (in its conditional part, or
+  in `contents` when it requires `software`), and no other pack ships a slot name (§9);
 - no pack other than `software` ships `sw-life-cycle` or a slot default, and no pack other than
   `base` ships `retrospective` or `governance-evolution` (§9, dl-022).
 
@@ -1173,7 +1177,9 @@ check the rest, and the composer refuses what they reject.
     `software`; §18: the checks of all the above;
   - wording: §1 (dl-022 among the applied decisions), §7.3 (the methodology "when there is one"),
     the §7.5 example, the §8.1 example's comment and the namespace of a conditional part, §10 (the
-    section of a pack with a conditional part).
+    section of a pack with a conditional part);
+  - §6.5, §9, §18: a methodology that requires `software` ships `delivery` in `contents`, and
+    carries no conditional part (the approver's ruling of 2026-10-15, at the branch review).
   - Read again at `ffa9bf6b`: no v0.3 release is tagged, so O10 stands; WingFoil dl-137 and dl-138
     are `ready` and dl-138's Action 2 tech-spec does not exist yet, so O2, O5, O12 and O13 keep
     their owners.
