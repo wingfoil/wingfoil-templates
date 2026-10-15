@@ -2,6 +2,7 @@ format: 1
 version: 1
 include:
   - workflows/built-in/retrospective.yaml
+  - workflows/built-in/governance-evolution.yaml
   - workflows/built-in/sw-life-cycle.yaml
   - workflows/built-in/specification.yaml
   - workflows/built-in/release.yaml

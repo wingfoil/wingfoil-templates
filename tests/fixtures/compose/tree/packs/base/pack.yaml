@@ -17,6 +17,6 @@ parameters:
 contents:
   fragments: [dna, roles, memory]
   directives: [base-rules]
-  workflows: [retrospective]
+  workflows: [retrospective, governance-evolution]
   memory_templates: [task]
   agents_section: true

@@ -30,6 +30,8 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 
 ### Workflows
 
+- `governance-evolution` (main)
+  - `assess`
 - `retrospective` (sub)
   - `review`
 
