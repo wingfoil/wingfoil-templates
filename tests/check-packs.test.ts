@@ -197,6 +197,63 @@ describe('inventory and formats rules', () => {
   });
 });
 
+describe('foundation rules (spec-001 §3, §6.5, §10, §18)', () => {
+  /** software with a Memory type, a directive and a parameter of its own. */
+  const SOFTWARE_FULL: PackSpec = { ...SOFTWARE_COMPOSABLE, fragments: ['memory'],
+    directives: ['determinism'],
+    manifest: { parameters: { adr_path: { type: 'path', default: 'docs/adr/{id}.md',
+      description: 'x' } } },
+    extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'fragments/memory.yaml': 'format: 1\n'
+      + 'types:\n  adr:\n    path: "{{adr_path}}"\n    id_pattern: "adr-{n}-{slug}"\n'
+      + '    template: { file: memory/templates/built-in/adr.md }\n' } };
+
+  it('requires-software: a phase pack that does not require software', () => {
+    failsWith('requires-software', [...CLEAN, { id: 'phase/inception/lean',
+      requires: ['base@^1'], workflows: ['inception'] }]);
+    assert.equal(lint([...CLEAN, { id: 'phase/inception/lean', workflows: ['inception'] }]).code,
+      0);
+  });
+
+  it('schema: software requiring a pack besides base', () => {
+    failsWith('schema', [BASE, { ...SOFTWARE_COMPOSABLE,
+      requires: ['base@^1', 'blueprint/api@^1'] }, KANBAN, { id: 'blueprint/api' }]);
+  });
+
+  it('compose: software defining defaults, or opening its section at level 1', () => {
+    failsWith('compose', [BASE, { ...SOFTWARE_COMPOSABLE, fragments: ['memory'],
+      extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'fragments/memory.yaml':
+        'format: 1\ndefaults:\n  states:\n    sequence: [draft, done]\n' } }, KANBAN]);
+    failsWith('compose', [BASE, { ...SOFTWARE_COMPOSABLE, agentsSection: true,
+      extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'agents/section.md': '# Software\n' } },
+    KANBAN]);
+  });
+
+  it('conditional: refused until spec-001 §6.5 is implemented (task-032)', () => {
+    failsWith('conditional', [...FOUNDATION, { ...KANBAN,
+      manifest: { conditional: [{ with: 'software@^1', contents: { workflows: [] } }] } }]);
+  });
+
+  // Characterizations (dl-018 R2): the existing reference rules apply to software's content once
+  // software is a pack of its own, so a pack that uses it must require it.
+  const user = (workflow: string, extra: Partial<PackSpec> = {}): PackSpec => ({
+    id: 'blueprint/x', workflows: ['x'], ...extra,
+    extraFiles: { 'workflows/x.yaml': `format: 1\nname: x\nkind: sub\n${workflow}`,
+      ...extra.extraFiles } });
+  for (const [rule, spec] of [
+    ['memory-type', user('element: adr\nphases:\n  - { name: a, produces: [x.md] }\n')],
+    ['include', user('phases:\n  - { name: a, include: sw-life-cycle }\n')],
+    ['directive', user('phases:\n  - { name: a, produces: [x.md] }\n', { fragments: ['roles'],
+      extraFiles: { 'fragments/roles.yaml': 'format: 1\nglobal: [determinism]\n' } })],
+    ['parameter-scope', user('phases:\n  - { name: a, produces: ["{{adr_path}}"] }\n')],
+  ] as [string, PackSpec][]) {
+    it(`${rule}: a pack that uses software's content without requiring software`, () => {
+      failsWith(rule, [BASE, SOFTWARE_FULL, KANBAN, spec]);
+      assert.equal(lint([BASE, SOFTWARE_FULL, KANBAN,
+        { ...spec, requires: ['base@^1', 'software@^1'] }]).code, 0);
+    });
+  }
+});
+
 describe('slot rules', () => {
   it('slot: a methodology without delivery, a pack shipping a slot it does not fill', () => {
     failsWith('slot', [...FOUNDATION, { ...KANBAN, workflows: ['flow'] }]);

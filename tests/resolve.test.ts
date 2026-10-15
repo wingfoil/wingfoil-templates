@@ -340,6 +340,20 @@ describe('resolve: inventories', () => {
   });
 });
 
+describe('resolve: the §18 rules on the foundation (spec-001 §17)', () => {
+  it('fails on a phase pack that does not require software', () => {
+    fails([...FOUNDATION, KANBAN, { id: 'phase/inception/lean', requires: ['base@^1'],
+      workflows: ['inception'] }], ['methodology/kanban', 'phase/inception/lean'],
+    /phase\/inception\/lean.*software/);
+  });
+
+  it('fails on a pack carrying conditional, until spec-001 §6.5 is implemented', () => {
+    fails([...FOUNDATION, { ...KANBAN,
+      manifest: { conditional: [{ with: 'software@^1', contents: { workflows: [] } }] } }],
+    ['methodology/kanban'], /methodology\/kanban.*conditional.*§6\.5/);
+  });
+});
+
 describe('resolve: order', () => {
   it('fails on a requires cycle among blueprints, naming both', () => {
     fails([...FOUNDATION, KANBAN, { id: 'blueprint/a', requires: ['base@^1', 'blueprint/b@^1'] },
