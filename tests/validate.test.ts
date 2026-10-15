@@ -20,8 +20,9 @@ const ENTRIES = ['methodology/kanban', 'phase/inception/lean', 'blueprint/web-se
   'team-mode/agent-first', 'stage/production'];
 const NAME = ['--param', 'project_name=Golden'];
 /** The examples of the golden tree's packs, in path order (task-022). */
-const GOLDEN_EXAMPLES = ['agent-first/agent-team', 'base/kanban-team', 'kanban/small-board',
-  'lean/new-product', 'production/live-service', 'web-service/orders-api']
+const GOLDEN_EXAMPLES = ['agent-first/agent-team', 'base/core-only', 'base/kanban-team',
+  'kanban/small-board', 'lean/new-product', 'production/live-service', 'software/delivery-team',
+  'web-service/orders-api']
   .map((example) => `tests/fixtures/examples/${example}/example.yaml`);
 
 /** WingFoil 0.2.2 as the tests see it: exit 0, one format warning per command (W-01). */
@@ -63,13 +64,13 @@ describe('npm run validate', () => {
   it('composes the golden preset twice into byte-identical files (W5 exit criterion)', () => {
     const result = validate(['--tree', TREE, ...NAME]);
     assert.equal(result.code, 0, result.lines.join('\n'));
-    assert.ok(result.lines.some((line) => /^schemas: checked 9 files, 0 problems$/.test(line)),
+    assert.ok(result.lines.some((line) => /^schemas: checked 10 files, 0 problems$/.test(line)),
       result.lines.join('\n'));
     assert.ok(result.lines.some((line) =>
       /^composition presets\/golden\.yaml: composed twice, 18 files, byte-identical$/.test(line)),
     result.lines.join('\n'));
-    // The golden preset and the six examples of its packs (task-022).
-    assert.ok(result.lines.includes('compositions: 7'));
+    // The golden preset and the eight examples of its packs (task-022, task-031).
+    assert.ok(result.lines.includes('compositions: 9'));
   });
 
   it('runs the golden preset against wingfoil@0.2.2 in self-test mode, reporting the tolerance',
@@ -81,7 +82,7 @@ describe('npm run validate', () => {
         ...['presets/golden.yaml', ...GOLDEN_EXAMPLES].flatMap((label) =>
           ['workflow list', 'dna show', 'directives list'].map((command) =>
             `matrix ${label} wingfoil@0.2.2 ${command}: pass (self-test, tolerated 1)`)),
-        'matrix: self-test, 7 runs, 0 failed, tolerance applied: 0.2.2',
+        'matrix: self-test, 9 runs, 0 failed, tolerance applied: 0.2.2',
       ]);
       assert.equal(result.mode, 'self-test');
       assert.deepEqual(result.tolerated, ['0.2.2']);
@@ -105,7 +106,8 @@ describe('npm run validate', () => {
       assert.ok(result.lines.some((line) => line.startsWith(
         'matrix presets/golden.yaml wingfoil@0.2.2 workflow list: fail (self-test)')),
       result.lines.join('\n'));
-      assert.ok(result.lines.includes('matrix: self-test, 7 runs, 7 failed, tolerance applied: none'),
+      assert.ok(result.lines.includes(
+        'matrix: self-test, 9 runs, 9 failed, tolerance applied: none'),
         result.lines.join('\n'));
     } finally {
       noisy.dispose();
@@ -119,7 +121,7 @@ describe('npm run validate', () => {
     assert.equal(result.code, 2);
     assert.ok(result.lines.some((line) => /wingfoil@0\.2\.2: npm ci failed/.test(line)),
       result.lines.join('\n'));
-    assert.ok(result.lines.includes('matrix: self-test, 7 runs, 7 failed, tolerance applied: none'),
+    assert.ok(result.lines.includes('matrix: self-test, 9 runs, 9 failed, tolerance applied: none'),
       result.lines.join('\n'));
   });
 
@@ -145,7 +147,7 @@ describe('npm run validate', () => {
 
   it('runs the lint after the schema checks, on the golden tree', () => {
     const result = validate(['--tree', TREE, ...NAME]);
-    assert.equal(result.lines[1], 'lint: checked 54 files, 0 problems', result.lines.join('\n'));
+    assert.equal(result.lines[1], 'lint: checked 61 files, 0 problems', result.lines.join('\n'));
   });
 
   it('exits 1 on a lint problem, and composes no preset the lint rejects', () => {
@@ -177,7 +179,7 @@ describe('npm run validate', () => {
     assert.equal(result.code, 1, 'wip_limit is set by the preset');
     const entries = validate(['--tree', TREE, ...NAME, ...ENTRIES]);
     assert.equal(entries.code, 0, entries.lines.join('\n'));
-    assert.ok(entries.lines.includes('compositions: 8'));
+    assert.ok(entries.lines.includes('compositions: 10'));
     assert.ok(entries.lines.some((line) => line.startsWith('composition entries: composed twice')));
   });
 
@@ -203,7 +205,7 @@ describe('npm run validate', () => {
         assert.equal(result.code, 1);
         assert.ok(result.lines.some((line) => line.startsWith('presets/golden.yaml:')));
         // The examples still compose (task-022); the failing preset does not.
-        assert.ok(result.lines.includes('compositions: 6'), result.lines.join('\n'));
+        assert.ok(result.lines.includes('compositions: 8'), result.lines.join('\n'));
       });
   });
 
@@ -220,7 +222,7 @@ describe('npm run validate', () => {
   it('runs index --check after the lint and before the compositions (task-019)', () => {
     const result = validate(['--tree', TREE, ...NAME]);
     const at = (pattern: RegExp): number => result.lines.findIndex((line) => pattern.test(line));
-    assert.ok(at(/^lint: /) < at(/^index: checked 9 files, 0 not up to date$/));
+    assert.ok(at(/^lint: /) < at(/^index: checked 10 files, 0 not up to date$/));
     assert.ok(at(/^index: checked/) < at(/^composition /), result.lines.join('\n'));
   });
 
@@ -290,7 +292,7 @@ describe('npm run validate', () => {
         + 'example.yaml: skipped, the lint reports it'), result.lines.join('\n'));
       assert.ok(result.lines.includes('matrix tests/fixtures/examples/kanban/small-board/'
         + 'example.yaml: skipped'));
-      assert.ok(result.lines.includes('compositions: 6'));
+      assert.ok(result.lines.includes('compositions: 8'));
     });
   });
 
@@ -309,15 +311,16 @@ describe('npm run validate', () => {
       const compositions = result.lines.filter((line) => line.startsWith('composition '));
       assert.deepEqual(compositions.map((line) => line.slice(0, line.indexOf(':'))), [
         'composition presets/golden.yaml',
-        ...['agent-first/agent-team', 'base/kanban-team', 'ghost/x', 'kanban/small-board',
-          'kanban/y', 'lean/new-product', 'production/live-service', 'web-service/orders-api']
+        ...['agent-first/agent-team', 'base/core-only', 'base/kanban-team', 'ghost/x',
+          'kanban/small-board', 'kanban/y', 'lean/new-product', 'production/live-service',
+          'software/delivery-team', 'web-service/orders-api']
           .map((example) => `composition tests/fixtures/examples/${example}/example.yaml`),
       ]);
       for (const orphan of ['ghost/x', 'kanban/y']) {
         assert.ok(result.lines.includes(`composition tests/fixtures/examples/${orphan}/`
           + 'example.yaml: skipped, the lint reports it'), result.lines.join('\n'));
       }
-      assert.ok(result.lines.includes('compositions: 7'));
+      assert.ok(result.lines.includes('compositions: 9'));
     }, true);
   });
 
@@ -389,7 +392,7 @@ describe('npm run validate', () => {
     }, (tree) => {
       const result = validate(['--tree', tree, ...NAME, '--param', 'api_prefix=/v2']);
       assert.equal(result.code, 0, result.lines.join('\n'));
-      assert.ok(result.lines.includes('compositions: 8'));
+      assert.ok(result.lines.includes('compositions: 10'));
     });
   });
 

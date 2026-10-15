@@ -45,4 +45,4 @@ None: written for this catalog.
 ## Versions
 
 - [Changelog](CHANGELOG.md)
-- [Catalog entry](https://github.com/wingfoil/wingfoil-templates/blob/main/CATALOG.md#pack-base)
+- [Catalog entry](https://github.com/wingfoil/wingfoil-templates/blob/main/CATALOG.md#pack-software)

@@ -685,20 +685,20 @@ packs. A resolver decides from it alone which versions to fetch.
 
 ```yaml
 format: 1
-foundation: base
+foundation: [base, software]
 axes:
-  methodology: { cardinality: one, required: true }
+  methodology: { cardinality: one, required_with: software }
   phase:       { cardinality: one-per-slot, required: false, slots: [inception, specification, release, end-of-life] }
   blueprint:   { cardinality: many, required: false }
   governance:  { cardinality: many, required: false }
   team-mode:   { cardinality: one, required: false, overlay: true }
   stage:       { cardinality: one, required: false, overlay: true, scale: [prototype, mvp, production, maintenance, sunset] }
 slots:
-  inception:     { included_by: sw-life-cycle, default: base, filled_by: phase }
-  specification: { included_by: sw-life-cycle, default: base, filled_by: phase }
+  inception:     { included_by: sw-life-cycle, default: software, filled_by: phase }
+  specification: { included_by: sw-life-cycle, default: software, filled_by: phase }
   delivery:      { included_by: sw-life-cycle, filled_by: methodology }
-  release:       { included_by: delivery, default: base, filled_by: phase }
-  end-of-life:   { included_by: sw-life-cycle, default: base, filled_by: phase }
+  release:       { included_by: delivery, default: software, filled_by: phase }
+  end-of-life:   { included_by: sw-life-cycle, default: software, filled_by: phase }
 packs:
   - id: base
     path: packs/base
@@ -733,9 +733,6 @@ presets:
     `required_with: software` in place of `required: true`; the other axes keep `required: false`.
   - The `default` of the slots `inception`, `specification`, `release` and `end-of-life` is
     `software`.
-- **The example above** still shows `foundation: base`, a required `methodology` axis and `base` as
-  the slots' default. It changes together with `catalog.yaml` and its schema, which
-  `tests/catalog.test.ts` holds equal to it (Execution Notes, 2026-10-15).
 - **`packs[]`:**
   - `id`, `path` (§4);
   - `catalog`: `official` or `community` (dl-001 D7). Where community packs live, and how they

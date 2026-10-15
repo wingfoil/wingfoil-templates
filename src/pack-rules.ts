@@ -3,6 +3,7 @@
 // messages it has always given (§17: the composer refuses what the lint rejects).
 import { lt, valid } from 'semver';
 
+import { corePack, softwarePack } from './catalog';
 import type { Catalog } from './catalog';
 import { listSorted } from './listing';
 import { parseEntry } from './requirements';
@@ -20,8 +21,10 @@ export interface PackLike {
   source: LoadedYaml;
 }
 
-/** Workflows only base may ship (spec-001 §9). */
-export const BASE_ONLY_WORKFLOWS = ['sw-life-cycle', 'retrospective'];
+/** Workflows only the core foundation pack, base, may ship (spec-001 §9, dl-022 S2). */
+export const BASE_ONLY_WORKFLOWS = ['retrospective', 'governance-evolution'];
+/** Workflows only the software layer may ship; the slot defaults are its too (§9, dl-022 S3). */
+export const SOFTWARE_ONLY_WORKFLOWS = ['sw-life-cycle'];
 const FRAGMENT_ORDER = ['dna', 'roles', 'memory'];
 export const INVENTORY_FOLDERS = ['fragments', 'directives', 'workflows', 'memory-templates',
   'agents'];
@@ -132,7 +135,7 @@ export function inventoryProblems(tree: string, pack: PackLike): Problem[] {
   return problems;
 }
 
-/** spec-001 §9: slot workflows, read from the catalog, and the workflows only base ships. */
+/** spec-001 §9: slot workflows, read from the catalog, and the workflows of each foundation pack. */
 export function slotProblems(catalog: Catalog, pack: PackLike): Problem[] {
   const problems: Problem[] = [];
   const workflows = pack.manifest.contents.workflows ?? [];
@@ -149,11 +152,16 @@ export function slotProblems(catalog: Catalog, pack: PackLike): Problem[] {
         `${pack.id}: ships workflow ${slot.name} but does not fill slot ${slot.name}`));
     }
   }
-  if (pack.id !== catalog.foundation) {
-    const reserved = workflows.find((name) => BASE_ONLY_WORKFLOWS.includes(name));
+  const owners: [string, string[], string][] = [
+    [corePack(catalog), BASE_ONLY_WORKFLOWS, 'base-only'],
+    [softwarePack(catalog), SOFTWARE_ONLY_WORKFLOWS, 'software-only'],
+  ];
+  for (const [owner, names, rule] of owners) {
+    if (pack.id === owner) continue;
+    const reserved = workflows.find((name) => names.includes(name));
     if (reserved !== undefined) {
-      problems.push(at(pack, '/contents/workflows', 'base-only',
-        `${pack.id}: ships ${reserved}, which only ${catalog.foundation} may ship (spec-001 §9)`));
+      problems.push(at(pack, '/contents/workflows', rule,
+        `${pack.id}: ships ${reserved}, which only ${owner} may ship (spec-001 §9)`));
     }
   }
   return problems;

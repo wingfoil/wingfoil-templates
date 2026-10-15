@@ -75,7 +75,8 @@ describe('resolve: requires and conflicts', () => {
   });
 
   it('fails on a requested pack missing from the tree', () => {
-    fails([...FOUNDATION, KANBAN], ['methodology/kanban', 'blueprint/web'], /blueprint\/web.*not found/);
+    fails([...FOUNDATION, KANBAN], ['methodology/kanban', 'blueprint/web'],
+      /blueprint\/web.*not found/);
   });
 
   it('fails on a required pack missing from the tree', () => {
@@ -106,7 +107,8 @@ describe('resolve: requires and conflicts', () => {
   });
 
   it('fails on a requested range the tree does not satisfy', () => {
-    fails([...FOUNDATION, KANBAN], ['methodology/kanban@^2'], /methodology\/kanban 1\.0\.0.*\^2.*request/);
+    fails([...FOUNDATION, KANBAN], ['methodology/kanban@^2'],
+      /methodology\/kanban 1\.0\.0.*\^2.*request/);
   });
 
   it('fails on a required range the tree does not satisfy', () => {
@@ -115,7 +117,8 @@ describe('resolve: requires and conflicts', () => {
   });
 
   it('fails on an empty intersection', () => {
-    fails([...FOUNDATION, KANBAN, { ...WEB, requires: ['base@^1', 'blueprint/api@>=2.0.0 <1.0.0'] }, API],
+    fails([...FOUNDATION, KANBAN, { ...WEB, requires: ['base@^1', 'blueprint/api@>=2.0.0 <1.0.0'] },
+      API],
       ['methodology/kanban', 'blueprint/web'], /blueprint\/api/);
   });
 
@@ -135,11 +138,13 @@ describe('resolve: requires and conflicts', () => {
 
   it('passes a conflict with a pack absent from the composition', () => {
     passes([...FOUNDATION, KANBAN, { id: 'blueprint/cli', conflicts: ['blueprint/api'] }],
-      ['methodology/kanban', 'blueprint/cli'], ['base', 'software', 'methodology/kanban', 'blueprint/cli']);
+      ['methodology/kanban', 'blueprint/cli'], ['base', 'software', 'methodology/kanban',
+        'blueprint/cli']);
   });
 
   it('fails on a pack that requires itself', () => {
-    fails([...FOUNDATION, KANBAN, { id: 'blueprint/cli', requires: ['base@^1', 'blueprint/cli@^1'] }],
+    fails([...FOUNDATION, KANBAN, { id: 'blueprint/cli', requires: ['base@^1',
+      'blueprint/cli@^1'] }],
       ['methodology/kanban', 'blueprint/cli'], /blueprint\/cli requires itself/);
   });
 
@@ -304,7 +309,8 @@ describe('resolve: cardinalities and slots', () => {
 
 describe('resolve: inventories', () => {
   it('fails on a directory where a listed file is expected', () => {
-    fails([...FOUNDATION, KANBAN, { id: 'blueprint/x', directives: ['d'], omitFiles: ['directives/d.md'],
+    fails([...FOUNDATION, KANBAN, { id: 'blueprint/x', directives: ['d'],
+      omitFiles: ['directives/d.md'],
       extraFiles: { 'directives/d.md/inner': 'x\n' } }], ['methodology/kanban', 'blueprint/x'],
     /blueprint\/x: directives\/d\.md is a directory/);
   });
@@ -318,7 +324,8 @@ describe('resolve: inventories', () => {
   ];
   for (const [file, spec] of listed) {
     it(`fails on a listed file missing: ${file}`, () => {
-      fails([...FOUNDATION, KANBAN, { ...spec, omitFiles: [file] }], ['methodology/kanban', 'blueprint/x'],
+      fails([...FOUNDATION, KANBAN, { ...spec, omitFiles: [file] }], ['methodology/kanban',
+        'blueprint/x'],
         new RegExp(`blueprint/x.*${file}.*missing`));
     });
     it(`fails on a file present but unlisted: ${file}`, () => {
@@ -363,7 +370,8 @@ describe('resolve: order', () => {
   it('passes a stage requiring a team-mode', () => {
     const stage = { id: 'stage/s', requires: ['base@^1', 'team-mode/a@^1'] };
     passes([...FOUNDATION, KANBAN, stage, { id: 'team-mode/a' }],
-      ['methodology/kanban', 'stage/s'], ['base', 'software', 'methodology/kanban', 'team-mode/a', 'stage/s']);
+      ['methodology/kanban', 'stage/s'], ['base', 'software', 'methodology/kanban', 'team-mode/a',
+        'stage/s']);
   });
 });
 

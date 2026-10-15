@@ -31,11 +31,6 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 ### Workflows
 
 - `retrospective` (sub)
-- `sw-life-cycle` (main)
-  - `inception`, includes `inception`
-  - `specification`, includes `specification`
-  - `delivery`, includes `delivery`
-  - `end-of-life`, includes `end-of-life`
 
 ### Memory types
 

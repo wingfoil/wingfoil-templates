@@ -5,6 +5,7 @@
 // as base + the first methodology + the pack, so that its fragments get the composer's checks too.
 // A pack that already has a problem is left out: its own rule has reported it.
 import type { LintContext } from './check-packs';
+import { corePack } from './catalog';
 import type { Catalog } from './catalog';
 import { composeDocuments } from './compose-documents';
 import { CompositionError } from './composition-error';
@@ -42,13 +43,13 @@ function refusal(tree: string, catalog: Catalog, request: string[]): string | un
 
 export function overlayProblems(context: LintContext, earlier: Problem[]): Problem[] {
   const { catalog, tree } = context;
-  if (catalog === undefined || !context.packs.has(catalog.foundation)) return [];
+  if (catalog === undefined || !context.packs.has(corePack(catalog))) return [];
   const troubled = new Set([...context.packs.values()]
     .filter((pack) => earlier.some((problem) => problem.file.startsWith(`${pack.path}/`)))
     .map((pack) => pack.id));
   const sound = [...context.packs.values()].sort((a, b) => byBytes(a.id, b.id))
     .filter((pack) => !reachable(pack, context.packs).some((id) => troubled.has(id))
-      && !troubled.has(catalog.foundation));
+      && !troubled.has(corePack(catalog)));
   const methodologies = ofAxis(sound, 'methodology');
   const teamModes = [undefined, ...ofAxis(sound, 'team-mode')];
   const stages = [undefined, ...ofAxis(sound, 'stage')];
@@ -61,7 +62,7 @@ export function overlayProblems(context: LintContext, earlier: Problem[]): Probl
     if (message === undefined) return;
     for (const pack of blamed) {
       problems.push({ file: `${pack.path}/pack.yaml`, rule,
-        message: `${[catalog.foundation, ...ids].join(' + ')}: ${message}` });
+        message: `${[corePack(catalog), ...ids].join(' + ')}: ${message}` });
     }
   };
   for (const methodology of methodologies) {
@@ -77,7 +78,7 @@ export function overlayProblems(context: LintContext, earlier: Problem[]): Probl
   for (const pack of sound) {
     if (reached.has(pack.id)) continue;
     // base comes with every composition; a methodology is composed alone (one per composition).
-    const request = pack.id === catalog.foundation ? [first]
+    const request = pack.id === corePack(catalog) ? [first]
       : pack.manifest.axis === 'methodology' ? [pack] : [first, pack];
     compose(request, 'compose', [pack]);
   }

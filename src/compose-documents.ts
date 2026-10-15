@@ -4,6 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { corePack } from './catalog';
 import type { Catalog } from './catalog';
 import { CompositionError } from './composition-error';
 import { checkFormat } from './formats';
@@ -165,7 +166,7 @@ export function composeDocuments(
   const shipped = new Set(packs.flatMap((pack) => pack.manifest.contents.directives ?? []));
   checkRoleDirectives(mergedRoles, shipped);
   const memory = fragmentsOf('memory', packs, files);
-  const mergedMemory = mergeMemoryWithOwners(memory.fragments, catalog.foundation);
+  const mergedMemory = mergeMemoryWithOwners(memory.fragments, corePack(catalog));
 
   return {
     packs,

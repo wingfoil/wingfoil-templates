@@ -10,7 +10,7 @@ import { runPublish } from '../src/publish';
 import type { PublishResult } from '../src/publish';
 import { runValidate } from '../src/validate';
 import type { TestRepo } from './support/git-repo';
-import { BASE_COMPOSABLE, FOUNDATION_COMPOSABLE, KANBAN } from './support/pack-tree';
+import { FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 import { REPO_ROOT } from './support/paths';
 import { runIndex } from '../src/index';
@@ -31,7 +31,7 @@ const DATES = { GIT_AUTHOR_DATE: '2026-10-10T12:00:00Z', GIT_COMMITTER_DATE: '20
 const WITH_KANBAN = ['methodology/kanban'];
 
 /** A repository whose packs carry a CHANGELOG entry for 1.0.0, committed. */
-function repository(specs: PackSpec[] = [...FOUNDATION_COMPOSABLE, KANBAN],
+function repository(specs: PackSpec[] = [...FOUNDATION, KANBAN],
   release = STUB_RELEASE, examples = true): TestRepo {
   const repo = treeRepo(specs, release, { examples });
   for (const spec of specs) {
@@ -123,7 +123,7 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
       assert.match(String((version?.['transitions'] as Doc)['mvp-to-production']),
         /^sha256:[0-9a-f]{64}$/);
       assert.equal(runCheckPacks(repo.dir).code, 0, runCheckPacks(repo.dir).lines.join('\n'));
-    }, [...FOUNDATION_COMPOSABLE, KANBAN, { id: 'stage/mvp' }, { id: 'stage/production' }]);
+    }, [...FOUNDATION, KANBAN, { id: 'stage/mvp' }, { id: 'stage/production' }]);
   });
 
   it('--dry-run does everything in a temporary clone and leaves the repository as it was', () => {
@@ -252,15 +252,18 @@ function bump(repo: TestRepo, version: string, formats?: Record<string, number>)
     manifest['version'] = version;
     if (formats !== undefined) manifest['formats'] = formats;
   });
+  // Every pack that requires base follows its major: software, and kanban, which requires both.
+  const major = version.split('.')[0] ?? '';
+  editManifest(repo, 'software', (manifest) => { manifest['requires'] = [`base@^${major}`]; });
   editManifest(repo, 'methodology/kanban', (manifest) => {
-    manifest['requires'] = [`base@^${version.split('.')[0] ?? ''}`];
+    manifest['requires'] = [`base@^${major}`, 'software@^1'];
   });
   appendFileSync(join(repo.dir, 'packs', 'base', 'CHANGELOG.md'), `- ${version}: next.\n`);
   // base's example follows its major, as an author's does (task-022).
   const example = join(repo.dir, 'tests', 'fixtures', 'examples', 'base', 'basic', 'example.yaml');
   if (existsSync(example)) {
     writeFileSync(example, readFileSync(example, 'utf8').replace(/base@\^\d+/,
-      `base@^${version.split('.')[0] ?? ''}`));
+      `base@^${major}`));
   }
   writeIndex(repo);
   repo.commitAll(`base ${version}`);

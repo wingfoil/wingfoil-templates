@@ -19,10 +19,15 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 <!-- generated:begin composition -->
 ## Composition
 
-- **Requires:** none
+- **Requires:** `base@^1`
 - **Conflicts:** none
-- **Formats:** `directive` 1, `dna` 1, `memory` 1, `memory-template` 1, `roles` 1, `workflow` 1
+- **Formats:** `memory` 1, `memory-template` 1, `workflow` 1
 - **Requires capabilities:** none
+- **Declares:**
+  - Memory types: `adr`
+  - roles: none
+  - states: none
+  - workflows: `end-of-life`, `inception`, `release`, `specification`, `sw-life-cycle`
 <!-- generated:end composition -->
 
 <!-- generated:begin what-it-adds -->
@@ -36,8 +41,6 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
   - `default`
 - `release` (sub)
   - `default`
-- `retrospective` (sub)
-  - `review`
 - `specification` (sub)
   - `default`
 - `sw-life-cycle` (main)
@@ -48,22 +51,19 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 
 ### Memory types
 
-- `adr`: defaults, `draft` → `pending` → `approved`; gates `pending` (reject → `draft`)
-- `task`: `draft` → `pending` → `backlog` → `in-progress` → `in-review` → `approved` → `done`; gates `in-review` (reject → `in-progress`), `pending` (reject → `draft`)
+- `adr`: —
 
 ### Directives
 
-- `base-rules`: `developer`
+None.
 
 ### Fragments
 
-- `dna`
-- `roles`
+None.
 
 ### Memory templates
 
 - `adr`
-- `task`
 <!-- generated:end what-it-adds -->
 
 <!-- generated:begin parameters -->
@@ -72,7 +72,6 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 | Name | Type | Default | Description |
 |---|---|---|---|
 | `adr_path` | path | `docs/memory/adr/{id}.md` | Where ADRs live |
-| `project_name` | string | required | The project name, dna.yaml project.name |
 <!-- generated:end parameters -->
 
 ## Examples

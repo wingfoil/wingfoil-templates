@@ -5,6 +5,7 @@ import { existsSync, lstatSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { gt, valid } from 'semver';
 
+import { corePack } from './catalog';
 import type { LintContext } from './check-packs';
 import { compatMessages } from './compat';
 import type { Compat } from './compat';
@@ -176,7 +177,7 @@ export function presetChecks(context: LintContext, yaml: LoadedYaml, rule?: stri
       if (found !== undefined) members.set(found.id, found);
     }
   };
-  const foundation = context.packs.get(context.catalog.foundation);
+  const foundation = context.packs.get(corePack(context.catalog));
   if (foundation !== undefined) add(foundation);
   list(data['packs']).forEach((entry, index) => {
     let packId: string;

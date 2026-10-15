@@ -13,7 +13,8 @@ import { composeDocuments } from '../src/compose-documents';
 import type { CheckPacksResult } from '../src/check-packs';
 import { FIXTURES, REPO_ROOT } from './support/paths';
 import {
-  BASE_COMPOSABLE as BASE, DELIVERY, FOUNDATION_COMPOSABLE, KANBAN, SOFTWARE_COMPOSABLE,
+  BASE_COMPOSABLE as BASE, DELIVERY, FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN,
+    SOFTWARE_COMPOSABLE,
   withPackTree,
 } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
@@ -56,15 +57,15 @@ void {
     result.lines.join('\n'));
 }
 
-const CLEAN = [...FOUNDATION_COMPOSABLE, KANBAN];
+const CLEAN = [...FOUNDATION, KANBAN];
 
 describe('npm run check:packs', () => {
   it('passes a clean tree, counting every file it covers', () => {
     const result = lint(CLEAN);
     assert.equal(result.code, 0, result.lines.join('\n'));
     // catalog, compat, each pack's pack.yaml, README.md, CHANGELOG.md, workflows, fragments, and
-    // each pack's example.yaml (task-022).
-    assert.equal(result.lines[0], 'lint: checked 16 files, 0 problems');
+    // each pack's example.yaml (task-022), software's included (task-031).
+    assert.equal(result.lines[0], 'lint: checked 20 files, 0 problems');
   });
 
   it('passes this repository: two files, no problem (acceptance 13)', () => {
@@ -79,10 +80,10 @@ describe('npm run check:packs', () => {
   });
 
   it('reports one sorted line per problem, with the rule id', () => {
-    const result = lint([...FOUNDATION_COMPOSABLE, { ...KANBAN, version: '0.9.0',
+    const result = lint([...FOUNDATION, { ...KANBAN, version: '0.9.0',
       manifest: { requires_capabilities: ['workflow-engine', 'pack-install'] } }]);
     assert.equal(result.code, 1);
-    assert.equal(result.lines[0], 'lint: checked 16 files, 2 problems');
+    assert.equal(result.lines[0], 'lint: checked 20 files, 2 problems');
     assert.deepEqual(result.lines.slice(1).map((line) => line.replace(/:\d+:\d+:/, ':L:C:')), [
       'packs/methodology/kanban/pack.yaml:L:C: capabilities-sorted: methodology/kanban: '
         + 'requires_capabilities must be sorted and unique',
@@ -92,7 +93,8 @@ describe('npm run check:packs', () => {
   });
 
   it('reports a file that fails its schema once, and lints nothing else of its pack', () => {
-    const result = lint([...FOUNDATION_COMPOSABLE, { ...KANBAN, manifest: { version: 'one', name: 'other' } }]);
+    const result = lint([...FOUNDATION, { ...KANBAN, manifest: { version: 'one',
+      name: 'other' } }]);
     assert.equal(result.code, 1, result.lines.join('\n'));
     assert.deepEqual(rules(result), ['schema'], 'pack-name is not reported for a broken pack');
   });
@@ -138,69 +140,71 @@ describe('pack.yaml rules', () => {
   });
 
   it('pack-name: a name other than the id\'s last segment', () => {
-    failsWith('pack-name', [...FOUNDATION_COMPOSABLE, { ...KANBAN, manifest: { name: 'scrum' } }]);
+    failsWith('pack-name', [...FOUNDATION, { ...KANBAN, manifest: { name: 'scrum' } }]);
   });
 
   it('pack-version: below 1.0.0', () => {
-    failsWith('pack-version', [...FOUNDATION_COMPOSABLE, { ...KANBAN, version: '0.3.0' }]);
+    failsWith('pack-version', [...FOUNDATION, { ...KANBAN, version: '0.3.0' }]);
   });
 
   it('requires-self and requires-twice', () => {
-    failsWith('requires-self', [...FOUNDATION_COMPOSABLE, { ...KANBAN, requires: ['base@^1', 'methodology/kanban@^1'] }]);
-    failsWith('requires-twice', [...FOUNDATION_COMPOSABLE, { id: 'blueprint/api' }, { ...KANBAN,
+    failsWith('requires-self', [...FOUNDATION, { ...KANBAN, requires: ['base@^1',
+      'methodology/kanban@^1'] }]);
+    failsWith('requires-twice', [...FOUNDATION, { id: 'blueprint/api' }, { ...KANBAN,
       requires: ['base@^1', 'blueprint/api@^1', 'blueprint/api@^1.2'] }]);
   });
 
   it('conflicts-self', () => {
-    failsWith('conflicts-self', [...FOUNDATION_COMPOSABLE, { ...KANBAN, conflicts: ['methodology/kanban'] }]);
+    failsWith('conflicts-self', [...FOUNDATION, { ...KANBAN, conflicts: ['methodology/kanban'] }]);
   });
 
   it('capabilities-sorted', () => {
-    failsWith('capabilities-sorted', [...FOUNDATION_COMPOSABLE, { ...KANBAN,
+    failsWith('capabilities-sorted', [...FOUNDATION, { ...KANBAN,
       manifest: { requires_capabilities: ['workflow-engine', 'pack-install'] } }]);
-    assert.equal(lint([...FOUNDATION_COMPOSABLE, { ...KANBAN,
+    assert.equal(lint([...FOUNDATION, { ...KANBAN,
       manifest: { requires_capabilities: ['pack-install', 'workflow-engine'] } }]).code, 0);
   });
 });
 
 describe('inventory and formats rules', () => {
   it('fragment-order', () => {
-    failsWith('fragment-order', [...FOUNDATION_COMPOSABLE, { ...KANBAN, fragments: ['memory', 'roles'] }]);
+    failsWith('fragment-order', [...FOUNDATION, { ...KANBAN, fragments: ['memory', 'roles'] }]);
   });
 
   it('contents: a listed file missing, a present file unlisted', () => {
-    failsWith('contents', [...FOUNDATION_COMPOSABLE, { ...KANBAN, omitFiles: ['workflows/delivery.yaml'] }]);
-    failsWith('contents', [...FOUNDATION_COMPOSABLE, { ...KANBAN,
+    failsWith('contents', [...FOUNDATION, { ...KANBAN, omitFiles: ['workflows/delivery.yaml'] }]);
+    failsWith('contents', [...FOUNDATION, { ...KANBAN,
       extraFiles: { 'workflows/extra.yaml': 'format: 1\nname: extra\nkind: sub\n' } }]);
   });
 
   it('formats: a declared kind the pack does not ship, a file of another format', () => {
-    failsWith('formats', [...FOUNDATION_COMPOSABLE, { ...KANBAN, manifest: { formats: { workflow: 1, dna: 1 } } }]);
-    failsWith('formats', [...FOUNDATION_COMPOSABLE, { ...KANBAN,
+    failsWith('formats', [...FOUNDATION, { ...KANBAN, manifest: { formats: { workflow: 1,
+      dna: 1 } } }]);
+    failsWith('formats', [...FOUNDATION, { ...KANBAN,
       extraFiles: { 'workflows/delivery.yaml': DELIVERY.replace('format: 1', 'format: 2') } }]);
-    failsWith(['formats', 'integer'], [...FOUNDATION_COMPOSABLE, { ...KANBAN,
+    failsWith(['formats', 'integer'], [...FOUNDATION, { ...KANBAN,
       extraFiles: { 'workflows/delivery.yaml': DELIVERY.replace('format: 1', 'format: 1.0') } }]);
   });
 
   it('asset-id: an identifier other than the file stem', () => {
-    failsWith('asset-id', [...FOUNDATION_COMPOSABLE, { ...KANBAN, directives: ['wip'],
+    failsWith('asset-id', [...FOUNDATION, { ...KANBAN, directives: ['wip'],
       extraFiles: { 'directives/wip.md': '---\nid: limits\nformat: 1\n---\n# wip\n' } }]);
   });
 
   it('parse: a file that is not YAML', () => {
-    failsWith('parse', [...FOUNDATION_COMPOSABLE, { ...KANBAN,
+    failsWith('parse', [...FOUNDATION, { ...KANBAN,
       extraFiles: { 'workflows/delivery.yaml': 'format: 1\nname: [delivery\n' } }]);
   });
 });
 
 describe('slot rules', () => {
   it('slot: a methodology without delivery, a pack shipping a slot it does not fill', () => {
-    failsWith('slot', [...FOUNDATION_COMPOSABLE, { ...KANBAN, workflows: ['flow'] }]);
-    failsWith('slot', [...FOUNDATION_COMPOSABLE, KANBAN, { id: 'blueprint/web', workflows: ['release'] }]);
+    failsWith('slot', [...FOUNDATION, { ...KANBAN, workflows: ['flow'] }]);
+    failsWith('slot', [...FOUNDATION, KANBAN, { id: 'blueprint/web', workflows: ['release'] }]);
   });
 
   it('slot: a slot workflow that is not kind: sub', () => {
-    failsWith('slot', [...FOUNDATION_COMPOSABLE, { ...KANBAN,
+    failsWith('slot', [...FOUNDATION, { ...KANBAN,
       extraFiles: { 'workflows/delivery.yaml': DELIVERY.replace('kind: sub', 'kind: main') } }]);
   });
 
@@ -228,7 +232,7 @@ describe('parameter rules', () => {
 
   it('parameter-default: an integer default not written as a base-10 integer', () => {
     // A default of the wrong type is the schema's (pack.schema.json types the defaults).
-    failsWith(['integer', 'parameter-default'], [...FOUNDATION_COMPOSABLE, { ...declares({
+    failsWith(['integer', 'parameter-default'], [...FOUNDATION, { ...declares({
       wip: { type: 'integer', default: 3, description: 'x' } }) }], (root) => {
       const file = join(root, 'packs', 'methodology', 'kanban', 'pack.yaml');
       execFileSync('sed', ['-i', 's/default: 3/default: 3.0/', file]);
@@ -236,11 +240,12 @@ describe('parameter rules', () => {
   });
 
   it('parameter-scope: a reference outside the pack and its requires', () => {
-    failsWith('parameter-scope', [...FOUNDATION_COMPOSABLE, { ...KANBAN,
+    failsWith('parameter-scope', [...FOUNDATION, { ...KANBAN,
       extraFiles: { 'workflows/delivery.yaml': `${DELIVERY}description: "{{wip}}"\n` } }]);
     const base = { ...BASE, manifest: { parameters: {
       wip: { type: 'integer', default: 2, description: 'x' } } } };
-    assert.equal(lint([base, { ...KANBAN, extraFiles: { 'workflows/delivery.yaml':
+    assert.equal(lint([base, SOFTWARE_COMPOSABLE, { ...KANBAN,
+      extraFiles: { 'workflows/delivery.yaml':
       `${DELIVERY}limit: {{wip}}\n` } }]).code, 0,
     'a parameter of a required pack is in scope (spec-001 §8.1)');
   });
@@ -322,18 +327,18 @@ describe('YAML rules, every file', () => {
       const file = join(root, 'compat.yaml');
       writeFileSync(file, readFileSync(file, 'utf8').replace('dna: [1]', 'dna: [1.0]'));
     });
-    failsWith('integer', [...FOUNDATION_COMPOSABLE, { ...KANBAN, fragments: ['roles'],
+    failsWith('integer', [...FOUNDATION, { ...KANBAN, fragments: ['roles'],
       extraFiles: { 'fragments/roles.yaml': 'format: 1\nlimits: { wip: 2.0 }\n' } }]);
   });
 
   it('integer: leaves non-integer numbers and strings alone', () => {
-    assert.equal(lint([...FOUNDATION_COMPOSABLE, { ...KANBAN, fragments: ['roles'],
+    assert.equal(lint([...FOUNDATION, { ...KANBAN, fragments: ['roles'],
       extraFiles: { 'fragments/roles.yaml': 'format: 1\nratio: 1.5\nlabel: "2.0"\n' } }]).code,
     0);
   });
 
   it('nan: .nan or .inf anywhere', () => {
-    failsWith('nan', [...FOUNDATION_COMPOSABLE, { ...KANBAN, fragments: ['roles'],
+    failsWith('nan', [...FOUNDATION, { ...KANBAN, fragments: ['roles'],
       extraFiles: { 'fragments/roles.yaml': 'format: 1\nlimits: [.nan, .inf]\n' } }]);
   });
 });
@@ -431,11 +436,13 @@ describe('preset rules', () => {
   it('preset-value: a value of the wrong YAML type, or a parameter nobody declares', () => {
     const declaring = { ...KANBAN, manifest: { parameters: {
       wip: { type: 'integer', default: 2, description: 'x' } } } };
-    failsWith('preset-value', [...FOUNDATION_COMPOSABLE, declaring], (root) => write(root, 'presets/small.yaml',
+    failsWith('preset-value', [...FOUNDATION, declaring], (root) => write(root,
+      'presets/small.yaml',
       `${GOLDEN_PRESET}parameters:\n  wip: "3"\n`));
-    failsWith('preset-value', [...FOUNDATION_COMPOSABLE, declaring], (root) => write(root, 'presets/small.yaml',
+    failsWith('preset-value', [...FOUNDATION, declaring], (root) => write(root,
+      'presets/small.yaml',
       `${GOLDEN_PRESET}parameters:\n  colour: red\n`));
-    assert.equal(lint([...FOUNDATION_COMPOSABLE, declaring], (root) => write(root, 'presets/small.yaml',
+    assert.equal(lint([...FOUNDATION, declaring], (root) => write(root, 'presets/small.yaml',
       `${GOLDEN_PRESET}parameters:\n  wip: 3\n`)).code, 0);
   });
 
@@ -515,19 +522,22 @@ const FLOW = (phases: string, head = ''): string =>
 
 describe('F3.5 workflow rules', () => {
   it('passes phases that declare include, actions or produces', () => {
-    const result = lint([...FOUNDATION_COMPOSABLE, withWorkflow('flow', FLOW('  - { name: a, actions: [memory.submit] }\n'
+    const result = lint([...FOUNDATION, withWorkflow('flow',
+      FLOW('  - { name: a, actions: [memory.submit] }\n'
       + '  - { name: b, produces: [docs/b.md] }\n  - { name: c, include: retrospective }\n'))]);
     assert.equal(result.code, 0, result.lines.join('\n'));
   });
 
   it('empty-phase: a phase that declares none of include, actions and produces', () => {
-    failsWith('empty-phase', [...FOUNDATION_COMPOSABLE, withWorkflow('flow', FLOW('  - { name: a, description: x }\n'))]);
+    failsWith('empty-phase', [...FOUNDATION, withWorkflow('flow',
+      FLOW('  - { name: a, description: x }\n'))]);
   });
 
   it('include: a path, a file name, or a workflow neither shipped nor a slot', () => {
-    failsWith('include', [...FOUNDATION_COMPOSABLE, withWorkflow('flow',
+    failsWith('include', [...FOUNDATION, withWorkflow('flow',
       FLOW('  - { name: a, include: workflows/built-in/retrospective.yaml }\n'))]);
-    failsWith('include', [...FOUNDATION_COMPOSABLE, withWorkflow('flow', FLOW('  - { name: a, include: hotfix }\n'))]);
+    failsWith('include', [...FOUNDATION, withWorkflow('flow',
+      FLOW('  - { name: a, include: hotfix }\n'))]);
   });
 
   it('include: a workflow of a pack that is required only transitively is not enough', () => {
@@ -536,45 +546,46 @@ describe('F3.5 workflow rules', () => {
     const cli = { id: 'blueprint/cli', requires: ['base@^1', 'blueprint/web@^1'],
       workflows: ['ship'], extraFiles: { 'workflows/ship.yaml': 'format: 1\nname: ship\n'
         + 'kind: sub\nphases:\n  - { name: a, include: api-review }\n' } };
-    failsWith('include', [...FOUNDATION_COMPOSABLE, KANBAN, api, web, cli]);
+    failsWith('include', [...FOUNDATION, KANBAN, api, web, cli]);
   });
 
   it('life-cycle-includes: software\'s sw-life-cycle and a methodology\'s delivery (§9)', () => {
     failsWith('life-cycle-includes', [BASE, { ...SOFTWARE_COMPOSABLE, extraFiles: {
       'workflows/sw-life-cycle.yaml': 'format: 1\nname: sw-life-cycle\nkind: main\nphases:\n'
         + '  - { name: delivery, include: delivery }\n' } }, KANBAN]);
-    failsWith('life-cycle-includes', [...FOUNDATION_COMPOSABLE, { ...KANBAN, extraFiles: {
+    failsWith('life-cycle-includes', [...FOUNDATION, { ...KANBAN, extraFiles: {
       'workflows/delivery.yaml': DELIVERY.replace(/ {2}- \{ name: retrospective[^\n]*\n/, '') } }]);
   });
 
   it('role: a phase role or approval.by_role not in team.roles', () => {
     const dna = 'format: 1\nproject:\n  name: test\nteam:\n  roles:\n    - { name: approver }\n';
     const base = { ...BASE, extraFiles: { ...BASE.extraFiles, 'fragments/dna.yaml': dna } };
-    assert.equal(lint([base, withWorkflow('flow', FLOW('  - { name: a, produces: [x.md], '
+    assert.equal(lint([base, SOFTWARE_COMPOSABLE, withWorkflow('flow',
+      FLOW('  - { name: a, produces: [x.md], '
       + 'approval: { by_role: approver } }\n'))]).code, 0);
-    failsWith('role', [base, withWorkflow('flow',
+    failsWith('role', [base, SOFTWARE_COMPOSABLE, withWorkflow('flow',
       FLOW('  - { name: a, produces: [x.md], role: developer }\n'))]);
-    failsWith('role', [base, withWorkflow('flow',
+    failsWith('role', [base, SOFTWARE_COMPOSABLE, withWorkflow('flow',
       FLOW('  - { name: a, produces: [x.md], approval: { by_role: owner } }\n'))]);
   });
 
   it('memory-type: an element or iterate_over that no memory fragment declares', () => {
-    failsWith('memory-type', [...FOUNDATION_COMPOSABLE, withWorkflow('flow',
+    failsWith('memory-type', [...FOUNDATION, withWorkflow('flow',
       FLOW('  - { name: a, produces: [x.md] }\n', 'element: ticket\n'))]);
-    failsWith('memory-type', [...FOUNDATION_COMPOSABLE, withWorkflow('flow',
+    failsWith('memory-type', [...FOUNDATION, withWorkflow('flow',
       FLOW('  - { name: a, iterate_over: ticket, include: retrospective }\n'))]);
   });
 
   it('directive: a roles fragment naming a directive nobody ships', () => {
-    failsWith('directive', [...FOUNDATION_COMPOSABLE, { ...KANBAN, fragments: ['roles'],
+    failsWith('directive', [...FOUNDATION, { ...KANBAN, fragments: ['roles'],
       extraFiles: { 'fragments/roles.yaml': 'format: 1\nassignments:\n  developer: [tdd]\n' } }]);
-    assert.equal(lint([...FOUNDATION_COMPOSABLE, { ...KANBAN, fragments: ['roles'], directives: ['tdd'],
+    assert.equal(lint([...FOUNDATION, { ...KANBAN, fragments: ['roles'], directives: ['tdd'],
       extraFiles: { 'fragments/roles.yaml': 'format: 1\nassignments:\n  developer: [tdd]\n' } }])
       .code, 0);
   });
 
   it('the composer refuses what these rules reject (spec-001 §17, §18)', () => {
-    withPackTree([...FOUNDATION_COMPOSABLE, withWorkflow('flow', FLOW('  - { name: a, description: x }\n'))],
+    withPackTree([...FOUNDATION, withWorkflow('flow', FLOW('  - { name: a, description: x }\n'))],
       (root) => {
         copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
         assert.throws(() => composeDocuments(root, loadCatalog(join(root, 'catalog.yaml')),
@@ -589,12 +600,12 @@ describe('F3.5 overlays and lone packs', () => {
   const overlay = (id: string, extra: Partial<PackSpec> = {}): PackSpec => ({ id, ...extra });
 
   it('passes overlays that compose with every methodology', () => {
-    const result = lint([...FOUNDATION_COMPOSABLE, KANBAN, overlay('team-mode/solo'), overlay('stage/mvp')]);
+    const result = lint([...FOUNDATION, KANBAN, overlay('team-mode/solo'), overlay('stage/mvp')]);
     assert.equal(result.code, 0, result.lines.join('\n'));
   });
 
   it('overlay: a team-mode and a stage that ship one directive (spec-001 §7.6)', () => {
-    const result = lint([...FOUNDATION_COMPOSABLE, KANBAN, overlay('team-mode/solo', directive('review')),
+    const result = lint([...FOUNDATION, KANBAN, overlay('team-mode/solo', directive('review')),
       overlay('stage/mvp', directive('review'))]);
     assert.equal(result.code, 1, result.lines.join('\n'));
     assert.deepEqual(rules(result), ['overlay']);
@@ -605,7 +616,8 @@ describe('F3.5 overlays and lone packs', () => {
   });
 
   it('compose: a pack no combination reaches is composed with base and a methodology', () => {
-    failsWith('compose', [...FOUNDATION_COMPOSABLE, KANBAN, { id: 'blueprint/web', ...directive('security') }]);
+    failsWith('compose', [...FOUNDATION, KANBAN, { id: 'blueprint/web',
+      ...directive('security') }]);
   });
 });
 
@@ -614,7 +626,7 @@ describe('F3.5 secrets', () => {
     const labelled = { ...KANBAN, manifest: { parameters: {
       label: { type: 'string', description: 'x' } } },
       extraFiles: { 'workflows/delivery.yaml': `${DELIVERY}description: "{{label}}"\n` } };
-    withPackTree([...FOUNDATION_COMPOSABLE, labelled], (root) => {
+    withPackTree([...FOUNDATION, labelled], (root) => {
       copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
       const value = ['Zm9vYmFyQmF6', 'cXV4MTIzNDU2', 'Nzg5MEFC'].join('');
       assert.doesNotThrow(() => composeDocuments(root, loadCatalog(join(root, 'catalog.yaml')),
@@ -624,9 +636,10 @@ describe('F3.5 secrets', () => {
 
   it('secret: a private key block in a pack file, and the composer refuses it too', () => {
     const block = ['-----BEGIN ', 'OPENSSH PRIVATE', ' KEY-----'].join('');
-    failsWith('secret', [...FOUNDATION_COMPOSABLE, { ...KANBAN, extraFiles: { 'README.md': `${KANBAN_README}\n${block}\n` } }]);
+    failsWith('secret', [...FOUNDATION, { ...KANBAN,
+      extraFiles: { 'README.md': `${KANBAN_README}\n${block}\n` } }]);
     const leaky = withWorkflow('flow', FLOW(`  - { name: a, produces: [x.md], note: "${block}" }\n`));
-    withPackTree([...FOUNDATION_COMPOSABLE, leaky], (root) => {
+    withPackTree([...FOUNDATION, leaky], (root) => {
       copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
       assert.throws(() => composeDocuments(root, loadCatalog(join(root, 'catalog.yaml')),
         ['methodology/kanban'], {}), /private key block/);

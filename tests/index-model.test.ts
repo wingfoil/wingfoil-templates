@@ -115,8 +115,8 @@ describe('buildIndex on the fixture catalog (CB-4)', () => {
     const kanban = pack('methodology/kanban');
     assert.deepEqual(kanban.versions.map((version) => [version.version, version.tag,
       version.requires, version.conflicts]), [
-      ['1.0.0', 'methodology/kanban@1.0.0', ['base@^1'], []],
-      ['1.1.0', 'methodology/kanban@1.1.0', ['base@^1.0.0'], ['blueprint/web']]]);
+      ['1.0.0', 'methodology/kanban@1.0.0', ['base@^1', 'software@^1'], []],
+      ['1.1.0', 'methodology/kanban@1.1.0', ['base@^1.0.0', 'software@^1'], ['blueprint/web']]]);
     assert.equal(kanban.versions[1]?.readme_url,
       `${RAW}/refs/tags/methodology/kanban@1.1.0/packs/methodology/kanban/README.md`);
     assert.equal(kanban.versions[1]?.manifest_url,
@@ -174,7 +174,8 @@ describe('buildIndex on the fixture catalog (CB-4)', () => {
         entry['id'] === 'methodology/kanban');
       ((kanban?.['versions'] as Doc[])[1] as Doc)['requires'] = ['base@^1'];
       writeFileSync(file, stringify(catalog));
-      assert.deepEqual(buildIndex(repo.dir).packs[1]?.versions[1]?.requires, ['base@^1.0.0']);
+      assert.deepEqual(buildIndex(repo.dir).packs[1]?.versions[1]?.requires, ['base@^1.0.0',
+        'software@^1']);
     } finally {
       writeFileSync(file, original);
     }
