@@ -47,16 +47,25 @@ Read at `ffa9bf6b` on 2026-10-15:
    §12. Until then §11's prose and its example differ, which this plan's Execution Notes record.
 2. **§7.5 admits more of WingFoil's `memory.yaml` keys**, with add-or-tighten rules:
    - `name`, `description`, `tags`, `amendable`, and `fields` (an authoring key WingFoil passes
-     through) are set by the defining pack only; a later pack's value is refused, also when the
-     defining pack left the key out;
-   - `states.waiting`, `states.returns` and `states.limits` are declared by the defining pack; a
-     later pack may add to `waiting` only the states it inserts itself, may add a `limits` entry or
-     lower an existing one, and must leave `returns` equal;
+     through) are set by the defining pack only; a later pack's value must be equal (§7.2), and is
+     refused when the defining pack left the key out;
+   - `states.waiting`, `states.returns` and `states.limits` are declared by the defining pack. A
+     pack that gives a type deriving from `defaults` its own machine is tightening it, not defining
+     it. A later pack (§7.5's merge):
+     - may add to `waiting` only its own states, those not on the base side at that point of the
+       composition; repeating an entry already present is a no-op; a tightening of `defaults` that
+       does so reaches every type deriving from `defaults`;
+     - may add a `limits` entry on a state that has none, or lower one: `limits.<state>` merges as
+       the minimum of the two sides, its key a state of the merged sequence, its value a positive
+       integer;
+     - leaves `returns` as it is: an incoming `states` without `returns` keeps it, one with
+       `returns` must equal the base side;
+     - may still add a gate on a state in `waiting`, as §7.5 allows for any state without a gate;
    - `template.frontmatter.not_applicable_allowed` and `template.frontmatter.lists` are sets a later
      pack may add to only for fields the same fragment adds to `required`, so an earlier pack's
      required field is never loosened;
    - `template.frontmatter.exempt` is not allowed in a pack's `memory.yaml` fragment in format 1:
-     it names element ids, which are project values.
+     it names element ids, which are project values; §7.5's failures and §18 both list it.
 3. **`retrospective` › `capture` before W9.** The phase lists a change of governance as a point,
    ruled by `governance-evolution`; until this repository adopts `base` (W9), by a decision-log
    under `decision-log-ingest`, applied by a dl actions plan.
@@ -87,11 +96,14 @@ conditional:
 - `with` is an entry of §6.3's syntax. It is a requirement that counts only when the composition
   holds that pack: it never adds a pack, so resolution stays one pass; a `software` version outside
   its range is an unsatisfied requirement, an error, not a reason to drop the part. `with` must not
-  repeat an id of the pack's `requires`.
+  repeat an id of the pack's `requires`, and the pack must not `conflict` with it. It counts as a
+  requirement for §7.1's rule against requiring a later pack.
 - The entry's `contents` may list `workflows` and `directives` only. A file is listed in one place,
   the pack's `contents` or the entry's, and §6.4's check that `contents` matches the files present
   covers both together. Without `software` the composer leaves those files out, and the generated
-  `include` with them (§7.7).
+  `include` with them (§7.7). With `software`, the entry's workflows follow the pack's own in
+  `include` and in the copied files, each list in its written order; directives likewise (§6.4,
+  §7.7).
 - Nothing outside the entry references the entry's workflows or directives (fragments, unconditional
   workflows, the roles fragment's assignments); `software`'s parameters, types, workflows and
   directives are used only inside the entry (§8.1's scope, checked per part). The AGENTS.md section
@@ -100,6 +112,9 @@ conditional:
   `bug` or `release`); a new open point **O14** records it.
 - A catalog version entry copies `conditional` (its `with`), as it copies `requires`, so a resolver
   needs no fetch.
+- The one-owner rule (§7.6) and the slot rule (§9) are checked on the composition with `software`,
+  the matrix's leg with `software` (§15). No phase pack carries the entry, since it requires
+  `software` (§9 says so).
 - A methodology ships `delivery` in its conditional entry, never in `contents`. A composition with
   `software` holds exactly one methodology; a composition without it holds at most one, which
   contributes no `delivery`.
@@ -123,8 +138,8 @@ All work happens on branch `dl/dl-022-actions`, from `main` at `b296a40`, one co
 | 2 | spec-001 §7.1, §7.3, §7.5, §8.1, §9, §10 | the order `base`, `software`, then the axes; §7.3's and §8.1's examples read with two foundation packs; `defaults` still `base`'s only; the keys of ruling 2; the slot defaults and `sw-life-cycle` shipped by `software`, `retrospective` and `governance-evolution` by `base`; `delivery` required only with `software`; `software`'s AGENTS.md section opens with a level-2 heading | S2–S4, ruling 2 |
 | 3 | spec-001 §11, §15, §18 | `foundation` names both packs; the `methodology` axis required only with `software` (prose only, ruling 1, its data form named for the next plan's schema); the slots' `default` names `software`; presets: the foundation packs may be omitted, `software` only when a listed pack requires it unconditionally, and the methodology cardinality judged on the resolved composition; §15's erratum (F-030); §18: `sw-life-cycle` and the slot defaults only from `software`, `retrospective` and `governance-evolution` only from `base`, the requirement rules of row 1, the preset checks, `exempt` refused in a fragment | S3, ruling 2, dl-020 |
 | 4 | spec-001 §5, §6.2, §6.3, §6.4, §7.7, §9, §10, §11, §15, §16, §17, §18 | the conditional part (ruling 5): §6.2's field table and example, the rules above, the catalog version entry, the matrix with and without `software` (§15, `pack-compatibility`), the composer's steps 1, 3 and 5 (§17), the §18 checks, O14; ruling 6 in §5 | S3's open points, rulings 5–6 |
-| 5 | spec-001 §5, §12, §16, Execution Notes | the v0.3 formats: format 1 for every kind (dl-149); adapter manifests and `bindings.yaml` are kinds a pack does not ship, so `config-arg` leaves the pack format unchanged and `compat.yaml`'s `kinds` stays as it is; a pack uses no key unknown to a release its computed range claims, enforced by the zero-warning matrix and, once one exists, a capability; O4 settled (a kind at format 1, not shipped by packs in format 1), O10, O12 and O13 read again at `ffa9bf6b`; the Execution Note of this amendment | the v0.3 gate |
-| 6 | spec-002 §2, §3, §3.3, Execution Notes | `Axis: foundation` for both foundation packs; section 4 of `software`'s README lists what it adds or tightens over `base`; the index's foundation section lists both, `base` first; §3.3's derived `axis` empty for both; the note of ruling 4 | dl-022 › spec-002 |
+| 5 | spec-001 §5, §12, §16, Execution Notes | the v0.3 formats: format 1 for every kind (dl-149); adapter manifests and `bindings.yaml` are kinds a pack does not ship, so `config-arg` leaves the pack format unchanged and `compat.yaml`'s `kinds` stays as it is; a pack uses no key unknown to a release its computed range claims, enforced by the zero-warning matrix and, once one exists, a capability; §12's `kinds` described as the seven dl-149 kinds a composition involves; O4 settled (a kind at format 1, not shipped by packs in format 1), O10, O12 and O13 read again at `ffa9bf6b`; the Execution Note of this amendment | the v0.3 gate |
+| 6 | spec-002 §2, §3, §3.3, Execution Notes | `Axis: foundation` for both foundation packs; section 4 of `software`'s README lists what it adds or tightens over `base`; the index's foundation section lists both, `base` first; §3.3's derived `axis` `null` for both; the note of ruling 4 | dl-022 › spec-002 |
 | 7 | `06_features.md` (Version 1.4 → 1.5, Date set) | F4.1 rewritten as dl-022 S2; a new F4.8 for `software` (S3); F6.1 the hand-adoption steps of both packs; F6.2 the parameters of both packs for every governed project, software or not; the review note's dependency list | S1–S3, S6 |
 | 8 | `07_sequencer.md` (Version 1.3 → 1.4, Date set) | the M2 row (both foundation packs and `governance/wingfoil-dogfood`); W8 (both packs; S6's criterion); W9 (this repository adopts both); the note "The first publication is `base`" | S6, dl-003 D10 as amended |
 | 9 | `pack-authoring`; `.wingfoil/memory.yaml` (4 → 5), the `pack` type's comment; `retrospective.yaml` (2 → 3), its `capture` phase and header comment | `foundation` is the axis value of both foundation packs' elements; every pack requires `base`, and the packs of row 1 require `software`; the conditional part; the slot rule names `software`; `capture` as ruling 3 | dl-004 1(a), dl-006 R2 as amended, rulings 3, 5 |
@@ -162,3 +177,8 @@ Then:
   `waiting`, `returns` and `limits`; the host's precedent; the sections of rows 1–4; dl-015's note;
   the B7 citation). The approver ruled on the points that change a decision (rulings 2, 5, 6 and the
   host); amended.
+- 2026-10-15: re-review: approve after amendments, nothing blocking; every finding of the first
+  review resolved or ruled. Its new findings (the merge of `waiting`, `limits` and `returns`; the
+  set-once keys under §7.2; the order of the conditional part's files; `with` under §7.1, §6.3, §7.6
+  and §9; §12's kinds; §3.3's `null`) make the rulings exact without changing them, so no further
+  re-review; amended. Plan submitted.
