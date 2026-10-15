@@ -35,7 +35,10 @@ The text it implements:
 - §11: a catalog version entry copies `conditional` with its `with` only;
 - §15 and `pack-compatibility`: a pack with a conditional part is validated with and without
   `software` (R2: `validate` derives the other leg; without a methodology the leg with `software`
-  is skipped with a report line; the lint's compositions likewise; R4: the directive's sentence).
+  is skipped with a report line; the lint's compositions likewise; R4: the directive's sentence);
+- plan-039 R5–R7 (the approver, 2026-10-15): the `[-software]` leg drops a preset's values for
+  absent packs and names them; publication fails without a leg with `software` that ran; an empty
+  conditional part is refused.
 
 What exists, at `main` `6e35a92` (task-031 done):
 - the schemas accept `conditional` (pack and catalog version entry) and F-031 reports it; the
@@ -92,7 +95,8 @@ Run from a clean clone of `task/task-032-conditional`, on Node.js 22.21 and the 
    existing rules, kept, as characterizations); a methodology that does not require `software`
    and ships `delivery` in `contents`, or that requires it and ships `delivery` in the entry; an
    entry that ships a slot it does not fill, `sw-life-cycle`, `retrospective` or
-   `governance-evolution`; `formats` missing a kind only the entry ships, and no `formats`
+   `governance-evolution`; an entry whose `contents` lists no workflow and no directive (R7);
+   `formats` missing a kind only the entry ships, and no `formats`
    problem for a kind only the entry ships. The entry's files may use `software`'s content and
    parameters, in the lint and in the composer (`parameterScopes` per part), tested.
 4. **Composition** (tests in `tests/compose-documents.test.ts`, `tests/output.test.ts`): with
@@ -113,7 +117,10 @@ Run from a clean clone of `task/task-032-conditional`, on Node.js 22.21 and the 
      part, the other leg: with `software` added (`<label>[+software]`), or without it when it is
      present and no pack requires it unconditionally (`<label>[-software]`); each leg composed
      twice and run through the matrix; without a methodology, `matrix <label>[+software]: skipped,
-     no methodology`;
+     no methodology`; the `[-software]` leg drops a preset's values for parameters of packs absent
+     from it, and its composition line names them (R5);
+   - in publication mode, `validate` fails when a pack with a conditional part has no composition
+     with `software` that ran (R6), naming the pack;
    - `validate:publication` does the same (it shares `runValidate`: a characterization);
    - `writeEvidence` lists the legs' compositions and releases and counts no skip line as a run (a
      characterization of the existing regexes, with the `[+software]` label);

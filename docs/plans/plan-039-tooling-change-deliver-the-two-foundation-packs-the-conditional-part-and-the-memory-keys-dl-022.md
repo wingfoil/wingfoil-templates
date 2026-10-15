@@ -74,6 +74,14 @@ And the approver's rulings in chat on 2026-10-15, on this plan's proposal:
   in a separate commit on task-032's branch, the task that implements it. Like `pack-authoring`,
   the directive carries no `version:` key.
 
+Then, at task-032's body review, on 2026-10-15:
+- **R5, a preset's values in the leg without `software`.** The `[-software]` leg drops the values
+  a preset sets for parameters of packs absent from it, and its report line names them.
+- **R6, publication needs the leg with `software`.** In publication mode, `validate` fails when a
+  pack with a conditional part has no composition with `software` that ran.
+- **R7, an empty conditional part is refused** by the lint, a rule the specification does not
+  state: folded back into spec-001 at the wave's close with R3 (dl-020 R2).
+
 **The tasks.** Four tooling tasks (`pack: ""`), split at proposal so that each has its own red
 first and a reviewable diff (dl-018 R3):
 
