@@ -69,3 +69,7 @@ On the branch `dl/dl-022-base-scope`, from `main` at `52f8221`.
   with the approver's ruling on `delivery` (`c8c92a9`); re-reviewed (one line too long, and the
   open points of the conditional `delivery` for the spec-001 amendment), amended. Checks:
   `workflow list` and `npm run lint` exit 0.
+- 2026-10-15: dl-022 submitted `pending`; CI run 38634829444 on `98ed322`, conclusion `success`
+  for `validate (22.12.0)` and `validate (22.21.0)`. The approver approved dl-022 (`7fea94d`) and
+  gave the merge OK in chat; `--no-ff` merge into `main`, push, branch removed. This plan goes
+  `active → done`.
