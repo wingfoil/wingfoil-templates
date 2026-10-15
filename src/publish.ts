@@ -364,6 +364,10 @@ function afterTag(tree: string, pack: string, tag: string, version: string,
     requires_capabilities: manifest.requires_capabilities ?? [], requires: manifest.requires ?? [],
     conflicts: manifest.conflicts ?? [], wingfoil: range,
   };
+  // A conditional part is copied with its `with` only, as `requires` is (spec-001 §6.5, §11).
+  if (manifest.conditional !== undefined) {
+    entry['conditional'] = manifest.conditional.map((part) => ({ with: part.with }));
+  }
   const transitions = transitionsTo(tree, pack);
   if (transitions.length > 0) {
     entry['transitions'] = Object.fromEntries(transitions.map((file) => [

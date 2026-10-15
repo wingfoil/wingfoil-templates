@@ -104,8 +104,10 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
       manifest: { conditional: [{ with: 'software@^1', contents: { workflows: ['delivery'] } }] },
       extraFiles: { 'workflows/delivery.yaml': DELIVERY } };
     withRepository((repo) => {
-      for (const pack of ['base', 'software', 'methodology/kanban', 'methodology/flow']) {
-        const result = publish(repo, ['--pack', pack, pack]);
+      // software stays unpublished: the index admits it from task-033 (plan-039).
+      for (const [pack, entry] of [['base', 'methodology/kanban'],
+        ['methodology/kanban', 'methodology/kanban'], ['methodology/flow', 'methodology/flow']]) {
+        const result = publish(repo, ['--pack', pack ?? '', entry ?? '']);
         assert.equal(result.code, 0, `${pack}: ${result.lines.join('\n')}`);
       }
       const versionOf = (id: string): Doc => ((catalogOf(repo).find((entry) => entry['id'] === id)
