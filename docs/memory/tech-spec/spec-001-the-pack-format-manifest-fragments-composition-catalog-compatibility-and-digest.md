@@ -269,19 +269,20 @@ The composer orders the packs of a composition as follows. The order does not de
 packs were given.
 
 1. `base`;
-2. the `methodology` pack;
-3. the `phase` packs, in slot order: `inception`, `specification`, `release`, `end-of-life`;
-4. the `blueprint` packs;
-5. the `governance` packs;
-6. the `team-mode` pack;
-7. the `stage` pack.
+2. `software`, when the composition holds it;
+3. the `methodology` pack;
+4. the `phase` packs, in slot order: `inception`, `specification`, `release`, `end-of-life`;
+5. the `blueprint` packs;
+6. the `governance` packs;
+7. the `team-mode` pack;
+8. the `stage` pack.
 
 Within an axis of cardinality "many", the packs are sorted topologically on `requires` (Kahn's
 algorithm): at each step, the next pack is the one with the smallest catalog pack id, in byte
 order, among the packs whose requirements in that axis are already placed.
 
 A `requires` that points to a pack later in this order (for example a blueprint requiring a stage)
-is an error.
+is an error. A conditional part's `with` counts as a requirement for this rule (§6.5).
 
 ### 7.2 General merge rules
 
@@ -318,7 +319,7 @@ belong to the project (WingFoil task-183).
 
 | Key | Rule |
 |---|---|
-| `project.*` | Scalars, set once. In practice `base` sets them from parameters and the methodology sets `project.methodology`. |
+| `project.*` | Scalars, set once. In practice `base` sets them from parameters and the methodology, when there is one, sets `project.methodology`. |
 | `modules` | Keyed list by `name`. |
 | `stacks.technologies`, `stacks.methodologies` | Keyed lists by `name`. |
 | `team.members`, `team.agents`, `team.roles` | Keyed lists by `name`. Within an item, `roles` and `executes_as` are sets. |
@@ -342,7 +343,9 @@ top-level key fails in format 1.
 
 **Defining and tightening.**
 - A type is **defined** by the first pack that declares it, with all its keys: `path`, `id_pattern`,
-  `template`, and optionally `states`.
+  `template`, and optionally `name`, `description`, `tags`, `amendable`, `fields` (an authoring key
+  WingFoil passes through) and `states`. `states` may hold `sequence`, `gates`, `waiting`, `returns`
+  and `limits`, as WingFoil's `memory.yaml` declares them.
 - `defaults` is defined by `base`.
 - A later pack may **tighten** a type, or `defaults`, by the rules below, and may change nothing
   else. A key not listed here fails.
@@ -350,9 +353,18 @@ top-level key fails in format 1.
 | Key | A later pack may |
 |---|---|
 | `path`, `id_pattern`, `template.file` | nothing: an incoming value must be equal |
+| `name`, `description`, `tags`, `amendable`, `fields` | nothing: an incoming value must be equal, and a value for a key the defining pack left out fails |
 | `template.frontmatter.required` | add fields (set), including when the defining pack declared none |
+| `template.frontmatter.not_applicable_allowed`, `template.frontmatter.lists` | add fields (set), only fields the same fragment adds to `required`, so an earlier pack's required field is never loosened |
+| `template.frontmatter.exempt` | never present in a pack: it names element ids, which are project values |
 | `states.sequence` | insert states (below) |
-| `states.gates` | add a gate on a state that has none; an existing gate's `reject` target must be equal |
+| `states.gates` | add a gate on a state that has none, a state in `waiting` included; an existing gate's `reject` target must be equal |
+| `states.waiting` | add its own states (below) |
+| `states.returns` | nothing: an incoming `states` without `returns` keeps it, one with `returns` must equal it |
+| `states.limits` | add a limit on a state that has none, or lower one (below) |
+
+A pack that gives a type deriving from `defaults` its own machine (below) tightens it: it is not
+the defining pack, so the defining pack's rows apply to it like to any later pack.
 
 **The effective machine.** A type defined with `states` has its own machine; its `states`
 **must** have a `sequence`. A type defined without `states` **derives from `defaults`**:
@@ -390,9 +402,20 @@ on anything but the composition order of §7.1.
   `reject` target is its own state fails.
 - An existing gate is never removed, and its `reject` target never changes.
 
+**Waiting, returns and limits.**
+- `waiting` is a set of states of the merged sequence. A later pack may add only its own states:
+  those of its incoming sequence that are not on the base side at that point of the composition.
+  Repeating an entry already present changes nothing. A tightening of `defaults` that adds a
+  `waiting` entry reaches every type deriving from `defaults`, like any tightening of `defaults`.
+- `returns` maps a state to an earlier state, both of the merged sequence. Since no state is
+  removed and insertion keeps the relative order, a `returns` edge stays valid in every merge.
+- `limits` maps a state of the merged sequence to a positive integer. A `limits.<state>` on a state
+  without a limit is added; on a state with one, the merged value is the smaller of the two, so a
+  limit only ever goes down and the result does not depend on which pack came first.
+
 Which `reject` targets make sense (earlier or later states) is WingFoil's validation.
 
-**Example.** The states are illustrative; `base`'s charter fixes the real ones. Suppose `base`
+**Example.** The states are illustrative; the foundation packs' charters fix the real ones. Suppose `base`
 defines `task` with `[draft, pending, backlog, in-progress, in-review, approved, done]` and gates on
 `pending` and `in-review`. Two overlays, which do not require each other, tighten it:
 
@@ -426,7 +449,10 @@ These fail composition:
 - an incoming sequence that swaps two existing states;
 - changing a gate's `reject` target, or removing a gate;
 - removing a required frontmatter field;
-- redefining a type's `path`, `id_pattern` or template file;
+- `template.frontmatter.exempt` in a fragment;
+- `not_applicable_allowed` or `lists` naming a field the same fragment does not add to `required`;
+- a new `waiting` entry on a state the incoming pack did not insert, or a different `returns`;
+- redefining a type's `path`, `id_pattern` or template file, or a set-once key;
 - a `states` on a type that replaces, rather than extends, the machine it follows.
 
 These rules are the add-or-tighten rule of dl-003 D1 made exact.
@@ -479,6 +505,7 @@ include each other by name, never by path (`pack-authoring`, WingFoil bug-144).
 ### 8.1 Declaration
 
 ```yaml
+# illustrative: project_name and plan_id would be base's, adr_path software's
 parameters:
   project_name:  { type: string, description: "dna.yaml project.name" }
   adr_path:      { type: path, default: "docs/memory/adr/{id}.md", description: "path of an ADR" }
@@ -532,23 +559,27 @@ fills, and from where, is WingFoil's.
 
 ## 9. Slots
 
-Slots are workflow names reserved by the life cycle (dl-003 D4, D11; dl-008):
+Slots are workflow names reserved by the life cycle (dl-003 D4, D11; dl-008; dl-022 S3). They exist
+only in a composition with `software`:
 
 | Slot | Included by | Default shipped by | Filled by |
 |---|---|---|---|
-| `inception` | `sw-life-cycle` | `base` | a `phase/inception/*` pack |
-| `specification` | `sw-life-cycle` | `base` | a `phase/specification/*` pack |
-| `delivery` | `sw-life-cycle` | none | the `methodology` pack (required) |
-| `release` | `delivery` | `base` | a `phase/release/*` pack |
-| `end-of-life` | `sw-life-cycle` | `base` | a `phase/end-of-life/*` pack |
+| `inception` | `sw-life-cycle` | `software` | a `phase/inception/*` pack |
+| `specification` | `sw-life-cycle` | `software` | a `phase/specification/*` pack |
+| `delivery` | `sw-life-cycle` | none | the `methodology` pack (required with `software`), in its conditional part |
+| `release` | `delivery` | `software` | a `phase/release/*` pack |
+| `end-of-life` | `sw-life-cycle` | `software` | a `phase/end-of-life/*` pack |
 
-- `base` ships `sw-life-cycle` (`kind: main`). It includes `inception`, `specification`,
-  `delivery` and `end-of-life` by name, and ships the defaults above and `retrospective`.
-- The methodology ships `delivery` (`kind: sub`). It includes `release` and `retrospective` by name,
-  at its own cadence (dl-003 D11, dl-006). `retrospective` is not a slot, so no pack replaces it.
+- `software` ships `sw-life-cycle` (`kind: main`). It includes `inception`, `specification`,
+  `delivery` and `end-of-life` by name, and ships the defaults above.
+- `base` ships `retrospective` and `governance-evolution` (dl-022 S2, S4).
+- The methodology ships `delivery` (`kind: sub`) in its conditional part with `with: software@^<major>`
+  (§6.5), never in its `contents`. `delivery` includes `release` and `retrospective` by name, at its
+  own cadence (dl-003 D11, dl-006). `retrospective` is not a slot, so no pack replaces it.
 - A phase pack of slot `<slot>` **must** ship `workflows/<slot>.yaml`, with `name: <slot>` and
-  `kind: sub`. Its file replaces `base`'s default. This is the only case in which a pack's file
-  replaces another's (§7.6).
+  `kind: sub`. Its file replaces `software`'s default. This is the only case in which a pack's file
+  replaces another's (§7.6). A phase pack requires `software` (§3), so it carries no conditional
+  part.
 - No other pack may ship a workflow named after a slot.
 - There is no `operations` slot (dl-008). Operations is the stage overlays' concern.
 
@@ -558,8 +589,10 @@ Slots are workflow names reserved by the life cycle (dl-003 D4, D11; dl-008):
 contributes at most one section, `agents/section.md` (R2):
 - Markdown, with parameters substituted, and no frontmatter. It is not a WingFoil file kind yet
   (§12), so it carries no `format:` until WingFoil dl-137 defines one;
-- `base`'s section opens with the level-1 heading of the file; every other section opens with a
-  level-2 heading and contains no level-1 heading;
+- `base`'s section opens with the level-1 heading of the file; every other section, `software`'s
+  included, opens with a level-2 heading and contains no level-1 heading;
+- it is composed whether or not the pack's conditional part is (§6.5): a methodology's section may
+  name `delivery` as present only with `software`;
 - it contains no markers.
 
 The composer writes no `AGENTS.md`. It produces the **generated region** as a separate output:
