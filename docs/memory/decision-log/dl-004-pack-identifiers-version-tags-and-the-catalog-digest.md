@@ -86,3 +86,6 @@ Configuration changes, depending on the ruling. Each is applied after approval a
 - 2026-10-06, under plan-012: the Decision section, written before the ruling, still read as a
   proposal. It now records the ruling, as the approver asked. The ruling itself is unchanged; it was
   already in the approve commit and in plan-009's Execution Notes.
+- 2026-10-15, plan-038: **1(a)** amended by dl-022: `foundation` is the `axis` value of both
+  foundation packs' elements, `pack-foundation-base` and `pack-foundation-software`; in `pack.yaml`
+  and `catalog.yaml` both have no axis (spec-001 §4). The body stays as approved.
