@@ -10,7 +10,7 @@ import { runPublish } from '../src/publish';
 import type { PublishResult } from '../src/publish';
 import { runValidate } from '../src/validate';
 import type { TestRepo } from './support/git-repo';
-import { FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN } from './support/pack-tree';
+import { DELIVERY, FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 import { REPO_ROOT } from './support/paths';
 import { runIndex } from '../src/index';
@@ -97,6 +97,24 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
       assert.ok(validation.lines.some((line) => /^index: checked \d+ files, 0 not up to date$/
         .test(line)), validation.lines.join('\n'));
     });
+  });
+
+  it('copies a conditional part\'s with into the version entry, and nothing without one', () => {
+    const flow: PackSpec = { id: 'methodology/flow', workflows: ['board'],
+      manifest: { conditional: [{ with: 'software@^1', contents: { workflows: ['delivery'] } }] },
+      extraFiles: { 'workflows/delivery.yaml': DELIVERY } };
+    withRepository((repo) => {
+      for (const pack of ['base', 'software', 'methodology/kanban', 'methodology/flow']) {
+        const result = publish(repo, ['--pack', pack, pack]);
+        assert.equal(result.code, 0, `${pack}: ${result.lines.join('\n')}`);
+      }
+      const versionOf = (id: string): Doc => ((catalogOf(repo).find((entry) => entry['id'] === id)
+        ?.['versions'] as Doc[])[0] ?? {});
+      assert.deepEqual(versionOf('methodology/flow')['conditional'], [{ with: 'software@^1' }]);
+      assert.ok(!Object.hasOwn(versionOf('methodology/kanban'), 'conditional'));
+      const lint = runCheckPacks(repo.dir);
+      assert.equal(lint.code, 0, lint.lines.join('\n'));
+    }, [...FOUNDATION, KANBAN, flow]);
   });
 
   it('counts an example that contains the pack as a composition (task-022)', () => {

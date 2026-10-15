@@ -58,6 +58,11 @@ export function publishByHand(repo: TestRepo, packId: string, { index = true } =
     requires: manifest['requires'] ?? [], conflicts: manifest['conflicts'] ?? [],
     wingfoil: STUB_RELEASE,
   };
+  // A conditional part is copied with its with only (spec-001 §11).
+  const conditional = manifest['conditional'];
+  if (Array.isArray(conditional)) {
+    entry['conditional'] = conditional.map((part) => ({ with: (part as Doc)['with'] }));
+  }
   const catalog = parse(readFileSync(join(repo.dir, 'catalog.yaml'), 'utf8')) as Doc;
   const packs = catalog['packs'] as Doc[];
   const existing = packs.find((pack) => pack['id'] === packId);
