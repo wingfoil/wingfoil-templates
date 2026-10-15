@@ -73,9 +73,9 @@ commit**: `pack.yaml`, its fragments, workflows, directives and Memory templates
 `catalog.yaml`, `compat.yaml`, another pack or git enters a README, so a publication, a WingFoil
 intake or a new version of another pack never changes a pack's directory.
 
-For section 4, "what it adds or tightens over the foundation" is computed from the pack's own fragments
-alone: the Memory types, roles and states it declares, and the workflows it ships; it is not a
-composition with `base`, so it lists what the pack declares without telling an addition from a
+For section 4, "what it adds or tightens over the foundation" is computed from the pack's own
+fragments alone: the Memory types, roles and states it declares, and the workflows it ships; it is
+not a composition with the foundation, so it lists what the pack declares without telling an addition from a
 tightening. Versions appear only in `CHANGELOG.md` and in the index (§3).
 
 ### 2.3 Install and update

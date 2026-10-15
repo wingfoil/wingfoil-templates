@@ -474,9 +474,9 @@ on anything but the composition order of §7.1.
 
 Which `reject` targets make sense (earlier or later states) is WingFoil's validation.
 
-**Example.** The states are illustrative; the foundation packs' charters fix the real ones. Suppose `base`
-defines `task` with `[draft, pending, backlog, in-progress, in-review, approved, done]` and gates on
-`pending` and `in-review`. Two overlays, which do not require each other, tighten it:
+**Example.** The states are illustrative; the foundation packs' charters fix the real ones.
+Suppose `base` defines `task` with `[draft, pending, backlog, in-progress, in-review, approved,
+done]` and gates on `pending` and `in-review`. Two overlays, which do not require each other, tighten it:
 
 ```yaml
 # team-mode/agent-first, composed first (§7.1)
@@ -632,9 +632,9 @@ only in a composition with `software`:
 - `software` ships `sw-life-cycle` (`kind: main`). It includes `inception`, `specification`,
   `delivery` and `end-of-life` by name, and ships the defaults above.
 - `base` ships `retrospective` and `governance-evolution` (dl-022 S2, S4).
-- The methodology ships `delivery` (`kind: sub`) in its conditional part with `with: software@^<major>`
-  (§6.5), never in its `contents`. `delivery` includes `release` and `retrospective` by name, at its
-  own cadence (dl-003 D11, dl-006). `retrospective` is not a slot, so no pack replaces it.
+- The methodology ships `delivery` (`kind: sub`) in its conditional part, with
+  `with: software@^<major>` (§6.5), never in its `contents`. `delivery` includes `release` and
+  `retrospective` by name, at its own cadence (dl-003 D11, dl-006). `retrospective` is not a slot, so no pack replaces it.
 - A phase pack of slot `<slot>` **must** ship `workflows/<slot>.yaml`, with `name: <slot>` and
   `kind: sub`. Its file replaces `software`'s default. This is the only case in which a pack's file
   replaces another's (§7.6). A phase pack requires `software` (§3), so it carries no conditional
@@ -720,8 +720,8 @@ presets:
 ```
 
 - **`foundation`** names the foundation packs in composition order: `[base, software]` (dl-022).
-  `base` is in every composition; `software` only where a pack of the composition requires it or the
-  project chooses it.
+  `base` is in every composition; `software` only where a pack of the composition requires it
+  unconditionally or the project chooses it (§6.5).
 - **`axes`** and **`slots`** carry §3 and §9 as data. The order of `axes` is the composition order
   of §7.1, after the foundation packs.
   - The `methodology` axis is required only in a composition with `software`. Its data form is

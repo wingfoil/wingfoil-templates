@@ -60,9 +60,9 @@ Applies to every role that writes or reviews pack content under `packs/`.
 - Slots (dl-003 D4, D11). They exist only with `software`. `sw-life-cycle` and the slot defaults
   belong to `software`, `retrospective` and `governance-evolution` to `base` (dl-022).
   `sw-life-cycle` includes `inception`, `specification`, `delivery` and `end-of-life` by name; the
-  methodology's `delivery` includes `release` and `retrospective` by name, at its own cadence. A phase pack fills one of the slots
-  `inception`, `specification`, `release`, `end-of-life` by shipping a workflow with the slot's
-  name; this is the one case where a pack file replaces another pack's file. `delivery` is filled by
+  methodology's `delivery` includes `release` and `retrospective` by name, at its own cadence. A
+  phase pack fills one of the slots `inception`, `specification`, `release`, `end-of-life` by
+  shipping a workflow with the slot's name; this is the one case where a pack file replaces another pack's file. `delivery` is filled by
   the methodology, in its conditional entry, never by a phase pack.
 - `AGENTS.md` and every agent file at the repository root are never pack files (dl-003 R1). A pack
   contributes at most one section (`agents_section`), and WingFoil generates the file (WingFoil
