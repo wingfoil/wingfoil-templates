@@ -66,7 +66,9 @@ Readings, stated so that the approver sees them at the gate:
 - the mark, in `CATALOG.md`'s and the search page's Summary cell (the same helper, §5's
   no-JavaScript table shows `CATALOG.md`'s content), and in a README's sections 4 and 5:
   `` Golden fixture pack methodology/flow. (`delivery`, `flow-delivery` only with `software`) ``,
-  the names in code spans, the layer's name from the part's `with`.
+  the names in code spans (a reading of R3's plain form), the layer's name from the part's
+  `with`; in sections 4 and 5, on each line the part adds, for example
+  `` - `delivery` (sub), only with `software` ``.
 
 Not in scope: `schema/`, `catalog.yaml`, `compat.yaml`; the `memory.yaml` keys (task-034); a pack
 of `packs/` (W8).
@@ -101,8 +103,9 @@ Run from a clean clone of `task/task-033-index`, on Node.js 22.21 and the floor 
    `software` filter; `catalog-index.json` and the schema stay `format: 1`; an index of a tree
    that publishes `software` and a pack with a conditional part validates against it.
 5. **The index fixtures:** `tests/support/index-catalog.ts` publishes `software`, a second
-   methodology whose conditional part holds workflows and a directive, and a pack whose part holds
-   directives only (kanban requires `software`, so it carries none); `tests/fixtures/index/
+   methodology whose conditional part holds workflows and a directive, and a `governance` pack
+   whose part holds directives only, requiring `base` alone (kanban requires `software`, so it
+   carries none); `tests/fixtures/index/
    expected/` is regenerated with `REFRESH_INDEX_EXPECTED=1` and reviewed by diff, its `llms.txt`
    unchanged; the site's no-JavaScript Summary cell carries the same mark as `CATALOG.md`'s, tested;
    the counts of `tests/site.test.ts` and `tests/agent-path.test.ts` that the new published packs
@@ -137,4 +140,6 @@ Run from a clean clone of `task/task-033-index`, on Node.js 22.21 and the floor 
   marking was ruled by the approver (plan-039 R8). Size: the Design splits the red in two steps
   (the foundation packs, then R3 and R8); the assertions already green (the "Declares" of
   `software`, the foundation order) are characterizations.
+- 2026-10-15: re-review: approve; its low findings (plan-039's task-033 row, the mark's form in
+  sections 4 and 5, the directives-only pack's axis) amended without changing a rule.
 
