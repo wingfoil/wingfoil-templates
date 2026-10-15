@@ -2,7 +2,7 @@
 id: task-032-the-conditional-part-of-a-pack-resolution-composition-isolation-lint-publication-and-both-legs-of-the-matrix-dl-022-spec-001-6.5
 type: task
 title: "The conditional part of a pack: resolution, composition, isolation lint, publication and both legs of the matrix (dl-022, spec-001 §6.5)"
-status: approved
+status: done
 pack: ""            # tooling task (tooling-change › deliver, plan-039)
 depends_on: ["task-031-the-two-foundation-packs-base-and-software-and-the-contract-schemas-catalog.yaml-resolver-lint-f-031-dl-022"]
 tags: ["tooling","base","spec"]
