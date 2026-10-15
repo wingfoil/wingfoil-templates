@@ -47,7 +47,13 @@ And the approver's rulings in chat on 2026-10-15, on this plan's proposal:
 - **R2, both legs of the matrix are derived.** `npm run validate` composes, for every composition
   (preset, example or entries) that holds a pack with a conditional part, the other leg too: with
   `software` added when it is absent; without it when it is present and no pack of the composition
-  requires it unconditionally. The second leg's report line names it. The lint's in-memory
+  requires it unconditionally. The second leg's report line names it. When the composition holds
+  no methodology, the leg with `software` would break §3 (exactly one methodology with
+  `software`): `validate` skips it with a report line that says so (for example
+  `matrix presets/x.yaml +software: skipped, no methodology`), the lint composes the pack with
+  `software` and the tree's first methodology, and a publication's leg with `software` comes from
+  a documented combination that holds a methodology (the approver's ruling at the review, after
+  dl-017's review found the gap). The lint's in-memory
   compositions (`overlay-rules`, the approver's ruling of 2026-10-09 under task-012) extend the
   same way (task-032), and also cover the overlays with no methodology, which a composition
   without `software` allows (task-031, which makes the methodology optional).
@@ -153,3 +159,11 @@ from `main`, in the order task-031, task-032, task-033, task-034, one after the 
 
 - 2026-10-15: written; `workflow` and `phase` filled by editing the draft (W-02). The approver
   chose the four tasks, their order, and R1–R4 in chat.
+- 2026-10-15: independent review: approve after amendments, nothing blocking. Amended: the code
+  paths that read the foundation as one id, named in task-031; the lint composing `base` alone and
+  the overlays with no methodology, moved to task-031; the interim `Axis: software` until the
+  index task; the tasks numbered in run order (the index task-033, the memory keys task-034); the
+  kinds of both parts in `formats`; R3 made exact; `deliver` in tooling-delivery v2's order;
+  `workflow list` for task-032; W8's limit on composing `software`. Its finding that R2's leg with
+  `software` is undefined without a methodology changed a ruling: the approver ruled (a), the leg
+  skipped with a report line. Re-review requested (dl-017 R2).
