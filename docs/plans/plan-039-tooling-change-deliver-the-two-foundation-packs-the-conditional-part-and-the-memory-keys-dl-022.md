@@ -151,8 +151,8 @@ from `main`, in the order task-031, task-032, task-033, task-034, one after the 
       into `main`, then `approved → done` on `main` with the task's delivery notes; `main` pushed,
       the branch removed remotely and locally; this plan's Execution Notes record the merge.
 3. **Close:** dl-022's Execution Notes record the tooling actions applied; this plan's Execution
-   Notes list, for spec-001 and spec-002, the errata and rulings recorded under it (R3 and R7 at least),
-   and the element the approver names to fold them back. The plan goes `active → done`.
+   Notes list, for spec-001 and spec-002, the errata and rulings recorded under it (R3 and R7 at
+   least), and the element the approver names to fold them back. The plan goes `active → done`.
 
 ## Handoff
 
