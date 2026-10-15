@@ -255,3 +255,9 @@ commits, the adapted tests and counts, and the interim of the generated README a
   rules (removing `software` from a composition that resolved only lowers what it requires, and a
   pack that requires `software` brings it back), so its failure line stays untested; `validate.ts`
   keeps a local `byBytes`, as every other module of `src/` does but `index-data.ts`.
+- 2026-10-15, **Acceptance** from clean clones at `0b777de` (the later commits change these notes
+  only), on Node.js 22.21.0 and 22.12.0: `npm ci`, `build`, `test`, `lint`, `check:pins`,
+  `check:schemas`, `check:packs`, `index -- --check`, `validate`, `validate -- --tree
+  tests/fixtures/compose/tree --param project_name=Golden` (13 compositions, against WingFoil
+  0.2.2) and `npx wingfoil workflow list` exit 0. No dependency added; `schema/`, the root
+  `catalog.yaml`, `compat.yaml` and `index/` unchanged.
