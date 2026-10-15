@@ -263,3 +263,6 @@ commits, the adapted tests and counts, and the interim of the generated README a
   `catalog.yaml`, `compat.yaml` and `index/` unchanged.
 - 2026-10-15, **CI** (Acceptance 10): run 38795573963 on `b66f246`, conclusion `success`
   (`validate (22.12.0)` and `validate (22.21.0)` both `success`). Submitted `in-review`.
+- 2026-10-15: the approver accepted the build (`in-review → approved`, `06acac0`) and gave the
+  merge OK in chat. CI run 38796748178 on `c0168d1`, conclusion `success`. `--no-ff` merge into
+  `main` (`ecd425f`); this task goes `approved → done`.

@@ -186,3 +186,9 @@ from `main`, in the order task-031, task-032, task-033, task-034, one after the 
   with no `kind: main` workflow (`E_NO_MAIN_WORKFLOW`), so `base`'s charter keeps
   `governance-evolution` as a main workflow (dl-022 S4). Raised to the approver: Acceptance 3's
   golden-tree `catalog.yaml` in the red commit (dl-019).
+- 2026-10-15, task-032 (the conditional part): accepted into the backlog after the approver's
+  rulings R5–R7, designed, built red first in three steps and the directive (R4), reviewed
+  (request changes: the composer let a slot through without `software`; fixed red first) and
+  re-reviewed (approve), CI run 38795573963 on `b66f246` `success`; approved, merged `--no-ff`
+  into `main` (`ecd425f`), `done`. Interims until task-033: the generated README and index leave
+  out a pack's conditional workflows; `software` is published in no test.
