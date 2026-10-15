@@ -2,7 +2,7 @@
 id: plan-039-tooling-change-deliver-the-two-foundation-packs-the-conditional-part-and-the-memory-keys-dl-022
 type: plan
 title: "tooling-change deliver: the two foundation packs, the conditional part and the memory keys (dl-022)"
-status: draft
+status: active
 workflow: "tooling-change"
 phase: "deliver"
 tags: ["tooling","base","spec"]
