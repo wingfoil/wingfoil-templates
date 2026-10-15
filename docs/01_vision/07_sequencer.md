@@ -87,9 +87,8 @@ Starts when the approver confirms that the v0.3 formats are final.
   `software` included (dl-022), so nothing is published before W9.
 - **The foundation packs also need a released WingFoil.** The `pack-compatibility` directive forbids
   publishing against an unreleased build. `base` and `software`, written in the v0.3 formats, can
-  therefore be published only
-  after WingFoil v0.3 is **released**, not merely when its formats are final. Authoring (W8) can
-  start when the formats are final.
+  therefore be published only after WingFoil v0.3 is **released**, not merely when its formats are
+  final. Authoring (W8) can start when the formats are final.
 - **Tooling tasks have no workflow host.** `sw-life-cycle` runs `kanban-delivery` only inside
   `pack-cycle`, which iterates over packs. The tooling of M1 belongs to no pack. See open question 2.
 

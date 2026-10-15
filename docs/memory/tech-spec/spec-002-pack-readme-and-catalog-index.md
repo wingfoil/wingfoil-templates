@@ -75,8 +75,8 @@ intake or a new version of another pack never changes a pack's directory.
 
 For section 4, "what it adds or tightens over the foundation" is computed from the pack's own
 fragments alone: the Memory types, roles and states it declares, and the workflows it ships; it is
-not a composition with the foundation, so it lists what the pack declares without telling an addition from a
-tightening. Versions appear only in `CHANGELOG.md` and in the index (§3).
+not a composition with the foundation, so it lists what the pack declares without telling an
+addition from a tightening. Versions appear only in `CHANGELOG.md` and in the index (§3).
 
 ### 2.3 Install and update
 
@@ -162,10 +162,9 @@ The human index, in this order:
    `pack-install`, or the sentence that no released WingFoil installs packs yet and that each
    README's section 3 gives the temporary hand steps;
 3. one section for the foundation packs, `base` then `software`, then one section per axis, in
-   `catalog.yaml` order: a table with
-   the columns Pack, Summary, Slot (phase only), Status, Latest, WingFoil, README. Pack is the id,
-   preceded by `<a id="pack-<id with / replaced by ->"></a>`, the anchor READMEs link (§2.5);
-   Summary is `description`'s first sentence;
+   `catalog.yaml` order: a table with the columns Pack, Summary, Slot (phase only), Status, Latest,
+   WingFoil, README. Pack is the id, preceded by `<a id="pack-<id with / replaced by ->"></a>`, the
+   anchor READMEs link (§2.5); Summary is `description`'s first sentence;
    Latest and WingFoil are the last published version and its computed range; README links the
    README rendered on github.com at the latest version's tag,
    `https://github.com/wingfoil/wingfoil-templates/blob/<tag>/packs/<catalog pack id>/README.md`;
@@ -186,10 +185,9 @@ The machine index. Top-level keys, in order:
   `requires_capabilities`, `url`).
 
 A pack object holds, in order:
-- `id`, `catalog` and `status` from `catalog.yaml`; `axis` and `slot` derived from the id
-  (spec-001 §4), both `null` for the foundation packs, `base` and `software`, and `slot` `null` for
-  every pack but a phase pack; `latest`,
-  the highest published version in semver order;
+- `id`, `catalog` and `status` from `catalog.yaml`; `axis` and `slot` derived from the id (spec-001
+  §4), both `null` for the foundation packs, `base` and `software`, and `slot` `null` for every pack
+  but a phase pack; `latest`, the highest published version in semver order;
 - `versions`: one object per published version, ascending: `version` and `wingfoil` (the computed
   range) from `catalog.yaml`, `tag` derived as `<catalog pack id>@<version>` (§3.1), and from the
   tag's `pack.yaml`: `formats`,
@@ -347,10 +345,10 @@ All closed in wave W14 (plan-024):
   code, test or generated file changes, since the tooling already implements this text.
 - 2026-10-15, **amended in place** (plan-038, after dl-022; the merge OK of plan-038 is the approval
   of the edited text): §2.1 (the foundation packs `base` and `software` write `Axis: foundation`;
-  section 4 is computed over the foundation a pack requires, and marks a conditional part's files
-  as present only with `software`); §3.2 (the foundation section, `base` then `software`); §3.3
-  (`axis` and `slot` `null` for both foundation packs). The index command follows in the tooling
-  task that follows plan-038.
+  section 4 is computed over the foundation a pack requires, and marks a conditional part's files as
+  present only with `software`; §2.2's paragraph on section 4 reads "over the foundation"); §3.2
+  (the foundation section, `base` then `software`); §3.3 (`axis` and `slot` `null` for both
+  foundation packs). The index command follows in the tooling task that follows plan-038.
 - 2026-10-15, **§2.4 kept by ruling** (the approver, plan-038): §2.4's premise, that every
   composition needs a methodology (spec-001 §3), no longer holds after dl-022: a composition without
   `software` needs none, so `base` could compose an example alone. The exemption is kept as written,

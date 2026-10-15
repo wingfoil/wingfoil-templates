@@ -120,7 +120,7 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 
   Whether the WingFoil CLI fetches release assets or the tag is WingFoil's choice. If it fetches the
   tag, only the traffic signal remains.
-- **Dependency on WingFoil:** F1.5, F1.6, F2.4, F4.1, F4.8 and F4.4 wait for WingFoil decisions or
+- **Dependency on WingFoil:** F1.5, F1.6, F2.4, F4.1, F4.4 and F4.8 wait for WingFoil decisions or
   releases. The sequencer has to put work that does not wait first.
 
 ## Open questions for the features review

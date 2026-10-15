@@ -19,10 +19,10 @@ It implements `docs/01_vision/06_features.md` F1.1–F1.7 and F2.1–F2.6, and s
 - dl-001: the pack model;
 - dl-002: compatibility by formats and capabilities;
 - dl-003: `base`, the slots, the `governance` axis, AGENTS.md R1–R4;
-- dl-022: the scope of `base`, the `software` foundation pack, a methodology's `delivery` only with
-  `software`;
 - dl-004: identifiers, tags, branches, digest, ruled 1(a), 2(a), 3(b), 4(a);
 - dl-008: no `operations` slot;
+- dl-022: the scope of `base`, the `software` foundation pack, a methodology's `delivery` only with
+  `software`;
 - adr-001: the reference composer;
 - WingFoil dl-149: the `format:` key.
 
@@ -84,8 +84,8 @@ dl-003 D1/D6, dl-008, dl-022):
 - `software` requires `base@^<major>` only. Every phase pack **must** require `software`, written
   `software@^<major>`, and so **must** every pack that uses a Memory type, a workflow, a directive
   or a parameter shipped by `software` outside a conditional part (§6.3, §6.5).
-- A composition without `software` has no life cycle: no `sw-life-cycle`, no slot, and no phase pack.
-  Its methodology, if any, contributes everything but its conditional part (dl-022 S3).
+- A composition without `software` has no life cycle: no `sw-life-cycle`, no slot, and no phase
+  pack. Its methodology, if any, contributes everything but its conditional part (dl-022 S3).
 - Every pack **must** only add to or tighten what the packs composed before it ship (§7). An
   overlay is composed after every non-overlay pack, so it can tighten them all.
 - The axes, cardinalities, slots and stage scale are data of `catalog.yaml` (§11), so that a resolver
@@ -294,7 +294,7 @@ conditional:
 
 - **Who.** Only a non-foundation pack may carry `conditional`. A pack that requires `software`
   gains nothing from it, so a phase pack carries none.
-- **`with`** is an entry of §6.3's syntax, and names `software` only in format 1. It is a
+- **`with`** is an entry of §6.3's syntax, and names only `software@^<major>` in format 1. It is a
   requirement that counts only when the composition holds `software`:
   - it never adds a pack, so resolution stays one pass;
   - when the composition holds `software` at a version outside the range, the requirement is
@@ -423,7 +423,7 @@ top-level key fails in format 1.
 | `states.limits` | add a limit on a state that has none, or lower one (below) |
 
 A pack that gives a type deriving from `defaults` its own machine (below) tightens it: it is not
-the defining pack, so the defining pack's rows apply to it like to any later pack.
+the defining pack, so every row above applies to it as to any later pack.
 
 **The effective machine.** A type defined with `states` has its own machine; its `states`
 **must** have a `sequence`. A type defined without `states` **derives from `defaults`**:
@@ -476,7 +476,8 @@ Which `reject` targets make sense (earlier or later states) is WingFoil's valida
 
 **Example.** The states are illustrative; the foundation packs' charters fix the real ones.
 Suppose `base` defines `task` with `[draft, pending, backlog, in-progress, in-review, approved,
-done]` and gates on `pending` and `in-review`. Two overlays, which do not require each other, tighten it:
+done]` and gates on `pending` and `in-review`. Two overlays, which do not require each other,
+tighten it:
 
 ```yaml
 # team-mode/agent-first, composed first (§7.1)
@@ -594,7 +595,8 @@ parameters:
 - **Namespace:** the parameters of a composition share one flat namespace.
   - Each name is declared by exactly one pack of the composition.
   - A pack may use the parameters it declares and those of the packs it `requires`, directly or
-    transitively.
+    transitively. A conditional part's files may also use those of its `with` pack and of the packs
+    that pack requires (§6.5).
 
 ### 8.2 Substitution
 
@@ -634,7 +636,9 @@ only in a composition with `software`:
 - `base` ships `retrospective` and `governance-evolution` (dl-022 S2, S4).
 - The methodology ships `delivery` (`kind: sub`) in its conditional part, with
   `with: software@^<major>` (§6.5), never in its `contents`. `delivery` includes `release` and
-  `retrospective` by name, at its own cadence (dl-003 D11, dl-006). `retrospective` is not a slot, so no pack replaces it.
+  `retrospective` by name, at its own cadence (dl-003 D11, dl-006). `retrospective` is not a slot,
+  so no pack replaces it. In a composition without `software`, what runs `retrospective` is fixed
+  by `base`'s charter.
 - A phase pack of slot `<slot>` **must** ship `workflows/<slot>.yaml`, with `name: <slot>` and
   `kind: sub`. Its file replaces `software`'s default. This is the only case in which a pack's file
   replaces another's (§7.6). A phase pack requires `software` (§3), so it carries no conditional
@@ -742,8 +746,8 @@ presets:
   - `versions[]`: one entry per published version, in ascending semver order. An entry is never
     edited after publication, except its `wingfoil` field (§12).
 - **A version entry** copies from the published `pack.yaml`: `formats`, `requires_capabilities`,
-  `requires`, `conflicts` and, when present, `conditional` with its `with` only (§6.5). A resolver can therefore check compatibility and dependencies without
-  fetching the pack. It adds:
+  `requires`, `conflicts` and, when present, `conditional` with its `with` only (§6.5). A resolver
+  can therefore check compatibility and dependencies without fetching the pack. It adds:
   - `commit`: the full id of the commit the tag points at;
   - `digest` (§13);
   - `wingfoil`: the computed range (§12).
@@ -1166,7 +1170,10 @@ check the rest, and the composer refuses what they reject.
     approver's ruling of 2026-10-15, as task-028 did for §12). Until then the example and the prose
     differ;
   - §15: the erratum of task-030 folded back (no `init --preset`; F-030); presets with and without
-    `software`; §18: the checks of all the above.
+    `software`; §18: the checks of all the above;
+  - wording: §1 (dl-022 among the applied decisions), §7.3 (the methodology "when there is one"),
+    the §7.5 example, the §8.1 example's comment and the namespace of a conditional part, §10 (the
+    section of a pack with a conditional part).
   - Read again at `ffa9bf6b`: no v0.3 release is tagged, so O10 stands; WingFoil dl-137 and dl-138
     are `ready` and dl-138's Action 2 tech-spec does not exist yet, so O2, O5, O12 and O13 keep
     their owners.

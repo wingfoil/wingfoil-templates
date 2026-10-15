@@ -78,8 +78,9 @@ types:
     # `name` fields (`memory add --set` fills only id tokens): `memory add --type pack --title Scrum
     # --set axis=methodology --set name=scrum`. Pack names are unique across the catalog, so the
     # slot of a phase pack is not in the id; the foundation packs are `pack-foundation-base` and
-    # `pack-foundation-software`, `foundation` being their axis value (dl-004, dl-022). proposed is the approver's acceptance of the charter; active means at
-    # least one version is published (first `pack-release` released).
+    # `pack-foundation-software`, `foundation` being their axis value (dl-004, dl-022). proposed is
+    # the approver's acceptance of the charter; active means at least one version is published
+    # (first `pack-release` released).
     path: docs/memory/pack/{id}.md
     id_pattern: "pack-{axis}-{name}"
     template:
