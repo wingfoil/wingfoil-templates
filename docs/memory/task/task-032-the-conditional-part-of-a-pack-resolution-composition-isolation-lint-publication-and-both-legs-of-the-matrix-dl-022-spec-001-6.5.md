@@ -45,17 +45,30 @@ What exists, at `main` `6e35a92` (task-031 done):
   `formatKindsProblems`, `readPackFiles` (`src/pack-files.ts`) and `readFiles`
   (`src/compose-documents.ts`); `workflowsYaml` (`src/output.ts`) reads `contents.workflows`;
 - `workflowProblems` (`src/workflow-rules.ts`) judges a pack's files against what the pack and its
-  direct requires declare (`declared`), and lets any slot name be included; `slotProblems` reads
-  `contents.workflows`;
+  direct requires declare (`declared`), and lets any slot name be included (line 112), so an
+  always-composed workflow of a pack that does not require `software` can include a slot today;
+  `slotProblems` reads `contents.workflows`; `checkRoleDirectives` (`src/compose-documents.ts`)
+  accepts the directives of `contents.directives` only;
 - the parameter scope is per pack (`scopeOf` in `src/pack-files.ts`, `parameterScopes` in
   `src/parameters.ts`);
 - `src/publish.ts` writes a version entry from `pack.yaml` (`formats`, `requires_capabilities`,
   `requires`, `conflicts`); `src/tag-rules.ts` compares those fields with the tag's `pack.yaml`;
 - `npm run validate` (`src/validate.ts`) composes each preset, example and entries once (twice
-  for determinism) and runs the matrix; `src/evidence.ts` reads `matrix <label> wingfoil@<v>` and
-  `composition <label>: composed twice` lines, labels without spaces;
-- `src/overlay-rules.ts` composes the lint's combinations (task-031);
+  for determinism) and runs the matrix; `validate:publication` shares `runValidate`; a skipped
+  composition already reports `matrix <label>: skipped`; `src/evidence.ts` reads
+  `matrix <label> wingfoil@<v>` and `composition <label>: composed twice` lines, matching a label
+  with `\S+`, so a leg's label carries no space: `<label>[+software]`, R2's "for example" form
+  adapted;
+- `src/overlay-rules.ts` composes the lint's combinations (task-031); its `first` methodology is
+  the first in byte order, so a `methodology/flow` in the golden tree becomes `first`;
+- `readme-generate.ts` and `index-model.ts` read `contents.workflows` only, so a pack's generated
+  README and index entry leave out its conditional workflows until task-033 (an interim, recorded
+  as task-031's `Axis: software` was).
 - `.wingfoil/directives/custom/pack-compatibility.md` has no sentence on `software` (R4).
+
+"Requires `software`" means, as in §11 and §15's "unconditionally", through `requires`, directly
+or transitively (`reachable`). §7.1's rule reads `with` as a requirement; in format 1 it cannot
+fail, since `software` is always composed second.
 
 Not in scope: the index and the READMEs' marking of a conditional part (task-033, R3); the
 `memory.yaml` keys (task-034); `schema/` (no change: R1), `catalog.yaml`, `compat.yaml`.
@@ -72,39 +85,52 @@ Run from a clean clone of `task/task-032-conditional`, on Node.js 22.21 and the 
 3. **Rules**, each reported by `npm run check:packs` and refused by the composer (spec-001 §17),
    with a test each: a pack that requires `software` and carries `conditional`; `with` outside the
    range of the `software` composed; a file listed in both parts, or in neither; an always-composed
-   workflow that includes, or a roles fragment that assigns, a workflow or directive of the entry;
-   an always-composed file that uses `software`'s type, workflow, directive or parameter (the
-   existing rules, kept); a methodology that does not require `software` and ships `delivery` in
-   `contents`, or that requires it and ships `delivery` in the entry; `formats` missing a kind
-   only the entry ships. The entry's files may use `software`'s content and parameters, tested.
+   workflow that includes, or a fragment (dna, roles, memory) that names, a workflow or directive
+   of the entry; an always-composed workflow of a pack that does not require `software` that
+   includes a slot, `delivery` among them (a new rule: today slots pass as includes); an
+   always-composed file that uses `software`'s type, workflow, directive or parameter (the
+   existing rules, kept, as characterizations); a methodology that does not require `software`
+   and ships `delivery` in `contents`, or that requires it and ships `delivery` in the entry; an
+   entry that ships a slot it does not fill, `sw-life-cycle`, `retrospective` or
+   `governance-evolution`; `formats` missing a kind only the entry ships, and no `formats`
+   problem for a kind only the entry ships. The entry's files may use `software`'s content and
+   parameters, in the lint and in the composer (`parameterScopes` per part), tested.
 4. **Composition** (tests in `tests/compose-documents.test.ts`, `tests/output.test.ts`): with
    `software`, the entry's workflows and directives are copied and its workflows included after
    the pack's own, each in its written order; without it, neither; a slot of the entry replaces
    nothing it should not (one owner, §7.6, checked with `software`).
 5. **The golden tree** gains a methodology with a conditional part (`methodology/flow`, requiring
-   `base` only, `delivery` in its entry), with a README, CHANGELOG and examples; a composition of
-   `base` and it, without `software`, is checked byte for byte against
-   `tests/fixtures/compose/expected-flow/`; the expected output with `software` is checked too.
+   `base` only, `delivery` in its entry), with a README, a CHANGELOG and two examples:
+   `flow/core-team` (`base` and `flow`, no `software`) and `flow/delivery-team` (with `software`),
+   each with its derived other leg. Their compositions are checked byte for byte against
+   `tests/fixtures/compose/expected-flow/` and `expected-flow-software/`. The golden tree's
+   generated files (`CATALOG.md`, `catalog-index.json`, `llms.txt`, the READMEs) follow; `flow`
+   becomes the tree's first methodology in byte order, and the compositions that used kanban as
+   `first` are re-checked. The count changes (`validate`, `check-packs`, `example-rules`) are listed
+   in the Execution Notes.
 6. **Both legs (R2)**, tests in `tests/validate.test.ts` and `tests/check-packs.test.ts`:
    - `validate` composes, for each preset, example or entries holding a pack with a conditional
      part, the other leg: with `software` added (`<label>[+software]`), or without it when it is
      present and no pack requires it unconditionally (`<label>[-software]`); each leg composed
      twice and run through the matrix; without a methodology, `matrix <label>[+software]: skipped,
      no methodology`;
-   - `validate:publication` does the same;
-   - `writeEvidence` lists the legs' compositions and releases and counts no skip line as a run;
-   - the lint composes a pack with a conditional part with and without `software`, the leg with
-     `software` taking the first methodology the pack does not conflict with when the pack is not
-     a methodology.
+   - `validate:publication` does the same (it shares `runValidate`: a characterization);
+   - `writeEvidence` lists the legs' compositions and releases and counts no skip line as a run (a
+     characterization of the existing regexes, with the `[+software]` label);
+   - the lint: every combination of its compositions (methodology × team-mode × stage, and a lone
+     pack) that holds a pack with a conditional part also gets its other leg; the leg with
+     `software` of a pack that is not a methodology takes the first methodology it does not
+     conflict with.
 7. **Publication:** `publish:pack` writes `conditional` (its `with` only) in the version entry of a
-   pack that carries one, and nothing for one that does not; the tag rules compare it with the
-   tag's `pack.yaml`; tested in a fixture repository.
+   pack that carries one, and nothing for one that does not; the tag rules compare the entry's
+   `with` values with the tag's `pack.yaml`, two absent fields comparing equal; tested in a fixture
+   repository.
 8. **`pack-compatibility`** (R4) says that a pack with a conditional part is validated in
    compositions with and without `software`, the leg with `software` from a documented combination
    that holds a methodology; one commit of its own on the branch; `workflow list` exits 0.
 9. **Nothing else changes:** `git diff --name-only` over the task's commits shows only `src/`,
-   `tests/`, `pack-compatibility.md` and this element; `schema/`, `catalog.yaml`, `compat.yaml`
-   and `index/` unchanged.
+   `tests/`, `pack-compatibility.md` and this element; `schema/`, the root `catalog.yaml`,
+   `compat.yaml` and `index/` unchanged.
 10. **CI:** the pushed branch's real run conclusion, for both Node.js versions, recorded before
     `in-review`.
 
