@@ -7,7 +7,7 @@ import { rootOutputs, runIndex } from '../../src/index';
 import { workingTree } from '../../src/index-source';
 import { TestRepo } from './git-repo';
 import { writeExamples } from './examples';
-import { BASE_COMPOSABLE, KANBAN, writePack } from './pack-tree';
+import { FOUNDATION_COMPOSABLE, KANBAN, writePack } from './pack-tree';
 import type { PackSpec } from './pack-tree';
 import { REPO_ROOT } from './paths';
 
@@ -29,7 +29,7 @@ export function fixtureCompat(release = STUB_RELEASE): string {
 }
 
 /** A scratch repository holding packs, this repository's catalog and the fixture compat file. */
-export function treeRepo(specs: PackSpec[] = [BASE_COMPOSABLE, KANBAN],
+export function treeRepo(specs: PackSpec[] = [...FOUNDATION_COMPOSABLE, KANBAN],
   release = STUB_RELEASE, { examples = true } = {}): TestRepo {
   const repo = new TestRepo();
   for (const spec of specs) writePack(repo.dir, spec);

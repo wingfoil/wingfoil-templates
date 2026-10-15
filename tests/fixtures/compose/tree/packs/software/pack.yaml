@@ -1,0 +1,20 @@
+format: 1
+id: software
+name: software
+title: "software"
+description: "Golden fixture pack software."
+version: 1.0.0
+formats:
+  memory: 1
+  workflow: 1
+  memory-template: 1
+requires_capabilities: []
+requires:
+  - base@^1
+parameters:
+  adr_path: { type: path, default: "docs/memory/adr/{id}.md", description: "Where ADRs live" }
+contents:
+  fragments: [memory]
+  workflows: [sw-life-cycle, inception, specification, release, end-of-life]
+  memory_templates: [adr]
+  agents_section: true

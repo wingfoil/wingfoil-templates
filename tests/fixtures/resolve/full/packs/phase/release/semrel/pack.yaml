@@ -10,6 +10,7 @@ formats: {}
 requires_capabilities: []
 requires:
   - base@^1
+  - software@^1
 contents:
   fragments: []
   directives: []

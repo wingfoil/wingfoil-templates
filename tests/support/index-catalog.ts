@@ -6,7 +6,7 @@ import { parse, stringify } from 'yaml';
 
 import { transitionDigest } from '../../src/digest';
 import type { TestRepo } from './git-repo';
-import { BASE_COMPOSABLE, KANBAN, writePack } from './pack-tree';
+import { BASE_COMPOSABLE, KANBAN, SOFTWARE_COMPOSABLE, writePack } from './pack-tree';
 import type { PackSpec } from './pack-tree';
 import { publishByHand, reindex, treeRepo } from './published-repo';
 import { exampleSection } from './examples';
@@ -45,15 +45,15 @@ function editCatalog(repo: TestRepo, edit: (catalog: Doc) => void): void {
 }
 
 /**
- * base, a methodology with two versions (1.1.0 changes its requires, adds a conflict, a parameter
- * and a new title), a
- * phase pack, two stage packs and their transition, one pack never published, two presets (one
- * with a profile); after the last tag, an unreleased title and section 2 in the working tree.
+ * base, software (never published until task-033), a methodology with two versions (1.1.0
+ * changes its requires, adds a conflict, a parameter and a new title), a phase pack, two stage
+ * packs and their transition, one pack never published, two presets (one with a profile); after
+ * the last tag, an unreleased title and section 2 in the working tree.
  */
 export function indexCatalog(): TestRepo {
   const v1 = kanban('1.0.0', 'Kanban', {});
   const lean: PackSpec = { id: 'phase/inception/lean', workflows: ['inception'] };
-  const repo = treeRepo([BASE_COMPOSABLE, v1, lean, { id: 'stage/mvp' },
+  const repo = treeRepo([BASE_COMPOSABLE, SOFTWARE_COMPOSABLE, v1, lean, { id: 'stage/mvp' },
     { id: 'stage/production' }, { id: 'blueprint/web' }]);
   repo.write('packs/methodology/kanban/README.md', readmeFor('methodology/kanban', 'Kanban',
     'A team that pulls work through a board with WIP limits.'));
@@ -79,7 +79,7 @@ export function indexCatalog(): TestRepo {
   });
   reindex(repo, 'transition digests');
   writePack(repo.dir, kanban('1.1.0', 'Kanban flow', {
-    requires: ['base@^1.0.0'],
+    requires: ['base@^1.0.0', 'software@^1'],
     conflicts: ['blueprint/web'],
     parameters: { wip_limit: { type: 'integer', default: 3, description: 'The WIP limit.' } },
   }));

@@ -1,0 +1,6 @@
+format: 1
+id: core-only
+title: "Core only"
+description: "Lumen Bakery, a fictional small team, keeps its records without a life cycle."
+packs:
+  - base@^1

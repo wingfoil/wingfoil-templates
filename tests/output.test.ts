@@ -5,7 +5,7 @@ import { describe, it } from 'node:test';
 import { loadCatalog } from '../src/catalog';
 import { composeDocuments } from '../src/compose-documents';
 import { normalizeText, planOutput } from '../src/output';
-import { BASE_COMPOSABLE, KANBAN, withPackTree } from './support/pack-tree';
+import { BASE_COMPOSABLE, FOUNDATION_COMPOSABLE, KANBAN, withPackTree } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 import { REPO_ROOT } from './support/paths';
 
@@ -62,7 +62,7 @@ const WITH_X = ['methodology/kanban', 'blueprint/x'];
 describe('output: assets (spec-001 §7.6)', () => {
   it('writes each asset to its built-in folder, copied whole', () => {
     const text = `# kept comment\n${workflow('w', 'sub', 'version: 7\n')}`;
-    const files = plan([BASE, KANBAN, NOTES,
+    const files = plan([...FOUNDATION_COMPOSABLE, KANBAN, NOTES,
       shipping('blueprint/x', { directives: ['d'], workflows: ['w'] },
         { 'workflows/w.yaml': text })],
     [...WITH_NOTES, 'blueprint/x']);
@@ -78,13 +78,13 @@ describe('output: assets (spec-001 §7.6)', () => {
   ];
   for (const [what, other] of twice) {
     it(`fails on two packs shipping one ${what}`, () => {
-      fails([BASE, KANBAN, { id: 'blueprint/x', directives: ['d'], workflows: ['w'] }, other],
+      fails([...FOUNDATION_COMPOSABLE, KANBAN, { id: 'blueprint/x', directives: ['d'], workflows: ['w'] }, other],
         [...WITH_X, 'blueprint/y'], /blueprint\/x.*blueprint\/y/);
     });
   }
 
   it('fails on two packs shipping one Memory template', () => {
-    fails([BASE, KANBAN, NOTES, { id: 'blueprint/y', memoryTemplates: ['note'] }],
+    fails([...FOUNDATION_COMPOSABLE, KANBAN, NOTES, { id: 'blueprint/y', memoryTemplates: ['note'] }],
       [...WITH_NOTES, 'blueprint/y'], /note/);
   });
 
@@ -109,28 +109,28 @@ describe('output: assets (spec-001 §7.6)', () => {
   });
 
   it('fails on a slot workflow whose kind is not sub', () => {
-    fails([BASE, KANBAN, shipping('phase/release/r', { workflows: ['release'] },
+    fails([...FOUNDATION_COMPOSABLE, KANBAN, shipping('phase/release/r', { workflows: ['release'] },
       { 'workflows/release.yaml': workflow('release', 'main') })],
     ['methodology/kanban', 'phase/release/r'], /phase\/release\/r.*release.*kind.*sub/);
   });
 
   it('fails on a Memory template shipped by a pack that does not define its type', () => {
-    fails([BASE, KANBAN, NOTES, { id: 'blueprint/y', memoryTemplates: ['other'] }],
+    fails([...FOUNDATION_COMPOSABLE, KANBAN, NOTES, { id: 'blueprint/y', memoryTemplates: ['other'] }],
       [...WITH_NOTES, 'blueprint/y'], /blueprint\/y.*other/);
   });
 
   it('fails on a template.file other than the built-in path, while the pack ships it', () => {
     const notes = { ...NOTES, extraFiles: { 'fragments/memory.yaml': noteType('tpl/note.md') } };
-    fails([BASE, KANBAN, notes], WITH_NOTES, /note.*template\.file/);
+    fails([...FOUNDATION_COMPOSABLE, KANBAN, notes], WITH_NOTES, /note.*template\.file/);
   });
 
   it('fails on a built-in template.file that no pack ships (derived)', () => {
-    fails([BASE, KANBAN, { ...NOTES, memoryTemplates: [] }], WITH_NOTES,
+    fails([...FOUNDATION_COMPOSABLE, KANBAN, { ...NOTES, memoryTemplates: [] }], WITH_NOTES,
       /memory\/templates\/built-in\/note\.md/);
   });
 
   it('fails on a directive id equal to a WingFoil built-in', () => {
-    fails([BASE, KANBAN, { id: 'blueprint/x', directives: ['security'] }], WITH_X,
+    fails([...FOUNDATION_COMPOSABLE, KANBAN, { id: 'blueprint/x', directives: ['security'] }], WITH_X,
       /blueprint\/x.*security.*built-in/);
   });
 
@@ -158,19 +158,19 @@ describe('output: formats and identifiers (spec-001 §5, §6.1)', () => {
       { 'directives/d.md': '---\nid: e\nformat: 1\n---\n' }), /directives\/d\.md.*id/],
   ];
   for (const [name, spec, pattern] of broken) {
-    it(`fails on ${name}`, () => fails([BASE, KANBAN, spec], WITH_X, pattern));
+    it(`fails on ${name}`, () => fails([...FOUNDATION_COMPOSABLE, KANBAN, spec], WITH_X, pattern));
   }
 
   it('fails on a Memory template without type, or with another type', () => {
     for (const text of ['---\nformat: 1\n---\n', '---\ntype: other\nformat: 1\n---\n']) {
       const files = { ...NOTES.extraFiles, 'memory-templates/note.md': text };
       const notes = { ...NOTES, extraFiles: files };
-      fails([BASE, KANBAN, notes], WITH_NOTES, /memory-templates\/note\.md.*type/);
+      fails([...FOUNDATION_COMPOSABLE, KANBAN, notes], WITH_NOTES, /memory-templates\/note\.md.*type/);
     }
   });
 
   it('fails on two files of one kind in one pack in different formats', () => {
-    fails([BASE, KANBAN, shipping('blueprint/x', { directives: ['a', 'b'] },
+    fails([...FOUNDATION_COMPOSABLE, KANBAN, shipping('blueprint/x', { directives: ['a', 'b'] },
       { 'directives/a.md': directive('a'), 'directives/b.md': directive('b', 2) })],
     WITH_X, /directives\/b\.md.*format 2/);
   });
@@ -180,14 +180,14 @@ describe('output: formats and identifiers (spec-001 §5, §6.1)', () => {
       ...shipping('blueprint/y', { directives: ['b'] }, { 'directives/b.md': directive('b', 2) }),
       manifest: { formats: { directive: 2 } },
     };
-    plan([BASE, KANBAN, { id: 'blueprint/x', directives: ['a'] }, second],
+    plan([...FOUNDATION_COMPOSABLE, KANBAN, { id: 'blueprint/x', directives: ['a'] }, second],
       [...WITH_X, 'blueprint/y']);
   });
 });
 
 describe('output: workflows.yaml (spec-001 §7.7)', () => {
   it('lists workflows in composition order, then each pack contents order', () => {
-    const files = plan([BASE, KANBAN, { id: 'blueprint/b', workflows: ['z', 'y'] },
+    const files = plan([...FOUNDATION_COMPOSABLE, KANBAN, { id: 'blueprint/b', workflows: ['z', 'y'] },
       { id: 'blueprint/a', workflows: ['x', 'w'] }],
     ['methodology/kanban', 'blueprint/b', 'blueprint/a']);
     const prefix = '  - workflows/built-in/';
@@ -198,7 +198,7 @@ describe('output: workflows.yaml (spec-001 §7.7)', () => {
   });
 
   it('writes format and version first in every generated file', () => {
-    const files = plan([BASE, KANBAN], ['methodology/kanban']);
+    const files = plan([...FOUNDATION_COMPOSABLE, KANBAN], ['methodology/kanban']);
     for (const name of ['dna', 'roles', 'memory', 'workflows']) {
       assert.match(files.get(`.wingfoil/${name}.yaml`) ?? '', /^format: 1\nversion: 1\n/, name);
     }
@@ -213,13 +213,13 @@ describe('output: bytes (spec-001 §17)', () => {
   });
 
   it('writes an asset with a byte order mark without it', () => {
-    const files = plan([BASE, KANBAN, shipping('blueprint/x', { directives: ['d'] },
+    const files = plan([...FOUNDATION_COMPOSABLE, KANBAN, shipping('blueprint/x', { directives: ['d'] },
       { 'directives/d.md': `\uFEFF${directive('d')}text\n` })], WITH_X);
     assert.equal(files.get('.wingfoil/directives/built-in/d.md'), `${directive('d')}text\n`);
   });
 
   it('writes a CRLF asset with LF', () => {
-    const files = plan([BASE, KANBAN, shipping('blueprint/x', { directives: ['d'] },
+    const files = plan([...FOUNDATION_COMPOSABLE, KANBAN, shipping('blueprint/x', { directives: ['d'] },
       { 'directives/d.md': '---\r\nid: d\r\nformat: 1\r\n---\r\ntext' })], WITH_X);
     assert.equal(files.get('.wingfoil/directives/built-in/d.md'), `${directive('d')}text\n`);
   });

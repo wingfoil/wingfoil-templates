@@ -6,7 +6,7 @@ import { loadCatalog } from '../src/catalog';
 import type { Catalog } from '../src/catalog';
 import { sortEntries } from '../src/listing';
 import { ResolveError, resolve } from '../src/resolve';
-import { BASE, KANBAN, withPackTree } from './support/pack-tree';
+import { BASE, FOUNDATION, KANBAN, SOFTWARE, withPackTree } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 import { FIXTURES, REPO_ROOT } from './support/paths';
 
@@ -36,25 +36,25 @@ const API: PackSpec = { id: 'blueprint/api' };
 describe('resolve: the complete fixture', () => {
   const full = join(FIXTURES, 'resolve', 'full');
   const order = [
-    'base', 'methodology/kanban', 'phase/inception/lean', 'phase/release/semrel',
+    'base', 'software', 'methodology/kanban', 'phase/inception/lean', 'phase/release/semrel',
     'blueprint/api', 'blueprint/cli', 'blueprint/web', 'governance/dogfood',
     'team-mode/agent-first', 'stage/production',
   ];
 
   it('orders every axis as spec-001 §7.1 says, Kahn within blueprints', () => {
-    const request = order.filter((id) => id !== 'base' && id !== 'blueprint/api');
+    const request = order.filter((id) => !['base', 'software', 'blueprint/api'].includes(id));
     assert.deepEqual(ids(full, request), order);
   });
 
   it('places a blueprint after the one it requires, even when its id sorts first (Kahn)', () => {
-    passes([BASE, KANBAN, { id: 'blueprint/a', requires: ['base@^1', 'blueprint/z@^1'] },
+    passes([...FOUNDATION, KANBAN, { id: 'blueprint/a', requires: ['base@^1', 'blueprint/z@^1'] },
       { id: 'blueprint/m' }, { id: 'blueprint/z' }],
     ['methodology/kanban', 'blueprint/a', 'blueprint/m'],
-    ['base', 'methodology/kanban', 'blueprint/m', 'blueprint/z', 'blueprint/a']);
+    ['base', 'software', 'methodology/kanban', 'blueprint/m', 'blueprint/z', 'blueprint/a']);
   });
 
   it('gives the same order whatever the order of the request', () => {
-    const request = order.slice(1);
+    const request = order.slice(2);
     const permuted = [5, 2, 8, 0, 7, 3, 1, 6, 4].map((index) => request[index] ?? '');
     assert.deepEqual(ids(full, permuted), order);
   });
@@ -69,17 +69,17 @@ describe('resolve: the complete fixture', () => {
 });
 
 describe('resolve: requires and conflicts', () => {
-  it('adds base and required packs transitively, base once', () => {
-    passes([BASE, KANBAN, WEB, API], ['methodology/kanban', 'blueprint/web'],
-      ['base', 'methodology/kanban', 'blueprint/api', 'blueprint/web']);
+  it('adds base and required packs transitively, base and software once', () => {
+    passes([...FOUNDATION, KANBAN, WEB, API], ['methodology/kanban', 'blueprint/web'],
+      ['base', 'software', 'methodology/kanban', 'blueprint/api', 'blueprint/web']);
   });
 
   it('fails on a requested pack missing from the tree', () => {
-    fails([BASE, KANBAN], ['methodology/kanban', 'blueprint/web'], /blueprint\/web.*not found/);
+    fails([...FOUNDATION, KANBAN], ['methodology/kanban', 'blueprint/web'], /blueprint\/web.*not found/);
   });
 
   it('fails on a required pack missing from the tree', () => {
-    fails([BASE, KANBAN, WEB], ['methodology/kanban', 'blueprint/web'],
+    fails([...FOUNDATION, KANBAN, WEB], ['methodology/kanban', 'blueprint/web'],
       /blueprint\/api.*not found.*required by blueprint\/web/);
   });
 
@@ -87,7 +87,7 @@ describe('resolve: requires and conflicts', () => {
     const errors = [['methodology/kanban@^2', 'methodology/kanban@^3'],
       ['methodology/kanban@^3', 'methodology/kanban@^2']].map((request) => {
       let message = '';
-      withPackTree([BASE, KANBAN], (root) => {
+      withPackTree([...FOUNDATION, KANBAN], (root) => {
         try {
           resolve(root, CATALOG, request);
         } catch (error) {
@@ -101,124 +101,178 @@ describe('resolve: requires and conflicts', () => {
   });
 
   it('refuses a catalog foundation that is not a catalog pack id', () => {
-    fails([BASE, KANBAN], ['methodology/kanban'], /foundation/, { ...CATALOG, foundation: '../x' });
+    fails([...FOUNDATION, KANBAN], ['methodology/kanban'], /foundation/,
+      { ...CATALOG, foundation: ['../x', 'software'] });
   });
 
   it('fails on a requested range the tree does not satisfy', () => {
-    fails([BASE, KANBAN], ['methodology/kanban@^2'], /methodology\/kanban 1\.0\.0.*\^2.*request/);
+    fails([...FOUNDATION, KANBAN], ['methodology/kanban@^2'], /methodology\/kanban 1\.0\.0.*\^2.*request/);
   });
 
   it('fails on a required range the tree does not satisfy', () => {
-    fails([BASE, KANBAN, { ...WEB, requires: ['base@^1', 'blueprint/api@^2'] }, API],
+    fails([...FOUNDATION, KANBAN, { ...WEB, requires: ['base@^1', 'blueprint/api@^2'] }, API],
       ['methodology/kanban', 'blueprint/web'], /blueprint\/api 1\.0\.0.*\^2.*blueprint\/web/);
   });
 
   it('fails on an empty intersection', () => {
-    fails([BASE, KANBAN, { ...WEB, requires: ['base@^1', 'blueprint/api@>=2.0.0 <1.0.0'] }, API],
+    fails([...FOUNDATION, KANBAN, { ...WEB, requires: ['base@^1', 'blueprint/api@>=2.0.0 <1.0.0'] }, API],
       ['methodology/kanban', 'blueprint/web'], /blueprint\/api/);
   });
 
   for (const conflict of ['blueprint/api', 'blueprint/api@^1']) {
     it(`fails on a conflict with a present pack (${conflict})`, () => {
-      fails([BASE, KANBAN, API, { id: 'blueprint/cli', conflicts: [conflict] }],
+      fails([...FOUNDATION, KANBAN, API, { id: 'blueprint/cli', conflicts: [conflict] }],
         ['methodology/kanban', 'blueprint/api', 'blueprint/cli'],
         /blueprint\/cli.*conflicts with blueprint\/api/);
     });
   }
 
   it('passes a conflict whose range the present version does not satisfy', () => {
-    passes([BASE, KANBAN, API, { id: 'blueprint/cli', conflicts: ['blueprint/api@^2'] }],
+    passes([...FOUNDATION, KANBAN, API, { id: 'blueprint/cli', conflicts: ['blueprint/api@^2'] }],
       ['methodology/kanban', 'blueprint/api', 'blueprint/cli'],
-      ['base', 'methodology/kanban', 'blueprint/api', 'blueprint/cli']);
+      ['base', 'software', 'methodology/kanban', 'blueprint/api', 'blueprint/cli']);
   });
 
   it('passes a conflict with a pack absent from the composition', () => {
-    passes([BASE, KANBAN, { id: 'blueprint/cli', conflicts: ['blueprint/api'] }],
-      ['methodology/kanban', 'blueprint/cli'], ['base', 'methodology/kanban', 'blueprint/cli']);
+    passes([...FOUNDATION, KANBAN, { id: 'blueprint/cli', conflicts: ['blueprint/api'] }],
+      ['methodology/kanban', 'blueprint/cli'], ['base', 'software', 'methodology/kanban', 'blueprint/cli']);
   });
 
   it('fails on a pack that requires itself', () => {
-    fails([BASE, KANBAN, { id: 'blueprint/cli', requires: ['base@^1', 'blueprint/cli@^1'] }],
+    fails([...FOUNDATION, KANBAN, { id: 'blueprint/cli', requires: ['base@^1', 'blueprint/cli@^1'] }],
       ['methodology/kanban', 'blueprint/cli'], /blueprint\/cli requires itself/);
   });
 
   it('fails on a pack that requires one id twice', () => {
     const twice = ['base@^1', 'blueprint/api@^1', 'blueprint/api@^1.2'];
-    fails([BASE, KANBAN, API, { ...WEB, requires: twice }],
+    fails([...FOUNDATION, KANBAN, API, { ...WEB, requires: twice }],
       ['methodology/kanban', 'blueprint/web'], /blueprint\/web requires blueprint\/api twice/);
   });
 
   it('fails on a manifest whose id is not its directory', () => {
     const other = { id: 'blueprint/other', name: 'other' };
-    fails([BASE, KANBAN, { id: 'blueprint/cli', manifest: other }],
+    fails([...FOUNDATION, KANBAN, { id: 'blueprint/cli', manifest: other }],
       ['methodology/kanban', 'blueprint/cli'], /packs\/blueprint\/cli.*blueprint\/other/);
   });
 
   it('fails on a phase manifest whose slot is not the middle of its id', () => {
-    fails([BASE, KANBAN, { id: 'phase/inception/lean', workflows: ['inception'],
+    fails([...FOUNDATION, KANBAN, { id: 'phase/inception/lean', workflows: ['inception'],
       manifest: { slot: 'release' } }], ['methodology/kanban', 'phase/inception/lean'],
     /packs\/phase\/inception\/lean\/pack\.yaml:\d+:\d+: \/id pattern/);
   });
 
   it('fails on a manifest that is not schema-valid, naming its file', () => {
-    fails([BASE, KANBAN, { id: 'blueprint/cli', manifest: { version: '1.0' } }],
+    fails([...FOUNDATION, KANBAN, { id: 'blueprint/cli', manifest: { version: '1.0' } }],
       ['methodology/kanban', 'blueprint/cli'], /packs\/blueprint\/cli\/pack\.yaml/);
   });
 });
 
-describe('resolve: cardinalities and slots', () => {
-  it('fails without a methodology', () => {
-    fails([BASE, API], ['blueprint/api'], /methodology.*required/);
+describe('resolve: the two foundation packs (spec-001 §3, §7.1, §11)', () => {
+  it('resolves base alone: without software, no methodology is needed', () => {
+    passes([...FOUNDATION, API], [], ['base']);
+    passes([...FOUNDATION, API], ['blueprint/api'], ['base', 'blueprint/api']);
   });
 
-  it('fails on two methodologies', () => {
-    fails([BASE, KANBAN, { id: 'methodology/scrum', workflows: ['delivery'] }],
-      ['methodology/kanban', 'methodology/scrum'], /methodology\/kanban.*methodology\/scrum/);
+  it('adds software only when requested or required', () => {
+    passes([...FOUNDATION, KANBAN, API], ['blueprint/api'], ['base', 'blueprint/api']);
+    passes([...FOUNDATION, KANBAN, API], ['methodology/kanban', 'blueprint/api'],
+      ['base', 'software', 'methodology/kanban', 'blueprint/api']);
+    passes([...FOUNDATION, KANBAN], ['software', 'methodology/kanban@^1'],
+      ['base', 'software', 'methodology/kanban']);
   });
+
+  it('brings software in through a phase pack\'s requires', () => {
+    passes([...FOUNDATION, KANBAN, { id: 'phase/inception/lean', workflows: ['inception'] }],
+      ['phase/inception/lean', 'methodology/kanban'],
+      ['base', 'software', 'methodology/kanban', 'phase/inception/lean']);
+  });
+
+  it('orders base, software, then the axes, whatever the request', () => {
+    const stage = { id: 'stage/production' };
+    for (const request of [['stage/production', 'software', 'methodology/kanban'],
+      ['methodology/kanban', 'stage/production', 'software']]) {
+      passes([...FOUNDATION, KANBAN, stage], request,
+        ['base', 'software', 'methodology/kanban', 'stage/production']);
+    }
+  });
+
+  it('fails with software and no methodology, naming the axis', () => {
+    fails([...FOUNDATION, API], ['software', 'blueprint/api'], /axis methodology.*software/);
+  });
+
+  it('fails on two methodologies, with or without software', () => {
+    fails([...FOUNDATION, KANBAN, { id: 'methodology/scrum', requires: ['base@^1', 'software@^1'],
+      workflows: ['delivery'] }],
+    ['methodology/kanban', 'methodology/scrum'], /methodology\/kanban.*methodology\/scrum/);
+    // Resolution only: a methodology without software has no valid form before task-032, and the
+    // axis message comes before the slot rule.
+    fails([...FOUNDATION, { id: 'methodology/a' }, { id: 'methodology/b' }],
+      ['methodology/a', 'methodology/b'], /methodology\/a.*methodology\/b/);
+  });
+});
+
+describe('resolve: cardinalities and slots', () => {
 
   it('fails on two packs of one phase slot', () => {
-    fails([BASE, KANBAN, { id: 'phase/inception/a', workflows: ['inception'] },
+    fails([...FOUNDATION, KANBAN, { id: 'phase/inception/a', workflows: ['inception'] },
       { id: 'phase/inception/b', workflows: ['inception'] }],
     ['methodology/kanban', 'phase/inception/a', 'phase/inception/b'], /slot inception/);
   });
 
   for (const axis of ['team-mode', 'stage']) {
     it(`fails on two ${axis} packs`, () => {
-      fails([BASE, KANBAN, { id: `${axis}/a` }, { id: `${axis}/b` }],
+      fails([...FOUNDATION, KANBAN, { id: `${axis}/a` }, { id: `${axis}/b` }],
         ['methodology/kanban', `${axis}/a`, `${axis}/b`], new RegExp(`${axis}/a.*${axis}/b`));
     });
   }
 
   it('passes any number of blueprints and governance packs', () => {
     const many = [{ id: 'blueprint/cli' }, { id: 'governance/a' }, { id: 'governance/b' }];
-    passes([BASE, KANBAN, API, ...many],
+    passes([...FOUNDATION, KANBAN, API, ...many],
       ['governance/b', 'blueprint/cli', 'governance/a', 'blueprint/api', 'methodology/kanban'],
-      ['base', 'methodology/kanban', 'blueprint/api', 'blueprint/cli', 'governance/a',
+      ['base', 'software', 'methodology/kanban', 'blueprint/api', 'blueprint/cli', 'governance/a',
         'governance/b']);
   });
 
   it('fails on a phase pack without its slot workflow', () => {
-    fails([BASE, KANBAN, { id: 'phase/release/semrel' }],
+    fails([...FOUNDATION, KANBAN, { id: 'phase/release/semrel' }],
       ['methodology/kanban', 'phase/release/semrel'],
       /phase\/release\/semrel.*workflows\/release\.yaml/);
   });
 
   it('fails on a methodology without delivery', () => {
-    fails([BASE, { id: 'methodology/kanban' }], ['methodology/kanban'],
+    fails([...FOUNDATION, { id: 'methodology/kanban' }], ['methodology/kanban'],
       /methodology\/kanban.*delivery/);
   });
 
   it('fails on a pack shipping a slot it does not fill', () => {
-    fails([BASE, KANBAN, { id: 'blueprint/web', workflows: ['inception'] }],
+    fails([...FOUNDATION, KANBAN, { id: 'blueprint/web', workflows: ['inception'] }],
       ['methodology/kanban', 'blueprint/web'], /blueprint\/web.*slot inception/);
   });
 
-  for (const name of ['sw-life-cycle', 'retrospective']) {
-    it(`fails on a pack other than base shipping ${name}`, () => {
-      fails([BASE, KANBAN, { id: 'governance/x', workflows: [name] }],
+  for (const name of ['sw-life-cycle', 'retrospective', 'governance-evolution']) {
+    it(`fails on a pack other than its owner shipping ${name}`, () => {
+      fails([...FOUNDATION, KANBAN, { id: 'governance/x', workflows: [name] }],
         ['methodology/kanban', 'governance/x'], new RegExp(`governance/x.*${name}`));
     });
   }
+
+  it('fails on base shipping sw-life-cycle or a slot default, and on software shipping '
+    + 'retrospective or governance-evolution (spec-001 §9)', () => {
+    for (const name of ['sw-life-cycle', 'inception']) {
+      fails([{ ...BASE, workflows: ['retrospective', name] }, SOFTWARE, KANBAN],
+        ['methodology/kanban'], new RegExp(`base.*${name}`));
+    }
+    for (const name of ['retrospective', 'governance-evolution']) {
+      fails([BASE, { ...SOFTWARE, workflows: ['sw-life-cycle', name] }, KANBAN],
+        ['methodology/kanban'], new RegExp(`software.*${name}`));
+    }
+  });
+
+  it('lets software ship the slot defaults', () => {
+    passes([BASE, { ...SOFTWARE, workflows: ['sw-life-cycle', 'inception', 'release'] }, KANBAN],
+      ['methodology/kanban'], ['base', 'software', 'methodology/kanban']);
+  });
 
   it('fails on a phase pack whose slot the catalog does not list', () => {
     const catalog: Catalog = {
@@ -227,7 +281,7 @@ describe('resolve: cardinalities and slots', () => {
         ? { ...axis, slots: ['inception', 'specification', 'end-of-life'] }
         : axis)),
     };
-    fails([BASE, KANBAN, { id: 'phase/release/semrel', workflows: ['release'] }],
+    fails([...FOUNDATION, KANBAN, { id: 'phase/release/semrel', workflows: ['release'] }],
       ['methodology/kanban', 'phase/release/semrel'],
       /phase\/release\/semrel: slot release is not a slot of axis phase/, catalog);
   });
@@ -241,16 +295,16 @@ describe('resolve: cardinalities and slots', () => {
         return axis;
       }),
     };
-    fails([BASE, KANBAN, API, { id: 'blueprint/cli' }, { id: 'governance/a' }],
+    fails([...FOUNDATION, KANBAN, API, { id: 'blueprint/cli' }, { id: 'governance/a' }],
       ['methodology/kanban', 'blueprint/api', 'blueprint/cli', 'governance/a'],
       /blueprint\/api.*blueprint\/cli/, catalog);
-    fails([BASE, KANBAN], ['methodology/kanban'], /governance.*required/, catalog);
+    fails([...FOUNDATION, KANBAN], ['methodology/kanban'], /governance.*required/, catalog);
   });
 });
 
 describe('resolve: inventories', () => {
   it('fails on a directory where a listed file is expected', () => {
-    fails([BASE, KANBAN, { id: 'blueprint/x', directives: ['d'], omitFiles: ['directives/d.md'],
+    fails([...FOUNDATION, KANBAN, { id: 'blueprint/x', directives: ['d'], omitFiles: ['directives/d.md'],
       extraFiles: { 'directives/d.md/inner': 'x\n' } }], ['methodology/kanban', 'blueprint/x'],
     /blueprint\/x: directives\/d\.md is a directory/);
   });
@@ -264,24 +318,24 @@ describe('resolve: inventories', () => {
   ];
   for (const [file, spec] of listed) {
     it(`fails on a listed file missing: ${file}`, () => {
-      fails([BASE, KANBAN, { ...spec, omitFiles: [file] }], ['methodology/kanban', 'blueprint/x'],
+      fails([...FOUNDATION, KANBAN, { ...spec, omitFiles: [file] }], ['methodology/kanban', 'blueprint/x'],
         new RegExp(`blueprint/x.*${file}.*missing`));
     });
     it(`fails on a file present but unlisted: ${file}`, () => {
-      fails([BASE, KANBAN, { id: 'blueprint/x', extraFiles: { [file]: 'x\n' } }],
+      fails([...FOUNDATION, KANBAN, { id: 'blueprint/x', extraFiles: { [file]: 'x\n' } }],
         ['methodology/kanban', 'blueprint/x'], new RegExp(`blueprint/x.*${file}.*not listed`));
     });
   }
 
   it('fails on fragments out of the order dna, roles, memory', () => {
-    fails([BASE, KANBAN, { id: 'blueprint/x', fragments: ['roles', 'dna'] }],
+    fails([...FOUNDATION, KANBAN, { id: 'blueprint/x', fragments: ['roles', 'dna'] }],
       ['methodology/kanban', 'blueprint/x'], /blueprint\/x.*fragments.*order/);
   });
 });
 
 describe('resolve: order', () => {
   it('fails on a requires cycle among blueprints, naming both', () => {
-    fails([BASE, KANBAN, { id: 'blueprint/a', requires: ['base@^1', 'blueprint/b@^1'] },
+    fails([...FOUNDATION, KANBAN, { id: 'blueprint/a', requires: ['base@^1', 'blueprint/b@^1'] },
       { id: 'blueprint/b', requires: ['base@^1', 'blueprint/a@^1'] }],
     ['methodology/kanban', 'blueprint/a'], /cycle.*blueprint\/a.*blueprint\/b/);
   });
@@ -301,15 +355,15 @@ describe('resolve: order', () => {
   ];
   for (const [name, from, to] of later) {
     it(`fails on ${name}`, () => {
-      fails([BASE, KANBAN, from, to], ['methodology/kanban', from.id],
+      fails([...FOUNDATION, KANBAN, from, to], ['methodology/kanban', from.id],
         new RegExp(`${from.id}.*requires ${to.id}.*later`));
     });
   }
 
   it('passes a stage requiring a team-mode', () => {
     const stage = { id: 'stage/s', requires: ['base@^1', 'team-mode/a@^1'] };
-    passes([BASE, KANBAN, stage, { id: 'team-mode/a' }],
-      ['methodology/kanban', 'stage/s'], ['base', 'methodology/kanban', 'team-mode/a', 'stage/s']);
+    passes([...FOUNDATION, KANBAN, stage, { id: 'team-mode/a' }],
+      ['methodology/kanban', 'stage/s'], ['base', 'software', 'methodology/kanban', 'team-mode/a', 'stage/s']);
   });
 });
 

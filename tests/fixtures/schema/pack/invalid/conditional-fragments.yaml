@@ -1,0 +1,16 @@
+# expect: additionalProperties /conditional/0/contents
+format: 1
+id: methodology/kanban
+axis: methodology
+name: kanban
+title: "Kanban"
+description: "Continuous flow under explicit WIP limits."
+version: 1.0.0
+formats: { workflow: 1 }
+requires_capabilities: []
+requires:
+  - base@^1
+contents: {}
+conditional:
+  - with: software@^1
+    contents: { workflows: [delivery], fragments: [memory] }

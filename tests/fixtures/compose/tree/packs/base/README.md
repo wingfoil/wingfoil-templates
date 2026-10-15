@@ -81,7 +81,13 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 
 Fixture: tests/fixtures/examples/base/kanban-team/
 
-A fictional bakery, Lumen Bakery, keeps its order tool in one repository with a small team. It composes `base` with `methodology/kanban` and gets the life cycle, the Memory types and the roles every pack builds on; its inception phase runs `base`'s default workflow.
+A fictional bakery, Lumen Bakery, keeps its order tool in one repository with a small team. It composes `base` with `methodology/kanban` and gets the Memory types and the roles every pack builds on.
+
+### core-only
+
+Fixture: tests/fixtures/examples/base/core-only/
+
+The same bakery keeps its tasks without a life cycle: `base` alone, with no methodology and no `software`.
 
 ## Sources and adaptations
 

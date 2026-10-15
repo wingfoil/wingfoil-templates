@@ -14,10 +14,9 @@ formats:
 requires_capabilities: []
 parameters:
   project_name: { type: string, description: "The project name, dna.yaml project.name" }
-  adr_path: { type: path, default: "docs/memory/adr/{id}.md", description: "Where ADRs live" }
 contents:
   fragments: [dna, roles, memory]
   directives: [base-rules]
-  workflows: [sw-life-cycle, inception, specification, release, end-of-life, retrospective]
-  memory_templates: [task, adr]
+  workflows: [retrospective]
+  memory_templates: [task]
   agents_section: true
