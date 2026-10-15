@@ -2,7 +2,7 @@
 id: task-031-the-two-foundation-packs-base-and-software-and-the-contract-schemas-catalog.yaml-resolver-lint-f-031-dl-022
 type: task
 title: "The two foundation packs base and software, and the contract: schemas, catalog.yaml, resolver, lint, F-031 (dl-022)"
-status: in-review
+status: approved
 pack: ""            # tooling task (tooling-change › deliver, plan-039)
 depends_on: []
 tags: ["tooling","base","spec"]
