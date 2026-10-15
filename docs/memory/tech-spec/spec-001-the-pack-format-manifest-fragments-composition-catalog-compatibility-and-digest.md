@@ -660,8 +660,18 @@ presets:
   - { id: startup-mvp, path: presets/startup-mvp.yaml }
 ```
 
+- **`foundation`** names the foundation packs in composition order: `[base, software]` (dl-022).
+  `base` is in every composition; `software` only where a pack of the composition requires it or the
+  project chooses it.
 - **`axes`** and **`slots`** carry §3 and §9 as data. The order of `axes` is the composition order
-  of §7.1, after `base`.
+  of §7.1, after the foundation packs.
+  - The `methodology` axis is required only in a composition with `software`. Its data form is
+    `required_with: software` in place of `required: true`; the other axes keep `required: false`.
+  - The `default` of the slots `inception`, `specification`, `release` and `end-of-life` is
+    `software`.
+- **The example above** still shows `foundation: base`, a required `methodology` axis and `base` as
+  the slots' default. It changes together with `catalog.yaml` and its schema, which
+  `tests/catalog.test.ts` holds equal to it (Execution Notes, 2026-10-15).
 - **`packs[]`:**
   - `id`, `path` (§4);
   - `catalog`: `official` or `community` (dl-001 D7). Where community packs live, and how they
@@ -845,7 +855,8 @@ actions:
 
 ## 15. Presets
 
-A preset names a curated combination, selectable with `wingfoil init --preset <id>` (dl-001 D1).
+A preset names a curated combination that `init` can select (dl-001 D1). How `init` selects one is
+WingFoil's, requested by this repository as F-030; no `init --preset` option exists yet.
 It lives in `presets/<id>.yaml`:
 
 ```yaml
@@ -864,6 +875,10 @@ parameters: {}
 ```
 
 - `packs` uses the entry syntax of §6.3. `base` may be omitted, because every pack requires it.
+  `software` may be omitted only when a listed pack requires it unconditionally (a phase pack, for
+  example); a preset that wants the software layer and lists no such pack names it.
+- Whether a preset holds `software` is judged on its resolved composition: with `software` it holds
+  exactly one methodology, without it at most one, which contributes no `delivery` (§3, §6.5).
 - `parameters` may set only generic values. A project value, such as a name or a person, is never in
   a preset (`pack-authoring`).
 - `profile` names the adoption profile it serves (`docs/01_vision/04_personas.md` §2).
@@ -925,7 +940,12 @@ check the rest, and the composer refuses what they reject.
 - `id` equals the directory path under `packs/`, and `name` equals its last segment (§4, §6.2);
 - the pack name is unique across the catalog (dl-004 1(a));
 - `requires` has exactly one `base@^<major>` entry (§3) and at most one entry per pack id; no pack
-  requires or conflicts with itself (§6.3);
+  requires or conflicts with itself, or conflicts with a foundation pack (§6.3);
+- `software` requires `base` only; every phase pack requires `software`; a pack that uses a Memory
+  type, a workflow, a directive or a parameter of `software` outside a conditional part requires it
+  (§3, §6.3);
+- no `memory.yaml` fragment holds `template.frontmatter.exempt`, and `not_applicable_allowed` and
+  `lists` name only fields the same fragment adds to `required` (§7.5);
 - `requires_capabilities` is sorted;
 - `contents.fragments` is in the order `dna`, `roles`, `memory`;
 - `contents` matches the files present, both ways (§6.4);
@@ -935,9 +955,11 @@ check the rest, and the composer refuses what they reject.
 - every `{{name}}` is in the pack's parameter scope (§8.1), and every default passes its type (§8);
 - a phase pack ships its slot workflow, a methodology ships `delivery`, and no other pack ships a
   slot name (§9);
-- no pack other than `base` ships `sw-life-cycle` or `retrospective` (§9).
+- no pack other than `software` ships `sw-life-cycle` or a slot default, and no pack other than
+  `base` ships `retrospective` or `governance-evolution` (§9, dl-022).
 
 **`catalog.yaml`:**
+- `foundation` is `[base, software]`;
 - `path` equals `packs/<id>`, and pack ids are unique;
 - `versions` are in ascending semver order, with unique versions;
 - `transitions` appears only on versions of `stage` packs, and each of its digests recomputes from
@@ -952,8 +974,10 @@ check the rest, and the composer refuses what they reject.
 - every capability a release lists is in the `capabilities` vocabulary.
 
 **Presets:**
-- the packs satisfy the cardinalities of §3 (one methodology, at most one pack per slot, team-mode
-  and stage);
+- the resolved packs satisfy the cardinalities of §3: with `software`, exactly one methodology;
+  without it, at most one methodology and no phase pack; at most one pack per slot, team-mode and
+  stage;
+- `software` is omitted only when a listed pack requires it unconditionally (§15);
 - every parameter value passes the type of the parameter it sets (§8.1).
 
 **Transitions:**
