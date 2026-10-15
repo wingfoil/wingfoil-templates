@@ -200,7 +200,7 @@ describe('inventory and formats rules', () => {
 describe('foundation rules (spec-001 §3, §6.5, §10, §18)', () => {
   /** software with a Memory type, a directive and a parameter of its own. */
   const SOFTWARE_FULL: PackSpec = { ...SOFTWARE_COMPOSABLE, fragments: ['memory'],
-    directives: ['determinism'],
+    directives: ['determinism'], memoryTemplates: ['adr'],
     manifest: { parameters: { adr_path: { type: 'path', default: 'docs/adr/{id}.md',
       description: 'x' } } },
     extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'fragments/memory.yaml': 'format: 1\n'
@@ -215,12 +215,16 @@ describe('foundation rules (spec-001 §3, §6.5, §10, §18)', () => {
   });
 
   it('schema: software requiring a pack besides base', () => {
-    failsWith('schema', [BASE, { ...SOFTWARE_COMPOSABLE,
+    // A pack.yaml that fails its schema is not loaded, so the lint's compositions refuse too.
+    failsWith(['compose', 'schema'], [BASE, { ...SOFTWARE_COMPOSABLE,
       requires: ['base@^1', 'blueprint/api@^1'] }, KANBAN, { id: 'blueprint/api' }]);
   });
 
   it('compose: software defining defaults, or opening its section at level 1', () => {
-    failsWith('compose', [BASE, { ...SOFTWARE_COMPOSABLE, fragments: ['memory'],
+    // base defines no defaults here, so software's would be their definition (spec-001 §7.5).
+    const files = { ...BASE.extraFiles, 'fragments/memory.yaml': 'format: 1\n' };
+    failsWith('compose', [{ ...BASE, extraFiles: files }, { ...SOFTWARE_COMPOSABLE,
+      fragments: ['memory'],
       extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'fragments/memory.yaml':
         'format: 1\ndefaults:\n  states:\n    sequence: [draft, done]\n' } }, KANBAN]);
     failsWith('compose', [BASE, { ...SOFTWARE_COMPOSABLE, agentsSection: true,
