@@ -166,7 +166,63 @@ Run from a clean clone of `task/task-031-foundation`, on Node.js 22.21 and the f
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+On `task/task-031-foundation`, through `tooling-delivery` v2 as `developer` (`code-quality`,
+`testing`, `determinism`). Three red steps (dl-018 R3), each a test commit run red and counted,
+then the code commit that makes it green; one task, no split: each step's tests can be written
+before its code.
+
+**Step 1: the contract and the composition with two foundation packs.** The catalog's schema
+change forces the fixture split and the resolver in one green commit (ruling 1), so their tests
+come together.
+- Tests, red:
+  - the schema samples of Acceptance 2, under `tests/fixtures/schema/{pack,catalog,preset}/`;
+  - `tests/catalog.test.ts`: the foundation list, the `methodology` axis's `required_with`;
+  - `tests/resolve.test.ts` and `tests/fixtures/resolve/`: Acceptance 4; the presets of
+    Acceptance 5 in `tests/check-packs.test.ts` (the cardinalities judged on the resolved
+    composition, with `required_with`; a preset naming `software`), which read the same
+    `axesMessages`;
+  - the golden split of Acceptance 6: the tree's `base` and `software`, kanban and the phase pack
+    requiring `software@^1`, the tree's `catalog.yaml`, `software`'s README, CHANGELOG and
+    example, `base/core-only`; `tests/fixtures/compose/expected` edited by hand where the split
+    changes it (`workflows.yaml`'s include order, the AGENTS region, the order of `memory.yaml`'s
+    types and of the copied files) and `tests/fixtures/compose/expected-base/` written by hand;
+  - the ownership rules of §9 (Acceptance 5's `sw-life-cycle`, slot defaults, `retrospective`,
+    `governance-evolution`), which the split needs at once;
+  - `tests/support/pack-tree.ts`: a `SOFTWARE` spec and `FOUNDATION = [BASE, SOFTWARE]`; `BASE`
+    without `sw-life-cycle`; `KANBAN` and a phase pack's default `requires` with `software@^1`;
+    `tests/support/index-catalog.ts` likewise. The existing tests are adapted to the split in the
+    same commit, each adaptation (a composition gaining `SOFTWARE`, a count) listed in the notes.
+- Code, green: `schema/pack`, `catalog`, `preset`; `catalog.yaml`, spec-001 §11's example and
+  bullet, the tree's `catalog.yaml` (one commit); `src/catalog.ts` (`foundation: string[]`, the
+  core and the software layer, `AxisSpec.requiredWith`); `resolve.ts` (the queue from the core,
+  `software` only as asked or required, the order, `required_with`, both foundation packs exempt
+  from the axis check); `pack-rules.ts` (the reserved names split by owner, a slot's default read
+  as the software layer); `workflow-rules.ts` (the software layer's `sw-life-cycle`);
+  `compose-documents.ts`, `memory-merge.ts`, `output.ts`, `tree-rules.ts` reading the core;
+  `npm run index` over the golden tree and `REFRESH_INDEX_EXPECTED=1` for
+  `tests/fixtures/index/expected`, each reviewed by diff (Acceptance 9). Then F-031 (Acceptance
+  10): `npm run feedback:note -- --schema --from task-031`, its body completed by hand, committed
+  before the branch is pushed.
+
+**Step 2: the §18 rules on the foundation.** Tests, red, in `tests/check-packs.test.ts` and
+`tests/resolve.test.ts` (the composer refusing each, §17): `software` requiring a pack other than
+`base`; a phase pack not requiring `software`; `software` defining `defaults`; `software`'s
+section at level 1; a pack carrying `conditional` (R1). Code, green:
+`pack-rules.ts` (`manifestProblems`), `memory-merge.ts`, `output.ts`, `tree-rules.ts`, and the
+`conditional` refusal in the lint and the resolver. The rule on using `software` without requiring
+it is existing behaviour: its four tests (type, include, directive, parameter) are
+characterizations (dl-018 R2), each checked by a mutation that switches off the rule it relies on.
+
+**Step 3: the lint's compositions.** Tests, red, in `tests/check-packs.test.ts` (Acceptance 7):
+`base` alone refused (a broken core fragment); an overlay pair with no methodology refused; a pack
+that does not reach `software` composed as `base` + the pack; `software` composed with the first
+methodology; no composition of a pack needing `software` when the tree has no methodology. Code,
+green: `overlay-rules.ts`.
+
+Then: the grep of Acceptance 8; the checks of Acceptance 1 from a clean clone on both Node.js
+versions; the independent review; the push, F-031 included (no pushed commit fails
+`schema-note`), and the CI run. The Execution Notes list each red run (command, failing count),
+the commits, the adapted tests, and the interim `Axis: software`.
 
 ## Execution Notes
 
