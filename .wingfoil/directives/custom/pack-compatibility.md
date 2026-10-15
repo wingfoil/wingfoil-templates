@@ -21,6 +21,11 @@ tooling's self-tests, run in the matrix's self-test mode (dl-009).
   compatible (it reads every format, it provides every capability). Each
   composed `.wingfoil/` must pass `wingfoil workflow list`, `wingfoil dna show` and
   `wingfoil directives list` with exit code 0 and no warning.
+- A pack with a conditional part (spec-001 §6.5) is validated in compositions with and without
+  `software`. `npm run validate` derives the other leg of each composition that holds one; the
+  leg with `software` needs a methodology, so for a pack that is not one it comes from a
+  documented combination (a README example or a preset) that holds a methodology, and a
+  publication fails without a leg with `software` that ran (plan-039 R2, R6).
 - Compose twice from a clean state: the two outputs must be byte-identical.
 - Record the commands, the WingFoil versions and the exit codes in the `pack-release` element.
   A claim of "it validates" without the command and its result is not evidence.
