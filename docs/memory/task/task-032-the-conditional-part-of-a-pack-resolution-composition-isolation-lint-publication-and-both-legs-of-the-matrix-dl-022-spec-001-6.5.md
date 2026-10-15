@@ -119,8 +119,8 @@ Run from a clean clone of `task/task-032-conditional`, on Node.js 22.21 and the 
      twice and run through the matrix; without a methodology, `matrix <label>[+software]: skipped,
      no methodology`; the `[-software]` leg drops a preset's values for parameters of packs absent
      from it, and its composition line names them (R5);
-   - in publication mode, `validate` fails when a pack with a conditional part has no composition
-     with `software` that ran (R6), naming the pack;
+   - in publication mode, `validate` fails when a pack with a conditional part, among the packs of
+     the compositions it validates, has no composition with `software` that ran (R6), naming it;
    - `validate:publication` does the same (it shares `runValidate`: a characterization);
    - `writeEvidence` lists the legs' compositions and releases and counts no skip line as a run (a
      characterization of the existing regexes, with the `[+software]` label);
@@ -151,3 +151,12 @@ Run from a clean clone of `task/task-032-conditional`, on Node.js 22.21 and the 
      command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019). -->
+- 2026-10-15: written under plan-039; independent review of the body: approve after amendments
+  (the slot hole of `workflowProblems`; isolation of fragments; `formats` both ways; the per-part
+  scope in the composer; the golden `flow` and its fixtures named; the lint's legs; the label
+  format; "requires" transitive; §7.1 vacuous in format 1). Three findings needed the approver:
+  ruled on 2026-10-15 as plan-039 R5–R7; amended. Re-review: approve; its minor findings (R6's
+  scope, plan-039's references to R5–R7) amended without changing a rule. Size: the Design lists
+  the red steps (rules, resolver, composer and the golden `flow`; the legs in `validate` and the
+  lint, and evidence; publication and the tag rules; the directive as a documentation exception,
+  dl-018 R2), or proposes a split (032a, 032b) through plan-039.
