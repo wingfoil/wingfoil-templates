@@ -19,6 +19,8 @@ It implements `docs/01_vision/06_features.md` F1.1–F1.7 and F2.1–F2.6, and s
 - dl-001: the pack model;
 - dl-002: compatibility by formats and capabilities;
 - dl-003: `base`, the slots, the `governance` axis, AGENTS.md R1–R4;
+- dl-022: the scope of `base`, the `software` foundation pack, a methodology's `delivery` only with
+  `software`;
 - dl-004: identifiers, tags, branches, digest, ruled 1(a), 2(a), 3(b), 4(a);
 - dl-008: no `operations` slot;
 - adr-001: the reference composer;
@@ -48,10 +50,12 @@ The key words **must**, **must not**, **should** and **may** are normative.
 | Term | Meaning |
 |---|---|
 | **pack** | A directory under `packs/` with a `pack.yaml`, versioned on its own (dl-001 D4). |
-| **catalog pack id** | The pack's identifier in `catalog.yaml`, tags and `requires`: `base`, `<axis>/<name>` or `phase/<slot>/<name>`. |
+| **catalog pack id** | The pack's identifier in `catalog.yaml`, tags and `requires`: `base`, `software`, `<axis>/<name>` or `phase/<slot>/<name>`. |
 | **pack name** | The last segment of the catalog pack id. Unique across the whole catalog (dl-004 1(a)). |
-| **axis** | A concern a project chooses a pack for (§3). `base` is outside the axes. |
-| **slot** | A workflow name that `sw-life-cycle` or `delivery` includes and that one pack fills (§9). |
+| **axis** | A concern a project chooses a pack for (§3). The foundation packs are outside the axes. |
+| **foundation pack** | `base`, the core of every project governed by WingFoil, or `software`, the software layer above it (§3, dl-022). |
+| **conditional part** | The part of a pack's content and requirements that counts only in a composition holding a given pack (§6.5). |
+| **slot** | A workflow name that `sw-life-cycle` or `delivery` includes and that one pack fills (§9). Slots exist only in a composition with `software`. |
 | **overlay** | A pack that only adds to or tightens the packs composed before it (dl-001 D1). |
 | **fragment** | A partial `dna.yaml`, `roles.yaml` or `memory.yaml`, merged with the other packs' (§7). |
 | **asset file** | A file copied whole into the project: a workflow, a directive, a Memory template (§6). |
@@ -61,12 +65,14 @@ The key words **must**, **must not**, **should** and **may** are normative.
 
 ## 3. Axes, cardinalities and overlays
 
-A composition holds `base` and packs chosen along these axes (dl-001 D1, dl-003 D1/D6, dl-008):
+A composition holds `base`, optionally `software`, and packs chosen along these axes (dl-001 D1,
+dl-003 D1/D6, dl-008, dl-022):
 
 | Axis | Cardinality | Overlay | Notes |
 |---|---|---|---|
-| *(foundation)* `base` | exactly one, always | no | Composed first. Every other pack requires it. |
-| `methodology` | exactly one | no | Fills the `delivery` slot. |
+| *(foundation)* `base` | exactly one, always | no | Composed first. Every other pack requires it. Serves every project governed by WingFoil, software or not (dl-022 S1, S2). |
+| *(foundation)* `software` | at most one | no | Composed right after `base`. Ships the software Memory types and the life cycle with its slots (dl-022 S3). |
+| `methodology` | exactly one with `software`, at most one without | no | Fills the `delivery` slot only in a composition with `software` (§6.5, §9). |
 | `phase` | at most one per slot | no | Slots `inception`, `specification`, `release`, `end-of-life`. |
 | `blueprint` | any number | no | |
 | `governance` | any number | no | |
@@ -75,6 +81,11 @@ A composition holds `base` and packs chosen along these axes (dl-001 D1, dl-003 
 
 - Every pack except `base` **must** require `base` exactly once, written `base@^<major>`, for
   example `base@^1` (dl-003 D1). `base` requires nothing.
+- `software` requires `base@^<major>` only. Every phase pack **must** require `software`, written
+  `software@^<major>`, and so **must** every pack that uses a Memory type, a workflow, a directive
+  or a parameter shipped by `software` outside a conditional part (§6.3, §6.5).
+- A composition without `software` has no life cycle: no `sw-life-cycle`, no slot, and no phase pack.
+  Its methodology, if any, contributes everything but its conditional part (dl-022 S3).
 - Every pack **must** only add to or tighten what the packs composed before it ship (§7). An
   overlay is composed after every non-overlay pack, so it can tighten them all.
 - The axes, cardinalities, slots and stage scale are data of `catalog.yaml` (§11), so that a resolver
@@ -83,15 +94,16 @@ A composition holds `base` and packs chosen along these axes (dl-001 D1, dl-003 
 ## 4. Identifiers
 
 - **Pack name:** `^[a-z][a-z0-9]*(-[a-z0-9]+)*$`, unique across the catalog whatever the axis or
-  slot (dl-004 1(a)). The name `base` is the foundation's.
+  slot (dl-004 1(a)). The names `base` and `software` are the foundation packs'.
 - **Catalog pack id:**
-  - `base` for the foundation;
+  - `base` and `software` for the foundation packs;
   - `phase/<slot>/<name>` for a phase pack;
   - `<axis>/<name>` for every other pack.
 - **Pack directory:** `packs/<catalog pack id>/`.
-- **Memory element:** `pack-<axis>-<name>`; `base` is `pack-foundation-base`. `foundation` is a
-  value of the element's `axis` field only. In `pack.yaml` and `catalog.yaml`, `base` has no axis
-  (dl-004 1(a)).
+- **Memory element:** `pack-<axis>-<name>`; the foundation packs are `pack-foundation-base` and
+  `pack-foundation-software`. `foundation` is a value of the element's `axis` field only. In
+  `pack.yaml` and `catalog.yaml`, the foundation packs have no axis (dl-004 1(a), as amended by
+  dl-022).
 - **Tag** of a published version: `<catalog pack id>@<version>`, for example `base@1.0.0`,
   `methodology/kanban@1.2.0`, `phase/inception/lean-inception@1.0.0` (dl-004 2(a)).
   - The tag is annotated, points at the commit recorded in `catalog.yaml` (§11), and is never moved
@@ -165,7 +177,7 @@ packs/<catalog pack id>/
 ```yaml
 format: 1
 id: methodology/kanban          # catalog pack id (§4)
-axis: methodology               # absent for base
+axis: methodology               # absent for the foundation packs
 name: kanban                    # equals the last segment of id
 # slot: release                 # phase packs only; equals the middle segment of id
 title: "Kanban"
@@ -195,14 +207,14 @@ contents:                       # §6.4
 |---|---|---|
 | `format` | yes | `1` |
 | `id` | yes | §4. Equals the directory path under `packs/`. |
-| `axis` | yes, except `base` | One of the axes of §3. Absent for `base`. Equals the first segment of `id`. |
+| `axis` | yes, except the foundation packs | One of the axes of §3. Absent for `base` and `software`. Equals the first segment of `id`. |
 | `name` | yes | §4. Equals the last segment of `id`. |
 | `slot` | phase packs only | One of the `phase` slots. Equals the middle segment of `id`. |
 | `title`, `description` | yes | Non-empty. English (dl-001 D8). |
 | `version` | yes | §4. |
 | `formats` | yes | Map from file kind (§12) to format, one entry per kind the pack ships. May be empty only for a pack that ships no WingFoil file. |
 | `requires_capabilities` | yes | Capability names from `compat.yaml` (§12), sorted, unique. May be empty. |
-| `requires` | yes, except `base` | §6.3. Exactly one `base@^<major>` entry for every pack but `base`; empty or absent for `base`. |
+| `requires` | yes, except `base` | §6.3. Exactly one `base@^<major>` entry for every pack but `base`; empty or absent for `base`; `software` requires `base@^<major>` only. |
 | `conflicts` | no | §6.3. |
 | `parameters` | no | §8. |
 | `contents` | yes | §6.4. |
@@ -228,12 +240,13 @@ rest; §18 lists them for every file kind.
 
   `||`, hyphen ranges, `x` wildcards and pre-releases are not allowed.
 - A pack has at most one `requires` entry per catalog pack id. It never requires or conflicts with
-  itself, and never conflicts with `base`.
+  itself, and never conflicts with `base` or `software`.
 - A composition **must** satisfy every `requires` of every pack, and **must not** contain two packs
   of which one `conflicts` with the other.
 - The cardinalities of §3 are conflicts already, so packs **must not** restate them.
 - A pack that uses a parameter, a Memory type, a role, a directive or an included workflow that it
-  does not ship itself **must** `require` the pack that ships it (`pack-authoring`).
+  does not ship itself **must** `require` the pack that ships it (`pack-authoring`). The one
+  exception is a conditional part, whose `with` requires `software` for what that part uses (§6.5).
 
 ### 6.4 `contents`
 
