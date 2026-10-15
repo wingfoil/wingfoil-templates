@@ -368,7 +368,7 @@ describe('resolve: order', () => {
       {
         id: 'phase/inception/a',
         workflows: ['inception'],
-        requires: ['base@^1', 'phase/release/b@^1'],
+        requires: ['base@^1', 'software@^1', 'phase/release/b@^1'],
       },
       { id: 'phase/release/b', workflows: ['release'] }],
     ['a team-mode requiring a stage', { id: 'team-mode/a', requires: ['base@^1', 'stage/s@^1'] },

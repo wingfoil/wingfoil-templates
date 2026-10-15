@@ -167,6 +167,25 @@ export function slotProblems(catalog: Catalog, pack: PackLike): Problem[] {
   return problems;
 }
 
+/**
+ * spec-001 §3, §6.5, §18: every phase pack requires the software layer; a conditional part is
+ * refused until its rules are implemented (plan-039 R1, task-032).
+ */
+export function foundationProblems(catalog: Catalog, pack: PackLike): Problem[] {
+  const problems: Problem[] = [];
+  const software = softwarePack(catalog);
+  const required = (pack.manifest.requires ?? []).map((entry) => entryId(entry, 'requires'));
+  if (pack.manifest.axis === 'phase' && !required.includes(software)) {
+    problems.push(at(pack, '/requires', 'requires-software',
+      `${pack.id}: a phase pack must require ${software} (spec-001 §3)`));
+  }
+  if (pack.manifest.conditional !== undefined) {
+    problems.push(at(pack, '/conditional', 'conditional',
+      `${pack.id}: conditional is not implemented yet by this tooling (spec-001 §6.5)`));
+  }
+  return problems;
+}
+
 /** The file kind of spec-001 §12 of a listed file, or undefined for the agents section. */
 export function kindOf(path: string): string | undefined {
   if (path.startsWith('fragments/')) return path.slice('fragments/'.length, -'.yaml'.length);

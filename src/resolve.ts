@@ -10,7 +10,7 @@ import type { AxisSpec, Catalog } from './catalog';
 import { isCatalogPackId } from './digest';
 import { packLayoutProblems } from './layout-rules';
 import {
-  formatKindsProblems, inventoryProblems, manifestProblems, slotProblems,
+  formatKindsProblems, foundationProblems, inventoryProblems, manifestProblems, slotProblems,
 } from './pack-rules';
 import type { Problem } from './problems';
 import { installListed, readmeProblems } from './readme-rules';
@@ -54,6 +54,8 @@ export interface PackManifest {
   conflicts?: string[];
   parameters?: Record<string, ParameterDeclaration>;
   contents: PackContents;
+  /** Content that counts only in a composition with software (spec-001 §6.5). */
+  conditional?: { with: string; contents: Pick<PackContents, 'workflows' | 'directives'> }[];
 }
 
 export interface ResolvedPack {
@@ -306,7 +308,10 @@ export function resolve(tree: string, catalog: Catalog, request: string[]): Reso
   checkConflicts(byId, packs);
   const [axisProblem] = axesMessages(catalog, byId);
   if (axisProblem !== undefined) throw new ResolveError(axisProblem);
-  for (const pack of byId) throwFirst(slotProblems(catalog, pack));
+  for (const pack of byId) {
+    throwFirst(foundationProblems(catalog, pack));
+    throwFirst(slotProblems(catalog, pack));
+  }
   const listed = installListed(tree);
   for (const pack of byId) {
     throwFirst(inventoryProblems(tree, pack));
