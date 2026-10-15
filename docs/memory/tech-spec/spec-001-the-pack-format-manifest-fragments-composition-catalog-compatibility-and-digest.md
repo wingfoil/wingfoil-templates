@@ -131,6 +131,14 @@ This specification applies it twice.
    The value is the WingFoil format of that file kind that the file is written in. The pack's
    `formats` map (§6) **must** list the same value for each kind it ships, and every file of one kind
    in one pack **must** have the same format.
+
+   WingFoil v0.3 keeps every kind at format 1 and adds optional keys without bumping it, as dl-149
+   allows (read at `wingfoil/wingfoil@ffa9bf6b`). A format therefore does not say which keys a
+   release knows. A pack **must not** use a key unknown to a release its computed range claims
+   (§12): WingFoil refuses unknown keys in some nodes (adapter manifests, a workflow phase's
+   `cadence`) and accepts them elsewhere with the warning `unknown field(s) ignored`, which the
+   compatibility matrix does not allow (`pack-compatibility`). The matrix enforces it; once a
+   capability names such a key, the pack also declares it.
 2. **This repository's own files.** `pack.yaml`, `catalog.yaml`, `compat.yaml`, presets and
    transitions **must** declare `format:` at the top. Their counters belong to this repository; they
    follow dl-149's rule (bumped only on a backward-incompatible change) but not its default, since
@@ -772,8 +780,11 @@ releases:
     notes: "Predates dl-149: reads format 1 but warns on the format: key."
 ```
 
-- **`kinds`** are dl-149's seven file kinds, all of them required. `workflows` is listed even though
-  packs ship no fragment of it, because the composed file has a format (§7.7).
+- **`kinds`** are the seven dl-149 kinds a composition involves, all of them required. `workflows`
+  is listed even though packs ship no fragment of it, because the composed file has a format
+  (§7.7). WingFoil's other kinds, `workflows/bindings.yaml` (WingFoil dl-153) and the adapter
+  manifests, are at format 1 in v0.3; packs ship neither, so they are not listed, and changes to
+  them, such as v0.3's `mcp.via: config-arg`, leave the pack format unchanged.
 - **`capabilities`** are this repository's provisional vocabulary (dl-021 R4) until WingFoil's
   capabilities query publishes one (WingFoil dl-177; F-013). WingFoil owns the final names.
 - **`releases[]`:**
@@ -952,7 +963,7 @@ Each has an owner outside this specification. None blocks format 1.
 | O1 | Where community packs live, and how they relate to WingFoil's third-party sources. | M4 features (dl-001 D7; WingFoil dl-138 Q4) |
 | O2 | The final AGENTS.md markers. | WingFoil dl-137 part (b) (notes T14) |
 | O3 | The capability vocabulary. This repository's is provisional (dl-021 R4, §12). | WingFoil dl-177, the capabilities query (F-013) |
-| O4 | `workflows/bindings.yaml` (v0.3): whether it becomes a dl-149 kind, and whether packs ship it. | WingFoil dl-153 (`ready`, recommends making it a kind) and task-251 "Layer 3"; re-read with the v0.3 formats |
+| O4 | `workflows/bindings.yaml` (v0.3): whether it becomes a dl-149 kind, and whether packs ship it. **Settled** at `wingfoil/wingfoil@ffa9bf6b`: a kind at format 1 (WingFoil dl-153); packs do not ship it in format 1 (§12). | settled; a pack that needs bindings reopens it |
 | O5 | A pack directive that shares its id with a WingFoil built-in directive. In format 1 it is an error; overriding a built-in is the project's `custom/` folder. | WingFoil dl-138's Action 2 tech-spec (the override rules of the `remote` class) |
 | O6 | Overlays cannot patch a workflow, only add workflows and tighten Memory, roles and DNA. A workflow-patch mechanism is a later format. | this repository, when a stage charter needs it |
 | O7 | A canonical YAML serialization of composed files, so that two different composers give the same bytes. Format 1 requires determinism of one composer only (adr-001). | WingFoil, with notes T15 |
@@ -961,8 +972,8 @@ Each has an owner outside this specification. None blocks format 1.
 | O10 | No released WingFoil has `format_key: true` before v0.3 is released, so the tooling's fixtures (sequencer W5–W7) cannot pass the zero-warning matrix on 0.2.2. Whether the matrix then runs against an unreleased v0.3 build, for tooling only and never for a publication, is the tooling phase's decision. | the tooling phase (M1) |
 | O11 | task-251 decision 4, held for the WingFoil approver: `memory add` copies a template's `format: 1` into the elements it creates. If ruled so, the `format:` that §5 requires in a pack's Memory templates also appears in every project element. | WingFoil (task-251) |
 | O12 | WingFoil's `init` writes its own built-in directives into `directives/built-in/`, the folder the reference composer writes packs to in format 1. Settled in principle by WingFoil dl-138 Q3 (dl-021 R3): `built-in/` is WingFoil's own and packs land in the `remote` class; what remains is the folder and how an upgrade tells them apart. | WingFoil dl-138's Action 2 tech-spec, with O5 and O13 |
-| O14 | Fragments are never conditional (§6.5), so no pack can tighten `software`'s Memory types (for example `bug` or `release`) only in a composition with `software`. A conditional fragment is a later format. | this repository, when a methodology's charter needs it |
 | O13 | A pack's `memory.yaml` fragment names its template as `memory/templates/built-in/<type>.md` (§7.6), the one path a pack writes that names a folder. How it reads under the `remote` class: rewritten by `pack-install`, or a kind-relative form. The format-1 rule stays until then. | WingFoil dl-138's Action 2 tech-spec (F-029) |
+| O14 | Fragments are never conditional (§6.5), so no pack can tighten `software`'s Memory types (for example `bug` or `release`) only in a composition with `software`. A conditional fragment is a later format. | this repository, when a methodology's charter needs it |
 
 ## 17. What the reference composer does
 
@@ -1131,3 +1142,31 @@ check the rest, and the composer refuses what they reject.
   `wingfoil init --preset <id>`", a verb WingFoil has not planned; how `init` selects a preset is
   this repository's request F-030 (refining F-006). Folded back by the next amendment of this
   specification.
+- 2026-10-15, **amended in place** (plan-038, the approver's choice of 2026-10-15 to host it with
+  dl-022's other actions; the merge OK of plan-038 is the approval of the edited text), after
+  dl-022 and the final v0.3 formats (read at `wingfoil/wingfoil@ffa9bf6b`):
+  - §1–§4, §6.2, §6.3: two foundation packs, `base` and `software`, outside the axes; the element
+    `pack-foundation-software`; the requirements on `software`; the `methodology` axis exactly one
+    with `software`, at most one without it;
+  - §6.5 (new), with §6.2, §6.4, §7.7, §11, §12, §15, §17 and §18: the conditional part, by which a
+    methodology's `delivery` exists only in a composition with `software` (dl-022 S3, the
+    approver's rulings of 2026-10-15); O14 new;
+  - §7.1: `software` composed right after `base`; §9: the slot defaults and `sw-life-cycle` shipped
+    by `software`, `retrospective` and `governance-evolution` by `base`; §10: `software`'s section;
+  - §7.5: WingFoil's other `memory.yaml` keys (`name`, `description`, `tags`, `amendable`, `fields`,
+    `waiting`, `returns`, `limits`, `not_applicable_allowed`, `lists`) with their add-or-tighten
+    rules, and `exempt` refused in a pack (the approver's ruling of 2026-10-15);
+  - §5: the v0.3 formats (format 1 for every kind, keys a pack's range must know), and the format 1
+    of `pack.yaml` and `catalog.yaml` kept through this amendment; §12: the other dl-149 kinds;
+    §16: O4 settled;
+  - §11: `foundation` names both packs, the `methodology` axis is `required_with: software`, the
+    slots' default is `software`. **The example block of §11 is not changed by this amendment**:
+    `tests/catalog.test.ts` holds `catalog.yaml`'s `axes` and `slots` equal to it, so the example,
+    `catalog.yaml` and its schema change together in the tooling task that follows plan-038 (the
+    approver's ruling of 2026-10-15, as task-028 did for §12). Until then the example and the prose
+    differ;
+  - §15: the erratum of task-030 folded back (no `init --preset`; F-030); presets with and without
+    `software`; §18: the checks of all the above.
+  - Read again at `ffa9bf6b`: no v0.3 release is tagged, so O10 stands; WingFoil dl-137 and dl-138
+    are `ready` and dl-138's Action 2 tech-spec does not exist yet, so O2, O5, O12 and O13 keep
+    their owners.
