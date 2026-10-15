@@ -1,0 +1,7 @@
+format: 1
+name: flow-board
+kind: sub
+version: 1
+phases:
+  - name: pull
+    produces: [docs/board.md]

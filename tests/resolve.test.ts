@@ -6,7 +6,7 @@ import { loadCatalog } from '../src/catalog';
 import type { Catalog } from '../src/catalog';
 import { sortEntries } from '../src/listing';
 import { ResolveError, resolve } from '../src/resolve';
-import { BASE, FOUNDATION, KANBAN, SOFTWARE, withPackTree } from './support/pack-tree';
+import { BASE, DELIVERY, FOUNDATION, KANBAN, SOFTWARE, withPackTree } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 import { FIXTURES, REPO_ROOT } from './support/paths';
 
@@ -347,10 +347,33 @@ describe('resolve: the §18 rules on the foundation (spec-001 §17)', () => {
     /phase\/inception\/lean.*software/);
   });
 
-  it('fails on a pack carrying conditional, until spec-001 §6.5 is implemented', () => {
-    fails([...FOUNDATION, { ...KANBAN,
-      manifest: { conditional: [{ with: 'software@^1', contents: { workflows: [] } }] } }],
-    ['methodology/kanban'], /methodology\/kanban.*conditional.*§6\.5/);
+});
+
+describe('resolve: the conditional part (spec-001 §6.5, §17 step 1)', () => {
+  const flow = (entry: Record<string, unknown>, extra: Partial<PackSpec> = {}): PackSpec => ({
+    id: 'methodology/flow', workflows: ['board'], ...extra,
+    manifest: { conditional: [entry], ...extra.manifest },
+    extraFiles: { 'workflows/delivery.yaml': DELIVERY } });
+  const DELIVERING = { with: 'software@^1', contents: { workflows: ['delivery'] } };
+
+  it('resolves with and without software, never adding software for the part', () => {
+    passes([...FOUNDATION, flow(DELIVERING)], ['methodology/flow'], ['base', 'methodology/flow']);
+    passes([...FOUNDATION, flow(DELIVERING)], ['software', 'methodology/flow'],
+      ['base', 'software', 'methodology/flow']);
+  });
+
+  it('fails on software outside the range of with, only when software is composed', () => {
+    const narrow = flow({ ...DELIVERING, with: 'software@^2' });
+    passes([...FOUNDATION, narrow], ['methodology/flow'], ['base', 'methodology/flow']);
+    fails([...FOUNDATION, narrow], ['software', 'methodology/flow'],
+      /software 1\.0\.0 does not satisfy \^2.*methodology\/flow/);
+  });
+
+  it('fails on a pack that requires software and carries one, and on an empty part', () => {
+    fails([...FOUNDATION, flow(DELIVERING, { requires: ['base@^1', 'software@^1'] })],
+      ['methodology/flow'], /methodology\/flow.*conditional/);
+    fails([...FOUNDATION, flow({ with: 'software@^1', contents: {} })], ['methodology/flow'],
+      /methodology\/flow.*conditional/);
   });
 });
 

@@ -10,7 +10,8 @@ import { transitionDigest } from '../src/digest';
 import type { CheckPacksResult } from '../src/check-packs';
 import type { TestRepo } from './support/git-repo';
 import { FIXTURES } from './support/paths';
-import { FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN } from './support/pack-tree';
+import { DELIVERY, FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN } from './support/pack-tree';
+import type { PackSpec } from './support/pack-tree';
 import { publishByHand, treeRepo } from './support/published-repo';
 
 type Doc = Record<string, unknown>;
@@ -23,14 +24,21 @@ function rules(result: CheckPacksResult): string[] {
   return [...new Set(result.problems.map((problem) => problem.rule))].sort();
 }
 
-/** base published by hand, then the catalog entry edited, committed, and the tree linted. */
-function linted(edit: (entry: Doc, repo: TestRepo) => void = () => undefined): CheckPacksResult {
-  const repo = treeRepo();
+/** A methodology whose delivery is in its conditional part (spec-001 §6.5). */
+const FLOW: PackSpec = { id: 'methodology/flow', workflows: ['board'],
+  manifest: { conditional: [{ with: 'software@^1', contents: { workflows: ['delivery'] } }] },
+  extraFiles: { 'workflows/delivery.yaml': DELIVERY } };
+
+/** A pack published by hand, then its catalog entry edited, committed, and the tree linted. */
+function linted(edit: (entry: Doc, repo: TestRepo) => void = () => undefined, packId = 'base'):
+CheckPacksResult {
+  const repo = treeRepo([...FOUNDATION, KANBAN, FLOW]);
   try {
-    publishByHand(repo, 'base');
+    publishByHand(repo, packId);
     const file = join(repo.dir, 'catalog.yaml');
     const catalog = parse(readFileSync(file, 'utf8')) as Doc;
-    const entry = ((catalog['packs'] as Doc[])[0]?.['versions'] as Doc[])[0] as Doc;
+    const entry = ((catalog['packs'] as Doc[]).find((pack) => pack['id'] === packId)
+      ?.['versions'] as Doc[])[0] as Doc;
     edit(entry, repo);
     writeFileSync(file, stringify(catalog));
     repo.commitAll('edited');
@@ -69,6 +77,16 @@ describe('tag-dependent catalog rules (spec-001 §18, task-014)', () => {
     assert.deepEqual(rules(linted((entry) => { entry['requires_capabilities'] = ['pack-install']; })),
       ['catalog-manifest', 'catalog-range'], 'the range follows the copied capabilities');
     assert.deepEqual(rules(linted((entry) => { entry['conflicts'] = ['blueprint/x']; })),
+      ['catalog-manifest']);
+  });
+
+  it('catalog-manifest: a conditional part\'s with differs, or is missing or added', () => {
+    assert.equal(linted(() => undefined, 'methodology/flow').code, 0);
+    assert.deepEqual(rules(linted((entry) => { entry['conditional'] = [{ with: 'software@^2' }]; },
+      'methodology/flow')), ['catalog-manifest']);
+    assert.deepEqual(rules(linted((entry) => { delete entry['conditional']; },
+      'methodology/flow')), ['catalog-manifest']);
+    assert.deepEqual(rules(linted((entry) => { entry['conditional'] = [{ with: 'software@^1' }]; })),
       ['catalog-manifest']);
   });
 

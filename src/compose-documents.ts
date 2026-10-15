@@ -12,6 +12,8 @@ import { checkDnaFragment, checkRoleDirectives, mergeFragments } from './merge';
 import type { Fragment } from './merge';
 import { mergeMemoryWithOwners } from './memory-merge';
 import { parameterScopes, resolveParameters, substitute } from './parameters';
+import type { PackScopes } from './parameters';
+import { conditionalFiles } from './pack-rules';
 import { listedFiles, resolve } from './resolve';
 import type { ResolvedPack } from './resolve';
 import { secretProblems } from './secret-rules';
@@ -53,14 +55,17 @@ function readFiles(
   tree: string,
   packs: ResolvedPack[],
   values: Map<string, string | number | boolean>,
-  scopes: Map<string, Set<string>>,
+  scopes: Map<string, PackScopes>,
 ): ComposedFile[] {
   const files: ComposedFile[] = [];
   for (const pack of packs) {
-    for (const path of listedFiles(pack.manifest.contents)) {
+    // The conditional part's files come after the pack's own, only with software (§6.5, §7.7).
+    const entry = pack.conditionalActive ? conditionalFiles(pack.manifest) : [];
+    for (const path of [...listedFiles(pack.manifest.contents), ...entry]) {
       const label = `${pack.path}/${path}`;
       const raw = readFileSync(join(tree, pack.path, path), 'utf8');
-      const text = substitute(raw, values, scopes.get(pack.id) ?? new Set(), label, pack.id);
+      const scope = scopes.get(pack.id)?.[entry.includes(path) ? 'conditional' : 'always'];
+      const text = substitute(raw, values, scope ?? new Set(), label, pack.id);
       const file: ComposedFile = { pack: pack.id, path, text };
       if (path.endsWith('.yaml')) {
         try {

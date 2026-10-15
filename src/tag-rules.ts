@@ -96,6 +96,15 @@ function versionProblems(tree: string, catalog: LoadedYaml, packId: string, entr
     problems.push(at('/digest', 'catalog-digest', `${tag}: ${error.message}`));
   }
   const manifest = taggedManifest(tree, ref, packId);
+  // The entry copies a conditional part's `with` only; absent on both sides is equal (§11).
+  const tagged = manifest?.['conditional'];
+  const withOnly = Array.isArray(tagged)
+    ? tagged.map((part: unknown) => ({ with: isDoc(part) ? part['with'] : undefined }))
+    : undefined;
+  if (manifest !== undefined && !same(entry['conditional'], withOnly)) {
+    problems.push(at('/conditional', 'catalog-manifest', `${tag}: conditional differs from the `
+      + 'tagged pack.yaml'));
+  }
   for (const field of ['version', 'formats', 'requires_capabilities', 'requires', 'conflicts']) {
     const tagged = manifest?.[field] ?? (field === 'requires' || field === 'conflicts' ? [] : undefined);
     if (manifest === undefined || !same(entry[field], tagged)) {

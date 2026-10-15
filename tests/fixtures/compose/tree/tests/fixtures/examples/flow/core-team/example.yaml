@@ -1,0 +1,6 @@
+format: 1
+id: core-team
+title: "Core team"
+description: "Lumen Bakery, a fictional small team, pulls its work through one board, without a life cycle."
+packs:
+  - methodology/flow@^1

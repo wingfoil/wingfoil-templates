@@ -1,0 +1,18 @@
+format: 1
+id: methodology/flow
+axis: methodology
+name: flow
+title: "flow"
+description: "Golden fixture pack methodology/flow."
+version: 1.0.0
+formats:
+  workflow: 1
+requires_capabilities: []
+requires:
+  - base@^1
+contents:
+  workflows: [flow-board]
+conditional:
+  - with: software@^1
+    contents:
+      workflows: [delivery, flow-delivery]

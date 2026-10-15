@@ -14,7 +14,7 @@ import {
 } from './pack-rules';
 import type { Problem } from './problems';
 import { installListed, readmeProblems } from './readme-rules';
-import { parseEntry, satisfies } from './requirements';
+import { parseEntry, reachableIds, satisfies } from './requirements';
 import { repositorySchemas } from './schemas';
 import type { SchemaSet } from './schemas';
 import { YamlError, loadYamlFile } from './yaml-load';
@@ -68,6 +68,8 @@ export interface ResolvedPack {
   requiredIds: string[];
   /** pack.yaml as loaded, with the source text of each value (spec-001 §18). */
   source: LoadedYaml;
+  /** The conditional part counts: the composition holds software (spec-001 §6.5). */
+  conditionalActive: boolean;
 }
 
 
@@ -122,7 +124,7 @@ function loadPack(tree: string, id: string, schemas: SchemaSet, requiredBy: stri
   }
   const manifest = loaded.data as PackManifest;
   const pack: ResolvedPack = { id, version: manifest.version, path, manifest, requiredIds: [],
-    source: loaded };
+    source: loaded, conditionalActive: false };
   throwFirst(manifestProblems(pack));
   return pack;
 }
@@ -248,6 +250,24 @@ export function axesMessages(
   return messages;
 }
 
+/**
+ * spec-001 §6.5, §17 step 1: a conditional part counts when the composition holds software, whose
+ * version must then satisfy its `with`; it never adds a pack.
+ */
+function checkConditional(catalog: Catalog, packs: Map<string, ResolvedPack>): void {
+  const software = packs.get(softwarePack(catalog));
+  for (const pack of [...packs.values()].sort((a, b) => byBytes(a.id, b.id))) {
+    const [entry] = pack.manifest.conditional ?? [];
+    if (entry === undefined || software === undefined) continue;
+    const range = attempt(() => parseEntry(entry.with, 'requires')).range ?? '';
+    if (!satisfies(software.version, range)) {
+      throw new ResolveError(`${software.id} ${software.version} does not satisfy ${range}, asked `
+        + `by ${pack.id} for its conditional part (spec-001 §6.5)`);
+    }
+    pack.conditionalActive = true;
+  }
+}
+
 /** Kahn's algorithm on the requires inside one axis; ties in byte order of the id (§7.1). */
 function kahn(members: ResolvedPack[]): ResolvedPack[] {
   const inAxis = new Set(members.map((pack) => pack.id));
@@ -286,7 +306,11 @@ function order(catalog: Catalog, packs: Map<string, ResolvedPack>): ResolvedPack
   }
   const position = new Map(ordered.map((pack, index) => [pack.id, index]));
   for (const pack of ordered) {
-    for (const required of pack.requiredIds) {
+    // A conditional part's `with` counts as a requirement here (§7.1, §6.5); in format 1 it
+    // names software, composed second, so it is never later.
+    const withIds = (pack.manifest.conditional ?? []).flatMap((entry) =>
+      attempt(() => parseEntry(entry.with, 'requires')).id);
+    for (const required of [...pack.requiredIds, ...withIds]) {
       if ((position.get(required) ?? -1) > (position.get(pack.id) ?? -1)) {
         throw new ResolveError(`${pack.id} requires ${required}, which comes later in the `
           + 'composition order (spec-001 §7.1)');
@@ -309,9 +333,11 @@ export function resolve(tree: string, catalog: Catalog, request: string[]): Reso
   const [axisProblem] = axesMessages(catalog, byId);
   if (axisProblem !== undefined) throw new ResolveError(axisProblem);
   for (const pack of byId) {
-    throwFirst(foundationProblems(catalog, pack));
-    throwFirst(slotProblems(catalog, pack));
+    const reached = reachableIds([pack.id], (id) => packs.get(id)?.requiredIds);
+    throwFirst(foundationProblems(catalog, pack, reached));
+    throwFirst(slotProblems(catalog, pack, reached));
   }
+  checkConditional(catalog, packs);
   const listed = installListed(tree);
   for (const pack of byId) {
     throwFirst(inventoryProblems(tree, pack));

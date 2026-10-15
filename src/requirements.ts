@@ -42,3 +42,19 @@ export function parseEntry(entry: string, kind: EntryKind): Entry {
 export function satisfies(version: string, range: string): boolean {
   return semverSatisfies(version, range, { loose: false, includePrerelease: false });
 }
+
+/**
+ * The ids reached from `start` through `requires`, the start included, in visit order; a pack
+ * missing from `requiredOf` ends its branch.
+ */
+export function reachableIds(start: string[], requiredOf: (id: string) => string[] | undefined):
+string[] {
+  const seen = new Set<string>();
+  const queue = [...start];
+  for (let id = queue.shift(); id !== undefined; id = queue.shift()) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    queue.push(...(requiredOf(id) ?? []));
+  }
+  return [...seen];
+}

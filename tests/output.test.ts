@@ -6,7 +6,8 @@ import { loadCatalog } from '../src/catalog';
 import { composeDocuments } from '../src/compose-documents';
 import { normalizeText, planOutput } from '../src/output';
 import {
-  BASE_COMPOSABLE, FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN, SOFTWARE_COMPOSABLE, withPackTree,
+  BASE_COMPOSABLE, DELIVERY, FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN, SOFTWARE_COMPOSABLE,
+  withPackTree,
 } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 import { REPO_ROOT } from './support/paths';
@@ -186,6 +187,69 @@ describe('output: formats and identifiers (spec-001 §5, §6.1)', () => {
     };
     plan([...FOUNDATION, KANBAN, { id: 'blueprint/x', directives: ['a'] }, second],
       [...WITH_X, 'blueprint/y']);
+  });
+});
+
+describe('output: the conditional part (spec-001 §6.5, §7.7, §17 step 5)', () => {
+  /** flow: an always-composed workflow, and an entry of two workflows and a directive. */
+  const FLOW: PackSpec = {
+    id: 'methodology/flow', workflows: ['board'],
+    manifest: { formats: { workflow: 1, directive: 1 }, conditional: [{ with: 'software@^1',
+      contents: { workflows: ['delivery', 'flow-delivery'], directives: ['wip'] } }] },
+    extraFiles: {
+      'workflows/delivery.yaml': DELIVERY,
+      'workflows/flow-delivery.yaml': workflow('flow-delivery'),
+      'directives/wip.md': directive('wip'),
+    },
+  };
+  const include = (files: Map<string, string>): string[] =>
+    (files.get('.wingfoil/workflows.yaml') ?? '').split('\n')
+      .filter((line) => line.startsWith('  - ')).map((line) => line.slice('  - '.length));
+
+  it('with software, copies the entry and includes its workflows after the pack\'s own', () => {
+    const files = plan([BASE, SOFTWARE_COMPOSABLE, FLOW], ['software', 'methodology/flow']);
+    assert.deepEqual(include(files), ['workflows/built-in/retrospective.yaml',
+      'workflows/built-in/sw-life-cycle.yaml', 'workflows/built-in/board.yaml',
+      'workflows/built-in/delivery.yaml', 'workflows/built-in/flow-delivery.yaml']);
+    assert.ok(files.has('.wingfoil/directives/built-in/wip.md'));
+  });
+
+  it('without software, leaves the entry out', () => {
+    const files = plan([BASE, SOFTWARE_COMPOSABLE, FLOW], ['methodology/flow']);
+    assert.deepEqual(include(files), ['workflows/built-in/retrospective.yaml',
+      'workflows/built-in/board.yaml']);
+    for (const path of ['workflows/built-in/delivery.yaml', 'workflows/built-in/flow-delivery.yaml',
+      'directives/built-in/wip.md']) {
+      assert.ok(!files.has(`.wingfoil/${path}`), path);
+    }
+  });
+
+  it('refuses, with software only, a part file another pack ships (one owner, §7.6)', () => {
+    const software: PackSpec = { ...SOFTWARE_COMPOSABLE, directives: ['wip'],
+      extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'directives/wip.md': directive('wip') } };
+    assert.ok(plan([BASE, software, FLOW], ['methodology/flow']).size > 0);
+    fails([BASE, software, FLOW], ['software', 'methodology/flow'],
+      /directives\/built-in\/wip\.md is shipped by software and by methodology\/flow/);
+  });
+
+  it('refuses, with software, a part file whose kind formats does not list (§5)', () => {
+    fails([BASE, SOFTWARE_COMPOSABLE, { ...FLOW, manifest: { ...FLOW.manifest,
+      formats: { workflow: 1 } } }], ['software', 'methodology/flow'],
+    /directives\/wip\.md: format 1, but its pack\.yaml formats\.directive is undefined/);
+  });
+
+  it('substitutes software\'s parameters in the entry only (§8.1, per part)', () => {
+    const software: PackSpec = { ...SOFTWARE_COMPOSABLE, manifest: { parameters: {
+      adr_path: { type: 'path', default: 'docs/adr/{id}.md', description: 'x' } } } };
+    const using = (file: string): PackSpec => ({ ...FLOW, extraFiles: { ...FLOW.extraFiles,
+      [file]: workflow(file.slice('workflows/'.length, -'.yaml'.length), 'sub',
+        'description: "{{adr_path}}"\n') } });
+    const files = plan([BASE, software, using('workflows/flow-delivery.yaml')],
+      ['software', 'methodology/flow']);
+    assert.match(files.get('.wingfoil/workflows/built-in/flow-delivery.yaml') ?? '',
+      /docs\/adr\/\{id\}\.md/);
+    fails([BASE, software, using('workflows/board.yaml')], ['software', 'methodology/flow'],
+      /board\.yaml.*adr_path/);
   });
 });
 

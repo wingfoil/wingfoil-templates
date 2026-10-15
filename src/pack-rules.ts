@@ -91,6 +91,16 @@ export function manifestProblems(pack: PackLike): Problem[] {
   return problems;
 }
 
+/** The contents of a pack's conditional part, or an empty one (spec-001 §6.5). */
+export function conditionalContents(manifest: PackManifest): PackContents {
+  return manifest.conditional?.[0]?.contents ?? {};
+}
+
+/** The files of a pack's conditional part, relative to the pack (spec-001 §6.5). */
+export function conditionalFiles(manifest: PackManifest): string[] {
+  return listedFiles(conditionalContents(manifest));
+}
+
 /** The files a pack's inventory lists, relative to the pack (spec-001 §6.4). */
 export function listedFiles(contents: PackContents): string[] {
   return [
@@ -123,7 +133,14 @@ export function inventoryProblems(tree: string, pack: PackLike): Problem[] {
       }
     }
   }
-  const listed = listedFiles(pack.manifest.contents);
+  const always = listedFiles(pack.manifest.contents);
+  const entry = conditionalFiles(pack.manifest);
+  // The two parts together match the files present, each file listed once (§6.4, §6.5).
+  for (const twice of always.filter((file) => entry.includes(file))) {
+    problems.push(at(pack, '/conditional/0/contents', 'contents',
+      `${pack.id}: ${twice} is listed in contents and in the conditional part`));
+  }
+  const listed = [...always, ...entry];
   for (const missing of listed.filter((file) => !present.includes(file)).sort(byBytes)) {
     problems.push(at(pack, '/contents', 'contents',
       `${pack.id}: ${missing} is listed in contents but missing`));
@@ -136,9 +153,11 @@ export function inventoryProblems(tree: string, pack: PackLike): Problem[] {
 }
 
 /** spec-001 §9: slot workflows, read from the catalog, and the workflows of each foundation pack. */
-export function slotProblems(catalog: Catalog, pack: PackLike): Problem[] {
+export function slotProblems(catalog: Catalog, pack: PackLike, reached: string[]): Problem[] {
   const problems: Problem[] = [];
-  const workflows = pack.manifest.contents.workflows ?? [];
+  const always = pack.manifest.contents.workflows ?? [];
+  const entry = conditionalContents(pack.manifest).workflows ?? [];
+  const workflows = [...always, ...entry];
   for (const slot of catalog.slots) {
     const axis = catalog.axes.find((candidate) => candidate.name === slot.filledBy);
     const fills = pack.manifest.axis === slot.filledBy
@@ -146,6 +165,18 @@ export function slotProblems(catalog: Catalog, pack: PackLike): Problem[] {
     if (fills && !workflows.includes(slot.name)) {
       problems.push(at(pack, '/contents', 'slot',
         `${pack.id}: fills slot ${slot.name} but ships no workflows/${slot.name}.yaml`));
+    } else if (fills && pack.manifest.axis === 'methodology') {
+      // A methodology ships delivery in contents when it requires software, in its conditional
+      // part when it does not (spec-001 §6.5, §9; plan-038 ruling 7).
+      const requires = requiresSoftware(catalog, reached);
+      if (requires && !always.includes(slot.name)) {
+        problems.push(at(pack, '/contents', 'slot', `${pack.id}: requires `
+          + `${softwarePack(catalog)}, so it ships ${slot.name} in contents (spec-001 §6.5)`));
+      } else if (!requires && !entry.includes(slot.name)) {
+        problems.push(at(pack, '/contents', 'slot', `${pack.id}: does not require `
+          + `${softwarePack(catalog)}, so it ships ${slot.name} in its conditional part `
+          + '(spec-001 §6.5)'));
+      }
     }
     if (!fills && workflows.includes(slot.name) && pack.id !== slot.default) {
       problems.push(at(pack, '/contents/workflows', 'slot',
@@ -168,22 +199,34 @@ export function slotProblems(catalog: Catalog, pack: PackLike): Problem[] {
 }
 
 /**
- * spec-001 §3, §6.5, §18: every phase pack requires the software layer; a conditional part is
- * refused until its rules are implemented (plan-039 R1, task-032).
+ * spec-001 §3, §6.5, §18: every phase pack requires the software layer; a pack that requires it
+ * carries no conditional part, and a conditional part is never empty (plan-039 R7). `reached` is
+ * what the pack reaches through `requires`.
  */
-export function foundationProblems(catalog: Catalog, pack: PackLike): Problem[] {
+export function foundationProblems(catalog: Catalog, pack: PackLike, reached: string[]):
+Problem[] {
   const problems: Problem[] = [];
   const software = softwarePack(catalog);
-  const required = (pack.manifest.requires ?? []).map((entry) => entryId(entry, 'requires'));
-  if (pack.manifest.axis === 'phase' && !required.includes(software)) {
+  if (pack.manifest.axis === 'phase' && !requiresSoftware(catalog, reached)) {
     problems.push(at(pack, '/requires', 'requires-software',
       `${pack.id}: a phase pack must require ${software} (spec-001 §3)`));
   }
   if (pack.manifest.conditional !== undefined) {
-    problems.push(at(pack, '/conditional', 'conditional',
-      `${pack.id}: conditional is not implemented yet by this tooling (spec-001 §6.5)`));
+    if (requiresSoftware(catalog, reached)) {
+      problems.push(at(pack, '/conditional', 'conditional', `${pack.id}: requires ${software}, `
+        + 'so it ships everything in contents and carries no conditional part (spec-001 §6.5)'));
+    }
+    if (conditionalFiles(pack.manifest).length === 0) {
+      problems.push(at(pack, '/conditional/0/contents', 'conditional', `${pack.id}: its `
+        + 'conditional part lists no workflow and no directive (plan-039 R7)'));
+    }
   }
   return problems;
+}
+
+/** Whether a pack requires the software layer, directly or transitively (spec-001 §3, §6.5). */
+export function requiresSoftware(catalog: Catalog, reached: string[]): boolean {
+  return reached.includes(softwarePack(catalog));
 }
 
 /** The file kind of spec-001 §12 of a listed file, or undefined for the agents section. */
@@ -197,7 +240,8 @@ export function kindOf(path: string): string | undefined {
 
 /** §5: `formats` lists exactly the kinds the pack ships; a kind it does not ship is a problem. */
 export function formatKindsProblems(pack: PackLike): Problem[] {
-  const shipped = new Set(listedFiles(pack.manifest.contents).map(kindOf)
+  const shipped = new Set([...listedFiles(pack.manifest.contents),
+    ...conditionalFiles(pack.manifest)].map(kindOf)
     .filter((kind) => kind !== undefined));
   return Object.keys(pack.manifest.formats).filter((kind) => !shipped.has(kind)).sort(byBytes)
     .map((kind) => at(pack, `/formats/${kind}`, 'formats',

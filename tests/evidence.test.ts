@@ -47,6 +47,19 @@ describe('writeEvidence (F5.1, dl-009)', () => {
     assert.ok(section.includes(`Compositions: presets/golden.yaml, ${example}`), section);
   });
 
+  it('lists the legs of a conditional part, and counts no skip line (task-032)', () => {
+    const leg = 'presets/golden.yaml[+software]';
+    const result: ValidateResult = { ...PASSED, lines: PASSED.lines.flatMap((line) =>
+      line.startsWith('composition presets/') ? [line,
+        `composition ${leg}: composed twice, 25 files, byte-identical`,
+        `matrix ${leg} wingfoil@9.1.0 workflow list: pass (publication)`,
+        'matrix presets/other.yaml[+software]: skipped, no methodology'] : [line]) };
+    const section = writeEvidence(result, { commit: COMMIT, command: COMMAND });
+    assert.ok(section.includes(`Compositions: presets/golden.yaml, ${leg}`), section);
+    // In the order the lines name them: the leg's line comes before the preset's matrix lines.
+    assert.ok(section.includes('WingFoil releases: 9.1.0, 9.0.0'), section);
+  });
+
   it('refuses a self-test result', () => {
     assert.throws(() => writeEvidence({ ...PASSED, mode: 'self-test' },
       { commit: COMMIT, command: COMMAND }), EvidenceError);

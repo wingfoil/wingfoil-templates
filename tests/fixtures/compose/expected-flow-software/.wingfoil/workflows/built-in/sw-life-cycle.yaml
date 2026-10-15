@@ -1,0 +1,14 @@
+format: 1
+# The life cycle skeleton: slots are included by name (spec-001 §9).
+name: sw-life-cycle
+kind: main
+version: 1
+phases:
+  - name: inception
+    include: inception
+  - name: specification
+    include: specification
+  - name: delivery
+    include: delivery
+  - name: end-of-life
+    include: end-of-life

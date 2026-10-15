@@ -67,6 +67,27 @@ describe('npm run compose', () => {
     });
   });
 
+  for (const [label, entries, dir] of [
+    ['flow without software, the example flow/core-team', ['methodology/flow'], 'expected-flow'],
+    ['flow with software, the example flow/delivery-team', ['software', 'methodology/flow'],
+      'expected-flow-software'],
+  ] as [string, string[], string][]) {
+    it(`composes ${label} into ${dir} (spec-001 §6.5)`, () => {
+      withTemp((tmp) => {
+        const out = join(tmp, 'out');
+        const result = run(['--tree', TREE, '--out', out, '--param', 'project_name=Golden',
+          ...entries]);
+        assert.equal(result.status, 0, result.stderr);
+        const expected = join(FIXTURES, 'compose', dir);
+        const files = filesUnder(out);
+        assert.deepEqual(files, filesUnder(expected));
+        for (const file of files) {
+          assert.ok(readFileSync(join(out, file)).equals(readFileSync(join(expected, file))), file);
+        }
+      });
+    });
+  }
+
   it('exits 1 on a resolution error and on an undeclared parameter', () => {
     withTemp((dir) => {
       assert.equal(run(['--tree', TREE, '--out', join(dir, 'a'), ...PARAMS, 'blueprint/nope'])

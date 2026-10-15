@@ -1,0 +1,7 @@
+format: 1
+id: delivery-team
+title: "Delivery team"
+description: "Lumen Bakery, a fictional small team, pulls its work through one board and delivers it through the life cycle."
+packs:
+  - software@^1
+  - methodology/flow@^1

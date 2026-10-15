@@ -10,6 +10,8 @@ import { MatrixIoError } from '../src/matrix';
 import { runIndex } from '../src/index';
 import { runValidate } from '../src/validate';
 import type { ValidateOptions, ValidateResult } from '../src/validate';
+import { writePack } from './support/pack-tree';
+import type { PackSpec } from './support/pack-tree';
 import { FIXTURES, REPO_ROOT } from './support/paths';
 import { publishByHand, treeRepo } from './support/published-repo';
 import { FORMAT_WARNING, StubWingfoil } from './support/stub-wingfoil';
@@ -21,9 +23,13 @@ const ENTRIES = ['methodology/kanban', 'phase/inception/lean', 'blueprint/web-se
 const NAME = ['--param', 'project_name=Golden'];
 /** The examples of the golden tree's packs, in path order (task-022). */
 const GOLDEN_EXAMPLES = ['agent-first/agent-team', 'base/core-only', 'base/kanban-team',
-  'kanban/small-board', 'lean/new-product', 'production/live-service', 'software/delivery-team',
-  'web-service/orders-api']
+  'flow/core-team', 'flow/delivery-team', 'kanban/small-board', 'lean/new-product',
+  'production/live-service', 'software/delivery-team', 'web-service/orders-api']
   .map((example) => `tests/fixtures/examples/${example}/example.yaml`);
+/** The compositions of the golden tree: flow's examples with their other leg (task-032). */
+const GOLDEN_LEGS = GOLDEN_EXAMPLES.flatMap((example) => [example,
+  ...example.includes('/flow/core-team/') ? [`${example}[+software]`] : [],
+  ...example.includes('/flow/delivery-team/') ? [`${example}[-software]`] : []]);
 
 /** WingFoil 0.2.2 as the tests see it: exit 0, one format warning per command (W-01). */
 function stubbed(command: StubCommand): StubWingfoil {
@@ -64,13 +70,13 @@ describe('npm run validate', () => {
   it('composes the golden preset twice into byte-identical files (W5 exit criterion)', () => {
     const result = validate(['--tree', TREE, ...NAME]);
     assert.equal(result.code, 0, result.lines.join('\n'));
-    assert.ok(result.lines.some((line) => /^schemas: checked 10 files, 0 problems$/.test(line)),
+    assert.ok(result.lines.some((line) => /^schemas: checked 11 files, 0 problems$/.test(line)),
       result.lines.join('\n'));
     assert.ok(result.lines.some((line) =>
       /^composition presets\/golden\.yaml: composed twice, 19 files, byte-identical$/.test(line)),
     result.lines.join('\n'));
-    // The golden preset and the eight examples of its packs (task-022, task-031).
-    assert.ok(result.lines.includes('compositions: 9'));
+    // The golden preset, the ten examples of its packs, and flow's two other legs (task-032).
+    assert.ok(result.lines.includes('compositions: 13'));
   });
 
   it('runs the golden preset against wingfoil@0.2.2 in self-test mode, reporting the tolerance',
@@ -79,10 +85,10 @@ describe('npm run validate', () => {
       assert.equal(result.code, 0, result.lines.join('\n'));
       // The golden preset, then its packs' examples in path order (task-022).
       assert.deepEqual(result.lines.filter((line) => line.startsWith('matrix')), [
-        ...['presets/golden.yaml', ...GOLDEN_EXAMPLES].flatMap((label) =>
+        ...['presets/golden.yaml', ...GOLDEN_LEGS].flatMap((label) =>
           ['workflow list', 'dna show', 'directives list'].map((command) =>
             `matrix ${label} wingfoil@0.2.2 ${command}: pass (self-test, tolerated 1)`)),
-        'matrix: self-test, 9 runs, 0 failed, tolerance applied: 0.2.2',
+        'matrix: self-test, 13 runs, 0 failed, tolerance applied: 0.2.2',
       ]);
       assert.equal(result.mode, 'self-test');
       assert.deepEqual(result.tolerated, ['0.2.2']);
@@ -107,7 +113,7 @@ describe('npm run validate', () => {
         'matrix presets/golden.yaml wingfoil@0.2.2 workflow list: fail (self-test)')),
       result.lines.join('\n'));
       assert.ok(result.lines.includes(
-        'matrix: self-test, 9 runs, 9 failed, tolerance applied: none'),
+        'matrix: self-test, 13 runs, 13 failed, tolerance applied: none'),
         result.lines.join('\n'));
     } finally {
       noisy.dispose();
@@ -121,7 +127,8 @@ describe('npm run validate', () => {
     assert.equal(result.code, 2);
     assert.ok(result.lines.some((line) => /wingfoil@0\.2\.2: npm ci failed/.test(line)),
       result.lines.join('\n'));
-    assert.ok(result.lines.includes('matrix: self-test, 9 runs, 9 failed, tolerance applied: none'),
+    assert.ok(result.lines.includes(
+      'matrix: self-test, 13 runs, 13 failed, tolerance applied: none'),
       result.lines.join('\n'));
   });
 
@@ -147,7 +154,7 @@ describe('npm run validate', () => {
 
   it('runs the lint after the schema checks, on the golden tree', () => {
     const result = validate(['--tree', TREE, ...NAME]);
-    assert.equal(result.lines[1], 'lint: checked 62 files, 0 problems', result.lines.join('\n'));
+    assert.equal(result.lines[1], 'lint: checked 70 files, 0 problems', result.lines.join('\n'));
   });
 
   it('exits 1 on a lint problem, and composes no preset the lint rejects', () => {
@@ -179,7 +186,7 @@ describe('npm run validate', () => {
     assert.equal(result.code, 1, 'wip_limit is set by the preset');
     const entries = validate(['--tree', TREE, ...NAME, ...ENTRIES]);
     assert.equal(entries.code, 0, entries.lines.join('\n'));
-    assert.ok(entries.lines.includes('compositions: 10'));
+    assert.ok(entries.lines.includes('compositions: 14'));
     assert.ok(entries.lines.some((line) => line.startsWith('composition entries: composed twice')));
   });
 
@@ -205,7 +212,7 @@ describe('npm run validate', () => {
         assert.equal(result.code, 1);
         assert.ok(result.lines.some((line) => line.startsWith('presets/golden.yaml:')));
         // The examples still compose (task-022); the failing preset does not.
-        assert.ok(result.lines.includes('compositions: 8'), result.lines.join('\n'));
+        assert.ok(result.lines.includes('compositions: 12'), result.lines.join('\n'));
       });
   });
 
@@ -222,7 +229,7 @@ describe('npm run validate', () => {
   it('runs index --check after the lint and before the compositions (task-019)', () => {
     const result = validate(['--tree', TREE, ...NAME]);
     const at = (pattern: RegExp): number => result.lines.findIndex((line) => pattern.test(line));
-    assert.ok(at(/^lint: /) < at(/^index: checked 10 files, 0 not up to date$/));
+    assert.ok(at(/^lint: /) < at(/^index: checked 11 files, 0 not up to date$/));
     assert.ok(at(/^index: checked/) < at(/^composition /), result.lines.join('\n'));
   });
 
@@ -292,7 +299,7 @@ describe('npm run validate', () => {
         + 'example.yaml: skipped, the lint reports it'), result.lines.join('\n'));
       assert.ok(result.lines.includes('matrix tests/fixtures/examples/kanban/small-board/'
         + 'example.yaml: skipped'));
-      assert.ok(result.lines.includes('compositions: 8'));
+      assert.ok(result.lines.includes('compositions: 12'));
     });
   });
 
@@ -311,16 +318,19 @@ describe('npm run validate', () => {
       const compositions = result.lines.filter((line) => line.startsWith('composition '));
       assert.deepEqual(compositions.map((line) => line.slice(0, line.indexOf(':'))), [
         'composition presets/golden.yaml',
-        ...['agent-first/agent-team', 'base/core-only', 'base/kanban-team', 'ghost/x',
-          'kanban/small-board', 'kanban/y', 'lean/new-product', 'production/live-service',
-          'software/delivery-team', 'web-service/orders-api']
-          .map((example) => `composition tests/fixtures/examples/${example}/example.yaml`),
+        ...['agent-first/agent-team', 'base/core-only', 'base/kanban-team', 'flow/core-team',
+          'flow/delivery-team', 'ghost/x', 'kanban/small-board', 'kanban/y', 'lean/new-product',
+          'production/live-service', 'software/delivery-team', 'web-service/orders-api']
+          .map((example) => `composition tests/fixtures/examples/${example}/example.yaml`)
+          .flatMap((label) => [label,
+            ...label.includes('/flow/core-team/') ? [`${label}[+software]`] : [],
+            ...label.includes('/flow/delivery-team/') ? [`${label}[-software]`] : []]),
       ]);
       for (const orphan of ['ghost/x', 'kanban/y']) {
         assert.ok(result.lines.includes(`composition tests/fixtures/examples/${orphan}/`
           + 'example.yaml: skipped, the lint reports it'), result.lines.join('\n'));
       }
-      assert.ok(result.lines.includes('compositions: 9'));
+      assert.ok(result.lines.includes('compositions: 13'));
     }, true);
   });
 
@@ -392,7 +402,7 @@ describe('npm run validate', () => {
     }, (tree) => {
       const result = validate(['--tree', tree, ...NAME, '--param', 'api_prefix=/v2']);
       assert.equal(result.code, 0, result.lines.join('\n'));
-      assert.ok(result.lines.includes('compositions: 10'));
+      assert.ok(result.lines.includes('compositions: 14'));
     });
   });
 
@@ -420,3 +430,64 @@ describe('npm run validate', () => {
     assert.equal(validate(['--param', 'novalue']).code, 3);
   });
 });
+
+describe('npm run validate: both legs of a conditional part (spec-001 §15, plan-039 R2, R5, R6)',
+  () => {
+    const FLOW_CORE = 'tests/fixtures/examples/flow/core-team/example.yaml';
+    const FLOW_DELIVERY = 'tests/fixtures/examples/flow/delivery-team/example.yaml';
+    /** governance/x: a conditional part, and no methodology to give its leg with software. */
+    const GOVERNANCE: PackSpec = { id: 'governance/x', workflows: ['x'],
+      manifest: { conditional: [{ with: 'software@^1', contents: { workflows: ['x-ship'] } }] },
+      extraFiles: { 'workflows/x-ship.yaml': 'format: 1\nname: x-ship\nkind: sub\n' } };
+
+    it('composes the other leg of each composition holding a conditional part', () => {
+      const result = validate(['--tree', TREE, ...NAME]);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      for (const label of [`${FLOW_CORE}[+software]`, `${FLOW_DELIVERY}[-software]`]) {
+        assert.ok(result.lines.some((line) => line.startsWith(`composition ${label}: composed `
+          + 'twice, ')), `${label}: ${result.lines.join('\n')}`);
+        assert.ok(result.lines.some((line) =>
+          line.startsWith(`matrix ${label} wingfoil@0.2.2 workflow list: pass`)), label);
+      }
+      assert.ok(!result.lines.some((line) => /golden\.yaml\[/.test(line)),
+        'the golden preset holds no conditional part');
+    });
+
+    it('skips the leg with software of a composition without a methodology', () => {
+      withTree((tree) => writePack(tree, GOVERNANCE), (tree) => {
+        const result = validate(['--tree', tree, ...NAME, 'governance/x']);
+        assert.ok(result.lines.includes('matrix entries[+software]: skipped, no methodology'),
+          result.lines.join('\n'));
+      }, true);
+    });
+
+    it('drops, in the leg without software, the values a preset sets for absent packs (R5)', () => {
+      withTree((tree) => {
+        writeFileSync(join(tree, 'presets', 'with-software.yaml'), 'format: 1\nid: with-software\n'
+          + 'title: "With software"\ndescription: "Flow with the life cycle."\npacks:\n'
+          + '  - software@^1\n  - methodology/flow@^1\nparameters:\n'
+          + '  adr_path: "docs/adr/{id}.md"\n');
+        const catalog = join(tree, 'catalog.yaml');
+        writeFileSync(catalog, readFileSync(catalog, 'utf8').replace('presets:\n',
+          'presets:\n  - { id: with-software, path: presets/with-software.yaml }\n'));
+      }, (tree) => {
+        const result = validate(['--tree', tree, ...NAME]);
+        assert.equal(result.code, 0, result.lines.join('\n'));
+        assert.ok(result.lines.some((line) => line.startsWith('composition '
+          + 'presets/with-software.yaml[-software]: composed twice, ')
+          && line.endsWith(', dropped adr_path')), result.lines.join('\n'));
+      });
+    });
+
+    it('fails a publication run where a conditional part has no leg with software that ran (R6)',
+      () => {
+        withTree((tree) => writePack(tree, GOVERNANCE), (tree) => {
+          const result = validate(['--tree', tree, ...NAME, 'governance/x'],
+            { mode: 'publication' });
+          assert.equal(result.code, 1, result.lines.join('\n'));
+          assert.ok(result.lines.includes('matrix: governance/x has a conditional part and no '
+            + 'composition with software that ran (plan-039 R6)'), result.lines.join('\n'));
+        }, true);
+      });
+  });
+

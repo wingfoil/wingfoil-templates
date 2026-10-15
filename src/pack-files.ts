@@ -9,9 +9,10 @@ import { isScalar } from 'yaml';
 import { formatMessage } from './formats';
 import { readFrontmatter } from './frontmatter';
 import { assetIdMessage, slotKindMessage } from './output';
-import { kindOf, listedFiles } from './pack-rules';
+import { conditionalFiles, kindOf, listedFiles } from './pack-rules';
 import type { PackLike } from './pack-rules';
 import { defaultMessage, referencesIn } from './parameters';
+import { reachableIds } from './requirements';
 import type { ParameterValue } from './parameters';
 import type { Problem } from './problems';
 import type { ParameterDeclaration } from './resolve';
@@ -51,21 +52,19 @@ export function placeholderOf(type: string): ParameterValue {
 
 /** The ids a pack reaches through `requires`, itself included. */
 export function reachable(pack: LintPack, packs: Map<string, LintPack>): string[] {
-  const seen = new Set<string>([pack.id]);
-  const queue = [...pack.requiredIds];
-  for (let id = queue.shift(); id !== undefined; id = queue.shift()) {
-    if (seen.has(id)) continue;
-    seen.add(id);
-    queue.push(...(packs.get(id)?.requiredIds ?? []));
-  }
-  return [...seen];
+  return reachableIds([pack.id], (id) => packs.get(id)?.requiredIds);
 }
 
-/** The parameters in a pack's scope, each with the pack declaring it. */
-function scopeOf(pack: LintPack, packs: Map<string, LintPack>):
+/**
+ * The parameters in a pack's scope, each with the pack declaring it; with `withPack`, the scope of
+ * its conditional part, which adds that pack's and the packs it requires (§8.1, §6.5).
+ */
+function scopeOf(pack: LintPack, packs: Map<string, LintPack>, withPack?: string):
 Map<string, ParameterDeclaration> {
   const scope = new Map<string, ParameterDeclaration>();
-  for (const id of reachable(pack, packs)) {
+  const other = withPack === undefined ? undefined : packs.get(withPack);
+  const ids = [...reachable(pack, packs), ...(other === undefined ? [] : reachable(other, packs))];
+  for (const id of ids) {
     for (const [name, declaration] of Object.entries(packs.get(id)?.manifest.parameters ?? {})) {
       if (!scope.has(name)) scope.set(name, declaration);
     }
@@ -130,6 +129,7 @@ export function readPackFiles(
   pack: LintPack,
   packs: Map<string, LintPack>,
   slots: Set<string>,
+  software?: string,
 ): { files: PackFile[]; problems: Problem[] } {
   const problems: Problem[] = [];
   for (const [name, declaration] of Object.entries(pack.manifest.parameters ?? {})) {
@@ -140,9 +140,12 @@ export function readPackFiles(
         message });
     }
   }
-  const scope = scopeOf(pack, packs);
+  const always = scopeOf(pack, packs);
+  const entry = conditionalFiles(pack.manifest);
+  const conditional = scopeOf(pack, packs, software);
   const files: PackFile[] = [];
-  for (const path of listedFiles(pack.manifest.contents)) {
+  for (const path of [...listedFiles(pack.manifest.contents), ...entry]) {
+    const scope = entry.includes(path) ? conditional : always;
     const file = `${pack.path}/${path}`;
     // A missing file, or a directory in its place, is the inventory rule's problem.
     if (!existsSync(join(tree, file)) || !lstatSync(join(tree, file)).isFile()) continue;
