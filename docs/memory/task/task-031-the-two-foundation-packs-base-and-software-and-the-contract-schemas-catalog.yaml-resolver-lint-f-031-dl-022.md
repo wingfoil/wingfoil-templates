@@ -262,13 +262,13 @@ the commits, the adapted tests, and the interim `Axis: software`.
 - **Adapted tests** (only as the split requires): `[BASE, KANBAN…]` trees gain `software`
   (`FOUNDATION`, `FOUNDATION_COMPOSABLE`, `SOFTWARE_COMPOSABLE` in `tests/support/pack-tree.ts`);
   `KANBAN` and a phase pack's default `requires` name `software@^1`; expected id lists gain
-  `software`; the reserved-workflow tests split by owner (`base-only`, `software-only`); the
-  index fixtures' kanban 1.1.0 requires `software@^1`; publication's `bump` moves `software`'s
-  and kanban's `requires` with `base`'s major; counts: `validate` (examples 6 → 8, compositions
-  7 → 9 and 8 → 10, runs 7 → 9, failing-preset compositions 6 → 8, lint 54 → 62, index 9 → 10,
-  golden files 18 → 19), `check-packs` and `example-rules` (16 → 20 files), `index` (unchanged 7 → 8 and
-  9 → 10, checked 9 → 10); `readme-generate` (kanban's requires; `adr` now `software`'s, its
-  line `` - `adr`: — `` until task-033); the feedback-note test asserts "Changed since F-031".
+  `software`; the reserved-workflow tests split by owner (`base-only`, `software-only`); the index
+  fixtures' kanban 1.1.0 requires `software@^1`; publication's `bump` moves `software`'s and
+  kanban's `requires` with `base`'s major; counts: `validate` (examples 6 → 8, compositions 7 → 9
+  and 8 → 10, runs 7 → 9, failing-preset compositions 6 → 8, lint 54 → 62, index 9 → 10, golden
+  files 18 → 19), `check-packs` and `example-rules` (16 → 20 files), `index` (unchanged 7 → 8 and 9
+  → 10, checked 9 → 10); `readme-generate` (kanban's requires; `adr` now `software`'s, its line `` -
+  `adr`: — `` until task-033); the feedback-note test asserts "Changed since F-031".
 - **Interim `Axis: software`:** the golden tree's `packs/software/README.md`, the resolve and merge
   fixtures' `software` READMEs and `tests/fixtures/index/expected/packs/software/README.md` read
   `Axis: software`, as `npm run index` generates it until task-033 (spec-002 §2.1).
