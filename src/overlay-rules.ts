@@ -16,6 +16,7 @@ import { OutputError, planOutput } from './output';
 import { placeholderOf, reachable } from './pack-files';
 import type { LintPack } from './pack-files';
 import type { Problem } from './problems';
+import { parseEntry } from './requirements';
 import { ResolveError, resolve } from './resolve';
 
 function byBytes(a: string, b: string): number {
@@ -80,8 +81,10 @@ export function overlayProblems(context: LintContext, earlier: Problem[]): Probl
     if (software === undefined || request.some(needsSoftware)
       || !request.some((pack) => pack.manifest.conditional !== undefined)) return undefined;
     if (request.some((pack) => pack.manifest.axis === 'methodology')) return [software, ...request];
+    const conflicting = (a: LintPack, b: LintPack): boolean => (a.manifest.conflicts ?? [])
+      .some((entry) => parseEntry(entry, 'conflicts').id === b.id);
     const allowed = methodologies.find((methodology) => !request.some((pack) =>
-      (pack.manifest.conflicts ?? []).some((entry) => entry.split('@')[0] === methodology.id)));
+      conflicting(pack, methodology) || conflicting(methodology, pack)));
     return allowed === undefined ? undefined : [software, allowed, ...request];
   };
   const both = (request: LintPack[], rule: string, blamed: LintPack[]): void => {

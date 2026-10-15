@@ -12,6 +12,7 @@ import { assetIdMessage, slotKindMessage } from './output';
 import { conditionalFiles, kindOf, listedFiles } from './pack-rules';
 import type { PackLike } from './pack-rules';
 import { defaultMessage, referencesIn } from './parameters';
+import { reachableIds } from './requirements';
 import type { ParameterValue } from './parameters';
 import type { Problem } from './problems';
 import type { ParameterDeclaration } from './resolve';
@@ -51,14 +52,7 @@ export function placeholderOf(type: string): ParameterValue {
 
 /** The ids a pack reaches through `requires`, itself included. */
 export function reachable(pack: LintPack, packs: Map<string, LintPack>): string[] {
-  const seen = new Set<string>([pack.id]);
-  const queue = [...pack.requiredIds];
-  for (let id = queue.shift(); id !== undefined; id = queue.shift()) {
-    if (seen.has(id)) continue;
-    seen.add(id);
-    queue.push(...(packs.get(id)?.requiredIds ?? []));
-  }
-  return [...seen];
+  return reachableIds([pack.id], (id) => packs.get(id)?.requiredIds);
 }
 
 /**

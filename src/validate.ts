@@ -116,6 +116,10 @@ function packsOf(tree: string, catalog: Catalog, entries: string[]):
   };
 }
 
+function byBytes(a: string, b: string): number {
+  return Buffer.compare(Buffer.from(a), Buffer.from(b));
+}
+
 function count(n: number, noun: string): string {
   return `${n} ${noun}${n === 1 ? '' : 's'}`;
 }
@@ -417,10 +421,13 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     }
     const entries = composition.entries.filter((entry) =>
       entry !== software && !entry.startsWith(`${software}@`));
+    const label = `${composition.label}[-software]`;
     let without: ResolvedPack[];
     try {
       without = resolve(args.tree, catalog, entries);
-    } catch {
+    } catch (error) {
+      fail(1, `composition ${label}: ${messageOf(error)}`);
+      matrixLines.push(`matrix ${label}: skipped`);
       continue;
     }
     // A pack requires software unconditionally: this composition has no leg without it.
@@ -431,11 +438,11 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     const dropped = Object.keys(composition.preset).filter((name) => !declared.has(name)).sort();
     const preset = Object.fromEntries(Object.entries(composition.preset)
       .filter(([name]) => declared.has(name)));
-    const leg = runOne({ label: `${composition.label}[-software]`, entries, preset, dropped });
+    const leg = runOne({ label, entries, preset, dropped });
     record(leg.packs, leg.ran);
   }
   if (mode === 'publication') {
-    for (const [id, ran] of [...parted].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
+    for (const [id, ran] of [...parted].sort(([a], [b]) => byBytes(a, b))) {
       if (!ran) {
         fail(1, `matrix: ${id} has a conditional part and no composition with software that ran `
           + '(plan-039 R6)');

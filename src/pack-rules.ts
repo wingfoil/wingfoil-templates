@@ -153,7 +153,7 @@ export function inventoryProblems(tree: string, pack: PackLike): Problem[] {
 }
 
 /** spec-001 §9: slot workflows, read from the catalog, and the workflows of each foundation pack. */
-export function slotProblems(catalog: Catalog, pack: PackLike, reached?: string[]): Problem[] {
+export function slotProblems(catalog: Catalog, pack: PackLike, reached: string[]): Problem[] {
   const problems: Problem[] = [];
   const always = pack.manifest.contents.workflows ?? [];
   const entry = conditionalContents(pack.manifest).workflows ?? [];
@@ -168,7 +168,7 @@ export function slotProblems(catalog: Catalog, pack: PackLike, reached?: string[
     } else if (fills && pack.manifest.axis === 'methodology') {
       // A methodology ships delivery in contents when it requires software, in its conditional
       // part when it does not (spec-001 §6.5, §9; plan-038 ruling 7).
-      const requires = requiresSoftware(catalog, pack, reached);
+      const requires = requiresSoftware(catalog, reached);
       if (requires && !always.includes(slot.name)) {
         problems.push(at(pack, '/contents', 'slot', `${pack.id}: requires `
           + `${softwarePack(catalog)}, so it ships ${slot.name} in contents (spec-001 §6.5)`));
@@ -199,19 +199,20 @@ export function slotProblems(catalog: Catalog, pack: PackLike, reached?: string[
 }
 
 /**
- * spec-001 §3, §6.5, §18: every phase pack requires the software layer; a conditional part is
- * refused until its rules are implemented (plan-039 R1, task-032).
+ * spec-001 §3, §6.5, §18: every phase pack requires the software layer; a pack that requires it
+ * carries no conditional part, and a conditional part is never empty (plan-039 R7). `reached` is
+ * what the pack reaches through `requires`.
  */
-export function foundationProblems(catalog: Catalog, pack: PackLike, reached?: string[]):
+export function foundationProblems(catalog: Catalog, pack: PackLike, reached: string[]):
 Problem[] {
   const problems: Problem[] = [];
   const software = softwarePack(catalog);
-  if (pack.manifest.axis === 'phase' && !requiresSoftware(catalog, pack, reached)) {
+  if (pack.manifest.axis === 'phase' && !requiresSoftware(catalog, reached)) {
     problems.push(at(pack, '/requires', 'requires-software',
       `${pack.id}: a phase pack must require ${software} (spec-001 §3)`));
   }
   if (pack.manifest.conditional !== undefined) {
-    if (requiresSoftware(catalog, pack, reached)) {
+    if (requiresSoftware(catalog, reached)) {
       problems.push(at(pack, '/conditional', 'conditional', `${pack.id}: requires ${software}, `
         + 'so it ships everything in contents and carries no conditional part (spec-001 §6.5)'));
     }
@@ -223,13 +224,9 @@ Problem[] {
   return problems;
 }
 
-/**
- * Whether a pack requires the software layer: through its own `requires`, or, when the caller
- * gives the ids the pack reaches through `requires`, transitively (spec-001 §3, §6.5).
- */
-export function requiresSoftware(catalog: Catalog, pack: PackLike, reached?: string[]): boolean {
-  const ids = reached ?? (pack.manifest.requires ?? []).map((entry) => entryId(entry, 'requires'));
-  return ids.includes(softwarePack(catalog));
+/** Whether a pack requires the software layer, directly or transitively (spec-001 §3, §6.5). */
+export function requiresSoftware(catalog: Catalog, reached: string[]): boolean {
+  return reached.includes(softwarePack(catalog));
 }
 
 /** The file kind of spec-001 §12 of a listed file, or undefined for the agents section. */

@@ -8,6 +8,7 @@ import type { ValidateFunction } from 'ajv';
 import { isScalar } from 'yaml';
 
 import { CompositionError } from './composition-error';
+import { parseEntry, reachableIds } from './requirements';
 import type { ParameterDeclaration, ResolvedPack } from './resolve';
 import { SCHEMA_DIR } from './schemas';
 
@@ -162,22 +163,14 @@ export function parameterScopes(
   parameters: Map<string, Parameter>,
 ): Map<string, PackScopes> {
   const byId = new Map(packs.map((pack) => [pack.id, pack]));
-  const reach = (start: string[]): Set<string> => {
-    const reachable = new Set<string>();
-    const queue = [...start];
-    for (let id = queue.shift(); id !== undefined; id = queue.shift()) {
-      if (reachable.has(id)) continue;
-      reachable.add(id);
-      queue.push(...(byId.get(id)?.requiredIds ?? []));
-    }
-    return reachable;
-  };
+  const reach = (start: string[]): Set<string> =>
+    new Set(reachableIds(start, (id) => byId.get(id)?.requiredIds));
   const names = (reachable: Set<string>): Set<string> => new Set([...parameters.values()]
     .filter((parameter) => reachable.has(parameter.pack)).map((parameter) => parameter.name));
   const scopes = new Map<string, PackScopes>();
   for (const pack of packs) {
     const withIds = (pack.manifest.conditional ?? [])
-      .map((entry) => entry.with.slice(0, entry.with.indexOf('@')));
+      .map((entry) => parseEntry(entry.with, 'requires').id);
     scopes.set(pack.id, { always: names(reach([pack.id])),
       conditional: names(reach([pack.id, ...withIds])) });
   }

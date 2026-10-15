@@ -5,6 +5,7 @@
 // the tree; the composer, to every pack it composes.
 import { softwarePack } from './catalog';
 import { conditionalContents, conditionalFiles } from './pack-rules';
+import { reachableIds } from './requirements';
 import type { Catalog } from './catalog';
 import { BUILTIN_DIRECTIVE_IDS } from './wingfoil-builtins';
 import type { Problem } from './problems';
@@ -88,14 +89,17 @@ export function workflowProblems(
   // The pack and its direct requires; its conditional part also sees its own files and the
   // software layer with the packs it requires (§6.3, §6.5). Nothing always composed may use them.
   const always = declared([pack.id, ...pack.requiredIds], packs, files);
-  const software = catalog === undefined ? undefined : packs.get(softwarePack(catalog));
+  // The software layer's id, whether or not its pack is composed: without it, slots do not exist.
+  const softwareId = catalog === undefined ? undefined : softwarePack(catalog);
+  const software = softwareId === undefined ? undefined : packs.get(softwareId);
   const part = conditionalContents(pack.manifest);
   const partFiles = conditionalFiles(pack.manifest);
   const partKnown = declared([pack.id, ...pack.requiredIds,
     ...(software === undefined ? [] : [software.id, ...software.requiredIds])], packs, files);
   for (const name of part.workflows ?? []) partKnown.workflows.add(name);
   for (const name of part.directives ?? []) partKnown.directives.add(name);
-  const reachesSoftware = software !== undefined && reaches(pack, software.id, packs);
+  const reachesSoftware = softwareId !== undefined && reachableIds([pack.id],
+    (id) => packs.get(id)?.requiredIds).includes(softwareId);
   const slots = new Set(catalog?.slots.map((slot) => slot.name) ?? []);
   for (const file of own.filter((candidate) => candidate.path.startsWith('workflows/'))) {
     const data = file.yaml?.data;
@@ -128,9 +132,9 @@ export function workflowProblems(
           problems.push(problemAt(file, `${pointer}/include`, 'isolation', `${label}: phase `
             + `${name} includes ${include}, a workflow of the pack's conditional part, which is `
             + 'composed only with software (spec-001 §6.5)'));
-        } else if (!inPart && slots.has(include) && software !== undefined && !reachesSoftware) {
+        } else if (!inPart && slots.has(include) && softwareId !== undefined && !reachesSoftware) {
           problems.push(problemAt(file, `${pointer}/include`, 'isolation', `${label}: phase `
-            + `${name} includes the slot ${include}; slots exist only with ${software.id}, which `
+            + `${name} includes the slot ${include}; slots exist only with ${softwareId}, which `
             + `${pack.id} does not require (spec-001 §6.5, §9)`));
         } else if (!known.workflows.has(include) && !slots.has(include)) {
           problems.push(problemAt(file, `${pointer}/include`, 'include', `${label}: phase ${name} `
@@ -181,19 +185,6 @@ export function workflowProblems(
     }
   }
   return problems;
-}
-
-/** Whether a pack reaches another through `requires`, itself included. */
-function reaches(pack: RulePack, target: string, packs: Map<string, RulePack>): boolean {
-  const seen = new Set<string>();
-  const queue = [pack.id];
-  for (let id = queue.shift(); id !== undefined; id = queue.shift()) {
-    if (id === target) return true;
-    if (seen.has(id)) continue;
-    seen.add(id);
-    queue.push(...(packs.get(id)?.requiredIds ?? []));
-  }
-  return false;
 }
 
 /** §9: software's sw-life-cycle includes its slots; a methodology's delivery includes its own. */

@@ -109,6 +109,11 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
         ['methodology/kanban', 'methodology/kanban'], ['methodology/flow', 'methodology/flow']]) {
         const result = publish(repo, ['--pack', pack ?? '', entry ?? '']);
         assert.equal(result.code, 0, `${pack}: ${result.lines.join('\n')}`);
+        if (pack === 'methodology/flow') {
+          // R6 passes: flow's leg with software ran in the publication run (plan-039).
+          assert.ok(result.lines.some((line) => line.startsWith('matrix entries[+software] '
+            + 'wingfoil@9.0.0 workflow list: pass (publication)')), result.lines.join('\n'));
+        }
       }
       const versionOf = (id: string): Doc => ((catalogOf(repo).find((entry) => entry['id'] === id)
         ?.['versions'] as Doc[])[0] ?? {});

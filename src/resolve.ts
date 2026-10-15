@@ -14,7 +14,7 @@ import {
 } from './pack-rules';
 import type { Problem } from './problems';
 import { installListed, readmeProblems } from './readme-rules';
-import { parseEntry, satisfies } from './requirements';
+import { parseEntry, reachableIds, satisfies } from './requirements';
 import { repositorySchemas } from './schemas';
 import type { SchemaSet } from './schemas';
 import { YamlError, loadYamlFile } from './yaml-load';
@@ -250,18 +250,6 @@ export function axesMessages(
   return messages;
 }
 
-/** The ids a pack reaches through `requires`, itself included. */
-function reachedIds(pack: ResolvedPack, packs: Map<string, ResolvedPack>): string[] {
-  const seen = new Set<string>([pack.id]);
-  const queue = [...pack.requiredIds];
-  for (let id = queue.shift(); id !== undefined; id = queue.shift()) {
-    if (seen.has(id)) continue;
-    seen.add(id);
-    queue.push(...(packs.get(id)?.requiredIds ?? []));
-  }
-  return [...seen];
-}
-
 /**
  * spec-001 §6.5, §17 step 1: a conditional part counts when the composition holds software, whose
  * version must then satisfy its `with`; it never adds a pack.
@@ -345,7 +333,7 @@ export function resolve(tree: string, catalog: Catalog, request: string[]): Reso
   const [axisProblem] = axesMessages(catalog, byId);
   if (axisProblem !== undefined) throw new ResolveError(axisProblem);
   for (const pack of byId) {
-    const reached = reachedIds(pack, packs);
+    const reached = reachableIds([pack.id], (id) => packs.get(id)?.requiredIds);
     throwFirst(foundationProblems(catalog, pack, reached));
     throwFirst(slotProblems(catalog, pack, reached));
   }
