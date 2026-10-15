@@ -69,7 +69,7 @@ describe('npm run feedback:note -- --schema (wingfoil-cli rule 8)', () => {
       assert.match(note.title, /^The pack schemas changed \(sha256:[0-9a-f]{12}\)$/);
       assert.match(note.body, /^\nNew note \(task-015\)\./);
       // Since the newest schema note of the inbox: F-017, the baseline, then F-031 (task-031).
-      assert.match(note.body, /Changed since F-\d{3}:\n\n- changed: `schema\/pack\.schema\.json`/);
+      assert.match(note.body, /Changed since F-031:\n\n- changed: `schema\/pack\.schema\.json`/);
       assertInbox(join(tree, INBOX));
       assert.equal(runCheckPacks(tree).code, 0, runCheckPacks(tree).lines.join('\n'));
       assert.match(runFeedbackNote(['--schema', '--from', 'task-015', '--tree', tree]).lines

@@ -487,6 +487,11 @@ describe('preset rules', () => {
     const api = { id: 'blueprint/api' };
     failsWith('preset-cardinality', [...CLEAN, api],
       (root) => write(root, 'presets/small.yaml', preset(['software@^1', 'blueprint/api@^1'])));
+    // Resolution only: methodologies that do not require software (no valid form before task-032).
+    const result = lint([...CLEAN, { id: 'methodology/a' }, { id: 'methodology/b' }],
+      (root) => write(root, 'presets/small.yaml', preset(['methodology/a@^1', 'methodology/b@^1'])));
+    assert.ok(result.problems.some((problem) => problem.rule === 'preset-cardinality'
+      && /axis methodology takes one pack/.test(problem.message)), result.lines.join('\n'));
     for (const packs of [['blueprint/api@^1'], ['software@^1', 'methodology/kanban@^1']]) {
       const result = lint([...CLEAN, api],
         (root) => write(root, 'presets/small.yaml', preset(packs)));
@@ -655,6 +660,12 @@ describe('F3.5 workflow rules', () => {
   });
 });
 
+/** The compose and overlay problems: each pack file and the composition named. */
+const messages = (result: CheckPacksResult): string[] =>
+  result.problems.filter((problem) => problem.rule === 'compose' || problem.rule === 'overlay')
+    .map((problem) => `${problem.file}: ${problem.message.slice(0, problem.message.indexOf(':'))}`)
+    .sort();
+
 describe('F3.5 overlays and lone packs', () => {
   const directive = (id: string): Partial<PackSpec> => ({ directives: [id],
     extraFiles: { [`directives/${id}.md`]: `---\nid: ${id}\nformat: 1\n---\n# ${id}\n` } });
@@ -676,16 +687,15 @@ describe('F3.5 overlays and lone packs', () => {
       ['packs/stage/mvp/pack.yaml', 'packs/team-mode/solo/pack.yaml'], 'both overlays are named');
   });
 
-  it('compose: a pack no combination reaches is composed with base and a methodology', () => {
-    failsWith('compose', [...FOUNDATION, KANBAN, { id: 'blueprint/web',
-      ...directive('security') }]);
+  it('compose: a pack that needs software is composed with base and the first methodology', () => {
+    const result = lint([...FOUNDATION, KANBAN, { id: 'blueprint/web',
+      requires: ['base@^1', 'software@^1'], ...directive('security') }]);
+    assert.deepEqual(messages(result),
+      ['packs/blueprint/web/pack.yaml: base + methodology/kanban + blueprint/web'],
+      result.lines.join('\n'));
   });
 
   // spec-001 §3: without software, a composition needs no methodology (task-031).
-  const messages = (result: CheckPacksResult): string[] =>
-    result.problems.filter((problem) => problem.rule === 'compose' || problem.rule === 'overlay')
-      .map((problem) => `${problem.file}: ${problem.message.slice(0, problem.message.indexOf(':'))}`)
-      .sort();
 
   it('compose: base alone, when the tree holds no methodology', () => {
     const files = { ...BASE.extraFiles, 'fragments/dna.yaml': 'format: 1\nproject:\n  name: x\n'

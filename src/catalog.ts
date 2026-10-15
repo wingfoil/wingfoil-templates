@@ -84,7 +84,7 @@ export function corePack(catalog: Catalog): string {
   return catalog.foundation[0] ?? '';
 }
 
-/** The software foundation layer, in a composition only when asked for (spec-001 §3). */
+/** The software foundation layer, in a composition when asked for or required (spec-001 §3). */
 export function softwarePack(catalog: Catalog): string {
   return catalog.foundation[1] ?? '';
 }

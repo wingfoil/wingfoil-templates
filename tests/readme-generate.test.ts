@@ -48,7 +48,7 @@ describe('generatedSections (acceptance 10)', () => {
     assert.ok(base.some((line) => line.startsWith('- `task`: `draft` → `pending`')), base.join('\n'));
     // adr is software's since task-031; its line reads only software's own fragments (spec-002 §2.2).
     const software = generatedSections(TREE, 'software')['what-it-adds'];
-    assert.ok(software.some((line) => line.startsWith('- `adr`:')), software.join('\n'));
+    assert.ok(software.includes('- `adr`: —'), software.join('\n'));
     assert.ok(!base.some((line) => line.startsWith('- `adr`:')), base.join('\n'));
     assert.ok(base.includes('- `base-rules`: `developer`'), base.join('\n'));
     const kanban = generatedSections(TREE, 'methodology/kanban')['what-it-adds'];
