@@ -1,7 +1,7 @@
 # Personas — WingFoil-Templates
 
-**Version:** 1.2
-**Date:** 2026-10-14
+**Version:** 1.3
+**Date:** 2026-10-15
 **Status:** Approved
 **Traces to:** [01_product-brief.md](01_product-brief.md) §3–§5, [02_product-vision.md](02_product-vision.md) "Value by Audience"
 
@@ -59,18 +59,19 @@ This document describes two different sets of people, and they must not be confu
 ### Persona 3 — The Governed-Repository Maintainer
 
 - **Who:** whoever maintains WingFoil2, WingFoil2-Benchmark or WingFoil-UI: the approver, with the
-  agents that work there.
+  agents that work there. Projects WingFoil governs that are not software adopt `base` alone
+  (dl-022 S1).
 - **Real from:** now, by hand adoption. It becomes the CLI path from v0.4.
-- **Goal:** share one foundation (`base`) across the four repositories and keep each project's own
-  domain parts.
+- **Goal:** share one foundation across the four repositories, `base` and `software` (dl-022), and
+  keep each project's own domain parts.
 - **Pain today:** the four configurations differ on things unrelated to what the projects are: state
   names, capture-workflow phases, feedback channels, stub directives.
 - **Needs from the packs:**
-  - `base` with parameters for each repository's paths and id conventions;
+  - `base` and `software` with parameters for each repository's paths and id conventions;
   - adoption steps that can be followed between two releases;
   - a version number to record in each repository.
-- **Success:** each of the four repositories declares the `base` version it adopted. A later `base`
-  release reaches all four the same way.
+- **Success:** each of the four repositories declares the versions of `base` and `software` it
+  adopted. A later release of either reaches all four the same way.
 - **Serves purpose:** 3.
 
 ### Persona 4 — The Pack Author

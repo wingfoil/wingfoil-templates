@@ -1,7 +1,7 @@
 # Is / Is Not / Does / Does Not — WingFoil-Templates
 
-**Version:** 1.4
-**Date:** 2026-10-14
+**Version:** 1.5
+**Date:** 2026-10-15
 **Status:** Approved
 **Traces to:** [01_product-brief.md](01_product-brief.md), [02_product-vision.md](02_product-vision.md)
 
@@ -71,7 +71,8 @@ Items marked *(pack-model)* depend on proposals ruled in the pack-model phase.
 
 - Publish a pack against an unreleased WingFoil build (`pack-compatibility`).
 - Write a WingFoil version range by hand *(pack-model)*.
-- Publish `base` before WingFoil2 v0.3 has finished its format changes (approver's constraint).
+- Publish the foundation packs, `base` and `software`, before WingFoil2 v0.3 has finished its format
+  changes (approver's constraint).
 - Ship `AGENTS.md` or any agent file at the repository root as a pack file. Packs contribute a
   section, and WingFoil generates the file *(pack-model)*.
 - Let an overlay remove what a methodology ships (`pack-authoring`).

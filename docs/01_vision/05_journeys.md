@@ -1,7 +1,7 @@
 # User Journeys — WingFoil-Templates
 
-**Version:** 1.2
-**Date:** 2026-10-14
+**Version:** 1.3
+**Date:** 2026-10-15
 **Status:** Approved
 **Traces to:** [04_personas.md](04_personas.md), [03_is-isnot.md](03_is-isnot.md)
 
@@ -19,7 +19,7 @@ dl-021 R2). A journey states only what the packs must make possible.
 | ID | Journey | Persona | Priority |
 |---|---|---|---|
 | J1 | Author and publish a pack | Pack author | now: nothing exists without it |
-| J2 | Adopt `base` by hand | Governed-repository maintainer | now (primary, until v0.4) |
+| J2 | Adopt the foundation packs by hand | Governed-repository maintainer | now (primary, until v0.4) |
 | J3 | Pin this catalog in a WingFoil release | WingFoil maintainer | when WingFoil adopts the default set (F-027, dl-138's tech-spec) |
 | J4 | Record a WingFoil release | WingFoil maintainer | now: keeps compatibility true |
 | J5 | Work a phase under a composed configuration | Agent | now, in the governed repositories |
@@ -45,25 +45,23 @@ dl-021 R2). A journey states only what the packs must make possible.
 | 7 | Publishes | the approver's gate, tag, `catalog.yaml` entry with its digest | Tag, catalog entry and digest come out of one deterministic step. No pack is bundled in WingFoil, so the publication needs no note of its own (dl-021 R1). |
 
 **Ends well when:** the pack is tagged and listed, its `pack-release` holds the validation evidence,
-and nobody had to fix it after publication.
-
----
-
-## J2 — Adopt `base` by hand (Governed-repository maintainer)
-
-**Trigger:** a `base` version is published, and the repository is between two of its own releases.
-
-| # | Step | Touchpoint | Pain / opportunity |
-|---|---|---|---|
-| 1 | Reads what changes | `base` README and CHANGELOG | What the repository gains, what it must rename, which parameters it sets. |
-| 2 | Sets the parameters | its own paths, id conventions, agent name | WingFoil2 and UI keep their path per type (`design/dls`, …) without forking `base`. |
-| 3 | Applies the files | `.wingfoil/` of the repository | The files go where `pack-install` will map them in WingFoil dl-138's `remote` class; until its tech-spec fixes that folder, format 1's mapping applies (spec-001 §7.6, O12). The repository's `custom/` overrides stay (dl-021 R3). |
-| 4 | Writes the `AGENTS.md` section | the marked region | Markers in place from the start, so the later export finds them. |
-| 5 | Validates | the pinned WingFoil CLI of that repository | Zero errors with the WingFoil version the repository actually runs. |
-| 6 | Records the adoption | a decision-log or task in that repository, the adopted version | The version is recorded, so the next `base` release has a known starting point. |
-
-**Ends well when:** the repository validates with `base`, records the version, and its own domain
-parts are unchanged.
+and nobody had to fix it after publication.  ---  ## J2 — Adopt the foundation packs by hand
+(Governed-repository maintainer)  **Trigger:** a version of `base` or `software` is published, and
+the repository is between two of its own releases. A software repository adopts both; a project that
+is not software adopts `base` alone (dl-022).  | # | Step | Touchpoint | Pain / opportunity |
+|---|---|---|---| | 1 | Reads what changes | the README and CHANGELOG of `base` and `software` |
+What the repository gains, what it must rename, which parameters it sets. | | 2 | Sets the
+parameters | its own paths, id conventions, agent name | WingFoil2 and UI keep their path per type
+(`design/dls`, …) without forking the foundation packs. | | 3 | Applies the files | `.wingfoil/` of
+the repository | The files go where `pack-install` will map them in WingFoil dl-138's `remote`
+class; until its tech-spec fixes that folder, format 1's mapping applies (spec-001 §7.6, O12). The
+repository's `custom/` overrides stay (dl-021 R3). | | 4 | Writes the `AGENTS.md` section | the
+marked region | Markers in place from the start, so the later export finds them. | | 5 | Validates |
+the pinned WingFoil CLI of that repository | Zero errors with the WingFoil version the repository
+actually runs. | | 6 | Records the adoption | a decision-log or task in that repository, the adopted
+version | The versions are recorded, so the next release of either pack has a known starting point.
+|  **Ends well when:** the repository validates with the foundation packs, records their versions,
+and its own domain parts are unchanged.
 
 ---
 
@@ -184,5 +182,5 @@ Approver, 2026-10-06:
      dl-021 R2).
 2. **J4 is in the MVP.** The `wingfoil-release-intake` workflow returns to the configuration. It
    comes after the pack-model rulings, as one of the configuration changes they imply.
-3. **Adoption register.** Each governed repository records its `base` adoption in its own Memory.
-   This repository keeps no list of adopters.
+3. **Adoption register.** Each governed repository records its adoption of the foundation packs in
+   its own Memory. This repository keeps no list of adopters.

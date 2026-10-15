@@ -1,7 +1,7 @@
 # Product Vision — WingFoil-Templates
 
-**Version:** 1.3
-**Date:** 2026-10-14
+**Version:** 1.4
+**Date:** 2026-10-15
 **Status:** Approved
 **Traces to:** [01_product-brief.md](01_product-brief.md)
 
@@ -36,7 +36,7 @@ constraints.
 | Versioning | **One semver per pack**, with no repository-wide version (`pack-semver` directive). |
 | Where WingFoil changes happen | **In WingFoil, through its own process.** A WingFoil defect or gap found here becomes a note in `docs/wingfoil-feedback/`, never an edit to WingFoil (`wingfoil-cli` directive). |
 | Dogfooding | **This repository is a WingFoil project** and adopts its own packs. Its history is the first evidence that the packs work. |
-| Timing | **The MVP is ready when WingFoil v0.4 installs packs** (WingFoil dl-138). `base` waits for the formats of v0.3. |
+| Timing | **The MVP is ready when WingFoil v0.4 installs packs** (WingFoil dl-138). The foundation packs wait for the formats of v0.3. |
 | Official and community packs | **Two catalogs** (vision review). The official one is curated; the community one is broader, written and maintained by external contributors, and opens later. |
 | Language | **English as the bridge language**, with regulatory quotes in their original language. Packs are localized by geographic area (regulations), not translated (vision review). |
 
@@ -45,7 +45,7 @@ discussion and the first attempt; they are not yet approved elements.
 
 | Question | Proposal |
 |---|---|
-| How is a configuration composed? | Packs along **orthogonal axes**: `methodology` (exactly one), `team-mode` (overlay), `phase/<slot>`, `blueprint`, `stage` (overlay), `governance`. They sit on top of a **foundation pack, `base`**, which every pack requires. |
+| How is a configuration composed? | Packs along **orthogonal axes**: `methodology` (exactly one with `software`, at most one without), `team-mode` (overlay), `phase/<slot>`, `blueprint`, `stage` (overlay), `governance`. They sit on top of the **foundation packs**: `base`, which every pack requires, and `software`, the software layer with the life cycle, which every phase pack requires (dl-022). |
 | How is compatibility declared? | By the **file formats** a pack is written in and the **capabilities** it needs. A WingFoil version range is never written by hand: it is computed from `compat.yaml` (notes D6). |
 | How is a version addressed and verified? | A **git tag per pack version**, plus a **digest** in `catalog.yaml`. The exact conventions are in the pack-model and spec-001. |
 
@@ -57,7 +57,7 @@ discussion and the first attempt; they are not yet approved elements.
 |---|---|
 | Adopter | A working process in one `init`: methodology, team mode, phase methods, blueprint and stage. They can upgrade it later without losing their own overrides in `custom/`. |
 | WingFoil maintainer | A versioned, validated source of the packs WingFoil installs, in place of templates compiled into the CLI; no pack is bundled in WingFoil's npm package (dl-021 R1). A compatibility table tells which release reads what. |
-| Governed-repository maintainer | One shared foundation (`base`) for Memory types, life cycles, capture workflows and directives across the four repositories. The project-specific parts stay their own. |
+| Governed-repository maintainer | One shared foundation: `base` for the Memory types, capture workflows and directives every governed project uses, software or not, and `software` for the software types and the life cycle across the four software repositories (dl-022). The project-specific parts stay their own. |
 | Pack author | A documented format with schemas, authoring rules and a validation that tells whether a pack is publishable. |
 | External contributor (later) | A way to propose changes to official packs as Memory elements, with credit, on WingFoil's contribution model. A community catalog where they publish and maintain their own packs. |
 
