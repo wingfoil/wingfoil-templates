@@ -76,3 +76,7 @@ Configuration changes this decision implies, applied after approval:
   commit `539e943` is not amended again, because commits now sit on top of it.
 - When `base` is adopted (dl-003 D10), `base`'s `retrospective` replaces this one. Any difference
   found then is resolved in `base`, not here.
+- 2026-10-15, plan-038: **R2** amended by dl-022: the retrospective's `capture` no longer makes a
+  change of process its own decision-log; it lists the point, ruled by `governance-evolution` (dl-022
+  S4), and until this repository adopts `base` (W9) by a decision-log under `decision-log-ingest`,
+  applied by a dl actions plan. `retrospective.yaml` v3 applies it. The body stays as approved.

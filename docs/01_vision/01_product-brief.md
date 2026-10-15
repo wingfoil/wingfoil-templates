@@ -1,7 +1,7 @@
 # Product Brief — WingFoil-Templates
 
-**Version:** 1.1
-**Date:** 2026-10-14
+**Version:** 1.2
+**Date:** 2026-10-15
 **Status:** Approved
 **Source:** the approver's answers (Roberto Pompermaier), 2026-10-06; the design discussion of
 2026-10-01..05; the first attempt on `archive/draft-2026-10-05` (unapproved drafts, source material
@@ -47,7 +47,8 @@ and no remote origin. As a consequence:
    blueprints and stages, which a project composes instead of writing its `.wingfoil/` by hand.
 2. **Be the single source of the packs WingFoil installs.** They replace the templates compiled into
    the CLI.
-3. **Align the four WingFoil-governed repositories** through the foundation pack `base`.
+3. **Align the projects WingFoil governs** through the foundation packs: `base` for every one of
+   them, software or not, and `software` for the four governed software repositories (dl-022).
 
 Purposes 2 and 3 serve purpose 1. The CLI is the delivery channel, and the four repositories are the
 first adopters and the first test of the format.
@@ -88,7 +89,7 @@ first adopters and the first test of the format.
 
 - the pack format (spec-001) and its JSON Schemas: the contract with the CLI;
 - `catalog.yaml` and `compat.yaml`;
-- `base`;
+- the foundation packs `base` and `software`;
 - the first set of packs (notes D4, plus `governance/wingfoil-dogfood`):
   - `methodology/scrum`, `methodology/kanban`;
   - `team-mode/agent-first`;
@@ -109,14 +110,15 @@ The sequencer (`07_sequencer.md`) sets the order and the first publishable set.
 
 ## 7. Constraints and dependencies
 
-- **`base` waits for WingFoil2 v0.3's formats.** It is not published before v0.3 finishes its format
-  changes, expected at the end of wave 3:
+- **The foundation packs wait for WingFoil2 v0.3's formats.** They are not published before v0.3
+  finishes its format changes, expected at the end of wave 3:
   - the `format:` key (WingFoil dl-149, task-251 done);
   - task-180;
   - `bindings.yaml`;
   - dev-loop 1.5/1.6;
   - the Memory templates.
-- **Adoption between releases.** Benchmark and UI adopt `base` only between their own releases.
+- **Adoption between releases.** Benchmark and UI adopt `base` and `software` only between their own
+  releases.
 - **No hand-written WingFoil ranges.** Compatibility is declared by file formats and capabilities;
   the WingFoil range is computed (notes D6).
 - **WingFoil-side changes go through WingFoil's own process.** They are notes in
@@ -129,7 +131,8 @@ The sequencer (`07_sequencer.md`) sets the order and the first publishable set.
 ## 8. Success signals
 
 - **A WingFoil release installs packs published here** instead of its compiled templates.
-- **All four governed repositories** declare the `base` version they adopted.
+- **All four governed software repositories** declare the versions of `base` and `software` they
+  adopted.
 - **Every preset validates.** It composes deterministically (byte-identical twice) and passes
   WingFoil's validation on every compatible WingFoil release.
 - **Downloads.** Download metrics of the remote repository, per pack where possible.

@@ -1,6 +1,6 @@
 # Project DNA (P2.4) — scaffolded by `wingfoil init` (Kanban template), then customized for this
 # repository. Structural map of the project: modules, stacks, team + roles, resource paths.
-version: 9
+version: 10
 
 project:
   name: wingfoil-templates
@@ -26,7 +26,7 @@ modules:
     description: "JSON Schemas of pack.yaml, catalog.yaml, presets and transitions (the contract with the WingFoil CLI)."
     path: schema
   - name: packs
-    description: "One directory per pack: base, then grouped by axis: methodology, phase/<slot>, blueprint, governance, team-mode, stage."
+    description: "One directory per pack: the foundation packs base and software, then grouped by axis: methodology, phase/<slot>, blueprint, governance, team-mode, stage."
     path: packs
   - name: transitions
     description: "Descriptive stage transitions, run as the target stage overlay's workflow on a pack update: pre-checks, actions, the decision-log they record."

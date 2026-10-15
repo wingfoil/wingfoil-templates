@@ -76,3 +76,9 @@ Consequences:
 - Related: dl-011, dl-012 and dl-013 (pending) assume `base`'s state names (`pending`) and roles
   (facilitator, approver) in their types and phases; at their ruling they follow this decision-log's
   outcome.
+- 2026-10-15, plan-038: dl-022 (`approved` 2026-10-14) splits this decision-log's points between
+  the two foundation charters: C1 (decision-log), C3, C4, C7, C8, C9 and C11 go to
+  `pack-foundation-base`; C1 (adr and tech-spec), C2, C5 and C6 go to `pack-foundation-software`;
+  C10 is split by type, the paths of `adr`, `tech-spec` and `bug` going to `software`'s charter; the
+  meaning of the `{release}` token is `software`'s, and `base`'s path parameters pass it through
+  (spec-001 §8.3). It is ruled with both charters, and stays `pending` until then.

@@ -12,9 +12,10 @@ tags: [packs]
 Applies to every role that writes or reviews pack content under `packs/`.
 
 - Pack names are unique across the whole catalog, whatever the axis or slot, because the `pack`
-  Memory element id is `pack-{axis}-{name}` (dl-004). `base` is the element `pack-foundation-base`:
-  `foundation` is reserved for it in the element's `axis` field, while in `catalog.yaml` `base` stays
-  outside the axes.
+  Memory element id is `pack-{axis}-{name}` (dl-004). The foundation packs `base` and `software` are
+  the elements `pack-foundation-base` and `pack-foundation-software`: `foundation` is the value of
+  their element's `axis` field, while in `pack.yaml` and `catalog.yaml` both stay outside the axes
+  (dl-022).
 - Every pack lives in `packs/<axis>/[<slot>/]<name>/` and has a `pack.yaml`, a `README.md` and a
   `CHANGELOG.md`. Its `pack.yaml` validates against `schema/pack.schema.json`.
 - A pack's `README.md` follows spec-002 §2 (dl-014 D1): its nine sections, in order. The generated
@@ -47,16 +48,25 @@ Applies to every role that writes or reviews pack content under `packs/`.
   phase slot per project.
 - Every workflow phase that should create or move an element says so with `actions` and `produces`:
   a phase that parses but declares nothing is a defect (WingFoil benchmark note N1).
-- Every pack except `base` requires the foundation pack (`requires: [base@^<major>]`) and only adds to it or
-  tightens it (dl-003 D1). Overlays (`team-mode`, `stage`) only add or tighten relative to everything
-  else; they never remove what a methodology ships. In a Memory state machine, adding a state or a
-  gate is allowed; removing either is not.
-- Slots (dl-003 D4, D11). `sw-life-cycle` belongs to `base` and includes `inception`,
-  `specification`, `delivery` and `end-of-life` by name; the methodology's `delivery` includes
-  `release` and `retrospective` by name, at its own cadence. A phase pack fills one of the slots
-  `inception`, `specification`, `release`, `end-of-life` by shipping a workflow with the slot's
-  name; this is the one case where a pack file replaces another pack's file. `delivery` is filled by
-  the methodology, never by a phase pack.
+- Every pack except `base` requires `base` (`requires: [base@^<major>]`) and only adds to it or
+  tightens it (dl-003 D1). `software` requires `base` only. Every phase pack requires `software`,
+  and so does every pack that uses a Memory type, a workflow, a directive or a parameter of
+  `software` outside a conditional part (spec-001 §3, §6.3; dl-022 S3). Overlays (`team-mode`,
+  `stage`) only add or tighten relative to everything else; they never remove what a methodology
+  ships. In a Memory state machine, adding a state or a gate is allowed; removing either is not.
+- A pack that does not require `software`, and whose content only makes sense with it (a
+  methodology's `delivery`), declares that content in a `conditional` entry,
+  `with: software@^<major>` (spec-001 §6.5): it counts only in a composition holding `software`,
+  and nothing outside it uses that content or anything of `software`'s. A pack that requires
+  `software` ships everything in `contents`.
+- Slots (dl-003 D4, D11). They exist only with `software`. `sw-life-cycle` and the slot defaults
+  belong to `software`, `retrospective` and `governance-evolution` to `base` (dl-022).
+  `sw-life-cycle` includes `inception`, `specification`, `delivery` and `end-of-life` by name; the
+  methodology's `delivery` includes `release` and `retrospective` by name, at its own cadence. A
+  phase pack fills one of the slots `inception`, `specification`, `release`, `end-of-life` by
+  shipping a workflow with the slot's name; this is the one case where a pack file replaces another
+  pack's file. `delivery` is filled by the methodology, never by a phase pack: in its conditional
+  entry, or in `contents` when the methodology requires `software`.
 - `AGENTS.md` and every agent file at the repository root are never pack files (dl-003 R1). A pack
   contributes at most one section (`agents_section`), and WingFoil generates the file (WingFoil
   dl-137).

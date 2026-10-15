@@ -3,11 +3,11 @@ id: ""
 type: pack
 title: ""
 status: draft
-axis: ""            # methodology | team-mode | phase | blueprint | stage | governance; foundation for base only (dl-004); filled by --set axis=
+axis: ""            # methodology | team-mode | phase | blueprint | stage | governance; foundation for base and software (dl-004, dl-022); filled by --set axis=
 name: ""            # the pack name, e.g. scrum (filled by --set name=)
 slot: ""            # phase packs only: inception | specification | release | end-of-life (dl-003 D11)
-pack_path: ""       # packs/<axis>/[<slot>/]<name>
-requires: []        # catalog pack ids with a semver range: base@^<major> for every pack but base (dl-003), plus any other
+pack_path: ""       # packs/<catalog pack id>: packs/base, packs/software, or packs/<axis>/[<slot>/]<name>
+requires: []        # catalog pack ids with a semver range: base@^<major> for every pack but base (dl-003), software@^<major> for every phase pack (dl-022), plus any other
 conflicts: []       # pack ids that cannot be composed with this one
 ---
 

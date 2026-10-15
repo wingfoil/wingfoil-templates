@@ -160,3 +160,17 @@ Configuration changes this decision implies. Each is applied after approval and 
   `governance/wingfoil-dogfood`). The install-folder line of the configuration changes ("`built-in/`
   today, `remote/` if ratified") is settled by dl-021 R3: dl-138 ratified the `remote` class, and
   `built-in/` stays WingFoil's own. The body stays as approved.
+- 2026-10-15, plan-038: amended by dl-022 (`approved` 2026-10-14), applied to spec-001, spec-002,
+  the vision and the configuration:
+  - **D2** is replaced by dl-022 S2 (what `base` holds, for every governed project) and S3 (the
+    software foundation pack `software`);
+  - **D4** and **D11** stand, with `software` in place of `base` as the pack that ships
+    `sw-life-cycle` and the slot defaults; a methodology's `delivery` exists only in a composition
+    with `software`, declared in its conditional part (spec-001 §6.5);
+  - **D5** gains "the software life cycle and the software Memory types, which belong to
+    `software`";
+  - **D10** also applies to `software`: this repository and the software adopters adopt it with
+    `base`;
+  - **D1** stands, and also applies to `software` for the packs that require it.
+
+  The body stays as approved.

@@ -115,3 +115,6 @@ Consequences:
   descriptive (plan-032); a project changes stage by a pack update of its `stage/*` overlay, whose
   workflow runs the transition, with no `stage set` verb (dl-021 R2, WingFoil dl-178). The open
   question "which packs WingFoil bundles" becomes the default set of F-027.
+- 2026-10-15, plan-038: **D5**'s first scope also gains `software`, the software foundation pack
+  (dl-022), as dl-003 D7 added `base`. `base` serves every project governed by WingFoil, software
+  or not; `software` is composed right after it. The body stays as approved.
