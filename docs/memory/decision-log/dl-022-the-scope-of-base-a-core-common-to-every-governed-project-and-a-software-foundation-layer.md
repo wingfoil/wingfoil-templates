@@ -224,3 +224,10 @@ Changes this decision implies, each applied later through its own element:
 - Related, pending: dl-011, dl-012 and dl-013 assume `base`'s types and roles; dl-012 D3 routes
   bugs to `bug-ingest`, which moves to `software`, and treats a decision-log as the path for a
   governance change, which S4 now hosts. At their ruling they follow this decision-log's outcome.
+- 2026-10-15, plan-038: the document and configuration actions applied and merged (`99ea8f0`):
+  spec-001 and spec-002 amended in place; the vision (features, sequencer, brief, vision, is-isnot,
+  personas, journeys, canvas); `pack-authoring`, `memory.yaml` v5, `retrospective.yaml` v3,
+  `dna.yaml` v10 and the `pack` template; the Execution Notes of dl-001, dl-003, dl-004, dl-006 and
+  dl-015. The approver's rulings on the conditional `delivery` and the memory keys are in plan-038.
+  Still to apply: the schemas, `catalog.yaml`, the composer, the lint rules, the index and the
+  feedback note (a `tooling-change` plan); the charters (W8); this repository's adoption (W9).

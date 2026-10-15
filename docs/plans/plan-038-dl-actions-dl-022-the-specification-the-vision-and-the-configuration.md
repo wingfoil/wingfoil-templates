@@ -212,3 +212,6 @@ Then:
   non-software project, no local path and no private repository.
 - 2026-10-15, branch pushed: CI run 38710168749 on `30dabd2`, conclusion `success` (`validate
   (22.12.0)` and `validate (22.21.0)` both `success`). Waiting for the approver's merge OK.
+- 2026-10-15: the approver gave the merge OK in chat, which approves spec-001's and spec-002's
+  edited text; `--no-ff` merge into `main` (`99ea8f0`), push, branch removed; dl-022's Execution
+  Notes record the actions applied. This plan goes `active → done`.
