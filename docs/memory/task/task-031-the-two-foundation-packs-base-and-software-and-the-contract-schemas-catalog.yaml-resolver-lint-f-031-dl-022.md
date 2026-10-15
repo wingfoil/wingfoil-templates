@@ -300,3 +300,9 @@ the commits, the adapted tests, and the interim `Axis: software`.
 - 2026-10-15, **re-review** (dl-017 R2, after `40a5493`, `9d291d9` and the notes): approve after
   amendments; findings 1–9 of the build review resolved or raised; one minor, the counts above
   split by cause and the schemas count added. Fixed in these notes; no rule changed.
+- 2026-10-15, **Acceptance** from clean clones at `58d5af0` (the later commits change these notes
+  only), on Node.js 22.21.0 and 22.12.0: `npm ci`, `build`, `test`, `lint`, `check:pins`,
+  `check:schemas`, `check:packs`, `index -- --check`, `validate` exit 0, and `validate -- --tree
+  tests/fixtures/compose/tree --param project_name=Golden` exits 0 against WingFoil 0.2.2 (9
+  compositions, 9 runs, 0 failed, the self-test tolerance applied). No dependency added;
+  `compat.yaml` and `index/` unchanged; no `schema/*.v<N>.schema.json`.
