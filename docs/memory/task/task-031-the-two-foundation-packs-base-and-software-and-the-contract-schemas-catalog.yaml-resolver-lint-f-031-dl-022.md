@@ -47,10 +47,10 @@ What exists, at `main` `d99241f`:
   `output.ts` (`agentsRegion`: its section opens at level 1, every other at level 2);
   `compose-documents.ts`; `tree-rules.ts` (`presetChecks` adds it to every preset);
   `overlay-rules.ts` (it composes every methodology × team-mode × stage, and every other pack once
-  as `base` + the first methodology + the pack; nothing when the tree has no methodology); `workflow-rules.ts` (`lifeCycleProblems`:
-  its `sw-life-cycle` includes the slots); `pack-rules.ts` (`BASE_ONLY_WORKFLOWS =
-  ['sw-life-cycle', 'retrospective']`, rule `base-only`; `slotProblems` lets a slot's `default`
-  pack ship it).
+  as `base` + the first methodology + the pack; nothing when the tree has no methodology);
+  `workflow-rules.ts` (`lifeCycleProblems`: its `sw-life-cycle` includes the slots); `pack-rules.ts`
+  (`BASE_ONLY_WORKFLOWS = ['sw-life-cycle', 'retrospective']`, rule `base-only`; `slotProblems` lets
+  a slot's `default` pack ship it).
 - **Fixtures.** The golden `tests/fixtures/compose/tree` (preset `golden`) has a `base` that ships
   `sw-life-cycle`, the slot defaults, `retrospective`, the types `task` and `adr` and the parameter
   `adr_path`; its packs require `base` only; `tests/fixtures/compose/expected` is its output.
