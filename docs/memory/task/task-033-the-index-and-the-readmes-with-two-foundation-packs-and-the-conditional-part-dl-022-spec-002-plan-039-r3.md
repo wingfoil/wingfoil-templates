@@ -2,7 +2,7 @@
 id: task-033-the-index-and-the-readmes-with-two-foundation-packs-and-the-conditional-part-dl-022-spec-002-plan-039-r3
 type: task
 title: "The index and the READMEs with two foundation packs and the conditional part (dl-022, spec-002, plan-039 R3)"
-status: backlog
+status: in-progress
 pack: ""            # tooling task (tooling-change › deliver, plan-039)
 depends_on: []
 tags: ["tooling","base","index"]
