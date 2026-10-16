@@ -2,9 +2,13 @@ import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
 import type { CatalogIndex } from '../src/index-model';
-import { cell, firstSentence, renderCatalog, renderJson, renderLlms } from '../src/index-render';
+import type { IndexPack } from '../src/index-model';
+import {
+  cell, conditionalMark, firstSentence, renderCatalog, renderJson, renderLlms,
+} from '../src/index-render';
 
 const AXES = ['methodology', 'phase', 'blueprint', 'governance', 'team-mode', 'stage'];
+const FOUNDATION = ['base', 'software'];
 const EMPTY: CatalogIndex = { format: 1, repository: 'wingfoil/wingfoil-templates', install: [],
   packs: [], presets: [], transitions: [] };
 
@@ -26,35 +30,53 @@ describe('table cells and summaries (acceptance 6)', () => {
   });
 });
 
+describe('conditionalMark (plan-039 R3)', () => {
+  const pack = (workflows: string[], directives: string[]): IndexPack => ({
+    latest: '1.0.0', versions: [{ version: '1.0.0', conditional: [{ with: 'software@^1' }] }],
+    conditional_workflows: workflows, conditional_directives: directives,
+  }) as unknown as IndexPack;
+
+  it('names the part\'s workflows, else its directives, and the layer of its with', () => {
+    assert.deepEqual(conditionalMark(pack(['delivery'], ['d'])),
+      { names: ['delivery'], layer: 'software' });
+    assert.deepEqual(conditionalMark(pack([], ['d'])), { names: ['d'], layer: 'software' });
+  });
+
+  it('gives no mark for a part that adds nothing', () => {
+    assert.equal(conditionalMark(pack([], [])), undefined);
+  });
+});
+
 describe('renderCatalog (§3.2)', () => {
   it('writes the sections in order, base first, then the axes of catalog.yaml', () => {
-    assert.deepEqual(headings(renderCatalog(EMPTY, AXES)), ['# WingFoil template catalog',
+    assert.deepEqual(headings(renderCatalog(EMPTY, AXES, FOUNDATION)), [
+      '# WingFoil template catalog',
       '## Install', '## Foundation', '## Methodology', '## Phase', '## Blueprint', '## Governance',
       '## Team mode', '## Stage', '## Presets', '## Transitions', '## Profiles', '## For agents']);
   });
 
   it('anchors the Install block and says no release installs packs yet', () => {
-    const text = renderCatalog(EMPTY, AXES);
+    const text = renderCatalog(EMPTY, AXES, FOUNDATION);
     assert.ok(text.includes('<a id="install"></a>\n\n## Install\n\nNo released WingFoil'));
-    assert.ok(renderCatalog({ ...EMPTY, install: ['1.0.0', '1.2.0'] }, AXES)
+    assert.ok(renderCatalog({ ...EMPTY, install: ['1.0.0', '1.2.0'] }, AXES, FOUNDATION)
       .includes('The WingFoil releases that install packs from this catalog: `1.0.0`, `1.2.0`.'));
   });
 
   it('writes the empty sentences of an empty catalog', () => {
-    const text = renderCatalog(EMPTY, AXES);
+    const text = renderCatalog(EMPTY, AXES, FOUNDATION);
     assert.equal(text.split('\n').filter((line) => line === 'None published yet.').length, 7);
     assert.equal(text.split('\n').filter((line) => line === 'None yet.').length, 3);
   });
 
   it('links llms.txt and lists the URL patterns for agents', () => {
-    const text = renderCatalog(EMPTY, AXES);
+    const text = renderCatalog(EMPTY, AXES, FOUNDATION);
     assert.ok(text.includes('[llms.txt](llms.txt)'));
     assert.ok(text.includes('`https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/'
       + 'catalog-index.json`'));
   });
 
   it('ends with one newline and has no trailing whitespace', () => {
-    for (const text of [renderCatalog(EMPTY, AXES), renderLlms(), renderJson(EMPTY)]) {
+    for (const text of [renderCatalog(EMPTY, AXES, FOUNDATION), renderLlms(), renderJson(EMPTY)]) {
       assert.ok(text.endsWith('\n') && !text.endsWith('\n\n'));
       assert.ok(text.split('\n').every((line) => line === line.trimEnd()));
     }

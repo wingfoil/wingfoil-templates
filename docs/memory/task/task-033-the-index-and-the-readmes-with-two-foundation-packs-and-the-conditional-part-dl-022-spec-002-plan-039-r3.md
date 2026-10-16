@@ -2,7 +2,7 @@
 id: task-033-the-index-and-the-readmes-with-two-foundation-packs-and-the-conditional-part-dl-022-spec-002-plan-039-r3
 type: task
 title: "The index and the READMEs with two foundation packs and the conditional part (dl-022, spec-002, plan-039 R3)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-change › deliver, plan-039)
 depends_on: []
 tags: ["tooling","base","index"]
@@ -172,3 +172,46 @@ versions; the independent review; the push and the CI run.
 - 2026-10-15: re-review: approve; its low findings (plan-039's task-033 row, the mark's form in
   sections 4 and 5, the directives-only pack's axis) amended without changing a rule.
 
+- 2026-10-16, design written and committed on `main`; task started (backlog → in-progress);
+  branch `task/task-033-index` from `2a613b0`.
+- 2026-10-16, **step 1**, red on `e3b11bf`: `npx tsc -p tsconfig.json`: 5 errors (exit 2); then
+  `node --test` over `index-model`, `readme-generate`, `index`, `site`, `agent-path`: 74 tests, the
+  index build failing on `software` (the schema's `packId`), so most suites fail. Green in
+  `222be7e`. Characterizations: "Declares" for `software` (it was never the literal `base`); the
+  foundation section's order for `[base, software]`, byte order agreeing (the test also gives the
+  reversed list, which is red).
+- 2026-10-16, **step 2**, red on `5dd685e`: `npx tsc`: 7 errors; `index-model`,
+  `readme-generate`, `site`: 51 tests, 6 fail. Green in `2d9430e`. spec-002's note in `0407068`
+  (content, dl-018 R2).
+- **Adapted tests and fixtures:** `renderCatalog` takes the foundation list (`index-render`
+  tests); `axisAndSlot` takes it too (`index-model` tests); the resolve and merge fixtures'
+  `software` READMEs read `Axis: foundation` (task-031's interim gone); a test that found kanban
+  as `packs[1]` finds it by id; counts and lists of the new published packs: `site.test.ts`
+  (rows 5 → 6 → 8, `found('')` 5 → 6 → 8, the foundation filter `base`, `software`),
+  `agent-path.test.ts` (the methodologies `flow`, `kanban`), `index-model.test.ts` (the published
+  ids).
+- **Acceptance 6:** `git grep -nE "['\"\`](base|software)(['\"\`@/]|$)" -- src/` gives no hit.
+- **Checks:** `llms.txt` of the expected outputs unchanged; `index/vendor/search.js` and its
+  sha256 unchanged; the root `CATALOG.md`, `catalog-index.json` and `llms.txt` unchanged.
+- 2026-10-16, **build review** (independent subagent): approve with minor amendments, nothing
+  blocking. Fixed red first: the tests in `d686a40` (`readme-generate`, `index-render`: 19 tests, 3
+  fail: section 4 split into workflows and directives lines; the directive marks of sections 4 and
+  5; no Summary mark for a part that adds nothing; `software`'s "Declares", a characterization),
+  the code in `c52bcf1` (one `conditionalPart` helper for the index and the READMEs; `index.ts`
+  reads `catalog.yaml` once; the index schema's `with` mirrors the pack schema's pattern; comments
+  on a part's directive roles and on the site's foundation order, which follows the index's byte
+  order and agrees with `catalog.yaml`'s since the site reads the index only; the import order).
+  Acceptance 3's foundation-order and Summary-mark tests sit in `tests/index-model.test.ts`, which
+  builds the fixture index, rather than in `tests/index-render.test.ts`. Re-review requested
+  (dl-017 R2).
+- 2026-10-16, **re-review** (dl-017 R2): approve; findings 1–10 fixed or recorded. Two low
+  findings (a comment placed after a `return`; the part read twice in `packOf`) fixed in
+  `83f5d89`, a refactor that changes no behaviour.
+- 2026-10-16, **Acceptance** from clean clones at `83f5d89` (the later commits change these notes
+  only), on Node.js 22.21.0 and 22.12.0: `npm ci`, `build`, `test`, `lint`, `check:pins`,
+  `check:schemas`, `check:packs`, `index -- --check`, `validate`, `validate -- --tree
+  tests/fixtures/compose/tree --param project_name=Golden` and `site -- --out <tmp>` exit 0. No
+  dependency added; `schema/`, the root `catalog.yaml`, `compat.yaml`, `CATALOG.md`,
+  `catalog-index.json` and `llms.txt` unchanged.
+- 2026-10-16, **CI** (Acceptance 9): run 38859419074 on `703773b`, conclusion `success`
+  (`validate (22.12.0)` and `validate (22.21.0)` both `success`). Submitted `in-review`.

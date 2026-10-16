@@ -3,10 +3,10 @@
 // `readmeOutline` finds, every other byte of the README unchanged.
 import { byBytes, code, isDoc, list, sorted, strings, text, yamlIn } from './index-data';
 import type { Doc } from './index-data';
-import { axisAndSlot } from './index-model';
+import { conditionalPart } from './index-model';
+import { cell } from './index-render';
 import { workingTree } from './index-source';
 import type { TreeSource } from './index-source';
-import { cell } from './index-render';
 import { GENERATED_SECTIONS, readmeOutline } from './readme';
 
 export interface GeneratedSections {
@@ -32,6 +32,19 @@ interface PackFiles {
   roles: Doc;
   memory: Doc;
   workflows: Doc[];
+  /** The conditional part (spec-001 §6.5): its workflows, directives and the layer it needs. */
+  part: { workflows: Doc[]; directives: string[]; layer: string } | undefined;
+}
+
+function partOf(source: TreeSource, dir: string, manifest: Doc): PackFiles['part'] {
+  const part = conditionalPart(manifest);
+  if (part === undefined) return undefined;
+  return {
+    workflows: sorted(strings(part.contents['workflows']))
+      .map((name) => ({ name, ...yamlOrEmpty(source, `${dir}/workflows/${name}.yaml`) })),
+    directives: sorted(strings(part.contents['directives'])),
+    layer: part.layer,
+  };
 }
 
 function readPack(source: TreeSource, id: string): PackFiles {
@@ -46,6 +59,7 @@ function readPack(source: TreeSource, id: string): PackFiles {
     dna: fragment('dna'), roles: fragment('roles'), memory: fragment('memory'),
     workflows: sorted(strings(contents['workflows']))
       .map((name) => ({ name, ...yamlOrEmpty(source, `${dir}/workflows/${name}.yaml`) })),
+    part: partOf(source, dir, manifest),
   };
 }
 
@@ -71,9 +85,11 @@ function rolesOf(pack: PackFiles): string[] {
 }
 
 function titleSection(pack: PackFiles): string[] {
-  const { axis, slot } = axisAndSlot(pack.id);
-  const axisLine = axis === null ? 'Axis: foundation'
-    : `Axis: ${axis}${slot === null ? '' : ` · Slot: ${slot}`}`;
+  // Read from the pack's own pack.yaml (§2.2): a foundation pack has no axis (spec-001 §6.2).
+  const axis = pack.manifest['axis'];
+  const slot = pack.manifest['slot'];
+  const axisLine = typeof axis !== 'string' ? 'Axis: foundation'
+    : `Axis: ${axis}${typeof slot === 'string' ? ` · Slot: ${slot}` : ''}`;
   return [`# ${text(pack.manifest['title'])}`, '', text(pack.manifest['description']), '',
     axisLine];
 }
@@ -89,12 +105,23 @@ function compositionSection(pack: PackFiles): string[] {
       .sort(byBytes).map((kind) => `${code(kind)} ${text(formats[kind])}`).join(', ')}`,
     `- **Requires capabilities:** ${codes(strings(pack.manifest['requires_capabilities']))}`,
   ];
-  if (pack.id !== 'base') {
+  // base, the core, has no axis and requires nothing (spec-001 §6.2); every other pack declares
+  // what it adds over the foundation it requires (spec-002 §2.1).
+  if (pack.manifest['axis'] !== undefined || strings(pack.manifest['requires']).length > 0) {
     lines.push('- **Declares:**',
       `  - Memory types: ${codes(memoryTypes(pack).map(([name]) => name))}`,
       `  - roles: ${codes(rolesOf(pack))}`,
       `  - states: ${codes(declaredStates(pack))}`,
       `  - workflows: ${codes(pack.workflows.map((workflow) => text(workflow['name'])))}`);
+    // spec-002 §2.1: a conditional part's files, present only with its layer (plan-039 R8).
+    const part = pack.part;
+    if (part !== undefined && part.workflows.length > 0) {
+      lines.push(`  - workflows only with ${code(part.layer)}: ${codes(part.workflows
+        .map((workflow) => text(workflow['name'])))}`);
+    }
+    if (part !== undefined && part.directives.length > 0) {
+      lines.push(`  - directives only with ${code(part.layer)}: ${codes(part.directives)}`);
+    }
   }
   return lines;
 }
@@ -108,11 +135,17 @@ function phaseLine(phase: Doc): string {
   return `  - ${parts.join(', ')}`;
 }
 
+/** The mark of a line the conditional part adds (plan-039 R8). */
+function onlyWith(pack: PackFiles): string {
+  return pack.part === undefined ? '' : `, only with ${code(pack.part.layer)}`;
+}
+
 function workflowLines(pack: PackFiles): string[] {
-  return pack.workflows.flatMap((workflow) => [
-    `- ${code(text(workflow['name']))} (${text(workflow['kind'] ?? 'unknown')})`,
+  const lines = (workflows: Doc[], mark: string): string[] => workflows.flatMap((workflow) => [
+    `- ${code(text(workflow['name']))} (${text(workflow['kind'] ?? 'unknown')})${mark}`,
     ...list(workflow['phases']).filter(isDoc).map(phaseLine),
   ]);
+  return [...lines(pack.workflows, ''), ...lines(pack.part?.workflows ?? [], onlyWith(pack))];
 }
 
 function gatesOf(states: Doc): string {
@@ -149,7 +182,9 @@ function directiveLines(pack: PackFiles): string[] {
       .filter((role) => strings(assignments[role]).includes(id)).map(code);
     if (global.includes(id)) roles.push('global');
     return `- ${code(id)}: ${roles.length === 0 ? '—' : roles.join(', ')}`;
-  });
+  })
+    // A part's directive is assigned to no role: what is always composed never names it (§6.5).
+    .concat((pack.part?.directives ?? []).map((id) => `- ${code(id)}: —${onlyWith(pack)}`));
 }
 
 function bullets(names: string[]): string[] {

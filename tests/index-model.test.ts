@@ -6,6 +6,7 @@ import { after, before, describe, it } from 'node:test';
 import { parse, stringify } from 'yaml';
 
 import { axisAndSlot, buildIndex, excerptOf } from '../src/index-model';
+import { renderCatalog } from '../src/index-render';
 import type { CatalogIndex, IndexPack } from '../src/index-model';
 import { IndexError } from '../src/index-source';
 import type { TestRepo } from './support/git-repo';
@@ -23,9 +24,13 @@ function withSection2(text: string): string {
 
 describe('axisAndSlot', () => {
   it('derives null axis and slot for base, a slot only for a phase pack', () => {
-    assert.deepEqual(axisAndSlot('base'), { axis: null, slot: null });
-    assert.deepEqual(axisAndSlot('methodology/kanban'), { axis: 'methodology', slot: null });
-    assert.deepEqual(axisAndSlot('phase/inception/lean'), { axis: 'phase', slot: 'inception' });
+    const foundation = ['base', 'software'];
+    assert.deepEqual(axisAndSlot('base', foundation), { axis: null, slot: null });
+    assert.deepEqual(axisAndSlot('software', foundation), { axis: null, slot: null });
+    assert.deepEqual(axisAndSlot('methodology/kanban', foundation),
+      { axis: 'methodology', slot: null });
+    assert.deepEqual(axisAndSlot('phase/inception/lean', foundation),
+      { axis: 'phase', slot: 'inception' });
   });
 });
 
@@ -95,15 +100,19 @@ describe('buildIndex on the fixture catalog (CB-4)', () => {
   });
 
   it('lists the published packs in byte order, and no unpublished one', () => {
-    assert.deepEqual(index.packs.map((entry) => entry.id), ['base', 'methodology/kanban',
-      'phase/inception/lean', 'stage/mvp', 'stage/production']);
+    assert.deepEqual(index.packs.map((entry) => entry.id), ['base', 'governance/notes',
+      'methodology/flow', 'methodology/kanban', 'phase/inception/lean', 'software', 'stage/mvp',
+      'stage/production']);
   });
 
   it('builds pack and version objects in the key order of §3.3', () => {
     const kanban = pack('methodology/kanban');
     assert.deepEqual(Object.keys(kanban), ['id', 'catalog', 'status', 'axis', 'slot', 'latest',
-      'versions', 'title', 'description', 'workflows', 'memory_types', 'directives',
-      'parameters', 'excerpt', 'profiles']);
+      'versions', 'title', 'description', 'workflows', 'conditional_workflows', 'memory_types',
+      'directives', 'conditional_directives', 'parameters', 'excerpt', 'profiles']);
+    assert.deepEqual(Object.keys(pack('methodology/flow').versions[0] ?? {}), ['version', 'tag',
+      'wingfoil', 'formats', 'requires_capabilities', 'requires', 'conflicts', 'conditional',
+      'readme_url', 'manifest_url']);
     assert.deepEqual(Object.keys(kanban.versions[0] ?? {}), ['version', 'tag', 'wingfoil',
       'formats', 'requires_capabilities', 'requires', 'conflicts', 'readme_url',
       'manifest_url']);
@@ -134,8 +143,52 @@ describe('buildIndex on the fixture catalog (CB-4)', () => {
     assert.deepEqual(kanban.workflows, ['delivery']);
   });
 
+  it('carries a conditional part apart from what is always composed (plan-039 R3)', () => {
+    const flow = pack('methodology/flow');
+    assert.deepEqual(flow.versions[0]?.conditional, [{ with: 'software@^1' }]);
+    assert.deepEqual([flow.workflows, flow.conditional_workflows, flow.directives,
+      flow.conditional_directives], [['flow-board'], ['delivery', 'flow-delivery'], [],
+      ['flow-limits']]);
+    const notes = pack('governance/notes');
+    assert.deepEqual([notes.conditional_workflows, notes.conditional_directives],
+      [[], ['notes-rules']]);
+    const kanban = pack('methodology/kanban');
+    assert.ok(!Object.hasOwn(kanban.versions[0] ?? {}, 'conditional'));
+    assert.deepEqual([kanban.conditional_workflows, kanban.conditional_directives], [[], []]);
+  });
+
+  it('marks the Summary of a pack with a conditional part (plan-039 R3)', () => {
+    const text = renderCatalog(index, ['methodology', 'phase', 'blueprint', 'governance',
+      'team-mode', 'stage'], ['base', 'software']);
+    const row = (id: string): string =>
+      text.split('\n').find((line) => line.includes(`\`${id}\` |`)) ?? '';
+    assert.ok(row('methodology/flow').includes(
+      '(`delivery`, `flow-delivery` only with `software`) |'), row('methodology/flow'));
+    assert.ok(row('governance/notes').includes('(`notes-rules` only with `software`) |'),
+      row('governance/notes'));
+    assert.ok(!row('methodology/kanban').includes('only with'));
+  });
+
+  it('writes the foundation section in catalog.yaml\'s order, each row anchored (§3.2)', () => {
+    const AXES = ['methodology', 'phase', 'blueprint', 'governance', 'team-mode', 'stage'];
+    const section = (foundation: string[]): string[] => {
+      const lines = renderCatalog(index, AXES, foundation).split('\n');
+      const start = lines.indexOf('## Foundation');
+      return lines.slice(start, lines.indexOf('## Methodology')).filter((line) =>
+        line.startsWith('| <a id='));
+    };
+    const rows = section(['base', 'software']);
+    assert.equal(rows.length, 2);
+    assert.ok(rows[0]?.startsWith('| <a id="pack-base"></a>`base` |'), rows[0]);
+    assert.ok(rows[1]?.startsWith('| <a id="pack-software"></a>`software` |'), rows[1]);
+    assert.ok(rows[1]?.includes('/blob/software@1.0.0/packs/software/README.md'), rows[1]);
+    // The order is catalog.yaml's, not the ids' byte order.
+    assert.ok(section(['software', 'base'])[0]?.includes('`software`'));
+  });
+
   it('derives axis and slot, and the profiles of the presets naming the pack', () => {
     assert.deepEqual([pack('base').axis, pack('base').slot], [null, null]);
+    assert.deepEqual([pack('software').axis, pack('software').slot], [null, null]);
     assert.deepEqual([pack('phase/inception/lean').axis, pack('phase/inception/lean').slot],
       ['phase', 'inception']);
     assert.deepEqual(pack('methodology/kanban').profiles, ['small teams']);
@@ -174,7 +227,8 @@ describe('buildIndex on the fixture catalog (CB-4)', () => {
         entry['id'] === 'methodology/kanban');
       ((kanban?.['versions'] as Doc[])[1] as Doc)['requires'] = ['base@^1'];
       writeFileSync(file, stringify(catalog));
-      assert.deepEqual(buildIndex(repo.dir).packs[1]?.versions[1]?.requires, ['base@^1.0.0',
+      assert.deepEqual(buildIndex(repo.dir).packs.find((entry) => entry.id === 'methodology/kanban')
+        ?.versions[1]?.requires, ['base@^1.0.0',
         'software@^1']);
     } finally {
       writeFileSync(file, original);

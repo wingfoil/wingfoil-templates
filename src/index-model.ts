@@ -28,6 +28,8 @@ export interface IndexVersion {
   requires_capabilities: string[];
   requires: string[];
   conflicts: string[];
+  /** Copied as the catalog version entry does, its `with` only (plan-039 R3). */
+  conditional?: { with: string }[];
   readme_url: string;
   manifest_url: string;
 }
@@ -43,8 +45,11 @@ export interface IndexPack {
   title: string;
   description: string;
   workflows: string[];
+  /** The workflows of the pack's conditional part, composed only with software (R3). */
+  conditional_workflows: string[];
   memory_types: string[];
   directives: string[];
+  conditional_directives: string[];
   parameters: IndexParameter[];
   excerpt: string;
   profiles: string[];
@@ -93,9 +98,10 @@ export function entryId(entry: string): string {
   return at < 0 ? entry : entry.slice(0, at);
 }
 
-/** `axis` and `slot` from a catalog pack id (spec-001 §4). */
-export function axisAndSlot(id: string): { axis: string | null; slot: string | null } {
-  if (id === 'base') return { axis: null, slot: null };
+/** `axis` and `slot` from a catalog pack id: both null for a foundation pack (spec-001 §4). */
+export function axisAndSlot(id: string, foundation: string[]):
+{ axis: string | null; slot: string | null } {
+  if (foundation.includes(id)) return { axis: null, slot: null };
   const segments = id.split('/');
   return { axis: segments[0] ?? null, slot: segments[0] === 'phase' ? segments[1] ?? null : null };
 }
@@ -155,6 +161,25 @@ function memoryTypes(source: TreeSource, packId: string, manifest: Doc): string[
   return sorted(Object.keys(isDoc(fragment['types']) ? fragment['types'] : {}));
 }
 
+/**
+ * A pack's conditional part, from its pack.yaml (spec-001 §6.5): its `with`, the layer that names,
+ * and its contents; undefined without one. Format 1 allows one entry.
+ */
+export function conditionalPart(manifest: Doc):
+{ with: string; layer: string; contents: Doc } | undefined {
+  const [part] = list(manifest['conditional']).filter(isDoc);
+  if (part === undefined) return undefined;
+  const entry = String(part['with']);
+  return { with: entry, layer: entryId(entry),
+    contents: isDoc(part['contents']) ? part['contents'] : {} };
+}
+
+/** A version's `conditional`, its `with` only, when the tagged pack.yaml has one (R3). */
+function conditionalOf(manifest: Doc): { conditional?: { with: string }[] } {
+  const part = conditionalPart(manifest);
+  return part === undefined ? {} : { conditional: [{ with: part.with }] };
+}
+
 function versionOf(tree: string, packId: string, entry: Doc): { version: IndexVersion;
   source: TreeSource; manifest: Doc } {
   const version = String(entry['version']);
@@ -172,13 +197,15 @@ function versionOf(tree: string, packId: string, entry: Doc): { version: IndexVe
       requires_capabilities: strings(manifest['requires_capabilities']),
       requires: strings(manifest['requires']),
       conflicts: strings(manifest['conflicts']),
+      ...conditionalOf(manifest),
       readme_url: rawAtTag(tag, `packs/${packId}/README.md`),
       manifest_url: rawAtTag(tag, `packs/${packId}/pack.yaml`),
     },
   };
 }
 
-function packOf(tree: string, entry: Doc, presets: IndexPreset[]): IndexPack | undefined {
+function packOf(tree: string, entry: Doc, presets: IndexPreset[], foundation: string[]):
+IndexPack | undefined {
   const id = String(entry['id']);
   const published = list(entry['versions']).filter(isDoc)
     .sort((a, b) => semverCompare(String(a['version']), String(b['version'])));
@@ -187,7 +214,8 @@ function packOf(tree: string, entry: Doc, presets: IndexPreset[]): IndexPack | u
   const latest = [...versions].sort((a, b) => rcompare(a.version.version, b.version.version))[0];
   if (latest === undefined) return undefined;
   const contents = isDoc(latest.manifest['contents']) ? latest.manifest['contents'] : {};
-  const { axis, slot } = axisAndSlot(id);
+  const { axis, slot } = axisAndSlot(id, foundation);
+  const part = conditionalPart(latest.manifest);
   return {
     id,
     catalog: String(entry['catalog']),
@@ -199,8 +227,10 @@ function packOf(tree: string, entry: Doc, presets: IndexPreset[]): IndexPack | u
     title: String(latest.manifest['title']),
     description: String(latest.manifest['description']),
     workflows: sorted(strings(contents['workflows'])),
+    conditional_workflows: sorted(strings(part?.contents['workflows'])),
     memory_types: memoryTypes(latest.source, id, latest.manifest),
     directives: sorted(strings(contents['directives'])),
+    conditional_directives: sorted(strings(part?.contents['directives'])),
     parameters: parametersOf(latest.manifest),
     excerpt: excerptOf(latest.source.read(`packs/${id}/README.md`)),
     profiles: sorted(presets.filter((preset) => preset.profile !== null
@@ -269,7 +299,8 @@ export function buildIndex(tree: string, source: TreeSource = workingTree(tree))
   if (entries.some((entry) => list(entry['versions']).length > 0)) checkRepositoryTop(tree);
   const presets = byId(list(catalog['presets']).filter(isDoc).map((entry) => presetOf(source,
     entry)));
-  const packs = byId(entries.flatMap((entry) => packOf(tree, entry, presets) ?? []));
+  const foundation = strings(catalog['foundation']);
+  const packs = byId(entries.flatMap((entry) => packOf(tree, entry, presets, foundation) ?? []));
   return {
     format: 1,
     repository: REPOSITORY,

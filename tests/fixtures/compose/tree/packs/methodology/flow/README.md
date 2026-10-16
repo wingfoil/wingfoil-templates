@@ -28,6 +28,7 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
   - roles: none
   - states: none
   - workflows: `flow-board`
+  - workflows only with `software`: `delivery`, `flow-delivery`
 <!-- generated:end composition -->
 
 <!-- generated:begin what-it-adds -->
@@ -37,6 +38,11 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 
 - `flow-board` (sub)
   - `pull`
+- `delivery` (sub), only with `software`
+  - `release`, includes `release`
+  - `retrospective`, includes `retrospective`
+- `flow-delivery` (sub), only with `software`
+  - `ship`
 
 ### Memory types
 

@@ -353,3 +353,16 @@ All closed in wave W14 (plan-024):
   composition needs a methodology (spec-001 §3), no longer holds after dl-022: a composition without
   `software` needs none, so `base` could compose an example alone. The exemption is kept as written,
   holding while the tree holds no methodology, and `base`'s examples are due with wave W10.
+- 2026-10-15, rulings recorded for the next element that amends this specification (dl-020 R1),
+  applied by task-033 under plan-039:
+  - **R3** (the approver, plan-039): the conditional part of a pack (spec-001 §6.5) in the index.
+    Each version object of `catalog-index.json` copies `conditional` as the catalog version entry
+    does, its `with` only, after `conflicts`, and only for a pack that carries one; each pack
+    object gains `conditional_workflows` right after `workflows` and `conditional_directives`
+    right after `directives`, always present, and its `workflows` and `directives` keep what is
+    always composed (§3.3). In `CATALOG.md`, and in the search page's table (§5), the Summary of
+    such a pack ends with the part's workflows, or its directives when it has none, marked as
+    present only with the layer its `with` names, for example
+    `` (`delivery`, `flow-delivery` only with `software`) `` (§3.2). The file stays `format: 1`;
+  - **R8** (the approver, plan-039): sections 4 and 5 of a pack's README list its conditional
+    part's workflows and directives too, each marked as present only with that layer (§2.1).

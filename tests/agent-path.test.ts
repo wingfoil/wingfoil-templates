@@ -163,7 +163,7 @@ describe('the agent path (task-021, CB-6 offline)', () => {
       assert.ok(link !== undefined);
       const found = JSON.parse(fetch(link.target)) as CatalogIndex;
       assert.deepEqual(ids(found.packs.filter((pack) => pack.axis === 'methodology')),
-        ['methodology/kanban']);
+        ['methodology/flow', 'methodology/kanban']);
       assert.deepEqual(ids(found.packs.filter((pack) => pack.profiles.includes('small teams'))),
         ['methodology/kanban', 'phase/inception/lean']);
       const text = (pack: IndexPack): string =>

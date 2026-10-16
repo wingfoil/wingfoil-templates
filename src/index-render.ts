@@ -64,6 +64,29 @@ export function firstSentence(text: string): string {
   return match?.[1] ?? text;
 }
 
+/**
+ * What a pack's conditional part adds, for its Summary (plan-039 R3): its workflows, or its
+ * directives when it has none, and the layer its `with` names; undefined without a part.
+ */
+export function conditionalMark(pack: IndexPack): { names: string[]; layer: string } | undefined {
+  const latest = pack.versions.find((version) => version.version === pack.latest);
+  const [part] = latest?.conditional ?? [];
+  const names = pack.conditional_workflows.length > 0 ? pack.conditional_workflows
+    : pack.conditional_directives;
+  // A part that adds nothing has no mark (the lint refuses it, plan-039 R7).
+  if (part === undefined || names.length === 0) return undefined;
+  return { names, layer: entryId(part.with) };
+}
+
+/** A pack's Summary: its description's first sentence, and the mark of its conditional part. */
+export function summaryOf(pack: IndexPack, codeOf: (text: string) => string,
+  textOf: (text: string) => string): string {
+  const first = textOf(firstSentence(pack.description));
+  const mark = conditionalMark(pack);
+  return mark === undefined ? first
+    : `${first} (${mark.names.map(codeOf).join(', ')} only with ${codeOf(mark.layer)})`;
+}
+
 function row(cells: string[]): string {
   return `| ${cells.join(' | ')} |`;
 }
@@ -81,15 +104,18 @@ export function axisHeading(axis: string | null): string {
 function packRow(pack: IndexPack, withSlot: boolean): string[] {
   const latest = pack.versions.find((version) => version.version === pack.latest);
   const cells = [`<a id="${packAnchor(pack.id)}"></a>${code(pack.id)}`,
-    cell(firstSentence(pack.description))];
+    summaryOf(pack, code, cell)];
   if (withSlot) cells.push(code(pack.slot ?? ''));
   cells.push(pack.status, pack.latest, cell(latest?.wingfoil ?? ''),
     `[README](${readmeOnGithub(latest?.tag ?? '', pack.id)})`);
   return cells;
 }
 
-function axisSection(index: CatalogIndex, axis: string | null): string[] {
-  const packs = index.packs.filter((pack) => pack.axis === axis);
+function axisSection(index: CatalogIndex, axis: string | null, foundation: string[]): string[] {
+  // The foundation packs in catalog.yaml's order (§3.2); an axis's packs in byte order of ids.
+  const members = index.packs.filter((pack) => pack.axis === axis);
+  const packs = axis !== null ? members
+    : [...members].sort((a, b) => foundation.indexOf(a.id) - foundation.indexOf(b.id));
   const withSlot = axis === 'phase';
   const header = ['Pack', 'Summary', ...(withSlot ? ['Slot'] : []), 'Status', 'Latest', 'WingFoil',
     'README'];
@@ -129,7 +155,7 @@ function profilesOf(index: CatalogIndex): string[][] {
 }
 
 /** CATALOG.md (spec-002 §3.2), for the axes of catalog.yaml in their order. */
-export function renderCatalog(index: CatalogIndex, axes: string[]): string {
+export function renderCatalog(index: CatalogIndex, axes: string[], foundation: string[]): string {
   const lines = [
     '# WingFoil template catalog',
     '',
@@ -139,7 +165,7 @@ export function renderCatalog(index: CatalogIndex, axes: string[]): string {
     'by hand.',
     '',
     ...installSection(index),
-    ...[null, ...axes].flatMap((axis) => axisSection(index, axis)),
+    ...[null, ...axes].flatMap((axis) => axisSection(index, axis, foundation)),
     '## Presets', '',
     ...orNone(index.presets.map((preset) => [code(preset.id), cell(preset.title),
       cell(preset.profile ?? '—'), preset.packs.map(code).join(', ')]),
