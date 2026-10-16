@@ -187,3 +187,5 @@ review; the push and the CI run.
   only), on Node.js 22.21.0 and 22.12.0: `npm ci`, `build`, `test`, `lint`, `check:pins`,
   `check:schemas`, `check:packs`, `index -- --check`, `validate` and `validate -- --tree
   tests/fixtures/compose/tree --param project_name=Golden` exit 0. No dependency added.
+- 2026-10-16, **CI** (Acceptance 6): run 38923931821 on `4f58180`, conclusion `success`
+  (`validate (22.12.0)` and `validate (22.21.0)` both `success`). Submitted `in-review`.
