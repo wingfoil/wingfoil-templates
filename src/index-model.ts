@@ -93,9 +93,10 @@ export function entryId(entry: string): string {
   return at < 0 ? entry : entry.slice(0, at);
 }
 
-/** `axis` and `slot` from a catalog pack id (spec-001 §4). */
-export function axisAndSlot(id: string): { axis: string | null; slot: string | null } {
-  if (id === 'base') return { axis: null, slot: null };
+/** `axis` and `slot` from a catalog pack id: both null for a foundation pack (spec-001 §4). */
+export function axisAndSlot(id: string, foundation: string[]):
+{ axis: string | null; slot: string | null } {
+  if (foundation.includes(id)) return { axis: null, slot: null };
   const segments = id.split('/');
   return { axis: segments[0] ?? null, slot: segments[0] === 'phase' ? segments[1] ?? null : null };
 }
@@ -178,7 +179,8 @@ function versionOf(tree: string, packId: string, entry: Doc): { version: IndexVe
   };
 }
 
-function packOf(tree: string, entry: Doc, presets: IndexPreset[]): IndexPack | undefined {
+function packOf(tree: string, entry: Doc, presets: IndexPreset[], foundation: string[]):
+IndexPack | undefined {
   const id = String(entry['id']);
   const published = list(entry['versions']).filter(isDoc)
     .sort((a, b) => semverCompare(String(a['version']), String(b['version'])));
@@ -187,7 +189,7 @@ function packOf(tree: string, entry: Doc, presets: IndexPreset[]): IndexPack | u
   const latest = [...versions].sort((a, b) => rcompare(a.version.version, b.version.version))[0];
   if (latest === undefined) return undefined;
   const contents = isDoc(latest.manifest['contents']) ? latest.manifest['contents'] : {};
-  const { axis, slot } = axisAndSlot(id);
+  const { axis, slot } = axisAndSlot(id, foundation);
   return {
     id,
     catalog: String(entry['catalog']),
@@ -269,7 +271,8 @@ export function buildIndex(tree: string, source: TreeSource = workingTree(tree))
   if (entries.some((entry) => list(entry['versions']).length > 0)) checkRepositoryTop(tree);
   const presets = byId(list(catalog['presets']).filter(isDoc).map((entry) => presetOf(source,
     entry)));
-  const packs = byId(entries.flatMap((entry) => packOf(tree, entry, presets) ?? []));
+  const foundation = strings(catalog['foundation']);
+  const packs = byId(entries.flatMap((entry) => packOf(tree, entry, presets, foundation) ?? []));
   return {
     format: 1,
     repository: REPOSITORY,

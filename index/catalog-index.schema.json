@@ -18,7 +18,7 @@
     "name": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$" },
     "packId": {
       "type": "string",
-      "pattern": "^(?:base|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$"
+      "pattern": "^(?:base|software|(?:methodology|blueprint|governance|team-mode|stage)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*|phase/(?:inception|specification|release|end-of-life)/[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$"
     },
     "version": {
       "type": "string",

@@ -141,6 +141,41 @@
       ]
     },
     {
+      "id": "software",
+      "catalog": "official",
+      "status": "active",
+      "axis": null,
+      "slot": null,
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "software@1.0.0",
+          "wingfoil": "9.0.0",
+          "formats": {
+            "workflow": 1
+          },
+          "requires_capabilities": [],
+          "requires": [
+            "base@^1"
+          ],
+          "conflicts": [],
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/software@1.0.0/packs/software/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/software@1.0.0/packs/software/pack.yaml"
+        }
+      ],
+      "title": "software",
+      "description": "Test pack software.",
+      "workflows": [
+        "sw-life-cycle"
+      ],
+      "memory_types": [],
+      "directives": [],
+      "parameters": [],
+      "excerpt": "A test fixture of the tooling; never adopted.",
+      "profiles": []
+    },
+    {
       "id": "stage/mvp",
       "catalog": "official",
       "status": "active",

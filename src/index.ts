@@ -58,8 +58,10 @@ export function rootOutputs(tree: string, source: TreeSource): Map<string, strin
   // Axes in catalog.yaml order (spec-001 §7.1); buildIndex has checked the catalog's schema.
   const declared = yamlAt(source, 'catalog.yaml')['axes'];
   const axes = Object.keys(isDoc(declared) ? declared : {});
+  const listed = yamlAt(source, 'catalog.yaml')['foundation'];
+  const foundation = Array.isArray(listed) ? listed.map(String) : [];
   return new Map([
-    ['CATALOG.md', renderCatalog(index, axes)],
+    ['CATALOG.md', renderCatalog(index, axes, foundation)],
     ['catalog-index.json', renderJson(index)],
   ]);
 }

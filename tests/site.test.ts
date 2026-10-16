@@ -158,7 +158,7 @@ describe('npm run site (task-024)', () => {
 
   describe('the page (acceptance 4, 6)', () => {
     it('lists every published pack without JavaScript, and nothing unreleased', () => {
-      assert.deepEqual(rows(html).map((row) => row.id), ['base', 'methodology/kanban',
+      assert.deepEqual(rows(html).map((row) => row.id), ['base', 'software', 'methodology/kanban',
         'phase/inception/lean', 'stage/mvp', 'stage/production']);
       assert.ok(!html.includes('blueprint/web'));
       assert.ok(!html.includes('unreleased'));
@@ -217,7 +217,7 @@ describe('npm run site (task-024)', () => {
       assert.deepEqual(found('board'), ['methodology/kanban']);
       assert.deepEqual(found('BOARD'), ['methodology/kanban']);
       assert.deepEqual(found('board nothing-like-this'), []);
-      assert.deepEqual(found('').length, 5);
+      assert.deepEqual(found('').length, 6);
     });
 
     it('searches titles and profiles too', () => {
@@ -249,6 +249,7 @@ describe('npm run site (task-024)', () => {
 
     it('filters by axis, slot and profile', () => {
       assert.deepEqual(found('', { axis: 'phase' }), ['phase/inception/lean']);
+      assert.deepEqual(found('', { axis: 'foundation' }), ['base', 'software']);
       assert.deepEqual(found('', { slot: 'inception' }), ['phase/inception/lean']);
       assert.deepEqual(found('', { profile: 'small teams' }), ['methodology/kanban',
         'phase/inception/lean']);

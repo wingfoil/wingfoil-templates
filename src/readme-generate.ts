@@ -3,7 +3,6 @@
 // `readmeOutline` finds, every other byte of the README unchanged.
 import { byBytes, code, isDoc, list, sorted, strings, text, yamlIn } from './index-data';
 import type { Doc } from './index-data';
-import { axisAndSlot } from './index-model';
 import { workingTree } from './index-source';
 import type { TreeSource } from './index-source';
 import { cell } from './index-render';
@@ -71,9 +70,11 @@ function rolesOf(pack: PackFiles): string[] {
 }
 
 function titleSection(pack: PackFiles): string[] {
-  const { axis, slot } = axisAndSlot(pack.id);
-  const axisLine = axis === null ? 'Axis: foundation'
-    : `Axis: ${axis}${slot === null ? '' : ` · Slot: ${slot}`}`;
+  // Read from the pack's own pack.yaml (§2.2): a foundation pack has no axis (spec-001 §6.2).
+  const axis = pack.manifest['axis'];
+  const slot = pack.manifest['slot'];
+  const axisLine = typeof axis !== 'string' ? 'Axis: foundation'
+    : `Axis: ${axis}${typeof slot === 'string' ? ` · Slot: ${slot}` : ''}`;
   return [`# ${text(pack.manifest['title'])}`, '', text(pack.manifest['description']), '',
     axisLine];
 }
@@ -89,7 +90,9 @@ function compositionSection(pack: PackFiles): string[] {
       .sort(byBytes).map((kind) => `${code(kind)} ${text(formats[kind])}`).join(', ')}`,
     `- **Requires capabilities:** ${codes(strings(pack.manifest['requires_capabilities']))}`,
   ];
-  if (pack.id !== 'base') {
+  // base, the core, has no axis and requires nothing (spec-001 §6.2); every other pack declares
+  // what it adds over the foundation it requires (spec-002 §2.1).
+  if (pack.manifest['axis'] !== undefined || strings(pack.manifest['requires']).length > 0) {
     lines.push('- **Declares:**',
       `  - Memory types: ${codes(memoryTypes(pack).map(([name]) => name))}`,
       `  - roles: ${codes(rolesOf(pack))}`,

@@ -16,6 +16,7 @@ No released WingFoil installs packs yet: section "Install and update" of each pa
 | Pack | Summary | Status | Latest | WingFoil | README |
 | --- | --- | --- | --- | --- | --- |
 | <a id="pack-base"></a>`base` | Test pack base. | active | 1.0.0 | 9.0.0 | [README](https://github.com/wingfoil/wingfoil-templates/blob/base@1.0.0/packs/base/README.md) |
+| <a id="pack-software"></a>`software` | Test pack software. | active | 1.0.0 | 9.0.0 | [README](https://github.com/wingfoil/wingfoil-templates/blob/software@1.0.0/packs/software/README.md) |
 
 ## Methodology
 

@@ -88,8 +88,11 @@ function packRow(pack: IndexPack, withSlot: boolean): string[] {
   return cells;
 }
 
-function axisSection(index: CatalogIndex, axis: string | null): string[] {
-  const packs = index.packs.filter((pack) => pack.axis === axis);
+function axisSection(index: CatalogIndex, axis: string | null, foundation: string[]): string[] {
+  // The foundation packs in catalog.yaml's order (§3.2); an axis's packs in byte order of ids.
+  const members = index.packs.filter((pack) => pack.axis === axis);
+  const packs = axis !== null ? members
+    : [...members].sort((a, b) => foundation.indexOf(a.id) - foundation.indexOf(b.id));
   const withSlot = axis === 'phase';
   const header = ['Pack', 'Summary', ...(withSlot ? ['Slot'] : []), 'Status', 'Latest', 'WingFoil',
     'README'];
@@ -129,7 +132,7 @@ function profilesOf(index: CatalogIndex): string[][] {
 }
 
 /** CATALOG.md (spec-002 §3.2), for the axes of catalog.yaml in their order. */
-export function renderCatalog(index: CatalogIndex, axes: string[]): string {
+export function renderCatalog(index: CatalogIndex, axes: string[], foundation: string[]): string {
   const lines = [
     '# WingFoil template catalog',
     '',
@@ -139,7 +142,7 @@ export function renderCatalog(index: CatalogIndex, axes: string[]): string {
     'by hand.',
     '',
     ...installSection(index),
-    ...[null, ...axes].flatMap((axis) => axisSection(index, axis)),
+    ...[null, ...axes].flatMap((axis) => axisSection(index, axis, foundation)),
     '## Presets', '',
     ...orNone(index.presets.map((preset) => [code(preset.id), cell(preset.title),
       cell(preset.profile ?? '—'), preset.packs.map(code).join(', ')]),

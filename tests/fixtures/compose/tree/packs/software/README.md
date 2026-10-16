@@ -3,7 +3,7 @@
 
 Golden fixture pack software.
 
-Axis: software
+Axis: foundation
 <!-- generated:end title -->
 
 ## When to use it
