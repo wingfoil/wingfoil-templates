@@ -190,11 +190,14 @@ A pack object holds, in order:
   but a phase pack; `latest`, the highest published version in semver order;
 - `versions`: one object per published version, ascending: `version` and `wingfoil` (the computed
   range) from `catalog.yaml`, `tag` derived as `<catalog pack id>@<version>` (§3.1), and from the
-  tag's `pack.yaml`: `formats`,
-  `requires_capabilities`, `requires`, `conflicts`; plus `readme_url` and `manifest_url` pinned to
+  tag's `pack.yaml`: `formats`, `requires_capabilities`, `requires`, `conflicts` and, only for a
+  pack that carries a conditional part (spec-001 §6.5), `conditional`, a list of one `{ with }`
+  copied as the catalog version entry copies it; plus `readme_url` and `manifest_url` pinned to
   the tag (§4);
-- from the latest version's tag: `title`, `description`, `workflows`, `memory_types` and
-  `directives` (each a sorted list of names), `parameters` (name, type, default when there is one,
+- from the latest version's tag: `title`, `description`, `workflows`, `conditional_workflows`,
+  `memory_types`, `directives` and `conditional_directives` (each a sorted list of names;
+  `workflows` and `directives` are what is always composed, the two `conditional_` lists the
+  conditional part's, empty without one), `parameters` (name, type, default when there is one,
   description), and `excerpt`, the first paragraph of the README's section 2 only, with no
   adoption-profile text, at most 500 characters, cut at a word;
 - `profiles`: the profiles of the presets whose `packs` name the pack.
