@@ -332,3 +332,38 @@ describe('composeDocuments: the conditional part\'s rules (spec-001 §6.5, §17,
   });
 });
 
+
+describe('composeDocuments: the other memory.yaml keys (spec-001 §7.5)', () => {
+  it('composes a type defined by base with them and tightened by an overlay', () => {
+    const memory = `${MEMORY_BASE}  plan:
+    name: Plan
+    description: An executable plan.
+    path: docs/plans/{id}.md
+    id_pattern: "plan-{n}-{slug}"
+    template:
+      file: memory/templates/built-in/plan.md
+      frontmatter: { required: [id, phase], not_applicable_allowed: [phase] }
+    states:
+      sequence: [draft, active, parked, done]
+      waiting: [parked]
+      returns: { parked: active }
+      limits: { active: 2 }
+`;
+    const base: PackSpec = { ...BASE_M, memoryTemplates: ['plan'],
+      extraFiles: { ...BASE_M.extraFiles, 'fragments/memory.yaml': memory } };
+    const stage: PackSpec = { id: 'stage/x', fragments: ['memory'], extraFiles: {
+      'fragments/memory.yaml': 'format: 1\ntypes:\n  plan:\n    name: Plan\n    states:\n'
+        + '      sequence: [draft, active, blocked, parked, done]\n      waiting: [blocked]\n'
+        + '      limits: { active: 1 }\n' } };
+    const result = compose([base, SOFTWARE, KANBAN, stage], ['methodology/kanban', 'stage/x'],
+      NAME);
+    assert.deepEqual((result.memory['types'] as Record<string, Doc>)['plan'], {
+      name: 'Plan', description: 'An executable plan.', path: 'docs/plans/{id}.md',
+      id_pattern: 'plan-{n}-{slug}',
+      template: { file: 'memory/templates/built-in/plan.md',
+        frontmatter: { required: ['id', 'phase'], not_applicable_allowed: ['phase'] } },
+      states: { sequence: ['draft', 'active', 'blocked', 'parked', 'done'],
+        waiting: ['parked', 'blocked'], returns: { parked: 'active' }, limits: { active: 1 } },
+    });
+  });
+});

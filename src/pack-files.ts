@@ -121,6 +121,42 @@ function assetProblems(pack: LintPack, file: PackFile, slots: Set<string>): Prob
 }
 
 /**
+ * spec-001 §18 on a pack's own memory.yaml fragment: no `template.frontmatter.exempt`, and
+ * `not_applicable_allowed` and `lists` naming only fields of the fragment's own `required` (the
+ * merge also judges that a tightening adds them, §7.5).
+ */
+function memoryFragmentProblems(pack: LintPack, file: PackFile): Problem[] {
+  const data = file.yaml?.data;
+  const types = isDoc(data) ? data['types'] : undefined;
+  const problems: Problem[] = [];
+  for (const [name, body] of Object.entries(isDoc(types) ? types : {})) {
+    const template = isDoc(body) ? body['template'] : undefined;
+    const frontmatter = isDoc(template) ? template['frontmatter'] : undefined;
+    if (!isDoc(frontmatter)) continue;
+    const pointer = `/types/${name}/template/frontmatter`;
+    const at = (key: string, message: string): void => {
+      problems.push({ file: file.file, ...located(file, `${pointer}/${key}`),
+        rule: 'memory-fragment', message: `${pack.id}: ${file.path}: type ${name}: ${message}` });
+    };
+    if (frontmatter['exempt'] !== undefined) {
+      at('exempt', 'template.frontmatter.exempt names element ids, which are project values: '
+        + 'never in a pack (spec-001 §7.5, §18)');
+    }
+    const required = Array.isArray(frontmatter['required']) ? frontmatter['required'] : [];
+    for (const key of ['not_applicable_allowed', 'lists']) {
+      const listed = frontmatter[key];
+      for (const field of Array.isArray(listed) ? listed : []) {
+        if (!required.includes(field)) {
+          at(key, `template.frontmatter.${key} names ${String(field)}, which this fragment's `
+            + 'required does not list (spec-001 §18)');
+        }
+      }
+    }
+  }
+  return problems;
+}
+
+/**
  * Reads every listed file of a pack that exists (a missing one is the inventory rule's), with its
  * parameters substituted, and checks parameter defaults, references, formats and identifiers.
  */
@@ -179,6 +215,7 @@ export function readPackFiles(
     }
     files.push(packFile);
     problems.push(...assetProblems(pack, packFile, slots));
+    if (path === 'fragments/memory.yaml') problems.push(...memoryFragmentProblems(pack, packFile));
   }
   return { files, problems };
 }

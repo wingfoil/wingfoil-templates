@@ -2,7 +2,7 @@
 id: task-034-the-memory.yaml-keys-of-spec-001-section-7.5-set-once-keys-waiting-returns-limits-frontmatter-sets-and-exempt-refused-plan-038-ruling-2
 type: task
 title: "The memory.yaml keys of spec-001 section 7.5: set-once keys, waiting, returns, limits, frontmatter sets and exempt refused (plan-038 ruling 2)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-change › deliver, plan-039)
 depends_on: []
 tags: ["tooling","base","spec"]
@@ -160,3 +160,32 @@ review; the push and the CI run.
   on 2026-10-16 as plan-039 R9 and R10; amended. Re-review requested (dl-017 R2).
 - 2026-10-16: re-review: approve; its low findings (the first reading's exception for R9, R9's
   condition in Acceptance 2, a wrap) amended without changing a rule. Submitted `pending`.
+- 2026-10-16, design written and committed on `main`; task started (backlog → in-progress);
+  branch `task/task-034-memory-keys` from `ea88493`.
+- 2026-10-16, **step 1**, red on `167aef2`: `node --test dist/tests/memory-merge.test.js
+  dist/tests/compose-documents.test.js`: 84 tests, 17 fail (every new key failed as "not allowed
+  here"). Green in `c74ae81`, where two test lines were rewritten for the lint (an `any` member
+  access; a property access split across lines), which changes no assertion.
+- 2026-10-16, **step 2**, red on `47e1813`: the `memory-fragment` tests of `check-packs`: 4 tests,
+  3 fail (the passing one is the clean case). Green in `23d0347`.
+- **Checks:** the full suite, 915 of 915, and `lint` pass at `23d0347`; `tests/fixtures/compose/`,
+  `schema/`, `catalog.yaml`, `compat.yaml` and `index/` unchanged (the golden fragments use none
+  of the new keys, so the golden compositions are byte for byte as before).
+- 2026-10-16, **build review** (independent subagent): approve, no correctness bug, no regression
+  (the frontmatter output of existing fragments compared byte for byte with `main`'s build).
+  Tests tightened in `ef9136f`: the limit of `defaults` reaching a detached type now proves the
+  propagation (it passed without it before); the mirror cases of `not_applicable_allowed` and
+  `lists`, R9 on `lists`; the line the `memory-fragment` rule reports (my expected line was wrong,
+  corrected in the next commit before the code); a `waiting` state in no sequence named as such,
+  fixed in `6fa293b`. Recorded: a tightening of `defaults` that inserts a waiting state judges it
+  own against `defaults`' base side, so a detached type whose own overlay had already inserted
+  that state (not waiting) gains it in `waiting`, as the reading on `defaults` states and §7.5's
+  "reaches every type deriving from defaults" ask. Re-review requested (dl-017 R2).
+- 2026-10-16, **re-review** (dl-017 R2): approve; findings 1–5 fixed or recorded; each tightened
+  test fails when the behaviour it names is removed (the reviewer's mutations).
+- 2026-10-16, **Acceptance** from clean clones at `487da77` (the later commits change these notes
+  only), on Node.js 22.21.0 and 22.12.0: `npm ci`, `build`, `test`, `lint`, `check:pins`,
+  `check:schemas`, `check:packs`, `index -- --check`, `validate` and `validate -- --tree
+  tests/fixtures/compose/tree --param project_name=Golden` exit 0. No dependency added.
+- 2026-10-16, **CI** (Acceptance 6): run 38923931821 on `4f58180`, conclusion `success`
+  (`validate (22.12.0)` and `validate (22.21.0)` both `success`). Submitted `in-review`.
