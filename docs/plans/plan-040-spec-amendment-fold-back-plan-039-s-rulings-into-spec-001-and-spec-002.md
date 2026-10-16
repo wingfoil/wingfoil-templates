@@ -40,9 +40,9 @@ which already defers to `pack-compatibility`, where it is stated.
 Not in this plan: the readings recorded in task-031 … task-034 (the `[+software]` label, deep
 equality, key orders, the propagation through `defaults`, and task-032's reading that "requires
 `software`" means through `requires`, directly or transitively), which stay in those elements and
-are not the approver's rulings; a later amendment may fold back the last one, which touches §6.5; R2, R5
-and R6, which concern `npm run validate` and `pack-compatibility`; wave W8 (another session, on
-the approver's OK).
+are not the approver's rulings; a later amendment may fold back the last one, which touches
+§6.5; R2, R5 and R6, which concern `npm run validate` and `pack-compatibility`; wave W8 (another
+session, on the approver's OK).
 
 ## Steps
 
