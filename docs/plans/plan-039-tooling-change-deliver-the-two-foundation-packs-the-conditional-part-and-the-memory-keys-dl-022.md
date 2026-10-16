@@ -212,3 +212,8 @@ from `main`, in the order task-031, task-032, task-033, task-034, one after the 
   R3 and R8, reviewed (approve with minor amendments, fixed red first) and re-reviewed (approve),
   CI run 38859419074 on `703773b` `success`; approved, merged `--no-ff` into `main` (`1991e20`),
   `done`. The interims of task-031 and task-032 are gone.
+- 2026-10-16, task-034 (the `memory.yaml` keys of §7.5): accepted into the backlog after the
+  approver's rulings R9 and R10, designed, built red first in two steps, reviewed (approve; tests
+  tightened) and re-reviewed (approve), CI run 38923931821 on `4f58180` `success`; approved,
+  merged `--no-ff` into `main` (`98774b3`), `done`. Recorded for W8: a waiting state a tightening
+  of `defaults` adds reaches a detached type that had inserted it already.

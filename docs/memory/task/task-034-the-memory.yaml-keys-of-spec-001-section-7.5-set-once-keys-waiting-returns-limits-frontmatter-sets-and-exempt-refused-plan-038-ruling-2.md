@@ -189,3 +189,6 @@ review; the push and the CI run.
   tests/fixtures/compose/tree --param project_name=Golden` exit 0. No dependency added.
 - 2026-10-16, **CI** (Acceptance 6): run 38923931821 on `4f58180`, conclusion `success`
   (`validate (22.12.0)` and `validate (22.21.0)` both `success`). Submitted `in-review`.
+- 2026-10-16: the approver accepted the build (`in-review → approved`, `fe4e6e8`) and gave the
+  merge OK in chat. CI run 38925138335 on `db45c7d`, conclusion `success`. `--no-ff` merge into
+  `main` (`98774b3`); this task goes `approved → done`.
