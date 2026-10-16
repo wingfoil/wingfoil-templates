@@ -58,9 +58,9 @@ What exists, at `main` `9d8a5f7` (task-031 … task-033 done), in `src/memory-me
 - the §7.5 tests: `tests/memory-merge.test.ts` and the fixtures `tests/fixtures/merge/`.
 
 Readings, stated so that the approver sees them at the gate:
-- "the same fragment adds to `required`" is read as: listed in the incoming fragment's
-  `required`, and not required on the base side before it; at a type's definition, the two sets
-  name fields of its own `required`;
+- "the same fragment adds to `required`" is read as: listed in the incoming fragment's `required`,
+  and not required on the base side before it, except a repeat of an entry already in the set, which
+  changes nothing (R9); at a type's definition, the two sets name fields of its own `required`;
 - set-once values are compared as YAML values: the same YAML type, mappings by key (their order
   ignored, §7.2's merge by key), lists item by item and in order (`tags`, a list §7.5 does not
   declare, §7.2's undeclared lists);
@@ -90,22 +90,22 @@ Run from a clean clone of `task/task-034-memory-keys`, on Node.js 22.21 and the 
    `npm run check:schemas`, `npm run check:packs`, `npm run index -- --check`, `npm run validate`
    and `npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden` exit 0;
    no dependency is added.
-2. **The merge** (`tests/memory-merge.test.ts`), a test for each row of §7.5's table and each of
-   its failures: a definition with every key, written back in its order; each set-once key equal
-   (passes), different (fails), or set where the defining pack left it out (fails); `waiting`
-   added for an own state (passes), for a state on the base side (fails), repeated (no change),
-   added by a tightening of `defaults` and reaching a type that derives from it, including one
-   already detached; `returns` kept when absent, equal (passes), different or added (fails), a
-   target not earlier (fails); `limits` added, lowered, kept at the smaller value when raised,
-   not a positive integer (fails), on a state not in the sequence (fails); a gate on a `waiting`
-   state (passes); `not_applicable_allowed` and `lists` for a field the fragment adds to
-   `required` (passes), for a field an earlier pack required or the fragment does not list
-   (fails), a repeat of an entry already in the set (no change, R9); `waiting` and `limits`
-   introduced by a later pack on a type that had none (passes, R10); `exempt` at a definition
-   and at a tightening (fails); at a definition, a `waiting`
-   state, a `returns` key or target, or a `limits` key not in the sequence (fails), and a valid
-   `returns` (passes); on `defaults`, a `limits` entry reaching a detached type by the minimum,
-   and a detached type keeping `defaults`' `returns`.
+2. **The merge** (`tests/memory-merge.test.ts`), a test for each row of §7.5's table and each of its
+   failures: a definition with every key, written back in its order; each set-once key equal
+   (passes), different (fails), or set where the defining pack left it out (fails); `waiting` added
+   for an own state (passes), for a state on the base side (fails), repeated (no change), added by a
+   tightening of `defaults` and reaching a type that derives from it, including one already
+   detached; `returns` kept when absent, equal (passes), different or added (fails), a target not
+   earlier (fails); `limits` added, lowered, kept at the smaller value when raised, not a positive
+   integer (fails), on a state not in the sequence (fails); a gate on a `waiting` state (passes);
+   `not_applicable_allowed` and `lists` for a field the fragment adds to `required` (passes), for a
+   field an earlier pack required or the fragment does not list (fails), a repeat of an entry
+   already in the set with the field in the fragment's `required` (no change, R9); `waiting` and
+   `limits` introduced by a later pack on a type that had none (passes, R10); `exempt` at a
+   definition and at a tightening (fails); at a definition, a `waiting` state, a `returns` key or
+   target, or a `limits` key not in the sequence (fails), and a valid `returns` (passes); on
+   `defaults`, a `limits` entry reaching a detached type by the minimum, and a detached type keeping
+   `defaults`' `returns`.
 3. **The composition** (`tests/compose-documents.test.ts`): a type with these keys, defined by
    `base` and tightened by an overlay, composes into the expected `memory.yaml`; the golden
    tree's composition is unchanged byte for byte (its fragments use none of the new keys).
@@ -135,4 +135,5 @@ Run from a clean clone of `task/task-034-memory-keys`, on Node.js 22.21 and the 
   the order inside `states`, the lint's per-fragment check; §18 quoted; more failures in
   Acceptance 2; the lint rule named `memory-fragment`). Two findings needed the approver: ruled
   on 2026-10-16 as plan-039 R9 and R10; amended. Re-review requested (dl-017 R2).
-
+- 2026-10-16: re-review: approve; its low findings (the first reading's exception for R9, R9's
+  condition in Acceptance 2, a wrap) amended without changing a rule. Submitted `pending`.
