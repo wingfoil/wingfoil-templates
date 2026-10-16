@@ -103,3 +103,5 @@ Then:
   `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check` and `workflow list`
   exit 0. Scope: the branch changes only spec-001, spec-002 and this plan. Privacy: the diff names
   no non-software project, local path or private repository.
+- 2026-10-16, branch pushed: CI run 38943478966 on `eeb1980`, conclusion `success` (`validate
+  (22.12.0)` and `validate (22.21.0)` both `success`). Waiting for the approver's merge OK.
