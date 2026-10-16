@@ -228,3 +228,5 @@ from `main`, in the order task-031, task-032, task-033, task-034, one after the 
   The approver named the element on 2026-10-16 (option (a)): a dedicated plan, before wave W8,
   that amends spec-001 and spec-002 in place, as plan-031 and plan-038 did; W8's opening plan
   starts after it (dl-020 R3). This plan goes `active → done`.
+- 2026-10-16: R3 and R7–R10 folded back into spec-001 and spec-002 by plan-040, merged `9a715fb`
+  with the approver's OK; W8's opening plan names them as folded back (dl-020 R3).

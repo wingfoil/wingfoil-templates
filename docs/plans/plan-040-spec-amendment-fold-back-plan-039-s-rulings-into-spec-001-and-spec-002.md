@@ -105,3 +105,6 @@ Then:
   no non-software project, local path or private repository.
 - 2026-10-16, branch pushed: CI run 38943478966 on `eeb1980`, conclusion `success` (`validate
   (22.12.0)` and `validate (22.21.0)` both `success`). Waiting for the approver's merge OK.
+- 2026-10-16: the approver gave the merge OK in chat, which approves spec-001's and spec-002's
+  edited text; `--no-ff` merge into `main` (`9a715fb`), push, branch removed; plan-039's Execution
+  Notes record the fold-back. This plan goes `active → done`; W8's opening plan can start.
