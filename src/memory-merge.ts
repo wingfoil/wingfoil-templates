@@ -261,7 +261,8 @@ function mergeMachine(
   const waiting = [...current.waiting];
   for (const state of incoming.waiting ?? []) {
     if (waiting.includes(state)) continue;
-    if (ownBase.includes(state) || !b.includes(state)) {
+    if (!b.includes(state)) fail(subject, pack, `waiting ${state}, not a state of the sequence`);
+    if (ownBase.includes(state)) {
       fail(subject, pack, `waiting ${state}: only a state this pack inserts may wait`);
     }
     waiting.push(state);
