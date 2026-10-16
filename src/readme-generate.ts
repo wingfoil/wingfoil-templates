@@ -3,10 +3,10 @@
 // `readmeOutline` finds, every other byte of the README unchanged.
 import { byBytes, code, isDoc, list, sorted, strings, text, yamlIn } from './index-data';
 import type { Doc } from './index-data';
+import { conditionalPart } from './index-model';
+import { cell } from './index-render';
 import { workingTree } from './index-source';
 import type { TreeSource } from './index-source';
-import { entryId } from './index-model';
-import { cell } from './index-render';
 import { GENERATED_SECTIONS, readmeOutline } from './readme';
 
 export interface GeneratedSections {
@@ -37,14 +37,13 @@ interface PackFiles {
 }
 
 function partOf(source: TreeSource, dir: string, manifest: Doc): PackFiles['part'] {
-  const [entry] = list(manifest['conditional']).filter(isDoc);
-  if (entry === undefined) return undefined;
-  const contents = isDoc(entry['contents']) ? entry['contents'] : {};
+  const part = conditionalPart(manifest);
+  if (part === undefined) return undefined;
   return {
-    workflows: sorted(strings(contents['workflows']))
+    workflows: sorted(strings(part.contents['workflows']))
       .map((name) => ({ name, ...yamlOrEmpty(source, `${dir}/workflows/${name}.yaml`) })),
-    directives: sorted(strings(contents['directives'])),
-    layer: entryId(text(entry['with'])),
+    directives: sorted(strings(part.contents['directives'])),
+    layer: part.layer,
   };
 }
 
@@ -114,11 +113,14 @@ function compositionSection(pack: PackFiles): string[] {
       `  - roles: ${codes(rolesOf(pack))}`,
       `  - states: ${codes(declaredStates(pack))}`,
       `  - workflows: ${codes(pack.workflows.map((workflow) => text(workflow['name'])))}`);
-    if (pack.part !== undefined) {
-      // spec-002 §2.1: a conditional part's files, present only with its layer (plan-039 R8).
-      lines.push(`  - only with ${code(pack.part.layer)}: ${codes([
-        ...pack.part.workflows.map((workflow) => text(workflow['name'])),
-        ...pack.part.directives])}`);
+    // spec-002 §2.1: a conditional part's files, present only with its layer (plan-039 R8).
+    const part = pack.part;
+    if (part !== undefined && part.workflows.length > 0) {
+      lines.push(`  - workflows only with ${code(part.layer)}: ${codes(part.workflows
+        .map((workflow) => text(workflow['name'])))}`);
+    }
+    if (part !== undefined && part.directives.length > 0) {
+      lines.push(`  - directives only with ${code(part.layer)}: ${codes(part.directives)}`);
     }
   }
   return lines;
@@ -180,6 +182,7 @@ function directiveLines(pack: PackFiles): string[] {
       .filter((role) => strings(assignments[role]).includes(id)).map(code);
     if (global.includes(id)) roles.push('global');
     return `- ${code(id)}: ${roles.length === 0 ? '—' : roles.join(', ')}`;
+  // A part's directive is assigned to no role: what is always composed never names it (§6.5).
   }).concat((pack.part?.directives ?? []).map((id) => `- ${code(id)}: —${onlyWith(pack)}`));
 }
 

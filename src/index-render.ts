@@ -71,9 +71,10 @@ export function firstSentence(text: string): string {
 export function conditionalMark(pack: IndexPack): { names: string[]; layer: string } | undefined {
   const latest = pack.versions.find((version) => version.version === pack.latest);
   const [part] = latest?.conditional ?? [];
-  if (part === undefined) return undefined;
   const names = pack.conditional_workflows.length > 0 ? pack.conditional_workflows
     : pack.conditional_directives;
+  // A part that adds nothing has no mark (the lint refuses it, plan-039 R7).
+  if (part === undefined || names.length === 0) return undefined;
   return { names, layer: entryId(part.with) };
 }
 

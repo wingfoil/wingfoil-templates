@@ -161,17 +161,23 @@ function memoryTypes(source: TreeSource, packId: string, manifest: Doc): string[
   return sorted(Object.keys(isDoc(fragment['types']) ? fragment['types'] : {}));
 }
 
-/** A version's `conditional`, its `with` only, when the tagged pack.yaml has one (R3). */
-function conditionalOf(manifest: Doc): { conditional?: { with: string }[] } {
-  const parts = list(manifest['conditional']).filter(isDoc);
-  return parts.length === 0 ? {}
-    : { conditional: parts.map((part) => ({ with: String(part['with']) })) };
+/**
+ * A pack's conditional part, from its pack.yaml (spec-001 §6.5): its `with`, the layer that names,
+ * and its contents; undefined without one. Format 1 allows one entry.
+ */
+export function conditionalPart(manifest: Doc):
+{ with: string; layer: string; contents: Doc } | undefined {
+  const [part] = list(manifest['conditional']).filter(isDoc);
+  if (part === undefined) return undefined;
+  const entry = String(part['with']);
+  return { with: entry, layer: entryId(entry),
+    contents: isDoc(part['contents']) ? part['contents'] : {} };
 }
 
-/** The contents of a pack's conditional part (spec-001 §6.5). */
-function partOf(manifest: Doc): Doc {
-  const [part] = list(manifest['conditional']).filter(isDoc);
-  return part !== undefined && isDoc(part['contents']) ? part['contents'] : {};
+/** A version's `conditional`, its `with` only, when the tagged pack.yaml has one (R3). */
+function conditionalOf(manifest: Doc): { conditional?: { with: string }[] } {
+  const part = conditionalPart(manifest);
+  return part === undefined ? {} : { conditional: [{ with: part.with }] };
 }
 
 function versionOf(tree: string, packId: string, entry: Doc): { version: IndexVersion;
@@ -220,10 +226,11 @@ IndexPack | undefined {
     title: String(latest.manifest['title']),
     description: String(latest.manifest['description']),
     workflows: sorted(strings(contents['workflows'])),
-    conditional_workflows: sorted(strings(partOf(latest.manifest)['workflows'])),
+    conditional_workflows: sorted(strings(conditionalPart(latest.manifest)?.contents['workflows'])),
     memory_types: memoryTypes(latest.source, id, latest.manifest),
     directives: sorted(strings(contents['directives'])),
-    conditional_directives: sorted(strings(partOf(latest.manifest)['directives'])),
+    conditional_directives: sorted(strings(
+      conditionalPart(latest.manifest)?.contents['directives'])),
     parameters: parametersOf(latest.manifest),
     excerpt: excerptOf(latest.source.read(`packs/${id}/README.md`)),
     profiles: sorted(presets.filter((preset) => preset.profile !== null

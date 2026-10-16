@@ -101,6 +101,8 @@ function table(header: string[], rows: string[]): string[] {
 }
 
 function axisSection(index: CatalogIndex, axis: string): string[] {
+  // The index's byte order of ids: for the foundation it agrees with catalog.yaml's (base,
+  // software), which the site does not read (spec-002 §5).
   const packs = index.packs.filter((pack) => axisOf(pack) === axis);
   const withSlot = axis === 'phase';
   const header = ['Pack', 'Summary', ...(withSlot ? ['Slot'] : []), 'Status', 'Latest',

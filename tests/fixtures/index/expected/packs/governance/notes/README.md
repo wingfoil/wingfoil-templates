@@ -28,7 +28,7 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
   - roles: none
   - states: none
   - workflows: `notes`
-  - only with `software`: `notes-rules`
+  - directives only with `software`: `notes-rules`
 <!-- generated:end composition -->
 
 <!-- generated:begin what-it-adds -->

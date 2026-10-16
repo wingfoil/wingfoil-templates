@@ -28,7 +28,8 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
   - roles: none
   - states: none
   - workflows: `flow-board`
-  - only with `software`: `delivery`, `flow-delivery`, `flow-limits`
+  - workflows only with `software`: `delivery`, `flow-delivery`
+  - directives only with `software`: `flow-limits`
 <!-- generated:end composition -->
 
 <!-- generated:begin what-it-adds -->

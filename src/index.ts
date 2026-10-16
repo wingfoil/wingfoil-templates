@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 
 import { GitError } from './git';
-import { byBytes, IndexInputError, isDoc, yamlAt } from './index-data';
+import { byBytes, IndexInputError, isDoc, strings, yamlAt } from './index-data';
 import { buildIndex } from './index-model';
 import { IndexError, workingTree } from './index-source';
 import type { TreeSource } from './index-source';
@@ -56,10 +56,10 @@ export function rootOutputs(tree: string, source: TreeSource): Map<string, strin
     throw new IndexError(`catalog-index.json would break its schema: ${errors.join('; ')}`);
   }
   // Axes in catalog.yaml order (spec-001 §7.1); buildIndex has checked the catalog's schema.
-  const declared = yamlAt(source, 'catalog.yaml')['axes'];
+  const catalog = yamlAt(source, 'catalog.yaml');
+  const declared = catalog['axes'];
   const axes = Object.keys(isDoc(declared) ? declared : {});
-  const listed = yamlAt(source, 'catalog.yaml')['foundation'];
-  const foundation = Array.isArray(listed) ? listed.map(String) : [];
+  const foundation = strings(catalog['foundation']);
   return new Map([
     ['CATALOG.md', renderCatalog(index, axes, foundation)],
     ['catalog-index.json', renderJson(index)],

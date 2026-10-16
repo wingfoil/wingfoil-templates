@@ -56,7 +56,8 @@
         "conflicts": { "$ref": "#/$defs/names" },
         "conditional": { "type": "array", "maxItems": 1, "items": { "type": "object",
           "required": ["with"], "additionalProperties": false,
-          "properties": { "with": { "type": "string", "minLength": 1 } } } },
+          "properties": {
+            "with": { "type": "string", "pattern": "^software@\\^(?:0|[1-9][0-9]*)$" } } } },
         "readme_url": { "$ref": "#/$defs/url" },
         "manifest_url": { "$ref": "#/$defs/url" }
       }
