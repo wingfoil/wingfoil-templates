@@ -193,3 +193,14 @@ versions; the independent review; the push and the CI run.
 - **Acceptance 6:** `git grep -nE "['\"\`](base|software)(['\"\`@/]|$)" -- src/` gives no hit.
 - **Checks:** `llms.txt` of the expected outputs unchanged; `index/vendor/search.js` and its
   sha256 unchanged; the root `CATALOG.md`, `catalog-index.json` and `llms.txt` unchanged.
+- 2026-10-16, **build review** (independent subagent): approve with minor amendments, nothing
+  blocking. Fixed red first: the tests in `d686a40` (`readme-generate`, `index-render`: 19 tests, 3
+  fail: section 4 split into workflows and directives lines; the directive marks of sections 4 and
+  5; no Summary mark for a part that adds nothing; `software`'s "Declares", a characterization),
+  the code in `c52bcf1` (one `conditionalPart` helper for the index and the READMEs; `index.ts`
+  reads `catalog.yaml` once; the index schema's `with` mirrors the pack schema's pattern; comments
+  on a part's directive roles and on the site's foundation order, which follows the index's byte
+  order and agrees with `catalog.yaml`'s since the site reads the index only; the import order).
+  Acceptance 3's foundation-order and Summary-mark tests sit in `tests/index-model.test.ts`, which
+  builds the fixture index, rather than in `tests/index-render.test.ts`. Re-review requested
+  (dl-017 R2).
