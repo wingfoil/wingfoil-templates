@@ -465,8 +465,10 @@ types:
     assert.deepEqual((type(doc, 'note')['states'] as Doc)['waiting'], ['parked', 'blocked']);
   });
 
-  it('refuses a waiting entry on a state of the base side', () => {
+  it('refuses a waiting entry on a state of the base side, or on no state', () => {
     fails(/note.*waiting.*active/, DEFINED, note('    states:\n      waiting: [active]\n'));
+    fails(/note.*waiting gone, not a state of the sequence/, DEFINED,
+      note('    states:\n      waiting: [gone]\n'));
   });
 
   it('lets a later pack introduce waiting and limits on a type that had none (R10)', () => {
@@ -525,7 +527,7 @@ types:
     const define = (states: string): [string, string] => ['governance/x', 'types:\n  y:\n'
       + '    path: y/{id}.md\n    id_pattern: "y-{n}"\n    template: { file: memory/templates/'
       + `built-in/y.md }\n    states:\n      sequence: [a, b, c]\n${states}`];
-    fails(/y.*waiting/, define('      waiting: [z]\n'));
+    fails(/y.*waiting z, not a state of the sequence/, define('      waiting: [z]\n'));
     fails(/y.*returns/, define('      returns: { z: a }\n'));
     fails(/y.*returns/, define('      returns: { b: z }\n'));
     fails(/y.*returns/, define('      returns: { a: c }\n'));
@@ -544,13 +546,21 @@ types:
       + '[severity]\n']);
     fails(/bug.*lists.*x/, ['stage/x', 'types:\n  bug:\n    template:\n      frontmatter:\n'
       + '        lists: [x]\n']);
+    // The mirror cases: lists on a field an earlier pack required, not_applicable_allowed on a
+    // field the fragment does not list.
+    fails(/bug.*lists.*severity/, ['stage/x', 'types:\n  bug:\n    template:\n'
+      + '      frontmatter:\n        required: [severity]\n        lists: [severity]\n']);
+    fails(/bug.*not_applicable_allowed.*x/, ['stage/x', 'types:\n  bug:\n    template:\n'
+      + '      frontmatter:\n        not_applicable_allowed: [x]\n']);
   });
 
-  it('changes nothing on a repeated entry of not_applicable_allowed (R9)', () => {
+  it('changes nothing on a repeated entry of not_applicable_allowed or lists (R9)', () => {
     const doc = compose(DEFINED, note('    template:\n      frontmatter:\n'
-      + '        required: [owner]\n        not_applicable_allowed: [owner]\n'));
+      + '        required: [owner, topics]\n        not_applicable_allowed: [owner]\n'
+      + '        lists: [topics]\n'));
     const frontmatter = (type(doc, 'note')['template'] as Doc)['frontmatter'] as Doc;
     assert.deepEqual(frontmatter['not_applicable_allowed'], ['owner']);
+    assert.deepEqual(frontmatter['lists'], ['topics']);
   });
 
   it('refuses exempt, at a definition and at a tightening', () => {
@@ -569,11 +579,12 @@ types:
     const all = (...fragments: [string, string][]): Doc => mergeMemory(fragments.map(
       ([pack, text]) => ({ pack, data: parse(text) as Doc })), 'base');
     const doc = all(base, ['team-mode/x', 'types:\n  adr:\n    states:\n'
-      + '      sequence: [draft, pending, ai-review, approved]\n      limits: { pending: 2 }\n'],
+      + '      sequence: [draft, pending, ai-review, approved]\n'],
     ['stage/x', 'defaults:\n  states:\n    limits: { pending: 3 }\n']);
     const adr = states(doc, 'adr') as Doc;
     assert.deepEqual(adr['returns'], { approved: 'pending' });
-    assert.deepEqual(adr['limits'], { pending: 2 });
+    // adr detached holding defaults' 4; the later tightening of defaults reaches it by the minimum.
+    assert.deepEqual(adr['limits'], { pending: 3 });
     assert.deepEqual((defaults(doc) as Doc)['limits'], { pending: 3 });
   });
 });

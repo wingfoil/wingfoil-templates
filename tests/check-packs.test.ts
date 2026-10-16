@@ -772,7 +772,11 @@ describe('memory-fragment (spec-001 §7.5, §18)', () => {
   for (const [label, frontmatter] of [['exempt', EXEMPT],
     ['not_applicable_allowed outside required', OUTSIDE], ['lists outside required', LISTS]]) {
     it(`reports ${label}, and the composer refuses it`, () => {
-      failsWith('memory-fragment', [...CLEAN, defining(frontmatter ?? '')]);
+      const result = lint([...CLEAN, defining(frontmatter ?? '')]);
+      assert.deepEqual(rules(result), ['memory-fragment'], result.lines.join('\n'));
+      // The line of the offending key in fragments/memory.yaml (its 9th line).
+      assert.equal(result.problems.find((problem) => problem.rule === 'memory-fragment')?.line,
+        9, result.lines.join('\n'));
       withPackTree([...CLEAN, defining(frontmatter ?? '')], (root) => {
         copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
         assert.throws(() => composeDocuments(root, loadCatalog(join(root, 'catalog.yaml')),
