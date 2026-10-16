@@ -774,9 +774,9 @@ describe('memory-fragment (spec-001 §7.5, §18)', () => {
     it(`reports ${label}, and the composer refuses it`, () => {
       const result = lint([...CLEAN, defining(frontmatter ?? '')]);
       assert.deepEqual(rules(result), ['memory-fragment'], result.lines.join('\n'));
-      // The line of the offending key in fragments/memory.yaml (its 9th line).
+      // The line of the offending key in fragments/memory.yaml (its 10th line).
       assert.equal(result.problems.find((problem) => problem.rule === 'memory-fragment')?.line,
-        9, result.lines.join('\n'));
+        10, result.lines.join('\n'));
       withPackTree([...CLEAN, defining(frontmatter ?? '')], (root) => {
         copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
         assert.throws(() => composeDocuments(root, loadCatalog(join(root, 'catalog.yaml')),
