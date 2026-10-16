@@ -234,7 +234,7 @@ conditional:                    # §6.5: counts only in a composition with softw
 | `conflicts` | no | §6.3. |
 | `parameters` | no | §8. |
 | `contents` | yes | §6.4. |
-| `conditional` | no | §6.5. At most one entry in format 1, on a non-foundation pack only. |
+| `conditional` | no | §6.5. At most one entry in format 1, on a non-foundation pack only, its `contents` non-empty. |
 
 `schema/pack.schema.json` checks what JSON Schema can express. The lint rules (F3.5) check the
 rest; §18 lists them for every file kind.
@@ -301,7 +301,8 @@ conditional:
     unsatisfied, an error, never a reason to leave the part out;
   - it names no pack of the pack's `requires`, and the pack does not `conflict` with it;
   - it counts as a requirement for §7.1's rule against requiring a later pack.
-- **`contents`** may list `workflows` and `directives` only, by file stem, as §6.4.
+- **`contents`** may list `workflows` and `directives` only, by file stem, as §6.4, and lists at
+  least one of them: an entry that adds nothing is refused.
   - In a composition with `software`, the entry's workflows and directives come after the pack's
     own, each list in its written order (§7.7).
   - In a composition without `software`, the composer leaves them out, and the generated `include`
@@ -1024,8 +1025,9 @@ check the rest, and the composer refuses what they reject.
   each file listed once (§6.4);
 - `conditional`: at most one entry, on a non-foundation pack that does not require `software`,
   `with` naming `software@^<major>` and no pack of `requires` or `conflicts`; its `contents` holds
-  `workflows` and `directives` only; the isolation rules of §6.5; a methodology's `delivery` in it
-  when the methodology does not require `software`, in `contents` when it does;
+  `workflows` and `directives` only, at least one of them; the isolation rules of §6.5; a
+  methodology's `delivery` in it when the methodology does not require `software`, in `contents`
+  when it does;
 - `formats` lists exactly the kinds of the files shipped, with the value each file declares (§5);
 - the layout and path segments of §6.1, with no symbolic link or submodule;
 - asset identifiers equal their file stems (§6.1);
