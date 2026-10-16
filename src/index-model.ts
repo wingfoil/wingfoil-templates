@@ -215,6 +215,7 @@ IndexPack | undefined {
   if (latest === undefined) return undefined;
   const contents = isDoc(latest.manifest['contents']) ? latest.manifest['contents'] : {};
   const { axis, slot } = axisAndSlot(id, foundation);
+  const part = conditionalPart(latest.manifest);
   return {
     id,
     catalog: String(entry['catalog']),
@@ -226,11 +227,10 @@ IndexPack | undefined {
     title: String(latest.manifest['title']),
     description: String(latest.manifest['description']),
     workflows: sorted(strings(contents['workflows'])),
-    conditional_workflows: sorted(strings(conditionalPart(latest.manifest)?.contents['workflows'])),
+    conditional_workflows: sorted(strings(part?.contents['workflows'])),
     memory_types: memoryTypes(latest.source, id, latest.manifest),
     directives: sorted(strings(contents['directives'])),
-    conditional_directives: sorted(strings(
-      conditionalPart(latest.manifest)?.contents['directives'])),
+    conditional_directives: sorted(strings(part?.contents['directives'])),
     parameters: parametersOf(latest.manifest),
     excerpt: excerptOf(latest.source.read(`packs/${id}/README.md`)),
     profiles: sorted(presets.filter((preset) => preset.profile !== null

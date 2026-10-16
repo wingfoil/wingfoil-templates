@@ -182,8 +182,9 @@ function directiveLines(pack: PackFiles): string[] {
       .filter((role) => strings(assignments[role]).includes(id)).map(code);
     if (global.includes(id)) roles.push('global');
     return `- ${code(id)}: ${roles.length === 0 ? '—' : roles.join(', ')}`;
-  // A part's directive is assigned to no role: what is always composed never names it (§6.5).
-  }).concat((pack.part?.directives ?? []).map((id) => `- ${code(id)}: —${onlyWith(pack)}`));
+  })
+    // A part's directive is assigned to no role: what is always composed never names it (§6.5).
+    .concat((pack.part?.directives ?? []).map((id) => `- ${code(id)}: —${onlyWith(pack)}`));
 }
 
 function bullets(names: string[]): string[] {
