@@ -36,30 +36,45 @@ The text it implements (§7.5's table and rules):
   pack adds to them only fields the same fragment adds to `required`, never a field an earlier
   pack made required;
 - `template.frontmatter.exempt`: never in a pack's fragment, defining or tightening;
-- §18: no fragment holds `exempt`, and `not_applicable_allowed` and `lists` name only fields the
-  same fragment's `required` lists; the composer refuses what the lint rejects (§17).
+- §18: "no `memory.yaml` fragment holds `template.frontmatter.exempt`, and
+  `not_applicable_allowed` and `lists` name only fields the same fragment adds to `required`";
+  the composer refuses what the lint rejects (§17).
 
 What exists, at `main` `9d8a5f7` (task-031 … task-033 done), in `src/memory-merge.ts`:
 - `DEFINITION_KEYS` is `path`, `id_pattern`, `template`, `states`; `TEMPLATE_KEYS` `file`,
   `frontmatter`; `FRONTMATTER_KEYS` `required`; `STATES_KEYS` `sequence`, `gates`: every other key,
   `name`, `waiting` or `exempt` among them, fails as "not allowed here", so a fragment of `base`
   with WingFoil2's `waiting` or a type's `description` cannot compose today;
-- `mergeMachine` merges `sequence` and `gates`; `machineOut` writes them; `typeOut` writes `path`,
-  `id_pattern`, `template` (`file`, `frontmatter.required`) and `states`, in the defining
-  fragment's key order;
+- `mergeMachine` merges `sequence` and `gates`; `machineOut` (lines 164–171) always writes
+  `sequence` then `gates`; `typeOut` writes `path`, `id_pattern`, `template` (`file`,
+  `frontmatter.required`) and `states`, a type's top-level keys in the defining fragment's order;
+  `tighten`'s `same` (lines 272–277) compares with `!==`, so deep equality is new code;
 - the lint reaches a fragment only through the compositions of `overlay-rules.ts` (rule
-  `compose`); no per-fragment rule reads `memory.yaml`;
+  `compose`); no per-fragment rule reads `memory.yaml`; a pack that already has a problem is left
+  out of those compositions (`overlay-rules.ts`), so a new per-fragment rule reports nothing twice;
 - the §7.5 tests: `tests/memory-merge.test.ts` and the fixtures `tests/fixtures/merge/`.
 
 Readings, stated so that the approver sees them at the gate:
 - "the same fragment adds to `required`" is read as: listed in the incoming fragment's
   `required`, and not required on the base side before it; at a type's definition, the two sets
   name fields of its own `required`;
-- set-once values are compared as YAML values (deep equality, key order of a mapping ignored);
+- set-once values are compared as YAML values: the same YAML type, mappings by key (their order
+  ignored, §7.2's merge by key), lists item by item and in order (`tags`, a list §7.5 does not
+  declare, §7.2's undeclared lists);
 - `returns` and `limits` are validated against the merged sequence after each merge (a state of
   it, `returns` pointing to an earlier state, a limit a positive integer);
 - the composed `memory.yaml` writes the new keys in the defining fragment's key order, a key a
-  later pack adds (`waiting`, `limits`, `not_applicable_allowed`, `lists`) appended, as §7.2 does.
+  later pack adds (`waiting`, `limits`, `not_applicable_allowed`, `lists`) appended, as §7.2 does;
+  inside `states`, `sequence` and `gates` first as today, then `waiting` (a set: the base side's
+  items, then the new ones), `returns`, `limits` (merged by key, new keys appended);
+- `defaults.states` takes `waiting`, `returns` and `limits` too, and a tightening of `defaults`
+  reaches every type deriving from it (§7.5): a `waiting` entry it adds is judged own against
+  `defaults`' base side, then added to each derived machine (a no-op where already present); a
+  `limits` entry merges into each by the minimum; a type that detaches from `defaults` inherits
+  `defaults`' `waiting`, `returns` and `limits` as they stand;
+- the lint, which sees one fragment, checks that `not_applicable_allowed` and `lists` name fields
+  of the fragment's own `required` (rule `memory-fragment`, with `exempt`); the merge enforces
+  "adds", against the base side.
 
 Not in scope: `schema/` (a fragment has no schema of its own), any pack of `packs/` (W8), the
 index and the READMEs (task-033 is done; section 5 already lists a type's states).
@@ -82,14 +97,18 @@ Run from a clean clone of `task/task-034-memory-keys`, on Node.js 22.21 and the 
    not a positive integer (fails), on a state not in the sequence (fails); a gate on a `waiting`
    state (passes); `not_applicable_allowed` and `lists` for a field the fragment adds to
    `required` (passes), for a field an earlier pack required or the fragment does not list
-   (fails); `exempt` at a definition and at a tightening (fails).
+   (fails); `exempt` at a definition and at a tightening (fails); at a definition, a `waiting`
+   state, a `returns` key or target, or a `limits` key not in the sequence (fails), and a valid
+   `returns` (passes); on `defaults`, a `limits` entry reaching a detached type by the minimum,
+   and a detached type keeping `defaults`' `returns`.
 3. **The composition** (`tests/compose-documents.test.ts`): a type with these keys, defined by
    `base` and tightened by an overlay, composes into the expected `memory.yaml`; the golden
    tree's composition is unchanged byte for byte (its fragments use none of the new keys).
 4. **§18** (`tests/check-packs.test.ts`): `exempt` in a fragment, and `not_applicable_allowed` or
    `lists` naming a field the fragment's own `required` does not list, are reported by the lint
-   (a rule of their own on the pack's fragment, so a pack no composition reaches is judged too)
-   and refused by the composer, a test each.
+   (rule `memory-fragment`, on the pack's fragment, so a pack no composition reaches is judged
+   too) and refused by the composer (the test "the composer refuses what these rules reject"
+   extended), a test each.
 5. **Nothing else changes:** `git diff --name-only` over the task's commits shows only `src/`,
    `tests/` and this element; `schema/`, `catalog.yaml`, `compat.yaml` and `index/` unchanged;
    `tests/fixtures/compose/expected*` unchanged.
