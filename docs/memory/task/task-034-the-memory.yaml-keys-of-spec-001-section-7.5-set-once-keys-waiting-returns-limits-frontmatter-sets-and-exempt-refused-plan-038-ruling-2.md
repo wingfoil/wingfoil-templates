@@ -160,3 +160,14 @@ review; the push and the CI run.
   on 2026-10-16 as plan-039 R9 and R10; amended. Re-review requested (dl-017 R2).
 - 2026-10-16: re-review: approve; its low findings (the first reading's exception for R9, R9's
   condition in Acceptance 2, a wrap) amended without changing a rule. Submitted `pending`.
+- 2026-10-16, design written and committed on `main`; task started (backlog → in-progress);
+  branch `task/task-034-memory-keys` from `ea88493`.
+- 2026-10-16, **step 1**, red on `167aef2`: `node --test dist/tests/memory-merge.test.js
+  dist/tests/compose-documents.test.js`: 84 tests, 17 fail (every new key failed as "not allowed
+  here"). Green in `c74ae81`, where two test lines were rewritten for the lint (an `any` member
+  access; a property access split across lines), which changes no assertion.
+- 2026-10-16, **step 2**, red on `47e1813`: the `memory-fragment` tests of `check-packs`: 4 tests,
+  3 fail (the passing one is the clean case). Green in `23d0347`.
+- **Checks:** the full suite, 915 of 915, and `lint` pass at `23d0347`; `tests/fixtures/compose/`,
+  `schema/`, `catalog.yaml`, `compat.yaml` and `index/` unchanged (the golden fragments use none
+  of the new keys, so the golden compositions are byte for byte as before).
