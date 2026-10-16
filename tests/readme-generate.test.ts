@@ -41,6 +41,13 @@ describe('generatedSections (acceptance 10)', () => {
     assert.ok(kanban.includes('- **Formats:** `directive` 1, `roles` 1, `workflow` 1'));
     assert.ok(kanban.includes('  - workflows: `delivery`, `replenishment`'));
     assert.ok(!generatedSections(TREE, 'base').composition.includes('- **Declares:**'));
+    // A conditional part, marked as present only with software (spec-002 §2.1, plan-039 R8).
+    const flow = generatedSections(TREE, 'methodology/flow');
+    assert.ok(flow.composition.includes('  - only with `software`: `delivery`, `flow-delivery`'),
+      flow.composition.join('\n'));
+    assert.ok(flow['what-it-adds'].includes('- `delivery` (sub), only with `software`'),
+      flow['what-it-adds'].join('\n'));
+    assert.ok(flow['what-it-adds'].includes('- `flow-board` (sub)'));
     const agentFirst = generatedSections(TREE, 'team-mode/agent-first').composition;
     assert.ok(agentFirst.includes('  - roles: `reviewer`'), agentFirst.join('\n'));
   });

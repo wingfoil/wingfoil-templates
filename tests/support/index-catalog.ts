@@ -6,7 +6,7 @@ import { parse, stringify } from 'yaml';
 
 import { transitionDigest } from '../../src/digest';
 import type { TestRepo } from './git-repo';
-import { BASE_COMPOSABLE, KANBAN, SOFTWARE_COMPOSABLE, writePack } from './pack-tree';
+import { BASE_COMPOSABLE, DELIVERY, KANBAN, SOFTWARE_COMPOSABLE, writePack } from './pack-tree';
 import type { PackSpec } from './pack-tree';
 import { publishByHand, reindex, treeRepo } from './published-repo';
 import { exampleSection } from './examples';
@@ -25,6 +25,22 @@ const PRESETS: Record<string, string> = {
   minimal: 'format: 1\nid: minimal\ntitle: "Minimal"\ndescription: "Kanban alone."\n'
     + 'packs:\n  - methodology/kanban@^1\n',
 };
+
+const directiveFile = (id: string): string => `---\nid: ${id}\nformat: 1\n---\n# ${id}\n`;
+
+/** A methodology whose conditional part holds workflows and a directive (spec-001 §6.5). */
+const FLOW: PackSpec = { id: 'methodology/flow', workflows: ['flow-board'],
+  manifest: { formats: { workflow: 1, directive: 1 }, conditional: [{ with: 'software@^1',
+    contents: { workflows: ['delivery', 'flow-delivery'], directives: ['flow-limits'] } }] },
+  extraFiles: { 'workflows/delivery.yaml': DELIVERY,
+    'workflows/flow-delivery.yaml': 'format: 1\nname: flow-delivery\nkind: sub\n',
+    'directives/flow-limits.md': directiveFile('flow-limits') } };
+
+/** A governance pack whose conditional part holds a directive only. */
+const NOTES: PackSpec = { id: 'governance/notes', workflows: ['notes'],
+  manifest: { formats: { workflow: 1, directive: 1 }, conditional: [{ with: 'software@^1',
+    contents: { directives: ['notes-rules'] } }] },
+  extraFiles: { 'directives/notes-rules.md': directiveFile('notes-rules') } };
 
 function kanban(version: string, title: string, extra: Doc): PackSpec {
   return { ...KANBAN, version, manifest: { title, description: `Kanban, ${version}. A pull `
@@ -45,7 +61,7 @@ function editCatalog(repo: TestRepo, edit: (catalog: Doc) => void): void {
 }
 
 /**
- * base, software, a methodology with two versions (1.1.0
+ * base, software, flow and notes with a conditional part each, a methodology with two versions (1.1.0
  * changes its requires, adds a conflict, a parameter and a new title), a phase pack, two stage
  * packs and their transition, one pack never published, two presets (one with a profile); after
  * the last tag, an unreleased title and section 2 in the working tree.
@@ -53,7 +69,8 @@ function editCatalog(repo: TestRepo, edit: (catalog: Doc) => void): void {
 export function indexCatalog(): TestRepo {
   const v1 = kanban('1.0.0', 'Kanban', {});
   const lean: PackSpec = { id: 'phase/inception/lean', workflows: ['inception'] };
-  const repo = treeRepo([BASE_COMPOSABLE, SOFTWARE_COMPOSABLE, v1, lean, { id: 'stage/mvp' },
+  const repo = treeRepo([BASE_COMPOSABLE, SOFTWARE_COMPOSABLE, v1, FLOW, NOTES, lean,
+    { id: 'stage/mvp' },
     { id: 'stage/production' }, { id: 'blueprint/web' }]);
   repo.write('packs/methodology/kanban/README.md', readmeFor('methodology/kanban', 'Kanban',
     'A team that pulls work through a board with WIP limits.'));
@@ -67,8 +84,8 @@ export function indexCatalog(): TestRepo {
       formats: {}, requires_capabilities: [] }];
   });
   reindex(repo, 'presets and transition');
-  for (const id of ['base', 'software', 'methodology/kanban', 'phase/inception/lean',
-    'stage/mvp']) {
+  for (const id of ['base', 'software', 'methodology/kanban', 'methodology/flow',
+    'governance/notes', 'phase/inception/lean', 'stage/mvp']) {
     publishByHand(repo, id);
   }
   publishByHand(repo, 'stage/production');

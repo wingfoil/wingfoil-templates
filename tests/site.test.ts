@@ -158,14 +158,20 @@ describe('npm run site (task-024)', () => {
 
   describe('the page (acceptance 4, 6)', () => {
     it('lists every published pack without JavaScript, and nothing unreleased', () => {
-      assert.deepEqual(rows(html).map((row) => row.id), ['base', 'software', 'methodology/kanban',
-        'phase/inception/lean', 'stage/mvp', 'stage/production']);
+      assert.deepEqual(rows(html).map((row) => row.id), ['base', 'software', 'methodology/flow',
+        'methodology/kanban', 'phase/inception/lean', 'governance/notes', 'stage/mvp',
+        'stage/production']);
       assert.ok(!html.includes('blueprint/web'));
       assert.ok(!html.includes('unreleased'));
       for (const heading of ['Presets', 'Transitions', 'Profiles']) {
         assert.ok(html.includes(`<h2>${heading}</h2>`), heading);
       }
       assert.ok(html.includes('href="llms.txt"') && html.includes('href="catalog-index.json"'));
+    });
+
+    it('marks the Summary of a pack with a conditional part as CATALOG.md does (R3)', () => {
+      assert.ok(html.includes('<td>Test pack methodology/flow. (<code>delivery</code>, '
+        + '<code>flow-delivery</code> only with <code>software</code>)</td>'), html);
     });
 
     it('starts its head with the charset and the CSP, with no inline script or style', () => {
@@ -217,7 +223,7 @@ describe('npm run site (task-024)', () => {
       assert.deepEqual(found('board'), ['methodology/kanban']);
       assert.deepEqual(found('BOARD'), ['methodology/kanban']);
       assert.deepEqual(found('board nothing-like-this'), []);
-      assert.deepEqual(found('').length, 6);
+      assert.deepEqual(found('').length, 8);
     });
 
     it('searches titles and profiles too', () => {
