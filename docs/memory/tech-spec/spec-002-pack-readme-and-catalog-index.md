@@ -164,8 +164,11 @@ The human index, in this order:
 3. one section for the foundation packs, `base` then `software`, then one section per axis, in
    `catalog.yaml` order: a table with the columns Pack, Summary, Slot (phase only), Status, Latest,
    WingFoil, README. Pack is the id, preceded by `<a id="pack-<id with / replaced by ->"></a>`, the
-   anchor READMEs link (§2.5); Summary is `description`'s first sentence;
-   Latest and WingFoil are the last published version and its computed range; README links the
+   anchor READMEs link (§2.5); Summary is `description`'s first sentence, followed, for a pack
+   with a conditional part (spec-001 §6.5), by the part's workflows, or its directives when it has
+   none, sorted and in code spans, and the layer its latest version's `with` names, for example
+   `` Kanban pull flow. (`delivery`, `flow-delivery` only with `software`) ``; Latest and
+   WingFoil are the last published version and its computed range; README links the
    README rendered on github.com at the latest version's tag,
    `https://github.com/wingfoil/wingfoil-templates/blob/<tag>/packs/<catalog pack id>/README.md`;
 4. **Presets**: id, title, profile, packs;
@@ -257,7 +260,8 @@ A static site built from `catalog-index.json` and the README excerpts, by a comm
 - client-side only: no external service, no analytics, no external fonts, no third-party library;
   the page's script is written in this repository, `index/vendor/search.js`, its sha256 recorded in
   `index/vendor/search.js.sha256` and checked by the build;
-- without JavaScript the page shows the full list, with the content of `CATALOG.md`'s tables;
+- without JavaScript the page shows the full list, with the content of `CATALOG.md`'s tables, its
+  Summary marked as §3.2 marks it;
 - the page renders no README Markdown: the excerpt is shown as escaped text, and each result links
   the README rendered on github.com;
 - the site also serves `catalog-index.json` and `llms.txt`;
