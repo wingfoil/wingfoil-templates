@@ -66,8 +66,8 @@ Then:
 - **Review:** an independent review of the branch by a subagent (dl-017), its findings fixed, a
   re-review when a fix changes a rule.
 - **Branch close:** push, the real CI run's conclusion recorded here; on the approver's merge OK,
-  `--no-ff` merge into `main`, push, the branch removed; plan-039's Execution Notes and dl-020's
-  wave-close practice recorded as done for these rulings.
+  `--no-ff` merge into `main`, push, the branch removed; plan-039's Execution Notes record the
+  fold-back.
 
 ## Handoff
 
