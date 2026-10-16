@@ -98,3 +98,8 @@ Then:
   §3.2 example taken from spec-001 §6.2's kanban; §3.3's `conditional` per version; §2.1 rows 4
   and 5 name both lines and mark only a workflow's or directive's own line; the R3/R8 note marked
   as folded back). Fixed in the next commit; no re-review.
+- 2026-10-16, checks on Node.js 22.21.0 at `8ac0d85` (the later commit changes spec text outside
+  §11 only; `tests/catalog.test.ts` re-run green at `a3d3bf1`): 915 of 915 tests, `lint`,
+  `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check` and `workflow list`
+  exit 0. Scope: the branch changes only spec-001, spec-002 and this plan. Privacy: the diff names
+  no non-software project, local path or private repository.
