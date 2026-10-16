@@ -6,6 +6,7 @@ import { after, before, describe, it } from 'node:test';
 import { parse, stringify } from 'yaml';
 
 import { axisAndSlot, buildIndex, excerptOf } from '../src/index-model';
+import { renderCatalog } from '../src/index-render';
 import type { CatalogIndex, IndexPack } from '../src/index-model';
 import { IndexError } from '../src/index-source';
 import type { TestRepo } from './support/git-repo';
@@ -23,9 +24,13 @@ function withSection2(text: string): string {
 
 describe('axisAndSlot', () => {
   it('derives null axis and slot for base, a slot only for a phase pack', () => {
-    assert.deepEqual(axisAndSlot('base'), { axis: null, slot: null });
-    assert.deepEqual(axisAndSlot('methodology/kanban'), { axis: 'methodology', slot: null });
-    assert.deepEqual(axisAndSlot('phase/inception/lean'), { axis: 'phase', slot: 'inception' });
+    const foundation = ['base', 'software'];
+    assert.deepEqual(axisAndSlot('base', foundation), { axis: null, slot: null });
+    assert.deepEqual(axisAndSlot('software', foundation), { axis: null, slot: null });
+    assert.deepEqual(axisAndSlot('methodology/kanban', foundation),
+      { axis: 'methodology', slot: null });
+    assert.deepEqual(axisAndSlot('phase/inception/lean', foundation),
+      { axis: 'phase', slot: 'inception' });
   });
 });
 
@@ -96,7 +101,7 @@ describe('buildIndex on the fixture catalog (CB-4)', () => {
 
   it('lists the published packs in byte order, and no unpublished one', () => {
     assert.deepEqual(index.packs.map((entry) => entry.id), ['base', 'methodology/kanban',
-      'phase/inception/lean', 'stage/mvp', 'stage/production']);
+      'phase/inception/lean', 'software', 'stage/mvp', 'stage/production']);
   });
 
   it('builds pack and version objects in the key order of §3.3', () => {
@@ -134,8 +139,26 @@ describe('buildIndex on the fixture catalog (CB-4)', () => {
     assert.deepEqual(kanban.workflows, ['delivery']);
   });
 
+  it('writes the foundation section in catalog.yaml\'s order, each row anchored (§3.2)', () => {
+    const AXES = ['methodology', 'phase', 'blueprint', 'governance', 'team-mode', 'stage'];
+    const section = (foundation: string[]): string[] => {
+      const lines = renderCatalog(index, AXES, foundation).split('\n');
+      const start = lines.indexOf('## Foundation');
+      return lines.slice(start, lines.indexOf('## Methodology')).filter((line) =>
+        line.startsWith('| <a id='));
+    };
+    const rows = section(['base', 'software']);
+    assert.equal(rows.length, 2);
+    assert.ok(rows[0]?.startsWith('| <a id="pack-base"></a>`base` |'), rows[0]);
+    assert.ok(rows[1]?.startsWith('| <a id="pack-software"></a>`software` |'), rows[1]);
+    assert.ok(rows[1]?.includes('/blob/software@1.0.0/packs/software/README.md'), rows[1]);
+    // The order is catalog.yaml's, not the ids' byte order.
+    assert.ok(section(['software', 'base'])[0]?.includes('`software`'));
+  });
+
   it('derives axis and slot, and the profiles of the presets naming the pack', () => {
     assert.deepEqual([pack('base').axis, pack('base').slot], [null, null]);
+    assert.deepEqual([pack('software').axis, pack('software').slot], [null, null]);
     assert.deepEqual([pack('phase/inception/lean').axis, pack('phase/inception/lean').slot],
       ['phase', 'inception']);
     assert.deepEqual(pack('methodology/kanban').profiles, ['small teams']);

@@ -31,6 +31,8 @@ describe('generatedSections (acceptance 10)', () => {
       ['# lean', '', 'Golden fixture pack phase/inception/lean.', '',
         'Axis: phase · Slot: inception']);
     assert.equal(generatedSections(TREE, 'base').title.at(-1), 'Axis: foundation');
+    // Read from software's own pack.yaml, which has no axis (spec-002 §2.1, §2.2).
+    assert.equal(generatedSections(TREE, 'software').title.at(-1), 'Axis: foundation');
   });
 
   it('writes the composition, with what a pack declares except for base', () => {

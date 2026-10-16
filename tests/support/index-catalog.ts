@@ -45,7 +45,7 @@ function editCatalog(repo: TestRepo, edit: (catalog: Doc) => void): void {
 }
 
 /**
- * base, software (never published until task-033), a methodology with two versions (1.1.0
+ * base, software, a methodology with two versions (1.1.0
  * changes its requires, adds a conflict, a parameter and a new title), a phase pack, two stage
  * packs and their transition, one pack never published, two presets (one with a profile); after
  * the last tag, an unreleased title and section 2 in the working tree.
@@ -67,7 +67,8 @@ export function indexCatalog(): TestRepo {
       formats: {}, requires_capabilities: [] }];
   });
   reindex(repo, 'presets and transition');
-  for (const id of ['base', 'methodology/kanban', 'phase/inception/lean', 'stage/mvp']) {
+  for (const id of ['base', 'software', 'methodology/kanban', 'phase/inception/lean',
+    'stage/mvp']) {
     publishByHand(repo, id);
   }
   publishByHand(repo, 'stage/production');
