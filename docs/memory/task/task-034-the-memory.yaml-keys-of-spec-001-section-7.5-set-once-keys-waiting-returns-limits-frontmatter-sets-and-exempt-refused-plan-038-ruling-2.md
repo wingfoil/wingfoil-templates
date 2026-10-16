@@ -2,7 +2,7 @@
 id: task-034-the-memory.yaml-keys-of-spec-001-section-7.5-set-once-keys-waiting-returns-limits-frontmatter-sets-and-exempt-refused-plan-038-ruling-2
 type: task
 title: "The memory.yaml keys of spec-001 section 7.5: set-once keys, waiting, returns, limits, frontmatter sets and exempt refused (plan-038 ruling 2)"
-status: in-progress
+status: in-review
 pack: ""            # tooling task (tooling-change › deliver, plan-039)
 depends_on: []
 tags: ["tooling","base","spec"]
