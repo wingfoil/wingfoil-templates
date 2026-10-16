@@ -360,7 +360,7 @@ All closed in wave W14 (plan-024):
   composition needs a methodology (spec-001 §3), no longer holds after dl-022: a composition without
   `software` needs none, so `base` could compose an example alone. The exemption is kept as written,
   holding while the tree holds no methodology, and `base`'s examples are due with wave W10.
-- 2026-10-15, rulings recorded for the next element that amends this specification (dl-020 R1),
+- 2026-10-16, rulings recorded for the next element that amends this specification (dl-020 R1),
   applied by task-033 under plan-039:
   - **R3** (the approver, plan-039): the conditional part of a pack (spec-001 §6.5) in the index.
     Each version object of `catalog-index.json` copies `conditional` as the catalog version entry
@@ -373,3 +373,12 @@ All closed in wave W14 (plan-024):
     `` (`delivery`, `flow-delivery` only with `software`) `` (§3.2). The file stays `format: 1`;
   - **R8** (the approver, plan-039): sections 4 and 5 of a pack's README list its conditional
     part's workflows and directives too, each marked as present only with that layer (§2.1).
+- 2026-10-16, **amended in place** (plan-040, the approver's choice of 2026-10-16 at plan-039's
+  close; the merge OK of plan-040 is the approval of the edited text): R3 and R8 above folded
+  back, in §2.1 (sections 4 and 5 list a conditional part's workflows and directives, marked as
+  present only with the layer its `with` names), §3.2 (the Summary mark), §3.3 (`conditional` in a
+  version object; `conditional_workflows` and `conditional_directives` in a pack object) and §5
+  (the search page's table marked as §3.2). The note above, dated 2026-10-15 by mistake when
+  task-033 wrote it on 2026-10-16, is corrected. No code, test or generated file changes: the
+  tooling already implements this text (task-033).
+

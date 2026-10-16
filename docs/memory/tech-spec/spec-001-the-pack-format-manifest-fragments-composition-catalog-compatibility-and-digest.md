@@ -1184,3 +1184,16 @@ check the rest, and the composer refuses what they reject.
   - Read again at `ffa9bf6b`: no v0.3 release is tagged, so O10 stands; WingFoil dl-137 and dl-138
     are `ready` and dl-138's Action 2 tech-spec does not exist yet, so O2, O5, O12 and O13 keep
     their owners.
+- 2026-10-16, **amended in place** (plan-040, the approver's choice of 2026-10-16 at plan-039's
+  close; the merge OK of plan-040 is the approval of the edited text), folding back the rulings
+  recorded under plan-039 (dl-020 R2):
+  - R7: §6.2's `conditional` row, §6.5's `contents` bullet and §18's `conditional` check: a
+    conditional part lists at least one workflow or directive;
+  - R9: §7.5's row of `not_applicable_allowed` and `lists`, its failure list, and §18's check: a
+    repeated entry already in the set, with the field in the fragment's `required`, changes
+    nothing; §18's lint check reads the fragment's own `required`, the merge judges "adds";
+  - R10: §7.5's rows of `waiting` and `limits` and "Waiting, returns and limits": a later pack may
+    introduce them on a type whose defining pack declared none, under the same rules.
+  No code, test or generated file changes: the tooling already implements this text (task-032,
+  task-034).
+
