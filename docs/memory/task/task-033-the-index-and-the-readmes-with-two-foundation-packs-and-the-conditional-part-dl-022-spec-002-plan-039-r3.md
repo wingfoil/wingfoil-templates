@@ -204,3 +204,12 @@ versions; the independent review; the push and the CI run.
   Acceptance 3's foundation-order and Summary-mark tests sit in `tests/index-model.test.ts`, which
   builds the fixture index, rather than in `tests/index-render.test.ts`. Re-review requested
   (dl-017 R2).
+- 2026-10-16, **re-review** (dl-017 R2): approve; findings 1–10 fixed or recorded. Two low
+  findings (a comment placed after a `return`; the part read twice in `packOf`) fixed in
+  `83f5d89`, a refactor that changes no behaviour.
+- 2026-10-16, **Acceptance** from clean clones at `83f5d89` (the later commits change these notes
+  only), on Node.js 22.21.0 and 22.12.0: `npm ci`, `build`, `test`, `lint`, `check:pins`,
+  `check:schemas`, `check:packs`, `index -- --check`, `validate`, `validate -- --tree
+  tests/fixtures/compose/tree --param project_name=Golden` and `site -- --out <tmp>` exit 0. No
+  dependency added; `schema/`, the root `catalog.yaml`, `compat.yaml`, `CATALOG.md`,
+  `catalog-index.json` and `llms.txt` unchanged.
