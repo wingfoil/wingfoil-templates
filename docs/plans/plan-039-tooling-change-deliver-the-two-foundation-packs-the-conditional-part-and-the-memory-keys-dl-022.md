@@ -197,3 +197,8 @@ from `main`, in the order task-031, task-032, task-033, task-034, one after the 
   re-reviewed (approve), CI run 38795573963 on `b66f246` `success`; approved, merged `--no-ff`
   into `main` (`ecd425f`), `done`. Interims until task-033: the generated README and index leave
   out a pack's conditional workflows; `software` is published in no test.
+- 2026-10-16, task-033 (the index and the READMEs): accepted into the backlog after the
+  approver's ruling R8, designed, built red first in two steps, spec-002's Execution Notes record
+  R3 and R8, reviewed (approve with minor amendments, fixed red first) and re-reviewed (approve),
+  CI run 38859419074 on `703773b` `success`; approved, merged `--no-ff` into `main` (`1991e20`),
+  `done`. The interims of task-031 and task-032 are gone.

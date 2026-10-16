@@ -215,3 +215,6 @@ versions; the independent review; the push and the CI run.
   `catalog-index.json` and `llms.txt` unchanged.
 - 2026-10-16, **CI** (Acceptance 9): run 38859419074 on `703773b`, conclusion `success`
   (`validate (22.12.0)` and `validate (22.21.0)` both `success`). Submitted `in-review`.
+- 2026-10-16: the approver accepted the build (`in-review → approved`, `03478ba`) and gave the
+  merge OK in chat. CI run 38860243969 on `2f98d6c`, conclusion `success`. `--no-ff` merge into
+  `main` (`1991e20`); this task goes `approved → done`.
