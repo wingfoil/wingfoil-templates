@@ -22,7 +22,7 @@ adoption (W9) come after this plan. Opened on the approver's request in chat on 
 §15, §17 and §18, and spec-002 §2.1, §2.2, §3.2 and §3.3, as amended on 2026-10-15. No erratum
 of either is pending. An error found in their text during this plan is an erratum (dl-020): it goes
 to the approver when found (dl-019), never corrected silently. The rulings recorded under this plan
-(R3, R7 and R8 at least) are named by W8's opening plan, which starts after their fold-back or
+(R3, R7–R10 at least) are named by W8's opening plan, which starts after their fold-back or
 after the approver rules it may start without (dl-020 R3).
 
 **The rulings this plan applies.** plan-038's rulings 1–9 hold here, in particular:
@@ -86,6 +86,16 @@ And at task-033's body review, on 2026-10-15:
 - **R8, a README tells what each pack adds and what only `software` brings.** Section 5 of a
   pack's README lists its conditional part's workflows and directives too, each marked as present
   only with `software`, as section 4 does: an addition to spec-002 §2.1, folded back with R3.
+
+And at task-034's body review, on 2026-10-16, two readings of spec-001 §7.5 its text leaves open:
+- **R9, a repeated entry changes nothing.** A later pack that repeats in
+  `template.frontmatter.not_applicable_allowed` or `lists` a field already there, with the same
+  field in its `required`, changes nothing, as a repeated `waiting` entry does.
+- **R10, `waiting` and `limits` from a later pack.** A later pack may introduce `states.waiting`
+  or `states.limits` on a type whose defining pack declared none, under the same rules: only its
+  own states in `waiting`, the smaller value in `limits`.
+
+Both are folded back into spec-001 with R7 (dl-020 R2).
 
 **The tasks.** Four tooling tasks (`pack: ""`), split at proposal so that each has its own red
 first and a reviewable diff (dl-018 R3):
@@ -156,7 +166,7 @@ from `main`, in the order task-031, task-032, task-033, task-034, one after the 
       into `main`, then `approved → done` on `main` with the task's delivery notes; `main` pushed,
       the branch removed remotely and locally; this plan's Execution Notes record the merge.
 3. **Close:** dl-022's Execution Notes record the tooling actions applied; this plan's Execution
-   Notes list, for spec-001 and spec-002, the errata and rulings recorded under it (R3, R7 and R8 at
+   Notes list, for spec-001 and spec-002, the errata and rulings recorded under it (R3, R7–R10 at
    least), and the element the approver names to fold them back. The plan goes `active → done`.
 
 ## Handoff

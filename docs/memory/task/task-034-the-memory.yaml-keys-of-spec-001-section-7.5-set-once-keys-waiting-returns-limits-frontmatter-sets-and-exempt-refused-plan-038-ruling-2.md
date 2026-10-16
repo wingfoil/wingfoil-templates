@@ -36,6 +36,9 @@ The text it implements (§7.5's table and rules):
   pack adds to them only fields the same fragment adds to `required`, never a field an earlier
   pack made required;
 - `template.frontmatter.exempt`: never in a pack's fragment, defining or tightening;
+- plan-039 R9 and R10 (the approver, 2026-10-16): a repeated entry of `not_applicable_allowed`
+  or `lists` changes nothing; a later pack may introduce `waiting` or `limits` on a type whose
+  defining pack declared none, under the same rules;
 - §18: "no `memory.yaml` fragment holds `template.frontmatter.exempt`, and
   `not_applicable_allowed` and `lists` name only fields the same fragment adds to `required`";
   the composer refuses what the lint rejects (§17).
@@ -97,7 +100,9 @@ Run from a clean clone of `task/task-034-memory-keys`, on Node.js 22.21 and the 
    not a positive integer (fails), on a state not in the sequence (fails); a gate on a `waiting`
    state (passes); `not_applicable_allowed` and `lists` for a field the fragment adds to
    `required` (passes), for a field an earlier pack required or the fragment does not list
-   (fails); `exempt` at a definition and at a tightening (fails); at a definition, a `waiting`
+   (fails), a repeat of an entry already in the set (no change, R9); `waiting` and `limits`
+   introduced by a later pack on a type that had none (passes, R10); `exempt` at a definition
+   and at a tightening (fails); at a definition, a `waiting`
    state, a `returns` key or target, or a `limits` key not in the sequence (fails), and a valid
    `returns` (passes); on `defaults`, a `limits` entry reaching a detached type by the minimum,
    and a detached type keeping `defaults`' `returns`.
@@ -125,3 +130,9 @@ Run from a clean clone of `task/task-034-memory-keys`, on Node.js 22.21 and the 
      command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019). -->
+- 2026-10-16: written under plan-039; independent review of the body: approve after amendments
+  ("What exists" on output order and equality; the readings on `defaults.states`, deep equality,
+  the order inside `states`, the lint's per-fragment check; §18 quoted; more failures in
+  Acceptance 2; the lint rule named `memory-fragment`). Two findings needed the approver: ruled
+  on 2026-10-16 as plan-039 R9 and R10; amended. Re-review requested (dl-017 R2).
+
