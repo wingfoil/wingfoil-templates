@@ -2,7 +2,7 @@
 id: plan-040-spec-amendment-fold-back-plan-039-s-rulings-into-spec-001-and-spec-002
 type: plan
 title: "spec amendment: fold back plan-039's rulings into spec-001 and spec-002"
-status: active
+status: done
 workflow: "sw-life-cycle"
 phase: "specification"
 tags: ["spec","base"]
