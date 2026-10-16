@@ -234,7 +234,7 @@ conditional:                    # §6.5: counts only in a composition with softw
 | `conflicts` | no | §6.3. |
 | `parameters` | no | §8. |
 | `contents` | yes | §6.4. |
-| `conditional` | no | §6.5. At most one entry in format 1, on a non-foundation pack only. |
+| `conditional` | no | §6.5. At most one entry in format 1, on a non-foundation pack only, its `contents` non-empty. |
 
 `schema/pack.schema.json` checks what JSON Schema can express. The lint rules (F3.5) check the
 rest; §18 lists them for every file kind.
@@ -301,7 +301,8 @@ conditional:
     unsatisfied, an error, never a reason to leave the part out;
   - it names no pack of the pack's `requires`, and the pack does not `conflict` with it;
   - it counts as a requirement for §7.1's rule against requiring a later pack.
-- **`contents`** may list `workflows` and `directives` only, by file stem, as §6.4.
+- **`contents`** may list `workflows` and `directives` only, by file stem, as §6.4, and lists at
+  least one of them: an entry that adds nothing is refused.
   - In a composition with `software`, the entry's workflows and directives come after the pack's
     own, each list in its written order (§7.7).
   - In a composition without `software`, the composer leaves them out, and the generated `include`
@@ -415,13 +416,13 @@ top-level key fails in format 1.
 | `path`, `id_pattern`, `template.file` | nothing: an incoming value must be equal |
 | `name`, `description`, `tags`, `amendable`, `fields` | nothing: an incoming value must be equal, and a value for a key the defining pack left out fails |
 | `template.frontmatter.required` | add fields (set), including when the defining pack declared none |
-| `template.frontmatter.not_applicable_allowed`, `template.frontmatter.lists` | add fields (set), only fields the same fragment adds to `required`, so an earlier pack's required field is never loosened |
+| `template.frontmatter.not_applicable_allowed`, `template.frontmatter.lists` | add fields (set), only fields the same fragment adds to `required`, so an earlier pack's required field is never loosened; repeating an entry already in the set, with the field in the fragment's `required`, changes nothing |
 | `template.frontmatter.exempt` | never present in a pack: it names element ids, which are project values |
 | `states.sequence` | insert states (below) |
 | `states.gates` | add a gate on a state that has none, a state in `waiting` included; an existing gate's `reject` target must be equal |
-| `states.waiting` | add its own states (below) |
+| `states.waiting` | add its own states (below), including when the defining pack declared none |
 | `states.returns` | nothing: an incoming `states` without `returns` keeps it, one with `returns` must equal it |
-| `states.limits` | add a limit on a state that has none, or lower one (below) |
+| `states.limits` | add a limit on a state that has none, or lower one (below), including when the defining pack declared none |
 
 A pack that gives a type deriving from `defaults` its own machine (below) tightens it: it is not
 the defining pack, so every row above applies to it as to any later pack.
@@ -464,14 +465,16 @@ on anything but the composition order of §7.1.
 
 **Waiting, returns and limits.**
 - `waiting` is a set of states of the merged sequence. A later pack may add only its own states:
-  those of its incoming sequence that are not on the base side at that point of the composition.
+  those of its incoming sequence that are not on the base side at that point of the composition,
+  also on a type whose defining pack declared no `waiting`.
   Repeating an entry already present changes nothing. A tightening of `defaults` that adds a
   `waiting` entry reaches every type deriving from `defaults`, like any tightening of `defaults`.
 - `returns` maps a state to an earlier state, both of the merged sequence. Since no state is
   removed and insertion keeps the relative order, a `returns` edge stays valid in every merge.
 - `limits` maps a state of the merged sequence to a positive integer. A `limits.<state>` on a state
-  without a limit is added; on a state with one, the merged value is the smaller of the two, so a
-  limit only ever goes down and the result does not depend on which pack came first.
+  without a limit is added, also on a type whose defining pack declared no `limits`; on a state
+  with one, the merged value is the smaller of the two, so a limit only ever goes down and the
+  result does not depend on which pack came first.
 
 Which `reject` targets make sense (earlier or later states) is WingFoil's validation.
 
@@ -511,7 +514,8 @@ These fail composition:
 - changing a gate's `reject` target, or removing a gate;
 - removing a required frontmatter field;
 - `template.frontmatter.exempt` in a fragment;
-- `not_applicable_allowed` or `lists` naming a field the same fragment does not add to `required`;
+- `not_applicable_allowed` or `lists` naming a field the same fragment does not add to `required`,
+  unless it repeats an entry already in the set, with the field in the fragment's `required`;
 - a new `waiting` entry on a state the incoming pack did not insert, or a different `returns`;
 - redefining a type's `path`, `id_pattern` or template file, or a set-once key;
 - a `states` on a type that replaces, rather than extends, the machine it follows.
@@ -1017,15 +1021,17 @@ check the rest, and the composer refuses what they reject.
   type, a workflow, a directive or a parameter of `software` outside a conditional part requires it
   (§3, §6.3);
 - no `memory.yaml` fragment holds `template.frontmatter.exempt`, and `not_applicable_allowed` and
-  `lists` name only fields the same fragment adds to `required` (§7.5);
+  `lists` name only fields of the fragment's own `required`; the merge judges that a tightening
+  adds them, a repeat changing nothing (§7.5);
 - `requires_capabilities` is sorted;
 - `contents.fragments` is in the order `dna`, `roles`, `memory`;
 - `contents` and the conditional part's `contents` together match the files present, both ways,
   each file listed once (§6.4);
 - `conditional`: at most one entry, on a non-foundation pack that does not require `software`,
   `with` naming `software@^<major>` and no pack of `requires` or `conflicts`; its `contents` holds
-  `workflows` and `directives` only; the isolation rules of §6.5; a methodology's `delivery` in it
-  when the methodology does not require `software`, in `contents` when it does;
+  `workflows` and `directives` only, at least one of them; the isolation rules of §6.5; a
+  methodology's `delivery` in it when the methodology does not require `software`, in `contents`
+  when it does;
 - `formats` lists exactly the kinds of the files shipped, with the value each file declares (§5);
 - the layout and path segments of §6.1, with no symbolic link or submodule;
 - asset identifiers equal their file stems (§6.1);
@@ -1178,3 +1184,16 @@ check the rest, and the composer refuses what they reject.
   - Read again at `ffa9bf6b`: no v0.3 release is tagged, so O10 stands; WingFoil dl-137 and dl-138
     are `ready` and dl-138's Action 2 tech-spec does not exist yet, so O2, O5, O12 and O13 keep
     their owners.
+- 2026-10-16, **amended in place** (plan-040, the approver's choice of 2026-10-16 at plan-039's
+  close; the merge OK of plan-040 is the approval of the edited text), folding back the rulings
+  recorded under plan-039 (dl-020 R2):
+  - R7: §6.2's `conditional` row, §6.5's `contents` bullet and §18's `conditional` check: a
+    conditional part lists at least one workflow or directive;
+  - R9: §7.5's row of `not_applicable_allowed` and `lists`, its failure list, and §18's check: a
+    repeated entry already in the set, with the field in the fragment's `required`, changes
+    nothing; §18's lint check reads the fragment's own `required`, the merge judges "adds";
+  - R10: §7.5's rows of `waiting` and `limits` and "Waiting, returns and limits": a later pack may
+    introduce them on a type whose defining pack declared none, under the same rules.
+  No code, test or generated file changes: the tooling already implements this text (task-032,
+  task-034).
+

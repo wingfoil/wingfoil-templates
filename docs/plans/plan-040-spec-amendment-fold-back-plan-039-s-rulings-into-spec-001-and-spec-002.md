@@ -40,9 +40,9 @@ which already defers to `pack-compatibility`, where it is stated.
 Not in this plan: the readings recorded in task-031 … task-034 (the `[+software]` label, deep
 equality, key orders, the propagation through `defaults`, and task-032's reading that "requires
 `software`" means through `requires`, directly or transitively), which stay in those elements and
-are not the approver's rulings; a later amendment may fold back the last one, which touches §6.5; R2, R5
-and R6, which concern `npm run validate` and `pack-compatibility`; wave W8 (another session, on
-the approver's OK).
+are not the approver's rulings; a later amendment may fold back the last one, which touches
+§6.5; R2, R5 and R6, which concern `npm run validate` and `pack-compatibility`; wave W8 (another
+session, on the approver's OK).
 
 ## Steps
 
@@ -93,3 +93,15 @@ Then:
   `src/pack-files.ts` and `src/site.ts` in the coherence read). No finding changes a ruling, so no
   re-review. Plan submitted.
 
+- 2026-10-16, rows 1–7 applied (`26d3c77` … `8ac0d85`). Independent review of the branch: approve
+  after minor amendments, none changing a ruling (§7.5's failure list carries R9's condition; the
+  §3.2 example taken from spec-001 §6.2's kanban; §3.3's `conditional` per version; §2.1 rows 4
+  and 5 name both lines and mark only a workflow's or directive's own line; the R3/R8 note marked
+  as folded back). Fixed in the next commit; no re-review.
+- 2026-10-16, checks on Node.js 22.21.0 at `8ac0d85` (the later commit changes spec text outside
+  §11 only; `tests/catalog.test.ts` re-run green at `a3d3bf1`): 915 of 915 tests, `lint`,
+  `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check` and `workflow list`
+  exit 0. Scope: the branch changes only spec-001, spec-002 and this plan. Privacy: the diff names
+  no non-software project, local path or private repository.
+- 2026-10-16, branch pushed: CI run 38943478966 on `eeb1980`, conclusion `success` (`validate
+  (22.12.0)` and `validate (22.21.0)` both `success`). Waiting for the approver's merge OK.
