@@ -753,6 +753,35 @@ describe('F3.5 workflow rules', () => {
   });
 });
 
+describe('memory-fragment (spec-001 §7.5, §18)', () => {
+  /** blueprint/x defining type x with the given frontmatter lines. */
+  const defining = (frontmatter: string): PackSpec => ({ id: 'blueprint/x', fragments: ['memory'],
+    memoryTemplates: ['x'], extraFiles: { 'fragments/memory.yaml': 'format: 1\ntypes:\n  x:\n'
+      + '    path: x/{id}.md\n    id_pattern: "x-{n}"\n    template:\n'
+      + `      file: memory/templates/built-in/x.md\n      frontmatter:\n${frontmatter}` } });
+  const EXEMPT = '        required: [id]\n        exempt: { id: [x-1] }\n';
+  const OUTSIDE = '        required: [id]\n        not_applicable_allowed: [owner]\n';
+  const LISTS = '        required: [id]\n        lists: [tags]\n';
+
+  it('passes sets that name fields of the fragment\'s own required', () => {
+    const result = lint([...CLEAN, defining('        required: [id, owner]\n'
+      + '        not_applicable_allowed: [owner]\n        lists: [owner]\n')]);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+  });
+
+  for (const [label, frontmatter] of [['exempt', EXEMPT],
+    ['not_applicable_allowed outside required', OUTSIDE], ['lists outside required', LISTS]]) {
+    it(`reports ${label}, and the composer refuses it`, () => {
+      failsWith('memory-fragment', [...CLEAN, defining(frontmatter ?? '')]);
+      withPackTree([...CLEAN, defining(frontmatter ?? '')], (root) => {
+        copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
+        assert.throws(() => composeDocuments(root, loadCatalog(join(root, 'catalog.yaml')),
+          ['methodology/kanban', 'blueprint/x'], {}), /type x.*(exempt|owner|tags)/);
+      });
+    });
+  }
+});
+
 /** The compose and overlay problems: each pack file and the composition named. */
 const messages = (result: CheckPacksResult): string[] =>
   result.problems.filter((problem) => problem.rule === 'compose' || problem.rule === 'overlay')
