@@ -406,3 +406,174 @@ types:
 `) as Doc }], 'base'), /adr.*defaults/);
   });
 });
+
+describe('mergeMemory: the other keys (spec-001 §7.5, plan-038 ruling 2, R9, R10)', () => {
+  const NOTE = `
+types:
+  note:
+    name: Note
+    description: A note.
+    tags: [docs]
+    amendable: true
+    fields: { owner: { type: string, label: Owner } }
+    path: docs/notes/{id}.md
+    id_pattern: "note-{n}-{slug}"
+    template:
+      file: memory/templates/built-in/note.md
+      frontmatter:
+        required: [id, owner, topics]
+        not_applicable_allowed: [owner]
+        lists: [topics]
+    states:
+      sequence: [draft, active, parked, done]
+      gates:
+        active: { reject: draft }
+      waiting: [parked]
+      returns: { parked: active }
+      limits: { active: 3 }
+`;
+  const DEFINED: [string, string] = ['governance/notes', NOTE];
+  const type = (doc: Doc, name: string): Doc => (doc['types'] as Record<string, Doc>)[name] ?? {};
+  const note = (text: string): [string, string] => ['stage/x', `types:\n  note:\n${text}`];
+  const task = (text: string): [string, string] => ['stage/x', `types:\n  task:\n${text}`];
+
+  it('defines a type with every key, written back in its order', () => {
+    const doc = compose(DEFINED);
+    assert.deepEqual(type(doc, 'note'), parse(NOTE).types.note);
+    assert.deepEqual(Object.keys(type(doc, 'note')), ['name', 'description', 'tags', 'amendable',
+      'fields', 'path', 'id_pattern', 'template', 'states']);
+    assert.deepEqual(Object.keys(type(doc, 'note')['states'] as Doc),
+      ['sequence', 'gates', 'waiting', 'returns', 'limits']);
+  });
+
+  it('keeps a set-once key a later pack repeats, compared as a YAML value', () => {
+    const doc = compose(DEFINED, note('    name: Note\n    tags: [docs]\n'
+      + '    fields: { owner: { label: Owner, type: string } }\n'));
+    assert.equal(type(doc, 'note')['name'], 'Note');
+  });
+
+  it('refuses a set-once key changed, or set where the defining pack left it out', () => {
+    fails(/note.*name/, DEFINED, note('    name: Other\n'));
+    fails(/note.*tags/, DEFINED, note('    tags: [other]\n'));
+    fails(/note.*amendable/, DEFINED, note('    amendable: "true"\n'));
+    fails(/adr.*description/, DEFINED, ['stage/x', 'types:\n  adr:\n    description: An ADR.\n']);
+  });
+
+  it('adds a later pack\'s own waiting states; repeating one changes nothing', () => {
+    const doc = compose(DEFINED, note('    states:\n      sequence: [draft, active, blocked, '
+      + 'parked, done]\n      waiting: [blocked, parked]\n'));
+    assert.deepEqual((type(doc, 'note')['states'] as Doc)['waiting'], ['parked', 'blocked']);
+  });
+
+  it('refuses a waiting entry on a state of the base side', () => {
+    fails(/note.*waiting.*active/, DEFINED, note('    states:\n      waiting: [active]\n'));
+  });
+
+  it('lets a later pack introduce waiting and limits on a type that had none (R10)', () => {
+    const doc = compose(task('    states:\n      sequence: [draft, pending, backlog, on-hold, '
+      + 'in-progress, in-review, approved, done]\n      waiting: [on-hold]\n'
+      + '      limits: { in-progress: 2 }\n'));
+    const machine = states(doc, 'task') as Doc;
+    assert.deepEqual(machine['waiting'], ['on-hold']);
+    assert.deepEqual(machine['limits'], { 'in-progress': 2 });
+  });
+
+  it('carries a waiting entry of a tightening of defaults to every type deriving from it', () => {
+    const detach: [string, string] = ['team-mode/x', 'types:\n  adr:\n    states:\n'
+      + '      sequence: [draft, pending, ai-review, approved]\n'];
+    const hold: [string, string] = ['stage/x', 'defaults:\n  states:\n'
+      + '    sequence: [draft, pending, on-hold, approved]\n    waiting: [on-hold]\n'];
+    const doc = compose(detach, hold);
+    assert.deepEqual((defaults(doc) as Doc)['waiting'], ['on-hold']);
+    assert.deepEqual((states(doc, 'adr') as Doc)['waiting'], ['on-hold']);
+    assert.deepEqual((states(doc, 'adr') as Doc)['sequence'],
+      ['draft', 'pending', 'ai-review', 'on-hold', 'approved']);
+    assert.equal(states(doc, 'bug'), undefined, 'bug still follows defaults');
+  });
+
+  it('keeps returns when a later states has none, and refuses a different or added one', () => {
+    const kept = compose(DEFINED, note('    states:\n      limits: { active: 2 }\n'));
+    assert.deepEqual((type(kept, 'note')['states'] as Doc)['returns'], { parked: 'active' });
+    assert.ok(compose(DEFINED, note('    states:\n      returns: { parked: active }\n')));
+    fails(/note.*returns/, DEFINED, note('    states:\n      returns: { done: active }\n'));
+    fails(/task.*returns/, task('    states:\n      returns: { done: approved }\n'));
+  });
+
+  it('merges limits by the minimum: added, lowered, never raised', () => {
+    const lowered = compose(DEFINED, note('    states:\n      limits: { active: 2, parked: 5 }\n'));
+    assert.deepEqual((type(lowered, 'note')['states'] as Doc)['limits'], { active: 2, parked: 5 });
+    const raised = compose(DEFINED, note('    states:\n      limits: { active: 9 }\n'));
+    assert.deepEqual((type(raised, 'note')['states'] as Doc)['limits'], { active: 3 });
+  });
+
+  it('refuses a limit that is not a positive integer, or on a state not in the sequence', () => {
+    for (const value of ['0', '-1', '1.5', '"2"']) {
+      fails(/note.*limits/, DEFINED, note(`    states:\n      limits: { active: ${value} }\n`));
+    }
+    fails(/note.*limits.*gone/, DEFINED, note('    states:\n      limits: { gone: 1 }\n'));
+  });
+
+  it('allows a gate on a waiting state', () => {
+    const doc = compose(DEFINED,
+      note('    states:\n      gates:\n        parked: { reject: active }\n'));
+    assert.deepEqual(Object.keys((type(doc, 'note')['states'] as Doc)['gates'] as Doc),
+      ['active', 'parked']);
+  });
+
+  it('refuses, at a definition, waiting, returns or limits outside the sequence, and returns '
+    + 'to a state not earlier', () => {
+    const define = (states: string): [string, string] => ['governance/x', 'types:\n  y:\n'
+      + '    path: y/{id}.md\n    id_pattern: "y-{n}"\n    template: { file: memory/templates/'
+      + `built-in/y.md }\n    states:\n      sequence: [a, b, c]\n${states}`];
+    fails(/y.*waiting/, define('      waiting: [z]\n'));
+    fails(/y.*returns/, define('      returns: { z: a }\n'));
+    fails(/y.*returns/, define('      returns: { b: z }\n'));
+    fails(/y.*returns/, define('      returns: { a: c }\n'));
+    fails(/y.*limits/, define('      limits: { z: 1 }\n'));
+    assert.ok(compose(define('      returns: { c: a }\n')));
+  });
+
+  it('adds to not_applicable_allowed and lists only fields the fragment adds to required', () => {
+    const doc = compose(['stage/x', 'types:\n  bug:\n    template:\n      frontmatter:\n'
+      + '        required: [reviewer]\n        not_applicable_allowed: [reviewer]\n'
+      + '        lists: [reviewer]\n']);
+    assert.deepEqual((type(doc, 'bug')['template'] as Doc)['frontmatter'], { required: ['id',
+      'severity', 'reviewer'], not_applicable_allowed: ['reviewer'], lists: ['reviewer'] });
+    fails(/bug.*not_applicable_allowed.*severity/, ['stage/x', 'types:\n  bug:\n    template:\n'
+      + '      frontmatter:\n        required: [severity]\n        not_applicable_allowed: '
+      + '[severity]\n']);
+    fails(/bug.*lists.*x/, ['stage/x', 'types:\n  bug:\n    template:\n      frontmatter:\n'
+      + '        lists: [x]\n']);
+  });
+
+  it('changes nothing on a repeated entry of not_applicable_allowed (R9)', () => {
+    const doc = compose(DEFINED, note('    template:\n      frontmatter:\n'
+      + '        required: [owner]\n        not_applicable_allowed: [owner]\n'));
+    assert.deepEqual(((type(doc, 'note')['template'] as Doc)['frontmatter'] as Doc)
+      ['not_applicable_allowed'], ['owner']);
+  });
+
+  it('refuses exempt, at a definition and at a tightening', () => {
+    fails(/note.*exempt/, ['governance/notes', NOTE.replace('        lists: [topics]\n',
+      '        lists: [topics]\n        exempt: { owner: [note-1] }\n')]);
+    fails(/bug.*exempt/, ['stage/x', 'types:\n  bug:\n    template:\n      frontmatter:\n'
+      + '        exempt: { severity: [bug-1] }\n']);
+  });
+
+  it('carries a limit of defaults to a detached type by the minimum, and returns of defaults to '
+    + 'a type that detaches', () => {
+    const base: [string, string] = ['base', 'defaults:\n  states:\n'
+      + '    sequence: [draft, pending, approved]\n    returns: { approved: pending }\n'
+      + '    limits: { pending: 4 }\ntypes:\n  adr:\n    path: a/{id}.md\n'
+      + '    id_pattern: "adr-{n}"\n    template: { file: memory/templates/built-in/adr.md }\n'];
+    const all = (...fragments: [string, string][]): Doc => mergeMemory(fragments.map(
+      ([pack, text]) => ({ pack, data: parse(text) as Doc })), 'base');
+    const doc = all(base, ['team-mode/x', 'types:\n  adr:\n    states:\n'
+      + '      sequence: [draft, pending, ai-review, approved]\n      limits: { pending: 2 }\n'],
+    ['stage/x', 'defaults:\n  states:\n    limits: { pending: 3 }\n']);
+    const adr = states(doc, 'adr') as Doc;
+    assert.deepEqual(adr['returns'], { approved: 'pending' });
+    assert.deepEqual(adr['limits'], { pending: 2 });
+    assert.deepEqual((defaults(doc) as Doc)['limits'], { pending: 3 });
+  });
+});
