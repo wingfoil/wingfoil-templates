@@ -64,6 +64,28 @@ export function firstSentence(text: string): string {
   return match?.[1] ?? text;
 }
 
+/**
+ * What a pack's conditional part adds, for its Summary (plan-039 R3): its workflows, or its
+ * directives when it has none, and the layer its `with` names; undefined without a part.
+ */
+export function conditionalMark(pack: IndexPack): { names: string[]; layer: string } | undefined {
+  const latest = pack.versions.find((version) => version.version === pack.latest);
+  const [part] = latest?.conditional ?? [];
+  if (part === undefined) return undefined;
+  const names = pack.conditional_workflows.length > 0 ? pack.conditional_workflows
+    : pack.conditional_directives;
+  return { names, layer: entryId(part.with) };
+}
+
+/** A pack's Summary: its description's first sentence, and the mark of its conditional part. */
+export function summaryOf(pack: IndexPack, codeOf: (text: string) => string,
+  textOf: (text: string) => string): string {
+  const first = textOf(firstSentence(pack.description));
+  const mark = conditionalMark(pack);
+  return mark === undefined ? first
+    : `${first} (${mark.names.map(codeOf).join(', ')} only with ${codeOf(mark.layer)})`;
+}
+
 function row(cells: string[]): string {
   return `| ${cells.join(' | ')} |`;
 }
@@ -81,7 +103,7 @@ export function axisHeading(axis: string | null): string {
 function packRow(pack: IndexPack, withSlot: boolean): string[] {
   const latest = pack.versions.find((version) => version.version === pack.latest);
   const cells = [`<a id="${packAnchor(pack.id)}"></a>${code(pack.id)}`,
-    cell(firstSentence(pack.description))];
+    summaryOf(pack, code, cell)];
   if (withSlot) cells.push(code(pack.slot ?? ''));
   cells.push(pack.status, pack.latest, cell(latest?.wingfoil ?? ''),
     `[README](${readmeOnGithub(latest?.tag ?? '', pack.id)})`);

@@ -33,8 +33,103 @@
       "workflows": [
         "retrospective"
       ],
+      "conditional_workflows": [],
       "memory_types": [],
       "directives": [],
+      "conditional_directives": [],
+      "parameters": [],
+      "excerpt": "A test fixture of the tooling; never adopted.",
+      "profiles": []
+    },
+    {
+      "id": "governance/notes",
+      "catalog": "official",
+      "status": "active",
+      "axis": "governance",
+      "slot": null,
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "governance/notes@1.0.0",
+          "wingfoil": "9.0.0",
+          "formats": {
+            "directive": 1,
+            "workflow": 1
+          },
+          "requires_capabilities": [],
+          "requires": [
+            "base@^1"
+          ],
+          "conflicts": [],
+          "conditional": [
+            {
+              "with": "software@^1"
+            }
+          ],
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/governance/notes@1.0.0/packs/governance/notes/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/governance/notes@1.0.0/packs/governance/notes/pack.yaml"
+        }
+      ],
+      "title": "governance/notes",
+      "description": "Test pack governance/notes.",
+      "workflows": [
+        "notes"
+      ],
+      "conditional_workflows": [],
+      "memory_types": [],
+      "directives": [],
+      "conditional_directives": [
+        "notes-rules"
+      ],
+      "parameters": [],
+      "excerpt": "A test fixture of the tooling; never adopted.",
+      "profiles": []
+    },
+    {
+      "id": "methodology/flow",
+      "catalog": "official",
+      "status": "active",
+      "axis": "methodology",
+      "slot": null,
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "methodology/flow@1.0.0",
+          "wingfoil": "9.0.0",
+          "formats": {
+            "directive": 1,
+            "workflow": 1
+          },
+          "requires_capabilities": [],
+          "requires": [
+            "base@^1"
+          ],
+          "conflicts": [],
+          "conditional": [
+            {
+              "with": "software@^1"
+            }
+          ],
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/flow@1.0.0/packs/methodology/flow/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/flow@1.0.0/packs/methodology/flow/pack.yaml"
+        }
+      ],
+      "title": "methodology/flow",
+      "description": "Test pack methodology/flow.",
+      "workflows": [
+        "flow-board"
+      ],
+      "conditional_workflows": [
+        "delivery",
+        "flow-delivery"
+      ],
+      "memory_types": [],
+      "directives": [],
+      "conditional_directives": [
+        "flow-limits"
+      ],
       "parameters": [],
       "excerpt": "A test fixture of the tooling; never adopted.",
       "profiles": []
@@ -87,8 +182,10 @@
       "workflows": [
         "delivery"
       ],
+      "conditional_workflows": [],
       "memory_types": [],
       "directives": [],
+      "conditional_directives": [],
       "parameters": [
         {
           "name": "wip_limit",
@@ -132,8 +229,10 @@
       "workflows": [
         "inception"
       ],
+      "conditional_workflows": [],
       "memory_types": [],
       "directives": [],
+      "conditional_directives": [],
       "parameters": [],
       "excerpt": "A test fixture of the tooling; never adopted.",
       "profiles": [
@@ -169,8 +268,10 @@
       "workflows": [
         "sw-life-cycle"
       ],
+      "conditional_workflows": [],
       "memory_types": [],
       "directives": [],
+      "conditional_directives": [],
       "parameters": [],
       "excerpt": "A test fixture of the tooling; never adopted.",
       "profiles": []
@@ -200,8 +301,10 @@
       "title": "stage/mvp",
       "description": "Test pack stage/mvp.",
       "workflows": [],
+      "conditional_workflows": [],
       "memory_types": [],
       "directives": [],
+      "conditional_directives": [],
       "parameters": [],
       "excerpt": "A test fixture of the tooling; never adopted.",
       "profiles": []
@@ -231,8 +334,10 @@
       "title": "stage/production",
       "description": "Test pack stage/production.",
       "workflows": [],
+      "conditional_workflows": [],
       "memory_types": [],
       "directives": [],
+      "conditional_directives": [],
       "parameters": [],
       "excerpt": "A test fixture of the tooling; never adopted.",
       "profiles": []

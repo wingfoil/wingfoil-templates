@@ -227,7 +227,8 @@ describe('buildIndex on the fixture catalog (CB-4)', () => {
         entry['id'] === 'methodology/kanban');
       ((kanban?.['versions'] as Doc[])[1] as Doc)['requires'] = ['base@^1'];
       writeFileSync(file, stringify(catalog));
-      assert.deepEqual(buildIndex(repo.dir).packs[1]?.versions[1]?.requires, ['base@^1.0.0',
+      assert.deepEqual(buildIndex(repo.dir).packs.find((entry) => entry.id === 'methodology/kanban')
+        ?.versions[1]?.requires, ['base@^1.0.0',
         'software@^1']);
     } finally {
       writeFileSync(file, original);

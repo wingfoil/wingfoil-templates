@@ -28,6 +28,8 @@ export interface IndexVersion {
   requires_capabilities: string[];
   requires: string[];
   conflicts: string[];
+  /** Copied as the catalog version entry does, its `with` only (plan-039 R3). */
+  conditional?: { with: string }[];
   readme_url: string;
   manifest_url: string;
 }
@@ -43,8 +45,11 @@ export interface IndexPack {
   title: string;
   description: string;
   workflows: string[];
+  /** The workflows of the pack's conditional part, composed only with software (R3). */
+  conditional_workflows: string[];
   memory_types: string[];
   directives: string[];
+  conditional_directives: string[];
   parameters: IndexParameter[];
   excerpt: string;
   profiles: string[];
@@ -156,6 +161,19 @@ function memoryTypes(source: TreeSource, packId: string, manifest: Doc): string[
   return sorted(Object.keys(isDoc(fragment['types']) ? fragment['types'] : {}));
 }
 
+/** A version's `conditional`, its `with` only, when the tagged pack.yaml has one (R3). */
+function conditionalOf(manifest: Doc): { conditional?: { with: string }[] } {
+  const parts = list(manifest['conditional']).filter(isDoc);
+  return parts.length === 0 ? {}
+    : { conditional: parts.map((part) => ({ with: String(part['with']) })) };
+}
+
+/** The contents of a pack's conditional part (spec-001 §6.5). */
+function partOf(manifest: Doc): Doc {
+  const [part] = list(manifest['conditional']).filter(isDoc);
+  return part !== undefined && isDoc(part['contents']) ? part['contents'] : {};
+}
+
 function versionOf(tree: string, packId: string, entry: Doc): { version: IndexVersion;
   source: TreeSource; manifest: Doc } {
   const version = String(entry['version']);
@@ -173,6 +191,7 @@ function versionOf(tree: string, packId: string, entry: Doc): { version: IndexVe
       requires_capabilities: strings(manifest['requires_capabilities']),
       requires: strings(manifest['requires']),
       conflicts: strings(manifest['conflicts']),
+      ...conditionalOf(manifest),
       readme_url: rawAtTag(tag, `packs/${packId}/README.md`),
       manifest_url: rawAtTag(tag, `packs/${packId}/pack.yaml`),
     },
@@ -201,8 +220,10 @@ IndexPack | undefined {
     title: String(latest.manifest['title']),
     description: String(latest.manifest['description']),
     workflows: sorted(strings(contents['workflows'])),
+    conditional_workflows: sorted(strings(partOf(latest.manifest)['workflows'])),
     memory_types: memoryTypes(latest.source, id, latest.manifest),
     directives: sorted(strings(contents['directives'])),
+    conditional_directives: sorted(strings(partOf(latest.manifest)['directives'])),
     parameters: parametersOf(latest.manifest),
     excerpt: excerptOf(latest.source.read(`packs/${id}/README.md`)),
     profiles: sorted(presets.filter((preset) => preset.profile !== null

@@ -22,6 +22,7 @@ No released WingFoil installs packs yet: section "Install and update" of each pa
 
 | Pack | Summary | Status | Latest | WingFoil | README |
 | --- | --- | --- | --- | --- | --- |
+| <a id="pack-methodology-flow"></a>`methodology/flow` | Test pack methodology/flow. (`delivery`, `flow-delivery` only with `software`) | active | 1.0.0 | 9.0.0 | [README](https://github.com/wingfoil/wingfoil-templates/blob/methodology/flow@1.0.0/packs/methodology/flow/README.md) |
 | <a id="pack-methodology-kanban"></a>`methodology/kanban` | Kanban, 1.1.0. | active | 1.1.0 | 9.0.0 | [README](https://github.com/wingfoil/wingfoil-templates/blob/methodology/kanban@1.1.0/packs/methodology/kanban/README.md) |
 
 ## Phase
@@ -36,7 +37,9 @@ None published yet.
 
 ## Governance
 
-None published yet.
+| Pack | Summary | Status | Latest | WingFoil | README |
+| --- | --- | --- | --- | --- | --- |
+| <a id="pack-governance-notes"></a>`governance/notes` | Test pack governance/notes. (`notes-rules` only with `software`) | active | 1.0.0 | 9.0.0 | [README](https://github.com/wingfoil/wingfoil-templates/blob/governance/notes@1.0.0/packs/governance/notes/README.md) |
 
 ## Team mode
 

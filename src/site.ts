@@ -9,7 +9,7 @@ import { parseArgs } from 'node:util';
 
 import { byBytes, isDoc } from './index-data';
 import type { CatalogIndex, IndexPack } from './index-model';
-import { axisHeading, firstSentence, profilePacks } from './index-render';
+import { axisHeading, profilePacks, summaryOf } from './index-render';
 import { indexSchemaDocument, indexSchemaErrors } from './index-schema';
 import { readmeOnGithub } from './index-urls';
 import { packAnchor } from './readme';
@@ -85,7 +85,7 @@ function packRow(pack: IndexPack, withSlot: boolean): string {
   const latest = pack.versions.find((version) => version.version === pack.latest);
   const text = [pack.title, pack.description, pack.excerpt, ...pack.profiles].join(' ');
   const cells = [`<td id="${html(packAnchor(pack.id))}">${code(pack.id)}</td>`,
-    `<td>${html(firstSentence(pack.description))}</td>`];
+    `<td>${summaryOf(pack, code, html)}</td>`];
   if (withSlot) cells.push(`<td>${code(pack.slot ?? '')}</td>`);
   cells.push(`<td>${html(pack.status)}</td>`, `<td>${html(pack.latest)}</td>`,
     `<td>${html(latest?.wingfoil ?? '')}</td>`,

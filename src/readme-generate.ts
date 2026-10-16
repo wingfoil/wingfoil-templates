@@ -5,6 +5,7 @@ import { byBytes, code, isDoc, list, sorted, strings, text, yamlIn } from './ind
 import type { Doc } from './index-data';
 import { workingTree } from './index-source';
 import type { TreeSource } from './index-source';
+import { entryId } from './index-model';
 import { cell } from './index-render';
 import { GENERATED_SECTIONS, readmeOutline } from './readme';
 
@@ -31,6 +32,20 @@ interface PackFiles {
   roles: Doc;
   memory: Doc;
   workflows: Doc[];
+  /** The conditional part (spec-001 §6.5): its workflows, directives and the layer it needs. */
+  part: { workflows: Doc[]; directives: string[]; layer: string } | undefined;
+}
+
+function partOf(source: TreeSource, dir: string, manifest: Doc): PackFiles['part'] {
+  const [entry] = list(manifest['conditional']).filter(isDoc);
+  if (entry === undefined) return undefined;
+  const contents = isDoc(entry['contents']) ? entry['contents'] : {};
+  return {
+    workflows: sorted(strings(contents['workflows']))
+      .map((name) => ({ name, ...yamlOrEmpty(source, `${dir}/workflows/${name}.yaml`) })),
+    directives: sorted(strings(contents['directives'])),
+    layer: entryId(text(entry['with'])),
+  };
 }
 
 function readPack(source: TreeSource, id: string): PackFiles {
@@ -45,6 +60,7 @@ function readPack(source: TreeSource, id: string): PackFiles {
     dna: fragment('dna'), roles: fragment('roles'), memory: fragment('memory'),
     workflows: sorted(strings(contents['workflows']))
       .map((name) => ({ name, ...yamlOrEmpty(source, `${dir}/workflows/${name}.yaml`) })),
+    part: partOf(source, dir, manifest),
   };
 }
 
@@ -98,6 +114,12 @@ function compositionSection(pack: PackFiles): string[] {
       `  - roles: ${codes(rolesOf(pack))}`,
       `  - states: ${codes(declaredStates(pack))}`,
       `  - workflows: ${codes(pack.workflows.map((workflow) => text(workflow['name'])))}`);
+    if (pack.part !== undefined) {
+      // spec-002 §2.1: a conditional part's files, present only with its layer (plan-039 R8).
+      lines.push(`  - only with ${code(pack.part.layer)}: ${codes([
+        ...pack.part.workflows.map((workflow) => text(workflow['name'])),
+        ...pack.part.directives])}`);
+    }
   }
   return lines;
 }
@@ -111,11 +133,17 @@ function phaseLine(phase: Doc): string {
   return `  - ${parts.join(', ')}`;
 }
 
+/** The mark of a line the conditional part adds (plan-039 R8). */
+function onlyWith(pack: PackFiles): string {
+  return pack.part === undefined ? '' : `, only with ${code(pack.part.layer)}`;
+}
+
 function workflowLines(pack: PackFiles): string[] {
-  return pack.workflows.flatMap((workflow) => [
-    `- ${code(text(workflow['name']))} (${text(workflow['kind'] ?? 'unknown')})`,
+  const lines = (workflows: Doc[], mark: string): string[] => workflows.flatMap((workflow) => [
+    `- ${code(text(workflow['name']))} (${text(workflow['kind'] ?? 'unknown')})${mark}`,
     ...list(workflow['phases']).filter(isDoc).map(phaseLine),
   ]);
+  return [...lines(pack.workflows, ''), ...lines(pack.part?.workflows ?? [], onlyWith(pack))];
 }
 
 function gatesOf(states: Doc): string {
@@ -152,7 +180,7 @@ function directiveLines(pack: PackFiles): string[] {
       .filter((role) => strings(assignments[role]).includes(id)).map(code);
     if (global.includes(id)) roles.push('global');
     return `- ${code(id)}: ${roles.length === 0 ? '—' : roles.join(', ')}`;
-  });
+  }).concat((pack.part?.directives ?? []).map((id) => `- ${code(id)}: —${onlyWith(pack)}`));
 }
 
 function bullets(names: string[]): string[] {
