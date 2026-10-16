@@ -15,6 +15,12 @@ interface Machine {
   sequence: string[];
   /** state -> reject target, in insertion order. */
   gates: Map<string, string>;
+  /** The states that wait (a set, in insertion order). */
+  waiting: string[];
+  /** state -> an earlier state it returns to; declared by the defining pack only. */
+  returns: Map<string, string> | undefined;
+  /** state -> its limit, a positive integer; merged by the minimum. */
+  limits: Map<string, number>;
 }
 
 interface TypeState {
@@ -25,7 +31,13 @@ interface TypeState {
   path: unknown;
   idPattern: unknown;
   templateFile: unknown;
-  required: unknown[] | undefined;
+  /** The set-once keys the defining pack gave (`name`, `description`, …), compared by value. */
+  setOnce: Map<string, unknown>;
+  /** The frontmatter's keys in the defining fragment's order, later ones appended. */
+  frontmatterKeys: string[];
+  required: string[] | undefined;
+  notApplicable: string[] | undefined;
+  lists: string[] | undefined;
   /** Defined without `states`: follows `defaults` until a tightening detaches it. */
   derives: boolean;
   /** The type's own machine; absent while it follows `defaults`. */
@@ -35,10 +47,15 @@ interface TypeState {
 }
 
 const TOP_KEYS = ['defaults', 'types'];
-const DEFINITION_KEYS = ['path', 'id_pattern', 'template', 'states'];
+/** Set by the defining pack only; a later pack's value must be equal (§7.5, plan-038 ruling 2). */
+const SET_ONCE_KEYS = ['name', 'description', 'tags', 'amendable', 'fields'];
+const DEFINITION_KEYS = [...SET_ONCE_KEYS, 'path', 'id_pattern', 'template', 'states'];
 const TEMPLATE_KEYS = ['file', 'frontmatter'];
-const FRONTMATTER_KEYS = ['required'];
-const STATES_KEYS = ['sequence', 'gates'];
+const FRONTMATTER_KEYS = ['required', 'not_applicable_allowed', 'lists'];
+const FIELD_SETS: [string, 'notApplicable' | 'lists'][] = [
+  ['not_applicable_allowed', 'notApplicable'], ['lists', 'lists'],
+];
+const STATES_KEYS = ['sequence', 'gates', 'waiting', 'returns', 'limits'];
 
 function isDoc(value: unknown): value is Doc {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -57,6 +74,23 @@ function checkKeys(
 ): void {
   const extra = Object.keys(value).find((key) => !allowed.includes(key));
   if (extra !== undefined) fail(subject, pack, `${prefix}${extra} is not allowed here`);
+}
+
+/** A YAML value as text that ignores a mapping's key order and keeps a list's (§7.2). */
+function canonical(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;
+  if (isDoc(value)) {
+    return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:`
+      + canonical(value[key])).join(',')}}`;
+  }
+  return JSON.stringify(value) ?? 'undefined';
+}
+
+function names(value: unknown, subject: string, pack: string, label: string): string[] {
+  if (!Array.isArray(value) || !value.every((item) => typeof item === 'string')) {
+    fail(subject, pack, `${label} must be a list of names`);
+  }
+  return value.filter((item, index) => value.indexOf(item) === index);
 }
 
 function readSequence(value: unknown, subject: string, pack: string): string[] {
@@ -82,9 +116,31 @@ function readGates(value: unknown, subject: string, pack: string): Map<string, s
   return gates;
 }
 
+function readReturns(value: unknown, subject: string, pack: string): Map<string, string> {
+  if (!isDoc(value) || !Object.values(value).every((target) => typeof target === 'string')) {
+    fail(subject, pack, 'states.returns must map a state to a state');
+  }
+  return new Map(Object.entries(value) as [string, string][]);
+}
+
+function readLimits(value: unknown, subject: string, pack: string): Map<string, number> {
+  if (!isDoc(value)) fail(subject, pack, 'states.limits must be a mapping');
+  const limits = new Map<string, number>();
+  for (const [state, limit] of Object.entries(value)) {
+    if (typeof limit !== 'number' || !Number.isInteger(limit) || limit < 1) {
+      fail(subject, pack, `states.limits.${state} must be a positive integer`);
+    }
+    limits.set(state, limit);
+  }
+  return limits;
+}
+
 interface IncomingStates {
   sequence: string[] | undefined;
   gates: Map<string, string>;
+  waiting: string[] | undefined;
+  returns: Map<string, string> | undefined;
+  limits: Map<string, number> | undefined;
 }
 
 function readStates(value: unknown, subject: string, pack: string): IncomingStates {
@@ -95,6 +151,13 @@ function readStates(value: unknown, subject: string, pack: string): IncomingStat
       ? undefined
       : readSequence(value['sequence'], subject, pack),
     gates: readGates(value['gates'], subject, pack),
+    waiting: value['waiting'] === undefined
+      ? undefined
+      : names(value['waiting'], subject, pack, 'states.waiting'),
+    returns: value['returns'] === undefined
+      ? undefined
+      : readReturns(value['returns'], subject, pack),
+    limits: value['limits'] === undefined ? undefined : readLimits(value['limits'], subject, pack),
   };
 }
 
@@ -104,13 +167,62 @@ function isSubsequence(part: string[], whole: string[]): boolean {
   return index === part.length;
 }
 
-/** §7.5 "Sequences" and "Gates": merge an incoming states block into machine A. */
-export function mergeMachine(
+/** §7.5 "Gates", "Waiting, returns and limits": every name a state of the merged sequence. */
+function checkMachine(machine: Machine, subject: string, pack: string): void {
+  const { sequence } = machine;
+  for (const [state, reject] of machine.gates) {
+    if (!sequence.includes(state)) {
+      fail(subject, pack, `gate on ${state}, not a state of the sequence`);
+    }
+    if (!sequence.includes(reject)) {
+      fail(subject, pack, `gate ${state} rejects to ${reject}, not a state of the sequence`);
+    }
+    if (reject === state) fail(subject, pack, `gate ${state} rejects to itself`);
+  }
+  for (const state of machine.waiting) {
+    if (!sequence.includes(state)) {
+      fail(subject, pack, `waiting ${state}, not a state of the sequence`);
+    }
+  }
+  for (const [state, target] of machine.returns ?? []) {
+    if (!sequence.includes(state) || !sequence.includes(target)
+      || sequence.indexOf(target) >= sequence.indexOf(state)) {
+      fail(subject, pack, `returns ${state} to ${target}: two states of the sequence, the `
+        + 'second earlier');
+    }
+  }
+  for (const state of machine.limits.keys()) {
+    if (!sequence.includes(state)) {
+      fail(subject, pack, `limits ${state}, not a state of the sequence`);
+    }
+  }
+}
+
+/** A machine as its defining pack declares it. */
+function newMachine(incoming: IncomingStates, subject: string, pack: string): Machine {
+  if (incoming.sequence === undefined) fail(subject, pack, 'states needs a sequence');
+  const machine: Machine = {
+    sequence: [...incoming.sequence],
+    gates: new Map(incoming.gates),
+    waiting: [...incoming.waiting ?? []],
+    returns: incoming.returns === undefined ? undefined : new Map(incoming.returns),
+    limits: new Map(incoming.limits ?? []),
+  };
+  checkMachine(machine, subject, pack);
+  return machine;
+}
+
+/**
+ * §7.5: merge an incoming states block into machine A. `ownBase` is the sequence a new `waiting`
+ * entry is judged against (A's, or `defaults`' for a tightening of `defaults` reaching a type).
+ */
+function mergeMachine(
   current: Machine,
   incoming: IncomingStates,
   reference: string[],
   subject: string,
   pack: string,
+  ownBase: string[] = current.sequence,
 ): Machine {
   const a = current.sequence;
   const b = incoming.sequence ?? a;
@@ -145,29 +257,60 @@ export function mergeMachine(
     }
     gates.set(state, reject);
   }
-  for (const [state, reject] of gates) {
-    if (!merged.includes(state)) {
-      fail(subject, pack, `gate on ${state}, not a state of the sequence`);
+  // A later pack adds to `waiting` only its own states; a repeat changes nothing (R10 too).
+  const waiting = [...current.waiting];
+  for (const state of incoming.waiting ?? []) {
+    if (waiting.includes(state)) continue;
+    if (ownBase.includes(state) || !b.includes(state)) {
+      fail(subject, pack, `waiting ${state}: only a state this pack inserts may wait`);
     }
-    if (!merged.includes(reject)) {
-      fail(subject, pack, `gate ${state} rejects to ${reject}, not a state of the sequence`);
-    }
-    if (reject === state) fail(subject, pack, `gate ${state} rejects to itself`);
+    waiting.push(state);
   }
-  return { sequence: merged, gates };
+  // `returns` is the defining pack's: an incoming one must equal it.
+  const asDoc = (returns: Map<string, string> | undefined): unknown =>
+    returns === undefined ? undefined : Object.fromEntries(returns);
+  if (incoming.returns !== undefined
+    && canonical(asDoc(incoming.returns)) !== canonical(asDoc(current.returns))) {
+    fail(subject, pack, 'states.returns is the defining pack\'s; it cannot change');
+  }
+  // `limits` merge by the minimum (R10: also on a state, or a type, that had none).
+  const limits = new Map(current.limits);
+  for (const [state, limit] of incoming.limits ?? []) {
+    limits.set(state, Math.min(limit, limits.get(state) ?? limit));
+  }
+  const machine = { sequence: merged, gates, waiting, returns: current.returns, limits };
+  checkMachine(machine, subject, pack);
+  return machine;
 }
 
 function cloneMachine(machine: Machine): Machine {
-  return { sequence: [...machine.sequence], gates: new Map(machine.gates) };
+  return {
+    sequence: [...machine.sequence],
+    gates: new Map(machine.gates),
+    waiting: [...machine.waiting],
+    returns: machine.returns === undefined ? undefined : new Map(machine.returns),
+    limits: new Map(machine.limits),
+  };
 }
 
+/** The machine as composed: `sequence` and `gates` first, then `waiting`, `returns`, `limits`. */
 function machineOut(machine: Machine): Doc {
   const out: Doc = { sequence: [...machine.sequence] };
   if (machine.gates.size > 0) {
     const gates = [...machine.gates].map(([state, reject]) => [state, { reject }]);
     out['gates'] = Object.fromEntries(gates);
   }
+  if (machine.waiting.length > 0) out['waiting'] = [...machine.waiting];
+  if (machine.returns !== undefined) out['returns'] = Object.fromEntries(machine.returns);
+  if (machine.limits.size > 0) out['limits'] = Object.fromEntries(machine.limits);
   return out;
+}
+
+interface Frontmatter {
+  keys: string[];
+  required: string[] | undefined;
+  notApplicable: string[] | undefined;
+  lists: string[] | undefined;
 }
 
 class MemoryMerge {
@@ -199,18 +342,18 @@ class MemoryMerge {
       if (pack !== this.foundation) {
         fail('defaults', pack, `defaults are defined by ${this.foundation} only`);
       }
-      if (incoming.sequence === undefined) fail('defaults', pack, 'states needs a sequence');
-      this.defaults = mergeMachine({ sequence: incoming.sequence, gates: new Map() }, incoming,
-        incoming.sequence, 'defaults', pack);
-      this.defaultsReference = [...incoming.sequence];
+      this.defaults = newMachine(incoming, 'defaults', pack);
+      this.defaultsReference = [...this.defaults.sequence];
       return;
     }
+    const before = this.defaults.sequence;
     this.defaults = mergeMachine(this.defaults, incoming, this.defaultsReference, 'defaults', pack);
-    // Every tightening of defaults reaches the types that derive from it and already detached.
+    // Every tightening of defaults reaches the types that derive from it and already detached;
+    // its `waiting` entries were judged own against defaults' base side.
     for (const [name, type] of this.types) {
       if (type.derives && type.machine !== undefined) {
         type.machine = mergeMachine(type.machine, incoming, this.defaultsReference, `type ${name}`,
-          pack);
+          pack, before);
       }
     }
   }
@@ -226,16 +369,22 @@ class MemoryMerge {
       fail(subject, pack, 'template needs a file');
     }
     checkKeys(template, TEMPLATE_KEYS, subject, pack, 'template.');
-    const required = this.readRequired(template, subject, pack);
+    const frontmatter = this.readFrontmatter(template, subject, pack);
+    // At a definition, the two sets name fields of the type's own `required`.
+    for (const [key, field] of FIELD_SETS) {
+      const outside = (frontmatter[field] ?? []).find((name) =>
+        !(frontmatter.required ?? []).includes(name));
+      if (outside !== undefined) {
+        fail(subject, pack, `template.frontmatter.${key} names ${outside}, which required does `
+          + 'not list');
+      }
+    }
     let machine: Machine | undefined;
     if (body['states'] === undefined && this.defaults === undefined) {
       fail(subject, pack, 'a type without states follows defaults, and no pack defined defaults');
     }
     if (body['states'] !== undefined) {
-      const incoming = readStates(body['states'], subject, pack);
-      if (incoming.sequence === undefined) fail(subject, pack, 'states needs a sequence');
-      machine = mergeMachine({ sequence: incoming.sequence, gates: new Map() }, incoming,
-        incoming.sequence, subject, pack);
+      machine = newMachine(readStates(body['states'], subject, pack), subject, pack);
     }
     this.types.set(name, {
       definedBy: pack,
@@ -244,24 +393,33 @@ class MemoryMerge {
       path: body['path'],
       idPattern: body['id_pattern'],
       templateFile: template['file'],
-      required,
+      setOnce: new Map(SET_ONCE_KEYS.filter((key) => body[key] !== undefined)
+        .map((key) => [key, body[key]])),
+      frontmatterKeys: frontmatter.keys,
+      required: frontmatter.required,
+      notApplicable: frontmatter.notApplicable,
+      lists: frontmatter.lists,
       derives: machine === undefined,
       machine,
       reference: machine === undefined ? [] : [...machine.sequence],
     });
   }
 
-  private readRequired(template: Doc, subject: string, pack: string): unknown[] | undefined {
+  private readFrontmatter(template: Doc, subject: string, pack: string): Frontmatter {
     const frontmatter = template['frontmatter'];
-    if (frontmatter === undefined) return undefined;
+    const none: Frontmatter = { keys: [], required: undefined, notApplicable: undefined,
+      lists: undefined };
+    if (frontmatter === undefined) return none;
     if (!isDoc(frontmatter)) fail(subject, pack, 'template.frontmatter must be a mapping');
-    checkKeys(frontmatter, FRONTMATTER_KEYS, subject, pack, 'template.frontmatter.');
-    const required = frontmatter['required'];
-    if (required === undefined) return undefined;
-    if (!Array.isArray(required) || !required.every((field) => typeof field === 'string')) {
-      fail(subject, pack, 'template.frontmatter.required must be a list of field names');
+    if (frontmatter['exempt'] !== undefined) {
+      fail(subject, pack, 'template.frontmatter.exempt names element ids, which are project '
+        + 'values: it is never in a pack (spec-001 §7.5)');
     }
-    return required.filter((field, index) => required.indexOf(field) === index);
+    checkKeys(frontmatter, FRONTMATTER_KEYS, subject, pack, 'template.frontmatter.');
+    const read = (key: string): string[] | undefined => frontmatter[key] === undefined
+      ? undefined : names(frontmatter[key], subject, pack, `template.frontmatter.${key}`);
+    return { keys: Object.keys(frontmatter), required: read('required'),
+      notApplicable: read('not_applicable_allowed'), lists: read('lists') };
   }
 
   private tighten(name: string, pack: string, body: Doc): void {
@@ -277,16 +435,22 @@ class MemoryMerge {
     };
     same('path', body['path'], type.path);
     same('id_pattern', body['id_pattern'], type.idPattern);
+    for (const key of SET_ONCE_KEYS) {
+      if (body[key] === undefined) continue;
+      if (!type.setOnce.has(key)) {
+        fail(subject, pack, `${key} is set by the defining pack, ${type.definedBy}, which left it `
+          + 'out');
+      }
+      if (canonical(body[key]) !== canonical(type.setOnce.get(key))) {
+        fail(subject, pack, `${key} is set by ${type.definedBy}; it cannot change`);
+      }
+    }
     const template = body['template'];
     if (template !== undefined) {
       if (!isDoc(template)) fail(subject, pack, 'template must be a mapping');
       checkKeys(template, TEMPLATE_KEYS, subject, pack, 'template.');
       same('template.file', template['file'], type.templateFile);
-      const required = this.readRequired(template, subject, pack);
-      if (required !== undefined) {
-        const base = type.required ?? [];
-        type.required = [...base, ...required.filter((field) => !base.includes(field))];
-      }
+      this.tightenFrontmatter(type, this.readFrontmatter(template, subject, pack), subject, pack);
     }
     if (body['states'] === undefined) return;
     const incoming = readStates(body['states'], subject, pack);
@@ -302,22 +466,55 @@ class MemoryMerge {
     type.machine = mergeMachine(type.machine, incoming, reference, subject, pack);
   }
 
+  /**
+   * `required` gains fields; `not_applicable_allowed` and `lists` gain only fields the same
+   * fragment adds to `required`, a repeated entry changing nothing (§7.5, R9).
+   */
+  private tightenFrontmatter(type: TypeState, incoming: Frontmatter, subject: string,
+    pack: string): void {
+    const before = type.required ?? [];
+    const added = (incoming.required ?? []).filter((field) => !before.includes(field));
+    for (const [key, field] of FIELD_SETS) {
+      const current = type[field] ?? [];
+      for (const name of incoming[field] ?? []) {
+        if (current.includes(name) && (incoming.required ?? []).includes(name)) continue;
+        if (!added.includes(name)) {
+          fail(subject, pack, `template.frontmatter.${key} names ${name}, which this fragment `
+            + 'does not add to required');
+        }
+      }
+    }
+    if (incoming.required !== undefined) type.required = [...before, ...added];
+    for (const [, field] of FIELD_SETS) {
+      const extra = (incoming[field] ?? []).filter((name) => !(type[field] ?? []).includes(name));
+      if (incoming[field] !== undefined) type[field] = [...type[field] ?? [], ...extra];
+    }
+    for (const key of incoming.keys) {
+      if (!type.frontmatterKeys.includes(key)) type.frontmatterKeys.push(key);
+    }
+  }
+
   /** A type as composed, its keys in the defining fragment's order, later ones appended. */
   private typeOut(type: TypeState): Doc {
+    const frontmatter: Doc = {};
+    for (const key of type.frontmatterKeys) {
+      if (key === 'required' && type.required !== undefined) frontmatter[key] = [...type.required];
+      if (key === 'not_applicable_allowed' && type.notApplicable !== undefined) {
+        frontmatter[key] = [...type.notApplicable];
+      }
+      if (key === 'lists' && type.lists !== undefined) frontmatter[key] = [...type.lists];
+    }
     const template: Doc = {};
     const templateKeys = [...type.templateKeys];
-    if (type.required !== undefined && !templateKeys.includes('frontmatter')) {
+    if (type.frontmatterKeys.length > 0 && !templateKeys.includes('frontmatter')) {
       templateKeys.push('frontmatter');
     }
     for (const key of templateKeys) {
       if (key === 'file') template['file'] = type.templateFile;
-      if (key === 'frontmatter') {
-        template['frontmatter'] = type.required === undefined
-          ? {}
-          : { required: [...type.required] };
-      }
+      if (key === 'frontmatter') template['frontmatter'] = frontmatter;
     }
-    const values: Doc = { path: type.path, id_pattern: type.idPattern, template };
+    const values: Doc = { ...Object.fromEntries(type.setOnce), path: type.path,
+      id_pattern: type.idPattern, template };
     if (type.machine !== undefined) values['states'] = machineOut(type.machine);
     const keys = [...type.keys];
     if (type.machine !== undefined && !keys.includes('states')) keys.push('states');

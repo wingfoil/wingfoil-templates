@@ -439,7 +439,7 @@ types:
 
   it('defines a type with every key, written back in its order', () => {
     const doc = compose(DEFINED);
-    assert.deepEqual(type(doc, 'note'), parse(NOTE).types.note);
+    assert.deepEqual(type(doc, 'note'), type(parse(NOTE) as Doc, 'note'));
     assert.deepEqual(Object.keys(type(doc, 'note')), ['name', 'description', 'tags', 'amendable',
       'fields', 'path', 'id_pattern', 'template', 'states']);
     assert.deepEqual(Object.keys(type(doc, 'note')['states'] as Doc),
@@ -549,8 +549,8 @@ types:
   it('changes nothing on a repeated entry of not_applicable_allowed (R9)', () => {
     const doc = compose(DEFINED, note('    template:\n      frontmatter:\n'
       + '        required: [owner]\n        not_applicable_allowed: [owner]\n'));
-    assert.deepEqual(((type(doc, 'note')['template'] as Doc)['frontmatter'] as Doc)
-      ['not_applicable_allowed'], ['owner']);
+    const frontmatter = (type(doc, 'note')['template'] as Doc)['frontmatter'] as Doc;
+    assert.deepEqual(frontmatter['not_applicable_allowed'], ['owner']);
   });
 
   it('refuses exempt, at a definition and at a tightening', () => {
