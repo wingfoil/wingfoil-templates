@@ -93,3 +93,8 @@ Then:
   `src/pack-files.ts` and `src/site.ts` in the coherence read). No finding changes a ruling, so no
   re-review. Plan submitted.
 
+- 2026-10-16, rows 1–7 applied (`26d3c77` … `8ac0d85`). Independent review of the branch: approve
+  after minor amendments, none changing a ruling (§7.5's failure list carries R9's condition; the
+  §3.2 example taken from spec-001 §6.2's kanban; §3.3's `conditional` per version; §2.1 rows 4
+  and 5 name both lines and mark only a workflow's or directive's own line; the R3/R8 note marked
+  as folded back). Fixed in the next commit; no re-review.

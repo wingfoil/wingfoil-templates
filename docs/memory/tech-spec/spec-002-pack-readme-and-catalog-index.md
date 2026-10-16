@@ -47,8 +47,8 @@ other level-1 or level-2 heading:
 | 1 | `# <title>` | generated | `pack.yaml` `title` as the heading; then `description`; then one line `Axis: <axis>` and, for a phase pack, ` · Slot: <slot>`; the foundation packs, `base` and `software`, write `Axis: foundation` |
 | 2 | `## When to use it` | written | the problem it solves; the adoption profiles it serves (`docs/01_vision/04_personas.md` §2), as the presets that contain it name them; when **not** to use it |
 | 3 | `## Install and update` | written | §2.3 |
-| 4 | `## Composition` | generated | `requires`, `conflicts`, `formats`, `requires_capabilities`; for every pack but `base`, the Memory types, roles and workflows it adds or tightens over the foundation (`base`, and `software` for a pack that requires it); for `software`, over `base`; for a pack with a conditional part (spec-001 §6.5), that part's workflows and its directives, one line each when non-empty, marked as present only with the layer its `with` names: `` workflows only with `software`: … `` |
-| 5 | `## What it adds` | generated | workflows (name, kind, phases with their roles and gates), Memory types (states, gates), directives (id, the roles fragment entries that assign them), fragments (`dna`, `roles`), Memory templates; a conditional part's workflows and directives too, each line ending `` , only with `software` `` (the layer its `with` names), a directive of the part with `—` for its roles, since nothing always composed assigns it (spec-001 §6.5) |
+| 4 | `## Composition` | generated | `requires`, `conflicts`, `formats`, `requires_capabilities`; for every pack but `base`, the Memory types, roles and workflows it adds or tightens over the foundation (`base`, and `software` for a pack that requires it); for `software`, over `base`; for a pack with a conditional part (spec-001 §6.5), that part's workflows and its directives, one line each when non-empty, marked as present only with the layer its `with` names: `` workflows only with `software`: … `` and `` directives only with `software`: … `` |
+| 5 | `## What it adds` | generated | workflows (name, kind, phases with their roles and gates), Memory types (states, gates), directives (id, the roles fragment entries that assign them), fragments (`dna`, `roles`), Memory templates; a conditional part's workflows and directives too, each workflow's and directive's line ending `` , only with `software` `` (the layer its `with` names), a directive of the part with `—` for its roles, since nothing always composed assigns it (spec-001 §6.5) |
 | 6 | `## Parameters` | generated | one row per parameter: name, type, default (or "required"), description; "None." when there is none |
 | 7 | `## Examples` | written | §2.4 |
 | 8 | `## Sources and adaptations` | written | the sources of the method, with their edition, and what the pack adapts from them (dl-007 M3); "None: written for this catalog." when there is none |
@@ -167,7 +167,8 @@ The human index, in this order:
    anchor READMEs link (§2.5); Summary is `description`'s first sentence, followed, for a pack
    with a conditional part (spec-001 §6.5), by the part's workflows, or its directives when it has
    none, sorted and in code spans, and the layer its latest version's `with` names, for example
-   `` Kanban pull flow. (`delivery`, `flow-delivery` only with `software`) ``; Latest and
+   `` Continuous flow under explicit WIP limits. (`delivery`, `kanban-delivery` only with
+   `software`) ``; Latest and
    WingFoil are the last published version and its computed range; README links the
    README rendered on github.com at the latest version's tag,
    `https://github.com/wingfoil/wingfoil-templates/blob/<tag>/packs/<catalog pack id>/README.md`;
@@ -194,9 +195,9 @@ A pack object holds, in order:
 - `versions`: one object per published version, ascending: `version` and `wingfoil` (the computed
   range) from `catalog.yaml`, `tag` derived as `<catalog pack id>@<version>` (§3.1), and from the
   tag's `pack.yaml`: `formats`, `requires_capabilities`, `requires`, `conflicts` and, only for a
-  pack that carries a conditional part (spec-001 §6.5), `conditional`, a list of one `{ with }`
-  copied as the catalog version entry copies it; plus `readme_url` and `manifest_url` pinned to
-  the tag (§4);
+  version whose tagged `pack.yaml` carries a conditional part (spec-001 §6.5), `conditional`, a
+  list of one `{ with }` copied as the catalog version entry copies it; plus `readme_url` and
+  `manifest_url` pinned to the tag (§4);
 - from the latest version's tag: `title`, `description`, `workflows`, `conditional_workflows`,
   `memory_types`, `directives` and `conditional_directives` (each a sorted list of names;
   `workflows` and `directives` are what is always composed, the two `conditional_` lists the
@@ -360,7 +361,8 @@ All closed in wave W14 (plan-024):
   composition needs a methodology (spec-001 §3), no longer holds after dl-022: a composition without
   `software` needs none, so `base` could compose an example alone. The exemption is kept as written,
   holding while the tree holds no methodology, and `base`'s examples are due with wave W10.
-- 2026-10-16, rulings recorded for the next element that amends this specification (dl-020 R1),
+- 2026-10-16, rulings recorded for the next element that amends this specification (dl-020 R1;
+  folded back by plan-040),
   applied by task-033 under plan-039:
   - **R3** (the approver, plan-039): the conditional part of a pack (spec-001 §6.5) in the index.
     Each version object of `catalog-index.json` copies `conditional` as the catalog version entry

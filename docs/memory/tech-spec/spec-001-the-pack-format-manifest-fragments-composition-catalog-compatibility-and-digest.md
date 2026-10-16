@@ -515,7 +515,7 @@ These fail composition:
 - removing a required frontmatter field;
 - `template.frontmatter.exempt` in a fragment;
 - `not_applicable_allowed` or `lists` naming a field the same fragment does not add to `required`,
-  unless it repeats an entry already in the set;
+  unless it repeats an entry already in the set, with the field in the fragment's `required`;
 - a new `waiting` entry on a state the incoming pack did not insert, or a different `returns`;
 - redefining a type's `path`, `id_pattern` or template file, or a set-once key;
 - a `states` on a type that replaces, rather than extends, the machine it follows.
