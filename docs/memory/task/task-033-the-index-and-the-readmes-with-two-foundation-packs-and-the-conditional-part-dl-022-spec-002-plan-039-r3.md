@@ -124,7 +124,36 @@ Run from a clean clone of `task/task-033-index`, on Node.js 22.21 and the floor 
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+On `task/task-033-index`, through `tooling-delivery` v2 as `developer` (`code-quality`, `testing`,
+`determinism`). Two red steps (dl-018 R3), each a test commit run red and counted, then the code
+commit that makes it green, then the note in spec-002.
+
+**Step 1: the two foundation packs in the index and the READMEs.**
+- Tests, red: `tests/readme-generate.test.ts` (`software`'s `Axis: foundation`, read from its
+  `pack.yaml`; "Declares" for `software`, not for `base`: a characterization);
+  `tests/index-model.test.ts` (`axis` and `slot` `null` for `software`, from `catalog.yaml`);
+  `tests/index-render.test.ts` (the foundation section in `catalog.yaml`'s order, `software`'s
+  anchor and README link; the order is a characterization, byte order agreeing);
+  `tests/support/index-catalog.ts` publishing `software`; the schema accepting it.
+- Code, green: `axisAndSlot` reading the foundation list; `readme-generate.ts` reading the axis and
+  the core from the pack's own `pack.yaml`; `index-render.ts` ordering the foundation section;
+  `index/catalog-index.schema.json`'s `packId`; the golden tree's READMEs and
+  `tests/fixtures/index/expected/` regenerated and reviewed by diff; the site and agent-path counts
+  adapted.
+
+**Step 2: the conditional part (R3, R8).**
+- Tests, red: the README's sections 4 and 5 marked; the index's `conditional`,
+  `conditional_workflows`, `conditional_directives` at their places; the Summary mark in
+  `CATALOG.md` and on the search page (workflows, or directives when the part has none); the
+  fixtures: a second methodology with workflows and a directive in its part, a `governance` pack
+  with directives only, both published in `tests/support/index-catalog.ts`.
+- Code, green: `readme-generate.ts`, `index-model.ts`, `index-render.ts`, `site.ts` (one helper for
+  the mark), the schema's new keys; the fixtures regenerated and reviewed by diff.
+
+**spec-002's Execution Notes** (Acceptance 7): R3 and R8, one commit, content (dl-018 R2).
+
+Then: the grep of Acceptance 6; the checks of Acceptance 1 from clean clones on both Node.js
+versions; the independent review; the push and the CI run.
 
 ## Execution Notes
 
