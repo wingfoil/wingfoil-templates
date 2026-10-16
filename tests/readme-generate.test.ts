@@ -41,15 +41,34 @@ describe('generatedSections (acceptance 10)', () => {
     assert.ok(kanban.includes('- **Formats:** `directive` 1, `roles` 1, `workflow` 1'));
     assert.ok(kanban.includes('  - workflows: `delivery`, `replenishment`'));
     assert.ok(!generatedSections(TREE, 'base').composition.includes('- **Declares:**'));
+    assert.ok(generatedSections(TREE, 'software').composition.includes('- **Declares:**'));
     // A conditional part, marked as present only with software (spec-002 §2.1, plan-039 R8).
     const flow = generatedSections(TREE, 'methodology/flow');
-    assert.ok(flow.composition.includes('  - only with `software`: `delivery`, `flow-delivery`'),
-      flow.composition.join('\n'));
+    assert.ok(flow.composition.includes(
+      '  - workflows only with `software`: `delivery`, `flow-delivery`'),
+    flow.composition.join('\n'));
+    assert.ok(!flow.composition.some((line) => line.startsWith('  - directives only with')),
+      'no directive in flow\'s part: no line');
     assert.ok(flow['what-it-adds'].includes('- `delivery` (sub), only with `software`'),
       flow['what-it-adds'].join('\n'));
     assert.ok(flow['what-it-adds'].includes('- `flow-board` (sub)'));
     const agentFirst = generatedSections(TREE, 'team-mode/agent-first').composition;
     assert.ok(agentFirst.includes('  - roles: `reviewer`'), agentFirst.join('\n'));
+  });
+
+  it('marks a conditional part\'s directives in sections 4 and 5 (plan-039 R8)', () => {
+    withPackTree([{ id: 'governance/notes', workflows: ['notes'],
+      manifest: { formats: { workflow: 1, directive: 1 }, conditional: [{ with: 'software@^1',
+        contents: { directives: ['notes-rules'] } }] },
+      extraFiles: { 'directives/notes-rules.md': '---\nid: notes-rules\nformat: 1\n---\n' } }],
+    (root) => {
+      const notes = generatedSections(root, 'governance/notes');
+      assert.ok(notes.composition.includes('  - directives only with `software`: `notes-rules`'),
+        notes.composition.join('\n'));
+      assert.ok(!notes.composition.some((line) => line.startsWith('  - workflows only with')));
+      assert.ok(notes['what-it-adds'].includes('- `notes-rules`: —, only with `software`'),
+        notes['what-it-adds'].join('\n'));
+    }, { examples: false });
   });
 
   it('writes what a pack adds: workflow phases, Memory types, directives and their roles', () => {

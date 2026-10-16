@@ -2,7 +2,10 @@ import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
 import type { CatalogIndex } from '../src/index-model';
-import { cell, firstSentence, renderCatalog, renderJson, renderLlms } from '../src/index-render';
+import type { IndexPack } from '../src/index-model';
+import {
+  cell, conditionalMark, firstSentence, renderCatalog, renderJson, renderLlms,
+} from '../src/index-render';
 
 const AXES = ['methodology', 'phase', 'blueprint', 'governance', 'team-mode', 'stage'];
 const FOUNDATION = ['base', 'software'];
@@ -24,6 +27,23 @@ describe('table cells and summaries (acceptance 6)', () => {
     assert.equal(firstSentence('Why? Because.'), 'Why?');
     assert.equal(firstSentence('No stop at all'), 'No stop at all');
     assert.equal(firstSentence('Version 1.0 only'), 'Version 1.0 only');
+  });
+});
+
+describe('conditionalMark (plan-039 R3)', () => {
+  const pack = (workflows: string[], directives: string[]): IndexPack => ({
+    latest: '1.0.0', versions: [{ version: '1.0.0', conditional: [{ with: 'software@^1' }] }],
+    conditional_workflows: workflows, conditional_directives: directives,
+  }) as unknown as IndexPack;
+
+  it('names the part\'s workflows, else its directives, and the layer of its with', () => {
+    assert.deepEqual(conditionalMark(pack(['delivery'], ['d'])),
+      { names: ['delivery'], layer: 'software' });
+    assert.deepEqual(conditionalMark(pack([], ['d'])), { names: ['d'], layer: 'software' });
+  });
+
+  it('gives no mark for a part that adds nothing', () => {
+    assert.equal(conditionalMark(pack([], [])), undefined);
   });
 });
 
