@@ -122,7 +122,30 @@ Run from a clean clone of `task/task-034-memory-keys`, on Node.js 22.21 and the 
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+On `task/task-034-memory-keys`, through `tooling-delivery` v2 as `developer` (`code-quality`,
+`testing`, `determinism`). Two red steps (dl-018 R3), each a test commit run red and counted, then
+the code commit that makes it green.
+
+**Step 1: the merge.**
+- Tests, red: `tests/memory-merge.test.ts`, every case of Acceptance 2 (each fails today with
+  "not allowed here", or passes where the rule already holds: those are named characterizations);
+  `tests/compose-documents.test.ts`, Acceptance 3's type defined by `base` and tightened by an
+  overlay, with its expected `memory.yaml` written by hand.
+- Code, green: `src/memory-merge.ts`: the set-once keys kept with the definition and compared by
+  YAML value; `waiting`, `returns` and `limits` read, checked against the merged sequence and
+  merged by §7.5's rules (R10), carried through `defaults` and its derived types; the frontmatter
+  sets with "adds" judged against the base side (R9); `exempt` refused; the output in the order of
+  the readings.
+
+**Step 2: the lint and the composer.**
+- Tests, red: `tests/check-packs.test.ts`, Acceptance 4 (rule `memory-fragment`: `exempt`, and the
+  two sets naming a field outside the fragment's `required`), and the composer's refusal of each.
+- Code, green: a per-fragment rule reading each pack's `fragments/memory.yaml`, in
+  `src/pack-files.ts` or a module of its own, and the composer refusing the same through the
+  merge.
+
+Then: the checks of Acceptance 1 from clean clones on both Node.js versions; the independent
+review; the push and the CI run.
 
 ## Execution Notes
 
