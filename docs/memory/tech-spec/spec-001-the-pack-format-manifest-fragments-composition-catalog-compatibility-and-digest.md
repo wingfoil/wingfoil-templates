@@ -420,9 +420,9 @@ top-level key fails in format 1.
 | `template.frontmatter.exempt` | never present in a pack: it names element ids, which are project values |
 | `states.sequence` | insert states (below) |
 | `states.gates` | add a gate on a state that has none, a state in `waiting` included; an existing gate's `reject` target must be equal |
-| `states.waiting` | add its own states (below) |
+| `states.waiting` | add its own states (below), including when the defining pack declared none |
 | `states.returns` | nothing: an incoming `states` without `returns` keeps it, one with `returns` must equal it |
-| `states.limits` | add a limit on a state that has none, or lower one (below) |
+| `states.limits` | add a limit on a state that has none, or lower one (below), including when the defining pack declared none |
 
 A pack that gives a type deriving from `defaults` its own machine (below) tightens it: it is not
 the defining pack, so every row above applies to it as to any later pack.
@@ -465,14 +465,16 @@ on anything but the composition order of §7.1.
 
 **Waiting, returns and limits.**
 - `waiting` is a set of states of the merged sequence. A later pack may add only its own states:
-  those of its incoming sequence that are not on the base side at that point of the composition.
+  those of its incoming sequence that are not on the base side at that point of the composition,
+  also on a type whose defining pack declared no `waiting`.
   Repeating an entry already present changes nothing. A tightening of `defaults` that adds a
   `waiting` entry reaches every type deriving from `defaults`, like any tightening of `defaults`.
 - `returns` maps a state to an earlier state, both of the merged sequence. Since no state is
   removed and insertion keeps the relative order, a `returns` edge stays valid in every merge.
 - `limits` maps a state of the merged sequence to a positive integer. A `limits.<state>` on a state
-  without a limit is added; on a state with one, the merged value is the smaller of the two, so a
-  limit only ever goes down and the result does not depend on which pack came first.
+  without a limit is added, also on a type whose defining pack declared no `limits`; on a state
+  with one, the merged value is the smaller of the two, so a limit only ever goes down and the
+  result does not depend on which pack came first.
 
 Which `reject` targets make sense (earlier or later states) is WingFoil's validation.
 
