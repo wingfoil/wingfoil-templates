@@ -171,3 +171,13 @@ review; the push and the CI run.
 - **Checks:** the full suite, 915 of 915, and `lint` pass at `23d0347`; `tests/fixtures/compose/`,
   `schema/`, `catalog.yaml`, `compat.yaml` and `index/` unchanged (the golden fragments use none
   of the new keys, so the golden compositions are byte for byte as before).
+- 2026-10-16, **build review** (independent subagent): approve, no correctness bug, no regression
+  (the frontmatter output of existing fragments compared byte for byte with `main`'s build).
+  Tests tightened in `ef9136f`: the limit of `defaults` reaching a detached type now proves the
+  propagation (it passed without it before); the mirror cases of `not_applicable_allowed` and
+  `lists`, R9 on `lists`; the line the `memory-fragment` rule reports (my expected line was wrong,
+  corrected in the next commit before the code); a `waiting` state in no sequence named as such,
+  fixed in `6fa293b`. Recorded: a tightening of `defaults` that inserts a waiting state judges it
+  own against `defaults`' base side, so a detached type whose own overlay had already inserted
+  that state (not waiting) gains it in `waiting`, as the reading on `defaults` states and §7.5's
+  "reaches every type deriving from defaults" ask. Re-review requested (dl-017 R2).
