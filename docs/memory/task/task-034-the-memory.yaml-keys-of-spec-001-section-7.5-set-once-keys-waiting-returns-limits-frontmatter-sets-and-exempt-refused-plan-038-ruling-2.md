@@ -181,3 +181,9 @@ review; the push and the CI run.
   own against `defaults`' base side, so a detached type whose own overlay had already inserted
   that state (not waiting) gains it in `waiting`, as the reading on `defaults` states and §7.5's
   "reaches every type deriving from defaults" ask. Re-review requested (dl-017 R2).
+- 2026-10-16, **re-review** (dl-017 R2): approve; findings 1–5 fixed or recorded; each tightened
+  test fails when the behaviour it names is removed (the reviewer's mutations).
+- 2026-10-16, **Acceptance** from clean clones at `487da77` (the later commits change these notes
+  only), on Node.js 22.21.0 and 22.12.0: `npm ci`, `build`, `test`, `lint`, `check:pins`,
+  `check:schemas`, `check:packs`, `index -- --check`, `validate` and `validate -- --tree
+  tests/fixtures/compose/tree --param project_name=Golden` exit 0. No dependency added.
