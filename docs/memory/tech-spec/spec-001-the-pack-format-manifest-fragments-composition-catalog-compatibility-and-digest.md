@@ -416,7 +416,7 @@ top-level key fails in format 1.
 | `path`, `id_pattern`, `template.file` | nothing: an incoming value must be equal |
 | `name`, `description`, `tags`, `amendable`, `fields` | nothing: an incoming value must be equal, and a value for a key the defining pack left out fails |
 | `template.frontmatter.required` | add fields (set), including when the defining pack declared none |
-| `template.frontmatter.not_applicable_allowed`, `template.frontmatter.lists` | add fields (set), only fields the same fragment adds to `required`, so an earlier pack's required field is never loosened |
+| `template.frontmatter.not_applicable_allowed`, `template.frontmatter.lists` | add fields (set), only fields the same fragment adds to `required`, so an earlier pack's required field is never loosened; repeating an entry already in the set, with the field in the fragment's `required`, changes nothing |
 | `template.frontmatter.exempt` | never present in a pack: it names element ids, which are project values |
 | `states.sequence` | insert states (below) |
 | `states.gates` | add a gate on a state that has none, a state in `waiting` included; an existing gate's `reject` target must be equal |
@@ -512,7 +512,8 @@ These fail composition:
 - changing a gate's `reject` target, or removing a gate;
 - removing a required frontmatter field;
 - `template.frontmatter.exempt` in a fragment;
-- `not_applicable_allowed` or `lists` naming a field the same fragment does not add to `required`;
+- `not_applicable_allowed` or `lists` naming a field the same fragment does not add to `required`,
+  unless it repeats an entry already in the set;
 - a new `waiting` entry on a state the incoming pack did not insert, or a different `returns`;
 - redefining a type's `path`, `id_pattern` or template file, or a set-once key;
 - a `states` on a type that replaces, rather than extends, the machine it follows.
@@ -1018,7 +1019,8 @@ check the rest, and the composer refuses what they reject.
   type, a workflow, a directive or a parameter of `software` outside a conditional part requires it
   (§3, §6.3);
 - no `memory.yaml` fragment holds `template.frontmatter.exempt`, and `not_applicable_allowed` and
-  `lists` name only fields the same fragment adds to `required` (§7.5);
+  `lists` name only fields of the fragment's own `required`; the merge judges that a tightening
+  adds them, a repeat changing nothing (§7.5);
 - `requires_capabilities` is sorted;
 - `contents.fragments` is in the order `dna`, `roles`, `memory`;
 - `contents` and the conditional part's `contents` together match the files present, both ways,
