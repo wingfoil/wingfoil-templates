@@ -231,3 +231,9 @@ Changes this decision implies, each applied later through its own element:
   dl-015. The approver's rulings on the conditional `delivery` and the memory keys are in plan-038.
   Still to apply: the schemas, `catalog.yaml`, the composer, the lint rules, the index and the
   feedback note (a `tooling-change` plan); the charters (W8); this repository's adoption (W9).
+- 2026-10-16, plan-039 (`tooling-change` › `deliver`): the tooling actions applied and merged:
+  the schemas, `catalog.yaml` and spec-001 §11's example, the resolver and the lint rules on the
+  two foundation packs, F-031 (task-031, `51094a8`); the conditional part (task-032, `ecd425f`);
+  the index and the READMEs (task-033, `1991e20`); the `memory.yaml` keys of §7.5 (task-034,
+  `98774b3`). Still to apply: the fold-back of plan-039's rulings into spec-001 and spec-002
+  (a plan before W8, the approver's choice); the charters (W8); this repository's adoption (W9).

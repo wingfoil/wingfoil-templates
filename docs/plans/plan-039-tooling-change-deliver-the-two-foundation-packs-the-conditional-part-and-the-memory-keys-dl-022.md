@@ -217,3 +217,14 @@ from `main`, in the order task-031, task-032, task-033, task-034, one after the 
   tightened) and re-reviewed (approve), CI run 38923931821 on `4f58180` `success`; approved,
   merged `--no-ff` into `main` (`98774b3`), `done`. Recorded for W8: a waiting state a tightening
   of `defaults` adds reaches a detached type that had inserted it already.
+- 2026-10-16, **close.** task-031 … task-034 `done` and on `main` (`51094a8`, `ecd425f`,
+  `1991e20`, `98774b3`); dl-022's Execution Notes record the tooling actions applied. Errata found
+  under this plan: none. Rulings recorded under it, to fold back (dl-020 R2):
+  - spec-001: R7 (§6.5, §18: an empty conditional part is refused), R9 (§7.5: a repeated entry of
+    `not_applicable_allowed` or `lists` changes nothing), R10 (§7.5: a later pack may introduce
+    `waiting` or `limits` on a type whose defining pack declared none);
+  - spec-002: R3 (§3.2, §3.3, §5: the conditional part in the index and the Summary mark, already
+    recorded in its Execution Notes), R8 (§2.1: sections 4 and 5 mark a conditional part's files).
+  The approver named the element on 2026-10-16 (option (a)): a dedicated plan, before wave W8,
+  that amends spec-001 and spec-002 in place, as plan-031 and plan-038 did; W8's opening plan
+  starts after it (dl-020 R3). This plan goes `active → done`.
