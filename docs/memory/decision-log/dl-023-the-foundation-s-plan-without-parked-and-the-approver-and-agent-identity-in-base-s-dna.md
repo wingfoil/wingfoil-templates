@@ -2,7 +2,7 @@
 id: dl-023-the-foundation-s-plan-without-parked-and-the-approver-and-agent-identity-in-base-s-dna
 type: decision-log
 title: "The foundation's plan without parked, and the approver and agent identity in base's DNA"
-status: draft
+status: pending
 tags: ["packs","base","dna","W8"]
 ---
 
