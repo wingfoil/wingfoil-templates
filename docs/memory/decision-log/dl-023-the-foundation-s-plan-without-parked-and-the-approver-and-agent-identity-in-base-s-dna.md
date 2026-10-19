@@ -19,8 +19,9 @@ dl-022 S2 fixes what `base` holds. Three of its points meet WingFoil 0.3.0's beh
   `draft → active`; `workflow end` closes it `active → done` along a `waiting` edge; an instance is
   open only while its plan is `draft` or `active` (`OPEN_PLAN_STATUSES`). Its CHANGELOG asks a
   project that uses the engine for the `plan` type that `init` scaffolds, which is
-  `[draft, active, done]` with `waiting: [active]`. A `parked` state anywhere in that sequence either sends a new plan to
-  `parked` or puts `parked` on the path to `done`, and a parked plan is not an open instance.
+  `[draft, active, done]` with `waiting: [active]`. A `parked` state anywhere in that sequence
+  either sends a new plan to `parked` or puts `parked` on the path to `done`, and a parked plan is
+  not an open instance.
   Whatever `base` decides is final for the packs above it, since a later pack cannot add
   `returns` at all, nor `waiting` on a state it did not insert (spec-001 §7.5).
 - **"`agent_name` and an optional `agent_email`".** A parameter is optional only when it has a
