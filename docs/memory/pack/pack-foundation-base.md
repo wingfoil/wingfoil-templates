@@ -39,9 +39,13 @@ where 0.3.0 drives the edge for every adopter (R-1).
   `wf(plan): finalize <id> [active → done]` commit. A phase plan carries a non-empty `parent`
   (`<workflow>.<phase>`), or WingFoil 0.3.0 deduces it as an instance.
 - `task` moves `backlog → in-progress` and `approved → done` with `submit`; `memory park` takes
-  it back to `backlog`. No `limits`: a methodology adds them (spec-001 §7.5).
-- `amendable: true` on the three types, as WingFoil. Required frontmatter: `plan` requires
-  `title`, `workflow` and `phase`; its template also carries `element` and `parent`.
+  it back to `backlog`. No `limits`: a methodology adds them (spec-001 §7.5). For WingFoil, whose
+  `task` has `waiting: [backlog, approved]` driven by its `dev-loop`, those two edges become
+  `submit` edges (R-1); spec-001 O15 is the way back.
+- `amendable: true` on the three types, as WingFoil. Required frontmatter: `decision-log` and
+  `task` require `title`; `plan` requires `title`, `workflow` and `phase`, and its template also
+  carries `element` and `parent`. A later pack adds fields (WingFoil's `task` adds `release` and
+  `kind`, which cannot be `base`'s).
 - Memory templates (`memory-templates/`): `decision-log`, `task`, `plan`, each declaring `format: 1`
   (spec-001 §5), at the format-1 path `memory/templates/built-in/<type>.md` (spec-001 §7.6, O13).
 
@@ -52,7 +56,7 @@ where 0.3.0 drives the edge for every adopter (R-1).
 | Workflow | Kind | Phases (role) | Notes |
 |---|---|---|---|
 | `decision-log-ingest` | main | `capture` (product-owner: add, submit; produces the decision-log) → `approve` (approver: `memory.approve`, approval by the approver, fallback `capture`) | dl-015 C3: `approve`, as WingFoil and UI; for decisions that change no governance (dl-022 S4) |
-| `governance-evolution` | main | `assess` (facilitator: the plan of the run, made `active`; its inputs are Execution Notes, retrospective points, feedback notes and the approver's requests) → `propose` (facilitator: a decision-log saying what changes in `.wingfoil/`, `AGENTS.md`, the roles and the Memory types, and why; add, submit; produces it) → `approve` (approver; reject back to `propose`) → `apply` (facilitator: the change applied, CLI verbs first, version bumps, `AGENTS.md` updated; produces `.wingfoil/**` and `AGENTS.md`; the plan goes `done`) | dl-022 S4: no `waiting` state; a change too large for one session becomes tasks, run through the composition's delivery workflow when it has one, otherwise one at a time under the plan. Its `main` also keeps a `base`-only composition valid on WingFoil, which refuses a composition with no `main` workflow |
+| `governance-evolution` | main | `assess` (facilitator: `agent.execute`, the assessment written into the run's plan, which `workflow start` created and made `active`; its inputs are Execution Notes, retrospective points, feedback notes and the approver's requests; no `memory.add` and no `produces`, the plan being the instance's record) → `propose` (facilitator: a decision-log saying what changes in `.wingfoil/`, `AGENTS.md`, the roles and the Memory types, and why; add, submit; produces it) → `approve` (approver: `memory.approve`, approval by the approver, fallback `propose`) → `apply` (facilitator: the change applied, CLI verbs first, version bumps, `AGENTS.md` updated; produces `.wingfoil` and `AGENTS.md`); the plan is then closed by `workflow end` | dl-022 S4: no `waiting` state; a change too large for one session becomes tasks, run through the composition's delivery workflow when it has one, otherwise one at a time under the plan. Other packs tighten it with directives (`software`: an `adr` or a tech-spec amendment for an architectural change; `stage/production`: application only through a task, with CI and a reviewer). Its `main` also keeps a `base`-only composition valid on WingFoil, which refuses a composition with no `main` workflow |
 | `retrospective` | sub | `explore` (facilitator: the friction inventory, read-only; produces `{{retrospective_path}}`) → `additional-points` (approver: a checkpoint) → `capture` (facilitator: a decision-log; a change of governance is listed as a point, ruled by `governance-evolution`, one plan per point; a WingFoil defect is a feedback note; produces the decision-log) → `approve` (approver: `memory.approve`, approval by the approver, fallback `capture`) | dl-015 C4: the approval phase is the approver's; dl-006 R2 as dl-022 amends it. `software`'s `delivery` includes it at its own cadence |
 | `retrospective-periodic` | main | `retrospective` (includes `retrospective`) | What runs `retrospective` in a composition without `software` (spec-001 §9), as this repository's own: a `main` cannot be included, so a thin `main` includes the sub (open point 2) |
 
@@ -66,7 +70,8 @@ where 0.3.0 drives the edge for every adopter (R-1).
 `assignments.facilitator: [traceability]` (dl-015 C8, as WingFoil, Benchmark and this repository).
 
 **DNA** (`fragments/dna.yaml`):
-- `project.name` from `project_name`;
+- `project.name` from `project_name`; `modules: []` and `stacks: { technologies: [],
+  methodologies: [] }`, which WingFoil 0.3.0's schema requires, so that `base` validates alone;
 - `team.roles`: `approver`, `facilitator`, `product-owner`, with their descriptions;
 - `team.members`: one member, `{{approver_name}}` with `email: "{{approver_email}}"` and the role
   `approver` (dl-023 D3; WingFoil grants approval by the member's email);
@@ -74,7 +79,9 @@ where 0.3.0 drives the edge for every adopter (R-1).
   `approval_authority: false`, no `email` (dl-023 D2): a project whose agent has an `adapter` adds
   the email in its own `dna.yaml`;
 - `paths.config: [.wingfoil]`; `paths.governance` means the Memory and the plans (dl-015 C11), and
-  its values are the project's (open point 3).
+  its values are the project's (open point 3). As dl-015 asked, what reads it was checked: nothing
+  in WingFoil 0.3.0's source reads `paths.governance` (schema only). WingFoil puts `.wingfoil/`
+  there today, so `base`'s `config` entry adds to its set at adoption.
 
 **Parameters** (spec-001 §8; the defaults are the convention for new projects, R1):
 
@@ -88,7 +95,7 @@ where 0.3.0 drives the edge for every adopter (R-1).
 | `task_path` | path | `docs/memory/task/{id}.md` | `task` `path`; a project may use `{release}` (spec-001 §8.3) |
 | `plan_path` | path | `docs/plans/{id}.md` | `plan` `path`; a project may use `{scope}` |
 | `plan_id` | pattern | `plan-{n}-{slug}` | `plan` `id_pattern` (dl-015 C7; WingFoil and UI set `{workflow}-{phase}-plan`) |
-| `retrospective_path` | path | `docs/retrospectives/*-friction-inventory.md` | `retrospective` › `explore`'s `produces` |
+| `retrospective_path` | path | `docs/retrospectives` | `retrospective` › `explore`'s `produces`: the inventory's directory (weak evidence; a project may set a fixed file) |
 
 **AGENTS.md section** (`agents/section.md`): opens with the file's level-1 heading,
 `# {{project_name}}`; states the governance every project shares: the approver approves, the agent
@@ -100,11 +107,23 @@ WingFoil task-252's provisional markers (spec-001 §10, R-10).
 
 Agreed with WingFoil (plan-041, R1), and binding on every version of `base`:
 1. The parameters' defaults are the convention for new projects.
-2. Existing adopters set their current values and move nothing.
+2. Existing adopters set their current parameter values (paths and ids) and move no file. What an
+   adoption still changes is listed under Adoption below.
 3. Ids are immutable: a new id pattern applies to new elements only.
 4. Memory types, state names, workflow names and phase names are fixed; a version that renames or
    restructures any of them ships an old → new key mapping (WingFoil dl-187) and is a major
    (`pack-semver`).
+
+## Adoption
+
+What adopting `base` changes beyond parameter values (plan-041; dl-023 D1; dl-015's list for this
+repository):
+- `plan`: plans close with `workflow end` or a hand-written `finalize` commit, never `submit`; a
+  phase plan carries `parent`; a project holding `parked` plans moves them back to `active` by a
+  hand-written status commit before installing the composed configuration;
+- the phase and role names above where a project's differ (this repository: `decision-log-ingest`
+  › `rule` becomes `approve`, the retrospective's approval role becomes `approver`);
+- WingFoil 0.3.0's `init` stubs in `custom/` with the ids of `base`'s directives are removed.
 
 ## Out of scope
 
@@ -127,6 +146,9 @@ Agreed with WingFoil (plan-041, R1), and binding on every version of `base`:
 - The oldest release of its matrix is WingFoil 0.3.0: it uses `returns`, `amendable` and the plan
   `waiting` edge of 0.3.0's engine, which 0.2.2 lacks; no workflow uses a key newer than 0.3.0.
   The WingFoil range is computed from `compat.yaml`, never written here.
+- A `path` parameter used in a `produces` takes only `[A-Za-z0-9._/{}-]` (WingFoil 0.3.0 refuses
+  any other character there, `E_PHASE_PRODUCES_NOT_A_PATH`), and no token where no element is in
+  scope.
 - Install mapping and lock: the format-1 `built-in/` mapping (spec-001 §7.6), provisional until
   WingFoil dl-138's tech-spec (O12, O13). WingFoil 0.3.0's `init` writes `custom/` directives with
   the ids `traceability`, `doc-versioning` and `security-secrets`, which win over `base`'s: an
@@ -135,8 +157,9 @@ Agreed with WingFoil (plan-041, R1), and binding on every version of `base`:
 ## Acceptance
 
 - spec-002's CB-1 (README standard) and CB-2 (examples as fixtures, with its exemption while the
-  tree holds no methodology; `base`'s examples are due with W10); CB-6's live part at the first
-  tag (plan-024).
+  tree holds no methodology; `base`'s examples are due with W10, although a `base`-only example
+  now composes and could double as the generic non-software fixture); CB-6's live part at the
+  first tag (plan-024).
 - **Exit criterion** (dl-022 S6): `base` composes and validates with the parameters of every
   governed project, software or not; the non-software ones through a generic non-software fixture
   in `tests/fixtures/`, and a check against the real projects run outside this repository that
@@ -148,10 +171,18 @@ For the approver's acceptance:
 1. **`retrospective`'s phases.** `base` takes WingFoil's phases without `collect-feedback`, which
    reads registered consumer inboxes (WingFoil dl-163) and is WingFoil's own; WingFoil's
    `retrospective` is also bound to a `release` element, which `base` has not. WingFoil keeps its
-   own version, or maps it, at its adoption.
-2. **`retrospective-periodic`.** A thin `main` (this repository's pattern), rather than WingFoil
-   0.3.0's `startable` key on the sub.
+   own version, or maps it, at its adoption; a `custom/` workflow of the same name as `base`'s is
+   left to WingFoil dl-138's install rules, as for directives.
+2. **`retrospective-periodic`.** A thin `main` (this repository's pattern), rather than declaring
+   `retrospective` with WingFoil 0.3.0's `startable: true, includable: true` and no `kind`.
 3. **`paths.governance`.** Its meaning is fixed (dl-015 C11); the fragment writes no value, since a
    directory list cannot be derived from path parameters.
 
 ## Execution Notes
+
+- 2026-10-20: independent review: request changes, two blocking findings, both textual: a `*` in a
+  `produces` path is a load error in WingFoil 0.3.0 (`retrospective_path`'s default and `apply`'s
+  `.wingfoil/**`), and the DNA fragment lacked `modules` and `stacks`, which 0.3.0 requires.
+  Amended, with `assess`, the required frontmatter, commitment 2 scoped to parameter values and an
+  Adoption section, WingFoil's `task` verbs, dl-022 S4's third rule, C11's check, open points 1–2,
+  CB-2. Focused re-review requested.
