@@ -78,7 +78,8 @@ because it only records what these charters need. A later configuration change f
 holds them yet; dl-023 records those that amend dl-022:
 1. **`waiting`, per type:** only where WingFoil 0.3.0 drives the edge for every adopter: `plan`
    `[active]` (`workflow end`), `adr` `[accepted]` and `tech-spec` `[approved]` (`supersedes:`).
-   `task`, `bug` and `release` have none: their edges move with `submit` or `approve`. `returns`,
+   `task`, `bug`, `release` and `release-line` have none: their edges move with `submit` or
+   `approve`. `returns`,
    `limits` and the set-once keys of spec-001 §7.5 are used where the rulings below say; `exempt`
    is never in a pack.
 2. **The default `release`** (dl-015 C5, R3): a thin `release` sub-workflow, the slot, that
@@ -94,20 +95,29 @@ holds them yet; dl-023 records those that amend dl-022:
    prefix of the release-line id's default; the charter says so.
 4. **Machines.** `software`'s `bug` (C2): WingFoil's states, each of `open`, `triaged` and `planned`
    gated with a reject to `closed`, `in-review` and `resolved` gated with a reject to `in-progress`,
-   no `waiting`, and `returns: {in-progress: planned}`. `base`'s `task`: WingFoil's states with
-   `in-progress`, no `waiting`, and `returns: {in-progress: backlog}`. A later pack cannot add
-   `returns` (spec-001 §7.5), so the foundation declares them.
+   no `waiting`, and `returns: {in-progress: planned}`. Its cost: `triaged → planned` and
+   `planned → in-progress`, and a resume after a park, become `approve` edges that only the human
+   approver can take (the agent has no approval authority); O15 is the way back. `software`'s
+   `release` and `release-line`: WingFoil's states and gates, no `waiting` (`release-line`'s
+   `active → done` has no 0.3.0 driver). `base`'s `task`: WingFoil's states with `in-progress`,
+   gates `pending` (reject to `draft`) and `in-review` (reject to `in-progress`), no `waiting`, and
+   `returns: {in-progress: backlog}`. A later pack cannot add `returns` (spec-001 §7.5), so the
+   foundation declares them.
 5. **The agent** (C9): `agent_name` required, with no default. No `agent_email` parameter: a
    parameter is optional only with a default (spec-001 §8.1), and WingFoil 0.3.0 refuses an empty
    or reserved address; `base`'s DNA fragment writes no email, and a project whose agent has an
    `adapter` adds it to its own `dna.yaml` (dl-023).
-6. **Directives:** `traceability` (generic), `doc-versioning`, `security-secrets` and `claim-sources`
-   (the generic rule on the sources of claims) in `base`; `determinism` in `software`. None equals a
-   WingFoil built-in id.
+6. **Directives:** `traceability` (generic), `doc-versioning`, `security-secrets` and
+   `claim-sources` (the generic rule on the sources of claims) in `base`; `determinism` in
+   `software`. None equals a WingFoil built-in id.
 7. **`plan`:** WingFoil 0.3.0's machine, `[draft, active, done]` with `waiting: [active]`, and no
-   `parked` (dl-023). A plan is closed by `workflow end`. `parked` returns in a later version of
-   `base` once WingFoil's engine can suspend an instance off the `submit` path; a feedback note asks
-   WingFoil for it.
+   `parked` (dl-023). `submit` cannot leave `active`: a plan that is an instance started by
+   `workflow start` is closed by `workflow end` once its workflow is complete; a phase plan, which
+   is no complete instance, by a hand-written `wf(plan): finalize <id> [active → done]` commit, as
+   WingFoil does. Adopting `base` therefore leaves the 0.2.2 pin, which has no such edge (W9).
+   `parked` returns in a later version of `base` once WingFoil's engine can suspend an instance off
+   the `submit` path; a feedback note asks WingFoil for it, and for a verb that closes a plan that
+   is not an instance.
 8. **This repository's adoption** (W9): its `tooling` and `pack-delivery` phases stay custom
    workflows of this repository, outside both packs.
 9. **The install folder:** the format-1 `built-in/` mapping (spec-001 §7.6), provisional until
@@ -122,9 +132,11 @@ holds them yet; dl-023 records those that amend dl-022:
     `end-of-life`.
 12. **Validating `software`** (dl-022 S6): a methodology that exists only as a test fixture, on the
     model of the golden tree's `methodology/flow`, never published.
-13. **The approver in DNA** (dl-022 S2): a required parameter `approver_name`, with no default, for
-    the member holding the `approver` role. `base` declares the roles its workflows use; `software`
-    adds those of its own.
+13. **The approver in DNA** (dl-022 S2): two required parameters with no default, `approver_name`
+    and `approver_email`, for the member holding the `approver` role (dl-023). WingFoil 0.3.0 grants
+    approval by matching the git user's email to a member's `email`, so a member without one
+    approves nothing. `base` declares the roles its workflows use; `software` adds those of its
+    own.
 14. **A later pack may add `waiting` to an existing state** when it ships the workflow that drives
     the edge, which would let a methodology restore WingFoil's "no manual verb" edges for the
     projects that run it: recorded as open point O15 of spec-001 by this plan (ruling 1's way
@@ -144,12 +156,12 @@ On branch `pack/foundation-charters`, from `main` at `070fdb4`.
 |---|---|---|---|
 | 1 | claude | This plan: written, independently reviewed, amended, submitted (`draft → active`); then the start of W8 reported to the coordinating session, as agreed with WingFoil | this plan |
 | 2 | claude | A re-read at `wingfoil/wingfoil@v0.3.0` (source, CHANGELOG, `init`'s scaffold) and at UI's and Benchmark's heads: what changed since `92bec996` in the values the charters use; recorded in this plan's Execution Notes | — |
-| 3 | claude, drafting for the approver | dl-023: `memory add --type decision-log`; it amends dl-022 S2 (`plan` without `parked`, no `agent_email` parameter, `approver_name`); reviewed, amended while `draft`, submitted (`draft → pending`) | dl-023 |
+| 3 | claude, drafting for the approver | dl-023: `memory add --type decision-log`; it amends dl-022 S2 (`plan` without `parked`, no `agent_email` parameter, `approver_name` and `approver_email`); reviewed, amended while `draft`, submitted (`draft → pending`) | dl-023 |
 | 4 | claude, drafting for the product-owner | `pack-foundation-base`: `memory add --type pack --title Base --set axis=foundation --set name=base`, `pack_path` filled by hand; written from dl-022 S1, S2, S4, S5, dl-023, dl-015 C1 (decision-log), C3, C4, C7, C8, C9, C10 (decision-log, task, plan), C11 and the rulings above | `docs/memory/pack/pack-foundation-base.md` |
 | 5 | claude, drafting for the product-owner | `pack-foundation-software`: likewise (`--title Software --set name=software`), from dl-022 S3, S5, dl-015 C1 (adr, tech-spec), C2, C5, C6, C10 (adr, tech-spec, bug, release, release-line) and the rulings above, with the mapping of the eight release phases and the `delivery` contract | `docs/memory/pack/pack-foundation-software.md` |
 | 6 | claude | an independent review of each charter (dl-017), amended while `draft`, re-reviewed when a fix changes a ruling; each submitted (`draft → proposed`) | — |
 | 7 | claude | spec-001 §16: open point O15 (ruling 14), with an Execution Note; the merge OK approves the text | spec-001 |
-| 8 | claude | dl-015's Execution Note: how the charters rule each of C1–C11, superseding its Proposal column point by point, with the corrections of 2026-10-16; independently reviewed | dl-015 |
+| 8 | claude | dl-022's Execution Note (amended by dl-023). dl-015's Execution Note: how the charters rule each of C1–C11, superseding its Proposal column point by point, with the corrections of 2026-10-16; independently reviewed | dl-015 |
 | 9 | claude | push; the real CI run's conclusion recorded here | — |
 | 10 | approver | approves dl-023 and dl-015, accepts each charter (`proposed → accepted`), from the commands claude gives | — |
 | 11 | claude | on the approver's OK, `--no-ff` merge into `main`, push, the branch removed; the charters' approval reported to the coordinating session | — |
@@ -182,7 +194,8 @@ What each charter must hold, besides its types, machines, workflows, directives 
 ## Handoff
 
 - **claude:** steps 1–9 and 11, except the approver's gates.
-- **Approver:** the rulings above (given); step 10; the merge OK, which also approves spec-001's O15.
+- **Approver:** the rulings above (given); step 10; the merge OK, which also approves spec-001's
+  O15.
 - Done when dl-023 and dl-015 are `approved` and both charters `accepted`, on `main`, pushed. The
   plan then goes `active → done`, and the intake of WingFoil 0.3.0 starts.
 
@@ -195,3 +208,7 @@ What each charter must hold, besides its types, machines, workflows, directives 
   approver ruled 1, 4, 5, 7 again and 13, 14 and the hosting deviations (2026-10-20); the re-read
   of 0.3.0 moved before the charters; the open §8.3 item named; dl-015's note reviewed; CI before
   the gates; the charters' contents completed. Re-review requested.
+- 2026-10-20: re-review: request changes, one blocking finding: WingFoil 0.3.0 grants approval by
+  the member's email, so `approver_name` alone leaves no one able to approve. The approver ruled
+  `approver_email` (13) and how a plan closes under `waiting: [active]` (7). Also applied:
+  `release-line` without `waiting`, the cost of ruling 4, dl-022's note, `task`'s gates, wraps.
