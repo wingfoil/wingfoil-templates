@@ -79,9 +79,8 @@ holds them yet; dl-023 records those that amend dl-022:
 1. **`waiting`, per type:** only where WingFoil 0.3.0 drives the edge for every adopter: `plan`
    `[active]` (`workflow end`), `adr` `[accepted]` and `tech-spec` `[approved]` (`supersedes:`).
    `task`, `bug`, `release` and `release-line` have none: their edges move with `submit` or
-   `approve`. `returns`,
-   `limits` and the set-once keys of spec-001 §7.5 are used where the rulings below say; `exempt`
-   is never in a pack.
+   `approve`. `returns`, `limits` and the set-once keys of spec-001 §7.5 are used where the rulings
+   below say; `exempt` is never in a pack.
 2. **The default `release`** (dl-015 C5, R3): a thin `release` sub-workflow, the slot, that
    includes two sub-workflows with WingFoil's names and phases, `release-submit` and
    `release-publishing`, the eight phases above; `staging-rehearsal` described generically
@@ -114,10 +113,10 @@ holds them yet; dl-023 records those that amend dl-022:
    `parked` (dl-023). `submit` cannot leave `active`: a plan that is an instance started by
    `workflow start` is closed by `workflow end` once its workflow is complete; a phase plan, which
    is no complete instance, by a hand-written `wf(plan): finalize <id> [active → done]` commit, as
-   WingFoil does. Adopting `base` therefore leaves the 0.2.2 pin, which has no such edge (W9).
-   `parked` returns in a later version of `base` once WingFoil's engine can suspend an instance off
-   the `submit` path; a feedback note asks WingFoil for it, and for a verb that closes a plan that
-   is not an instance.
+   WingFoil does. Adopting `base` therefore needs WingFoil 0.3.0 or later, the oldest release of its
+   matrix (W9). `parked` returns in a later version of `base` once WingFoil's engine can suspend an
+   instance off the `submit` path; a feedback note asks WingFoil for it, and for a verb that closes
+   a plan that is not an instance.
 8. **This repository's adoption** (W9): its `tooling` and `pack-delivery` phases stay custom
    workflows of this repository, outside both packs.
 9. **The install folder:** the format-1 `built-in/` mapping (spec-001 §7.6), provisional until
@@ -161,7 +160,7 @@ On branch `pack/foundation-charters`, from `main` at `070fdb4`.
 | 5 | claude, drafting for the product-owner | `pack-foundation-software`: likewise (`--title Software --set name=software`), from dl-022 S3, S5, dl-015 C1 (adr, tech-spec), C2, C5, C6, C10 (adr, tech-spec, bug, release, release-line) and the rulings above, with the mapping of the eight release phases and the `delivery` contract | `docs/memory/pack/pack-foundation-software.md` |
 | 6 | claude | an independent review of each charter (dl-017), amended while `draft`, re-reviewed when a fix changes a ruling; each submitted (`draft → proposed`) | — |
 | 7 | claude | spec-001 §16: open point O15 (ruling 14), with an Execution Note; the merge OK approves the text | spec-001 |
-| 8 | claude | dl-022's Execution Note (amended by dl-023). dl-015's Execution Note: how the charters rule each of C1–C11, superseding its Proposal column point by point, with the corrections of 2026-10-16; independently reviewed | dl-015 |
+| 8 | claude | dl-022's Execution Note (amended by dl-023). dl-015's Execution Note: how the charters rule each of C1–C11, superseding its Proposal column point by point, with the corrections of 2026-10-16; independently reviewed | dl-022, dl-015 |
 | 9 | claude | push; the real CI run's conclusion recorded here | — |
 | 10 | approver | approves dl-023 and dl-015, accepts each charter (`proposed → accepted`), from the commands claude gives | — |
 | 11 | claude | on the approver's OK, `--no-ff` merge into `main`, push, the branch removed; the charters' approval reported to the coordinating session | — |
@@ -212,3 +211,5 @@ What each charter must hold, besides its types, machines, workflows, directives 
   the member's email, so `approver_name` alone leaves no one able to approve. The approver ruled
   `approver_email` (13) and how a plan closes under `waiting: [active]` (7). Also applied:
   `release-line` without `waiting`, the cost of ruling 4, dl-022's note, `task`'s gates, wraps.
+- 2026-10-20: focused re-review: approve after amendments, nothing blocking; ruling 7's reason for
+  leaving 0.2.2 corrected (0.3.0 is the oldest release of the matrix), wraps. Plan submitted.
