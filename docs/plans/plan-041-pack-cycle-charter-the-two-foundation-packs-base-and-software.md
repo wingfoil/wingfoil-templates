@@ -213,3 +213,28 @@ What each charter must hold, besides its types, machines, workflows, directives 
   `release-line` without `waiting`, the cost of ruling 4, dl-022's note, `task`'s gates, wraps.
 - 2026-10-20: focused re-review: approve after amendments, nothing blocking; ruling 7's reason for
   leaving 0.2.2 corrected (0.3.0 is the oldest release of the matrix), wraps. Plan submitted.
+- 2026-10-20, step 2 (re-read at `wingfoil/wingfoil@v0.3.0` = `cc31d7a8`, `origin/main` at
+  `1b686151`; `wingfoil/wingfoil-ui@b4496d4`; `wingfoil/wingfoil-benchmark@8cf7ae4`):
+  - unchanged since `92bec996`: `memory.yaml` 3.5 (types, machines, keys), `dna.yaml`, `roles.yaml`,
+    the schemas, the state machine, the format constants (all 1), the built-in directive ids, and
+    `init`'s scaffold. No phase name changed. UI and Benchmark: no change in `.wingfoil/`; UI still
+    pins 0.2.2, Benchmark a pre-0.2 build;
+  - every claim of this plan's Context on the engine is confirmed. Corrections: WingFoil's
+    `release` has no gate (`[draft, planning, in-development, releasing, released]`, all three
+    middle states `waiting`), so with ruling 1 every release edge is a `submit` and the approval is
+    the `approve-release` phase's; its id pattern is `{kind}-{version}`, `rel-{version}` being
+    ruling 3's generic default;
+  - new: WingFoil's agent file is `AGENTS.md`, with the same provisional markers as spec-001 §10
+    (ruling 10 holds); `release-publishing` 1.9 tags on an integration branch (`main` for a minor,
+    `release/X.Y` for a patch), which a generic default leaves to the project;
+  - for the charters, from 0.3.0: a phase plan needs a non-empty `parent` (`<workflow>.<phase>`),
+    or it is deduced as an instance; a `{ type, path }` in `produces` needs a `memory.add(type: T)`
+    action in the same phase, and only elements added with `--workflow`/`--step` count as a step's
+    evidence; `init` 0.3.0 writes `custom/` directives with the ids `traceability`, `doc-versioning`,
+    `security-secrets` and `determinism`, which win over a pack's of the same id, so an adopter
+    removes those stubs; ruling 1 changes WingFoil's verbs on edges (states stay identical), which
+    `software`'s charter says to WingFoil; WingFoil's bug-400: `init` 0.3.0's workflows declare no
+    `role`, `actions` or `produces`, so the packs would be the first configuration the engine can
+    drive;
+  - 0.3.0's CHANGELOG names no capability: neither `pack-install` nor a workflow engine; template
+    installation is v0.4 (WingFoil dl-138). No ruling changes.
