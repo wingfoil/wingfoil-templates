@@ -2,7 +2,7 @@
 id: plan-041-pack-cycle-charter-the-two-foundation-packs-base-and-software
 type: plan
 title: "pack-cycle charter: the two foundation packs, base and software"
-status: active
+status: done
 workflow: "pack-cycle"
 phase: "charter"
 tags: ["packs","base","software","W8"]
