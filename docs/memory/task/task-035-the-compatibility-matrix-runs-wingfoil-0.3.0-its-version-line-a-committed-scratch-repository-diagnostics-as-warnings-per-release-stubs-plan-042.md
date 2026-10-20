@@ -21,8 +21,8 @@ run it; read at `v0.3.0`, it cannot:
   `.wingfoil/` into a scratch repository that is only `git init`ed, so `workflow list` sees no
   workflow (an empty snapshot, exit 0) and the check is vacuous;
 - **what a warning is.** `judge` fails a command on its exit, any stderr line, and a stdout line
-  starting `Warning:`. 0.3.0 writes its stderr warnings as `warning: …` (any stderr line already
-  fails), and also reports problems as data on stdout: `workflow list` returns `diagnostics`
+  starting `Warning:`. 0.3.0 writes its stderr warnings as `warning: …`, or `{"warning": …}` under
+  `--format json` (any stderr line already fails), and also reports problems as data on stdout: `workflow list` returns `diagnostics`
   (`{code, severity: error|warning, file, path, message}`; an `error` one also makes the command
   exit 1), and `directives list` returns `{entries, warnings}` in both 0.2.2 and 0.3.0, 0.3.0
   adding scope and `roles.yaml` disagreements. The approver ruled (L and M, 2026-10-20): a warning
@@ -49,7 +49,7 @@ Tests in `tests/matrix.test.ts` and `tests/validate.test.ts` unless named, run b
 
 1. **The version line.** A release run accepts a `--version` line that is exactly the release, or
    the release, one space and a parenthesised commit as above: it accepts `0.3.0`,
-   `0.3.0 (cc31d7a8)` (e.g.), `0.3.0 (unknown)`; it refuses `0.3.0 (`, `0.3.0  (x)`,
+   e.g. `0.3.0 (cc31d7a8)`, and `0.3.0 (unknown)`; it refuses `0.3.0 (`, `0.3.0  (x)`,
    `0.3.0 (x) y` and `0.3.1 (cc31d7a8)` with "--version printed …".
 2. **A committed scratch repository.** Before any WingFoil command, the scratch repository holds one
    commit of the copied `.wingfoil/`, added with `git add --force` (no exclude file drops a file)
@@ -112,3 +112,5 @@ Tests in `tests/matrix.test.ts` and `tests/validate.test.ts` unless named, run b
   report labels and the stub keys, a two-release stub test, a complete scratch commit, the empty
   snapshot, `directives list`'s warnings, the version cases). The approver ruled M (2026-10-20):
   `directives list`'s `warnings` count. Amended.
+- 2026-10-20: re-review: approve (ruling M implementable on both releases; criterion 7's summary
+  line matches `src/validate.ts`); two wording nits applied. Submitted.
