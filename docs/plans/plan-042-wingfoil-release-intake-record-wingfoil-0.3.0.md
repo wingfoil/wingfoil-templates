@@ -50,7 +50,8 @@ also breaks the compatibility matrix itself (read at `v0.3.0` by this plan's rev
 
 The approver ruled on 2026-10-20, on this plan's review:
 - **K:** two tasks, as dl-018 asks of a task too large for red first: **task-035** makes the matrix
-  run WingFoil 0.3.0, tested on a fixture `compat.yaml`, without touching the real file; **task-036**
+  run WingFoil 0.3.0, tested on a fixture `compat.yaml`, without touching the real file;
+  **task-036**
   records 0.3.0, the intake proper.
 - **L:** for 0.3.0, a "warning" the zero-warning matrix refuses (`pack-compatibility`) is any
   diagnostic of severity warning or error, whether on stderr (`Warning: …`) or in the
@@ -92,8 +93,8 @@ the vocabulary's final names (WingFoil dl-177).
    - ruling L in the judge: stderr warnings and `workflow list`'s `diagnostics`;
    - the tests' stub answers per release; `fixtureCompat` is built from a frozen 0.2.2-only header,
      so the fixture ranges do not depend on the real `compat.yaml`;
-   - a fixture `compat.yaml` with 0.3.0 proves a run against it (the stub, and in one test the real
-     0.3.0 only if the matrix can install it offline-safe; otherwise by CI).
+   - a fixture `compat.yaml` with 0.3.0 proves a run against it with the stub; a run of the real
+     0.3.0 is proved by the CI's golden fixture step, which installs it.
 4. **task-036 — record 0.3.0:**
    - `compat.yaml`: release 0.3.0 with `format_key`, `reads`, `capabilities: [workflow-engine]` and
      its `notes`, as verified by running it;
