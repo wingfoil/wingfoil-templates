@@ -141,6 +141,13 @@ holds them yet; dl-023 records those that amend dl-022:
     projects that run it: recorded as open point O15 of spec-001 by this plan (ruling 1's way
     back).
 
+Then, at the charters' review, on 2026-10-20:
+15. **Ruling H.** A `release` edge may also move by a workflow action naming its target state,
+    `element.set_state(<state>)`, as WingFoil's `enter-releasing` and `mark-released` do; it needs
+    no `waiting`, so ruling 1 holds.
+16. **Ruling I** (dl-015 C2): Benchmark's `bug` migrates `draft → draft`, `pending → open`,
+    `approved → planned`, `fixed → resolved` (`closed` if Benchmark reads "fixed" as closed).
+
 Not in this plan: WingFoil 0.3.0's intake into `compat.yaml` (`wingfoil-release-intake`, the next
 plan, run by this session after this one); the feedback note asking WingFoil to suspend an
 instance (its own task, after this plan); the `author` phase, whose tasks write the packs (a plan
@@ -238,3 +245,10 @@ What each charter must hold, besides its types, machines, workflows, directives 
     drive;
   - 0.3.0's CHANGELOG names no capability: neither `pack-install` nor a workflow engine; template
     installation is v0.4 (WingFoil dl-138). No ruling changes.
+- 2026-10-20, steps 3–4: dl-023 written, reviewed (approve after amendments), amended and
+  submitted (`pending`). Both charters written and reviewed; `base`'s: request changes (two
+  textual blockers: a `*` in a `produces` path, `modules`/`stacks` missing from the DNA);
+  `software`'s: request changes (the thin `release` must be element-bound; `submit` misfires on
+  the release phases after a reject; the exit criterion's fixture). The approver ruled H and I
+  (15, 16) and asked whether adoption applies to other projects: the charters' Adoption sections
+  now open with the procedure for any project. Amended; focused re-reviews requested.

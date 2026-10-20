@@ -201,8 +201,8 @@ READMEs give the procedure (F6.1, spec-002 §2.3).
 ## Open points
 
 For the approver's acceptance:
-1. **The `inception` and `specification` defaults' phases** (`frame`/`approve`, `specify`/`approve`):
-   minimal, naming no method (dl-003 D11); their names become fixed with the first version (R1).
+1. **The `inception` and `specification` defaults' phases** (`frame`/`approve`,
+   `specify`/`approve`): minimal, naming no method (dl-003 D11); their names become fixed with the first version (R1).
 2. **`inception_path`**, a parameter for the one document the default `inception` produces.
 3. **`release`'s required frontmatter** (`title`, `version`, `release-line`): the minimum WingFoil,
    UI and Benchmark share; Benchmark's releases have no `release-line` field today.
