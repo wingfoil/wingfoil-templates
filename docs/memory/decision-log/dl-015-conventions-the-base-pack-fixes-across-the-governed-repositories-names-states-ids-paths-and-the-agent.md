@@ -82,3 +82,29 @@ Consequences:
   C10 is split by type, the paths of `adr`, `tech-spec` and `bug` going to `software`'s charter; the
   meaning of the `{release}` token is `software`'s, and `base`'s path parameters pass it through
   (spec-001 §8.3). It is ruled with both charters, and stays `pending` until then.
+- 2026-10-20, plan-041: ruled with the two foundation charters, which supersede the Proposal column
+  point by point (the governed repositories re-read on 2026-10-16 at `wingfoil/wingfoil@92bec996`,
+  `wingfoil/wingfoil-ui@cce3656`, `wingfoil/wingfoil-benchmark@8cf7ae4`, and WingFoil again at
+  `v0.3.0`). Corrections to the table: C2, Benchmark's `bug` is the default machine plus `fixed`;
+  C3, Benchmark's `decision-log-ingest` has one phase, `capture`; C8, WingFoil also gives
+  `traceability` to the facilitator; C9, WingFoil's agent has a name, an email and an `adapter`;
+  C10, WingFoil's release folder is `rl-{release-line}/`, UI's `{release-line}/`.
+  - **C1** (`pack-foundation-base` for `decision-log`, `pack-foundation-software` for `adr` and
+    `tech-spec`): WingFoil's names, as proposed; `adr` and `tech-spec` keep `waiting` on
+    `accepted` and `approved`, which `supersedes:` drives in WingFoil 0.3.0.
+  - **C2** (`software`): WingFoil's chain, with no `waiting` and `returns: {in-progress: planned}`;
+    Benchmark's `fixed` maps to `resolved` (or `closed`), its other states as `software`'s charter
+    lists (plan-041 ruling 16).
+  - **C3** (`base`): `approve`, as proposed.
+  - **C4** (`base`): role `approver`, as proposed; its `approve` selects the retrospective's
+    decision-log.
+  - **C5** (`software`): not five phases but WingFoil's eight: a thin `release` slot including
+    `release-submit` and `release-publishing` (plan-041 ruling 2).
+  - **C6** (`software`): both types in `software`; id patterns as parameters with defaults
+    `rl-{version}` and `rel-{version}`, the token `{release-line}`; the proposed `{line}` is dropped.
+  - **C7** (`base`): `plan_id`, default `plan-{n}-{slug}`, as proposed.
+  - **C8** (`base`): `traceability` for the facilitator, as proposed.
+  - **C9** (`base`): `agent_name` required with no default, not a generic default (dl-023 D2).
+  - **C10** (both): one path parameter per type, defaults in this repository's form; `{release}`
+    and `{scope}` pass through, `{release}` being a task's `release` field (`software`'s charter).
+  - **C11** (`base`): as proposed; nothing in WingFoil 0.3.0's source reads `paths.governance`.
