@@ -148,6 +148,10 @@ Then, at the charters' review, on 2026-10-20:
 16. **Ruling I** (dl-015 C2): Benchmark's `bug` migrates `draft → draft`, `pending → open`,
     `approved → planned`, `fixed → resolved` (`closed` if Benchmark reads "fixed" as closed).
 
+17. **Ruling J.** Both packs declare `requires_capabilities: [workflow-engine]`, as dl-003 D3 asks
+    of a `base` with `waiting` states; the intake of WingFoil 0.3.0 records whether 0.3.0 provides
+    it. D3 stands.
+
 Not in this plan: WingFoil 0.3.0's intake into `compat.yaml` (`wingfoil-release-intake`, the next
 plan, run by this session after this one); the feedback note asking WingFoil to suspend an
 instance (its own task, after this plan); the `author` phase, whose tasks write the packs (a plan
@@ -252,3 +256,7 @@ What each charter must hold, besides its types, machines, workflows, directives 
   the release phases after a reject; the exit criterion's fixture). The approver ruled H and I
   (15, 16) and asked whether adoption applies to other projects: the charters' Adoption sections
   now open with the procedure for any project. Amended; focused re-reviews requested.
+- 2026-10-20, steps 6–8: both charters re-reviewed (approve after amendments), amended and
+  submitted (`proposed`); spec-001's O15 written; dl-022's and dl-015's notes written, reviewed
+  (approve after amendments), amended. The review found dl-003 D3 (a `base` with `waiting` requires
+  `workflow-engine`) unaddressed: the approver ruled J (17).

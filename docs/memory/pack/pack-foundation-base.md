@@ -153,8 +153,10 @@ repository):
 ## Compatibility
 
 - `formats`: `dna: 1`, `roles: 1`, `memory: 1`, `workflow: 1`, `directive: 1`,
-  `memory-template: 1`. `requires: []`. `requires_capabilities`: none expected; the intake of
-  WingFoil 0.3.0 decides what 0.3.0 provides from the provisional vocabulary (dl-021 R4, O3).
+  `memory-template: 1`. `requires: []`. `requires_capabilities: [workflow-engine]`, from the
+  provisional vocabulary (dl-021 R4, O3): `base` uses `waiting` and the engine's verbs (`workflow
+  end`, `memory park`), as dl-003 D3 asks; the intake of WingFoil 0.3.0 records whether 0.3.0
+  provides it (its CHANGELOG names `workflow start`, `end`, `next` and `finalize`).
 - The oldest release of its matrix is WingFoil 0.3.0: it uses `returns`, `amendable` and the plan
   `waiting` edge of 0.3.0's engine, which 0.2.2 lacks; no workflow uses a key newer than 0.3.0.
   The WingFoil range is computed from `compat.yaml`, never written here.
@@ -212,3 +214,5 @@ For the approver's acceptance:
   `apply`'s evidence, the ruling range.
 - 2026-10-20: from `pack-foundation-software`'s re-review: the `decision-log` migration of the
   projects on the default machine added to the Adoption section.
+- 2026-10-20: `requires_capabilities: [workflow-engine]`, as dl-003 D3 asks of a `base` with
+  `waiting` states (the approver's ruling J, 2026-10-20; found at the review of dl-015's note).

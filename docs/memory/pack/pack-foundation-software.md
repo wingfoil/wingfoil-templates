@@ -176,8 +176,9 @@ READMEs give the procedure (F6.1, spec-002 §2.3).
 ## Compatibility
 
 - `formats`: `dna: 1`, `roles: 1`, `memory: 1`, `workflow: 1`, `directive: 1`,
-  `memory-template: 1`. `requires: [base@^1]`. `requires_capabilities`: none expected; the intake
-  of WingFoil 0.3.0 decides (dl-021 R4, O3).
+  `memory-template: 1`. `requires: [base@^1]`. `requires_capabilities: [workflow-engine]`, as
+  `base` (dl-003 D3; `adr` and `tech-spec` use `waiting`, `bug` uses `memory park`); the intake of
+  WingFoil 0.3.0 records whether 0.3.0 provides it (dl-021 R4, O3).
 - The oldest release of its matrix is WingFoil 0.3.0 (`returns`, `amendable`, `supersedes:` with
   `waiting`, element-bound includes); no workflow uses a key newer than 0.3.0. The range is
   computed, never written here. A `path` parameter used in a `produces` takes only
@@ -223,3 +224,5 @@ For the approver's acceptance:
   first review resolved, rulings H and I applied. Amended: `deprecate`'s selection, the migration
   rows of Benchmark, UI and this repository, `specification` › `approve`'s selection stated, ruling
   H scoped to `release`, a wrap.
+- 2026-10-20: `requires_capabilities: [workflow-engine]`, as `base` (dl-003 D3; the approver's
+  ruling J, 2026-10-20).
