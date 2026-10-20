@@ -54,7 +54,8 @@ The approver ruled on 2026-10-20, on this plan's review:
   **task-036** records 0.3.0, the intake proper.
 - **L:** for 0.3.0, a "warning" the zero-warning matrix refuses (`pack-compatibility`) is any
   diagnostic of severity warning or error, whether on stderr (`Warning: …`) or in the
-  `diagnostics` array `workflow list` prints on stdout.
+  `diagnostics` array `workflow list` prints on stdout; and (**M**, at task-035's review) any entry
+  of the `warnings` array `directives list` prints on stdout.
 
 `recheck` and `plan-migrations`: no pack is published (`catalog.yaml` › `packs` is empty), so no
 range is recomputed and no migration task opens.
