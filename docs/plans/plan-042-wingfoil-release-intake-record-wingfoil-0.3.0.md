@@ -51,8 +51,7 @@ also breaks the compatibility matrix itself (read at `v0.3.0` by this plan's rev
 The approver ruled on 2026-10-20, on this plan's review:
 - **K:** two tasks, as dl-018 asks of a task too large for red first: **task-035** makes the matrix
   run WingFoil 0.3.0, tested on a fixture `compat.yaml`, without touching the real file;
-  **task-036**
-  records 0.3.0, the intake proper.
+  **task-036** records 0.3.0, the intake proper.
 - **L:** for 0.3.0, a "warning" the zero-warning matrix refuses (`pack-compatibility`) is any
   diagnostic of severity warning or error, whether on stderr (`Warning: …`) or in the
   `diagnostics` array `workflow list` prints on stdout.
@@ -93,20 +92,32 @@ the vocabulary's final names (WingFoil dl-177).
    - ruling L in the judge: stderr warnings and `workflow list`'s `diagnostics`;
    - the tests' stub answers per release; `fixtureCompat` is built from a frozen 0.2.2-only header,
      so the fixture ranges do not depend on the real `compat.yaml`;
-   - a fixture `compat.yaml` with 0.3.0 proves a run against it with the stub; a run of the real
-     0.3.0 is proved by the CI's golden fixture step, which installs it.
+   - `src/matrix/wingfoil-0.3.0/package.json` pinning `wingfoil` exactly, and its lockfile
+     (`npm install --package-lock-only --ignore-scripts`); `npm run check:pins`; `npm audit` 0
+     vulnerabilities on the new lockfile, any other result going to the approver (dl-019); the real
+     `compat.yaml` untouched (ruling K);
+   - `workflow list` read with `--format json`, which both 0.2.2 and 0.3.0 accept and which does
+     not change at WingFoil v0.4 as console output will: a flag added to the command
+     `pack-compatibility` names, which the Design states; an `error` diagnostic already fails the
+     command, so ruling L adds the `warning` items of an exit 0;
+   - the scratch commit with a fixed identity (`-c user.name=… -c user.email=…`), since the
+     matrix's git environment carries none;
+   - a fixture `compat.yaml` with 0.3.0 proves a run with the stub; an Acceptance command runs the
+     real 0.3.0 on a temporary copy of the golden tree whose `compat.yaml` adds 0.3.0 (`npm run
+     validate -- --tree <copy> …`). A warning 0.3.0 raises on a fixture is fixed in the fixture;
+     one that needs a rule changed goes to the approver (dl-019).
 4. **task-036 — record 0.3.0:**
    - `compat.yaml`: release 0.3.0 with `format_key`, `reads`, `capabilities: [workflow-engine]` and
      its `notes`, as verified by running it;
-   - `src/matrix/wingfoil-0.3.0/package.json` pinning `wingfoil` exactly, and its lockfile
-     (`npm install --package-lock-only --ignore-scripts`); `npm run check:pins`; `npm audit` 0
-     vulnerabilities on the new lockfile, any other result going to the approver (dl-019);
    - spec-001, amended in place as plan-032 did (the merge OK approves the text, so nothing is left
      to fold back under dl-020): §12's example and the compose fixture's `compat.yaml` equal to the
      real file, §12's prose gaining 0.3.0's check (date, commands, result), §16's O10 settled, an
      Execution Note; dl-009's Execution Note: the self-tests now also run a release with
      `format_key: true`, the tolerance applying to 0.2.2 only;
-   - `tests/compat.test.ts` (the real file's releases; a sample release other than 0.3.0);
+   - `tests/compat.test.ts` (the real file's releases; a sample release other than 0.3.0) and
+     `tests/validate.test.ts` (the golden fixture's `compat.yaml` equals the real file: 13 runs
+     become 26, 0.3.0's lines join 0.2.2's tolerated ones, publication mode now passes against
+     0.3.0);
    - `.github/workflows/ci.yml`: its header and the golden fixture step's name;
    - `npm run index`: `CATALOG.md` and `catalog-index.json` expected byte-unchanged, at the root and
      in the fixture tree (`install` stays empty);
@@ -132,3 +143,7 @@ the vocabulary's final names (WingFoil dl-177).
   `HEAD`) and moves many test expectations (the stub, the fixture's 9.0.0, `compat.test.ts`); the
   CI's comments, dl-009, spec-001 §12's prose and the out-of-scope list were missing. The approver
   ruled K (two tasks) and L (what counts as a warning); amended. Re-review requested.
+- 2026-10-20: re-review: approve after amendments. 0.3.0's pin and lockfile move to task-035, whose
+  Acceptance runs the real 0.3.0 on a copy of the golden tree (the real `compat.yaml` untouched,
+  ruling K); `validate.test.ts` joins task-036; the fixture-warning rule restored; `--format json`
+  and the scratch commit's identity named. Plan submitted.
