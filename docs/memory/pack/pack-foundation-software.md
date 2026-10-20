@@ -38,9 +38,10 @@ release-line); plan-041 holds the approver's rulings it applies (R-1 … R-14, a
 | `release-line` | `[draft, planning, active, done]` | `planning` → `draft` | — | — | `release_line_id`, default `rl-{version}` | `release_line_path`, `docs/memory/release-line/{id}.md` | `title`, `version` |
 | `release` | `[draft, planning, in-development, releasing, released]` | — | — | — | `release_id`, default `rel-{version}` | `release_path`, `docs/memory/release/{release-line}/{id}.md` | `title`, `version`, `release-line` |
 
-- **How the edges move.** With no `waiting` (R-1), an edge moves by `submit`, by `approve` from a
-  gate, or by a workflow action that names its target state, `element.set_state(<state>)`
-  (ruling H), which WingFoil 0.3.0 records as a commit and which needs no `waiting`.
+- **How the edges move.** With no `waiting` (R-1), an edge moves by `submit` or by `approve` from
+  a gate; a `release` edge also by a workflow action that names its target state,
+  `element.set_state(<state>)` (ruling H), which WingFoil 0.3.0 records as a commit and which needs
+  no `waiting`.
 - **The cost of R-1 on `bug`.** `triaged → planned` and `planned → in-progress`, and a resume after
   `memory park`, are `approve` edges that only the human approver takes (the agent has no approval
   authority). spec-001 O15 is the way back for a methodology that ships the driving workflows.
@@ -67,11 +68,11 @@ approval in a sub-workflow selects its element (`where`), so WingFoil 0.3.0 can 
 |---|---|---|
 | `sw-life-cycle` | main | `inception` (includes `inception`) → `specification` (includes `specification`) → `delivery` (includes `delivery`) → `end-of-life` (includes `end-of-life`) |
 | `inception` (slot default) | sub | `frame` (product-owner: the project's purpose and scope; produces `{{inception_path}}`) → `approve` (approver: approval, fallback `frame`) |
-| `specification` (slot default) | sub | `specify` (architect: a tech-spec, add, submit; produces it) → `approve` (approver: `memory.approve` on `where: { type: tech-spec, status: [pending] }`, fallback `specify`) |
+| `specification` (slot default) | sub | `specify` (architect: a tech-spec, add, submit; produces it) → `approve` (approver: `memory.approve` on `where: { type: tech-spec, status: [pending] }`, which selects every pending tech-spec: the approver rules the one `specify` submitted, and the step closes once none is pending; fallback `specify`) |
 | `release` (slot default) | sub, `element: release` | `submit` (includes `release-submit`) → `publishing` (includes `release-publishing`) |
 | `release-submit` | sub, `element: release` | `pre-release-checks` (qa) → `enter-releasing` (tech-lead: `element.set_state(releasing)`) → `approve-release` (approver: approval, fallback `pre-release-checks`) |
 | `release-publishing` | sub, `element: release` | `release-commit` (tech-lead) → `staging-rehearsal` (qa: rehearse the publication without making it public) → `tag` (tech-lead) → `publish` (tech-lead, approval by the approver) → `mark-released` (tech-lead: `element.set_state(released)`) |
-| `end-of-life` (slot default) | sub | `announce` (product-owner: a decision-log, add, submit; produces `{ type: decision-log, path: "{{decision_log_path}}" }`, `base`'s parameter; approval by the approver) → `deprecate` (tech-lead: `memory.deprecate` on `where: { type: release }`) → `archive` (tech-lead) |
+| `end-of-life` (slot default) | sub | `announce` (product-owner: a decision-log, add, submit; produces `{ type: decision-log, path: "{{decision_log_path}}" }`, `base`'s parameter; approval by the approver) → `deprecate` (tech-lead: `memory.deprecate` on `where: { type: release, status: [draft, planning, in-development, releasing] }`, the unreleased ones, as WingFoil) → `archive` (tech-lead) |
 | `adr-ingest` | main | `capture` (architect: add, submit; produces the adr) → `approve` (approver: `memory.approve`, fallback `capture`) |
 | `bug-ingest` | main | `capture` (developer: add, submit `draft → open`; produces the bug) → `triage` (tech-lead, approval by the approver: `approve` `open → triaged`; a reject closes it) |
 
@@ -147,9 +148,9 @@ READMEs give the procedure (F6.1, spec-002 §2.3).
 | Project | What changes |
 |---|---|
 | WingFoil | the step keys below; its verbs on unchanged states (`bug`'s `triaged`/`planned`, the `release` and `release-line` states lose their `waiting`; `base`'s `task` too) |
-| UI | as WingFoil; its `release-commit` moves from `release-submit` to `release-publishing` |
-| Benchmark | its `bug` `[draft, pending, approved, fixed]` migrates to `software`'s: `draft → draft`, `pending → open`, `approved → planned`, `fixed → resolved` (ruling I, dl-015 C2; `closed` if Benchmark reads "fixed" as closed); its `adr`, `tech-spec` and `release-line` on the default machine migrate (`approved → accepted`, `approved`, `active`) |
-| this repository | its `adr` and `tech-spec` on the default machine migrate as Benchmark's (W9) |
+| UI | as WingFoil; its `release-commit` moves from `release-submit` to `release-publishing`, and it gains `staging-rehearsal` (a new step key) |
+| Benchmark | its `bug` `[draft, pending, approved, fixed]` migrates to `software`'s: `draft → draft`, `pending → open`, `approved → planned`, `fixed → resolved` (ruling I, dl-015 C2; `closed` if Benchmark reads "fixed" as closed); its `adr` and `tech-spec` on the default machine keep `draft` and `pending` and migrate `approved → accepted` and `approved`; its `release-line` migrates `pending → planning`, `approved → active`; its releases gain a `release-line` field (open point 3) |
+| this repository | its `adr` and `tech-spec` on the default machine migrate as Benchmark's; its `bug` on the default machine migrates by default as Benchmark's (`pending → open`, `approved → planned`), or to `closed` for a bug already fixed; its adoption plan (W9) decides |
 
 **WingFoil's step keys** (R3; old → new, WingFoil dl-187):
 
@@ -202,7 +203,8 @@ READMEs give the procedure (F6.1, spec-002 §2.3).
 
 For the approver's acceptance:
 1. **The `inception` and `specification` defaults' phases** (`frame`/`approve`,
-   `specify`/`approve`): minimal, naming no method (dl-003 D11); their names become fixed with the first version (R1).
+   `specify`/`approve`): minimal, naming no method (dl-003 D11); their names become fixed with the
+   first version (R1).
 2. **`inception_path`**, a parameter for the one document the default `inception` produces.
 3. **`release`'s required frontmatter** (`title`, `version`, `release-line`): the minimum WingFoil,
    UI and Benchmark share; Benchmark's releases have no `release-line` field today.
@@ -217,3 +219,7 @@ For the approver's acceptance:
   the `delivery` contract, `{release}`, an Adoption section (any project, then the known ones), the
   step-key mapping completed, the required frontmatter, `end-of-life`'s `produces`, roles and
   markers. Focused re-review requested.
+- 2026-10-20: focused re-review: approve after amendments, nothing blocking; every finding of the
+  first review resolved, rulings H and I applied. Amended: `deprecate`'s selection, the migration
+  rows of Benchmark, UI and this repository, `specification` › `approve`'s selection stated, ruling
+  H scoped to `release`, a wrap.

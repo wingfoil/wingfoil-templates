@@ -19,8 +19,8 @@ other pack requires it and only adds to it or tightens it (dl-003 D1, spec-001 �
 pack id is `base`, its directory `packs/base`, and it has no `axis` in `pack.yaml` or
 `catalog.yaml` (spec-001 §4). This charter rules, for `base`, dl-022 S2 and S4 as dl-023 amends
 them, and dl-015's points C1 (decision-log), C3, C4, C7, C8, C9, C10 (decision-log, task, plan) and
-C11; plan-041 holds the approver's rulings it applies (numbered R-1 … R-16 below as in plan-041; 15 and
-16 are `software`'s).
+C11; plan-041 holds the approver's rulings it applies (numbered R-1 … R-16 below as in plan-041;
+15 and 16 are `software`'s).
 
 ## Ships
 
@@ -131,7 +131,10 @@ repository):
   hand-written status commit before installing the composed configuration;
 - the phase and role names above where a project's differ (this repository: `decision-log-ingest`
   › `rule` becomes `approve`, the retrospective's approval role becomes `approver`);
-- WingFoil 0.3.0's `init` stubs in `custom/` with the ids of `base`'s directives are removed.
+- WingFoil 0.3.0's `init` stubs in `custom/` with the ids of `base`'s directives are removed;
+- `decision-log` on the default machine (this repository, Benchmark) migrates by explicit commits:
+  `draft → draft`, `pending → in-discussion`, `approved → ready`; the projects whose `task` or
+  `plan` machine differs from `base`'s map them in their own adoption plan.
 
 ## Out of scope
 
@@ -206,3 +209,5 @@ For the approver's acceptance:
 - 2026-10-20: focused re-review: approve after amendments, nothing blocking; all twelve findings
   resolved. Amended: the `retrospective` › `approve` selection narrowed by a tag (open point 0),
   `apply`'s evidence, the ruling range.
+- 2026-10-20: from `pack-foundation-software`'s re-review: the `decision-log` migration of the
+  projects on the default machine added to the Adoption section.
