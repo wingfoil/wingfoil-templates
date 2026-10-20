@@ -263,3 +263,7 @@ What each charter must hold, besides its types, machines, workflows, directives 
   `workflow-engine`) unaddressed: the approver ruled J (17).
 - 2026-10-20: ruling J checked (approve after amendments): publication waits for the intake,
   ruling 17's reading of the CHANGELOG under dl-021 R4, wording and wraps.
+- 2026-10-20, step 9: branch pushed; CI run 39435669505 on `f6a674a`, conclusion `success`
+  (`validate (22.12.0)` and `validate (22.21.0)` both `success`), the full suite on both Node.js
+  versions. Privacy: the diff names no non-software project, no local path and no private
+  repository. Waiting for the approver's gates (step 10) and the merge OK.
