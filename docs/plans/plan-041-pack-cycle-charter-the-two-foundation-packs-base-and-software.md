@@ -241,8 +241,8 @@ What each charter must hold, besides its types, machines, workflows, directives 
   - for the charters, from 0.3.0: a phase plan needs a non-empty `parent` (`<workflow>.<phase>`),
     or it is deduced as an instance; a `{ type, path }` in `produces` needs a `memory.add(type: T)`
     action in the same phase, and only elements added with `--workflow`/`--step` count as a step's
-    evidence; `init` 0.3.0 writes `custom/` directives with the ids `traceability`, `doc-versioning`,
-    `security-secrets` and `determinism`, which win over a pack's of the same id, so an adopter
+    evidence; `init` 0.3.0 writes `custom/` directives with the ids `traceability`,
+    `doc-versioning`, `security-secrets` and `determinism`, which win over a pack's of the same id, so an adopter
     removes those stubs; ruling 1 changes WingFoil's verbs on edges (states stay identical), which
     `software`'s charter says to WingFoil; WingFoil's bug-400: `init` 0.3.0's workflows declare no
     `role`, `actions` or `produces`, so the packs would be the first configuration the engine can
