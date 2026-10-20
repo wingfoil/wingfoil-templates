@@ -980,6 +980,7 @@ Each has an owner outside this specification. None blocks format 1.
 | O12 | WingFoil's `init` writes its own built-in directives into `directives/built-in/`, the folder the reference composer writes packs to in format 1. Settled in principle by WingFoil dl-138 Q3 (dl-021 R3): `built-in/` is WingFoil's own and packs land in the `remote` class; what remains is the folder and how an upgrade tells them apart. | WingFoil dl-138's Action 2 tech-spec, with O5 and O13 |
 | O13 | A pack's `memory.yaml` fragment names its template as `memory/templates/built-in/<type>.md` (§7.6), the one path a pack writes that names a folder. How it reads under the `remote` class: rewritten by `pack-install`, or a kind-relative form. The format-1 rule stays until then. | WingFoil dl-138's Action 2 tech-spec (F-029) |
 | O14 | Fragments are never conditional (§6.5), so no pack can tighten `software`'s Memory types (for example `bug` or `release`) only in a composition with `software`. A conditional fragment is a later format. | this repository, when a methodology's charter needs it |
+| O15 | A later pack may add `waiting` only on the states it inserts (§7.5). Adding `waiting` to an existing state is a tightening (it removes a manual verb) that a pack shipping the workflow which drives the edge could make, restoring for the projects that run it the edges the foundation leaves without `waiting` because WingFoil 0.3.0 drives them for no adopter (plan-041, ruling 14). | this repository, when a methodology ships such a workflow (M3) |
 
 ## 17. What the reference composer does
 
@@ -1196,4 +1197,7 @@ check the rest, and the composer refuses what they reject.
     introduce them on a type whose defining pack declared none, under the same rules.
   No code, test or generated file changes: the tooling already implements this text (task-032,
   task-034).
-
+- 2026-10-20, under plan-041 (the approver's ruling 14, approved with plan-041's merge OK): §16
+  gains O15, a later pack adding `waiting` to an existing state when it ships the driving
+  workflow; the foundation packs' charters point to it as the way back for the edges they leave
+  without `waiting`. Nothing else changes.
