@@ -19,7 +19,8 @@ other pack requires it and only adds to it or tightens it (dl-003 D1, spec-001 �
 pack id is `base`, its directory `packs/base`, and it has no `axis` in `pack.yaml` or
 `catalog.yaml` (spec-001 §4). This charter rules, for `base`, dl-022 S2 and S4 as dl-023 amends
 them, and dl-015's points C1 (decision-log), C3, C4, C7, C8, C9, C10 (decision-log, task, plan) and
-C11; plan-041 holds the approver's rulings it applies (numbered R-1 … R-14 below as in plan-041).
+C11; plan-041 holds the approver's rulings it applies (numbered R-1 … R-16 below as in plan-041; 15 and
+16 are `software`'s).
 
 ## Ships
 
@@ -56,8 +57,8 @@ where 0.3.0 drives the edge for every adopter (R-1).
 | Workflow | Kind | Phases (role) | Notes |
 |---|---|---|---|
 | `decision-log-ingest` | main | `capture` (product-owner: add, submit; produces the decision-log) → `approve` (approver: `memory.approve`, approval by the approver, fallback `capture`) | dl-015 C3: `approve`, as WingFoil and UI; for decisions that change no governance (dl-022 S4) |
-| `governance-evolution` | main | `assess` (facilitator: `agent.execute`, the assessment written into the run's plan, which `workflow start` created and made `active`; its inputs are Execution Notes, retrospective points, feedback notes and the approver's requests; no `memory.add` and no `produces`, the plan being the instance's record) → `propose` (facilitator: a decision-log saying what changes in `.wingfoil/`, `AGENTS.md`, the roles and the Memory types, and why; add, submit; produces it) → `approve` (approver: `memory.approve`, approval by the approver, fallback `propose`) → `apply` (facilitator: the change applied, CLI verbs first, version bumps, `AGENTS.md` updated; produces `.wingfoil` and `AGENTS.md`); the plan is then closed by `workflow end` | dl-022 S4: no `waiting` state; a change too large for one session becomes tasks, run through the composition's delivery workflow when it has one, otherwise one at a time under the plan. Other packs tighten it with directives (`software`: an `adr` or a tech-spec amendment for an architectural change; `stage/production`: application only through a task, with CI and a reviewer). Its `main` also keeps a `base`-only composition valid on WingFoil, which refuses a composition with no `main` workflow |
-| `retrospective` | sub | `explore` (facilitator: the friction inventory, read-only; produces `{{retrospective_path}}`) → `additional-points` (approver: a checkpoint) → `capture` (facilitator: a decision-log; a change of governance is listed as a point, ruled by `governance-evolution`, one plan per point; a WingFoil defect is a feedback note; produces the decision-log) → `approve` (approver: `memory.approve` on `where: { type: decision-log, status: [in-discussion] }`, so that WingFoil 0.3.0 binds it in a sub, approval by the approver, fallback `capture`) | dl-015 C4: the approval phase is the approver's; dl-006 R2 as dl-022 amends it. `software`'s `delivery` includes it at its own cadence |
+| `governance-evolution` | main | `assess` (facilitator: `agent.execute`, the assessment written into the run's plan, which `workflow start` created and made `active`; its inputs are Execution Notes, retrospective points, feedback notes and the approver's requests; no `memory.add` and no `produces`, the plan being the instance's record) → `propose` (facilitator: a decision-log saying what changes in `.wingfoil/`, `AGENTS.md`, the roles and the Memory types, and why; add, submit; produces it) → `approve` (approver: `memory.approve`, approval by the approver, fallback `propose`) → `apply` (facilitator: the change applied, CLI verbs first, version bumps, `AGENTS.md` updated; produces `.wingfoil` and `AGENTS.md`, evidence that is always satisfied, the directory existing); the plan is then closed by `workflow end` | dl-022 S4: no `waiting` state; a change too large for one session becomes tasks, run through the composition's delivery workflow when it has one, otherwise one at a time under the plan. Other packs tighten it with directives (`software`: an `adr` or a tech-spec amendment for an architectural change; `stage/production`: application only through a task, with CI and a reviewer). Its `main` also keeps a `base`-only composition valid on WingFoil, which refuses a composition with no `main` workflow |
+| `retrospective` | sub | `explore` (facilitator: the friction inventory, read-only; produces `{{retrospective_path}}`) → `additional-points` (approver: a checkpoint) → `capture` (facilitator: a decision-log tagged `retrospective`; a change of governance is listed as a point, ruled by `governance-evolution`, one plan per point; a WingFoil defect is a feedback note; produces the decision-log) → `approve` (approver: `memory.approve` on `where: { type: decision-log, status: [in-discussion], tags: [retrospective] }`, so that WingFoil 0.3.0 binds it in a sub to the retrospective's decision-log only (`capture` tags it), approval by the approver, fallback `capture`) | dl-015 C4: the approval phase is the approver's; dl-006 R2 as dl-022 amends it. `software`'s `delivery` includes it at its own cadence |
 | `retrospective-periodic` | main | `retrospective` (includes `retrospective`) | What runs `retrospective` in a composition without `software` (spec-001 §9), as this repository's own: a `main` cannot be included, so a thin `main` includes the sub (open point 2) |
 
 **Directives** (`directives/`; none equals a WingFoil built-in id, R-6):
@@ -175,6 +176,12 @@ repository):
 ## Open points
 
 For the approver's acceptance:
+0. **The `retrospective` tag.** `retrospective` › `approve` selects the retrospective's
+   decision-log by a `retrospective` tag that `capture` sets; the `author` phase checks that
+   WingFoil 0.3.0's `memory.add` action can set it. If it cannot, the selection keeps type and
+   status only, and the charter states the effect: the step proposes every decision-log
+   `in-discussion`, the approver approves only the retrospective's, and the step closes once none
+   is left.
 1. **`retrospective`'s phases.** `base` takes WingFoil's phases without `collect-feedback`, which
    reads registered consumer inboxes (WingFoil dl-163) and is WingFoil's own; WingFoil's
    `retrospective` is also bound to a `release` element, which `base` has not. WingFoil keeps its
@@ -196,3 +203,6 @@ For the approver's acceptance:
 - 2026-10-20: the review of `pack-foundation-software` found that an untargeted `memory.approve`
   in a sub-workflow warns on WingFoil 0.3.0: `retrospective` › `approve` selects its decision-log.
   The Adoption section now opens with the procedure for any project (the approver's question).
+- 2026-10-20: focused re-review: approve after amendments, nothing blocking; all twelve findings
+  resolved. Amended: the `retrospective` › `approve` selection narrowed by a tag (open point 0),
+  `apply`'s evidence, the ruling range.
