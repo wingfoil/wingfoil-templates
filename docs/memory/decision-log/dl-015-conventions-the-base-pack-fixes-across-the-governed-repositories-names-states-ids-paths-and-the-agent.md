@@ -101,7 +101,8 @@ Consequences:
   - **C5** (`software`): not five phases but WingFoil's eight: a thin `release` slot including
     `release-submit` and `release-publishing` (plan-041 ruling 2).
   - **C6** (`software`): both types in `software`; id patterns as parameters with defaults
-    `rl-{version}` and `rel-{version}`, the token `{release-line}`; the proposed `{line}` is dropped.
+    `rl-{version}` and `rel-{version}`, the token `{release-line}`; the proposed `{line}` is
+    dropped.
   - **C7** (`base`): `plan_id`, default `plan-{n}-{slug}`, as proposed.
   - **C8** (`base`): `traceability` for the facilitator, as proposed.
   - **C9** (`base`): `agent_name` required with no default, not a generic default (dl-023 D2).
