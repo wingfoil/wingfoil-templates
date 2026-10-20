@@ -270,3 +270,6 @@ What each charter must hold, besides its types, machines, workflows, directives 
 - 2026-10-20, step 10: the approver approved dl-023 and dl-015 and accepted `pack-foundation-base`
   and `pack-foundation-software` (`proposed → accepted`), with their open points as written; the
   merge OK in chat approves spec-001's O15.
+- 2026-10-20, step 11: `--no-ff` merge into `main` (`386e3c5`), push, branch removed; the charters'
+  approval reported to the coordinating session. Both charters `accepted`, dl-023 and dl-015
+  `approved`. This plan goes `active → done`; the intake of WingFoil 0.3.0 starts.
