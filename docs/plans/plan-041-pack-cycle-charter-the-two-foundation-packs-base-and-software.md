@@ -147,10 +147,11 @@ Then, at the charters' review, on 2026-10-20:
     no `waiting`, so ruling 1 holds.
 16. **Ruling I** (dl-015 C2): Benchmark's `bug` migrates `draft → draft`, `pending → open`,
     `approved → planned`, `fixed → resolved` (`closed` if Benchmark reads "fixed" as closed).
-
 17. **Ruling J.** Both packs declare `requires_capabilities: [workflow-engine]`, as dl-003 D3 asks
     of a `base` with `waiting` states; the intake of WingFoil 0.3.0 records whether 0.3.0 provides
-    it. D3 stands.
+    it: under dl-021 R4 the commands its CHANGELOG names (`workflow start`, `end`, `next`,
+    `finalize`) are what records it, although the CHANGELOG uses no capability names (step 2's
+    note). D3 stands: `base`'s first version is 1.0.0, the later major D3 allows.
 
 Not in this plan: WingFoil 0.3.0's intake into `compat.yaml` (`wingfoil-release-intake`, the next
 plan, run by this session after this one); the feedback note asking WingFoil to suspend an
@@ -238,15 +239,15 @@ What each charter must hold, besides its types, machines, workflows, directives 
   - new: WingFoil's agent file is `AGENTS.md`, with the same provisional markers as spec-001 §10
     (ruling 10 holds); `release-publishing` 1.9 tags on an integration branch (`main` for a minor,
     `release/X.Y` for a patch), which a generic default leaves to the project;
-  - for the charters, from 0.3.0: a phase plan needs a non-empty `parent` (`<workflow>.<phase>`),
-    or it is deduced as an instance; a `{ type, path }` in `produces` needs a `memory.add(type: T)`
+  - for the charters, from 0.3.0: a phase plan needs a non-empty `parent` (`<workflow>.<phase>`), or
+    it is deduced as an instance; a `{ type, path }` in `produces` needs a `memory.add(type: T)`
     action in the same phase, and only elements added with `--workflow`/`--step` count as a step's
     evidence; `init` 0.3.0 writes `custom/` directives with the ids `traceability`,
-    `doc-versioning`, `security-secrets` and `determinism`, which win over a pack's of the same id, so an adopter
-    removes those stubs; ruling 1 changes WingFoil's verbs on edges (states stay identical), which
-    `software`'s charter says to WingFoil; WingFoil's bug-400: `init` 0.3.0's workflows declare no
-    `role`, `actions` or `produces`, so the packs would be the first configuration the engine can
-    drive;
+    `doc-versioning`, `security-secrets` and `determinism`, which win over a pack's of the same id,
+    so an adopter removes those stubs; ruling 1 changes WingFoil's verbs on edges (states stay
+    identical), which `software`'s charter says to WingFoil; WingFoil's bug-400: `init` 0.3.0's
+    workflows declare no `role`, `actions` or `produces`, so the packs would be the first
+    configuration the engine can drive;
   - 0.3.0's CHANGELOG names no capability: neither `pack-install` nor a workflow engine; template
     installation is v0.4 (WingFoil dl-138). No ruling changes.
 - 2026-10-20, steps 3–4: dl-023 written, reviewed (approve after amendments), amended and
@@ -260,3 +261,5 @@ What each charter must hold, besides its types, machines, workflows, directives 
   submitted (`proposed`); spec-001's O15 written; dl-022's and dl-015's notes written, reviewed
   (approve after amendments), amended. The review found dl-003 D3 (a `base` with `waiting` requires
   `workflow-engine`) unaddressed: the approver ruled J (17).
+- 2026-10-20: ruling J checked (approve after amendments): publication waits for the intake,
+  ruling 17's reading of the CHANGELOG under dl-021 R4, wording and wraps.

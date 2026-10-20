@@ -82,8 +82,8 @@ where 0.3.0 drives the edge for every adopter (R-1).
 - `paths.config: [.wingfoil]`; `paths.governance` means the Memory and the plans (dl-015 C11), and
   its values are the project's (open point 3). As dl-015 asked, what reads it was checked: no
   behaviour of WingFoil 0.3.0 depends on it (only its schema, the `paths` query and the agent
-  context use it). WingFoil puts `.wingfoil/`
-  there today, so `base`'s `config` entry adds to its set at adoption.
+  context use it). WingFoil puts `.wingfoil/` there today, so `base`'s `config` entry adds to its
+  set at adoption.
 
 **Parameters** (spec-001 §8; the defaults are the convention for new projects, R1):
 
@@ -154,9 +154,13 @@ repository):
 
 - `formats`: `dna: 1`, `roles: 1`, `memory: 1`, `workflow: 1`, `directive: 1`,
   `memory-template: 1`. `requires: []`. `requires_capabilities: [workflow-engine]`, from the
-  provisional vocabulary (dl-021 R4, O3): `base` uses `waiting` and the engine's verbs (`workflow
-  end`, `memory park`), as dl-003 D3 asks; the intake of WingFoil 0.3.0 records whether 0.3.0
-  provides it (its CHANGELOG names `workflow start`, `end`, `next` and `finalize`).
+  provisional vocabulary (dl-021 R4, O3): `base`'s `plan` has a `waiting` edge that `workflow end`
+  closes, as dl-003 D3 asks of a `base` with `waiting` (its first version is 1.0.0, the later
+  major D3 allows); the intake of WingFoil 0.3.0 records whether 0.3.0
+  provides it (its CHANGELOG names `workflow start`, `end`, `next` and `finalize`). Publication
+  (W9) waits for that intake: until a release listed in `compat.yaml` provides `workflow-engine`,
+  the computed range is empty and no version is published (spec-001 §12); if the intake does not
+  record it, the approver rules again before `first-release`.
 - The oldest release of its matrix is WingFoil 0.3.0: it uses `returns`, `amendable` and the plan
   `waiting` edge of 0.3.0's engine, which 0.2.2 lacks; no workflow uses a key newer than 0.3.0.
   The WingFoil range is computed from `compat.yaml`, never written here.

@@ -177,8 +177,11 @@ READMEs give the procedure (F6.1, spec-002 §2.3).
 
 - `formats`: `dna: 1`, `roles: 1`, `memory: 1`, `workflow: 1`, `directive: 1`,
   `memory-template: 1`. `requires: [base@^1]`. `requires_capabilities: [workflow-engine]`, as
-  `base` (dl-003 D3; `adr` and `tech-spec` use `waiting`, `bug` uses `memory park`); the intake of
-  WingFoil 0.3.0 records whether 0.3.0 provides it (dl-021 R4, O3).
+  `base` (dl-003 D3; its workflows rely on the engine: element-bound includes and
+  `element.set_state`); the intake of WingFoil 0.3.0 records whether 0.3.0 provides it (dl-021
+  R4, O3). Publication (W9) waits for that intake: until then the computed range is empty
+  (spec-001 §12); if the intake does not record it, the approver rules again before
+  `first-release`.
 - The oldest release of its matrix is WingFoil 0.3.0 (`returns`, `amendable`, `supersedes:` with
   `waiting`, element-bound includes); no workflow uses a key newer than 0.3.0. The range is
   computed, never written here. A `path` parameter used in a `produces` takes only
