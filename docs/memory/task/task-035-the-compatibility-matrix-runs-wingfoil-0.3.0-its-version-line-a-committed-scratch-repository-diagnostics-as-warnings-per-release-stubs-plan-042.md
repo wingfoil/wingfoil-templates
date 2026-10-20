@@ -23,11 +23,11 @@ run it; read at `v0.3.0`, it cannot:
 - **what a warning is.** `judge` fails a command on its exit, any stderr line, and a stdout line
   starting `Warning:`. 0.3.0 writes its stderr warnings as `warning: …`, or `{"warning": …}` under
   `--format json` (any stderr line already fails), and also reports problems as data on stdout:
-  `workflow list` returns `diagnostics` (`{code, severity: error|warning, file, path, message}`; an `error` one also makes the command
-  exit 1), and `directives list` returns `{entries, warnings}` in both 0.2.2 and 0.3.0, 0.3.0
-  adding scope and `roles.yaml` disagreements. The approver ruled (L and M, 2026-10-20): a warning
-  is any diagnostic of severity warning or error, on stderr or in `workflow list`'s `diagnostics`,
-  and any entry of `directives list`'s `warnings`;
+  `workflow list` returns `diagnostics` (`{code, severity: error|warning, file, path, message}`; an
+  `error` one also makes the command exit 1), and `directives list` returns `{entries, warnings}` in
+  both 0.2.2 and 0.3.0, 0.3.0 adding scope and `roles.yaml` disagreements. The approver ruled (L and
+  M, 2026-10-20): a warning is any diagnostic of severity warning or error, on stderr or in
+  `workflow list`'s `diagnostics`, and any entry of `directives list`'s `warnings`;
 - **the tests.** The WingFoil stub (`tests/support/stub-wingfoil.ts`) answers one version for every
   release and looks commands up by their exact argument string, and `fixtureCompat()`
   (`tests/support/published-repo.ts`) appends the fictitious release 9.0.0 to the real
