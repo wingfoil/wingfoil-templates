@@ -2,7 +2,7 @@
 id: pack-foundation-base
 type: pack
 title: "Base"
-status: proposed
+status: accepted
 axis: "foundation"
 name: "base"
 slot: ""
