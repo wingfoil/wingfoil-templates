@@ -240,5 +240,9 @@ Changes this decision implies, each applied later through its own element:
 - 2026-10-20, plan-041: S2 amended by dl-023 (`pending`, approved with the charters): `plan` is
   `[draft, active, done]` with `waiting: [active]` and no `parked`; the parameters are
   `project_name`, one path per Memory type, `plan_id`, `agent_name`, `approver_name` and
-  `approver_email`, with no `agent_email`. The charters `pack-foundation-base` and
-  `pack-foundation-software` rule S2–S6 for each pack.
+  `approver_email`, with no `agent_email`. `pack-foundation-base` rules S2 and S4,
+  `pack-foundation-software` S3, both carrying S5 and S6. S4 is refined for WingFoil 0.3.0: `assess`
+  writes into the run's plan, `apply` produces `.wingfoil` and `AGENTS.md`, and the plan is closed
+  by `workflow end`. Still to apply after the charters' acceptance: the packs (the `author` phase),
+  their publication and this repository's adoption (W9), and spec-001 §8.3's fold-back at W8's
+  close.

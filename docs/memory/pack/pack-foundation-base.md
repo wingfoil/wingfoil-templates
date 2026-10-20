@@ -80,8 +80,9 @@ where 0.3.0 drives the edge for every adopter (R-1).
   `approval_authority: false`, no `email` (dl-023 D2): a project whose agent has an `adapter` adds
   the email in its own `dna.yaml`;
 - `paths.config: [.wingfoil]`; `paths.governance` means the Memory and the plans (dl-015 C11), and
-  its values are the project's (open point 3). As dl-015 asked, what reads it was checked: nothing
-  in WingFoil 0.3.0's source reads `paths.governance` (schema only). WingFoil puts `.wingfoil/`
+  its values are the project's (open point 3). As dl-015 asked, what reads it was checked: no
+  behaviour of WingFoil 0.3.0 depends on it (only its schema, the `paths` query and the agent
+  context use it). WingFoil puts `.wingfoil/`
   there today, so `base`'s `config` entry adds to its set at adoption.
 
 **Parameters** (spec-001 §8; the defaults are the convention for new projects, R1):

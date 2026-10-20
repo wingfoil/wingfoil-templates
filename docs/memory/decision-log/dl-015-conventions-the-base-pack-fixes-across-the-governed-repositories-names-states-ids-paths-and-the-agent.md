@@ -94,18 +94,28 @@ Consequences:
     `accepted` and `approved`, which `supersedes:` drives in WingFoil 0.3.0.
   - **C2** (`software`): WingFoil's chain, with no `waiting` and `returns: {in-progress: planned}`;
     Benchmark's `fixed` maps to `resolved` (or `closed`), its other states as `software`'s charter
-    lists (plan-041 ruling 16).
+    lists (plan-041 ruling 16, I).
   - **C3** (`base`): `approve`, as proposed.
   - **C4** (`base`): role `approver`, as proposed; its `approve` selects the retrospective's
-    decision-log.
+    decision-log (by a tag, `base`'s open point 0).
   - **C5** (`software`): not five phases but WingFoil's eight: a thin `release` slot including
-    `release-submit` and `release-publishing` (plan-041 ruling 2).
+    `release-submit` and `release-publishing` (plan-041 ruling 2), `enter-releasing` and
+    `mark-released` naming their target state (ruling 15, H).
   - **C6** (`software`): both types in `software`; id patterns as parameters with defaults
     `rl-{version}` and `rel-{version}`, the token `{release-line}`; the proposed `{line}` is
     dropped.
   - **C7** (`base`): `plan_id`, default `plan-{n}-{slug}`, as proposed.
   - **C8** (`base`): `traceability` for the facilitator, as proposed.
-  - **C9** (`base`): `agent_name` required with no default, not a generic default (dl-023 D2).
-  - **C10** (both): one path parameter per type, defaults in this repository's form; `{release}`
-    and `{scope}` pass through, `{release}` being a task's `release` field (`software`'s charter).
-  - **C11** (`base`): as proposed; nothing in WingFoil 0.3.0's source reads `paths.governance`.
+  - **C9** (`base`): `agent_name` required with no default, not a generic default (dl-023 D2), so
+    the governed repositories need not agree one value; `executes_as` is `[facilitator,
+    product-owner]` from `base` plus `[developer, reviewer, qa, architect]` from `software`; no
+    `agent_email` parameter.
+  - **C10** (both): one path parameter per type, defaults in this repository's form where it has
+    the type; `{release}` and `{scope}` pass through, `{release}` being a task's `release` field,
+    and `release_path`'s default uses `{release-line}` (`software`'s charter).
+  - **C11** (`base`): its meaning as proposed, no value written (`base`'s open point 3); no
+    behaviour of WingFoil 0.3.0 depends on it (only its schema, the `paths` query and the agent
+    context use it).
+  - **Consequences.** The list of this repository's changes at its adoption is replaced by the two
+    charters' Adoption sections, which its adoption plan (W9) maps. The consumer's provisional
+    choices now differ on C5 (five phases, in `base`) and C6 (`{line}`), no longer on C9.
