@@ -2,7 +2,7 @@
 id: pack-foundation-software
 type: pack
 title: "Software"
-status: draft
+status: proposed
 axis: "foundation"
 name: "software"
 slot: ""
