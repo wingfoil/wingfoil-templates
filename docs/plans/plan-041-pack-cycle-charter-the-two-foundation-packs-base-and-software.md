@@ -267,3 +267,6 @@ What each charter must hold, besides its types, machines, workflows, directives 
   (`validate (22.12.0)` and `validate (22.21.0)` both `success`), the full suite on both Node.js
   versions. Privacy: the diff names no non-software project, no local path and no private
   repository. Waiting for the approver's gates (step 10) and the merge OK.
+- 2026-10-20, step 10: the approver approved dl-023 and dl-015 and accepted `pack-foundation-base`
+  and `pack-foundation-software` (`proposed → accepted`), with their open points as written; the
+  merge OK in chat approves spec-001's O15.
