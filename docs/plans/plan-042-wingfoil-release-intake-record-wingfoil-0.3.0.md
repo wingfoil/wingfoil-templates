@@ -2,7 +2,7 @@
 id: plan-042-wingfoil-release-intake-record-wingfoil-0.3.0
 type: plan
 title: "wingfoil-release-intake record: WingFoil 0.3.0"
-status: draft
+status: active
 workflow: "wingfoil-release-intake"
 phase: "record"
 tags: ["compat","wingfoil","intake"]
