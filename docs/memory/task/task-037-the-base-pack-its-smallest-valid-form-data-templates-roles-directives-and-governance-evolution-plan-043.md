@@ -3,26 +3,84 @@ id: task-037-the-base-pack-its-smallest-valid-form-data-templates-roles-directiv
 type: task
 title: "The base pack, its smallest valid form: data, templates, roles, directives and governance-evolution (plan-043)"
 status: draft
-pack: ""            # the pack element id this task works on; empty for tooling tasks
+pack: "pack-foundation-base"
 depends_on: []
 tags: ["packs","base","W8"]
 ---
 
 ## Context
 
-<!-- Why this task exists, and the element it comes from (pack charter, spec, DL, bug). -->
+The first of plan-043's three tasks (the approver's ruling N, 2026-10-21): the smallest `base` that
+the lint, the composer and WingFoil 0.3.0 all accept, written from the accepted charter
+`pack-foundation-base` and dl-023. WingFoil refuses a composition with no `main` workflow
+(`E_NO_MAIN_WORKFLOW`), and `base`'s `roles.yaml` names its directives, so `governance-evolution`
+and the four directives come here; task-038 adds `decision-log-ingest`, `retrospective`,
+`retrospective-periodic` and the AGENTS.md section, and task-039 the README's examples.
+
+No `catalog.yaml` entry yet (ruling O): `first-release` adds it. The README raises the number of
+files `npm run index -- --check` reads in this repository from 3 to 4, which moves one assertion of
+`tests/index.test.ts`; that test change follows dl-018 R1–R3, as a tooling change inside a pack
+task. Pack content is checked by the lint, the composition and the matrix (dl-018, pack tasks).
 
 ## Acceptance
 
-<!-- Verifiable criteria: the command to run and the expected result. -->
+1. **`packs/base/pack.yaml`**: `format: 1`, `id: base`, `name: base`, no `axis`, `title` and
+   `description` from the charter's Purpose, `version: 1.0.0`, `formats` exactly for the kinds
+   shipped (`dna`, `roles`, `memory`, `memory-template`, `workflow`, `directive`, all 1),
+   `requires_capabilities: [workflow-engine]`, no `requires`, and the parameters the files of this
+   task use, with the charter's types, defaults and descriptions: `project_name`, `approver_name`,
+   `approver_email`, `agent_name` (required, no default), `decision_log_path`, `task_path`,
+   `plan_path`, `plan_id` (defaults as the charter). `retrospective_path` comes with task-038.
+   `contents` lists every file below and nothing else.
+2. **`fragments/memory.yaml`**: `defaults` `[draft, pending, approved]`, gate `pending` → `draft`;
+   `decision-log` `[draft, in-discussion, ready]`, gate `in-discussion` → `draft`; `task`
+   `[draft, pending, backlog, in-progress, in-review, approved, done]`, gates `pending` → `draft`
+   and `in-review` → `in-progress`, `returns: {in-progress: backlog}`; `plan`
+   `[draft, active, done]`, `waiting: [active]` (dl-023 D1). No other `waiting`; no `limits`. Ids
+   `dl-{n}-{slug}`, `task-{n}-{slug}`, `{{plan_id}}`; paths from the three path parameters;
+   `amendable: true` on the three types; `template.file` at
+   `memory/templates/built-in/<type>.md`; `template.frontmatter.required`: `decision-log` and
+   `task` `[title]`, `plan` `[title, workflow, phase]` (plan-043 ruling 6).
+3. **Memory templates** `memory-templates/{decision-log,task,plan}.md`, each declaring `format: 1`;
+   the plan template carries `workflow`, `phase`, `element` and `parent`.
+4. **`fragments/dna.yaml`**: `project.name: "{{project_name}}"`; `modules: []`;
+   `stacks: { technologies: [], methodologies: [] }`; `team.roles` `approver`, `facilitator`,
+   `product-owner` with descriptions; one member `"{{approver_name}}"`, `email:
+   "{{approver_email}}"`, roles `[approver]`; one agent `"{{agent_name}}"`,
+   `executes_as: [facilitator, product-owner]`, `approval_authority: false`, no email (dl-023);
+   `paths.config: [.wingfoil]`. No real name or address anywhere in the pack.
+5. **`fragments/roles.yaml`**: `global: [doc-versioning, security-secrets, claim-sources]`;
+   `assignments.facilitator: [traceability]`.
+6. **Directives** `directives/{traceability,doc-versioning,security-secrets,claim-sources}.md`,
+   each with `format: 1` and its id, written as real rules: `traceability` generic (each project or
+   pack names its own chain); `claim-sources` the generic rule on the sources of claims, which
+   other packs tighten.
+7. **`workflows/governance-evolution.yaml`**: `kind: main`, `format: 1`, the charter's four phases
+   and roles: `assess` (`agent.execute`, no `memory.add`, no `produces`), `propose`
+   (`memory.add(type: decision-log)`, `memory.submit`, `produces` `{ type: decision-log, path:
+   "{{decision_log_path}}" }`), `approve` (`memory.approve`, `approval: { by_role: approver }`,
+   `fallback: { step: propose }`), `apply` (`produces` `.wingfoil` and `AGENTS.md`); no key newer
+   than WingFoil 0.3.0.
+8. **`CHANGELOG.md`** with a `1.0.0` entry, and **`README.md`** per spec-002 §2: its generated
+   sections written by `npm run index`, never by hand; section 3 ("Install and update") opening
+   with §2.3's temporary mark, linking `CATALOG.md#install`, and giving the hand-adoption steps
+   (F6.1, the charter's Adoption) with no WingFoil CLI command in code (CB-3); section 7 holding
+   §2.4's exemption line until task-039.
+9. **The commands**, recorded in the Execution Notes with their output:
+   - `npm run lint`, `npm run check:packs`, `npm run check:schemas`, `npm run index -- --check`
+     exit 0;
+   - `npm run validate -- base --param project_name=Sample --param approver_name=Sample
+     --param approver_email=<a fictional address WingFoil 0.3.0 accepts> --param
+     agent_name=Sample` exits 0: composed twice byte-identical, the matrix on WingFoil 0.3.0 alone
+     (`workflow list`, `dna show`, `directives list` `pass (self-test)`, no warning);
+   - `tests/index.test.ts` asserts 4 files, its red run recorded (dl-018 R1).
+10. **Checks** from a clean clone on Node.js 22.21 and 22.12.0: `npm test`, `npm run lint`,
+    `npm run check:pins`, `npm run check:schemas`, `npm run check:packs`,
+    `npm run index -- --check`, `npm run validate` exit 0; the privacy grep of plan-041 on the diff
+    finds nothing; the CI run on the pushed branch concludes `success`.
 
 ## Design
 
 <!-- Filled at the start of the work. -->
 
 ## Execution Notes
-
-<!-- Deviations, blockers, decisions taken, WingFoil friction. In a tooling task, each red run: the
-     command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
-     proposed reading and the approver's ruling with its date; the Acceptance text stays as
-     approved (dl-019). -->
