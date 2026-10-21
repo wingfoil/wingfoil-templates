@@ -1,0 +1,11 @@
+format: 1
+id: core-records
+title: "Core records"
+description: "Harbour Choir, a fictional amateur choir, keeps its decisions and tasks."
+packs:
+  - base@^1
+parameters:
+  project_name: "Harbour Choir"
+  approver_name: "Choir Director"
+  approver_email: "director@harbour-choir.example"
+  agent_name: "Choir Assistant"

@@ -122,7 +122,38 @@ pack's range (see its catalog entry):
 
 ## Examples
 
-None yet: no methodology pack is published.
+### core-records
+
+Fixture: tests/fixtures/examples/base/core-records/
+
+Harbour Choir, a fictional amateur choir, has no software life cycle: it keeps its decisions, its
+tasks and its plans. It composes `base` alone and sets only its name, its director as the
+approver and its assistant agent; the paths and ids keep their defaults (`docs/memory/<type>/`,
+`docs/plans/`, `plan-{n}-{slug}`). When the choir decides to rehearse on Sundays, its assistant
+runs `decision-log-ingest`: it captures a decision-log, and the director approves it.
+
+### release-folders
+
+Fixture: tests/fixtures/examples/base/release-folders/
+
+Seabird Maps, a fictional mapping tool, composes `base` alone with its own path and id values: its
+tasks in a folder per release (`docs/04_memory/{release}/`), its plans in a folder per scope
+(`docs/05_plans/{scope}/`) with ids `{workflow}-{phase}-plan`, its decision-logs under
+`docs/04_memory/design/dls/` and its retrospective inventories under `docs/09_retrospectives`. Its
+records land where its tools already look, and no file moves. This example shows `base`'s
+parameters alone: a task's `release` is given when the task is added, nothing in `base` fills it.
+When the team changes who may approve, it runs `governance-evolution`: the assessment in the run's
+plan, a decision-log proposing the change, the approver's ruling, then the change applied.
+
+### release-folders-lean
+
+Fixture: tests/fixtures/examples/base/release-folders-lean/
+
+Lantern Notes, a fictional note-taking app, composes `base` alone and files its records by release
+as Seabird Maps does, but keeps no retrospective folder of its own: `retrospective_path` keeps its
+default. Its records stay where they are and no file moves. When it decides to drop a platform, it
+runs `decision-log-ingest`: a decision-log under `docs/04_memory/design/dls/`, which the approver
+rules.
 
 ## Sources and adaptations
 
