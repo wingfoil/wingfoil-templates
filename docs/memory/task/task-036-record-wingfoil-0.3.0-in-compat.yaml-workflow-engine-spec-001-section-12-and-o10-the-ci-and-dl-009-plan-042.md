@@ -89,7 +89,26 @@ publication after v0.3.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Written 2026-10-21, before the build. Branch `task/task-036-record-wingfoil-0.3.0` from `main`.
+
+Order (dl-018):
+1. **Red** — tests only, committed first, the red counted:
+   - `tests/compat.test.ts`: the real releases 0.2.2 then 0.3.0, 0.3.0's `format_key` and
+     `capabilities`; `SECOND_RELEASE` becomes 0.4.0, the repeated case repeats the last release;
+     `computeRange` on the real file gives `"0.3.0"` to a version requiring `workflow-engine`.
+   - `tests/validate.test.ts`: the default `validate()` helper installs per release
+     (`stubsPerRelease`: 0.2.2 with its format warning, 0.3.0 printing `0.3.0 (cc31d7a8)` and JSON
+     with no diagnostics or warnings); the golden expectations of criterion 3 (26 self-test runs with
+     both releases' lines; publication 13 runs on 0.3.0 alone; a noisy 0.2.2, a 0.3.0 warning, an
+     install failure); task-035's two-release test folded in; the empty compatible set on a tree
+     copy whose `compat.yaml` is `FROZEN_COMPAT`.
+2. **Green** — `compat.yaml`, `tests/fixtures/compose/tree/compat.yaml` and spec-001 §12's example
+   together (held byte-equal), with 0.3.0's entry as criterion 1.
+3. **Documentation** (red-first exceptions): §12's prose (0.3.0's check, after the example), O10
+   settled, spec-001's Execution Note; dl-009's Execution Note; `ci.yml`'s header and golden step
+   name.
+4. **The commands** of criterion 4, by hand, and `npm run index` with `git status` clean.
+
 
 ## Execution Notes
 
