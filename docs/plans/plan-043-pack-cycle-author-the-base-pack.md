@@ -34,7 +34,11 @@ requires, and the matrix runs it (plan-042). Only 0.3.0 is selected for `base`: 
 3. **`base`'s README has examples** (P), replacing the first outline's use of spec-002 §2.4's
    exemption: task-039's generic, fictional non-software project becomes an example of the README
    (`tests/fixtures/examples/base/<example>/`), and so do the parameter sets of the governed
-   software repositories (WingFoil, UI, Benchmark, this repository). `npm run validate` and the CI
+   software repositories (WingFoil, UI, Benchmark, this repository). Every example names a
+   fictional project, as spec-002 §2.4 and `pack-authoring` require: an example carries a
+   repository's real path and id values in a fictional situation (for example a project keeping
+   its tasks in a folder per release), and task-039's Execution Notes record which example matches
+   which public repository. `npm run validate` and the CI
    then compose and validate `base` on WingFoil 0.3.0 on every push, CB-2 holds in full, and the
    publication has a documented combination (`pack-compatibility`).
 4. `software`'s `author` follows this plan, as its own plan.
@@ -53,18 +57,22 @@ requires, and the matrix runs it (plan-042). Only 0.3.0 is selected for `base`: 
   `fragments/roles.yaml`, `fragments/memory.yaml` (`defaults`, `decision-log`, `task`, `plan` as
   the charter and dl-023 fix them, each with `template.frontmatter`); the three Memory templates;
   the four directives (`traceability`, `doc-versioning`, `security-secrets`, `claim-sources`);
-  `governance-evolution` (`main`); `CHANGELOG.md`; `README.md` per spec-002 §2. It composes, passes
-  the lint, and WingFoil 0.3.0 accepts it.
+  `governance-evolution` (`main`); `CHANGELOG.md`; `README.md` per spec-002 §2, whose section 7
+  holds §2.4's exemption line until task-039 replaces it. It composes, passes the lint, and
+  WingFoil 0.3.0 accepts it.
 - **task-038 — the rest of the workflows and AGENTS.md:** `decision-log-ingest`, `retrospective`,
   `retrospective-periodic`, each phase with its role, actions, approval, fallback and `produces`
   (R4); `agents/section.md`. Its Design settles the charter's open point 0 (whether WingFoil 0.3.0's
   `memory.add` sets the `retrospective` tag); the outcome goes into the charter's Execution Notes,
   and a negative one, which changes the accepted charter, to the approver (dl-019).
 - **task-039 — the exit criterion** (dl-022 S6): the README's examples, one per parameter set: a
-  generic, fictional non-software project, and WingFoil, UI, Benchmark and this repository with
-  their path and id values (copied from their public repositories) and fictional approver and agent
-  identities that WingFoil 0.3.0 accepts (no real address in this repository); each composes and
-  validates on 0.3.0 with no warning, through `npm run validate` and the CI. The check against the
+  generic, fictional non-software project, and four fictional projects carrying the path and id
+  values of WingFoil, UI, Benchmark and this repository (copied from their public repositories),
+  with fictional approver and agent identities that WingFoil 0.3.0 accepts (no real address in this
+  repository; the Design names the address checked against 0.3.0, which refuses empty and reserved
+  ones). Each example and its `example.yaml` land in the same commit (CB-2), and section 7 then
+  drops the exemption line. Each composes and validates on 0.3.0 with no warning, through plain
+  `npm run validate` and the CI. The check against the
   three private, non-software projects is run by claude outside this repository; task-039's
   Execution Notes record only its outcome (date, `base`'s commit, the WingFoil version, the number
   of projects, the commands with their values redacted, the exit codes, the warning count), never a
@@ -100,8 +108,9 @@ repository's adoption (W9); spec-001 §8.3's `{release}` fold-back, at W8's clos
       Node.js 22.21 and 22.12.0: `npm test`, `npm run lint`, `npm run check:pins`,
       `npm run check:schemas`, `npm run check:packs`, `npm run index -- --check`, and
       `npm run validate` with the matrix on WingFoil 0.3.0 and no warning (from task-039 the
-      README's examples; before it, `npm run validate -- base` with the four required parameters);
-      the privacy grep of plan-041 on the diff;
+      README's examples; before it, `npm run validate -- base` with the four required parameters,
+      its matrix lines recorded in the task's Execution Notes, since the CI composes nothing for
+      `base` until the examples exist); the privacy grep of plan-041 on the diff;
    4. `review`: an independent review of the branch, its findings fixed, a re-review when a fix
       changes behaviour; the branch pushed, the CI run's conclusion recorded,
       `in-progress → in-review`; the approver accepts it and gives the merge OK;
@@ -127,3 +136,8 @@ repository's adoption (W9); spec-001 §8.3's `{release}` fold-back, at W8's clos
   workflow), nothing ran `base` through the matrix, a `planned` catalog entry broke tooling tests,
   and the README's exemption left the publication without a documented combination. The approver
   ruled N, O, P and Q (rulings 1, 2, 3 and 6 above); the rest applied. Re-review requested.
+- 2026-10-21: re-review: approve after amendments. Applied: the examples name fictional projects
+  carrying the repositories' real values (spec-002 §2.4, `pack-authoring`; no ruling needed);
+  section 7's exemption line until task-039; each example lands with its README entry; the local
+  `validate -- base` evidence before task-039; the fictional address checked in task-039's Design.
+  Plan submitted.
