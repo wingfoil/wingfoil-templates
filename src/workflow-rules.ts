@@ -1,5 +1,6 @@
 // F3.5 on a pack's workflows and fragments (task-012, `pack-authoring`, spec-001 §6.3, §9): no
-// empty phase; includes by bare name, of a workflow the pack or a pack it requires ships, or of a
+// empty phase (one that declares none of include, actions, produces and approval; an approval
+// alone is a checkpoint, task-038); includes by bare name, of a workflow the pack or a pack it requires ships, or of a
 // slot; the life cycle's includes; every role, Memory type and directive id a pack references is
 // declared by the pack or by a pack it requires directly. The lint applies them to every pack of
 // the tree; the composer, to every pack it composes.
@@ -117,9 +118,10 @@ export function workflowProblems(
       if (!isDoc(phase)) return;
       const pointer = `/phases/${index}`;
       const name = String(phase['name']);
-      if (!['include', 'actions', 'produces'].some((key) => phase[key] !== undefined)) {
+      if (!['include', 'actions', 'produces', 'approval'].some((key) => phase[key] !== undefined)) {
         problems.push(problemAt(file, pointer, 'empty-phase', `${label}: phase ${name} declares `
-          + 'none of include, actions and produces (pack-authoring, WingFoil benchmark note N1)'));
+          + 'none of include, actions, produces and approval (pack-authoring, WingFoil benchmark '
+          + 'note N1)'));
       }
       const include = phase['include'];
       if (include !== undefined) {

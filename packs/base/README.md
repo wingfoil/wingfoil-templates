@@ -9,8 +9,8 @@ Axis: foundation
 ## When to use it
 
 Every project governed by WingFoil, software or not, starts from `base`: it holds the decision-log,
-task and plan types, the workflow that changes the project's own governance, the generic directives
-and the DNA every project shares (one approver, one agent without approval authority). Other packs
+task and plan types, the workflows that capture a decision, run a retrospective and change the
+project's own governance, the generic directives and the DNA every project shares (one approver, one agent without approval authority). Other packs
 only add to it or tighten it. It serves every adoption profile (solo developer, code reviewer,
 team developer, tech lead, non-technical manager, architect), since every composition contains it.
 It is not meant to be used alone by a software project, which takes `software` on top of it for its
@@ -63,11 +63,21 @@ pack's range (see its catalog entry):
 
 ### Workflows
 
+- `decision-log-ingest` (main)
+  - `capture`, role `product-owner`
+  - `approve`, role `approver`, gate `approver`
 - `governance-evolution` (main)
   - `assess`, role `facilitator`
   - `propose`, role `facilitator`
   - `approve`, role `approver`, gate `approver`
   - `apply`, role `facilitator`
+- `retrospective` (sub)
+  - `explore`, role `facilitator`
+  - `additional-points`, role `approver`, gate `approver`
+  - `capture`, role `facilitator`
+  - `approve`, role `approver`, gate `approver`
+- `retrospective-periodic` (main)
+  - `retrospective`, includes `retrospective`
 
 ### Memory types
 
@@ -106,6 +116,7 @@ pack's range (see its catalog entry):
 | `plan_id` | pattern | `plan-{n}-{slug}` | The plan type's id pattern |
 | `plan_path` | path | `docs/plans/{id}.md` | The plan type's path; only letters, digits and . _ / { } - |
 | `project_name` | string | required | The project's name: dna.yaml project.name |
+| `retrospective_path` | path | `docs/retrospectives` | Where the retrospective's friction inventory goes: a directory by default, weak evidence; a project may set a fixed file. Only letters, digits and . _ / { } -, and no {...} token, no element being in scope |
 | `task_path` | path | `docs/memory/task/{id}.md` | The task type's path; only letters, digits and . _ / { } - |
 <!-- generated:end parameters -->
 
@@ -118,6 +129,11 @@ None yet: no methodology pack is published.
 - WingFoil 0.3.0's own configuration: the state names and gates of `decision-log`, `task` and
   `plan`, and the `waiting` edge that closes a plan. `base` keeps `waiting` only where WingFoil
   0.3.0 drives the edge for every project, so `task` moves with `submit` and `approve`.
+- WingFoil's `retrospective`: its phases, without `collect-feedback`, which reads registered
+  consumer inboxes, and without its `release` element; the approval selects the retrospective's
+  decision-log by a tag.
+- wingfoil-templates' own `retrospective-periodic`: a thin main that starts the retrospective in a
+  composition without a delivery workflow.
 
 ## Versions
 

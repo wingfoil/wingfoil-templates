@@ -47,7 +47,8 @@ Applies to every role that writes or reviews pack content under `packs/`.
 - A pack declares what it `requires` and what it `conflicts` with; one methodology and one pack per
   phase slot per project.
 - Every workflow phase that should create or move an element says so with `actions` and `produces`:
-  a phase that parses but declares nothing is a defect (WingFoil benchmark note N1).
+  a phase that parses but declares none of `include`, `actions`, `produces` and `approval` is a
+  defect (WingFoil benchmark note N1); a phase with an `approval` alone is a checkpoint, a gate.
 - Every pack except `base` requires `base` (`requires: [base@^<major>]`) and only adds to it or
   tightens it (dl-003 D1). `software` requires `base` only. Every phase pack requires `software`,
   and so does every pack that uses a Memory type, a workflow, a directive or a parameter of
