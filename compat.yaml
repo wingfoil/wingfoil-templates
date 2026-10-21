@@ -16,3 +16,8 @@ releases:
     reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
     capabilities: []
     notes: "Predates dl-149: reads format 1 but warns on the format: key."
+  - wingfoil: 0.3.0
+    format_key: true
+    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
+    capabilities: [workflow-engine]
+    notes: "Accepts the format: key. workflow-engine recorded because the CHANGELOG names workflow start, end, next and finalize (dl-021 R4); the vocabulary is provisional, WingFoil's to name (dl-177)."

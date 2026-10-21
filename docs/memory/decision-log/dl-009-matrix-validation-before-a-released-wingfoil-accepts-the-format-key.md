@@ -100,3 +100,8 @@ bumped.
   on tags runs publication mode; the evidence writer refuses self-test results; the exact matching
   of the tolerated line; the scope of `pack-compatibility`, with its one-sentence configuration
   change; `compat.yaml` is cited as spec-001's example, since the real file arrives with dl-010.
+- 2026-10-21, task-036 (plan-042): `compat.yaml` lists WingFoil 0.3.0, the first released WingFoil
+  with `format_key: true`. The self-tests now run it too, with no tolerance; the tolerance applies
+  to 0.2.2 only. Publication mode selects 0.3.0. Self-test mode drops only the `format_key`
+  condition, not capabilities, so a composition requiring `workflow-engine` (the foundation packs,
+  once authored) runs 0.3.0 alone.

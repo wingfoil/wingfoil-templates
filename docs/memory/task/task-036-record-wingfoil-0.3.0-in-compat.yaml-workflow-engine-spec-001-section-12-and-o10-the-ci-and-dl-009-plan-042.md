@@ -2,7 +2,7 @@
 id: task-036-record-wingfoil-0.3.0-in-compat.yaml-workflow-engine-spec-001-section-12-and-o10-the-ci-and-dl-009-plan-042
 type: task
 title: "Record WingFoil 0.3.0 in compat.yaml: workflow-engine, spec-001 section 12 and O10, the CI and dl-009 (plan-042)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (wingfoil-release-intake › record, plan-042)
 depends_on: ["task-035-the-compatibility-matrix-runs-wingfoil-0.3.0-its-version-line-a-committed-scratch-repository-diagnostics-as-warnings-per-release-stubs-plan-042"]
 tags: ["tooling","compat","intake"]
@@ -115,3 +115,28 @@ Order (dl-018):
 - 2026-10-21: independent review of the body: approve after amendments, nothing blocking (task-035's
   two-release test folds into the golden one; the empty compatible set keeps a test; the CI header;
   exact counts and commands; the notes' wording; the out-of-scope texts). Amended.
+- 2026-10-21, build on `task/task-036-record-wingfoil-0.3.0`:
+  - red (`a47b461`): nine failing, four in `tests/compat.test.ts` (the real releases, the
+    `workflow-engine` range, the ordering and repeated-release samples) and five in
+    `tests/validate.test.ts` (26 self-test runs, a 0.3.0 warning, publication on 0.3.0 alone, a
+    noisy 0.2.2, an install failure); green with `42f663a`, which changes `compat.yaml`, the
+    fixture's and spec-001 §12's example together, with the documentation (spec-001's prose and
+    O10, dl-009, `ci.yml`). `tests/compat.test.ts` 10 of 10, `tests/validate.test.ts` 38 of 38.
+  - criterion 4, with the real releases: `npm run validate` exit 0 (`0 runs`); on the golden tree
+    exit 0, `matrix: self-test, 26 runs, 0 failed, tolerance applied: 0.2.2`;
+    `npm run validate:publication` exit 1, "publication mode with no composition: a publication
+    run that runs nothing is not a pass"; on the golden tree exit 0,
+    `matrix: publication, 13 runs, 0 failed, tolerance applied: none`.
+  - criterion 6: `npm run index -- --check` 0 not up to date at the root (3 files) and in the
+    golden tree (11 files); `git status` clean after `npm run index`.
+- 2026-10-21: independent review of the branch: approve after amendments, nothing blocking.
+  Applied: the default helper maps each listed release to its stub and refuses an unlisted one,
+  instead of the Design's `stubsPerRelease`, which task-035's two-release test alone used and is
+  removed now that the golden test covers it; dl-009's note says "once authored"; O10 says the
+  matrix never ran an unreleased build. Out of scope, as W-01 and the root README: the accepted
+  charters' Compatibility sentences, which speak of this intake as to come and stay true as
+  conditionals; W9 records it.
+- 2026-10-21: re-review of the fixes: approve. Branch pushed: CI run 39575416119 on `3398991`,
+  conclusion `success` (`validate (22.12.0)` and `validate (22.21.0)` both `success`, the full
+  suite on both Node.js versions). `in-progress → in-review`; the clean-clone checks are recorded
+  at delivery.
