@@ -14,7 +14,7 @@ import { writePack } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 import { FIXTURES, REPO_ROOT } from './support/paths';
 import { publishByHand, treeRepo } from './support/published-repo';
-import { FORMAT_WARNING, StubWingfoil } from './support/stub-wingfoil';
+import { FORMAT_WARNING, StubWingfoil, stubsPerRelease } from './support/stub-wingfoil';
 import type { StubCommand } from './support/stub-wingfoil';
 
 const TREE = join(FIXTURES, 'compose', 'tree');
@@ -93,6 +93,48 @@ describe('npm run validate', () => {
       assert.equal(result.mode, 'self-test');
       assert.deepEqual(result.tolerated, ['0.2.2']);
     });
+
+  it('runs a tree whose compat.yaml lists 0.2.2 and 0.3.0 against both releases (task-035)', () => {
+    const json = { stdout: [JSON.stringify({ workflows: [], diagnostics: [], entries: [],
+      warnings: [] })] };
+    const releases = (diagnostics: unknown[]): ReturnType<typeof stubsPerRelease> =>
+      stubsPerRelease({
+        '0.2.2': { commands: Object.fromEntries(['workflow list', 'dna show', 'directives list']
+          .map((line) => [line, { stderr: [FORMAT_WARNING] }])) },
+        '0.3.0': { version: '0.3.0 (cc31d7a8)', commands: {
+          'workflow list': { stdout: [JSON.stringify({ workflows: [], diagnostics })] },
+          'dna show': json, 'directives list': json } },
+      });
+    withTree((tree) => {
+      const compat = join(tree, 'compat.yaml');
+      writeFileSync(compat, `${readFileSync(compat, 'utf8')}  - wingfoil: 0.3.0
+    format_key: true
+    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
+    capabilities: [workflow-engine]
+`);
+    }, (tree) => {
+      const clean = releases([]);
+      try {
+        const result = validate(['--tree', tree, ...NAME], { install: clean.install });
+        assert.equal(result.code, 0, result.lines.join('\n'));
+        assert.ok(result.lines.includes(
+          'matrix: self-test, 26 runs, 0 failed, tolerance applied: 0.2.2'), result.lines.join('\n'));
+      } finally {
+        clean.dispose();
+      }
+      const warned = releases([{ code: 'W_SAMPLE', severity: 'warning', file: 'f', path: 'p',
+        message: 'sample' }]);
+      try {
+        const result = validate(['--tree', tree, ...NAME], { install: warned.install });
+        assert.equal(result.code, 1, result.lines.join('\n'));
+        assert.ok(result.lines.some((line) => line.startsWith(
+          'matrix presets/golden.yaml wingfoil@0.3.0 workflow list: fail (self-test)')),
+        result.lines.join('\n'));
+      } finally {
+        warned.dispose();
+      }
+    });
+  });
 
   it('in publication mode, finds no compatible release for the golden preset (dl-009)', () => {
     const result = validate(['--tree', TREE, ...NAME], { mode: 'publication' });

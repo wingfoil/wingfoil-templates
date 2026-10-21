@@ -239,6 +239,97 @@ describe('runRelease', () => {
   });
 });
 
+describe('runRelease with WingFoil 0.3.0 (task-035)', () => {
+  const V030 = release('0.3.0');
+
+  for (const printed of ['0.3.0', '0.3.0 (cc31d7a8)', '0.3.0 (unknown)', '0.3.0 (cc31d7a8-dirty)']) {
+    it(`accepts the version line ${JSON.stringify(printed)}`, () => {
+      const result = run(everyCommand({}), { target: V030, behaviour: { version: printed } });
+      assert.equal(result.code, 0, JSON.stringify(result));
+    });
+  }
+
+  for (const printed of ['0.3.0 (', '0.3.0  (cc31d7a8)', '0.3.0 (cc31d7a8) y', '0.3.1 (cc31d7a8)',
+    '0.3.0 (xyz)']) {
+    it(`refuses the version line ${JSON.stringify(printed)}`, () => {
+      const result = run(everyCommand({}), { target: V030, behaviour: { version: printed } });
+      assert.equal(result.code, 1);
+      assert.match(result.message ?? '', /^--version printed /);
+    });
+  }
+
+  it('runs every command with --format json, keeping the bare label in the outcome', () => {
+    const result = run({ 'workflow list --format json': { status: 5 } }, { target: V030 });
+    assert.equal(result.code, 1);
+    assert.match(failureOf(result, 'workflow list'), /exit 5/);
+    assert.deepEqual(result.outcomes.map((outcome) => outcome.command), COMMANDS);
+  });
+
+  it('commits the composed .wingfoil/ before any command: HEAD holds it, nothing is left over',
+    () => {
+      const stub = new StubWingfoil({ snapshot: true }, '0.3.0');
+      const composed = composedOutput();
+      try {
+        writeFileSync(join(composed.dir, '.wingfoil', 'roles.yaml'), 'format: 1\n');
+        mkdirSync(join(composed.dir, '.wingfoil', 'workflows'));
+        writeFileSync(join(composed.dir, '.wingfoil', 'workflows', 'a.yaml'), 'name: a\n');
+        const result = runRelease(stub.cli, composed.dir, V030, 'publication');
+        assert.equal(result.code, 0, JSON.stringify(result));
+        const seen = JSON.parse(readFileSync(join(stub.dir, 'snapshot.json'), 'utf8')) as
+          { args: string; tree: string | null; status: string | null }[];
+        assert.equal(seen.length, 3);
+        for (const entry of seen) {
+          assert.equal(entry.tree, '.wingfoil/dna.yaml\n.wingfoil/roles.yaml\n'
+            + '.wingfoil/workflows/a.yaml\n', entry.args);
+          assert.equal(entry.status, '', entry.args);
+        }
+      } finally {
+        stub.dispose();
+        composed.dispose();
+      }
+    });
+
+  const diagnostic = (severity: string): string => JSON.stringify({ baseline: { rev: 'HEAD' },
+    workflows: [], diagnostics: [{ code: 'W_SAMPLE', severity, file: 'f', path: 'p',
+      message: 'sample message' }] });
+
+  it('passes a workflow list whose diagnostics are empty', () => {
+    const result = run({ 'workflow list': { stdout: [JSON.stringify(
+      { baseline: { rev: 'HEAD' }, workflows: [], diagnostics: [] })] } }, { target: V030 });
+    assert.equal(result.code, 0, JSON.stringify(result));
+  });
+
+  for (const severity of ['warning', 'error']) {
+    it(`fails a workflow list diagnostic of severity ${severity}, naming its code (ruling L)`,
+      () => {
+        const result = run({ 'workflow list': { stdout: [diagnostic(severity)] } },
+          { target: V030 });
+        assert.equal(result.code, 1);
+        assert.match(failureOf(result, 'workflow list'), /W_SAMPLE.*sample message/);
+      });
+  }
+
+  it('fails an entry of directives list warnings (ruling M)', () => {
+    const result = run({ 'directives list': { stdout: [JSON.stringify(
+      { entries: [], warnings: ['scope disagrees with roles.yaml'] })] } }, { target: V030 });
+    assert.equal(result.code, 1);
+    assert.match(failureOf(result, 'directives list'), /scope disagrees with roles\.yaml/);
+  });
+
+  it('passes directives list with no warnings', () => {
+    const result = run({ 'directives list': { stdout: [JSON.stringify(
+      { entries: [], warnings: [] })] } }, { target: V030 });
+    assert.equal(result.code, 0, JSON.stringify(result));
+  });
+
+  it("judges 0.2.2's JSON workflow list as before: its stderr format warning tolerated", () => {
+    const result = run(everyCommand({ stderr: [FORMAT_WARNING],
+      stdout: [JSON.stringify({ manifest: {}, workflows: [] })] }));
+    assert.equal(result.code, 0, JSON.stringify(result));
+    assert.deepEqual(result.outcomes.map((outcome) => outcome.tolerated), [1, 1, 1]);
+  });
+});
+
 /** The stamp of an install: the manifest's bytes, then the lockfile's. */
 function stampOf(dir: string): string {
   return createHash('sha256').update(readFileSync(join(dir, 'package.json')))
