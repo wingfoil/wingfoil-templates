@@ -784,6 +784,11 @@ releases:
     reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
     capabilities: []
     notes: "Predates dl-149: reads format 1 but warns on the format: key."
+  - wingfoil: 0.3.0
+    format_key: true
+    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
+    capabilities: [workflow-engine]
+    notes: "Accepts the format: key. workflow-engine recorded because the CHANGELOG names workflow start, end, next and finalize (dl-021 R4); the vocabulary is provisional, WingFoil's to name (dl-177)."
 ```
 
 - **`kinds`** are the seven dl-149 kinds a composition involves, all of them required. `workflows`
@@ -807,6 +812,12 @@ releases:
   key: `unknown field(s) ignored: format` from `workflow list`, `dna show` and `directives list`
   (checked on 2026-10-06 in a scratch clone of this repository). Its `format_key` is therefore
   `false`.
+
+  WingFoil 0.3.0 accepts the key: on the composed golden tree, committed in a scratch repository,
+  `workflow list`, `dna show` and `directives list` run with `--format json` exit 0 with no
+  warning (checked on 2026-10-21, task-035). Its `format_key` is `true`, it reads format 1 for
+  every kind, and it provides `workflow-engine`, its CHANGELOG naming `workflow start`, `end`,
+  `next` and `finalize` (dl-021 R4).
 
   `wingfoil-release-intake` appends one entry per WingFoil release (dl-002).
 
@@ -975,7 +986,7 @@ Each has an owner outside this specification. None blocks format 1.
 | O7 | A canonical YAML serialization of composed files, so that two different composers give the same bytes. Format 1 requires determinism of one composer only (adr-001). | WingFoil, with notes T15 |
 | O8 | The `{{` escape. Not needed so far. | this repository, when a pack needs it |
 | O9 | The `method` entry per workflow and phase. | dl-007 (`pending`) |
-| O10 | No released WingFoil has `format_key: true` before v0.3 is released, so the tooling's fixtures (sequencer W5–W7) cannot pass the zero-warning matrix on 0.2.2. Whether the matrix then runs against an unreleased v0.3 build, for tooling only and never for a publication, is the tooling phase's decision. | the tooling phase (M1) |
+| O10 | No released WingFoil had `format_key: true` before v0.3, so the tooling's fixtures could not pass the zero-warning matrix on 0.2.2. **Settled** with WingFoil 0.3.0 (task-036): it has `format_key: true`, the self-tests run it with no tolerance, and publication mode selects it. | settled |
 | O11 | task-251 decision 4, held for the WingFoil approver: `memory add` copies a template's `format: 1` into the elements it creates. If ruled so, the `format:` that §5 requires in a pack's Memory templates also appears in every project element. | WingFoil (task-251) |
 | O12 | WingFoil's `init` writes its own built-in directives into `directives/built-in/`, the folder the reference composer writes packs to in format 1. Settled in principle by WingFoil dl-138 Q3 (dl-021 R3): `built-in/` is WingFoil's own and packs land in the `remote` class; what remains is the folder and how an upgrade tells them apart. | WingFoil dl-138's Action 2 tech-spec, with O5 and O13 |
 | O13 | A pack's `memory.yaml` fragment names its template as `memory/templates/built-in/<type>.md` (§7.6), the one path a pack writes that names a folder. How it reads under the `remote` class: rewritten by `pack-install`, or a kind-relative form. The format-1 rule stays until then. | WingFoil dl-138's Action 2 tech-spec (F-029) |
@@ -1201,3 +1212,7 @@ check the rest, and the composer refuses what they reject.
   gains O15, a later pack adding `waiting` to an existing state when it ships the driving
   workflow; the foundation packs' charters point to it as the way back for the edges they leave
   without `waiting`. Nothing else changes.
+- 2026-10-21, **amended in place** (plan-042, task-036; its merge OK approves the text, as for
+  plan-032): §12's example lists WingFoil 0.3.0 (`format_key: true`, format 1 for every kind,
+  `workflow-engine`), equal to `compat.yaml`; §12's prose records 0.3.0's check; §16's O10 is
+  settled. Nothing else changes.
