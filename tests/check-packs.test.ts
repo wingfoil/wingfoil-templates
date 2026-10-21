@@ -71,7 +71,7 @@ describe('npm run check:packs', () => {
   it('passes this repository: catalog.yaml, compat.yaml and the base pack, no problem '
     + '(acceptance 13)', () => {
     const result = runCheckPacks(REPO_ROOT);
-    assert.deepEqual(result.lines, ['lint: checked 16 files, 0 problems']);
+    assert.deepEqual(result.lines, ['lint: checked 20 files, 0 problems']);
     assert.equal(result.code, 0);
   });
 
@@ -688,10 +688,17 @@ describe('F3.5 workflow rules', () => {
     assert.equal(result.code, 0, result.lines.join('\n'));
   });
 
-  it('empty-phase: a phase that declares none of include, actions and produces', () => {
+  it('empty-phase: a phase that declares none of include, actions, produces and approval', () => {
     failsWith('empty-phase', [...FOUNDATION, withWorkflow('flow',
       FLOW('  - { name: a, description: x }\n'))]);
   });
+
+  it('empty-phase: a phase that declares only an approval is a checkpoint, not empty (task-038)',
+    () => {
+      const result = lint([...FOUNDATION, withWorkflow('flow',
+        FLOW('  - { name: a, role: approver, approval: { by_role: approver } }\n'))]);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+    });
 
   it('include: a path, a file name, or a workflow neither shipped nor a slot', () => {
     failsWith('include', [...FOUNDATION, withWorkflow('flow',
@@ -749,7 +756,7 @@ describe('F3.5 workflow rules', () => {
       (root) => {
         copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
         assert.throws(() => composeDocuments(root, loadCatalog(join(root, 'catalog.yaml')),
-          ['methodology/kanban'], {}), /declares none of include, actions and produces/);
+          ['methodology/kanban'], {}), /declares none of include, actions, produces and approval/);
       });
   });
 });
