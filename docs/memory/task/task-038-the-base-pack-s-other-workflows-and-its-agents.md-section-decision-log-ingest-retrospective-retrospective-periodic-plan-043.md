@@ -2,7 +2,7 @@
 id: task-038-the-base-pack-s-other-workflows-and-its-agents.md-section-decision-log-ingest-retrospective-retrospective-periodic-plan-043
 type: task
 title: "The base pack's other workflows and its AGENTS.md section: decision-log-ingest, retrospective, retrospective-periodic (plan-043)"
-status: in-progress
+status: in-review
 pack: "pack-foundation-base"
 depends_on: ["task-037-the-base-pack-its-smallest-valid-form-data-templates-roles-directives-and-governance-evolution-plan-043"]
 tags: ["packs","base","W8"]
