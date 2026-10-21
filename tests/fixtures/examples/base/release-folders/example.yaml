@@ -1,14 +1,14 @@
 format: 1
 id: release-folders
 title: "Release folders"
-description: "Tidewater Maps, a fictional mapping tool, files its records by release."
+description: "Seabird Maps, a fictional mapping tool, files its records by release."
 packs:
   - base@^1
 parameters:
-  project_name: "Tidewater Maps"
-  approver_name: "Tidewater Lead"
-  approver_email: "lead@tidewater-maps.example"
-  agent_name: "Tidewater Agent"
+  project_name: "Seabird Maps"
+  approver_name: "Seabird Lead"
+  approver_email: "lead@seabird-maps.example"
+  agent_name: "Seabird Agent"
   decision_log_path: "docs/04_memory/design/dls/{id}.md"
   task_path: "docs/04_memory/{release}/{id}.md"
   plan_path: "docs/05_plans/{scope}/{id}.md"

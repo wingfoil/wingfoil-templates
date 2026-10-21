@@ -121,7 +121,8 @@ Written 2026-10-21, before the build. Branch `task/task-039-base-examples` from 
   - red (`a75b41d`): three failing: `tests/check-packs.test.ts` (lint, 23 files) and
     `tests/validate.test.ts` (3 compositions, `3 runs`; a publication run of this repository that
     composes the examples and passes); green with `6c68f08` (the three examples and README section
-    7, one commit, CB-2): 94 of 94 and 2 of 2 on those files.
+    7, one commit, CB-2): `tests/check-packs.test.ts` 94 of 94, and the two "this repository"
+    tests of `tests/validate.test.ts` 2 of 2.
   - criterion 4, WingFoil 0.3.0 for real: `npm run validate` exit 0, the three examples
     `composed twice, 16 files, byte-identical`, `compositions: 3`, every matrix line
     `pass (self-test)`, `matrix: self-test, 3 runs, 0 failed, tolerance applied: none`;
@@ -130,8 +131,9 @@ Written 2026-10-21, before the build. Branch `task/task-039-base-examples` from 
   - criterion 5, the private projects' check, 2026-10-21, `base` at `6c68f08`, WingFoil 0.3.0:
     3 projects, each on a scratch tree outside this repository (`packs/base`, `catalog.yaml`,
     `compat.yaml` and the index outputs; README section 7 reduced to the exemption line, since the
-    scratch holds no example), `npm run validate -- --tree <scratch> base --param … ` with the
-    project's path and id values (redacted) and fictional identities: 3 of 3 exit 0, each
+    scratch holds no example), `npm run validate -- --tree <scratch> base --param …` with the
+    project's path and id values (redacted; given as `--param` rather than a preset file, the same
+    composition) and fictional identities: 3 of 3 exit 0, each
     `matrix: self-test, 1 run, 0 failed, tolerance applied: none`, 0 warnings. A first run exited 1
     on the scratch tree alone (its index outputs were missing), not on the projects. The scratch
     trees and logs were removed.
@@ -141,3 +143,8 @@ Written 2026-10-21, before the build. Branch `task/task-039-base-examples` from 
     `release-folders-lean` carries WingFoil-UI's.
   - privacy: no local path, private name or value, real name, or address but `*.example` in the
     diff.
+- 2026-10-21: independent review of the branch: approve after amendments, nothing blocking.
+  Applied: the lean example runs `decision-log-ingest` (its retrospective would write under the
+  default folder) and states its composition; the release-folder examples say what the project
+  gets; the scratch check's `--param` noted; the test counts named per file; a fictional name no
+  longer shared with another fixture; a long line.
