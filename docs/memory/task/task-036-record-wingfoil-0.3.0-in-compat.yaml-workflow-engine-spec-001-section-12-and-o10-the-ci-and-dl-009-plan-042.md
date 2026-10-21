@@ -57,13 +57,11 @@ Tests run by `npm test` unless named.
    (no pack) and on the golden tree with 26 runs, 0 failed; `npm run validate:publication` exits 1
    on this repository ("publication mode with no composition") and exits 0 on the golden tree
    against 0.3.0 alone. Recorded in the Execution Notes.
-5. **dl-009 and the CI.** dl-009's Execution Note records that the self-tests now also run a
-   release with `format_key: true`, the tolerance applying to 0.2.2 only. `ci.yml`'s header no
-   longer
-   says publication fails by design, and its golden step's name does not name 0.2.2 alone.
+5. **dl-009 and the CI.** dl-009's Execution Note records that the self-tests now also run a release
+   with `format_key: true`, the tolerance applying to 0.2.2 only. `ci.yml`'s header no longer says
+   publication fails by design, and its golden step's name does not name 0.2.2 alone.
 6. **The index.** `npm run index` leaves `CATALOG.md` and `catalog-index.json` byte-unchanged, at
-the
-   root and in the fixture trees: `install` stays empty, no release providing `pack-install`.
+   the root and in the fixture trees: `install` stays empty, no release providing `pack-install`.
 7. **Checks** from a clean clone on Node.js 22.21 and 22.12.0: `npm test`, `npm run lint`,
    `npm run check:pins`, `npm run check:schemas`, `npm run check:packs`, `npm run index -- --check`
    and `npm run validate` exit 0; the CI run on the pushed branch concludes `success`.
