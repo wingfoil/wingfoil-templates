@@ -146,8 +146,7 @@ repository's adoption (W9); spec-001 §8.3's `{release}` fold-back, at W8's clos
   lint and validate counts on this repository), not ruling 2's one; the ruling's substance (no
   catalog entry) is unchanged. `retrospective_path` comes with task-038.
 - 2026-10-21: task-037 `done`, merged (`b6e9755`): `packs/base` in its smallest valid form (14
-  files),
-  accepted by WingFoil 0.3.0 with no warning (`validate -- base …`: 1 run, 0 failed). CI run
+  files), accepted by WingFoil 0.3.0 with no warning (`validate -- base …`: 1 run, 0 failed). CI run
   39590724856 `success`. task-038 next.
 - 2026-10-21, task-038's review: the approver ruled R (the lint accepts an approval checkpoint
   phase, `pack-authoring` reworded, in task-038) and S (the `retrospective` tag selection kept,

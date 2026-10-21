@@ -75,10 +75,12 @@ under dl-018 R1–R3 inside this pack task.
 7. **The lint rule** (ruling R): `empty-phase` accepts a phase that declares `approval`; a red case
    in `tests/check-packs.test.ts` first (a phase with only `role` and `approval` passes), its red
    run recorded (dl-018 R1); a phase with none of `include`, `actions`, `produces` and `approval`
-   still fails. `pack-authoring`'s sentence on phases that declare nothing names the approval
-   checkpoint as declaring a gate.
-8. **The charter** `pack-foundation-base`: an Execution Note recording open point 0's outcome
-   (above, with its condition and limit) and `retrospective_path`'s default.
+   still fails, and the refusal's message and `src/workflow-rules.ts`'s header name the four keys.
+   `pack-authoring`'s sentence on phases that declare nothing names the approval checkpoint as
+   declaring a gate.
+8. **The charter** `pack-foundation-base`: an Execution Note recording ruling S and its date, which
+   replaces open point 0's fallback, open point 0's outcome (above, with its condition and limit)
+   and `retrospective_path`'s default.
 9. **The commands**, after `npm run build`, recorded in the Execution Notes: `npm run lint`,
    `npm run check:packs`, `npm run check:schemas`, `npm run index -- --check` exit 0;
    `npm run validate -- base --param project_name=Sample --param "approver_name=Sample
