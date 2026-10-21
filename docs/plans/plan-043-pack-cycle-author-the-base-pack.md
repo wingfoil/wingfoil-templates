@@ -2,7 +2,7 @@
 id: plan-043-pack-cycle-author-the-base-pack
 type: plan
 title: "pack-cycle author: the base pack"
-status: active
+status: done
 workflow: "pack-cycle"
 phase: "author"
 tags: ["packs","base","W8"]
