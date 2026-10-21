@@ -151,3 +151,7 @@ the vocabulary's final names (WingFoil dl-177).
 - 2026-10-21, task-035's build: WingFoil 0.3.0 refuses a Memory type without
   `template.frontmatter` (`E_VALIDATION`), which spec-001 §7.5 lets a pack omit; the fixtures were
   fixed, and a rule (lint or spec) is the approver's to decide, outside this plan.
+- 2026-10-21: task-035 `done`, merged (`26bc8c4`): the matrix runs WingFoil 0.3.0 (version line, a
+  committed scratch repository, rulings L and M), 0.3.0's pin, per-release stubs, a frozen
+  fixture compat header. A real run on a copy of the golden tree passed (26 runs, 0 failed) after
+  the fixture fix. CI run 39561773454 `success`. task-036 next.

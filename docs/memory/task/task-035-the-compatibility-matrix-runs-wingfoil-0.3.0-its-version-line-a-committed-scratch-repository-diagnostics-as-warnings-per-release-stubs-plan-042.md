@@ -199,3 +199,7 @@ Red-first exceptions (dl-018): the pin (configuration), the directive and header
   `index -- --check` and `workflow list` exit 0. Branch pushed: CI run 39561773454 on `ab50d20`,
   conclusion `success` (`validate (22.12.0)` and `validate (22.21.0)` both `success`, the full
   suite on the floor). `in-progress → in-review`.
+- 2026-10-21, delivery: checks from a clean clone at `ab50d20` on Node.js 22.12.0 also green (934
+  of 934, every check exit 0). The approver accepted the task (`in-review → approved`) and gave
+  the merge OK; `--no-ff` merge into `main` (`26bc8c4`), `approved → done`, `main` pushed, the branch
+  removed.
