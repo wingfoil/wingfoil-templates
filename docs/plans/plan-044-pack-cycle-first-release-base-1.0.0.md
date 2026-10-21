@@ -69,9 +69,9 @@ repository's adoption of `base` (W9); spec-001 §8.3's fold-back.
    rejection back to `validating`. Ruling C: it authorizes the publication.
 5. **`publish`** (tech-lead): `npm run publish:pack -- --pack base`, which tags `base@1.0.0` at the
    release commit and makes the catalog commit with the regenerated index, pushing nothing; the
-   tag and `main` pushed by hand; the CI run on the tag (`**@*`, publication mode) and on `main` read, their conclusions
-   recorded in the element's Publication section with the tag, the commit and the digest; the
-   catalog checked on the published site.
+   tag and `main` pushed by hand; the CI run on the tag (`**@*`, publication mode) and on `main`
+   read, their conclusions recorded in the element's Publication section with the tag, the commit
+   and the digest; the catalog checked on the published site.
 6. **`activate`** (ruling B): the charter `accepted → active`, its Execution Notes recording the
    published version.
 7. **Notices**: the publication date and the tag to WingFoil UI's session and to the coordinating
