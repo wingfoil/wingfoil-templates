@@ -96,7 +96,20 @@ with other values runs on a scratch tree outside it (criterion 5).
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Written 2026-10-21, before the build. Branch `task/task-039-base-examples` from `main`.
+
+1. **Red** (dl-018 R1), tests only: `tests/validate.test.ts` ("validates this repository": its
+   three examples, 3 compositions, `3 runs`, lint 23; the publication run of this repository
+   composes them and passes, `3 runs`) and `tests/check-packs.test.ts` (lint 23), with titles that
+   say what they count; red until the examples exist.
+2. **Green:** `tests/fixtures/examples/base/{core-records,release-folders,release-folders-lean}/
+   example.yaml` and README section 7 in one commit (CB-2): a fictional non-software project on
+   the defaults; a fictional software project on release folders with a retrospective folder; one
+   without it. Identities `*.example`; values as the Context's sets.
+3. **The evidence:** `npm run validate` on this repository with WingFoil 0.3.0 (3 runs, no
+   warning); the private check on a scratch tree outside the repository, outcome fields only.
+4. **The charter's and this task's notes:** the mapping, the outcome, the exit criterion met.
+
 
 ## Execution Notes
 - 2026-10-21: independent review of the body: approve after amendments. Applied: the private check
