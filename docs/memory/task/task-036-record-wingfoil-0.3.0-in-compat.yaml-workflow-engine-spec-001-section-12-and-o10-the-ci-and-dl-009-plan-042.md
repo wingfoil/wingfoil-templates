@@ -96,9 +96,9 @@ Order (dl-018):
    - `tests/compat.test.ts`: the real releases 0.2.2 then 0.3.0, 0.3.0's `format_key` and
      `capabilities`; `SECOND_RELEASE` becomes 0.4.0, the repeated case repeats the last release;
      `computeRange` on the real file gives `"0.3.0"` to a version requiring `workflow-engine`.
-   - `tests/validate.test.ts`: the default `validate()` helper installs per release (a stub each:
-     0.2.2 with its format warning, 0.3.0 printing `0.3.0 (cc31d7a8)` and JSON with nothing to
-     report); the golden expectations of criterion 3 (26 self-test runs with
+   - `tests/validate.test.ts`: the default `validate()` helper installs per release
+     (`stubsPerRelease`: 0.2.2 with its format warning, 0.3.0 printing `0.3.0 (cc31d7a8)` and JSON
+     with no diagnostics or warnings); the golden expectations of criterion 3 (26 self-test runs with
      both releases' lines; publication 13 runs on 0.3.0 alone; a noisy 0.2.2, a 0.3.0 warning, an
      install failure); task-035's two-release test folded in; the empty compatible set on a tree
      copy whose `compat.yaml` is `FROZEN_COMPAT`.
@@ -128,4 +128,11 @@ Order (dl-018):
     run that runs nothing is not a pass"; on the golden tree exit 0,
     `matrix: publication, 13 runs, 0 failed, tolerance applied: none`.
   - criterion 6: `npm run index -- --check` 0 not up to date at the root (3 files) and in the
-    golden tree (11 files).
+    golden tree (11 files); `git status` clean after `npm run index`.
+- 2026-10-21: independent review of the branch: approve after amendments, nothing blocking.
+  Applied: the default helper maps each listed release to its stub and refuses an unlisted one,
+  instead of the Design's `stubsPerRelease`, which task-035's two-release test alone used and is
+  removed now that the golden test covers it; dl-009's note says "once authored"; O10 says the
+  matrix never ran an unreleased build. Out of scope, as W-01 and the root README: the accepted
+  charters' Compatibility sentences, which speak of this intake as to come and stay true as
+  conditionals; W9 records it.

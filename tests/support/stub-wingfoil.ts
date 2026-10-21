@@ -78,19 +78,4 @@ export function composedOutput(): { dir: string; dispose: () => void } {
   return { dir, dispose: () => rmSync(dir, { recursive: true, force: true }) };
 }
 
-/** One stub per release, each answering its own version; `install` maps a version to its CLI. */
-export function stubsPerRelease(behaviours: Record<string, StubBehaviour>):
-{ install: (version: string) => string; dispose: () => void } {
-  const stubs = Object.fromEntries(Object.entries(behaviours).map(([version, behaviour]) =>
-    [version, new StubWingfoil(behaviour, version)]));
-  return {
-    install: (version) => {
-      const stub = stubs[version];
-      if (stub === undefined) throw new Error(`no stub for wingfoil@${version}`);
-      return stub.cli;
-    },
-    dispose: () => { for (const stub of Object.values(stubs)) stub.dispose(); },
-  };
-}
-
 export const FORMAT_WARNING = 'Warning: {cwd}/.wingfoil/dna.yaml: unknown field(s) ignored: format';

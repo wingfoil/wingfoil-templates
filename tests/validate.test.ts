@@ -50,10 +50,18 @@ function stubbed030(diagnostics: unknown[] = []): StubWingfoil {
 const WINGFOIL_030 = stubbed030();
 after(() => WINGFOIL_030.dispose());
 
-/** The stub of each release: `wingfoil-<version>` is never installed in the tests. */
+/**
+ * The stub of each release `compat.yaml` lists: `wingfoil-<version>` is never installed in the
+ * tests, and a release with no stub is an error.
+ */
 function byRelease(release022: StubWingfoil = WINGFOIL, release030: StubWingfoil = WINGFOIL_030):
 (version: string) => string {
-  return (version) => (version === '0.3.0' ? release030 : release022).cli;
+  const stubs: Record<string, StubWingfoil> = { '0.2.2': release022, '0.3.0': release030 };
+  return (version) => {
+    const stub = stubs[version];
+    if (stub === undefined) throw new Error(`no stub for wingfoil@${version}`);
+    return stub.cli;
+  };
 }
 
 /** `validate` never installs a release in the tests: a stub stands for each release. */

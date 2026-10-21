@@ -103,5 +103,5 @@ bumped.
 - 2026-10-21, task-036 (plan-042): `compat.yaml` lists WingFoil 0.3.0, the first released WingFoil
   with `format_key: true`. The self-tests now run it too, with no tolerance; the tolerance applies
   to 0.2.2 only. Publication mode selects 0.3.0. Self-test mode drops only the `format_key`
-  condition, not capabilities, so a composition requiring `workflow-engine` (the foundation packs)
-  runs 0.3.0 alone.
+  condition, not capabilities, so a composition requiring `workflow-engine` (the foundation packs,
+  once authored) runs 0.3.0 alone.
