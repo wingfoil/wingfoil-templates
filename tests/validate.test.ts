@@ -257,21 +257,25 @@ describe('npm run validate', () => {
     assert.ok(entries.lines.some((line) => line.startsWith('composition entries: composed twice')));
   });
 
-  it('validates this repository: catalog.yaml, compat.yaml and the base pack, no composition, '
-    + 'no matrix run', () => {
-    const result = validate(['--tree', REPO_ROOT]);
-    assert.equal(result.code, 0, result.lines.join('\n'));
-    assert.ok(result.lines.includes('schemas: checked 3 files, 0 problems'));
-    assert.ok(result.lines.includes('lint: checked 20 files, 0 problems'));
-    assert.ok(result.lines.includes('compositions: 0'));
-    assert.ok(result.lines.includes('matrix: self-test, 0 runs, 0 failed, tolerance applied: none'));
-  });
+  it('validates this repository: the base pack and its three examples, three runs (task-039)',
+    () => {
+      const result = validate(['--tree', REPO_ROOT]);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      assert.ok(result.lines.includes('schemas: checked 3 files, 0 problems'));
+      assert.ok(result.lines.includes('lint: checked 23 files, 0 problems'));
+      assert.ok(result.lines.includes('compositions: 3'));
+      assert.ok(result.lines.includes(
+        'matrix: self-test, 3 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
+    });
 
-  it('fails a publication run of this repository: it runs nothing', () => {
-    const result = validate(['--tree', REPO_ROOT], { mode: 'publication' });
-    assert.equal(result.code, 1, result.lines.join('\n'));
-    assert.ok(result.lines.some((line) => /no composition/.test(line)), result.lines.join('\n'));
-  });
+  it('passes a publication run of this repository: the three examples of base on 0.3.0 (task-039)',
+    () => {
+      const result = validate(['--tree', REPO_ROOT], { mode: 'publication' });
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      assert.ok(result.lines.includes(
+        'matrix: publication, 3 runs, 0 failed, tolerance applied: none'),
+      result.lines.join('\n'));
+    });
 
   it('exits 1 on a schema error, and does not compose the failing preset', () => {
     withTree((tree) => replaceIn(join(tree, 'presets', 'golden.yaml'), 'format: 1', 'format: 2'),
