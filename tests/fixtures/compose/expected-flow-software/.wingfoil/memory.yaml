@@ -15,6 +15,10 @@ types:
     id_pattern: task-{n}-{slug}
     template:
       file: memory/templates/built-in/task.md
+      frontmatter:
+        required:
+          - id
+          - title
     states:
       sequence:
         - draft
