@@ -220,3 +220,12 @@ For the approver's acceptance:
   projects on the default machine added to the Adoption section.
 - 2026-10-20: `requires_capabilities: [workflow-engine]`, as dl-003 D3 asks of a `base` with
   `waiting` states (the approver's ruling J, 2026-10-20; found at the review of dl-015's note).
+- 2026-10-21, task-038 (plan-043): open point 0 settled by the approver's ruling S (2026-10-21),
+  which replaces its fallback. Read at `wingfoil/wingfoil@v0.3.0`: a phase's `where` matches a
+  list field by a shared element, so `retrospective` › `approve` selects a decision-log tagged
+  `retrospective`; but the command WingFoil offers for `memory.add` reads only its `type`, so the
+  facilitator passes `--tags retrospective` by hand (`capture`'s description says so); if the tag
+  is forgotten, the selection matches nothing and the step reads as complete. The selection is
+  repository-wide. A feedback note (F-032) asks WingFoil to pass an action's
+  arguments. `retrospective_path`'s default is the directory `docs/retrospectives`. The lint's
+  `empty-phase` accepts `additional-points`, an approval checkpoint (ruling R).

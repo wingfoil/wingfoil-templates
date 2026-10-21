@@ -39,8 +39,16 @@ parameters:
     type: pattern
     default: "plan-{n}-{slug}"
     description: "The plan type's id pattern"
+  retrospective_path:
+    type: path
+    default: "docs/retrospectives"
+    description: >-
+      Where the retrospective's friction inventory goes: a directory by default, weak evidence; a
+      project may set a fixed file. Only letters, digits and . _ / { } -, and no {...} token, since
+      no element is in scope
 contents:
   fragments: [dna, roles, memory]
   directives: [traceability, doc-versioning, security-secrets, claim-sources]
-  workflows: [governance-evolution]
+  workflows: [decision-log-ingest, governance-evolution, retrospective, retrospective-periodic]
   memory_templates: [decision-log, task, plan]
+  agents_section: true

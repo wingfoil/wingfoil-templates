@@ -2,7 +2,7 @@
 id: task-038-the-base-pack-s-other-workflows-and-its-agents.md-section-decision-log-ingest-retrospective-retrospective-periodic-plan-043
 type: task
 title: "The base pack's other workflows and its AGENTS.md section: decision-log-ingest, retrospective, retrospective-periodic (plan-043)"
-status: in-progress
+status: approved
 pack: "pack-foundation-base"
 depends_on: ["task-037-the-base-pack-its-smallest-valid-form-data-templates-roles-directives-and-governance-evolution-plan-043"]
 tags: ["packs","base","W8"]
@@ -130,3 +130,34 @@ Written 2026-10-21, before the build. Branch `task/task-038-base-workflows` from
   retrospective (`19a66000`) was read first: our notes F-001…F-031 are triaged, and none of F-032's
   topics is covered by an element. Amended, with the counts (16 → 20), "no warning", the path's
   description, README sections 2 and 8, the workflows' keys and the YAML quoting.
+- 2026-10-21, build on `task/task-038-base-workflows`:
+  - red (`81e641e`): four failing: `tests/check-packs.test.ts` (an approval-only phase is not
+    empty; the refusal names four keys, through the composer too; this repository's lint counts
+    20 files) and `tests/validate.test.ts` (this repository's lint, 20 files); green with
+    `688423b` (the rule, `pack-authoring`, the pack's four files, the charter's note) and
+    `7dbe8fb` (the checkpoint test's fixture, below).
+  - `npm run lint`, `check:packs` (`lint: checked 20 files, 0 problems`), `check:schemas`,
+    `index -- --check` exit 0; `npm run index` regenerated the README's sections 4–6.
+  - criterion 9: `npm run validate -- base …` (the sample parameters of task-037) exit 0:
+    `composition entries: composed twice, 16 files, byte-identical`; the three commands
+    `pass (self-test)`; `matrix: self-test, 1 run, 0 failed, tolerance applied: none`. By hand on
+    the composed `base`, committed in a scratch repository: 0.3.0's `workflow list --format json`
+    lists `decision-log-ingest`, `governance-evolution`, `retrospective-periodic`, `diagnostics`
+    empty; `directives list` `warnings` empty.
+  - privacy: no local path, private name, real name or address but `*.example` in the diff.
+  - the checkpoint test of the red commit used a role the lint fixture does not declare, so after
+    the rule changed it still failed, on `role`; it now uses the fixture with an `approver` role,
+    as the role test does. Checked in a clone with the red commit's rule: it fails on
+    `empty-phase` alone; with the new rule it passes (`tests/check-packs.test.ts` 94 of 94).
+- 2026-10-21: independent review of the branch: approve after amendments, nothing blocking.
+  Applied: three long lines (README section 2, the rule's header, `retrospective` › `approve`'s
+  description), the green note naming `7dbe8fb`, the AGENTS.md section's CLI verbs, `capture`'s and
+  `retrospective_path`'s wording, the charter note on a forgotten tag, a shared test fixture.
+  Re-checked: `check:packs` 20 files 0 problems, `index` up to date, `tests/check-packs.test.ts`
+  94 of 94, `validate -- base …` 1 run, 0 failed.
+- 2026-10-21: re-review: approve (three cosmetic wraps left as they are). Checks from a clean clone
+  at `7dbe8fb` on Node.js 22.21.0 and 22.12.0: 937 of 937 tests, `lint`, `check:pins`,
+  `check:schemas`, `check:packs`, `validate`, `index -- --check`, `workflow list` exit 0 (the later
+  commit changes wording and a test fixture). Branch pushed: CI run 39624093976 on `932514d`,
+  conclusion `success` (`validate (22.12.0)` and `validate (22.21.0)` both `success`).
+  `in-progress → in-review`.
