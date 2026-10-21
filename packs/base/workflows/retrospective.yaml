@@ -22,7 +22,8 @@ phases:
   - name: capture
     description: >-
       Record what to keep and what to change as a decision-log tagged retrospective: pass
-      --tags retrospective to memory add, which the approve phase selects by. A change of
+      --tags retrospective to memory add, since the approve phase selects the decision-log by
+      that tag. A change of
       governance is listed as a point, not ruled here: each is ruled by its own governance-evolution
       plan. A defect of WingFoil itself is a feedback note to WingFoil, not a decision.
     role: facilitator
@@ -32,7 +33,8 @@ phases:
     produces:
       - { type: decision-log, path: "{{decision_log_path}}" }
   - name: approve
-    description: "The approver rules the retrospective's decision-log; a reject goes back to capture."
+    description: >-
+      The approver rules the retrospective's decision-log; a reject goes back to capture.
     role: approver
     where: { type: decision-log, status: [in-discussion], tags: [retrospective] }
     actions:

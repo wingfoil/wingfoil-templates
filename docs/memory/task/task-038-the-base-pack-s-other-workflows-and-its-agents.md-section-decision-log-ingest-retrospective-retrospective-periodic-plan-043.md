@@ -134,7 +134,8 @@ Written 2026-10-21, before the build. Branch `task/task-038-base-workflows` from
   - red (`81e641e`): four failing: `tests/check-packs.test.ts` (an approval-only phase is not
     empty; the refusal names four keys, through the composer too; this repository's lint counts
     20 files) and `tests/validate.test.ts` (this repository's lint, 20 files); green with
-    `688423b` (the rule, `pack-authoring`, the pack's four files, the charter's note).
+    `688423b` (the rule, `pack-authoring`, the pack's four files, the charter's note) and
+    `7dbe8fb` (the checkpoint test's fixture, below).
   - `npm run lint`, `check:packs` (`lint: checked 20 files, 0 problems`), `check:schemas`,
     `index -- --check` exit 0; `npm run index` regenerated the README's sections 4–6.
   - criterion 9: `npm run validate -- base …` (the sample parameters of task-037) exit 0:
@@ -148,3 +149,9 @@ Written 2026-10-21, before the build. Branch `task/task-038-base-workflows` from
     the rule changed it still failed, on `role`; it now uses the fixture with an `approver` role,
     as the role test does. Checked in a clone with the red commit's rule: it fails on
     `empty-phase` alone; with the new rule it passes (`tests/check-packs.test.ts` 94 of 94).
+- 2026-10-21: independent review of the branch: approve after amendments, nothing blocking.
+  Applied: three long lines (README section 2, the rule's header, `retrospective` › `approve`'s
+  description), the green note naming `7dbe8fb`, the AGENTS.md section's CLI verbs, `capture`'s and
+  `retrospective_path`'s wording, the charter note on a forgotten tag, a shared test fixture.
+  Re-checked: `check:packs` 20 files 0 problems, `index` up to date, `tests/check-packs.test.ts`
+  94 of 94, `validate -- base …` 1 run, 0 failed.

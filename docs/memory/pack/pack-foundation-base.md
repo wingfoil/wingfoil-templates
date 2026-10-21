@@ -224,7 +224,8 @@ For the approver's acceptance:
   which replaces its fallback. Read at `wingfoil/wingfoil@v0.3.0`: a phase's `where` matches a
   list field by a shared element, so `retrospective` › `approve` selects a decision-log tagged
   `retrospective`; but the command WingFoil offers for `memory.add` reads only its `type`, so the
-  facilitator passes `--tags retrospective` by hand (`capture`'s description says so), and the
-  selection is repository-wide. A feedback note (F-032) asks WingFoil to pass an action's
+  facilitator passes `--tags retrospective` by hand (`capture`'s description says so); if the tag
+  is forgotten, the selection matches nothing and the step reads as complete. The selection is
+  repository-wide. A feedback note (F-032) asks WingFoil to pass an action's
   arguments. `retrospective_path`'s default is the directory `docs/retrospectives`. The lint's
   `empty-phase` accepts `additional-points`, an approval checkpoint (ruling R).

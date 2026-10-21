@@ -671,6 +671,11 @@ describe('pack-name-unique', () => {
   });
 });
 
+/** BASE whose DNA declares the role approver only. */
+const BASE_WITH_APPROVER: PackSpec = { ...BASE, extraFiles: { ...BASE.extraFiles,
+  'fragments/dna.yaml': 'format: 1\nproject:\n  name: test\nteam:\n  roles:\n'
+    + '    - { name: approver }\n' } };
+
 /** KANBAN with one more workflow, written as given. */
 function withWorkflow(name: string, text: string, extra: Partial<PackSpec> = {}): PackSpec {
   return { ...KANBAN, ...extra, workflows: ['delivery', name],
@@ -695,9 +700,7 @@ describe('F3.5 workflow rules', () => {
 
   it('empty-phase: a phase that declares only an approval is a checkpoint, not empty (task-038)',
     () => {
-      const dna = 'format: 1\nproject:\n  name: test\nteam:\n  roles:\n    - { name: approver }\n';
-      const base = { ...BASE, extraFiles: { ...BASE.extraFiles, 'fragments/dna.yaml': dna } };
-      const result = lint([base, SOFTWARE_COMPOSABLE, withWorkflow('flow',
+      const result = lint([BASE_WITH_APPROVER, SOFTWARE_COMPOSABLE, withWorkflow('flow',
         FLOW('  - { name: a, role: approver, approval: { by_role: approver } }\n'))]);
       assert.equal(result.code, 0, result.lines.join('\n'));
     });
@@ -727,8 +730,7 @@ describe('F3.5 workflow rules', () => {
   });
 
   it('role: a phase role or approval.by_role not in team.roles', () => {
-    const dna = 'format: 1\nproject:\n  name: test\nteam:\n  roles:\n    - { name: approver }\n';
-    const base = { ...BASE, extraFiles: { ...BASE.extraFiles, 'fragments/dna.yaml': dna } };
+    const base = BASE_WITH_APPROVER;
     assert.equal(lint([base, SOFTWARE_COMPOSABLE, withWorkflow('flow',
       FLOW('  - { name: a, produces: [x.md], '
       + 'approval: { by_role: approver } }\n'))]).code, 0);

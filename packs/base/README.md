@@ -10,11 +10,11 @@ Axis: foundation
 
 Every project governed by WingFoil, software or not, starts from `base`: it holds the decision-log,
 task and plan types, the workflows that capture a decision, run a retrospective and change the
-project's own governance, the generic directives and the DNA every project shares (one approver, one agent without approval authority). Other packs
-only add to it or tighten it. It serves every adoption profile (solo developer, code reviewer,
-team developer, tech lead, non-technical manager, architect), since every composition contains it.
-It is not meant to be used alone by a software project, which takes `software` on top of it for its
-life cycle and its software types.
+project's own governance, the generic directives and the DNA every project shares (one approver, one
+agent without approval authority). Other packs only add to it or tighten it. It serves every
+adoption profile (solo developer, code reviewer, team developer, tech lead, non-technical manager,
+architect), since every composition contains it. It is not meant to be used alone by a software
+project, which takes `software` on top of it for its life cycle and its software types.
 
 ## Install and update
 
@@ -116,7 +116,7 @@ pack's range (see its catalog entry):
 | `plan_id` | pattern | `plan-{n}-{slug}` | The plan type's id pattern |
 | `plan_path` | path | `docs/plans/{id}.md` | The plan type's path; only letters, digits and . _ / { } - |
 | `project_name` | string | required | The project's name: dna.yaml project.name |
-| `retrospective_path` | path | `docs/retrospectives` | Where the retrospective's friction inventory goes: a directory by default, weak evidence; a project may set a fixed file. Only letters, digits and . _ / { } -, and no {...} token, no element being in scope |
+| `retrospective_path` | path | `docs/retrospectives` | Where the retrospective's friction inventory goes: a directory by default, weak evidence; a project may set a fixed file. Only letters, digits and . _ / { } -, and no {...} token, since no element is in scope |
 | `task_path` | path | `docs/memory/task/{id}.md` | The task type's path; only letters, digits and . _ / { } - |
 <!-- generated:end parameters -->
 

@@ -1,9 +1,9 @@
 // F3.5 on a pack's workflows and fragments (task-012, `pack-authoring`, spec-001 §6.3, §9): no
-// empty phase (one that declares none of include, actions, produces and approval; an approval
-// alone is a checkpoint, task-038); includes by bare name, of a workflow the pack or a pack it requires ships, or of a
-// slot; the life cycle's includes; every role, Memory type and directive id a pack references is
-// declared by the pack or by a pack it requires directly. The lint applies them to every pack of
-// the tree; the composer, to every pack it composes.
+// empty phase (one that declares none of include, actions, produces and approval; an approval alone
+// is a checkpoint, task-038); includes by bare name, of a workflow the pack or a pack it requires
+// ships, or of a slot; the life cycle's includes; every role, Memory type and directive id a pack
+// references is declared by the pack or by a pack it requires directly. The lint applies them to
+// every pack of the tree; the composer, to every pack it composes.
 import { softwarePack } from './catalog';
 import { conditionalContents, conditionalFiles } from './pack-rules';
 import { reachableIds } from './requirements';
