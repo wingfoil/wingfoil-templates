@@ -28,9 +28,9 @@ first version, and the highest class is taken, plan-044 ruling F). It ships what
 `CHANGELOG.md`: `1.0.0: first version.` `pack.yaml`: `version: 1.0.0`, `requires: []`,
 `requires_capabilities: [workflow-engine]`. The `wingfoil` range is computed from `compat.yaml`:
 0.3.0 is the only release that reads every format `base` ships and provides `workflow-engine`
-(spec-001 §12); WingFoil 0.3.1 enters it when its intake adds it to `compat.yaml`. The README's
-"Install and update" keeps spec-002 §2.3's temporary mark, since no release in `compat.yaml`
-provides `pack-install` (CB-3).
+(spec-001 §12); WingFoil 0.3.1 enters it when its intake adds it to `compat.yaml` with those
+formats and `workflow-engine`, and recomputes the range. The README's "Install and update" keeps
+spec-002 §2.3's temporary mark, since no release in `compat.yaml` provides `pack-install` (CB-3).
 
 ## Validation
 
@@ -63,6 +63,9 @@ matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.0 
 matrix: publication, 3 runs, 0 failed, tolerance applied: none
 ```
 
+- Presets: none (`catalog.yaml` `presets: []`); the documented combinations are the README's three
+  examples. No conditional part (spec-001 §6.5): no leg with `software`.
+
 Also on `90cc766`:
 - from clean clones on Node.js 22.21.0 and 22.12.0: `npm ci`, `npm test` (941 of 941), `lint`,
   `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check` and
@@ -81,3 +84,12 @@ Also on `90cc766`:
 <!-- The tag (<catalog pack id>@<version>, dl-004), the commit, the catalog.yaml digest. -->
 
 ## Execution Notes
+
+- 2026-10-21, `prepare`: added by `memory add`; `pack`, `version`, `bump` (ruling F), `wingfoil`
+  and `line` filled by editing the draft (W-02); `CHANGELOG.md`, `pack.yaml` and the README's
+  "Install and update" checked; `.idea/` listed in `.git/info/exclude` (ruling A); submitted
+  (`draft → validating`).
+- 2026-10-21, `validate`: the evidence, the clean-clone checks and the dry run at `90cc766`.
+  Independent review: approve after amendments. Applied: the presets and the conditional part
+  stated; the condition for 0.3.1 to enter the range. Submitted (`validating → releasing`).
+
