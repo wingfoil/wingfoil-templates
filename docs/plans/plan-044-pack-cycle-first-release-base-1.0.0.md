@@ -131,3 +131,9 @@ that calls `released` "tag pushed", which the approval reaches before `publish` 
   the two files `publish:pack` writes. Re-review requested.
 - 2026-10-21: re-review: approve after amendments. Applied: the range recomputed by the intake of
   0.3.1 (spec-001 §12); the approval's commit pushed by claude. Plan submitted.
+- 2026-10-21: task-040 `done`, merged (`dc6d219`): the tests take a fixture catalog; a simulated
+  publication of `base@1.0.0` (tag and catalog entry by `publish:pack`, not pushed) passes the
+  whole suite, 941 of 941, on Node.js 22.21.0 and 22.12.0 (92 failed before). CI run 39667763456
+  `success`. Follow-ups: `tests/publish.test.ts`'s identity test reads the environment's git
+  identity; `tests/check-packs.test.ts` copies the real `compat.yaml`. `prepare` next.
+
