@@ -155,3 +155,9 @@ Written 2026-10-21, before the build. Branch `task/task-038-base-workflows` from
   `retrospective_path`'s wording, the charter note on a forgotten tag, a shared test fixture.
   Re-checked: `check:packs` 20 files 0 problems, `index` up to date, `tests/check-packs.test.ts`
   94 of 94, `validate -- base …` 1 run, 0 failed.
+- 2026-10-21: re-review: approve (three cosmetic wraps left as they are). Checks from a clean clone
+  at `7dbe8fb` on Node.js 22.21.0 and 22.12.0: 937 of 937 tests, `lint`, `check:pins`,
+  `check:schemas`, `check:packs`, `validate`, `index -- --check`, `workflow list` exit 0 (the later
+  commit changes wording and a test fixture). Branch pushed: CI run 39624093976 on `932514d`,
+  conclusion `success` (`validate (22.12.0)` and `validate (22.21.0)` both `success`).
+  `in-progress → in-review`.
