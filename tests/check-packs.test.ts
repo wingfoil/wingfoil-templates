@@ -695,7 +695,9 @@ describe('F3.5 workflow rules', () => {
 
   it('empty-phase: a phase that declares only an approval is a checkpoint, not empty (task-038)',
     () => {
-      const result = lint([...FOUNDATION, withWorkflow('flow',
+      const dna = 'format: 1\nproject:\n  name: test\nteam:\n  roles:\n    - { name: approver }\n';
+      const base = { ...BASE, extraFiles: { ...BASE.extraFiles, 'fragments/dna.yaml': dna } };
+      const result = lint([base, SOFTWARE_COMPOSABLE, withWorkflow('flow',
         FLOW('  - { name: a, role: approver, approval: { by_role: approver } }\n'))]);
       assert.equal(result.code, 0, result.lines.join('\n'));
     });

@@ -144,3 +144,7 @@ Written 2026-10-21, before the build. Branch `task/task-038-base-workflows` from
     lists `decision-log-ingest`, `governance-evolution`, `retrospective-periodic`, `diagnostics`
     empty; `directives list` `warnings` empty.
   - privacy: no local path, private name, real name or address but `*.example` in the diff.
+  - the checkpoint test of the red commit used a role the lint fixture does not declare, so after
+    the rule changed it still failed, on `role`; it now uses the fixture with an `approver` role,
+    as the role test does. Checked in a clone with the red commit's rule: it fails on
+    `empty-phase` alone; with the new rule it passes (`tests/check-packs.test.ts` 94 of 94).
