@@ -234,4 +234,5 @@ For the approver's acceptance:
   folders without a retrospective folder) carry the parameters of the four governed software
   repositories and a generic non-software project, validated by `npm run validate` and the CI on
   every push; the check against the three private, non-software projects, run outside this
-  repository, passed for all three.
+  repository, passed for all three. Branch head `8b803ab`: clean-clone checks on Node.js 22.21.0 and
+  22.12.0 exit 0, CI run 39631782206 `success`.

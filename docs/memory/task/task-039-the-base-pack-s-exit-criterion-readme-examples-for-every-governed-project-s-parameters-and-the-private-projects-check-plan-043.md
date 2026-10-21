@@ -155,3 +155,8 @@ Written 2026-10-21, before the build. Branch `task/task-039-base-examples` from 
   compatible release; its assertions are unchanged (exit 1, no `## Validation`, `no evidence` on
   stderr). Not red first: the test was already red in CI, and its premise, not its claim, changed
   (dl-018 R3). The whole suite: 937 of 937.
+- 2026-10-21: from clean clones of `8b803ab` on Node.js 22.21.0 and 22.12.0: `npm ci`, `npm test`
+  (937 of 937), `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate` (3 runs, 0
+  failed, no warning), `index -- --check` and `workflow list` all exit 0. CI run 39631782206 on
+  `8b803ab`: `success`, both jobs (`validate (22.21.0)`, `validate (22.12.0)`).
+
