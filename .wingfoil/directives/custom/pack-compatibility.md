@@ -19,8 +19,10 @@ tooling's self-tests, run in the matrix's self-test mode (dl-009).
 - Before a version is published, compose every preset and every documented combination that
   contains the pack, with **the oldest and the newest** WingFoil release that `compat.yaml` lists as
   compatible (it reads every format, it provides every capability). Each
-  composed `.wingfoil/` must pass `wingfoil workflow list`, `wingfoil dna show` and
-  `wingfoil directives list` with exit code 0 and no warning.
+  composed `.wingfoil/`, committed in a scratch repository, must pass `wingfoil workflow list`,
+  `wingfoil dna show` and `wingfoil directives list`, each run with `--format json`, with exit code
+  0 and no warning: no stderr line, no `workflow list` diagnostic of severity warning or error, no
+  `directives list` warning (plan-042, rulings L and M).
 - A pack with a conditional part (spec-001 §6.5) is validated in compositions with and without
   `software`. `npm run validate` derives the other leg of each composition that holds one; the
   leg with `software` needs a methodology, so for a pack that is not one it comes from a
