@@ -34,8 +34,47 @@ provides `pack-install` (CB-3).
 
 ## Validation
 
-<!-- The compatibility matrix: every WingFoil version tested, every preset composed, the
-     determinism double-run, with the commands and their exit codes. -->
+- Commit: `90cc766403206840966280fc161ff6e8c185ca8d`
+- Command: `npm run validate:publication -- --evidence`
+- Mode: publication
+- Exit code: 0
+- WingFoil releases: 0.3.0
+- Compositions: tests/fixtures/examples/base/core-records/example.yaml, tests/fixtures/examples/base/release-folders-lean/example.yaml, tests/fixtures/examples/base/release-folders/example.yaml
+
+Report:
+
+```text
+schemas: checked 3 files, 0 problems
+lint: checked 23 files, 0 problems
+index: checked 4 files, 0 not up to date
+composition tests/fixtures/examples/base/core-records/example.yaml: composed twice, 16 files, byte-identical
+composition tests/fixtures/examples/base/release-folders-lean/example.yaml: composed twice, 16 files, byte-identical
+composition tests/fixtures/examples/base/release-folders/example.yaml: composed twice, 16 files, byte-identical
+compositions: 3
+matrix tests/fixtures/examples/base/core-records/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/base/core-records/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/base/core-records/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders-lean/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders-lean/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/base/release-folders-lean/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix: publication, 3 runs, 0 failed, tolerance applied: none
+```
+
+Also on `90cc766`:
+- from clean clones on Node.js 22.21.0 and 22.12.0: `npm ci`, `npm test` (941 of 941), `lint`,
+  `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check` and
+  `workflow list`, each exit 0;
+- `npm run publish:pack -- --pack base --dry-run`: exit 0, in a temporary clone; the tag at
+  `90cc766`, the range `0.3.0`, the digest
+  `sha256:ff23044b700fcf85c04250b1e44761248950187f5ac3d6e89bcda62b4b4e70be`; the repository left
+  as it was;
+- the privacy check of this element and of `packs/base/`: no local path, no private repository,
+  nothing on the private projects beyond their number.
+
+`publish:pack` validates again in publication mode at the release commit before it tags.
 
 ## Publication
 
