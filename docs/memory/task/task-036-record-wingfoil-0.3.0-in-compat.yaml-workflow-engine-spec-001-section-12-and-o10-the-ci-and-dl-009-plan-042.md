@@ -2,7 +2,7 @@
 id: task-036-record-wingfoil-0.3.0-in-compat.yaml-workflow-engine-spec-001-section-12-and-o10-the-ci-and-dl-009-plan-042
 type: task
 title: "Record WingFoil 0.3.0 in compat.yaml: workflow-engine, spec-001 section 12 and O10, the CI and dl-009 (plan-042)"
-status: approved
+status: done
 pack: ""            # tooling task (wingfoil-release-intake › record, plan-042)
 depends_on: ["task-035-the-compatibility-matrix-runs-wingfoil-0.3.0-its-version-line-a-committed-scratch-repository-diagnostics-as-warnings-per-release-stubs-plan-042"]
 tags: ["tooling","compat","intake"]
