@@ -118,7 +118,8 @@ describe('npm run validate', () => {
         const result = validate(['--tree', tree, ...NAME], { install: clean.install });
         assert.equal(result.code, 0, result.lines.join('\n'));
         assert.ok(result.lines.includes(
-          'matrix: self-test, 26 runs, 0 failed, tolerance applied: 0.2.2'), result.lines.join('\n'));
+          'matrix: self-test, 26 runs, 0 failed, tolerance applied: 0.2.2'),
+        result.lines.join('\n'));
       } finally {
         clean.dispose();
       }

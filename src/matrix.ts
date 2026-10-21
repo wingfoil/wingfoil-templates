@@ -23,7 +23,7 @@ import type { CompatRelease, VersionRequirements } from './range';
 /** Fixed by the caller, never by the data (dl-009). */
 export type MatrixMode = 'self-test' | 'publication';
 
-/** The validation of `pack-compatibility`, in this order: the report's label, then the arguments. */
+/** The validation of `pack-compatibility`, in order: the report's label, then the arguments. */
 export const COMMANDS: readonly { label: string; args: readonly string[] }[] = [
   ['workflow', 'list'], ['dna', 'show'], ['directives', 'list'],
 ].map((words) => ({ label: words.join(' '), args: [...words, '--format', 'json'] }));
@@ -204,6 +204,7 @@ function dataWarnings(label: string, stdout: string): string[] {
   if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) return [];
   const data = parsed as Record<string, unknown>;
   if (label === 'workflow list' && Array.isArray(data['diagnostics'])) {
+    // An item that is not an object is ignored: WingFoil 0.3.0 emits objects only.
     return data['diagnostics'].flatMap((item: unknown) => {
       const entry = (item ?? {}) as Record<string, unknown>;
       return entry['severity'] === 'warning' || entry['severity'] === 'error'
@@ -222,7 +223,7 @@ function dataWarnings(label: string, stdout: string): string[] {
  * warning reported as data (`dataWarnings`). With `tolerate`, the exact format warnings about a
  * file inside `wingfoilDir` are removed first.
  */
-export function judge(output: Output, tolerate: boolean, wingfoilDir: string, label = ''):
+export function judge(output: Output, tolerate: boolean, wingfoilDir: string, label: string):
 Omit<CommandOutcome, 'command'> {
   let tolerated = 0;
   const remaining: string[] = [];
@@ -287,14 +288,21 @@ export function runRelease(
 ): ReleaseRun {
   const tolerate = mode === 'self-test' && !release.format_key;
   let scratch: string | undefined;
+  let realScratch: string | undefined;
   try {
     scratch = mkdtempSync(join(tmpdir(), 'matrix-'));
-    const realScratch = realpathSync(scratch);
+    realScratch = realpathSync(scratch);
     cpSync(join(composed, '.wingfoil'), join(scratch, '.wingfoil'), { recursive: true });
     runGit(scratch, ['init', '--quiet']);
     runGit(scratch, ['add', '--force', '--', '.wingfoil']);
-    runGit(scratch, [...SCRATCH_IDENTITY, 'commit', '--quiet', '--no-gpg-sign',
-      '-m', 'composed .wingfoil']);
+    try {
+      runGit(scratch, [...SCRATCH_IDENTITY, 'commit', '--quiet', '--no-gpg-sign', '--allow-empty',
+        '-m', 'composed .wingfoil']);
+    } catch (error) {
+      // runGit names its first argument, here the identity's `-c`.
+      throw new Error(`git commit: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error });
+    }
     const version = execute(cli, ['--version'], scratch);
     const printed = version.stdout.trim();
     if (version.timedOut === true || version.status !== 0) {
@@ -311,13 +319,13 @@ export function runRelease(
     const outcomes = COMMANDS.map(({ label, args }) => {
       const verdict = judge(execute(cli, args, scratch as string), tolerate, wingfoilDir, label);
       return { command: label, ...verdict,
-        reason: hideScratch(verdict.reason, scratch as string, realScratch) };
+        reason: hideScratch(verdict.reason, scratch as string, realScratch as string) };
     });
     return { code: outcomes.every((outcome) => outcome.pass) ? 0 : 1, outcomes };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    return { code: 2, outcomes: [],
-      message: scratch === undefined ? message : message.split(scratch).join('<scratch>') };
+    return { code: 2, outcomes: [], message: scratch === undefined ? message
+      : hideScratch(message, scratch, realScratch ?? scratch) };
   } finally {
     if (scratch !== undefined) rmSync(scratch, { recursive: true, force: true });
   }

@@ -188,7 +188,8 @@ describe('runRelease', () => {
   });
 
   it('fails a command that runs too long, as a check, not as an I/O error', () => {
-    const verdict = judge({ status: null, stdout: '', stderr: '', timedOut: true }, true, '/x');
+    const verdict = judge({ status: null, stdout: '', stderr: '', timedOut: true }, true, '/x',
+      'dna show');
     assert.equal(verdict.pass, false);
     assert.match(verdict.reason, /timed out/);
   });
@@ -242,7 +243,8 @@ describe('runRelease', () => {
 describe('runRelease with WingFoil 0.3.0 (task-035)', () => {
   const V030 = release('0.3.0');
 
-  for (const printed of ['0.3.0', '0.3.0 (cc31d7a8)', '0.3.0 (unknown)', '0.3.0 (cc31d7a8-dirty)']) {
+  for (const printed of ['0.3.0', '0.3.0 (cc31d7a8)', '0.3.0 (unknown)',
+    '0.3.0 (cc31d7a8-dirty)']) {
     it(`accepts the version line ${JSON.stringify(printed)}`, () => {
       const result = run(everyCommand({}), { target: V030, behaviour: { version: printed } });
       assert.equal(result.code, 0, JSON.stringify(result));
@@ -273,14 +275,18 @@ describe('runRelease with WingFoil 0.3.0 (task-035)', () => {
         writeFileSync(join(composed.dir, '.wingfoil', 'roles.yaml'), 'format: 1\n');
         mkdirSync(join(composed.dir, '.wingfoil', 'workflows'));
         writeFileSync(join(composed.dir, '.wingfoil', 'workflows', 'a.yaml'), 'name: a\n');
+        // An ignore pattern inside .wingfoil/ must not drop a file: the add is forced.
+        writeFileSync(join(composed.dir, '.wingfoil', '.gitignore'), '*.log\n');
+        writeFileSync(join(composed.dir, '.wingfoil', 'notes.log'), 'kept\n');
         const result = runRelease(stub.cli, composed.dir, V030, 'publication');
         assert.equal(result.code, 0, JSON.stringify(result));
         const seen = JSON.parse(readFileSync(join(stub.dir, 'snapshot.json'), 'utf8')) as
           { args: string; tree: string | null; status: string | null }[];
         assert.equal(seen.length, 3);
         for (const entry of seen) {
-          assert.equal(entry.tree, '.wingfoil/dna.yaml\n.wingfoil/roles.yaml\n'
-            + '.wingfoil/workflows/a.yaml\n', entry.args);
+          assert.equal(entry.tree, '.wingfoil/.gitignore\n.wingfoil/dna.yaml\n'
+            + '.wingfoil/notes.log\n.wingfoil/roles.yaml\n.wingfoil/workflows/a.yaml\n',
+          entry.args);
           assert.equal(entry.status, '', entry.args);
         }
       } finally {

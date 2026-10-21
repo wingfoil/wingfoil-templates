@@ -184,5 +184,13 @@ Red-first exceptions (dl-018): the pin (configuration), the directive and header
     `matrix: self-test, 26 runs, 0 failed, tolerance applied: 0.2.2`, every `wingfoil@0.3.0`
     line `pass (self-test)`. Evidence on `base` composed alone, committed in a scratch repository:
     `--version` printed `0.3.0 (cc31d7a8ca3940c6ec96dca4e0ef77f32f52dfb1)`; `workflow list
-    --format json` gave `baseline: {rev: HEAD, commit: <the scratch commit>}`, `workflows:
-    [governance-evolution]`, `diagnostics: []`.
+    --format json` gave `baseline: {rev: HEAD, commit: ec7ec134…}`, equal to `git rev-parse HEAD`
+    of that scratch repository, `workflows: [governance-evolution]`, `diagnostics: []`. This
+    evidence was gathered by hand, composing `base` and committing it as the matrix does.
+- 2026-10-21: independent review of the branch: approve after amendments, nothing blocking.
+  Applied: the scratch-commit test proves `--force` (an ignore pattern inside `.wingfoil/`); a
+  failed scratch commit reads `git commit: …`, with `--allow-empty`; the scratch path hidden also
+  in its resolved form on an I/O error; `judge`'s label required; `pack-compatibility` names the
+  `Warning:` stdout rule; wraps. For the approver, outside this task: WingFoil 0.3.0 refuses a type
+  without `template.frontmatter`, which spec-001 §7.5 allows a pack to omit; plan-042 carries it
+  to the approver (a lint rule or a spec change).

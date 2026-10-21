@@ -21,8 +21,9 @@ tooling's self-tests, run in the matrix's self-test mode (dl-009).
   compatible (it reads every format, it provides every capability). Each
   composed `.wingfoil/`, committed in a scratch repository, must pass `wingfoil workflow list`,
   `wingfoil dna show` and `wingfoil directives list`, each run with `--format json`, with exit code
-  0 and no warning: no stderr line, no `workflow list` diagnostic of severity warning or error, no
-  `directives list` warning (plan-042, rulings L and M).
+  0 and no warning: no stderr line, no stdout line starting `Warning:`, no `workflow list`
+  diagnostic of severity warning or error, no `directives list` warning (plan-042, rulings L and
+  M).
 - A pack with a conditional part (spec-001 §6.5) is validated in compositions with and without
   `software`. `npm run validate` derives the other leg of each composition that holds one; the
   leg with `software` needs a methodology, so for a pack that is not one it comes from a
