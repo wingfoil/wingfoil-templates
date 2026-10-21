@@ -52,7 +52,8 @@ requires, and the matrix runs it (plan-042). Only 0.3.0 is selected for `base`: 
 `task/<task id>` from `main`, one after the other (its WIP limit is one task in progress):
 - **task-037 — the smallest valid `base`:** `packs/base/pack.yaml` (id `base`, no `axis`,
   `version: 1.0.0`, `formats` for the kinds it ships, `requires_capabilities: [workflow-engine]`,
-  the charter's nine parameters, `contents`); `fragments/dna.yaml` (project, `modules`, `stacks`,
+  the charter's parameters but `retrospective_path`, which task-038 adds with its workflow,
+  `contents`); `fragments/dna.yaml` (project, `modules`, `stacks`,
   the roles, the approver member and the agent from parameters only, the agent with no email),
   `fragments/roles.yaml`, `fragments/memory.yaml` (`defaults`, `decision-log`, `task`, `plan` as
   the charter and dl-023 fix them, each with `template.frontmatter`); the three Memory templates;
@@ -141,3 +142,6 @@ repository's adoption (W9); spec-001 §8.3's `{release}` fold-back, at W8's clos
   section 7's exemption line until task-039; each example lands with its README entry; the local
   `validate -- base` evidence before task-039; the fictional address checked in task-039's Design.
   Plan submitted.
+- 2026-10-21, task-037's review: `packs/base` moves four assertions in three tooling tests (index,
+  lint and validate counts on this repository), not ruling 2's one; the ruling's substance (no
+  catalog entry) is unchanged. `retrospective_path` comes with task-038.
