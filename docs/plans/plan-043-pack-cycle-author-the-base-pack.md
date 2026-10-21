@@ -18,43 +18,73 @@ patch v0.3.1 (WingFoil dl-186). This plan writes `packs/base` from the charter; 
 
 **Preconditions, met.** The charter is `accepted` and dl-023 and dl-015 are `approved` (plan-041);
 spec-001 and spec-002 hold no open erratum but §8.3's `{release}` note, owned by W8 and folded back
-at its close (plan-041); the tooling implements the foundation packs, the conditional part and the
-memory keys (plan-039, plan-040); `compat.yaml` lists WingFoil 0.3.0 with `workflow-engine`, which
-`base` requires, and the matrix runs it (plan-042).
+at its close; the tooling implements the foundation packs, the conditional part and the memory keys
+(plan-039, plan-040); `compat.yaml` lists WingFoil 0.3.0 with `workflow-engine`, which `base`
+requires, and the matrix runs it (plan-042). Only 0.3.0 is selected for `base`: 0.2.2 lacks
+`workflow-engine`, so the oldest and the newest compatible release are the same one.
 
-**The approver's rulings** (2026-10-21):
-1. three tasks, in order: task-037 (the pack's skeleton and data), task-038 (its workflows,
-   directives and AGENTS.md section), task-039 (its exit criterion, dl-022 S6);
-2. `base`'s README uses spec-002 §2.4's exemption while the tree holds no methodology; its
-   examples come with W10, as the charter says;
-3. `software`'s `author` follows this plan, as its own plan;
-4. `base` is published on its own as soon as it is ready (`first-release`), without waiting for
+**The approver's rulings** (2026-10-21, the first outline amended after this plan's review):
+1. **Three tasks, each leaving a pack WingFoil 0.3.0 accepts** (N): task-037, the smallest valid
+   `base`; task-038, the rest of its workflows and its AGENTS.md section; task-039, its exit
+   criterion. A `base` with no workflow is refused (`E_NO_MAIN_WORKFLOW`), and its `roles.yaml`
+   names its directives, so both come in task-037.
+2. **No `catalog.yaml` entry now** (O): `first-release` adds `base`'s entry; `catalog.yaml` and its
+   tests stay as they are. The one tooling test that moves is the index's file count on this
+   repository, which a pack README raises; it changes inside task-037 under dl-018 R1–R3.
+3. **`base`'s README has examples** (P), replacing the first outline's use of spec-002 §2.4's
+   exemption: task-039's generic, fictional non-software project becomes an example of the README
+   (`tests/fixtures/examples/base/<example>/`), and so do the parameter sets of the governed
+   software repositories (WingFoil, UI, Benchmark, this repository). `npm run validate` and the CI
+   then compose and validate `base` on WingFoil 0.3.0 on every push, CB-2 holds in full, and the
+   publication has a documented combination (`pack-compatibility`).
+4. `software`'s `author` follows this plan, as its own plan.
+5. `base` is published on its own as soon as it is ready (`first-release`), without waiting for
    `software`.
+6. **`template.frontmatter`** (Q): WingFoil 0.3.0 refuses a Memory type without it, which spec-001
+   §7.5 lets a pack omit; the rule (lint or spec) stays pending (plan-042), and `base`'s three types
+   declare it.
 
 **The tasks.** Each runs through `kanban-delivery` (`pack: pack-foundation-base`), on its own branch
 `task/<task id>` from `main`, one after the other (its WIP limit is one task in progress):
-- **task-037 — skeleton and data:** `packs/base/pack.yaml` (id `base`, no `axis`, `version: 1.0.0`,
-  `formats`, `requires_capabilities: [workflow-engine]`, the charter's nine parameters, `contents`);
-  `fragments/dna.yaml` (project, `modules`, `stacks`, the roles, the approver member, the agent
-  with no email), `fragments/roles.yaml` and `fragments/memory.yaml` (`defaults`, `decision-log`,
-  `task`, `plan` as the charter and dl-023 fix them); the three Memory templates; `CHANGELOG.md`;
-  `README.md` per spec-002 §2, with section 3's hand-adoption steps (F6.1) and §2.4's exemption;
-  `catalog.yaml`'s `base` entry, `planned`. The pack composes alone and passes the lint, with its
-  workflows still to come in task-038 (the README and `contents` grow with it).
-- **task-038 — workflows, directives, AGENTS.md:** `decision-log-ingest`, `governance-evolution`
-  (`main`), `retrospective`, `retrospective-periodic`, each phase with its role, actions, approval,
-  fallback and `produces` (R4); the directives `traceability`, `doc-versioning`, `security-secrets`,
-  `claim-sources`; `agents/section.md`. It settles the charter's open point 0 (whether WingFoil
-  0.3.0's `memory.add` sets the `retrospective` tag), in the task's Design.
-- **task-039 — the exit criterion:** `base` composes and validates on WingFoil 0.3.0 with zero
-  warnings with the parameters of every governed project: a generic, fictional non-software
-  fixture under `tests/fixtures/`, the parameter sets of WingFoil, UI, Benchmark and this
-  repository; and a check against the three private, non-software projects run outside this
-  repository, which records only its outcome (dl-022 S6).
+- **task-037 — the smallest valid `base`:** `packs/base/pack.yaml` (id `base`, no `axis`,
+  `version: 1.0.0`, `formats` for the kinds it ships, `requires_capabilities: [workflow-engine]`,
+  the charter's nine parameters, `contents`); `fragments/dna.yaml` (project, `modules`, `stacks`,
+  the roles, the approver member and the agent from parameters only, the agent with no email),
+  `fragments/roles.yaml`, `fragments/memory.yaml` (`defaults`, `decision-log`, `task`, `plan` as
+  the charter and dl-023 fix them, each with `template.frontmatter`); the three Memory templates;
+  the four directives (`traceability`, `doc-versioning`, `security-secrets`, `claim-sources`);
+  `governance-evolution` (`main`); `CHANGELOG.md`; `README.md` per spec-002 §2. It composes, passes
+  the lint, and WingFoil 0.3.0 accepts it.
+- **task-038 — the rest of the workflows and AGENTS.md:** `decision-log-ingest`, `retrospective`,
+  `retrospective-periodic`, each phase with its role, actions, approval, fallback and `produces`
+  (R4); `agents/section.md`. Its Design settles the charter's open point 0 (whether WingFoil 0.3.0's
+  `memory.add` sets the `retrospective` tag); the outcome goes into the charter's Execution Notes,
+  and a negative one, which changes the accepted charter, to the approver (dl-019).
+- **task-039 — the exit criterion** (dl-022 S6): the README's examples, one per parameter set: a
+  generic, fictional non-software project, and WingFoil, UI, Benchmark and this repository with
+  their path and id values (copied from their public repositories) and fictional approver and agent
+  identities that WingFoil 0.3.0 accepts (no real address in this repository); each composes and
+  validates on 0.3.0 with no warning, through `npm run validate` and the CI. The check against the
+  three private, non-software projects is run by claude outside this repository; task-039's
+  Execution Notes record only its outcome (date, `base`'s commit, the WingFoil version, the number
+  of projects, the commands with their values redacted, the exit codes, the warning count), never a
+  name, path or value; a failure goes to the approver (dl-019).
 
-Not in this plan: `software`'s `author` (the next plan); `first-release` and the tag (`pack-release`,
-W9), and the notices owed to the coordinating session and to WingFoil UI at the tag; this
-repository's adoption (W9).
+Each task runs `npm run index`, so the README's generated sections are never written by hand
+(`pack-authoring`). Section 3 ("Install and update") opens with spec-002 §2.3's temporary mark,
+links `CATALOG.md#install`, and gives the hand-adoption steps (F6.1, the charter's Adoption) with no
+WingFoil CLI command in code (CB-3).
+
+Who runs what: claude drafts for the product-owner (`plan`) and is the pack-author (`design`,
+`build`, `deliver`), and the developer for any change under `src/`, `tests/` or `.github/`; the
+reviewer is an independent subagent (dl-017), never the author's context; claude never runs
+`memory approve` or `reject` and hands the approver the command.
+
+Not in this plan: `software`'s `author` (the next plan); `first-release`, the catalog entry and the
+tag (`pack-release`, W9), with the confirmation of `CHANGELOG.md` and `version: 1.0.0` at its
+`prepare`, and the notices owed to the coordinating session and to WingFoil UI at the tag; this
+repository's adoption (W9); spec-001 §8.3's `{release}` fold-back, at W8's close after `software`'s
+`author`.
 
 ## Steps
 
@@ -64,28 +94,36 @@ repository's adoption (W9).
    1. `plan`: its body (Context, Acceptance), reviewed independently and amended while `pending`;
       the approver accepts it into the backlog;
    2. `design`: its Design committed on `main`, then `backlog → in-progress`;
-   3. `build` on `task/<task id>`: the tests of the tooling that checks the pack first, where the
-      pack's acceptance is a command (dl-018's exceptions name the pack content itself); the
-      checks from a clean clone on Node.js 22.21 and 22.12.0 (`npm test`, `npm run lint`,
-      `npm run check:pins`, `npm run check:schemas`, `npm run check:packs`,
-      `npm run index -- --check`, `npm run validate`), the matrix on WingFoil 0.3.0 with no
-      warning;
+   3. `build` on `task/<task id>`: pack content is checked by the lint, the composition and the
+      matrix, not by red-first tests (dl-018, pack tasks); any change under `src/`, `tests/` or
+      `.github/` follows dl-018 R1–R3, its red run recorded. The checks from a clean clone on
+      Node.js 22.21 and 22.12.0: `npm test`, `npm run lint`, `npm run check:pins`,
+      `npm run check:schemas`, `npm run check:packs`, `npm run index -- --check`, and
+      `npm run validate` with the matrix on WingFoil 0.3.0 and no warning (from task-039 the
+      README's examples; before it, `npm run validate -- base` with the four required parameters);
+      the privacy grep of plan-041 on the diff;
    4. `review`: an independent review of the branch, its findings fixed, a re-review when a fix
       changes behaviour; the branch pushed, the CI run's conclusion recorded,
       `in-progress → in-review`; the approver accepts it and gives the merge OK;
    5. `deliver`: `--no-ff` merge into `main`, `approved → done`, `main` pushed, the branch removed;
       this plan's Execution Notes record it.
-3. **Close:** the charter's Execution Notes record the pack written; this plan goes
-   `active → done`; `first-release` can start.
+3. **Close:** the charter's Execution Notes record the pack written and open point 0's outcome; this
+   plan goes `active → done`; `first-release` can start.
 
 ## Handoff
 
 - **claude:** steps 1–3, except the approver's gates.
 - **Approver:** each task's backlog acceptance, its acceptance after the build, its merge OK.
-- Done when `packs/base` on `main` composes and validates on WingFoil 0.3.0 with the parameters of
-  every governed project, pushed.
+- Done when `packs/base` on `main` composes and validates on WingFoil 0.3.0 with the README's
+  examples for every governed software repository and the fictional non-software project, and
+  task-039 records the outcome of the private projects' check, pushed.
 
 ## Execution Notes
 
 - 2026-10-21: written; `workflow` and `phase` filled by editing the draft (W-02). The approver gave
-  the OK to the outline and rulings 1–4 in chat.
+  the OK to the outline and its rulings in chat.
+- 2026-10-21: independent review: request changes. As first outlined, task-037 would not pass the
+  lint (its `roles.yaml` named directives from task-038) nor be accepted by WingFoil (no `main`
+  workflow), nothing ran `base` through the matrix, a `planned` catalog entry broke tooling tests,
+  and the README's exemption left the publication without a documented combination. The approver
+  ruled N, O, P and Q (rulings 1, 2, 3 and 6 above); the rest applied. Re-review requested.
