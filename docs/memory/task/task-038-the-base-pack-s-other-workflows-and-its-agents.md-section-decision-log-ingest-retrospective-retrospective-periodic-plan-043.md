@@ -161,3 +161,5 @@ Written 2026-10-21, before the build. Branch `task/task-038-base-workflows` from
   commit changes wording and a test fixture). Branch pushed: CI run 39624093976 on `932514d`,
   conclusion `success` (`validate (22.12.0)` and `validate (22.21.0)` both `success`).
   `in-progress → in-review`.
+- 2026-10-21, delivery: the approver accepted the task (`in-review → approved`) and gave the merge
+  OK; `--no-ff` merge into `main` (`c3af634`), `approved → done`, `main` pushed, the branch removed.

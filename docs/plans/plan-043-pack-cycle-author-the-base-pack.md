@@ -154,3 +154,6 @@ repository's adoption (W9); spec-001 §8.3's `{release}` fold-back, at W8's clos
   task: suspending an instance (`parked`, dl-023 D1), closing a plan that is not an instance, and
   passing an action's arguments to its command (`memory.add`'s `tags`). WingFoil's v0.3
   retrospective (`19a66000`) covers none of them.
+- 2026-10-21: task-038 `done`, merged (`c3af634`): `base`'s other workflows, its AGENTS.md section, the
+  lint accepting an approval checkpoint (ruling R), open point 0 settled (ruling S). WingFoil 0.3.0
+  accepts the full `base` with no warning. CI run 39624093976 `success`. task-039 next.
