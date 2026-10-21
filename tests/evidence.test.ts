@@ -6,6 +6,7 @@ import { describe, it } from 'node:test';
 import { EvidenceError, writeEvidence } from '../src/evidence';
 import type { ValidateResult } from '../src/validate';
 import { REPO_ROOT } from './support/paths';
+import { FROZEN_COMPAT, treeRepo } from './support/published-repo';
 
 const COMMIT = '0123456789abcdef0123456789abcdef01234567';
 const COMMAND = 'npm run validate:publication -- --evidence';
@@ -78,12 +79,21 @@ describe('writeEvidence (F5.1, dl-009)', () => {
 
 describe('npm run validate:publication -- --evidence', () => {
   it('writes no evidence for a publication run that fails, and exits 1', () => {
-    const run = spawnSync(process.execPath,
-      [join(REPO_ROOT, 'dist', 'src', 'validate-publication-cli.js'), '--evidence'],
-      { cwd: REPO_ROOT, encoding: 'utf8' });
-    assert.equal(run.status, 1, run.stdout + run.stderr);
-    assert.ok(!run.stdout.includes('## Validation'), run.stdout);
-    assert.match(run.stderr, /no evidence/);
+    // A tree whose compat.yaml lists no release its packs can run on: the publication fails. This
+    // repository no longer serves, since base's examples pass (task-039).
+    const repo = treeRepo();
+    try {
+      repo.write('compat.yaml', FROZEN_COMPAT);
+      repo.commitAll('no compatible release');
+      const run = spawnSync(process.execPath,
+        [join(REPO_ROOT, 'dist', 'src', 'validate-publication-cli.js'), '--evidence', '--tree',
+          repo.dir], { cwd: REPO_ROOT, encoding: 'utf8' });
+      assert.equal(run.status, 1, run.stdout + run.stderr);
+      assert.ok(!run.stdout.includes('## Validation'), run.stdout);
+      assert.match(run.stderr, /no evidence/);
+    } finally {
+      repo.dispose();
+    }
   });
 
   it('is not an option of npm run validate (self-test)', () => {

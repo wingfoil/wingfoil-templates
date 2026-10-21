@@ -148,3 +148,10 @@ Written 2026-10-21, before the build. Branch `task/task-039-base-examples` from 
   default folder) and states its composition; the release-folder examples say what the project
   gets; the scratch check's `--param` noted; the test counts named per file; a fictional name no
   longer shared with another fixture; a long line.
+- 2026-10-21: CI run 39628882756 on `ccb32f9`: `failure`, one test. `tests/evidence.test.ts`'s
+  "writes no evidence for a publication run that fails" used this repository as a publication that
+  fails; with `base`'s examples it passes. The build missed it by running only the two changed test
+  files, not the whole suite. The test now runs on a fixture tree whose `compat.yaml` lists no
+  compatible release; its assertions are unchanged (exit 1, no `## Validation`, `no evidence` on
+  stderr). Not red first: the test was already red in CI, and its premise, not its claim, changed
+  (dl-018 R3). The whole suite: 937 of 937.
