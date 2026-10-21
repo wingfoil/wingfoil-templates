@@ -1,0 +1,45 @@
+format: 1
+defaults:
+  states:
+    sequence: [draft, pending, approved]
+    gates:
+      pending: { reject: draft }
+types:
+  decision-log:
+    path: "{{decision_log_path}}"
+    id_pattern: "dl-{n}-{slug}"
+    amendable: true
+    template:
+      file: memory/templates/built-in/decision-log.md
+      frontmatter:
+        required: [title]
+    states:
+      sequence: [draft, in-discussion, ready]
+      gates:
+        in-discussion: { reject: draft }
+  task:
+    path: "{{task_path}}"
+    id_pattern: "task-{n}-{slug}"
+    amendable: true
+    template:
+      file: memory/templates/built-in/task.md
+      frontmatter:
+        required: [title]
+    states:
+      sequence: [draft, pending, backlog, in-progress, in-review, approved, done]
+      gates:
+        pending: { reject: draft }
+        in-review: { reject: in-progress }
+      returns:
+        in-progress: backlog
+  plan:
+    path: "{{plan_path}}"
+    id_pattern: "{{plan_id}}"
+    amendable: true
+    template:
+      file: memory/templates/built-in/plan.md
+      frontmatter:
+        required: [title, workflow, phase]
+    states:
+      sequence: [draft, active, done]
+      waiting: [active]

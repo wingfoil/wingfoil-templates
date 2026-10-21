@@ -68,9 +68,10 @@ describe('npm run check:packs', () => {
     assert.equal(result.lines[0], 'lint: checked 20 files, 0 problems');
   });
 
-  it('passes this repository: two files, no problem (acceptance 13)', () => {
+  it('passes this repository: catalog.yaml, compat.yaml and the base pack, no problem '
+    + '(acceptance 13)', () => {
     const result = runCheckPacks(REPO_ROOT);
-    assert.deepEqual(result.lines, ['lint: checked 2 files, 0 problems']);
+    assert.deepEqual(result.lines, ['lint: checked 16 files, 0 problems']);
     assert.equal(result.code, 0);
   });
 

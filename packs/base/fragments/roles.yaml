@@ -1,0 +1,4 @@
+format: 1
+assignments:
+  facilitator: [traceability]
+global: [doc-versioning, security-secrets, claim-sources]
