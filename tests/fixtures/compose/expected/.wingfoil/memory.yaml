@@ -16,6 +16,10 @@ types:
     id_pattern: task-{n}-{slug}
     template:
       file: memory/templates/built-in/task.md
+      frontmatter:
+        required:
+          - id
+          - title
     states:
       sequence:
         - draft
@@ -48,3 +52,7 @@ types:
     id_pattern: ep-{n}-{slug}
     template:
       file: memory/templates/built-in/endpoint.md
+      frontmatter:
+        required:
+          - id
+          - title

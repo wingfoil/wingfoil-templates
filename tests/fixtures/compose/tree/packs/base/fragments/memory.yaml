@@ -8,7 +8,7 @@ types:
   task:
     path: docs/memory/task/{id}.md
     id_pattern: "task-{n}-{slug}"
-    template: { file: memory/templates/built-in/task.md }
+    template: { file: memory/templates/built-in/task.md, frontmatter: { required: [id, title] } }
     states:
       sequence: [draft, pending, backlog, in-progress, in-review, approved, done]
       gates:

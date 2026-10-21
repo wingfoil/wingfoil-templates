@@ -17,11 +17,36 @@ type Doc = Record<string, unknown>;
 export const STUB_RELEASE = '9.0.0';
 
 /**
- * This repository's compat.yaml with a fictional release appended: by default STUB_RELEASE, from
- * WingFoil 1.0 on; a release below 1.0.0 keeps the tree before it (the line policy, task-016).
+ * This repository's compat.yaml as it stood with WingFoil 0.2.2 alone, frozen so that the fixture
+ * ranges do not move when the real file gains a release (task-035); a test holds it a byte prefix
+ * of the real file.
+ */
+export const FROZEN_COMPAT = `format: 1
+kinds:
+  dna: ".wingfoil/dna.yaml"
+  memory: ".wingfoil/memory.yaml"
+  roles: ".wingfoil/roles.yaml"
+  workflows: ".wingfoil/workflows.yaml"
+  workflow: "a workflow file"
+  directive: "a directive file"
+  memory-template: "a Memory template"
+capabilities:
+  pack-install: "init, pack add and upgrade install packs from this repository"
+  workflow-engine: "WingFoil executes workflows"
+releases:
+  - wingfoil: 0.2.2
+    format_key: false
+    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
+    capabilities: []
+    notes: "Predates dl-149: reads format 1 but warns on the format: key."
+`;
+
+/**
+ * FROZEN_COMPAT with a fictional release appended: by default STUB_RELEASE, from WingFoil 1.0 on;
+ * a release below 1.0.0 keeps the tree before it (the line policy, task-016).
  */
 export function fixtureCompat(release = STUB_RELEASE): string {
-  return `${readFileSync(join(REPO_ROOT, 'compat.yaml'), 'utf8')}  - wingfoil: ${release}
+  return `${FROZEN_COMPAT}  - wingfoil: ${release}
     format_key: true
     reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
     capabilities: []

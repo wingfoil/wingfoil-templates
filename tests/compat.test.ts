@@ -7,6 +7,7 @@ import { parse } from 'yaml';
 
 import { CompatError, compatFrom, loadCompat } from '../src/compat';
 import { FIXTURES, REPO_ROOT } from './support/paths';
+import { FROZEN_COMPAT } from './support/published-repo';
 
 const REAL = join(REPO_ROOT, 'compat.yaml');
 
@@ -42,6 +43,11 @@ describe('compat.yaml', () => {
     assert.equal(real, example);
     assert.equal(readFileSync(join(FIXTURES, 'compose', 'tree', 'compat.yaml'), 'utf8'), real);
   });
+
+  it('starts with the frozen 0.2.2-only header the fixture compat files build on (task-035)',
+    () => {
+      assert.ok(readFileSync(REAL, 'utf8').startsWith(FROZEN_COMPAT));
+    });
 
   it('loads the releases of the real file', () => {
     const compat = loadCompat(REAL);

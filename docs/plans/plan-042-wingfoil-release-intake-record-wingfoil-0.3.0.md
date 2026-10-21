@@ -148,3 +148,6 @@ the vocabulary's final names (WingFoil dl-177).
   Acceptance runs the real 0.3.0 on a copy of the golden tree (the real `compat.yaml` untouched,
   ruling K); `validate.test.ts` joins task-036; the fixture-warning rule restored; `--format json`
   and the scratch commit's identity named. Plan submitted.
+- 2026-10-21, task-035's build: WingFoil 0.3.0 refuses a Memory type without
+  `template.frontmatter` (`E_VALIDATION`), which spec-001 §7.5 lets a pack omit; the fixtures were
+  fixed, and a rule (lint or spec) is the approver's to decide, outside this plan.
