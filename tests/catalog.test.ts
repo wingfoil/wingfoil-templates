@@ -53,9 +53,9 @@ describe('the real catalog.yaml', () => {
     assert.deepEqual(catalog.raw['slots'], example.slots);
   });
 
-  it('loads although foundation names packs not yet listed (dl-010)', () => {
+  it('names the foundation packs, whatever its packs list (dl-010, task-040)', () => {
     assert.deepEqual(catalog.foundation, ['base', 'software']);
-    assert.deepEqual(catalog.raw['packs'], []);
+    assert.equal(catalog.raw['format'], 1);
   });
 
   it('requires the methodology axis only with software, the slots defaulting to software', () => {

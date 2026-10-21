@@ -13,7 +13,7 @@ import {
   BASE_COMPOSABLE as BASE, FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN, withPackTree,
 } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
-import { REPO_ROOT } from './support/paths';
+import { FIXTURE_CATALOG, REPO_ROOT } from './support/paths';
 
 const KANBAN_README = 'packs/methodology/kanban/README.md';
 const FIXTURE = 'tests/fixtures/examples/kanban/basic/example.yaml';
@@ -40,7 +40,7 @@ function lint({ specs = [...FOUNDATION, KANBAN], examples = true,
 CheckPacksResult {
   let result: CheckPacksResult | undefined;
   withPackTree(specs, (root) => {
-    copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
+    copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
     copyFileSync(join(REPO_ROOT, 'compat.yaml'), join(root, 'compat.yaml'));
     edit(root);
     result = runCheckPacks(root);
@@ -161,7 +161,7 @@ describe('examples as fixtures (task-022)', () => {
 
   it('leaves the composer alone: a pack composes with its fixture missing', () => {
     withPackTree([...FOUNDATION, KANBAN], (root) => {
-      copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
+      copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
       rmSync(join(root, FIXTURE));
       assert.doesNotThrow(() => resolve(root, loadCatalog(join(root, 'catalog.yaml')),
         ['methodology/kanban']));
@@ -177,7 +177,7 @@ describe('examples as fixtures (task-022)', () => {
       let lines: string[] = [];
       let readme = '';
       withPackTree([...FOUNDATION, KANBAN], (root) => {
-        copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
+        copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
         copyFileSync(join(REPO_ROOT, 'compat.yaml'), join(root, 'compat.yaml'));
         edit(root);
         readme = readFileSync(join(root, KANBAN_README), 'utf8');

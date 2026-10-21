@@ -15,7 +15,7 @@ import type { TestRepo } from './support/git-repo';
 import { indexCatalog } from './support/index-catalog';
 import { BASE_COMPOSABLE, writePack } from './support/pack-tree';
 import { fixtureCompat, publishByHand } from './support/published-repo';
-import { FIXTURES, REPO_ROOT } from './support/paths';
+import { FIXTURES, FIXTURE_CATALOG, REPO_ROOT } from './support/paths';
 
 const CLI = join(REPO_ROOT, 'dist', 'src', 'index-cli.js');
 const TREE = join(FIXTURES, 'compose', 'tree');
@@ -121,7 +121,7 @@ describe('npm run index (acceptance 3)', () => {
   it('exits 2 when the index would break its own schema', () => {
     withRepo((repo) => {
       writePack(repo.dir, BASE_COMPOSABLE);
-      repo.write('catalog.yaml', readFileSync(join(REPO_ROOT, 'catalog.yaml'), 'utf8'));
+      repo.write('catalog.yaml', readFileSync(FIXTURE_CATALOG, 'utf8'));
       repo.write('compat.yaml', fixtureCompat());
       // A tagged pack.yaml no schema check reads: its parameter type is outside the enum.
       const manifest = join(repo.dir, 'packs', 'base', 'pack.yaml');

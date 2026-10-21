@@ -1,13 +1,12 @@
 import { strict as assert } from 'node:assert';
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { describe, it } from 'node:test';
 import { parse } from 'yaml';
 
 import { CatalogEditError, addVersion } from '../src/catalog-edit';
-import { REPO_ROOT } from './support/paths';
+import { FIXTURE_CATALOG } from './support/paths';
 
-const CATALOG = readFileSync(join(REPO_ROOT, 'catalog.yaml'), 'utf8');
+const CATALOG = readFileSync(FIXTURE_CATALOG, 'utf8');
 
 function version(v: string): Record<string, unknown> {
   return { version: v, commit: '0'.repeat(40), digest: `sha256:${'a'.repeat(64)}`, formats: {},

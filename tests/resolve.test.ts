@@ -8,9 +8,9 @@ import { sortEntries } from '../src/listing';
 import { ResolveError, resolve } from '../src/resolve';
 import { BASE, DELIVERY, FOUNDATION, KANBAN, SOFTWARE, withPackTree } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
-import { FIXTURES, REPO_ROOT } from './support/paths';
+import { FIXTURES, FIXTURE_CATALOG } from './support/paths';
 
-const CATALOG = loadCatalog(join(REPO_ROOT, 'catalog.yaml'));
+const CATALOG = loadCatalog(FIXTURE_CATALOG);
 
 function ids(root: string, request: string[], catalog: Catalog = CATALOG): string[] {
   return resolve(root, catalog, request).map((pack) => pack.id);
