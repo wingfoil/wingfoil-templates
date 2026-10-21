@@ -159,4 +159,5 @@ Written 2026-10-21, before the build. Branch `task/task-039-base-examples` from 
   (937 of 937), `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate` (3 runs, 0
   failed, no warning), `index -- --check` and `workflow list` all exit 0. CI run 39631782206 on
   `8b803ab`: `success`, both jobs (`validate (22.21.0)`, `validate (22.12.0)`).
+- 2026-10-21: approved by the approver; merged into `main` (`ccc0bbb`), `approved → done`.
 

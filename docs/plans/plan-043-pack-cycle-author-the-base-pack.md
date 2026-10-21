@@ -163,3 +163,14 @@ repository's adoption (W9); spec-001 §8.3's `{release}` fold-back, at W8's clos
   `validate -- base --param …` on this repository is refused (the examples set those parameters):
   `software`'s author plan validates other values on a scratch tree, or a tooling follow-up lets
   `--param` apply to an `entries` composition only.
+- 2026-10-21: task-039 `done`, merged (`ccc0bbb`): the README's three examples (the defaults, release
+  folders, release folders without a retrospective folder), each composed and validated on
+  WingFoil 0.3.0 with no warning by `npm run validate` and the CI; the private projects' check
+  passed for all three. The CI's first run failed on an evidence test that relied on this
+  repository's publication failing; it now uses a fixture tree. CI run 39633841077 `success`.
+- 2026-10-21: closed. `packs/base` on `main` composes and validates on WingFoil 0.3.0 with the
+  README's examples; the charter's Execution Notes record the pack written, open point 0's outcome
+  (task-038, ruling S) and the exit criterion met (task-039). Owed after this plan: `first-release`
+  of `base` (W9), feedback note F-032 as its own task, `software`'s `author`, and the
+  `template.frontmatter` rule (lint or spec).
+
