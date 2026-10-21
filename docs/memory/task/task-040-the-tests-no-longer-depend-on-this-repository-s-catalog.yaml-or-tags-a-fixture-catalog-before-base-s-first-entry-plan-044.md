@@ -110,9 +110,9 @@ Tests run by `npm test`; `npm run build` precedes the commands.
   red first as an in-suite guard plus a recorded publication run on the branch's head; dl-010 (a)
   cited for what it decided; the fixture a byte copy with a drift test; no `src/` change, the
   expected fixtures unchanged; the real `compat.yaml` copy left as a follow-up.
-- 2026-10-21, red (`b15490c`: the fixture, the drift case, the guard): `npm test` 1 failed of 937 +
-  3, the guard listing ten files, `tests/resolve.test.ts` among them (not named in the Design; it
-  loads the catalog for its axes and slots, and takes the fixture too). The guard allowlists its
+- 2026-10-21, red (`b15490c`: the fixture, the drift case, the guard): `npm test` 1 failed of 940 (the
+  guard, listing ten files, `tests/resolve.test.ts` among them (not named in the Design; it
+  loads the catalog for its axes and slots, and takes the fixture too)). The guard allowlists its
   own file besides `tests/catalog.test.ts`. The publication run on the red commit: `publish:pack`
   exit 0 (range `0.3.0`), then `npm test` 92 of 940 failed (the 91 and the guard).
 - 2026-10-21, fix (`11dc2cf`): the ten files take `FIXTURE_CATALOG`; assertions unchanged. The
