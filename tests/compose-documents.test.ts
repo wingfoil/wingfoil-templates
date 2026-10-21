@@ -8,10 +8,10 @@ import { composeDocuments } from '../src/compose-documents';
 import type { ParameterValues } from '../src/compose-documents';
 import { BASE, DELIVERY, KANBAN, SOFTWARE, withPackTree } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
-import { FIXTURES, REPO_ROOT } from './support/paths';
+import { FIXTURES, FIXTURE_CATALOG } from './support/paths';
 import { conformingReadme } from './support/readme';
 
-const CATALOG = loadCatalog(join(REPO_ROOT, 'catalog.yaml'));
+const CATALOG = loadCatalog(FIXTURE_CATALOG);
 type Doc = Record<string, unknown>;
 
 function compose(specs: PackSpec[], request: string[], values: ParameterValues = {}) {

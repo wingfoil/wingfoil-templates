@@ -1,5 +1,4 @@
 import { strict as assert } from 'node:assert';
-import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
 import { loadCatalog } from '../src/catalog';
@@ -10,9 +9,9 @@ import {
   withPackTree,
 } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
-import { REPO_ROOT } from './support/paths';
+import { FIXTURE_CATALOG } from './support/paths';
 
-const CATALOG = loadCatalog(join(REPO_ROOT, 'catalog.yaml'));
+const CATALOG = loadCatalog(FIXTURE_CATALOG);
 const BASE = BASE_COMPOSABLE;
 
 function plan(specs: PackSpec[], request: string[]): Map<string, string> {

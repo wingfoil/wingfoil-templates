@@ -9,7 +9,7 @@ import { TestRepo } from './git-repo';
 import { writeExamples } from './examples';
 import { FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN, writePack } from './pack-tree';
 import type { PackSpec } from './pack-tree';
-import { REPO_ROOT } from './paths';
+import { FIXTURE_CATALOG } from './paths';
 
 type Doc = Record<string, unknown>;
 
@@ -59,7 +59,7 @@ export function treeRepo(specs: PackSpec[] = [...FOUNDATION, KANBAN],
   const repo = new TestRepo();
   for (const spec of specs) writePack(repo.dir, spec);
   if (examples) writeExamples(repo.dir, specs);
-  repo.write('catalog.yaml', readFileSync(join(REPO_ROOT, 'catalog.yaml'), 'utf8'));
+  repo.write('catalog.yaml', readFileSync(FIXTURE_CATALOG, 'utf8'));
   repo.write('compat.yaml', fixtureCompat(release));
   repo.write('.gitignore', '.cache/\nnode_modules/\n');
   // The index outputs belong to the tree, as in this repository (task-019).

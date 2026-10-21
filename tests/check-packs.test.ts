@@ -11,7 +11,7 @@ import { runCheckPacks } from '../src/check-packs';
 import { loadCatalog } from '../src/catalog';
 import { composeDocuments } from '../src/compose-documents';
 import type { CheckPacksResult } from '../src/check-packs';
-import { FIXTURES, REPO_ROOT } from './support/paths';
+import { FIXTURES, FIXTURE_CATALOG, REPO_ROOT } from './support/paths';
 import {
   BASE_COMPOSABLE as BASE, DELIVERY, FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN,
     SOFTWARE_COMPOSABLE,
@@ -28,7 +28,7 @@ function lint(specs: PackSpec[], edit: (root: string) => void = () => undefined)
 CheckPacksResult {
   let result: CheckPacksResult | undefined;
   withPackTree(specs, (root) => {
-    copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
+    copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
     copyFileSync(join(REPO_ROOT, 'compat.yaml'), join(root, 'compat.yaml'));
     edit(root);
     result = runCheckPacks(root);
@@ -758,7 +758,7 @@ describe('F3.5 workflow rules', () => {
   it('the composer refuses what these rules reject (spec-001 §17, §18)', () => {
     withPackTree([...FOUNDATION, withWorkflow('flow', FLOW('  - { name: a, description: x }\n'))],
       (root) => {
-        copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
+        copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
         assert.throws(() => composeDocuments(root, loadCatalog(join(root, 'catalog.yaml')),
           ['methodology/kanban'], {}), /declares none of include, actions, produces and approval/);
       });
@@ -790,7 +790,7 @@ describe('memory-fragment (spec-001 §7.5, §18)', () => {
       assert.equal(result.problems.find((problem) => problem.rule === 'memory-fragment')?.line,
         10, result.lines.join('\n'));
       withPackTree([...CLEAN, defining(frontmatter ?? '')], (root) => {
-        copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
+        copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
         assert.throws(() => composeDocuments(root, loadCatalog(join(root, 'catalog.yaml')),
           ['methodology/kanban', 'blueprint/x'], {}), /type x.*(exempt|owner|tags)/);
       });
@@ -924,7 +924,7 @@ describe('F3.5 secrets', () => {
       label: { type: 'string', description: 'x' } } },
       extraFiles: { 'workflows/delivery.yaml': `${DELIVERY}description: "{{label}}"\n` } };
     withPackTree([...FOUNDATION, labelled], (root) => {
-      copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
+      copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
       const value = ['Zm9vYmFyQmF6', 'cXV4MTIzNDU2', 'Nzg5MEFC'].join('');
       assert.doesNotThrow(() => composeDocuments(root, loadCatalog(join(root, 'catalog.yaml')),
         ['methodology/kanban'], { label: value }));
@@ -937,7 +937,7 @@ describe('F3.5 secrets', () => {
       extraFiles: { 'README.md': `${KANBAN_README}\n${block}\n` } }]);
     const leaky = withWorkflow('flow', FLOW(`  - { name: a, produces: [x.md], note: "${block}" }\n`));
     withPackTree([...FOUNDATION, leaky], (root) => {
-      copyFileSync(join(REPO_ROOT, 'catalog.yaml'), join(root, 'catalog.yaml'));
+      copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
       assert.throws(() => composeDocuments(root, loadCatalog(join(root, 'catalog.yaml')),
         ['methodology/kanban'], {}), /private key block/);
     });

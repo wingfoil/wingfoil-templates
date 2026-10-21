@@ -11,7 +11,7 @@ import { schemaListing } from '../src/schema-digest';
 import type { TestRepo } from './support/git-repo';
 import { assertInbox, notesOf } from './support/inbox';
 import { FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN } from './support/pack-tree';
-import { REPO_ROOT } from './support/paths';
+import { FIXTURE_CATALOG, REPO_ROOT } from './support/paths';
 import { STUB_RELEASE, treeRepo } from './support/published-repo';
 import { StubWingfoil } from './support/stub-wingfoil';
 
@@ -28,7 +28,7 @@ function withTree(body: (tree: string) => void): void {
   const tree = mkdtempSync(join(tmpdir(), 'feedback-note-'));
   try {
     addRepositoryFiles(tree);
-    cpSync(join(REPO_ROOT, 'catalog.yaml'), join(tree, 'catalog.yaml'));
+    cpSync(FIXTURE_CATALOG, join(tree, 'catalog.yaml'));
     body(tree);
   } finally {
     rmSync(tree, { recursive: true, force: true });
