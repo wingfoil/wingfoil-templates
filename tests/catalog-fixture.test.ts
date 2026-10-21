@@ -10,7 +10,8 @@ import { REPO_ROOT } from './support/paths';
 
 const TESTS = join(REPO_ROOT, 'tests');
 const ALLOWED = ['tests/catalog.test.ts', 'tests/catalog-fixture.test.ts'];
-const READ = "REPO_ROOT, 'catalog.yaml'";
+/** A path to this repository's catalog.yaml, however it is quoted or spaced. */
+const READ = /REPO_ROOT\s*,\s*['"`]catalog\.yaml['"`]/;
 
 function sources(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -24,7 +25,7 @@ describe('the tests and this repository\'s catalog.yaml (task-040)', () => {
   it('reads it only where it is checked; every other test takes the fixture catalog', () => {
     const readers = sources(TESTS).map((path) => relative(REPO_ROOT, path).split('\\').join('/'))
       .filter((path) => !ALLOWED.includes(path))
-      .filter((path) => readFileSync(join(REPO_ROOT, path), 'utf8').includes(READ));
+      .filter((path) => READ.test(readFileSync(join(REPO_ROOT, path), 'utf8')));
     assert.deepEqual(readers, []);
   });
 });

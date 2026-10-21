@@ -53,7 +53,7 @@ describe('the real catalog.yaml', () => {
     assert.deepEqual(catalog.raw['slots'], example.slots);
   });
 
-  it('names the foundation packs, whatever its packs list (dl-010, task-040)', () => {
+  it('has its format and foundation packs, whatever its packs list (task-040)', () => {
     assert.deepEqual(catalog.foundation, ['base', 'software']);
     assert.equal(catalog.raw['format'], 1);
   });
@@ -90,5 +90,10 @@ describe('the fixture catalog (task-040)', () => {
     const published = 'format: 1\npacks:\n  - id: base\n    versions:\n      - version: 1.0.0\n'
       + 'transitions: []\npresets: []\n';
     assert.equal(unpublished(published), 'format: 1\npacks: []\ntransitions: []\npresets: []\n');
+  });
+
+  it('ends a block at a top-level comment, and keeps the comment', () => {
+    assert.equal(unpublished('packs:\n  - id: base\n# presets follow\npresets: []\n'),
+      'packs: []\n# presets follow\npresets: []\n');
   });
 });
