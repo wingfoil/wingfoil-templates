@@ -11,9 +11,10 @@ Axis: foundation
 Every project governed by WingFoil, software or not, starts from `base`: it holds the decision-log,
 task and plan types, the workflow that changes the project's own governance, the generic directives
 and the DNA every project shares (one approver, one agent without approval authority). Other packs
-only add to it or tighten it. It serves every adoption profile: a governed project that adopts by
-hand today, and a new project from its first configuration. It is not meant to be used alone by a
-software project, which takes `software` on top of it for its life cycle and its software types.
+only add to it or tighten it. It serves every adoption profile (solo developer, code reviewer,
+team developer, tech lead, non-technical manager, architect), since every composition contains it.
+It is not meant to be used alone by a software project, which takes `software` on top of it for its
+life cycle and its software types.
 
 ## Install and update
 
