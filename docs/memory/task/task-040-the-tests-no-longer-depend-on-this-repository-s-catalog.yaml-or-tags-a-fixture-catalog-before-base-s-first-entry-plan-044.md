@@ -110,3 +110,23 @@ Tests run by `npm test`; `npm run build` precedes the commands.
   red first as an in-suite guard plus a recorded publication run on the branch's head; dl-010 (a)
   cited for what it decided; the fixture a byte copy with a drift test; no `src/` change, the
   expected fixtures unchanged; the real `compat.yaml` copy left as a follow-up.
+- 2026-10-21, red (`b15490c`: the fixture, the drift case, the guard): `npm test` 1 failed of 937 +
+  3, the guard listing ten files, `tests/resolve.test.ts` among them (not named in the Design; it
+  loads the catalog for its axes and slots, and takes the fixture too). The guard allowlists its
+  own file besides `tests/catalog.test.ts`. The publication run on the red commit: `publish:pack`
+  exit 0 (range `0.3.0`), then `npm test` 92 of 940 failed (the 91 and the guard).
+- 2026-10-21, fix (`11dc2cf`): the ten files take `FIXTURE_CATALOG`; assertions unchanged. The
+  publication run on it: 940 of 940. A first run gave 939 of 940: the run's script exported a
+  scratch git identity into `npm test`, and `tests/publish.test.ts`'s "tags and commits as the
+  caller" reads the environment's identity; with the identity scoped to `publish:pack` alone, no
+  failure. The cancelled tests exposed no other failure.
+- 2026-10-21: independent review of the branch: approve after amendments. Applied (`684effe`): the
+  guard matches any spacing and quoting of the path; a drift case (a top-level comment after the
+  block); a test title. Follow-up, outside this task: `tests/publish.test.ts`'s identity test fails
+  when `GIT_AUTHOR_*` or `GIT_COMMITTER_*` are set in the environment.
+- 2026-10-21, `684effe`: the publication run on Node.js 22.21.0 and 22.12.0: `publish:pack` exit
+  0, `npm test` 941 of 941. From clean clones on both: `npm ci`, `npm test` (941 of 941), `lint`,
+  `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check` and
+  `workflow list` exit 0. Nothing under `src/`, `packs/`, `schema/` or `.github/` changed, nor the
+  catalog files or the expected fixtures. CI run 39663778203: `success`, both jobs.
+
