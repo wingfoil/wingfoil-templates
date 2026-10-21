@@ -38,8 +38,8 @@ spec-002 hold no open erratum but §8.3's `{release}` note, folded back at W8's 
 **What it produces.** The pack-release element `prel-1-…` (`pack: pack-foundation-base`,
 `version: 1.0.0`, its range computed from `compat.yaml`), the annotated tag `base@1.0.0` at the
 release commit (dl-004), then one commit with `catalog.yaml`'s `base` entry (version, commit,
-digest, formats, capabilities, computed range) and the regenerated `CATALOG.md`,
-`catalog-index.json` and `llms.txt` (spec-001 §11, spec-002 §3). No file under `packs/` changes:
+digest, formats, capabilities, computed range) and the index files `npm run index` regenerates
+for it (spec-001 §11, spec-002 §3). No file under `packs/` changes:
 `CHANGELOG.md` already reads `1.0.0: first version.` and `pack.yaml` `version: 1.0.0`, which
 `prepare` confirms.
 
@@ -68,8 +68,8 @@ repository's adoption of `base` (W9); spec-001 §8.3's fold-back.
 4. **`approve-publication`** (approver): `memory approve prel-1-…` (`releasing → released`), or a
    rejection back to `validating`. Ruling C: it authorizes the publication.
 5. **`publish`** (tech-lead): `npm run publish:pack -- --pack base`, which tags `base@1.0.0` at the
-   release commit and makes the catalog commit with the regenerated index; the tag and `main`
-   pushed; the CI run on the tag (`**@*`, publication mode) and on `main` read, their conclusions
+   release commit and makes the catalog commit with the regenerated index, pushing nothing; the
+   tag and `main` pushed by hand; the CI run on the tag (`**@*`, publication mode) and on `main` read, their conclusions
    recorded in the element's Publication section with the tag, the commit and the digest; the
    catalog checked on the published site.
 6. **`activate`** (ruling B): the charter `accepted → active`, its Execution Notes recording the
@@ -81,8 +81,8 @@ repository's adoption of `base` (W9); spec-001 §8.3's fold-back.
 ## Handoff
 
 - **claude:** steps 1–3 and 5–8, except the approver's gates.
-- **Approver:** the pack-release's approval (step 4), which authorizes the tag (ruling C); the
-  charter's activation, if its type gates it.
+- **Approver:** the pack-release's approval (step 4), which authorizes the tag (ruling C). The
+  charter's `accepted → active` has no gate (`pack`'s machine gates `proposed` only).
 - Done when `base@1.0.0` is tagged and pushed, `catalog.yaml` lists `base` on `main` with the CI
   `success` on the tag and on `main`, the charter is `active`, and the notices are sent.
 
