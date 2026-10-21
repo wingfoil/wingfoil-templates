@@ -163,3 +163,26 @@ Red-first exceptions (dl-018): the pin (configuration), the directive and header
   `directives list`'s `warnings` count. Amended.
 - 2026-10-20: re-review: approve (ruling M implementable on both releases; criterion 7's summary
   line matches `src/validate.ts`); two wording nits applied. Submitted.
+- 2026-10-21, build on `task/task-035-matrix-wingfoil-0.3.0`:
+  - red (`74b8245`): nine failing, eight in `tests/matrix.test.ts` (three accepted version lines,
+    `--format json`, the scratch commit, two diagnostics, a `directives list` warning) and one in
+    `tests/validate.test.ts` (a tree listing 0.2.2 and 0.3.0); green with `21f9905`. The frozen
+    compat header and the stub changes are test infrastructure; the pin, the directive and the
+    header wording are the Design's red-first exceptions.
+  - pin: `src/matrix/wingfoil-0.3.0/` (`wingfoil` 0.3.0, integrity `sha512-9mNzN6o2…`);
+    `npm run check:pins` exit 0; `npm audit` 0 vulnerabilities.
+  - criterion 7, the first run of the real 0.3.0 on a copy of the golden tree with 0.3.0 appended
+    to its `compat.yaml`: 13 of 26 runs failed, `workflow list` exit 1 with `E_VALIDATION
+    types.task.template.frontmatter` (and `types.endpoint…`): "expected object, received
+    undefined". WingFoil 0.3.0 requires `template.frontmatter` on every type; the fixture's
+    `base` `task` and `web-service` `endpoint` had none. Fixed in the fixtures (`d9b9eab`: both
+    require `id` and `title`, as the fixture's `adr`), the expected compose outputs following. No
+    rule of this repository changes: spec-001 §7.5 lets `template.frontmatter.required` be
+    absent, and the foundation charters declare it on every type; a lint rule requiring it is a
+    proposal for the approver, not this task's.
+  - criterion 7 again: `npm run validate -- --tree <copy> --param project_name=Golden` exit 0,
+    `matrix: self-test, 26 runs, 0 failed, tolerance applied: 0.2.2`, every `wingfoil@0.3.0`
+    line `pass (self-test)`. Evidence on `base` composed alone, committed in a scratch repository:
+    `--version` printed `0.3.0 (cc31d7a8ca3940c6ec96dca4e0ef77f32f52dfb1)`; `workflow list
+    --format json` gave `baseline: {rev: HEAD, commit: <the scratch commit>}`, `workflows:
+    [governance-evolution]`, `diagnostics: []`.
