@@ -31,9 +31,9 @@ plan-043 lists five examples (a generic non-software project and one per public 
 Benchmark's and this repository's sets equal the defaults, and UI's differs from WingFoil's only by
 the retrospective folder, so three examples, one per distinct set, carry the four public
 repositories and the generic non-software project; the approver confirms this at the backlog
-acceptance. The Execution Notes record which public repository each example matches. Every example names a fictional project
-(spec-002 §2.4, `pack-authoring`) and fictional approver and agent identities (`*.example`
-addresses, which WingFoil 0.3.0 accepts for a member, task-037).
+acceptance. The Execution Notes record which public repository each example matches. Every example
+names a fictional project (spec-002 §2.4, `pack-authoring`) and fictional approver and agent
+identities (`*.example` addresses, which WingFoil 0.3.0 accepts for a member, task-037).
 
 Three examples change what `npm run validate` does on this repository: 3 compositions, 3 matrix
 runs instead of 0, and 3 more files for the lint (20 → 23); a publication run of this repository
