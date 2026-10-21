@@ -146,3 +146,7 @@ Written 2026-10-21, before the build. Branch `task/task-037-base-smallest` from 
   `security-secrets`' wording; long parameter descriptions in block form; test titles; the
   Context's lint count (16). Re-checked: `check:packs` 16 files 0 problems, `index` unchanged,
   `validate -- base …` 1 run, 0 failed, tolerance none.
+- 2026-10-21: re-review: approve; its two optional nits applied (`658bcf7`: the README names
+  spec-002's adoption profiles; a wrap). Branch pushed: CI run 39590724856 on `658bcf7`,
+  conclusion `success` (`validate (22.12.0)` and `validate (22.21.0)` both `success`).
+  `in-progress → in-review`; the clean-clone checks are recorded at delivery.
