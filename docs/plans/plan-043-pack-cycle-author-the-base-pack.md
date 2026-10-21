@@ -148,3 +148,9 @@ repository's adoption (W9); spec-001 §8.3's `{release}` fold-back, at W8's clos
 - 2026-10-21: task-037 `done`, merged (`b6e9755`): `packs/base` in its smallest valid form (14 files),
   accepted by WingFoil 0.3.0 with no warning (`validate -- base …`: 1 run, 0 failed). CI run
   39590724856 `success`. task-038 next.
+- 2026-10-21, task-038's review: the approver ruled R (the lint accepts an approval checkpoint
+  phase, `pack-authoring` reworded, in task-038) and S (the `retrospective` tag selection kept,
+  with its condition). Owed: feedback note **F-032** for WingFoil, after this plan, as its own
+  task: suspending an instance (`parked`, dl-023 D1), closing a plan that is not an instance, and
+  passing an action's arguments to its command (`memory.add`'s `tags`). WingFoil's v0.3
+  retrospective (`19a66000`) covers none of them.
