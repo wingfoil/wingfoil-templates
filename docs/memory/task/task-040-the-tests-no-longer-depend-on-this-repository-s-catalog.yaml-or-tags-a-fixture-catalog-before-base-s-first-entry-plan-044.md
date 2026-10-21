@@ -76,7 +76,28 @@ Tests run by `npm test`; `npm run build` precedes the commands.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+- **The fixture.** `tests/fixtures/catalog/catalog.yaml`, a byte copy of `catalog.yaml` today;
+  `tests/support/paths.ts` exports its path as `FIXTURE_CATALOG`.
+- **The sites.** Every `join(REPO_ROOT, 'catalog.yaml')` in `tests/` but `tests/catalog.test.ts`
+  becomes `FIXTURE_CATALOG`: `tests/support/published-repo.ts` (`treeRepo`, which
+  `indexCatalog` uses), `tests/index.test.ts`, `tests/check-packs.test.ts` (its `lint` helper and
+  the four composition cases), `tests/example-rules.test.ts`, `tests/readme-rules.test.ts`,
+  `tests/feedback-note.test.ts`, `tests/catalog-edit.test.ts`, `tests/compose-documents.test.ts`
+  and `tests/output.test.ts`. Their assertions do not change.
+- **`tests/catalog.test.ts`.** "The real catalog.yaml" keeps its axes, slots and foundation checks
+  and drops `packs: []`; a new case, "the fixture catalog is the real one with no published pack",
+  replaces in the real text each of the `packs`, `transitions` and `presets` blocks (the key's
+  line and its indented or `- ` lines up to the next top-level key) by `<key>: []` and asserts
+  byte equality with the fixture.
+- **The guard** (the in-suite red): `tests/catalog-fixture.test.ts` reads every `.ts` file under
+  `tests/` and lists those holding `REPO_ROOT, 'catalog.yaml'` outside the allowlist
+  (`tests/catalog.test.ts`); it expects none. It is committed first with the fixture and the drift
+  case, red on the sites above.
+- **The publication run**, scripted in the scratchpad, never committed: clone of the branch's head
+  (the red commit, then the green one), `npm ci`, `npm run build`, `npm run publish:pack -- --pack
+  base` with a scratch git identity, `npm test`; the failing count is recorded each time.
+- **Commits** on `task/task-040-tests-fixture-catalog`: the red (fixture, drift case, guard), then
+  the fix (the sites), then the notes.
 
 ## Execution Notes
 
