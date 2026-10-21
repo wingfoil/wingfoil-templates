@@ -2,7 +2,7 @@
 id: task-035-the-compatibility-matrix-runs-wingfoil-0.3.0-its-version-line-a-committed-scratch-repository-diagnostics-as-warnings-per-release-stubs-plan-042
 type: task
 title: "The compatibility matrix runs WingFoil 0.3.0: its version line, a committed scratch repository, diagnostics as warnings, per-release stubs (plan-042)"
-status: in-review
+status: approved
 pack: ""            # tooling task (wingfoil-release-intake › record, plan-042)
 depends_on: []
 tags: ["tooling","compat","matrix"]
