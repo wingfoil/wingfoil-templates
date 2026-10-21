@@ -96,9 +96,9 @@ Order (dl-018):
    - `tests/compat.test.ts`: the real releases 0.2.2 then 0.3.0, 0.3.0's `format_key` and
      `capabilities`; `SECOND_RELEASE` becomes 0.4.0, the repeated case repeats the last release;
      `computeRange` on the real file gives `"0.3.0"` to a version requiring `workflow-engine`.
-   - `tests/validate.test.ts`: the default `validate()` helper installs per release
-     (`stubsPerRelease`: 0.2.2 with its format warning, 0.3.0 printing `0.3.0 (cc31d7a8)` and JSON
-     with no diagnostics or warnings); the golden expectations of criterion 3 (26 self-test runs with
+   - `tests/validate.test.ts`: the default `validate()` helper installs per release (a stub each:
+     0.2.2 with its format warning, 0.3.0 printing `0.3.0 (cc31d7a8)` and JSON with nothing to
+     report); the golden expectations of criterion 3 (26 self-test runs with
      both releases' lines; publication 13 runs on 0.3.0 alone; a noisy 0.2.2, a 0.3.0 warning, an
      install failure); task-035's two-release test folded in; the empty compatible set on a tree
      copy whose `compat.yaml` is `FROZEN_COMPAT`.
@@ -115,3 +115,17 @@ Order (dl-018):
 - 2026-10-21: independent review of the body: approve after amendments, nothing blocking (task-035's
   two-release test folds into the golden one; the empty compatible set keeps a test; the CI header;
   exact counts and commands; the notes' wording; the out-of-scope texts). Amended.
+- 2026-10-21, build on `task/task-036-record-wingfoil-0.3.0`:
+  - red (`a47b461`): nine failing, four in `tests/compat.test.ts` (the real releases, the
+    `workflow-engine` range, the ordering and repeated-release samples) and five in
+    `tests/validate.test.ts` (26 self-test runs, a 0.3.0 warning, publication on 0.3.0 alone, a
+    noisy 0.2.2, an install failure); green with `42f663a`, which changes `compat.yaml`, the
+    fixture's and spec-001 §12's example together, with the documentation (spec-001's prose and
+    O10, dl-009, `ci.yml`). `tests/compat.test.ts` 10 of 10, `tests/validate.test.ts` 38 of 38.
+  - criterion 4, with the real releases: `npm run validate` exit 0 (`0 runs`); on the golden tree
+    exit 0, `matrix: self-test, 26 runs, 0 failed, tolerance applied: 0.2.2`;
+    `npm run validate:publication` exit 1, "publication mode with no composition: a publication
+    run that runs nothing is not a pass"; on the golden tree exit 0,
+    `matrix: publication, 13 runs, 0 failed, tolerance applied: none`.
+  - criterion 6: `npm run index -- --check` 0 not up to date at the root (3 files) and in the
+    golden tree (11 files).
