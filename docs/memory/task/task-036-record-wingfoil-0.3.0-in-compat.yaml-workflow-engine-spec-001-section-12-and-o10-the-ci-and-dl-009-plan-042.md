@@ -136,3 +136,7 @@ Order (dl-018):
   matrix never ran an unreleased build. Out of scope, as W-01 and the root README: the accepted
   charters' Compatibility sentences, which speak of this intake as to come and stay true as
   conditionals; W9 records it.
+- 2026-10-21: re-review of the fixes: approve. Branch pushed: CI run 39575416119 on `3398991`,
+  conclusion `success` (`validate (22.12.0)` and `validate (22.21.0)` both `success`, the full
+  suite on both Node.js versions). `in-progress → in-review`; the clean-clone checks are recorded
+  at delivery.
