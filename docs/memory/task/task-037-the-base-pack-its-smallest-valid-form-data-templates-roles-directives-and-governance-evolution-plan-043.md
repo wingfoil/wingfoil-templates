@@ -19,8 +19,8 @@ and the four directives come here; task-038 adds `decision-log-ingest`, `retrosp
 
 No `catalog.yaml` entry yet (ruling O): `first-release` adds it. `packs/base` raises the numbers of
 files this repository's checks read, which moves four assertions in three tests: the index
-(`tests/index.test.ts`, 3 → 4 files), the lint (`tests/check-packs.test.ts`, "two files" → 18) and
-`npm run validate` on this repository (`tests/validate.test.ts`, schemas 2 → 3, lint 2 → 18; its
+(`tests/index.test.ts`, 3 → 4 files), the lint (`tests/check-packs.test.ts`, "two files" → 16) and
+`npm run validate` on this repository (`tests/validate.test.ts`, schemas 2 → 3, lint 2 → 16; its
 `compositions: 0` and `0 runs` stay). These test changes follow dl-018 R1–R3, as tooling changes
 inside a pack task. Pack content is checked by the lint, the composition and the matrix (dl-018,
 pack tasks).
@@ -138,3 +138,11 @@ Written 2026-10-21, before the build. Branch `task/task-037-base-smallest` from 
     address.
   - privacy: the diff's added lines hold no local path, no private project's name, no real name
     and no address but `*.example`.
+- 2026-10-21: independent review of the branch: approve after amendments, nothing blocking.
+  Applied: the README's hand steps keep a project's own entries in the four composed files, follow
+  the charter's Adoption in full (comparison, `parked` first, key mapping, plan closing), and name
+  the range through the catalog; section 2 names its profiles and when not to use it; section 8
+  names WingFoil 0.3.0's configuration as the source; `traceability` fixes no link of the chain;
+  `security-secrets`' wording; long parameter descriptions in block form; test titles; the
+  Context's lint count (16). Re-checked: `check:packs` 16 files 0 problems, `index` unchanged,
+  `validate -- base …` 1 run, 0 failed, tolerance none.

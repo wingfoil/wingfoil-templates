@@ -257,7 +257,8 @@ describe('npm run validate', () => {
     assert.ok(entries.lines.some((line) => line.startsWith('composition entries: composed twice')));
   });
 
-  it('validates this repository: its files and the base pack, no composition, no matrix run', () => {
+  it('validates this repository: catalog.yaml, compat.yaml and the base pack, no composition, '
+    + 'no matrix run', () => {
     const result = validate(['--tree', REPO_ROOT]);
     assert.equal(result.code, 0, result.lines.join('\n'));
     assert.ok(result.lines.includes('schemas: checked 3 files, 0 problems'));

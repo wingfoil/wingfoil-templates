@@ -16,8 +16,12 @@ formats:
 requires_capabilities: [workflow-engine]
 parameters:
   project_name: { type: string, description: "The project's name: dna.yaml project.name" }
-  approver_name: { type: string, description: "The name of the approver, the team member who approves" }
-  approver_email: { type: string, description: "The approver's email, which WingFoil matches to the git user to grant approval" }
+  approver_name:
+    type: string
+    description: "The name of the approver, the team member who approves"
+  approver_email:
+    type: string
+    description: "The approver's email, which WingFoil matches to the git user to grant approval"
   agent_name: { type: string, description: "The name of the agent in dna.yaml team.agents" }
   decision_log_path:
     type: path
