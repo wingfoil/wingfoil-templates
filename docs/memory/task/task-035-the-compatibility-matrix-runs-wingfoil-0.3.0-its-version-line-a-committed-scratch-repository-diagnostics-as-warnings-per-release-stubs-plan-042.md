@@ -194,3 +194,8 @@ Red-first exceptions (dl-018): the pin (configuration), the directive and header
   `Warning:` stdout rule; wraps. For the approver, outside this task: WingFoil 0.3.0 refuses a type
   without `template.frontmatter`, which spec-001 §7.5 allows a pack to omit; plan-042 carries it
   to the approver (a lint rule or a spec change).
+- 2026-10-21: re-review of the fixes: approve. Checks from a clean clone at `ab50d20` on Node.js
+  22.21.0: 934 of 934 tests, `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`,
+  `index -- --check` and `workflow list` exit 0. Branch pushed: CI run 39561773454 on `ab50d20`,
+  conclusion `success` (`validate (22.12.0)` and `validate (22.21.0)` both `success`, the full
+  suite on the floor). `in-progress → in-review`.
