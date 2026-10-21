@@ -28,54 +28,51 @@ pack tasks).
 ## Acceptance
 
 1. **`packs/base/pack.yaml`**: `format: 1`, `id: base`, `name: base`, no `axis`, `title: "Base"`,
-   `description` the first sentence of the charter's Purpose, `version: 1.0.0`, `formats` exactly for the kinds
-   shipped (`dna`, `roles`, `memory`, `memory-template`, `workflow`, `directive`, all 1),
-   `requires_capabilities: [workflow-engine]`, no `requires`, and the parameters the files of this
-   task use, with the charter's types, defaults and descriptions: `project_name`, `approver_name`,
-   `approver_email`, `agent_name` (required, no default), `decision_log_path`, `task_path`,
-   `plan_path`, `plan_id` (defaults as the charter; a path parameter's description says it takes
-   only `[A-Za-z0-9._/{}-]`, as the charter's Compatibility does). `retrospective_path` comes with
-   task-038.
-   `contents` lists every file below and nothing else.
-2. **`fragments/memory.yaml`** (`format: 1`): `defaults` `[draft, pending, approved]`, gate `pending` → `draft`;
-   `decision-log` `[draft, in-discussion, ready]`, gate `in-discussion` → `draft`; `task`
-   `[draft, pending, backlog, in-progress, in-review, approved, done]`, gates `pending` → `draft`
-   and `in-review` → `in-progress`, `returns: {in-progress: backlog}`; `plan`
+   `description` the first sentence of the charter's Purpose, `version: 1.0.0`, `formats` exactly
+   for the kinds shipped (`dna`, `roles`, `memory`, `memory-template`, `workflow`, `directive`, all
+   1), `requires_capabilities: [workflow-engine]`, no `requires`, and the parameters the files of
+   this task use, with the charter's types, defaults and descriptions: `project_name`,
+   `approver_name`, `approver_email`, `agent_name` (required, no default), `decision_log_path`,
+   `task_path`, `plan_path`, `plan_id` (defaults as the charter; a path parameter's description says
+   it takes only `[A-Za-z0-9._/{}-]`, as the charter's Compatibility does). `retrospective_path`
+   comes with task-038. `contents` lists every file below and nothing else.
+2. **`fragments/memory.yaml`** (`format: 1`): `defaults` `[draft, pending, approved]`, gate
+   `pending` → `draft`; `decision-log` `[draft, in-discussion, ready]`, gate `in-discussion` →
+   `draft`; `task` `[draft, pending, backlog, in-progress, in-review, approved, done]`, gates
+   `pending` → `draft` and `in-review` → `in-progress`, `returns: {in-progress: backlog}`; `plan`
    `[draft, active, done]`, `waiting: [active]` (dl-023 D1). No other `waiting`; no `limits`. Ids
    `dl-{n}-{slug}`, `task-{n}-{slug}`, `"{{plan_id}}"`; paths from the three path parameters, every
-   parameter reference inside a double-quoted scalar (spec-001 §8.2);
-   `amendable: true` on the three types; `template.file` at
-   `memory/templates/built-in/<type>.md`; `template.frontmatter.required`: `decision-log` and
-   `task` `[title]`, `plan` `[title, workflow, phase]` (plan-043 ruling 6).
+   parameter reference inside a double-quoted scalar (spec-001 §8.2); `amendable: true` on the three
+   types; `template.file` at `memory/templates/built-in/<type>.md`; `template.frontmatter.required`:
+   `decision-log` and `task` `[title]`, `plan` `[title, workflow, phase]` (plan-043 ruling 6).
 3. **Memory templates** `memory-templates/{decision-log,task,plan}.md`, each declaring `format: 1`
-   and `type` equal to its stem;
-   the plan template carries `workflow`, `phase`, `element` and `parent`.
+   and `type` equal to its stem; the plan template carries `workflow`, `phase`, `element` and
+   `parent`.
 4. **`fragments/dna.yaml`** (`format: 1`): `project.name: "{{project_name}}"`; `modules: []`;
    `stacks: { technologies: [], methodologies: [] }`; `team.roles` `approver`, `facilitator`,
    `product-owner` with descriptions; one member `"{{approver_name}}"`, `email:
-   "{{approver_email}}"`, roles `[approver]`; one agent `"{{agent_name}}"`,
-   `executes_as: [facilitator, product-owner]`, `approval_authority: false`, no email (dl-023);
-   `paths.config: [.wingfoil]`. No real name or address anywhere in the pack.
-5. **`fragments/roles.yaml`** (`format: 1`): `global: [doc-versioning, security-secrets, claim-sources]`;
-   `assignments.facilitator: [traceability]`.
-6. **Directives** `directives/{traceability,doc-versioning,security-secrets,claim-sources}.md`,
-   each with WingFoil 0.3.0's directive frontmatter (`id` and `name` equal to the stem,
-   `type: directive`, `kind: built-in`, `title`, `format: 1`), written as real rules: `traceability` generic (each project or
-   pack names its own chain); `claim-sources` the generic rule on the sources of claims, which
-   other packs tighten.
-7. **`workflows/governance-evolution.yaml`**: `name: governance-evolution`, `kind: main`,
-   `format: 1`, the charter's four phases
-   and roles: `assess` (`agent.execute`, no `memory.add`, no `produces`), `propose`
-   (`memory.add(type: decision-log)`, `memory.submit`, `produces` `{ type: decision-log, path:
-   "{{decision_log_path}}" }`), `approve` (`memory.approve`, `approval: { by_role: approver }`,
-   `fallback: { step: propose }`), `apply` (`produces` `.wingfoil` and `AGENTS.md`); no key newer
-   than WingFoil 0.3.0.
+   "{{approver_email}}"`, roles `[approver]`; one agent `"{{agent_name}}"`, `executes_as:
+   [facilitator, product-owner]`, `approval_authority: false`, no email (dl-023); `paths.config:
+   [.wingfoil]`. No real name or address anywhere in the pack.
+5. **`fragments/roles.yaml`** (`format: 1`): `global: [doc-versioning, security-secrets,
+   claim-sources]`; `assignments.facilitator: [traceability]`.
+6. **Directives** `directives/{traceability,doc-versioning,security-secrets,claim-sources}.md`, each
+   with WingFoil 0.3.0's directive frontmatter (`id` and `name` equal to the stem, `type:
+   directive`, `kind: built-in`, `title`, `format: 1`), written as real rules: `traceability`
+   generic (each project or pack names its own chain); `claim-sources` the generic rule on the
+   sources of claims, which other packs tighten.
+7. **`workflows/governance-evolution.yaml`**: `name: governance-evolution`, `kind: main`, `format:
+   1`, the charter's four phases and roles: `assess` (`agent.execute`, no `memory.add`, no
+   `produces`), `propose` (`memory.add(type: decision-log)`, `memory.submit`, `produces` `{ type:
+   decision-log, path: "{{decision_log_path}}" }`), `approve` (`memory.approve`, `approval: {
+   by_role: approver }`, `fallback: { step: propose }`), `apply` (`produces` `.wingfoil` and
+   `AGENTS.md`); no key newer than WingFoil 0.3.0.
 8. **`CHANGELOG.md`** with an entry line `- 1.0.0: …` (the form `publish:pack` reads), and
    **`README.md`** per spec-002 §2: its generated sections written by `npm run index`, never by
    hand; section 3 ("Install and update") opening with §2.3's temporary mark, linking
-   `https://github.com/wingfoil/wingfoil-templates/blob/main/CATALOG.md#install`, and giving the hand-adoption steps
-   (F6.1, the charter's Adoption) with no WingFoil CLI command in code (CB-3); section 7 holding
-   §2.4's exemption line until task-039; section 9 linking `CHANGELOG.md` and
+   `https://github.com/wingfoil/wingfoil-templates/blob/main/CATALOG.md#install`, and giving the
+   hand-adoption steps (F6.1, the charter's Adoption) with no WingFoil CLI command in code (CB-3);
+   section 7 holding §2.4's exemption line until task-039; section 9 linking `CHANGELOG.md` and
    `…/CATALOG.md#pack-base` (an anchor that exists from `first-release`, as §2.5 allows).
 9. **The commands**, after `npm run build`, recorded in the Execution Notes with their output:
    - `npm run lint`, `npm run check:packs`, `npm run check:schemas`, `npm run index -- --check`
@@ -87,12 +84,11 @@ pack tasks).
      `matrix: self-test, 1 run, 0 failed, tolerance applied: none`;
    - the three tests of the Context assert the new counts, each red run recorded (dl-018 R1), and
      the "two files" test titles say what they now count.
-10. **Checks** from a clean clone on Node.js 22.21 and 22.12.0: `npm test`, `npm run lint`,
-    `npm run check:pins`, `npm run check:schemas`, `npm run check:packs`,
-    `npm run index -- --check`, `npm run validate` exit 0; the CI run on the pushed branch
-    concludes `success`. Privacy (plan-041's rule): `git diff main` holds no local path
-    (`/home/`), no name of a private project, no real person's name or address in the pack, and
-    no address but `*.example`.
+10. **Checks** from a clean clone on Node.js 22.21 and 22.12.0: `npm test`, `npm run lint`, `npm run
+    check:pins`, `npm run check:schemas`, `npm run check:packs`, `npm run index -- --check`, `npm
+    run validate` exit 0; the CI run on the pushed branch concludes `success`. Privacy (plan-041's
+    rule): `git diff main` holds no local path (`/home/`), no name of a private project, no real
+    person's name or address in the pack, and no address but `*.example`.
 
 ## Design
 
