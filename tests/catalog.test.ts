@@ -5,7 +5,30 @@ import { describe, it } from 'node:test';
 import { parse } from 'yaml';
 
 import { loadCatalog } from '../src/catalog';
-import { REPO_ROOT } from './support/paths';
+import { FIXTURE_CATALOG, REPO_ROOT } from './support/paths';
+
+/**
+ * The catalog with its `packs`, `transitions` and `presets` blocks emptied: each key's line and the
+ * lines under it, up to the next top-level key, become `<key>: []`.
+ */
+function unpublished(text: string): string {
+  const lines = text.replace(/\r\n/g, '\n').split('\n');
+  const out: string[] = [];
+  let skipping = false;
+  for (const line of lines) {
+    const key = /^(packs|transitions|presets):/.exec(line)?.[1];
+    if (key !== undefined) {
+      out.push(`${key}: []`);
+      skipping = true;
+    } else if (skipping && (line.startsWith(' ') || line.startsWith('-'))) {
+      continue;
+    } else {
+      skipping = false;
+      out.push(line);
+    }
+  }
+  return out.join('\n');
+}
 
 /** The `catalog.yaml` example of spec-001 §11, parsed from the specification. */
 function specExample(): { axes: unknown; slots: unknown } {
@@ -54,5 +77,18 @@ describe('the real catalog.yaml', () => {
       ['methodology', 'phase', 'blueprint', 'governance', 'team-mode', 'stage']);
     assert.deepEqual(catalog.axes.find((axis) => axis.name === 'phase')?.slots,
       ['inception', 'specification', 'release', 'end-of-life']);
+  });
+});
+
+describe('the fixture catalog (task-040)', () => {
+  it('is the real catalog.yaml with no published pack, byte for byte', () => {
+    assert.equal(readFileSync(FIXTURE_CATALOG, 'utf8'),
+      unpublished(readFileSync(join(REPO_ROOT, 'catalog.yaml'), 'utf8')));
+  });
+
+  it('empties a published packs block and keeps every other line', () => {
+    const published = 'format: 1\npacks:\n  - id: base\n    versions:\n      - version: 1.0.0\n'
+      + 'transitions: []\npresets: []\n';
+    assert.equal(unpublished(published), 'format: 1\npacks: []\ntransitions: []\npresets: []\n');
   });
 });
