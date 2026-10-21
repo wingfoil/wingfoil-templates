@@ -155,3 +155,7 @@ the vocabulary's final names (WingFoil dl-177).
   committed scratch repository, rulings L and M), 0.3.0's pin, per-release stubs, a frozen
   fixture compat header. A real run on a copy of the golden tree passed (26 runs, 0 failed) after
   the fixture fix. CI run 39561773454 `success`. task-036 next.
+- 2026-10-21: task-036 `done`, merged (`fc9e2dc`): `compat.yaml` lists WingFoil 0.3.0
+  (`format_key: true`, format 1, `workflow-engine`); spec-001 §12 and O10 amended in place, the
+  merge OK approving them; dl-009's note; the CI header. CI run 39575416119 `success`. `recheck`
+  and `plan-migrations`: empty, no pack published. This plan goes `active → done`.

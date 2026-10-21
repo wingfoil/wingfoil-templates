@@ -140,3 +140,8 @@ Order (dl-018):
   conclusion `success` (`validate (22.12.0)` and `validate (22.21.0)` both `success`, the full
   suite on both Node.js versions). `in-progress → in-review`; the clean-clone checks are recorded
   at delivery.
+- 2026-10-21, delivery: checks from a clean clone at `3398991` on Node.js 22.21.0 and 22.12.0: 936
+  of 936 tests, `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`,
+  `index -- --check` and `workflow list` exit 0. The approver accepted the task
+  (`in-review → approved`) and gave the merge OK, which approves spec-001's edited text (§12, O10);
+  `--no-ff` merge into `main` (`fc9e2dc`), `approved → done`, `main` pushed, the branch removed.
