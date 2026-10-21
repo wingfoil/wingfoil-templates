@@ -32,42 +32,67 @@ is what lets their computed range be non-empty at publication (spec-001 §12).
 
 ## Acceptance
 
-Tests run by `npm test` unless named.
+Tests run by `npm test` unless named. `npm run build` precedes the commands; the matrix installs
+0.3.0 (network).
 
-1. **The release.** `compat.yaml` appends, after 0.2.2:
-   `wingfoil: 0.3.0`, `format_key: true`, `reads` at `[1]` for the seven kinds,
-   `capabilities: [workflow-engine]`, and `notes` saying the capability is recorded because 0.3.0's
-   CHANGELOG names `workflow start`, `end`, `next` and `finalize` (dl-021 R4), and that 0.3.0
-   accepts the `format:` key. Nothing else in the file changes; task-035's frozen header stays its
-   byte prefix.
-2. **spec-001, amended in place** (as plan-032 did; the merge OK approves the text):
-   §12's example equals the real file; §12's prose gains 0.3.0's check (the date, the commands with
-   `--format json` on a committed scratch repository, the result: no warning on the golden tree);
-   §16's O10 is settled; an Execution Note lists the changes. The compose fixture's `compat.yaml`
-   equals the real file (`tests/compat.test.ts`, dl-010).
-3. **Tests.** `tests/compat.test.ts`: the real file's releases are 0.2.2 then 0.3.0; its sample
-   second release is another version (for example 0.4.0), so the ordering and duplicate tests keep
-   their meaning. `tests/validate.test.ts` runs per-release stubs (task-035) wherever the golden
-   tree's two releases are selected, and its expectations follow: 26 runs in self-test mode with
-   0.3.0's lines `pass (self-test)`; publication mode on the golden tree passes against 0.3.0 alone;
-   a failing stub fails its release's runs. Any other test that reads the real `compat.yaml`
-   (`readme-rules`, `example-rules`, `check-packs`) passes, adjusted only where its assertion named
-   0.2.2 as the last release.
-4. **The commands after it**, from a clean clone: `npm run validate` exits 0 on this repository
-   (no pack) and on the golden tree with 26 runs, 0 failed; `npm run validate:publication` exits 1
-   on this repository ("publication mode with no composition") and exits 0 on the golden tree
-   against 0.3.0 alone. Recorded in the Execution Notes.
+1. **The release.** `compat.yaml` appends, after 0.2.2: `wingfoil: 0.3.0`, `format_key: true`,
+   `reads` at `[1]` for the seven kinds, `capabilities: [workflow-engine]`, and `notes` saying that
+   0.3.0 accepts the `format:` key, that the capability is recorded because its CHANGELOG names
+   `workflow start`, `end`, `next` and `finalize` (dl-021 R4), and that the vocabulary's wording is
+   provisional, WingFoil's to name (WingFoil dl-177). Nothing else in the file changes; task-035's
+   frozen header stays its byte prefix. `catalog.yaml` is unchanged: `packs` is empty, so `record`
+   has no range to recompute.
+2. **spec-001, amended in place** (as plan-032 did; task-036's merge OK under plan-042 approves the
+   text): §12's example equals the real file, and §12's new prose adds no YAML block before it
+   (`tests/compat.test.ts` reads the first); §12's prose gains 0.3.0's check (the date, the commands
+   with `--format json` on a committed scratch repository, the result: no warning on the golden
+   tree); §16's O10 is settled; an Execution Note lists the changes and their approval. The compose
+   fixture's `compat.yaml` equals the real file (dl-010).
+3. **Tests.**
+   - `tests/compat.test.ts`: the real file's releases are 0.2.2 then 0.3.0, 0.3.0 with
+     `format_key: true` and `capabilities: [workflow-engine]`; its sample second release is 0.4.0,
+     and the repeated-release case repeats the last release; a version requiring `workflow-engine`
+     gets the computed range `"0.3.0"` from the real file.
+   - `tests/validate.test.ts`, on the golden tree, with per-release stubs (task-035): self-test
+     gives `matrix: self-test, 26 runs, 0 failed, tolerance applied: 0.2.2`, 0.2.2's lines
+     `pass (self-test, tolerated 1)` and 0.3.0's `pass (self-test)`; publication gives
+     `matrix: publication, 13 runs, 0 failed, tolerance applied: none` with only
+     `wingfoil@0.3.0 … pass (publication)` lines; a noisy 0.2.2 stub gives 26 runs, 13 failed; a
+     0.3.0 `warning` diagnostic gives 26 runs, 13 failed, 0.2.2 still tolerated; an install
+     failure exits 2 with 26 failed. task-035's two-release test is folded into these (the golden
+     tree now lists 0.3.0 itself). The empty compatible set keeps its test on a tree copy whose
+     `compat.yaml` is task-035's frozen 0.2.2-only header: `matrix presets/golden.yaml: no
+     compatible release (publication)`.
+   - Expected unchanged: `readme-rules`, `readme-generate`, `example-rules`, `check-packs`,
+     `ci-workflow` and every test built on `treeRepo`/`fixtureCompat`.
+4. **The commands after it**, from a clean clone, recorded in the Execution Notes:
+   `npm run validate` exits 0 on this repository (no composition, 0 runs);
+   `npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden` exits 0
+   with 26 runs, 0 failed; `npm run validate:publication` exits 1 on this repository
+   ("publication mode with no composition"); `npm run validate:publication -- --tree
+   tests/fixtures/compose/tree --param project_name=Golden` exits 0 against 0.3.0 alone, 13 runs.
 5. **dl-009 and the CI.** dl-009's Execution Note records that the self-tests now also run a release
-   with `format_key: true`, the tolerance applying to 0.2.2 only. `ci.yml`'s header no longer says
-   publication fails by design, and its golden step's name does not name 0.2.2 alone.
-6. **The index.** `npm run index` leaves `CATALOG.md` and `catalog-index.json` byte-unchanged, at
-   the root and in the fixture trees: `install` stays empty, no release providing `pack-install`.
+   with `format_key: true`, the tolerance applying to 0.2.2 only, and that a composition requiring
+   `workflow-engine` runs 0.3.0 alone. `ci.yml`'s header says that publication selects the releases
+   with `format_key: true` (0.3.0) and that a tag run fails while the tree holds no composition;
+   its golden step's name does not name 0.2.2 alone.
+6. **The index.** `npm run index` changes no output (`CATALOG.md`, `catalog-index.json`,
+   `llms.txt`, the READMEs' generated regions), at the root and in the fixture trees; `git status`
+   clean: `install` stays empty, no release providing `pack-install`.
 7. **Checks** from a clean clone on Node.js 22.21 and 22.12.0: `npm test`, `npm run lint`,
    `npm run check:pins`, `npm run check:schemas`, `npm run check:packs`, `npm run index -- --check`
    and `npm run validate` exit 0; the CI run on the pushed branch concludes `success`.
+
+Out of scope, left as they are until this repository moves to 0.3.0 (W9): `wingfoil-cli`'s W-01,
+which cites O10 for this repository's own WingFoil 0.2.2, and the root README's sentence on the
+publication after v0.3.
 
 ## Design
 
 <!-- Filled at the start of the work. -->
 
 ## Execution Notes
+
+- 2026-10-21: independent review of the body: approve after amendments, nothing blocking (task-035's
+  two-release test folds into the golden one; the empty compatible set keeps a test; the CI header;
+  exact counts and commands; the notes' wording; the out-of-scope texts). Amended.
