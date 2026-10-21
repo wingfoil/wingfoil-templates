@@ -2,7 +2,7 @@
 id: task-040-the-tests-no-longer-depend-on-this-repository-s-catalog.yaml-or-tags-a-fixture-catalog-before-base-s-first-entry-plan-044
 type: task
 title: "The tests no longer depend on this repository's catalog.yaml or tags: a fixture catalog before base's first entry (plan-044)"
-status: draft
+status: pending
 pack: ""            # tooling task (pack-cycle › first-release, plan-044, ruling E)
 depends_on: []
 tags: ["tooling","catalog","tests"]
