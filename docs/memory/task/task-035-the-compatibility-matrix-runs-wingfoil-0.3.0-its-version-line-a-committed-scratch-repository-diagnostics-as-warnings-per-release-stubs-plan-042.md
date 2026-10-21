@@ -104,7 +104,56 @@ Tests in `tests/matrix.test.ts` and `tests/validate.test.ts` unless named, run b
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Written 2026-10-21, before the build. Branch `task/task-035-matrix-wingfoil-0.3.0` from `main`.
+
+**`src/matrix.ts`**
+- `versionMatches(printed, release)`: `printed === release`, or `printed` matches
+  `^<release, escaped> \((?:[0-9a-f]{7,64}(?:-dirty)?|unknown)\)$`. `runRelease` uses it; the
+  failure message stays "--version printed …, not <release>" (criterion 1).
+- `COMMANDS` becomes a list of `{ label, args }`: the labels `workflow list`, `dna show`,
+  `directives list` (the report and the outcomes keep them, criterion 4), the arguments each
+  followed by `--format json` (criterion 3).
+- The scratch commit (criterion 2), after `git init`: `git add --force -- .wingfoil`, then
+  `git -c user.name=wingfoil-templates-matrix -c user.email=matrix@wingfoil-templates.invalid
+  commit --quiet --no-gpg-sign -m "composed .wingfoil"`, through `runGit` (its environment closes
+  the system and global configuration; `--force` makes no exclude file drop a file).
+- `judge(output, tolerate, wingfoilDir, label)` gains the data warnings (rulings L, M): when
+  `stdout.trim()` parses as JSON, `workflow list`'s `diagnostics` items of severity `warning` or
+  `error` become reasons `diagnostic <code>: <message>`, and `directives list`'s `warnings` items
+  become reasons `warning: <item>`; anything else on stdout (not JSON, or no such array) is judged
+  as before. The tolerance of 0.2.2's stderr `format` warning is unchanged.
+- The header comment names `--format json`, the scratch commit and rulings L and M (criterion 10).
+
+**`.wingfoil/directives/custom/pack-compatibility.md`**: the validation sentence names
+`--format json` and what counts as a warning (L, M); no `version` field to bump (directives carry
+none).
+
+**Tests (red first, dl-018)**, written and committed before the code, the red counted:
+- `tests/support/stub-wingfoil.ts`: the stub looks a command up with or without a trailing
+  `--format json` (criterion 4); an option `snapshot` makes it write, at each command, the output
+  of `git ls-tree -r --name-only HEAD` and `git status --porcelain` in its working directory to a
+  file of the stub's directory, which a test reads after the run (criterion 2); a helper
+  `stubsPerRelease(versions, behaviour)` returns one stub per version and an `install` function
+  (criteria 5, 6).
+- `tests/matrix.test.ts`: the version cases of criterion 1; the snapshot of criterion 2; the data
+  warnings of criterion 3 (no diagnostics; a warning; an error; a `directives list` warning;
+  0.2.2's `{manifest, workflows}` with its tolerated stderr warning; non-JSON); the labels of
+  criterion 4.
+- `tests/support/published-repo.ts`: `FROZEN_COMPAT` holds today's `compat.yaml` text (0.2.2 only)
+  and `fixtureCompat()` appends to it; `tests/compat.test.ts` gains the check that `FROZEN_COMPAT`
+  is a byte prefix of the real file (criterion 5).
+- `tests/validate.test.ts`: a tree copy whose `compat.yaml` appends a 0.3.0 entry, validated with
+  `stubsPerRelease(['0.2.2', '0.3.0'], …)`: both pass, 26 runs; a 0.3.0 `warning` diagnostic
+  fails its run (criterion 6).
+
+**The pin** (criterion 8): `src/matrix/wingfoil-0.3.0/package.json` as 0.2.2's, its lockfile by
+`npm install --package-lock-only --ignore-scripts` in that folder, `npm audit` there.
+
+**The real run** (criterion 7) by hand after the build, on a copy of the golden tree in the
+scratchpad; its output recorded in the Execution Notes.
+
+Red-first exceptions (dl-018): the pin (configuration), the directive and header wording
+(documentation), the real run (a manual check).
 
 ## Execution Notes
 
