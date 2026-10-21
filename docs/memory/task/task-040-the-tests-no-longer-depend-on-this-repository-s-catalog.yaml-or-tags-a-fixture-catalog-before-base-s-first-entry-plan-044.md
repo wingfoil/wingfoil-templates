@@ -13,48 +13,66 @@ tags: ["tooling","catalog","tests"]
 plan-044's ruling E (the approver, 2026-10-21): `base`'s first publication writes its entry into
 `catalog.yaml` and tags `base@1.0.0`, and the test suite does not survive it. On a scratch clone,
 with the tag and the entry written as `npm run publish:pack` writes them (plan-044's review), 91
-of 937 tests fail, in 14 files (`agent-path`, `catalog`, `catalog-edit`, `check-packs`,
-`evidence`, `example-rules`, `feedback-note`, `index`, `index-model`, `publish`, `readme-rules`,
-`site`, `tag-rules`, `validate`). The causes:
-- tests copy this repository's `catalog.yaml` into a temporary tree or repository with no tags
-  (`tests/support/published-repo.ts` `treeRepo`, `tests/check-packs.test.ts`,
-  `tests/index.test.ts`), so the index refuses the missing tag
-  (`index: tag base@1.0.0 is named by catalog.yaml and missing from the repository`, 42 times)
-  and the lint refuses a published version in a tree that is not a git repository (`catalog-tag`,
-  31 times);
-- tests assert the real file's content that publication changes: `tests/catalog.test.ts` expects
-  `packs: []`, `tests/catalog-edit.test.ts` splits on `'packs: []'`.
+of 937 tests fail, in 14 files. Two causes:
+- **This repository's `catalog.yaml` copied where its tags are not.** Through `treeRepo`
+  (`tests/support/published-repo.ts`) and `indexCatalog` (`tests/support/index-catalog.ts`), and
+  in `tests/index.test.ts`, it is written into a test repository without the tag, and the index
+  refuses it (`index: tag base@1.0.0 is named by catalog.yaml and missing from the repository`:
+  38 tests and 4 `before` hooks). In `tests/check-packs.test.ts`, `tests/example-rules.test.ts`,
+  `tests/readme-rules.test.ts` and `tests/feedback-note.test.ts` it is copied into a plain
+  directory, and the lint refuses a published version outside a git repository (`catalog-tag`,
+  31 tests).
+- **Tests assert the real file's `packs`.** `tests/catalog.test.ts` expects `packs: []`, and
+  `tests/catalog-edit.test.ts` splits and replaces on `'packs: []'`.
 
-`publish:pack` runs no test and the tag's CI runs on a commit whose catalog still lists no pack,
-so the failure would show only on `main` after the push. Every later publication would hit it
-again. The tests take a fixture catalog instead: they test the tooling on fixtures, not on this
-repository's published state (dl-010), which is checked by the lint, the index and the matrix.
+The 4 failed hooks cancelled 56 tests, which never ran: among them agent-path's check of this
+repository's files, which resolves the real `CATALOG.md`, `llms.txt` and `catalog-index.json` at
+the tag. The 91 is a lower bound; once the hooks pass, these tests run in a published state for the
+first time and may expose other failures, which this task fixes too.
+
+Both refusals are correct behaviour: no file under `src/` changes. `publish:pack` runs no test and
+the tag's CI runs on a commit whose catalog still lists no pack, so the failure would show only on
+`main` after the push, and again at every later publication. The tooling's behaviour is tested on
+fixtures; the real files stay checked by the tests that read this repository as a whole, and by
+`lint`, `index -- --check` and `validate` (dl-010 (a)).
 
 ## Acceptance
 
 Tests run by `npm test`; `npm run build` precedes the commands.
 
-1. **A fixture catalog.** `tests/fixtures/` holds a `catalog.yaml` with this repository's `format`,
-   `foundation`, `axes` and `slots` and empty `packs`, `transitions` and `presets`; a test holds its
-   `axes`, `slots` and `foundation` equal to the real file's, so that the two cannot drift.
-2. **No test copies or asserts this repository's `packs`, `transitions` or `presets`.** Every test
-   and helper that wrote `catalog.yaml` from this repository into a temporary tree or repository
-   writes the fixture catalog. `tests/catalog.test.ts` checks the real file's `format`, `axes`,
-   `slots` and `foundation` and that it loads, whatever its `packs`; `tests/catalog-edit.test.ts`
-   edits the fixture catalog. Tests that read this repository as a whole (its lint, index and
-   validate counts) keep doing so and pass whatever `packs` lists.
-3. **Red first** (dl-018): the scenario becomes a test before the fix: a scratch clone of this
-   repository where `base@1.0.0` is tagged and its catalog entry written by `npm run publish:pack`
-   (not pushed), in which the suite is run; it fails before the fix. The red run and its failing
-   count are recorded. If that test is too slow for `npm test`, the same check runs as a recorded
-   manual run on a scratch clone, before and after the fix, and the Execution Notes say so.
-4. **Green.** After the fix, the whole suite passes on `main` as it is (`packs: []`) and on the
-   scratch clone with `base@1.0.0` published locally, on Node.js 22.21 and 22.12.0; `npm run lint`,
-   `check:pins`, `check:schemas`, `check:packs`, `validate` and `index -- --check` exit 0 from a
-   clean clone.
-5. **Nothing else moves.** No file under `src/`, `packs/`, `schema/` or `.github/` changes, and
-   `catalog.yaml`, `CATALOG.md` and `catalog-index.json` are unchanged; the CI run on the branch
-   is `success` and recorded.
+1. **A fixture catalog.** `tests/fixtures/catalog/catalog.yaml` is a byte copy of this
+   repository's `catalog.yaml` as it stands (`packs: []`, `transitions: []`, `presets: []`). A
+   test holds that the real file, with its `packs`, `transitions` and `presets` blocks emptied,
+   equals the fixture byte for byte, so the two cannot drift.
+2. **No test copies or asserts this repository's `packs`, `transitions` or `presets`.**
+   - `treeRepo`, `indexCatalog` and `tests/index.test.ts` write the fixture catalog into their
+     test repositories;
+   - `tests/check-packs.test.ts`, `tests/example-rules.test.ts`, `tests/readme-rules.test.ts` and
+     `tests/feedback-note.test.ts` copy the fixture catalog into their directories;
+   - `tests/catalog.test.ts` checks the real file's `format`, `foundation`, `axes` and `slots` and
+     that it loads, whatever its `packs`; `tests/catalog-edit.test.ts` edits the fixture catalog;
+   - `tests/compose-documents.test.ts` and `tests/output.test.ts`, which load the real catalog for
+     its axes and slots, take the fixture catalog;
+   - the tests that read this repository as a whole (its lint, index and validate counts) keep
+     doing so and pass whatever `packs` lists.
+3. **Red first** (dl-018):
+   - **In the suite:** a test scans `tests/**/*.ts` and fails on a read of this repository's
+     `catalog.yaml` (`join(REPO_ROOT, 'catalog.yaml')`) outside an allowlist
+     (`tests/catalog.test.ts` and the fixture's drift test). It is red before the fix, listing the
+     sites of criterion 2, and guards against new ones.
+   - **The publication, as a recorded run:** a clone of the task branch's head, `npm ci`,
+     `npm run build`, `.idea/`-free and clean, `npm run publish:pack -- --pack base` (nothing
+     pushed), then `npm test`. Its failing count is recorded before the fix (on the red commit)
+     and after it.
+4. **Green.** After the fix, the whole suite passes on the branch as it is (`packs: []`) and in
+   criterion 3's recorded run on the branch's head (0 failed), on Node.js 22.21 and 22.12.0;
+   `npm run lint`, `check:pins`, `check:schemas`, `check:packs`, `validate` and `index -- --check`
+   exit 0 from a clean clone. Any failure the cancelled tests expose is recorded with its cause.
+5. **Nothing else moves.** No file under `src/`, `packs/`, `schema/` or `.github/` changes;
+   `catalog.yaml`, `CATALOG.md`, `catalog-index.json`, `tests/fixtures/index/expected/` and
+   `tests/fixtures/compose/expected*/` are unchanged. The CI run on the branch is `success` and
+   recorded. Out of scope: `tests/check-packs.test.ts` also copies the real `compat.yaml`, a
+   similar drift when a WingFoil release is added (a follow-up).
 
 ## Design
 
@@ -66,3 +84,8 @@ Tests run by `npm test`; `npm run build` precedes the commands.
      command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019). -->
+- 2026-10-21: independent review of the body: approve after amendments. Applied: every call site
+  named and mapped to criterion 2; the 56 cancelled tests and the red count as a lower bound; the
+  red first as an in-suite guard plus a recorded publication run on the branch's head; dl-010 (a)
+  cited for what it decided; the fixture a byte copy with a drift test; no `src/` change, the
+  expected fixtures unchanged; the real `compat.yaml` copy left as a follow-up.
