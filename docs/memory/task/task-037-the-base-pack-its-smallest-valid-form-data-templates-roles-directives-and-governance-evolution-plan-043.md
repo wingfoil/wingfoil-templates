@@ -2,7 +2,7 @@
 id: task-037-the-base-pack-its-smallest-valid-form-data-templates-roles-directives-and-governance-evolution-plan-043
 type: task
 title: "The base pack, its smallest valid form: data, templates, roles, directives and governance-evolution (plan-043)"
-status: in-review
+status: approved
 pack: "pack-foundation-base"
 depends_on: []
 tags: ["packs","base","W8"]
