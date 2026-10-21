@@ -2,7 +2,7 @@
 id: task-039-the-base-pack-s-exit-criterion-readme-examples-for-every-governed-project-s-parameters-and-the-private-projects-check-plan-043
 type: task
 title: "The base pack's exit criterion: README examples for every governed project's parameters, and the private projects' check (plan-043)"
-status: in-review
+status: approved
 pack: "pack-foundation-base"
 depends_on: ["task-038-the-base-pack-s-other-workflows-and-its-agents.md-section-decision-log-ingest-retrospective-retrospective-periodic-plan-043"]
 tags: ["packs","base","W8"]
