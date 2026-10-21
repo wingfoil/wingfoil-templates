@@ -130,3 +130,17 @@ Written 2026-10-21, before the build. Branch `task/task-038-base-workflows` from
   retrospective (`19a66000`) was read first: our notes F-001…F-031 are triaged, and none of F-032's
   topics is covered by an element. Amended, with the counts (16 → 20), "no warning", the path's
   description, README sections 2 and 8, the workflows' keys and the YAML quoting.
+- 2026-10-21, build on `task/task-038-base-workflows`:
+  - red (`81e641e`): four failing: `tests/check-packs.test.ts` (an approval-only phase is not
+    empty; the refusal names four keys, through the composer too; this repository's lint counts
+    20 files) and `tests/validate.test.ts` (this repository's lint, 20 files); green with
+    `688423b` (the rule, `pack-authoring`, the pack's four files, the charter's note).
+  - `npm run lint`, `check:packs` (`lint: checked 20 files, 0 problems`), `check:schemas`,
+    `index -- --check` exit 0; `npm run index` regenerated the README's sections 4–6.
+  - criterion 9: `npm run validate -- base …` (the sample parameters of task-037) exit 0:
+    `composition entries: composed twice, 16 files, byte-identical`; the three commands
+    `pass (self-test)`; `matrix: self-test, 1 run, 0 failed, tolerance applied: none`. By hand on
+    the composed `base`, committed in a scratch repository: 0.3.0's `workflow list --format json`
+    lists `decision-log-ingest`, `governance-evolution`, `retrospective-periodic`, `diagnostics`
+    empty; `directives list` `warnings` empty.
+  - privacy: no local path, private name, real name or address but `*.example` in the diff.
