@@ -1,0 +1,42 @@
+format: 1
+id: base
+name: base
+title: "Base"
+description: >-
+  The core of every project governed by WingFoil, software or not: the Memory types, workflows,
+  directives and DNA that all of them use, and nothing that only some use.
+version: 1.0.0
+formats:
+  dna: 1
+  roles: 1
+  memory: 1
+  workflow: 1
+  directive: 1
+  memory-template: 1
+requires_capabilities: [workflow-engine]
+parameters:
+  project_name: { type: string, description: "The project's name: dna.yaml project.name" }
+  approver_name: { type: string, description: "The name of the approver, the team member who approves" }
+  approver_email: { type: string, description: "The approver's email, which WingFoil matches to the git user to grant approval" }
+  agent_name: { type: string, description: "The name of the agent in dna.yaml team.agents" }
+  decision_log_path:
+    type: path
+    default: "docs/memory/decision-log/{id}.md"
+    description: "The decision-log type's path; only letters, digits and . _ / { } -"
+  task_path:
+    type: path
+    default: "docs/memory/task/{id}.md"
+    description: "The task type's path; only letters, digits and . _ / { } -"
+  plan_path:
+    type: path
+    default: "docs/plans/{id}.md"
+    description: "The plan type's path; only letters, digits and . _ / { } -"
+  plan_id:
+    type: pattern
+    default: "plan-{n}-{slug}"
+    description: "The plan type's id pattern"
+contents:
+  fragments: [dna, roles, memory]
+  directives: [traceability, doc-versioning, security-secrets, claim-sources]
+  workflows: [governance-evolution]
+  memory_templates: [decision-log, task, plan]

@@ -1,0 +1,25 @@
+format: 1
+project:
+  name: "{{project_name}}"
+modules: []
+stacks:
+  technologies: []
+  methodologies: []
+paths:
+  config: [.wingfoil]
+team:
+  roles:
+    - name: approver
+      description: "Rules decisions and approves gates; a person, never an agent."
+    - name: facilitator
+      description: "Runs the workflows: captures, assesses, proposes and applies."
+    - name: product-owner
+      description: "Owns what the project captures and decides to do."
+  members:
+    - name: "{{approver_name}}"
+      email: "{{approver_email}}"
+      roles: [approver]
+  agents:
+    - name: "{{agent_name}}"
+      executes_as: [facilitator, product-owner]
+      approval_authority: false
