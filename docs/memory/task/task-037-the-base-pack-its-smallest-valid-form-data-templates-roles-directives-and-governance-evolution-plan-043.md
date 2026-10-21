@@ -121,3 +121,20 @@ Written 2026-10-21, before the build. Branch `task/task-037-base-smallest` from 
   links; the identity keys of templates, directives, the workflow and the fragments; quoted
   parameter references; the CHANGELOG line form; the privacy check spelt out; distinct sample
   values, an `.example` address, the matrix summary; `npm run build` first.
+- 2026-10-21, build on `task/task-037-base-smallest`:
+  - red (`a9b641b`): three failing without `packs/base`:
+    `tests/index.test.ts` (4 files), `tests/check-packs.test.ts` (lint, 16 files),
+    `tests/validate.test.ts` (schemas 3, lint 16); green once the pack exists (109 of 109 and 1 of
+    1 on those files). The lint counts 16: the pack's 14 files and the repository's two.
+  - the pack (`3e0e461`): 14 files; `npm run index` wrote its README's generated sections (the
+    marker pairs must already hold their headings); `npm run lint`, `check:packs`
+    (`lint: checked 16 files, 0 problems`), `check:schemas` (3 files), `index -- --check`
+    (4 files, 0 not up to date) exit 0.
+  - criterion 9: `npm run validate -- base --param project_name=Sample --param "approver_name=Sample
+    Approver" --param approver_email=approver@sample.example --param "agent_name=Sample Agent"`
+    exit 0: `composition entries: composed twice, 13 files, byte-identical`; `matrix entries
+    wingfoil@0.3.0 workflow list|dna show|directives list: pass (self-test)`; `matrix: self-test,
+    1 run, 0 failed, tolerance applied: none`. WingFoil 0.3.0 accepts the member's `.example`
+    address.
+  - privacy: the diff's added lines hold no local path, no private project's name, no real name
+    and no address but `*.example`.
