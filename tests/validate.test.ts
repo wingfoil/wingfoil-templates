@@ -13,8 +13,8 @@ import type { ValidateOptions, ValidateResult } from '../src/validate';
 import { writePack } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 import { FIXTURES, REPO_ROOT } from './support/paths';
-import { publishByHand, treeRepo } from './support/published-repo';
-import { FORMAT_WARNING, StubWingfoil, stubsPerRelease } from './support/stub-wingfoil';
+import { FROZEN_COMPAT, publishByHand, treeRepo } from './support/published-repo';
+import { FORMAT_WARNING, StubWingfoil } from './support/stub-wingfoil';
 import type { StubCommand } from './support/stub-wingfoil';
 
 const TREE = join(FIXTURES, 'compose', 'tree');
@@ -39,9 +39,26 @@ function stubbed(command: StubCommand): StubWingfoil {
 const WINGFOIL = stubbed({ stderr: [FORMAT_WARNING] });
 after(() => WINGFOIL.dispose());
 
-/** `validate` never installs a release in the tests: the stub stands for every release. */
+/** WingFoil 0.3.0 as the tests see it: its version line, JSON with nothing to report (task-036). */
+const CLEAN_JSON = { stdout: [JSON.stringify({ workflows: [], diagnostics: [], entries: [],
+  warnings: [] })] };
+function stubbed030(diagnostics: unknown[] = []): StubWingfoil {
+  return new StubWingfoil({ version: '0.3.0 (cc31d7a8)', commands: {
+    'workflow list': { stdout: [JSON.stringify({ workflows: [], diagnostics })] },
+    'dna show': CLEAN_JSON, 'directives list': CLEAN_JSON } }, '0.3.0');
+}
+const WINGFOIL_030 = stubbed030();
+after(() => WINGFOIL_030.dispose());
+
+/** The stub of each release: `wingfoil-<version>` is never installed in the tests. */
+function byRelease(release022: StubWingfoil = WINGFOIL, release030: StubWingfoil = WINGFOIL_030):
+(version: string) => string {
+  return (version) => (version === '0.3.0' ? release030 : release022).cli;
+}
+
+/** `validate` never installs a release in the tests: a stub stands for each release. */
 function validate(argv: string[], options: Partial<ValidateOptions> = {}): ValidateResult {
-  return runValidate(argv, { mode: 'self-test', install: () => WINGFOIL.cli, ...options });
+  return runValidate(argv, { mode: 'self-test', install: byRelease(), ...options });
 }
 
 function withTree(edit: (tree: string) => void, body: (tree: string) => void,
@@ -79,85 +96,82 @@ describe('npm run validate', () => {
     assert.ok(result.lines.includes('compositions: 13'));
   });
 
-  it('runs the golden preset against wingfoil@0.2.2 in self-test mode, reporting the tolerance',
+  it('runs the golden preset against wingfoil@0.2.2 and 0.3.0 in self-test mode (task-036)',
     () => {
       const result = validate(['--tree', TREE, ...NAME]);
       assert.equal(result.code, 0, result.lines.join('\n'));
-      // The golden preset, then its packs' examples in path order (task-022).
+      // The golden preset, then its packs' examples in path order (task-022); per composition,
+      // the oldest then the newest compatible release.
       assert.deepEqual(result.lines.filter((line) => line.startsWith('matrix')), [
-        ...['presets/golden.yaml', ...GOLDEN_LEGS].flatMap((label) =>
-          ['workflow list', 'dna show', 'directives list'].map((command) =>
-            `matrix ${label} wingfoil@0.2.2 ${command}: pass (self-test, tolerated 1)`)),
-        'matrix: self-test, 13 runs, 0 failed, tolerance applied: 0.2.2',
+        ...['presets/golden.yaml', ...GOLDEN_LEGS].flatMap((label) => [
+          ...['workflow list', 'dna show', 'directives list'].map((command) =>
+            `matrix ${label} wingfoil@0.2.2 ${command}: pass (self-test, tolerated 1)`),
+          ...['workflow list', 'dna show', 'directives list'].map((command) =>
+            `matrix ${label} wingfoil@0.3.0 ${command}: pass (self-test)`)]),
+        'matrix: self-test, 26 runs, 0 failed, tolerance applied: 0.2.2',
       ]);
       assert.equal(result.mode, 'self-test');
       assert.deepEqual(result.tolerated, ['0.2.2']);
     });
 
-  it('runs a tree whose compat.yaml lists 0.2.2 and 0.3.0 against both releases (task-035)', () => {
-    const json = { stdout: [JSON.stringify({ workflows: [], diagnostics: [], entries: [],
-      warnings: [] })] };
-    const releases = (diagnostics: unknown[]): ReturnType<typeof stubsPerRelease> =>
-      stubsPerRelease({
-        '0.2.2': { commands: Object.fromEntries(['workflow list', 'dna show', 'directives list']
-          .map((line) => [line, { stderr: [FORMAT_WARNING] }])) },
-        '0.3.0': { version: '0.3.0 (cc31d7a8)', commands: {
-          'workflow list': { stdout: [JSON.stringify({ workflows: [], diagnostics })] },
-          'dna show': json, 'directives list': json } },
-      });
-    withTree((tree) => {
-      const compat = join(tree, 'compat.yaml');
-      writeFileSync(compat, `${readFileSync(compat, 'utf8')}  - wingfoil: 0.3.0
-    format_key: true
-    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
-    capabilities: [workflow-engine]
-`);
-    }, (tree) => {
-      const clean = releases([]);
-      try {
-        const result = validate(['--tree', tree, ...NAME], { install: clean.install });
-        assert.equal(result.code, 0, result.lines.join('\n'));
-        assert.ok(result.lines.includes(
-          'matrix: self-test, 26 runs, 0 failed, tolerance applied: 0.2.2'),
-        result.lines.join('\n'));
-      } finally {
-        clean.dispose();
-      }
-      const warned = releases([{ code: 'W_SAMPLE', severity: 'warning', file: 'f', path: 'p',
+  it('fails a 0.3.0 warning diagnostic on the runs of 0.3.0 only, 0.2.2 tolerated (task-036)',
+    () => {
+      const warned = stubbed030([{ code: 'W_SAMPLE', severity: 'warning', file: 'f', path: 'p',
         message: 'sample' }]);
       try {
-        const result = validate(['--tree', tree, ...NAME], { install: warned.install });
+        const result = validate(['--tree', TREE, ...NAME],
+          { install: byRelease(WINGFOIL, warned) });
         assert.equal(result.code, 1, result.lines.join('\n'));
         assert.ok(result.lines.some((line) => line.startsWith(
           'matrix presets/golden.yaml wingfoil@0.3.0 workflow list: fail (self-test)')),
+        result.lines.join('\n'));
+        assert.ok(result.lines.includes(
+          'matrix: self-test, 26 runs, 13 failed, tolerance applied: 0.2.2'),
         result.lines.join('\n'));
       } finally {
         warned.dispose();
       }
     });
-  });
 
-  it('in publication mode, finds no compatible release for the golden preset (dl-009)', () => {
+  it('in publication mode, runs the golden preset against 0.3.0 alone (dl-009, task-036)', () => {
     const result = validate(['--tree', TREE, ...NAME], { mode: 'publication' });
-    assert.equal(result.code, 1, result.lines.join('\n'));
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    const matrix = result.lines.filter((line) => line.startsWith('matrix'));
+    assert.ok(matrix.every((line) => !line.includes('wingfoil@0.2.2')), matrix.join('\n'));
+    assert.ok(matrix.includes(
+      'matrix presets/golden.yaml wingfoil@0.3.0 workflow list: pass (publication)'),
+    matrix.join('\n'));
     assert.ok(result.lines.includes(
-      'matrix presets/golden.yaml: no compatible release (publication)'), result.lines.join('\n'));
-    assert.ok(result.lines.includes('matrix: publication, 0 runs, 0 failed, tolerance applied: none'));
+      'matrix: publication, 13 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
     assert.equal(result.mode, 'publication');
     assert.deepEqual(result.tolerated, []);
   });
 
+  it('in publication mode, finds no compatible release when compat.yaml lists 0.2.2 alone',
+    () => {
+      withTree((tree) => { writeFileSync(join(tree, 'compat.yaml'), FROZEN_COMPAT); }, (tree) => {
+        const result = validate(['--tree', tree, ...NAME], { mode: 'publication' });
+        assert.equal(result.code, 1, result.lines.join('\n'));
+        assert.ok(result.lines.includes(
+          'matrix presets/golden.yaml: no compatible release (publication)'),
+        result.lines.join('\n'));
+        assert.ok(result.lines.includes(
+          'matrix: publication, 0 runs, 0 failed, tolerance applied: none'),
+        result.lines.join('\n'));
+      });
+    });
+
   it('fails a composition that fails the matrix, naming release and command', () => {
     const noisy = stubbed({ stderr: ['Warning: something else'] });
     try {
-      const result = validate(['--tree', TREE, ...NAME], { install: () => noisy.cli });
+      const result = validate(['--tree', TREE, ...NAME], { install: byRelease(noisy) });
       assert.equal(result.code, 1);
       assert.ok(result.lines.some((line) => line.startsWith(
         'matrix presets/golden.yaml wingfoil@0.2.2 workflow list: fail (self-test)')),
       result.lines.join('\n'));
       assert.ok(result.lines.includes(
-        'matrix: self-test, 13 runs, 13 failed, tolerance applied: none'),
-        result.lines.join('\n'));
+        'matrix: self-test, 26 runs, 13 failed, tolerance applied: none'),
+      result.lines.join('\n'));
     } finally {
       noisy.dispose();
     }
@@ -170,9 +184,11 @@ describe('npm run validate', () => {
     assert.equal(result.code, 2);
     assert.ok(result.lines.some((line) => /wingfoil@0\.2\.2: npm ci failed/.test(line)),
       result.lines.join('\n'));
-    assert.ok(result.lines.includes(
-      'matrix: self-test, 13 runs, 13 failed, tolerance applied: none'),
+    assert.ok(result.lines.some((line) => /wingfoil@0\.3\.0: npm ci failed/.test(line)),
       result.lines.join('\n'));
+    assert.ok(result.lines.includes(
+      'matrix: self-test, 26 runs, 26 failed, tolerance applied: none'),
+    result.lines.join('\n'));
   });
 
   it('exits 1 on a tree with compositions and no compat.yaml', () => {
