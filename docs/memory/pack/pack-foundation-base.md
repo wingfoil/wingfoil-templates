@@ -229,3 +229,9 @@ For the approver's acceptance:
   repository-wide. A feedback note (F-032) asks WingFoil to pass an action's
   arguments. `retrospective_path`'s default is the directory `docs/retrospectives`. The lint's
   `empty-phase` accepts `additional-points`, an approval checkpoint (ruling R).
+- 2026-10-21, task-039 (plan-043): the exit criterion (dl-022 S6) met at `6c68f08` on WingFoil
+  0.3.0 with no warning: the README's three examples (the defaults, release folders, release
+  folders without a retrospective folder) carry the parameters of the four governed software
+  repositories and a generic non-software project, validated by `npm run validate` and the CI on
+  every push; the check against the three private, non-software projects, run outside this
+  repository, passed for all three.
