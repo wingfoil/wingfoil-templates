@@ -21,15 +21,15 @@ v0.3.1. `base` is published on its own, without waiting for `software` (plan-043
 with `workflow-engine`, which `base` requires, so the computed range is not empty (spec-001 §12);
 the matrix runs 0.3.0 (plan-042). Only 0.3.0 is compatible, so the oldest and the newest release
 of the matrix are the same one, and the computed range is exactly `0.3.0`: WingFoil 0.3.1 enters
-it only when a `wingfoil-release-intake` of 0.3.1 lists it in `compat.yaml` and a later
-publication recomputes it. spec-001 and spec-002 hold no open erratum but §8.3's `{release}` note,
-folded back at W8's close.
+it when a `wingfoil-release-intake` of 0.3.1 adds it to `compat.yaml` and recomputes the
+`wingfoil` field of every published version (spec-001 §12). spec-001 and spec-002 hold no open
+erratum but §8.3's `{release}` note, folded back at W8's close.
 
 **Not yet met: the test suite after the catalog entry.** A simulated catalog commit (the tag and
 the entry written as `publish:pack` writes them, on a scratch clone) fails 91 of 937 tests: many
 tests take this repository's `catalog.yaml` as their base and expect `packs: []`, or copy the tree
 without its tags. `publish:pack` runs no test, and the tag's own CI passes (its commit still lists
-no pack), so `main`'s CI would fail only after the push. Task-040 fixes it before `publish`.
+no pack), so `main`'s CI would fail only after the push. task-040 fixes it before `publish`.
 
 **The approver's rulings** (2026-10-21, in chat, as recommended):
 - **A.** `npm run publish:pack`, and its dry run, refuse a working tree that is not clean, and
@@ -92,7 +92,8 @@ that calls `released` "tag pushed", which the approval reaches before `publish` 
 5. **`approve-publication`** (approver): `memory approve prel-1-…` (`releasing → released`), or a
    rejection back to `validating`. Ruling C: it authorizes the publication.
 6. **`publish`** (tech-lead): first `npm run build`, a clean tree, HEAD the approval's commit,
-   pushed, with `main`'s CI `success` on it (the tag's CI does not run the self-test). Then
+   pushed by claude after the approval, with `main`'s CI `success` on it (the tag's CI does not
+   run the self-test). Then
    `npm run publish:pack -- --pack base`, which tags `base@1.0.0` at HEAD and makes the catalog
    commit with `CATALOG.md` and `catalog-index.json`, pushing nothing; the tag and `main` pushed
    together (`git push --atomic origin base@1.0.0 main`), since `main`'s lint and Pages need the
@@ -128,4 +129,5 @@ that calls `released` "tag pushed", which the approval reaches before `publish` 
   applied: the element's fields filled by editing, its tasks listed, the checks before
   `publish:pack`, the atomic push, the range's meaning for 0.3.1, ruling B recorded in dl-006,
   the two files `publish:pack` writes. Re-review requested.
-
+- 2026-10-21: re-review: approve after amendments. Applied: the range recomputed by the intake of
+  0.3.1 (spec-001 §12); the approval's commit pushed by claude. Plan submitted.
