@@ -257,11 +257,11 @@ describe('npm run validate', () => {
     assert.ok(entries.lines.some((line) => line.startsWith('composition entries: composed twice')));
   });
 
-  it('validates this repository: two files, no composition, no matrix run', () => {
+  it('validates this repository: its files and the base pack, no composition, no matrix run', () => {
     const result = validate(['--tree', REPO_ROOT]);
     assert.equal(result.code, 0, result.lines.join('\n'));
-    assert.ok(result.lines.includes('schemas: checked 2 files, 0 problems'));
-    assert.ok(result.lines.includes('lint: checked 2 files, 0 problems'));
+    assert.ok(result.lines.includes('schemas: checked 3 files, 0 problems'));
+    assert.ok(result.lines.includes('lint: checked 16 files, 0 problems'));
     assert.ok(result.lines.includes('compositions: 0'));
     assert.ok(result.lines.includes('matrix: self-test, 0 runs, 0 failed, tolerance applied: none'));
   });
