@@ -150,3 +150,9 @@ Written 2026-10-21, before the build. Branch `task/task-037-base-smallest` from 
   spec-002's adoption profiles; a wrap). Branch pushed: CI run 39590724856 on `658bcf7`,
   conclusion `success` (`validate (22.12.0)` and `validate (22.21.0)` both `success`).
   `in-progress → in-review`; the clean-clone checks are recorded at delivery.
+- 2026-10-21, delivery: checks from a clean clone at `510236c` on Node.js 22.21.0 and 22.12.0: 936
+  of 936 tests, `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`,
+  `index -- --check` and `workflow list` exit 0 (the later commit changes README and directive text
+  only, covered by the CI on `658bcf7`). The approver accepted the task (`in-review → approved`)
+  and gave the merge OK; `--no-ff` merge into `main` (`b6e9755`), `approved → done`, `main` pushed, the
+  branch removed.
