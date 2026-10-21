@@ -157,3 +157,9 @@ repository's adoption (W9); spec-001 §8.3's `{release}` fold-back, at W8's clos
 - 2026-10-21: task-038 `done`, merged (`c3af634`): `base`'s other workflows, its AGENTS.md section, the
   lint accepting an approval checkpoint (ruling R), open point 0 settled (ruling S). WingFoil 0.3.0
   accepts the full `base` with no warning. CI run 39624093976 `success`. task-039 next.
+- 2026-10-21, task-039's review: three examples instead of plan-043's five (Benchmark's and this
+  repository's sets equal the defaults; UI's differs from WingFoil's only by the retrospective
+  folder), to be confirmed by the approver at the backlog acceptance. From task-039 on,
+  `validate -- base --param …` on this repository is refused (the examples set those parameters):
+  `software`'s author plan validates other values on a scratch tree, or a tooling follow-up lets
+  `--param` apply to an `entries` composition only.
