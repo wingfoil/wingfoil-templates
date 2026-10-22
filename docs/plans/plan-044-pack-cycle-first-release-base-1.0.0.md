@@ -57,8 +57,8 @@ no pack), so `main`'s CI would fail only after the push. task-040 fixes it befor
 range computed from `compat.yaml`); the annotated tag `base@1.0.0` at the release commit
 (dl-004); then one commit with `catalog.yaml`'s `base` entry (version, commit, digest, formats,
 capabilities, computed range) and the regenerated `CATALOG.md` and `catalog-index.json` (spec-001
-§11, spec-002 §3). No file under `packs/` changes: `CHANGELOG.md` already reads `1.0.0: first version.` and `pack.yaml`
-`version: 1.0.0`, which `prepare` confirms.
+§11, spec-002 §3). No file under `packs/` changes: `CHANGELOG.md` already reads
+`1.0.0: first version.` and `pack.yaml` `version: 1.0.0`, which `prepare` confirms.
 
 Who runs what: claude drafts for the product-owner (`plan`), acts as tech-lead (`prepare`,
 `publish`) and as developer for task-040; the reviewer is an independent subagent (dl-017), never
@@ -148,4 +148,15 @@ that calls `released` "tag pushed", which the approval reaches before `publish` 
   after the tag, not before, so that the release commit stayed the approval's.
 - 2026-10-22: `activate`: the charter `accepted → active` (ruling B); dl-006's Execution Notes
   record the deviation from R1's order.
+- 2026-10-22: notices sent to the coordinating session and to WingFoil UI (its requesting session
+  had ended; forwarded, on the approver's choice, to WingFoil UI's active session): the tag, the
+  date, the range `0.3.0` (0.3.1 after its intake), no `pack-install`, the adoption by hand per
+  the README at the tag.
+- 2026-10-22: closed. `base@1.0.0` tagged and pushed, `catalog.yaml` lists `base` on `main`, CI
+  `success` on the tag and on `main`, CB-6 recorded, the charter `active`, the notices sent. Owed
+  after this plan (ruling D and task-040's follow-ups): feedback note F-032; the
+  `template.frontmatter` rule; `pack-semver`'s rule for a first version; `tests/publish.test.ts`'s
+  identity test and the real `compat.yaml` copied by `tests/check-packs.test.ts`; the
+  `pack-release` type's comment on `released`. Then `software`'s `author`; the foundation packs'
+  `retrospective` after `software`'s `first-release`.
 
