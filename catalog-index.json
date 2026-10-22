@@ -2,7 +2,113 @@
   "format": 1,
   "repository": "wingfoil/wingfoil-templates",
   "install": [],
-  "packs": [],
+  "packs": [
+    {
+      "id": "base",
+      "catalog": "official",
+      "status": "active",
+      "axis": null,
+      "slot": null,
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "base@1.0.0",
+          "wingfoil": "0.3.0",
+          "formats": {
+            "directive": 1,
+            "dna": 1,
+            "memory": 1,
+            "memory-template": 1,
+            "roles": 1,
+            "workflow": 1
+          },
+          "requires_capabilities": [
+            "workflow-engine"
+          ],
+          "requires": [],
+          "conflicts": [],
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@1.0.0/packs/base/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@1.0.0/packs/base/pack.yaml"
+        }
+      ],
+      "title": "Base",
+      "description": "The core of every project governed by WingFoil, software or not: the Memory types, workflows, directives and DNA that all of them use, and nothing that only some use.",
+      "workflows": [
+        "decision-log-ingest",
+        "governance-evolution",
+        "retrospective",
+        "retrospective-periodic"
+      ],
+      "conditional_workflows": [],
+      "memory_types": [
+        "decision-log",
+        "plan",
+        "task"
+      ],
+      "directives": [
+        "claim-sources",
+        "doc-versioning",
+        "security-secrets",
+        "traceability"
+      ],
+      "conditional_directives": [],
+      "parameters": [
+        {
+          "name": "agent_name",
+          "type": "string",
+          "description": "The name of the agent in dna.yaml team.agents"
+        },
+        {
+          "name": "approver_email",
+          "type": "string",
+          "description": "The approver's email, which WingFoil matches to the git user to grant approval"
+        },
+        {
+          "name": "approver_name",
+          "type": "string",
+          "description": "The name of the approver, the team member who approves"
+        },
+        {
+          "name": "decision_log_path",
+          "type": "path",
+          "default": "docs/memory/decision-log/{id}.md",
+          "description": "The decision-log type's path; only letters, digits and . _ / { } -"
+        },
+        {
+          "name": "plan_id",
+          "type": "pattern",
+          "default": "plan-{n}-{slug}",
+          "description": "The plan type's id pattern"
+        },
+        {
+          "name": "plan_path",
+          "type": "path",
+          "default": "docs/plans/{id}.md",
+          "description": "The plan type's path; only letters, digits and . _ / { } -"
+        },
+        {
+          "name": "project_name",
+          "type": "string",
+          "description": "The project's name: dna.yaml project.name"
+        },
+        {
+          "name": "retrospective_path",
+          "type": "path",
+          "default": "docs/retrospectives",
+          "description": "Where the retrospective's friction inventory goes: a directory by default, weak evidence; a project may set a fixed file. Only letters, digits and . _ / { } -, and no {...} token, since no element is in scope"
+        },
+        {
+          "name": "task_path",
+          "type": "path",
+          "default": "docs/memory/task/{id}.md",
+          "description": "The task type's path; only letters, digits and . _ / { } -"
+        }
+      ],
+      "excerpt": "Every project governed by WingFoil, software or not, starts from `base`: it holds the decision-log, task and plan types, the workflows that capture a decision, run a retrospective and change the project's own governance, the generic directives and the DNA every project shares (one approver, one agent without approval authority). Other packs only add to it or tighten it. It serves every adoption profile (solo developer, code reviewer, team developer, tech lead, non-technical manager,…",
+      "profiles": []
+    }
+  ],
   "presets": [],
   "transitions": []
 }
