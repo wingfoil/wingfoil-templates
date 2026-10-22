@@ -54,10 +54,10 @@ no pack), so `main`'s CI would fail only after the push. task-040 fixes it befor
 
 **What it produces.** Task-040; the pack-release element `prel-001-base-1.0.0`
 (`pack: pack-foundation-base`, `version: 1.0.0`, `bump: major`, `line: current`, `wingfoil` the
-range computed from `compat.yaml`); the annotated tag `base@1.0.0` at the release commit (dl-004); then one commit with
-`catalog.yaml`'s `base` entry (version, commit, digest, formats, capabilities, computed range) and
-the regenerated `CATALOG.md` and `catalog-index.json` (spec-001 §11, spec-002 §3). No file under
-`packs/` changes: `CHANGELOG.md` already reads `1.0.0: first version.` and `pack.yaml`
+range computed from `compat.yaml`); the annotated tag `base@1.0.0` at the release commit
+(dl-004); then one commit with `catalog.yaml`'s `base` entry (version, commit, digest, formats,
+capabilities, computed range) and the regenerated `CATALOG.md` and `catalog-index.json` (spec-001
+§11, spec-002 §3). No file under `packs/` changes: `CHANGELOG.md` already reads `1.0.0: first version.` and `pack.yaml`
 `version: 1.0.0`, which `prepare` confirms.
 
 Who runs what: claude drafts for the product-owner (`plan`), acts as tech-lead (`prepare`,
@@ -90,7 +90,8 @@ that calls `released` "tag pushed", which the approval reaches before `publish` 
    repository, nothing on the private projects beyond their number). An independent review of
    the pack-release, its findings fixed, then `validating → releasing`; `main` pushed.
 5. **`approve-publication`** (approver): `memory approve prel-001-base-1.0.0`
-   (`releasing → released`), or a rejection back to `validating`. Ruling C: it authorizes the publication.
+   (`releasing → released`), or a rejection back to `validating`. Ruling C: it authorizes the
+   publication.
 6. **`publish`** (tech-lead): first `npm run build`, a clean tree, HEAD the approval's commit,
    pushed by claude after the approval, with `main`'s CI `success` on it (the tag's CI does not
    run the self-test). Then
