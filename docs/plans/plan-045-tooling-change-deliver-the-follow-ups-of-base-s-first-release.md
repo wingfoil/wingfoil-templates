@@ -89,10 +89,11 @@ close).
      mark), stays and is named as such. The failure removed: a release adding a capability such
      as `pack-install` changes those rules' outcome; the red test simulates it.
    - Red first (dl-018).
-6. Each task through `tooling-delivery`, one after the other (its WIP limit is one): its body reviewed and accepted into the backlog, its
-   Design on `main`, the build on `task/<task id>`, an independent review, the checks from clean
-   clones on Node.js 22.21 and 22.12.0, the CI's conclusion recorded, the approver's acceptance and
-   merge OK, `done`; this plan's Execution Notes record each.
+6. Each task through `tooling-delivery`, one after the other (its WIP limit is one): its body
+   reviewed and accepted into the backlog, its Design on `main`, the build on `task/<task id>`, an
+   independent review, the checks from clean clones on Node.js 22.21 and 22.12.0, the CI's
+   conclusion recorded, the approver's acceptance and merge OK, `done`; this plan's Execution Notes
+   record each.
 7. **Close:** the wave's errata and rulings per tech-spec (dl-020): spec-001 §7.5 amended in place
    by task-042, nothing to fold back; `active → done`.
 
@@ -113,4 +114,10 @@ close).
   that move listed; the fixture `compat.yaml` with frozen `releases`, every copying test named;
   how 0.3.0 runs for the notes and the notes they must be told apart from; the inbox test's
   constraints; the `pack` type's comment in v6; the commit precedents; the WIP limit.
+- 2026-10-22: step 2 done: `pack-semver`'s first-version clause and `memory.yaml` v6 (the
+  `pack-release` comment on `released`, the `pack` comment on `active`); independent review:
+  approve, its nits applied; `workflow list` and `directives list` with no warning; `npm test` 941
+  of 941. Follow-up: `pack-cycle`'s `activate` reads "First version released" and pre-checks a
+  released `pack-release`, which now means authorized; a later `pack-cycle` version says
+  "published" and checks the tag and the catalog entry.
 

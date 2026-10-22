@@ -94,8 +94,8 @@ types:
   pack-release:
     # One element per published version of one pack (pack-release-cycle). validating: the
     # compatibility matrix runs; releasing: awaiting the approver's authorization (gate, reject
-    # back to validating); released: the publication authorized, after which pack-release-cycle's
-    # publish tags the version and updates catalog.yaml.
+    # back to validating); released: the approver has authorized the publication;
+    # pack-release-cycle's publish then tags the version and updates catalog.yaml.
     path: docs/memory/pack-release/{id}.md
     id_pattern: "prel-{n}-{slug}"
     template:
