@@ -12,10 +12,10 @@ which observed on 0.2.2 that no verb leaves a `waiting` state except `deprecate`
 
 ## Observed
 
-WingFoil 0.3.0 from npm, in a scratch project (`git init`, `wingfoil init --template Kanban`, one
-commit). The scaffold's `plan` is `sequence: [draft, active, done]`, `waiting: [active]`. A phase
-plan, added by hand for one phase of a running life cycle, its `parent` set by editing the draft
-(`memory add --set` fills only id tokens, F-011):
+WingFoil 0.3.0 from npm, in a scratch project (`git init`, `wingfoil init --template Kanban`, which
+commits the scaffold). The scaffold's `plan` is `sequence: [draft, active, done]`, `waiting:
+[active]`. A phase plan, added by hand for one phase of a running life cycle, its `parent` set by
+editing the draft (`memory add --set` fills only id and path tokens, F-011):
 
 ```
 $ wingfoil memory add --type plan --title "Inception phase" --set workflow=sw-life-cycle \
@@ -51,6 +51,6 @@ commit (WingFoil-Templates' `base` pack documents `wf(plan): finalize <id> [acti
 ## Expected
 
 A designed verb that closes a plan that is not a workflow instance (a phase plan carrying
-`parent`, or a plan added by `memory add`) along its `waiting` edge, recorded in its history like
+`parent`) along its `waiting` edge, recorded in its history like
 `workflow end`; or `workflow end` accepting such a plan when its `parent`'s step is recorded
 complete.

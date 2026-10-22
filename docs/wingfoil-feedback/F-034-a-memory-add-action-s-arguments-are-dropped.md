@@ -1,6 +1,6 @@
 ---
 id: F-034
-title: "The command offered for a memory.add action drops its arguments but type"
+title: "The command offered for a memory.add action drops every argument but type"
 kind: gap
 status: open
 wingfoil_version: 0.3.0

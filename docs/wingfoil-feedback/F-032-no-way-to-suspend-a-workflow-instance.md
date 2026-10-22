@@ -12,8 +12,9 @@ New note (task-041). From this repository's plan-045 (ruling H) and dl-023 D1, w
 
 ## Observed
 
-WingFoil 0.3.0 from npm, in a scratch project (`git init`, `wingfoil init --template Kanban`, one
-commit). The scaffold's `plan` is `sequence: [draft, active, done]`, `waiting: [active]`:
+WingFoil 0.3.0 from npm, in a scratch project (`git init`, `wingfoil init --template Kanban`, which
+commits the scaffold). The scaffold's `plan` is `sequence: [draft, active, done]`, `waiting:
+[active]`:
 
 ```
 $ wingfoil workflow start sw-life-cycle --set scope=demo
