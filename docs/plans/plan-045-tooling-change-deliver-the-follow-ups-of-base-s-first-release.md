@@ -18,8 +18,8 @@ needs a new version of `base`.
 The approver's rulings (2026-10-22, the outline approved in chat, as recommended):
 - **G.** spec-001 §7.5, amended in place, requires `template.frontmatter` on every Memory type a
   pack defines (today §7.5's table lets the defining pack declare none, while WingFoil 0.3.0
-  refuses a type without it); a lint rule enforces it, so the lint stops such a pack before the
-  matrix does. The amendment is approved by the task's merge OK, as in plan-032.
+  refuses a type without it); the tooling enforces it, so the lint stops such a pack before the
+  matrix does (step 4). The amendment is approved by the task's merge OK, as in task-036.
 - **H.** Three feedback notes, one `kind` each (WingFoil dl-163 R4): F-032 (`request`): suspending
   a workflow instance, which `base`'s `plan` cannot express since dl-023 D1 dropped `parked`;
   F-033 (`gap`): no designed way to close a plan that is not an instance started by
@@ -28,7 +28,8 @@ The approver's rulings (2026-10-22, the outline approved in chat, as recommended
   (`19a66000`) covers none of them (plan-043).
 - **I.** One task for the two test defects.
 
-The configuration changes are this plan's own step, as plan-028 changed `pack-semver`:
+The configuration changes are this plan's own step, committed as `pack-semver`'s and
+`memory.yaml`'s earlier changes were (`4f74759`, `0425459`):
 - the `pack-semver` directive: a pack's first version is `1.0.0`, its `bump` `major` (plan-044
   ruling F);
 - `.wingfoil/memory.yaml`, version 6: the `pack-release` type's comment says that `released` is
@@ -47,21 +48,48 @@ close).
 
 1. **This plan:** an independent review by a subagent (dl-017), amended, then submitted
    (`draft → active`). A finding that changes a ruling goes to the approver.
-2. **Configuration** (on `main`): `config(directives): pack-semver …` and
-   `config(memory): v6 …`, each reviewed independently before it is pushed; `npm run -s wingfoil --
+2. **Configuration** (on `main`, in the form of `4f74759` and `0425459`): the `pack-semver`
+   directive's first-version clause; `.wingfoil/memory.yaml` v6, the `pack-release` type's comment
+   on `released` and the `pack` type's comment, whose `active` then reads "first version
+   published". Each reviewed independently before it is pushed; `npm run -s wingfoil --
    workflow list` and `directives list` with no warning after them.
 3. **task-041, the feedback notes** F-032, F-033 and F-034 in `docs/wingfoil-feedback/`, in
-   dl-163's format with their ledger rows, each reproducible with WingFoil 0.3.0 alone (command,
-   output, version), written `open`; `tests/feedback-note.test.ts` passes.
-4. **task-042, `template.frontmatter`:** spec-001 §7.5 amended in place (its table's row and the
-   prose; an Execution Note lists the change and its approval); a lint rule refusing a Memory type
-   defined by a pack without `template.frontmatter.required`; red first (dl-018); `base` and the
-   fixtures pass.
-5. **task-043, the tests that depend on their environment:** `tests/publish.test.ts`'s identity
-   test passes with `GIT_AUTHOR_*` and `GIT_COMMITTER_*` set; `tests/check-packs.test.ts` copies a
-   fixture `compat.yaml`, held equal to the real one as task-040 holds the catalog, so that a
-   WingFoil intake does not move it; red first (dl-018).
-6. Each task through `tooling-delivery`: its body reviewed and accepted into the backlog, its
+   dl-163's format, written `open`:
+   - each reproducible with WingFoil 0.3.0 alone, run in a scratch project with 0.3.0 installed
+     (this repository's governance pin is 0.2.2, so `wingfoil_version: 0.3.0` is written by hand,
+     not by `npm run feedback:note`);
+   - each cites and is told apart from the notes and decisions near it: F-032 from 0.3.0's
+     `memory park` (a `returns` edge, which does not suspend an instance; dl-023 option (b));
+     F-033 continues F-025 (0.2.2: no verb leaves `waiting` but `deprecate`) with what 0.3.0's
+     `workflow end` changed; F-034 is distinct from F-011 (`--set` fills only id tokens);
+   - the inbox's test (`tests/support/inbox.ts`): contiguous numbering from F-001, the six fields
+     in order, the body's opening line naming task-041, `## Observed` and `## Expected`, one
+     ledger row per note.
+4. **task-042, `template.frontmatter`.** The red step first records what WingFoil 0.3.0 accepts
+   (`frontmatter: {}`, `required: []`, or only a non-empty `required`), and the rule and the
+   amendment use that form. The rule lives where the definition is known: the merge
+   (`src/memory-merge.ts`, beside its `exempt` refusal) refuses a type's first definition without
+   it, and the lint reports it through the compositions it already runs (spec-001 §18: the
+   composer refuses what the lint rejects); a later pack that restates `path`, `id_pattern` or
+   `template.file` is not a definition. spec-001 amended in place, as task-036 did: §7.5's table
+   row ("including when the defining pack declared none" goes), its "These fail composition" list,
+   and a §18 bullet; an Execution Note lists the change and its approval. What moves, listed in
+   the task: the §7.5 example fixtures (`tests/fixtures/merge/example-1` and `example-2`), the
+   inline trees of `tests/check-packs.test.ts`, `compose-documents`, `memory-merge`, `output` and
+   `readme-generate`, and `tests/memory-merge.test.ts`'s "adds required fields, also when the
+   defining pack declared none", which becomes the refusal; `tests/fixtures/compose/expected*` and
+   `packs/base` stay byte-identical. Red first (dl-018).
+5. **task-043, the tests that depend on their environment:**
+   - `tests/publish.test.ts`'s identity test passes with `GIT_AUTHOR_*` and `GIT_COMMITTER_*` set;
+     the likely fix site is `isolatedGitEnv` (`tests/support/git-repo.ts`), not `src/`;
+   - the tests that copy the real `compat.yaml` (`tests/check-packs.test.ts`,
+     `tests/example-rules.test.ts`) take a fixture whose `releases` are frozen (`FROZEN_COMPAT`,
+     whose relation to the real file `tests/compat.test.ts` already holds), so that an intake
+     moves no test; `tests/readme-rules.test.ts`, which reads it on purpose (the `pack-install`
+     mark), stays and is named as such. The failure removed: a release adding a capability such
+     as `pack-install` changes those rules' outcome; the red test simulates it.
+   - Red first (dl-018).
+6. Each task through `tooling-delivery`, one after the other (its WIP limit is one): its body reviewed and accepted into the backlog, its
    Design on `main`, the build on `task/<task id>`, an independent review, the checks from clean
    clones on Node.js 22.21 and 22.12.0, the CI's conclusion recorded, the approver's acceptance and
    merge OK, `done`; this plan's Execution Notes record each.
@@ -79,3 +107,10 @@ close).
 
 - 2026-10-22: written; `workflow` and `phase` filled by editing the draft (W-02). The approver gave
   the OK to the outline in chat; rulings G–I as recommended.
+- 2026-10-22: independent review: approve after amendments; no ruling changed. Applied: the rule in
+  the merge, where a type's definition is known, reported by the lint through its compositions
+  (ruling G's means made exact); the form 0.3.0 accepts recorded first; the fixtures and tests
+  that move listed; the fixture `compat.yaml` with frozen `releases`, every copying test named;
+  how 0.3.0 runs for the notes and the notes they must be told apart from; the inbox test's
+  constraints; the `pack` type's comment in v6; the commit precedents; the WIP limit.
+
