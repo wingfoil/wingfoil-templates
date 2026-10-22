@@ -3,7 +3,7 @@
 # no `states:` block of its own uses the `defaults` state machine (REQ-STATE-08).
 # `release` and `release-line` from the scaffold are removed: this repository has no repository-wide
 # releases, every pack is versioned and published on its own (`pack-release`, dl-001).
-version: 5
+version: 6
 
 # Default state machine — `sequence` is the forward chain (`submit` walks it); a `gates` state's
 # forward edge needs `approve`, and its `reject` target is where a rejection lands. `deprecated` is
@@ -80,7 +80,7 @@ types:
     # slot of a phase pack is not in the id; the foundation packs are `pack-foundation-base` and
     # `pack-foundation-software`, `foundation` being their axis value (dl-004, dl-022). proposed is
     # the approver's acceptance of the charter; active means at least one version is published
-    # (first `pack-release` released).
+    # (the first `pack-release` tagged and listed in catalog.yaml).
     path: docs/memory/pack/{id}.md
     id_pattern: "pack-{axis}-{name}"
     template:
@@ -93,8 +93,9 @@ types:
         proposed: { reject: draft }
   pack-release:
     # One element per published version of one pack (pack-release-cycle). validating: the
-    # compatibility matrix runs; releasing: the approver authorizes the publication (gate, reject
-    # back to validating); released: tag pushed and catalog.yaml updated.
+    # compatibility matrix runs; releasing: awaiting the approver's authorization (gate, reject
+    # back to validating); released: the publication authorized, after which pack-release-cycle's
+    # publish tags the version and updates catalog.yaml.
     path: docs/memory/pack-release/{id}.md
     id_pattern: "prel-{n}-{slug}"
     template:
