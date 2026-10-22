@@ -81,7 +81,28 @@ Also on `90cc766`:
 
 ## Publication
 
-<!-- The tag (<catalog pack id>@<version>, dl-004), the commit, the catalog.yaml digest. -->
+- Date: 2026-10-22. Line: current.
+- Tag: `base@1.0.0` (annotated), at `3f34dfc95eea315444d74cc9424de61071c93163` (the approval's
+  commit; its `main` CI run 39814750853 `success` before the tag).
+- Catalog commit: `429cf8f0fd03f345882c86027458382c9ad56296` (`catalog.yaml`'s `base` entry,
+  `CATALOG.md`, `catalog-index.json`), by `npm run publish:pack -- --pack base`, exit 0.
+- Digest: `sha256:ff23044b700fcf85c04250b1e44761248950187f5ac3d6e89bcda62b4b4e70be`.
+- WingFoil range: `0.3.0`.
+- Pushed together: `git push --atomic origin base@1.0.0 main`.
+- CI on the tag, run 39816925128 (publication mode): `success`, both jobs. CI on `main` at
+  `429cf8f`, run 39816927227: `success`, both jobs. Pages, run 39816925882: `success` (build and
+  deploy).
+- CB-6, live (spec-002 §6), anonymous, following `llms.txt`'s steps:
+  - `https://wingfoil.github.io/wingfoil-templates/llms.txt`: 200;
+  - `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/catalog-index.json`: 200;
+    filtered locally to `id: base`, `status: active`, `latest: 1.0.0`;
+  - its `readme_url`,
+    `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@1.0.0/packs/base/README.md`:
+    200, the README's title section;
+  - its `manifest_url`,
+    `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@1.0.0/packs/base/pack.yaml`:
+    200, `id: base`, `version: 1.0.0`;
+  - `https://wingfoil.github.io/wingfoil-templates/catalog-index.json`: 200, listing `base`.
 
 ## Execution Notes
 
@@ -92,4 +113,6 @@ Also on `90cc766`:
 - 2026-10-21, `validate`: the evidence, the clean-clone checks and the dry run at `90cc766`.
   Independent review: approve after amendments. Applied: the presets and the conditional part
   stated; the condition for 0.3.1 to enter the range. Submitted (`validating → releasing`).
+- 2026-10-22, `publish`: published as above; the tag and `main` pushed atomically, the CI and Pages
+  `success`, CB-6's live check passed.
 

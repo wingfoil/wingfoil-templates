@@ -80,3 +80,8 @@ Configuration changes this decision implies, applied after approval:
   change of process its own decision-log; it lists the point, ruled by `governance-evolution` (dl-022
   S4), and until this repository adopts `base` (W9) by a decision-log under `decision-log-ingest`,
   applied by a dl actions plan. `retrospective.yaml` v3 applies it. The body stays as approved.
+- 2026-10-22, plan-044: **R1**'s order (`retrospective` after `first-release`, before `activate`)
+  deviated from for `base`, by the approver's ruling B: the pack was activated at its first tag,
+  and the retrospective runs once for both foundation packs after `software`'s `first-release`, as
+  their charters ran in one plan (plan-041). The body stays as approved.
+

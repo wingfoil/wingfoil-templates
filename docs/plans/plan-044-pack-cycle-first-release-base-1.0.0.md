@@ -52,9 +52,9 @@ no pack), so `main`'s CI would fail only after the push. task-040 fixes it befor
   `pack-semver` has no rule for a first version, so the highest class, as it asks when in doubt.
   The gap in `pack-semver` is a follow-up.
 
-**What it produces.** Task-040; the pack-release element `prel-001-base-1.0.0` (`pack: pack-foundation-base`,
-`version: 1.0.0`, `bump: major`, `line: current`, `wingfoil` the range computed from
-`compat.yaml`); the annotated tag `base@1.0.0` at the release commit (dl-004); then one commit with
+**What it produces.** Task-040; the pack-release element `prel-001-base-1.0.0`
+(`pack: pack-foundation-base`, `version: 1.0.0`, `bump: major`, `line: current`, `wingfoil` the
+range computed from `compat.yaml`); the annotated tag `base@1.0.0` at the release commit (dl-004); then one commit with
 `catalog.yaml`'s `base` entry (version, commit, digest, formats, capabilities, computed range) and
 the regenerated `CATALOG.md` and `catalog-index.json` (spec-001 §11, spec-002 §3). No file under
 `packs/` changes: `CHANGELOG.md` already reads `1.0.0: first version.` and `pack.yaml`
@@ -89,8 +89,8 @@ that calls `released` "tag pushed", which the approval reaches before `publish` 
    on the committed element; the privacy check on the element (no local path, no private
    repository, nothing on the private projects beyond their number). An independent review of
    the pack-release, its findings fixed, then `validating → releasing`; `main` pushed.
-5. **`approve-publication`** (approver): `memory approve prel-001-base-1.0.0` (`releasing → released`), or a
-   rejection back to `validating`. Ruling C: it authorizes the publication.
+5. **`approve-publication`** (approver): `memory approve prel-001-base-1.0.0`
+   (`releasing → released`), or a rejection back to `validating`. Ruling C: it authorizes the publication.
 6. **`publish`** (tech-lead): first `npm run build`, a clean tree, HEAD the approval's commit,
    pushed by claude after the approval, with `main`'s CI `success` on it (the tag's CI does not
    run the self-test). Then
@@ -136,4 +136,15 @@ that calls `released` "tag pushed", which the approval reaches before `publish` 
   whole suite, 941 of 941, on Node.js 22.21.0 and 22.12.0 (92 failed before). CI run 39667763456
   `success`. Follow-ups: `tests/publish.test.ts`'s identity test reads the environment's git
   identity; `tests/check-packs.test.ts` copies the real `compat.yaml`. `prepare` next.
+- 2026-10-21: `prepare` and `validate`: `prel-001-base-1.0.0` filled (rulings A, F), its evidence
+  at `90cc766`, clean clones 941 of 941 on both Node.js versions, the dry run exit 0; independent
+  review: approve after amendments, applied; submitted to `releasing`. The approver approved it
+  (`3f34dfc`, `releasing → released`), authorizing the publication (ruling C).
+- 2026-10-22: `publish`: `main`'s CI on `3f34dfc` `success` (run 39814750853); `publish:pack`
+  tagged `base@1.0.0` at it and made the catalog commit `429cf8f`; both pushed atomically. CI on
+  the tag (run 39816925128), on `main` (run 39816927227) and Pages (run 39816925882) `success`.
+  CB-6's live check passed (the element's Publication section). Two lines of this plan rewrapped
+  after the tag, not before, so that the release commit stayed the approval's.
+- 2026-10-22: `activate`: the charter `accepted → active` (ruling B); dl-006's Execution Notes
+  record the deviation from R1's order.
 

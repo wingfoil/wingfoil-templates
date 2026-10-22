@@ -236,3 +236,8 @@ For the approver's acceptance:
   every push; the check against the three private, non-software projects, run outside this
   repository, passed for all three. Branch head `8b803ab`: clean-clone checks on Node.js 22.21.0 and
   22.12.0 exit 0, CI run 39631782206 `success`.
+- 2026-10-22, plan-044: `base` 1.0.0 published (`prel-001-base-1.0.0`): tag `base@1.0.0` at
+  `3f34dfc`, catalog commit `429cf8f`, range `0.3.0`, CI on the tag and on `main` `success`, CB-6's
+  live check passed. Activated (`accepted → active`) before `pack-cycle`'s `retrospective`, which
+  runs once for both foundation packs after `software`'s `first-release` (plan-044 ruling B).
+
