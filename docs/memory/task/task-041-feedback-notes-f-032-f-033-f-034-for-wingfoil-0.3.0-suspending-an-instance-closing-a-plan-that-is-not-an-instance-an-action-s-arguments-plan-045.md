@@ -2,7 +2,7 @@
 id: task-041-feedback-notes-f-032-f-033-f-034-for-wingfoil-0.3.0-suspending-an-instance-closing-a-plan-that-is-not-an-instance-an-action-s-arguments-plan-045
 type: task
 title: "Feedback notes F-032, F-033, F-034 for WingFoil 0.3.0: suspending an instance, closing a plan that is not an instance, an action's arguments (plan-045)"
-status: draft
+status: pending
 pack: ""            # tooling task (tooling-change › deliver, plan-045 ruling H)
 depends_on: []
 tags: ["tooling","feedback"]
