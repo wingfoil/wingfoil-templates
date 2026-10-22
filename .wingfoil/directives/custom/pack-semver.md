@@ -25,7 +25,9 @@ Every pack has its own semver (dl-001). There is no repository-wide version.
 - The version is set in `pack.yaml` and recorded in a `pack-release` element; the tag is
   `<catalog pack id>@<version>`, e.g. `base@1.0.0`, `methodology/kanban@1.0.0`,
   `phase/inception/lean-inception@1.0.0` (dl-004). A published tag is never moved or deleted.
-- Every published version is `1.0.0` or later (spec-001 §4, §18).
+- Every published version is `1.0.0` or later (spec-001 §4, §18). A pack's first version is
+  `1.0.0`, classified `major`: its whole public surface is new, and a first version has no
+  previous one to compare with (plan-044 ruling F).
 
 ## Lines and maintenance (dl-002)
 
