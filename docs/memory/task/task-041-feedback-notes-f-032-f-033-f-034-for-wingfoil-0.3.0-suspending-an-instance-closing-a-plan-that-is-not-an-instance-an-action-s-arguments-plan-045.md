@@ -62,7 +62,18 @@ WingFoil's v0.3 retrospective (`19a66000`) covers none of them.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+- **The scratch project**, in the scratchpad and never committed: `git init`, WingFoil 0.3.0
+  installed with `npm ci` from `src/matrix/wingfoil-0.3.0/`, `wingfoil init --template Kanban`, a
+  commit; each note's minimal change to the scaffold (F-032: the `plan` type with option (b)'s
+  `parked` and `returns`; F-033: a plan added without `workflow start`; F-034: a custom `main`
+  workflow whose phase action is `memory.add(type: task, tags: [demo])`) and the commands run
+  there, their output and exit codes copied into `## Observed`.
+- **The notes**, written by hand in F-031's layout (the six fields, the opening line and its
+  provenance, `## Observed`, `## Expected`), titles without `|`; the ledger rows appended.
+- **Checks:** `npm test` (the inbox test), the privacy grep on the three notes, no change outside
+  `docs/wingfoil-feedback/` and this task's file.
+- **Commits** on `task/task-041-feedback-notes`: the three notes and the ledger (one commit), then
+  the notes of this task.
 
 ## Execution Notes
 
