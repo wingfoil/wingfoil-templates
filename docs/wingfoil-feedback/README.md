@@ -61,6 +61,9 @@ sha of the commit it read (WingFoil `COLLABORATION.md` › Credit, task-271), fo
 | [F-029](F-029-packs-land-in-remote-with-the-lock.md) | Packs land in the remote asset class, mapped by pack-install and pinned by the lock | request | open | |
 | [F-030](F-030-selecting-a-preset-at-init-pinned-like-the-default-set.md) | Selecting a preset of this repository's catalog at init, pinned like the default set | request | open | |
 | [F-031](F-031-schema-71864edabdb1.md) | The pack schemas changed (sha256:71864edabdb1) | request | open | |
+| [F-032](F-032-no-way-to-suspend-a-workflow-instance.md) | No way to suspend a workflow instance and resume it later | request | open | |
+| [F-033](F-033-no-verb-closes-a-plan-that-is-not-an-instance.md) | No verb closes a plan that is not a workflow instance | gap | open | |
+| [F-034](F-034-a-memory-add-action-s-arguments-are-dropped.md) | The command offered for a memory.add action drops its arguments but type | gap | open | |
 
 ## Context
 
