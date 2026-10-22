@@ -2,7 +2,7 @@
 id: plan-044-pack-cycle-first-release-base-1.0.0
 type: plan
 title: "pack-cycle first-release: base 1.0.0"
-status: active
+status: done
 workflow: "pack-cycle"
 phase: "first-release"
 tags: ["packs","base","W8","W9"]
