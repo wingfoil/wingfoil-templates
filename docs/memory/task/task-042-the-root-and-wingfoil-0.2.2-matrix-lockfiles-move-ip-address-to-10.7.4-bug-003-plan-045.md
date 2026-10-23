@@ -44,7 +44,14 @@ and its output; the Design's red steps (R3) are those runs.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+- **Red:** on the branch, before the fix, `npm audit` in the root (after `npm ci`) and in
+  `src/matrix/wingfoil-0.2.2`, their exit codes and summary lines recorded.
+- **Fix commit:** `npm audit fix --package-lock-only` in each folder; the diff checked to be the six
+  lines of `ip-address`; one commit, `fix(deps): …`.
+- **Green and adr-003's review:** `npm audit` in the root and in both matrix folders; `npm ci` then
+  `npm audit signatures` in the root; `ip-address` 10.7.4's licence read from the lockfile; the
+  clean-clone checks on both Node.js versions; the CI.
+- **Branch:** `task/task-042-lockfiles-ip-address`.
 
 ## Execution Notes
 
