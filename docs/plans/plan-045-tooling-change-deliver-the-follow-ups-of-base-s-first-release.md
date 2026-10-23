@@ -120,4 +120,9 @@ close).
   of 941. Follow-up: `pack-cycle`'s `activate` reads "First version released" and pre-checks a
   released `pack-release`, which now means authorized; a later `pack-cycle` version says
   "published" and checks the tag and the catalog entry.
+- 2026-10-23: CI red on every push since `4d84334` (bug-003, an `npm audit` advisory on a
+  transitive dependency, published on 2026-10-22); `main`'s runs after plan-044's close were not
+  read at their push. The approver ruled: bug-003, and a task fixing the lockfiles first, before
+  task-041's merge. That task took the id task-042, so `template.frontmatter` (step 4) is task-043
+  and the tests that depend on their environment (step 5) task-044.
 
