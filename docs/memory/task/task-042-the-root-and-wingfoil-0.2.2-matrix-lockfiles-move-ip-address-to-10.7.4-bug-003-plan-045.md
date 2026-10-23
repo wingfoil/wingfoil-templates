@@ -76,4 +76,5 @@ and its output; the Design's red steps (R3) are those runs.
   941), `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check` and
   `workflow list` exit 0. Independent review of the branch: approve. CI run 39909017029:
   `success`, both jobs.
+- 2026-10-23: approved by the approver; merged into `main` (`c5fc052`), `approved → done`.
 
