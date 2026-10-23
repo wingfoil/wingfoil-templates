@@ -125,4 +125,8 @@ close).
   read at their push. The approver ruled: bug-003, and a task fixing the lockfiles first, before
   task-041's merge. That task took the id task-042, so `template.frontmatter` (step 4) is task-043
   and the tests that depend on their environment (step 5) task-044.
+- 2026-10-23: task-042 `done`, merged (`c5fc052`): the two lockfiles at `ip-address` 10.7.4
+  (bug-003). CI run 39912282726 on the branch and 39973448615 on `main` (`db0cac5`): `success`.
+  From now on `main`'s CI is read after every push. `main` merged into task-041's branch
+  (`a743b36`), whose CI runs again.
 

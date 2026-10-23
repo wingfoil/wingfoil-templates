@@ -56,4 +56,7 @@ two `package-lock.json` files (three lines each), and `npm run check:pins` still
   plan-044 close, plan-045's commits). Independent review: approve after amendments. Applied: the
   first failing run and the last green one; the matrix lockfile's path; the matrix step skipped in
   CI; the reproduction's commit and both fix commands; the CI as the gate.
+- 2026-10-23: fixed by task-042, merged into `main` (`c5fc052`): `ip-address` 10.7.4 in both
+  lockfiles; `npm audit` 0 in the root and every matrix folder. `main`'s CI run 39973448615 on
+  `db0cac5`: `success`.
 
