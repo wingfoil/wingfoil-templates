@@ -26,8 +26,8 @@ node_modules/ip-address
 `ip-address` 10.7.3 is a transitive development dependency: `wingfoil@0.2.2` →
 `@modelcontextprotocol/sdk@1.32.1` → `express-rate-limit@8.7.0` → `ip-address@10.7.3`. The matrix
 lockfile `src/matrix/wingfoil-0.2.2/package-lock.json` holds it too (its `npm audit` exits 1), so
-the next step, "Audit every matrix release's lockfile", fails as well; `src/matrix/wingfoil-0.3.0/`'s
-passes. Every push fails the CI until it is fixed, `main` included.
+the next step, "Audit every matrix release's lockfile", fails as well; the lockfile of
+`src/matrix/wingfoil-0.3.0/` passes. Every push fails the CI until it is fixed, `main` included.
 
 ## Expected
 
