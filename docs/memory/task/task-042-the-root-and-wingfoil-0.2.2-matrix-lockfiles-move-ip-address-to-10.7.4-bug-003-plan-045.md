@@ -2,7 +2,7 @@
 id: task-042-the-root-and-wingfoil-0.2.2-matrix-lockfiles-move-ip-address-to-10.7.4-bug-003-plan-045
 type: task
 title: "The root and WingFoil 0.2.2 matrix lockfiles move ip-address to 10.7.4 (bug-003, plan-045)"
-status: in-review
+status: approved
 pack: ""            # tooling task (bug-003; tooling-change › deliver, plan-045)
 depends_on: []
 tags: ["tooling","ci","dependencies"]
