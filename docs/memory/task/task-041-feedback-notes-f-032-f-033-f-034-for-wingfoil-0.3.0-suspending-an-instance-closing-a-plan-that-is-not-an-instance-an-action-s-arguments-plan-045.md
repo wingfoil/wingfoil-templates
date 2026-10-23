@@ -104,4 +104,7 @@ WingFoil's v0.3 retrospective (`19a66000`) covers none of them.
   published after `main`'s last green run; `src/matrix/wingfoil-0.2.2/`'s lockfile has it too. The
   approver ruled (2026-10-23): bug-003 and a tooling task fix the lockfiles first; `main` is then
   merged into this branch and the CI run again.
+- 2026-10-23: `main` merged into this branch (`a743b36`) after task-042 fixed bug-003; the branch's
+  own changes are unchanged (the three notes, the ledger, this file). CI run 39974980600 on
+  `a743b36`: `success`, both jobs.
 
