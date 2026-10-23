@@ -63,4 +63,17 @@ and its output; the Design's red steps (R3) are those runs.
   lockfile-only change; the red and green are the audit's exit codes); adr-003's review for the
   moved package; the fix commit's diff and what stays unchanged; the red run's id; the Node.js
   versions.
+- 2026-10-23, red (on the branch, before the fix, Node.js 22.21.0): `npm audit` after `npm ci` in
+  the root, exit 1, "1 moderate severity vulnerability" (GHSA-rxp7-6hxx-x8q5, `ip-address
+  <=10.7.3`); in `src/matrix/wingfoil-0.2.2`, exit 1, the same. The CI's first red run:
+  39831936093 (`4d84334`).
+- 2026-10-23, fix (`8c90270`): `npm audit fix --package-lock-only` in each folder, exit 0; the diff
+  is the two lockfiles, three lines each; the new integrity equals the 0.3.0 lockfile's.
+- 2026-10-23, green and adr-003's review: `npm audit` "found 0 vulnerabilities" in the root and in
+  both matrix folders; in the root after `npm ci`, `npm audit signatures`: 189 packages with
+  verified registry signatures, 41 with verified attestations; `ip-address` 10.7.4's licence MIT.
+  From clean clones of `8c90270` on Node.js 22.21.0 and 22.12.0: `npm ci`, `npm test` (941 of
+  941), `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check` and
+  `workflow list` exit 0. Independent review of the branch: approve. CI run 39909017029:
+  `success`, both jobs.
 
