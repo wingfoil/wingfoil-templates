@@ -11,11 +11,12 @@ tags: ["tooling","spec","memory"]
 ## Context
 
 plan-045's ruling G (the approver, 2026-10-22): WingFoil 0.3.0 refuses a Memory type without
-`template.frontmatter` (found at plan-042, task-035's build; carried by plan-043's ruling Q), while spec-001 §7.5 lets the pack that defines
-a type declare none (its table: `template.frontmatter.required` "add fields (set), including when
-the defining pack declared none"). `base` declares it on its three types; nothing stops another
-pack from omitting it, and only the matrix would find it. This task makes spec-001 require it and
-the tooling enforce it, so that the lint stops such a pack before the matrix does.
+`template.frontmatter` (found at plan-042, task-035's build; carried by plan-043's ruling Q), while
+spec-001 §7.5 lets the pack that defines a type declare none (its table:
+`template.frontmatter.required` "add fields (set), including when the defining pack declared none").
+`base` declares it on its three types; nothing stops another pack from omitting it, and only the
+matrix would find it. This task makes spec-001 require it and the tooling enforce it, so that the
+lint stops such a pack before the matrix does.
 
 The rule lives where a type's definition is known: the merge (`src/memory-merge.ts`, beside its
 `template.frontmatter.exempt` refusal). A later pack may restate an equal `path`, `id_pattern` and
@@ -70,7 +71,23 @@ rejects).
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+- **The probe** (Acceptance 1), in the scratchpad: WingFoil 0.3.0 from `src/matrix/wingfoil-0.3.0/`,
+  `wingfoil init --template Kanban`, a custom `probe` type in four forms, one commit each; outputs
+  copied into the Execution Notes.
+- **The rule:** in `MemoryMerge.define` (`src/memory-merge.ts`), after `readFrontmatter`, a type
+  whose `template.frontmatter.required` is absent fails through `fail()` (which names the type and
+  the pack), citing spec-001 §7.5; `tighten`, which also reads the frontmatter, is unchanged. The
+  check runs after `define`'s existing refusals, so their messages stay first.
+- **Red first:** the new and rewritten cases of `tests/memory-merge.test.ts` and one case of
+  `tests/check-packs.test.ts` (a pack whose type lacks the form, reported by the lint) committed
+  before the code; the red run recorded.
+- **The fixtures:** each type definition in the listed fixtures and inline trees gains
+  `template: { frontmatter: { required: [...] } }` (an existing `template.file` keeps its place),
+  with the fields its tests already assume, or `required: []` where none.
+- **spec-001:** §7.5's "Defining and tightening" bullet, its table row, its "These fail
+  composition" list, §18, and an Execution Note.
+- **Commits** on `task/task-044-template-frontmatter`: the red tests; the rule with the fixtures;
+  spec-001; the notes.
 
 ## Execution Notes
 
