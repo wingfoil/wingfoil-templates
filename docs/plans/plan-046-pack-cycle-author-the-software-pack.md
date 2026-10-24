@@ -37,12 +37,14 @@ A way to compose this tree's `base` and `software` with packs that exist only un
 **The approver's rulings** (2026-10-24, the outline approved in chat, as recommended):
 1. **An overlay for `validate`** (A): `npm run validate -- --overlay <dir>` composes this tree's
    packs together with the packs and examples of a directory under `tests/fixtures/`, and validates
-   each composition in the matrix. The overlay contributes packs to resolution and compositions to
+   each composition in the matrix. This plan's detail of the ruling, confirmed by task-046's
+   Design: the overlay contributes packs to resolution and compositions to
    the matrix, nothing else: the schema check, the tree-wide lint and the index run on this tree
    alone, unchanged, so the CB-2 exemption of `software`'s README holds (spec-002 §2.4 speaks of
    "the tree"); the overlay's own packs pass the composer's checks (`resolve`'s layout and README
    checks among them). Its layout is `<overlay>/packs/<pack path>/` and
-   `<overlay>/compositions/<id>/example.yaml`, which task-046's Design confirms. An overlay is never
+   `<overlay>/compositions/<id>/example.yaml`; an overlay pack whose path this tree's `packs/`
+   already holds is refused, never shadowing it. An overlay is never
    publishable: `validate:publication` refuses it, and the index, the catalog and `publish:pack`
    ignore it. The word is the flag's alone, unrelated to spec-001 §3's overlay axes. Rejected: a
    CI script assembling a temporary tree (no local check during the pack tasks), and git symlinks
@@ -69,18 +71,17 @@ A way to compose this tree's `base` and `software` with packs that exist only un
 
 **The fixture methodology** (plan-041 ruling 12, on the model of the golden tree's methodology
 packs, `methodology/kanban`'s shape): `tests/fixtures/software-exit/packs/methodology/fixture/`, id
-`methodology/fixture`, `requires: [base@^1, software@^1]`, `delivery` in `contents` (spec-001
-§3, §6.5). Its
-`delivery` follows the charter's contract: `kind: sub`, no `element`; a phase creates a `release`
-and moves it to `in-development` (the type has no gate; how WingFoil 0.3.0 moves it is task-047's
-Design; `element.set_state` may need an element-bound sub included with `iterate_over`); a phase
-includes `release` with `iterate_over: release` and `where: { status: [in-development] }`; a phase
-includes `retrospective`. If the contract cannot be written as the accepted charter states it on
-0.3.0, that goes to the approver when found (dl-019). It ships a `README.md` with spec-002 §2's
+`methodology/fixture`, `requires: [base@^1, software@^1]`, `delivery` in `contents` (spec-001 §3,
+§6.5). Its `delivery` follows the charter's contract: `kind: sub`, no `element`; a phase creates a
+`release` and moves it to `in-development` (the type has no gate; how WingFoil 0.3.0 moves it is
+task-047's Design; `element.set_state` may need an element-bound sub included with `iterate_over`);
+a phase includes `release` with `iterate_over: release` and `where: { status: [in-development] }`; a
+phase includes `retrospective`. If the contract cannot be written as the accepted charter states it
+on 0.3.0, that goes to the approver when found (dl-019). It ships a `README.md` with spec-002 §2's
 sections, marked as a test fixture as the golden tree's are, and a `CHANGELOG.md`, since `resolve`
-refuses a pack without them; `npm run index` ignores the overlay, so task-047's Design fixes how
-the README's generated sections are written and checked. No catalog entry, no tag: it exists only
-as a test fixture.
+refuses a pack without them; `npm run index` ignores the overlay, so task-047's Design fixes how the
+README's generated sections are written and checked. No catalog entry, no tag: it exists only as a
+test fixture.
 
 **The tasks.** task-047 to task-049 run through `kanban-delivery` (`pack:
 pack-foundation-software`); task-046 and task-050, which change no pack, through
@@ -114,10 +115,10 @@ Each on its own branch `task/<task id>` from `main`, one after the other (WIP li
   WingFoil 0.3.0 accepts. Each composes and validates on 0.3.0 with no warning, through the overlay
   and the CI. They are exit-criterion compositions, not README examples (spec-002 §2.4): section 7
   keeps the exemption line until W10. Its Execution Notes record which composition matches which
-  repository. The Design checks
-  first whether 0.3.0 accepts every value as given (for example WingFoil's `release_id`,
-  `{kind}-{version}`, whose token is not in `software`'s required frontmatter); an exit criterion
-  found unsatisfiable goes to the approver when it is found (dl-019).
+  repository. The Design checks first whether 0.3.0 accepts every value as given (for example
+  WingFoil's `release_id`, `{kind}-{version}`, whose token is not in `software`'s required
+  frontmatter); an exit criterion found unsatisfiable goes to the approver when it is found
+  (dl-019).
 - **task-050 — spec-001 §8.3's `{release}` fold-back** (dl-020): §8.3 cites, for the project
   tokens `{release}` and `{scope}`, a note this repository no longer holds (its Execution Notes'
   2026-10-10 entry); it is amended in place to state `{release}` as `software`'s charter defines it
@@ -149,7 +150,9 @@ dl-025, F-035, F-036, the first sync of the feedback inbox); a possible note on 
 
 1. **This plan:** an independent review by a subagent (dl-017), amended, then submitted
    (`draft → active`). A finding that changes a ruling goes to the approver.
-2. **Each task**, task-046 to task-050 in order, through `kanban-delivery`:
+2. **Each task**, task-046 to task-050 in order, through its delivery loop (`kanban-delivery` or
+   `tooling-delivery`, as above; a `tooling-delivery` task's Design lists its red steps, dl-018
+   R3):
    1. `plan`: its body (Context, Acceptance), reviewed independently and amended while `pending`;
       the approver accepts it into the backlog;
    2. `design`: its Design committed on `main`, then `backlog → in-progress`;
@@ -185,7 +188,7 @@ dl-025, F-035, F-036, the first sync of the feedback inbox); a possible note on 
 - **Approver:** each task's backlog acceptance, its acceptance after the build, its merge OK; any
   ruling a review or the build finds needed (dl-019).
 - Done when `packs/software` on `main` composes and validates on WingFoil 0.3.0 through the
-  fixture methodology with an example for every distinct parameter set of the four governed
+  fixture methodology with a composition for every distinct parameter set of the four governed
   software repositories, in the CI; spec-001 §8.3 is folded back; `pack-cycle`'s `activate` reads
   "published"; all pushed, `main`'s CI `success`.
 
@@ -202,3 +205,7 @@ dl-025, F-035, F-036, the first sync of the feedback inbox); a possible note on 
   the split's ground, the configuration step's version and order, the flag's word, the reading of
   the charter's exit criterion recorded at the close, `{scope}`'s source, provisional task ids, the
   `finalize --dry-run` note, the `determinism` stub note. Re-review requested.
+- 2026-10-24: re-review: approve after amendments, nothing blocking, no ruling changed. Applied:
+  step 2 names both delivery loops; the Handoff says "composition"; ruling 1's added detail marked
+  as this plan's, confirmed by task-046's Design; an overlay pack never shadows one of this tree;
+  two paragraphs rewrapped. Plan submitted.
