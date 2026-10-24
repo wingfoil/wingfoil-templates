@@ -143,4 +143,8 @@ close).
   CI run 40074670467 on the branch and 40082361897 on `main` (`c12ae90`): `success`. adr-003's
   licence record corrected by an Execution Note. The approver ruled that plan-022, whose condition
   (dl-015 ruled) plan-041 met, closes after W9, not in this plan. task-044 next.
+- 2026-10-24: task-044 `done`, merged (`97d1f59`): spec-001 §7.5 and §18 amended in place, the merge
+  refuses a type's definition without `template.frontmatter.required` (an empty list at least, the
+  least form WingFoil 0.3.0 accepts), the lint reports it through its compositions. CI run
+  40095209344 `success`. task-045 next.
 

@@ -136,4 +136,5 @@ rejects).
 - 2026-10-24, `a9b6af2`: from clean clones on Node.js 22.21.0 and 22.12.0, `npm ci`, `npm test`
   (945 of 945), `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`,
   `index -- --check` and `workflow list` exit 0. CI run 40091343228: `success`.
+- 2026-10-24: approved by the approver; merged into `main` (`97d1f59`), `approved → done`; the merge OK approves spec-001's amendment.
 
