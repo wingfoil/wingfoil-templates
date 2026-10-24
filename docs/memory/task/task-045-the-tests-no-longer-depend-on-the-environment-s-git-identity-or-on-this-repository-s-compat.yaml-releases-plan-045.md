@@ -2,7 +2,7 @@
 id: task-045-the-tests-no-longer-depend-on-the-environment-s-git-identity-or-on-this-repository-s-compat.yaml-releases-plan-045
 type: task
 title: "The tests no longer depend on the environment's git identity or on this repository's compat.yaml releases (plan-045)"
-status: in-review
+status: approved
 pack: ""            # tooling task (tooling-change › deliver, plan-045 step 5, ruling I)
 depends_on: []
 tags: ["tooling","tests"]
