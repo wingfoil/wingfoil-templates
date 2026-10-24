@@ -30,7 +30,10 @@ const STUB = [
   "const args = process.argv.slice(2).join(' ');",
   "const bare = args.replace(/ --format json$/, '');",
   "const sub = (line) => line.split('{cwd}').join(process.cwd());",
-  "const git = (a) => { try { return execFileSync('git', a, { encoding: 'utf8' }); }",
+  // None of the caller's GIT_* variables (GIT_DIR from a hook) reaches the stub's git (task-045).
+  "const env = Object.fromEntries(Object.entries(process.env)",
+  "  .filter(([k]) => !k.startsWith('GIT_')));",
+  "const git = (a) => { try { return execFileSync('git', a, { encoding: 'utf8', env }); }",
   "  catch { return null; } };",
   "if (args === '--version') {",
   "  process.stdout.write(`${b.version}\\n`);",

@@ -9,6 +9,7 @@ const INHERITED: Record<string, string> = {
   GIT_AUTHOR_NAME: 'Caller', GIT_AUTHOR_EMAIL: 'caller@example.invalid',
   GIT_COMMITTER_NAME: 'Caller', GIT_COMMITTER_EMAIL: 'caller@example.invalid',
   GIT_CONFIG_PARAMETERS: "'commit.gpgsign=true' 'tag.gpgsign=true'",
+  GIT_CONFIG_COUNT: '1', GIT_CONFIG_KEY_0: 'commit.gpgsign', GIT_CONFIG_VALUE_0: 'true',
 };
 
 describe('TestRepo and the caller\'s git environment (task-045)', () => {
