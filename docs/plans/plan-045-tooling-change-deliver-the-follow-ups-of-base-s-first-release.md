@@ -136,4 +136,7 @@ close).
   `zod` and `fast-uri` (bug-004). The approver ruled: bug-004 and a task as for bug-003, before
   `template.frontmatter`. That task is task-043, so `template.frontmatter` (step 4) is task-044 and
   the tests that depend on their environment (step 5) task-045.
+- 2026-10-24, follow-up: adr-003 records `ajv`'s dependencies as MIT, while `fast-uri` is
+  BSD-3-Clause (bug-004's review); its record is corrected by an Execution Note on adr-003 after
+  task-043.
 

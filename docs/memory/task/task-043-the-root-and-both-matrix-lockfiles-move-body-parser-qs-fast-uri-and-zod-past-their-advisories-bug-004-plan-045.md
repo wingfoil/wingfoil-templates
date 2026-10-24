@@ -19,26 +19,32 @@ with `ajv`, the tooling's runtime dependency that adr-003 reviewed. The approver
 
 ## Acceptance
 
-As task-042, a lockfile-only change, with no code and no test: dl-018 R1's test does not apply (a
-test asserting a transitive version would duplicate `npm audit`, which needs the network, and go
-stale at the next advisory); the red and green are `npm audit`'s exit codes, recorded with the
-command and its output.
+As task-042, a lockfile-only change, with no code and no test: dl-018 R1's test does not apply,
+since a test asserting a transitive version would duplicate `npm audit`, which needs the network
+(the `testing` directive keeps tests offline), and would go stale at the next advisory;
+`check:pins` covers direct pins only. The red and green are `npm audit`'s exit codes, recorded
+with the command and its output; the Design's red steps (R3) are those runs.
 
 1. **Red** (recorded): on `main`, `npm audit` in the root ("3 vulnerabilities (1 moderate, 2
-   high)"), in `src/matrix/wingfoil-0.2.2` and in `src/matrix/wingfoil-0.3.0` exit 1; the CI's
-   first red run, 40071365400 (`1dd597b`), is cited.
+   high)"), in `src/matrix/wingfoil-0.2.2` and in `src/matrix/wingfoil-0.3.0` exit 1, with bug-004's
+   six advisories, each summary line recorded; the CI's first red run, 40071365400 (`1dd597b`), is
+   cited.
 2. **The fix:** `npm audit fix --package-lock-only` in the three folders; the fix commit's diff is
-   the three `package-lock.json` files: in the root and in 0.2.2, `body-parser` 2.3.0 → 2.4.0,
-   `qs` 6.16.0 → 6.16.1, `fast-uri` 3.1.8 → 3.1.9, `zod` 4.6.5 → 4.6.7; in 0.3.0, `body-parser`
-   only. Every `package.json` and `.wingfoil/dna.yaml` are unchanged. If `audit fix` moves anything
-   else, it goes to the approver (dl-019) before any other approach.
+   the three `package-lock.json` files (15, 15 and 6 lines): in the root and in 0.2.2,
+   `body-parser` 2.3.0 → 2.4.0, `qs` 6.16.0 → 6.16.1 (`body-parser` 2.4.0 requires `^6.16.1`),
+   `fast-uri` 3.1.8 → 3.1.9, `zod` 4.6.5 → 4.6.7; in 0.3.0, `body-parser` only. Every
+   `package.json` and `.wingfoil/dna.yaml` are unchanged. If `audit fix` moves anything else, or
+   to other versions, it goes to the approver (dl-019) before any other approach.
 3. **adr-003's review, for `fast-uri`** (the moved package in its runtime tree): `npm audit` exits 0
    in the root and in every `src/matrix/wingfoil-*/`; in the root, after `npm ci`,
    `npm audit signatures` verifies (its count recorded); `fast-uri` 3.1.9's licence is still
-   BSD-3-Clause.
+   BSD-3-Clause, as 3.1.8's was; adr-003 records `ajv`'s dependencies as MIT, an inaccuracy
+   corrected by a follow-up noted in plan-045, not here. The other moved packages' licences are
+   recorded unchanged (`body-parser` and `zod` MIT, `qs` BSD-3-Clause).
 4. **Green:** from clean clones on Node.js 22.21.0 and 22.12.0, `npm ci`, `npm test`, `lint`,
    `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check` and
-   `workflow list` exit 0; the CI run on the branch is `success`, both jobs, and recorded.
+   `workflow list` exit 0; the CI run on the branch is `success`, both jobs, its matrix audit step
+   run and passed, and recorded.
 5. **After the merge:** `main`'s CI is `success` and recorded in bug-004's and plan-045's notes.
 
 ## Design
@@ -52,10 +58,14 @@ command and its output.
   checks on both Node.js versions; the CI.
 - **Branch:** `task/task-043-lockfiles-advisories`.
 
-
 ## Execution Notes
 
 <!-- Deviations, blockers, decisions taken, WingFoil friction. In a tooling task, each red run: the
      command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019). -->
+- 2026-10-24: independent review of the body: approve after amendments. Applied: the dl-018 reasons
+  and R3's link as in task-042; the diff's size and why `qs` moves; other versions go to the
+  approver too; the red's summary lines; adr-003's licence record, a follow-up; the matrix audit
+  step in the green CI.
+
