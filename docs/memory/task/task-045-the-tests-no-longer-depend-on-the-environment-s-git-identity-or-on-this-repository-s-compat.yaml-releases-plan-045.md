@@ -2,7 +2,7 @@
 id: task-045-the-tests-no-longer-depend-on-the-environment-s-git-identity-or-on-this-repository-s-compat.yaml-releases-plan-045
 type: task
 title: "The tests no longer depend on the environment's git identity or on this repository's compat.yaml releases (plan-045)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-change › deliver, plan-045 step 5, ruling I)
 depends_on: []
 tags: ["tooling","tests"]
@@ -96,4 +96,31 @@ intake turns red; the fix drops every inherited `GIT_*`, not the identity alone.
   covering them and all four identity fields; the simulated intake's expected outcome (the
   whole-repository tests stay red after the fix, by design); `FROZEN_COMPAT` as the fixture, no
   new drift test; the guard's allowlist; the departures from plan-045 step 5 recorded.
+- 2026-10-24, red (`d243d38`): `tests/git-repo.test.ts` fails (the caller's `GIT_CONFIG_PARAMETERS`
+  makes git sign: "gpg failed to sign the data", with the caller's identity);
+  `tests/compat-fixture.test.ts` fails listing `tests/check-packs.test.ts`,
+  `tests/example-rules.test.ts` and `tests/readme-rules.test.ts`; 2 failed of the two files.
+- 2026-10-24, fix (`b77b1c7`): `isolatedGitEnv` drops every inherited `GIT_*`; the three files write
+  `FROZEN_COMPAT`; assertions unchanged.
+- 2026-10-24, the simulated intake (a scratch clone, `compat.yaml` appending a 0.4.0 release with
+  `pack-install` and `workflow-engine`): on `d243d38`, 12 of 947 failed, `readme-rules`' "requires
+  the mark while no release provides pack-install" and "reports an empty section 3" among them; on
+  `b77b1c7`, 8 failed, all checking this repository as a whole, as Acceptance 4 expects:
+  `compat.test.ts`'s "is the example of spec-001 §12", "loads the releases of the real file",
+  "gives a version requiring workflow-engine the range 0.3.0", "loads releases in ascending
+  order"; `index`'s "is up to date in this repository and in the golden tree"; `check-packs`'
+  "passes this repository"; `validate`'s "validates this repository" and "passes a publication
+  run of this repository".
+- 2026-10-24: independent review of the branch: approve after amendments. Its run with the four
+  identity variables, `GIT_CONFIG_PARAMETERS` and `GIT_DIR` at a decoy found one more leak:
+  `tests/support/agent-urls.ts` ran git with the inherited environment (`agent-path`'s "matches a
+  form in this repository's files" read the decoy). Applied (`b98c253`): it runs git with
+  `src/git.ts`'s `gitEnvironment()`; the WingFoil stub's own git (`tests/support/stub-wingfoil.ts`)
+  drops `GIT_*` too; the red case also sets `GIT_CONFIG_COUNT`.
+- 2026-10-24, `b98c253`: the whole suite with the four identity variables,
+  `GIT_CONFIG_PARAMETERS` and `GIT_DIR` at a decoy set in the shell: 947 of 947, the decoy
+  unchanged (one commit, no tag). From clean clones on Node.js 22.21.0 and 22.12.0, `npm ci`,
+  `npm test` (947 of 947), `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`,
+  `index -- --check` and `workflow list` exit 0. `compat.yaml`, `src/`, `packs/` and the expected
+  fixtures unchanged. CI run 40112987701: `success`.
 

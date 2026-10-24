@@ -4,6 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { gitEnvironment } from '../../src/git';
 import type { CatalogIndex } from '../../src/index-model';
 import { parseUrl } from '../../src/index-urls';
 import { scanMarkdown } from '../../src/markdown-lines';
@@ -66,7 +67,8 @@ export function resolveOffline(url: string, tree: string, repository: string,
   }
   try {
     const git = (args: string[]): string => repo !== undefined ? repo.git(args)
-      : execFileSync('git', args, { cwd: tree, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+      : execFileSync('git', args, { cwd: tree, env: gitEnvironment(), encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'] });
     return git(['show', `refs/tags/${parsed.tag ?? ''}:${parsed.path}`]);
   } catch {
     return undefined;
