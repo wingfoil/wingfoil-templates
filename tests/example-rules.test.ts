@@ -13,7 +13,8 @@ import {
   BASE_COMPOSABLE as BASE, FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN, withPackTree,
 } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
-import { FIXTURE_CATALOG, REPO_ROOT } from './support/paths';
+import { FIXTURE_CATALOG } from './support/paths';
+import { FROZEN_COMPAT } from './support/published-repo';
 
 const KANBAN_README = 'packs/methodology/kanban/README.md';
 const FIXTURE = 'tests/fixtures/examples/kanban/basic/example.yaml';
@@ -41,7 +42,7 @@ CheckPacksResult {
   let result: CheckPacksResult | undefined;
   withPackTree(specs, (root) => {
     copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
-    copyFileSync(join(REPO_ROOT, 'compat.yaml'), join(root, 'compat.yaml'));
+    writeFileSync(join(root, 'compat.yaml'), FROZEN_COMPAT);
     edit(root);
     result = runCheckPacks(root);
   }, { examples });
@@ -178,7 +179,7 @@ describe('examples as fixtures (task-022)', () => {
       let readme = '';
       withPackTree([...FOUNDATION, KANBAN], (root) => {
         copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
-        copyFileSync(join(REPO_ROOT, 'compat.yaml'), join(root, 'compat.yaml'));
+        writeFileSync(join(root, 'compat.yaml'), FROZEN_COMPAT);
         edit(root);
         readme = readFileSync(join(root, KANBAN_README), 'utf8');
         lines = runCheckPacks(root).problems.filter((problem) => problem.rule === 'example-section')

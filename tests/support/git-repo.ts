@@ -3,9 +3,15 @@ import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:f
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
-/** Git configuration a test repository runs with: no system file, and this global file only. */
+/**
+ * Git configuration a test repository runs with: no system file, this global file only, and none of
+ * the caller's `GIT_*` variables (identity, configuration, `GIT_DIR` from a hook), as `src/git.ts`
+ * keeps none for the tooling's own git (task-045).
+ */
 export function isolatedGitEnv(globalConfig: string): NodeJS.ProcessEnv {
-  return { ...process.env, GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: globalConfig };
+  const env = Object.fromEntries(Object.entries(process.env)
+    .filter(([key]) => !key.startsWith('GIT_')));
+  return { ...env, GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: globalConfig };
 }
 
 const CONFIG = [

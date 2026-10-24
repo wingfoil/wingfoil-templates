@@ -12,6 +12,7 @@ import { loadCatalog } from '../src/catalog';
 import { composeDocuments } from '../src/compose-documents';
 import type { CheckPacksResult } from '../src/check-packs';
 import { FIXTURES, FIXTURE_CATALOG, REPO_ROOT } from './support/paths';
+import { FROZEN_COMPAT } from './support/published-repo';
 import {
   BASE_COMPOSABLE as BASE, DELIVERY, FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN,
     SOFTWARE_COMPOSABLE,
@@ -23,13 +24,13 @@ import { conformingReadme } from './support/readme';
 const KANBAN_README = conformingReadme({ id: 'methodology/kanban', title: 'kanban',
   description: 'Kanban.' });
 
-/** A tree with the given packs and this repository's catalog.yaml and compat.yaml. */
+/** A tree with the given packs, the fixture catalog and FROZEN_COMPAT (task-040, task-045). */
 function lint(specs: PackSpec[], edit: (root: string) => void = () => undefined):
 CheckPacksResult {
   let result: CheckPacksResult | undefined;
   withPackTree(specs, (root) => {
     copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
-    copyFileSync(join(REPO_ROOT, 'compat.yaml'), join(root, 'compat.yaml'));
+    writeFileSync(join(root, 'compat.yaml'), FROZEN_COMPAT);
     edit(root);
     result = runCheckPacks(root);
   });

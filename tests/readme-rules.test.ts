@@ -1,11 +1,12 @@
 import { strict as assert } from 'node:assert';
-import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
 import { runCheckPacks } from '../src/check-packs';
 import type { CheckPacksResult } from '../src/check-packs';
-import { FIXTURE_CATALOG, REPO_ROOT } from './support/paths';
+import { FIXTURE_CATALOG } from './support/paths';
+import { FROZEN_COMPAT } from './support/published-repo';
 import { FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN, withPackTree } from './support/pack-tree';
 import { exampleSection } from './support/examples';
 import { CATALOG_URL, TEMPORARY_MARK, conformingReadme } from './support/readme';
@@ -16,7 +17,7 @@ const README = conformingReadme({ id: 'methodology/kanban', title: 'methodology/
 const FILE = 'packs/methodology/kanban/README.md';
 
 interface Options {
-  /** compat.yaml of the tree: this repository's, one whose release lists pack-install, none. */
+  /** compat.yaml of the tree: FROZEN_COMPAT, one whose release lists pack-install, none. */
   compat?: 'repository' | 'pack-install' | 'invalid' | 'none';
 }
 
@@ -26,7 +27,7 @@ function lintReadme(readme: string, options: Options = {}): CheckPacksResult {
     copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
     const compat = options.compat ?? 'repository';
     if (compat !== 'none') {
-      const text = readFileSync(join(REPO_ROOT, 'compat.yaml'), 'utf8');
+      const text = FROZEN_COMPAT;
       const written = { repository: text, invalid: text.replace('format: 1', 'format: one'),
         'pack-install': text.replace('capabilities: []', 'capabilities: [pack-install]') };
       writeFileSync(join(root, 'compat.yaml'), written[compat]);
