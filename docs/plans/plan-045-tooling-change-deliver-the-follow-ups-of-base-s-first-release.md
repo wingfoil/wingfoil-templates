@@ -129,4 +129,7 @@ close).
   (bug-003). CI run 39912282726 on the branch and 39973448615 on `main` (`db0cac5`): `success`.
   From now on `main`'s CI is read after every push. `main` merged into task-041's branch
   (`a743b36`), whose CI runs again.
+- 2026-10-24: task-041 `done`, merged (`868b8d0`): feedback notes F-032 (suspending an instance),
+  F-033 (closing a plan that is not an instance) and F-034 (a `memory.add` action's arguments),
+  reproduced with WingFoil 0.3.0 alone. CI run 39976556265 `success`. task-043 next.
 

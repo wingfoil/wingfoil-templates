@@ -107,4 +107,5 @@ WingFoil's v0.3 retrospective (`19a66000`) covers none of them.
 - 2026-10-23: `main` merged into this branch (`a743b36`) after task-042 fixed bug-003; the branch's
   own changes are unchanged (the three notes, the ledger, this file). CI run 39974980600 on
   `a743b36`: `success`, both jobs.
+- 2026-10-24: approved by the approver; merged into `main` (`868b8d0`), `approved → done`.
 
