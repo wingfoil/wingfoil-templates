@@ -152,4 +152,16 @@ close).
   is the test an intake with `pack-install` turns red; `isolatedGitEnv` drops every inherited
   `GIT_*`, not the identity alone (`GIT_CONFIG_PARAMETERS` fails 65 tests, `GIT_DIR` from a hook
   writes into the outer repository).
+- 2026-10-24: task-045 `done`, merged (`8bf4523`): the test repositories and the tests' own git drop
+  every inherited `GIT_*`; check-packs, example-rules and readme-rules write `FROZEN_COMPAT`; a
+  simulated intake with `pack-install` leaves red only the tests that check this repository as a
+  whole. CI run 40116385125 `success`.
+- 2026-10-24: closed. Done: the configuration step (`pack-semver`'s first version, `memory.yaml`
+  v6), task-041 (F-032..F-034), task-042 and task-043 (bug-003 and bug-004, the lockfiles past
+  their advisories), task-044 (`template.frontmatter.required`), task-045 (the tests' environment);
+  adr-003's licence record corrected. Per tech-spec (dl-020): spec-001 §7.5 and §18 amended in
+  place by task-044, approved by its merge OK, nothing to fold back; spec-002 unchanged; no other
+  errata or rulings in this plan. Owed after it: `pack-cycle`'s `activate` wording ("published"
+  and its pre-check), a possible note on 0.3.0's `workflow finalize --dry-run`; plan-022's close,
+  dl-024, dl-025, F-035, F-036 and the first inbox sync after W9.
 

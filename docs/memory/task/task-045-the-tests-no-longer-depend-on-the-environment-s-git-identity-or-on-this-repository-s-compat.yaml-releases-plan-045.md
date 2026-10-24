@@ -123,4 +123,5 @@ intake turns red; the fix drops every inherited `GIT_*`, not the identity alone.
   `npm test` (947 of 947), `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`,
   `index -- --check` and `workflow list` exit 0. `compat.yaml`, `src/`, `packs/` and the expected
   fixtures unchanged. CI run 40112987701: `success`.
+- 2026-10-24: approved by the approver; merged into `main` (`8bf4523`), `approved → done`.
 
