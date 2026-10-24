@@ -72,7 +72,18 @@ intake turns red; the fix drops every inherited `GIT_*`, not the identity alone.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+- **`isolatedGitEnv`:** copies `process.env` without any key starting with `GIT_`, then sets
+  `GIT_CONFIG_NOSYSTEM` and `GIT_CONFIG_GLOBAL`, as `src/git.ts`'s `gitEnvironment` does.
+- **The copies:** `tests/check-packs.test.ts`, `tests/example-rules.test.ts` and
+  `tests/readme-rules.test.ts` write `FROZEN_COMPAT` into their trees in place of
+  `REPO_ROOT`'s `compat.yaml`; `readme-rules`' `pack-install` and `invalid` variants are built
+  from it; `REPO_ROOT` imports that become unused go.
+- **Red first:** `tests/git-repo.test.ts` (or the support's own test file) with the environment
+  case; `tests/compat-fixture.test.ts`, the guard; both committed before the fix, the red run
+  recorded. The simulated intake, scripted in the scratchpad, never committed: a clone of the red
+  commit and of the fix commit, its `compat.yaml` appending a 0.4.0 release with `pack-install`
+  and `workflow-engine`, `npm ci`, `npm run build`, `npm test`; the failing tests listed.
+- **Commits** on `task/task-045-tests-environment`: the red tests; the fix; the notes.
 
 ## Execution Notes
 
