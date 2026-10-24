@@ -2,7 +2,7 @@
 id: task-044-spec-001-section-7.5-and-the-merge-require-template.frontmatter-on-every-memory-type-a-pack-defines-plan-045-ruling-g
 type: task
 title: "spec-001 section 7.5 and the merge require template.frontmatter on every Memory type a pack defines (plan-045 ruling G)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-change › deliver, plan-045 ruling G)
 depends_on: []
 tags: ["tooling","spec","memory"]
@@ -102,4 +102,38 @@ rejects).
   `readme-generate` pass). Applied: §7.5's wording follows the least form, not "declared none";
   an accepting case beside the refusal; two more moving tests; `readme-generate` dropped from the
   list and the golden tree added to the unchanged ones; the Context's source of the finding.
+- 2026-10-24, the probe (Acceptance 1): WingFoil `0.3.0 (cc31d7a8ca3940c6ec96dca4e0ef77f32f52dfb1)`,
+  from `src/matrix/wingfoil-0.3.0/`, `wingfoil init --template Kanban`, a custom `probe` type
+  committed in four forms (scratch commits `b84f7ed`, `4d64e4e`, `ac67b6f`, `7c63fc6`):
+  - no `template.frontmatter`: `workflow list --format json` exit 1, `E_VALIDATION
+    types.probe.template.frontmatter … expected object, received undefined`; `memory add` exit 1,
+    "cannot resolve the memory type registry";
+  - `frontmatter: {}`: exit 1, `E_VALIDATION types.probe.template.frontmatter.required … expected
+    array, received undefined`; `memory add` exit 1;
+  - `required: []`: exit 0, `diagnostics: []`; `memory add` exit 0;
+  - `required: [id, title]`: exit 0, `diagnostics: []`; `memory add` exit 0.
+  The least form is `template.frontmatter.required` present, even empty; it agrees with plan-042's
+  record, so nothing goes to the approver.
+- 2026-10-24, red (`958e643`): the new tests before the rule: `memory-merge` and `check-packs`, 2
+  failed of 149 (the two refusals; the accepting and restatement cases already pass).
+- 2026-10-24, the rule and the fixtures (`6744fdf`): the rule alone failed 76 of 945 tests
+  (`check-packs` 12, `compose-documents` 16, `memory-merge` 61, `output` 7, counting suites);
+  every type definition of the fixtures and inline trees gained `frontmatter: { required: [] }`
+  (`tests/fixtures/merge/example-1` and `example-2`, and `tests/check-packs.test.ts`
+  `SOFTWARE_FULL`, `tests/compose-documents.test.ts`, `tests/memory-merge.test.ts`'s `BASE` and
+  definition cases, `tests/output.test.ts`'s `noteType`); restatements stay bare. Moved:
+  "keeps the defining fragment key order, and an empty required" (`{}` → `required: []`); "adds
+  required fields, also when the defining pack's required is empty" (renamed; the refusal and the
+  accepting case are the new describe); "refuses a type without states when no pack defined
+  defaults" keeps its refusal (its type gained the form, and the rule runs after it).
+  `tests/fixtures/compose/`, `tests/fixtures/index/expected/` and `packs/base/` unchanged.
+- 2026-10-24, spec-001 (`eb9d251`): §7.5's definition bullet, its table row, its "These fail
+  composition" list, §18, an Execution Note.
+- 2026-10-24: independent review of the branch: approve after amendments (the reviewer reran the
+  red against the old merge: 2 failures; the full suite 945 of 945). Applied (`a9b6af2`): a
+  tightening case left bare; the lint test pins the message's `spec-001 §7.5`; spec-001's last
+  line.
+- 2026-10-24, `a9b6af2`: from clean clones on Node.js 22.21.0 and 22.12.0, `npm ci`, `npm test`
+  (945 of 945), `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`,
+  `index -- --check` and `workflow list` exit 0. CI run 40091343228: `success`.
 

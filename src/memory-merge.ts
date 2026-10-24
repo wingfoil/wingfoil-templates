@@ -387,6 +387,11 @@ class MemoryMerge {
     if (body['states'] !== undefined) {
       machine = newMachine(readStates(body['states'], subject, pack), subject, pack);
     }
+    // WingFoil 0.3.0 refuses a type without it; an empty list is accepted (task-044).
+    if (frontmatter.required === undefined) {
+      fail(subject, pack, 'a new type needs template.frontmatter.required, an empty list at least '
+        + '(spec-001 §7.5)');
+    }
     this.types.set(name, {
       definedBy: pack,
       keys: Object.keys(body),

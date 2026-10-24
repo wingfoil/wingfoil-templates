@@ -44,7 +44,7 @@ types:
   adr:
     path: docs/memory/adr/{id}.md
     id_pattern: "adr-{n}-{slug}"
-    template: { file: memory/templates/built-in/adr.md }
+    template: { file: memory/templates/built-in/adr.md, frontmatter: { required: [] } }
 `;
 
 const BASE_M: PackSpec = { ...BASE, fragments: ['dna', 'roles', 'memory'], extraFiles: {

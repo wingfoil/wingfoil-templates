@@ -205,7 +205,8 @@ const SOFTWARE_FULL: PackSpec = { ...SOFTWARE_COMPOSABLE, fragments: ['memory'],
     description: 'x' } } },
   extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'fragments/memory.yaml': 'format: 1\n'
     + 'types:\n  adr:\n    path: "{{adr_path}}"\n    id_pattern: "adr-{n}-{slug}"\n'
-    + '    template: { file: memory/templates/built-in/adr.md }\n' } };
+    + '    template: { file: memory/templates/built-in/adr.md,\n'
+    + '      frontmatter: { required: [] } }\n' } };
 
 describe('foundation rules (spec-001 §3, §6.5, §10, §18)', () => {
   it('requires-software: a phase pack that does not require software', () => {
@@ -779,6 +780,18 @@ describe('memory-fragment (spec-001 §7.5, §18)', () => {
     const result = lint([...CLEAN, defining('        required: [id, owner]\n'
       + '        not_applicable_allowed: [owner]\n        lists: [owner]\n')]);
     assert.equal(result.code, 0, result.lines.join('\n'));
+  });
+
+  it('reports a type defined without template.frontmatter.required, through its compositions '
+    + '(task-044)', () => {
+    const bare: PackSpec = { id: 'blueprint/x', fragments: ['memory'], memoryTemplates: ['x'],
+      extraFiles: { 'fragments/memory.yaml': 'format: 1\ntypes:\n  x:\n'
+        + '    path: x/{id}.md\n    id_pattern: "x-{n}"\n'
+        + '    template: { file: memory/templates/built-in/x.md }\n' } };
+    const result = lint([...CLEAN, bare]);
+    assert.deepEqual(rules(result), ['compose'], result.lines.join('\n'));
+    assert.match(result.lines.join('\n'),
+      /type x.*template\.frontmatter\.required.*spec-001 §7\.5/);
   });
 
   for (const [label, frontmatter] of [['exempt', EXEMPT],

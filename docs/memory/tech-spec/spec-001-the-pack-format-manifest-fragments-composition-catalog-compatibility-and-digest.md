@@ -404,9 +404,10 @@ top-level key fails in format 1.
 
 **Defining and tightening.**
 - A type is **defined** by the first pack that declares it, with all its keys: `path`, `id_pattern`,
-  `template`, and optionally `name`, `description`, `tags`, `amendable`, `fields` (an authoring key
-  WingFoil passes through) and `states`. `states` may hold `sequence`, `gates`, `waiting`, `returns`
-  and `limits`, as WingFoil's `memory.yaml` declares them.
+  `template` with its `file` and `frontmatter.required` (an empty list at least: WingFoil 0.3.0
+  refuses a type without it), and optionally `name`, `description`, `tags`, `amendable`, `fields`
+  (an authoring key WingFoil passes through) and `states`. `states` may hold `sequence`, `gates`,
+  `waiting`, `returns` and `limits`, as WingFoil's `memory.yaml` declares them.
 - `defaults` is defined by `base`.
 - A later pack may **tighten** a type, or `defaults`, by the rules below, and may change nothing
   else. A key not listed here fails.
@@ -415,7 +416,7 @@ top-level key fails in format 1.
 |---|---|
 | `path`, `id_pattern`, `template.file` | nothing: an incoming value must be equal |
 | `name`, `description`, `tags`, `amendable`, `fields` | nothing: an incoming value must be equal, and a value for a key the defining pack left out fails |
-| `template.frontmatter.required` | add fields (set), including when the defining pack declared none |
+| `template.frontmatter.required` | add fields (set), including when the defining pack's `required` is empty |
 | `template.frontmatter.not_applicable_allowed`, `template.frontmatter.lists` | add fields (set), only fields the same fragment adds to `required`, so an earlier pack's required field is never loosened; repeating an entry already in the set, with the field in the fragment's `required`, changes nothing |
 | `template.frontmatter.exempt` | never present in a pack: it names element ids, which are project values |
 | `states.sequence` | insert states (below) |
@@ -514,6 +515,7 @@ These fail composition:
 - changing a gate's `reject` target, or removing a gate;
 - removing a required frontmatter field;
 - `template.frontmatter.exempt` in a fragment;
+- a type's definition without `template.frontmatter.required`;
 - `not_applicable_allowed` or `lists` naming a field the same fragment does not add to `required`,
   unless it repeats an entry already in the set, with the field in the fragment's `required`;
 - a new `waiting` entry on a state the incoming pack did not insert, or a different `returns`;
@@ -1035,6 +1037,8 @@ check the rest, and the composer refuses what they reject.
 - no `memory.yaml` fragment holds `template.frontmatter.exempt`, and `not_applicable_allowed` and
   `lists` name only fields of the fragment's own `required`; the merge judges that a tightening
   adds them, a repeat changing nothing (§7.5);
+- a type's definition declares `template.frontmatter.required`, an empty list at least; the merge
+  refuses it otherwise, and the lint reports it through the compositions it runs (§7.5);
 - `requires_capabilities` is sorted;
 - `contents.fragments` is in the order `dna`, `roles`, `memory`;
 - `contents` and the conditional part's `contents` together match the files present, both ways,
@@ -1216,3 +1220,8 @@ check the rest, and the composer refuses what they reject.
   plan-032): §12's example lists WingFoil 0.3.0 (`format_key: true`, format 1 for every kind,
   `workflow-engine`), equal to `compat.yaml`; §12's prose records 0.3.0's check; §16's O10 is
   settled. Nothing else changes.
+- 2026-10-24, **amended in place** (plan-045 ruling G, task-044; its merge OK approves the text, as
+  for task-036): §7.5's definition requires `template.frontmatter.required`, an empty list at
+  least, the least form WingFoil 0.3.0 accepts (task-044's probe: no `frontmatter` and `{}` are
+  refused); its table's row says "the defining pack's `required` is empty" in place of "declared
+  none"; its "These fail composition" list and §18 gain the refusal. Nothing else changes.

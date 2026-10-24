@@ -9,7 +9,7 @@ types:
   task:
     path: docs/memory/task/{id}.md
     id_pattern: "task-{n}-{slug}"
-    template: { file: memory/templates/built-in/task.md }
+    template: { file: memory/templates/built-in/task.md, frontmatter: { required: [] } }
     states:
       sequence: [draft, pending, backlog, in-progress, in-review, approved, done]
       gates:
@@ -18,8 +18,8 @@ types:
   adr:
     path: docs/memory/adr/{id}.md
     id_pattern: "adr-{n}-{slug}"
-    template: { file: memory/templates/built-in/adr.md }
+    template: { file: memory/templates/built-in/adr.md, frontmatter: { required: [] } }
   bug:
     path: docs/memory/bug/{id}.md
     id_pattern: "bug-{n}-{slug}"
-    template: { file: memory/templates/built-in/bug.md }
+    template: { file: memory/templates/built-in/bug.md, frontmatter: { required: [] } }
