@@ -265,6 +265,35 @@ types:
   });
 });
 
+describe('memory: a type is defined with its required frontmatter (§7.5, task-044)', () => {
+  /** blueprint/x defining type probe with the given template. */
+  const probe = (template: string): [string, string] => ['blueprint/x', 'types:\n  probe:\n'
+    + `    path: docs/probe/{id}.md\n    id_pattern: "probe-{n}"\n    template: ${template}\n`];
+
+  it('refuses a definition without template.frontmatter.required', () => {
+    fails(/probe.*blueprint\/x.*template\.frontmatter\.required/,
+      probe('{ file: memory/templates/built-in/probe.md }'));
+    fails(/probe.*blueprint\/x.*template\.frontmatter\.required/,
+      probe('{ file: memory/templates/built-in/probe.md, frontmatter: {} }'));
+  });
+
+  it('accepts an empty required, and a later pack adds fields to it', () => {
+    const doc = compose(probe('{ file: memory/templates/built-in/probe.md, '
+      + 'frontmatter: { required: [] } }'), ['stage/x',
+      'types:\n  probe:\n    template:\n      frontmatter: { required: [id] }\n']);
+    const type = (doc['types'] as Record<string, Doc>)['probe'] as Doc;
+    assert.deepEqual((type['template'] as Doc)['frontmatter'], { required: ['id'] });
+  });
+
+  it('accepts a later pack restating path, id_pattern and template file without frontmatter',
+    () => {
+      compose(probe('{ file: memory/templates/built-in/probe.md, '
+        + 'frontmatter: { required: [id] } }'), ['stage/x', 'types:\n  probe:\n'
+        + '    path: docs/probe/{id}.md\n    id_pattern: "probe-{n}"\n'
+        + '    template: { file: memory/templates/built-in/probe.md }\n']);
+    });
+});
+
 describe('memory: sequences', () => {
   it('fails on a duplicate state', () => {
     fails(/task.*duplicate.*backlog/, ['stage/x', `

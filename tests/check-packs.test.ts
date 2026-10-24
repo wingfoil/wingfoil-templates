@@ -781,6 +781,17 @@ describe('memory-fragment (spec-001 §7.5, §18)', () => {
     assert.equal(result.code, 0, result.lines.join('\n'));
   });
 
+  it('reports a type defined without template.frontmatter.required, through its compositions '
+    + '(task-044)', () => {
+    const bare: PackSpec = { id: 'blueprint/x', fragments: ['memory'], memoryTemplates: ['x'],
+      extraFiles: { 'fragments/memory.yaml': 'format: 1\ntypes:\n  x:\n'
+        + '    path: x/{id}.md\n    id_pattern: "x-{n}"\n'
+        + '    template: { file: memory/templates/built-in/x.md }\n' } };
+    const result = lint([...CLEAN, bare]);
+    assert.deepEqual(rules(result), ['compose'], result.lines.join('\n'));
+    assert.match(result.lines.join('\n'), /type x.*template\.frontmatter\.required/);
+  });
+
   for (const [label, frontmatter] of [['exempt', EXEMPT],
     ['not_applicable_allowed outside required', OUTSIDE], ['lists outside required', LISTS]]) {
     it(`reports ${label}, and the composer refuses it`, () => {
