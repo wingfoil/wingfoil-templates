@@ -37,38 +37,55 @@ A way to compose this tree's `base` and `software` with packs that exist only un
 **The approver's rulings** (2026-10-24, the outline approved in chat, as recommended):
 1. **An overlay for `validate`** (A): `npm run validate -- --overlay <dir>` composes this tree's
    packs together with the packs and examples of a directory under `tests/fixtures/`, and validates
-   each composition in the matrix. An overlay is never publishable: `validate:publication` refuses
-   it, and the index, the catalog and the publication ignore it. Rejected: a CI script assembling
-   a temporary tree (no local check during the pack tasks), and git symlinks in the fixture (the
-   digest and the lint read files).
+   each composition in the matrix. The overlay contributes packs to resolution and compositions to
+   the matrix, nothing else: the schema check, the tree-wide lint and the index run on this tree
+   alone, unchanged, so the CB-2 exemption of `software`'s README holds (spec-002 §2.4 speaks of
+   "the tree"); the overlay's own packs pass the composer's checks (`resolve`'s layout and README
+   checks among them). Its layout is `<overlay>/packs/<pack path>/` and
+   `<overlay>/compositions/<id>/example.yaml`, which task-046's Design confirms. An overlay is never
+   publishable: `validate:publication` refuses it, and the index, the catalog and `publish:pack`
+   ignore it. The word is the flag's alone, unrelated to spec-001 §3's overlay axes. Rejected: a
+   CI script assembling a temporary tree (no local check during the pack tasks), and git symlinks
+   in the fixture (the digest and the lint read files).
 2. **Tooling first, then three pack tasks** (B), each pack task leaving a `software` that WingFoil
-   0.3.0 accepts through the overlay.
+   0.3.0 accepts through the overlay: from task-047, one overlay composition at least holds
+   `software`.
 3. **One example per distinct parameter set** (C), as task-039: the four governed software
-   repositories (WingFoil, UI, Benchmark, this repository) whose values coincide share one example;
-   the count is confirmed at task-049's backlog acceptance.
+   repositories (WingFoil, UI, Benchmark, this repository) whose values coincide share one
+   composition; the count is confirmed at task-049's backlog acceptance.
 4. **W8's close in this plan** (D): spec-001 §8.3's `{release}` fold-back, as its own task, and
    `pack-cycle`'s `activate` wording, as a configuration step, both before `software`'s
    `first-release`, which runs `activate`.
 5. **`methodology/scrum`'s charter in parallel** (E): its own plan, plan-047
    (`pack-cycle › charter`), in another session on its own worktree; it depends only on the
-   `delivery` contract of `software`'s accepted charter. This plan holds task-046 to task-050;
-   numbers beyond them are agreed between the two sessions.
-6. **W9, not decided here** (F): a tag of `software` runs `validate:publication`, which fails on a
-   tree with no composition, and an overlay does not count; `software`'s `first-release` therefore
-   needs a methodology in `packs/`. The recommendation, for W9's plan, is to publish `software` and
-   `scrum` in the same wave, which matches WingFoil UI's adoption of the three together.
+   `delivery` contract of `software`'s accepted charter. This plan holds task-046 to task-050,
+   provisionally (a bug task or a split may renumber them, recorded in the Execution Notes, as in
+   plan-045); numbers beyond them are agreed between the two sessions.
+6. **W9, not decided here** (F): `publish:pack` refuses a pack that no composition of the
+   validation contains, and an overlay does not count; a composition with `software` needs a
+   methodology, so `software`'s `first-release` needs one in `packs/`. The recommendation, for
+   W9's plan, is to publish `software` and `scrum` in the same wave, which matches WingFoil UI's
+   adoption of the three together.
 
-**The fixture methodology** (plan-041 ruling 12, on the model of the golden tree's
-`methodology/flow`): `tests/fixtures/software-exit/packs/methodology/fixture/`, id
-`methodology/fixture`, `requires: [software@^1]`, `delivery` in `contents` (spec-001 §6.5). Its
+**The fixture methodology** (plan-041 ruling 12, on the model of the golden tree's methodology
+packs, `methodology/kanban`'s shape): `tests/fixtures/software-exit/packs/methodology/fixture/`, id
+`methodology/fixture`, `requires: [base@^1, software@^1]`, `delivery` in `contents` (spec-001
+§3, §6.5). Its
 `delivery` follows the charter's contract: `kind: sub`, no `element`; a phase creates a `release`
 and moves it to `in-development` (the type has no gate; how WingFoil 0.3.0 moves it is task-047's
-Design); a phase includes `release` with `iterate_over: release` and
-`where: { status: [in-development] }`; a phase includes `retrospective`. No catalog entry, no tag,
-no publishable README: it exists only as a test fixture.
+Design; `element.set_state` may need an element-bound sub included with `iterate_over`); a phase
+includes `release` with `iterate_over: release` and `where: { status: [in-development] }`; a phase
+includes `retrospective`. If the contract cannot be written as the accepted charter states it on
+0.3.0, that goes to the approver when found (dl-019). It ships a `README.md` with spec-002 §2's
+sections, marked as a test fixture as the golden tree's are, and a `CHANGELOG.md`, since `resolve`
+refuses a pack without them; `npm run index` ignores the overlay, so task-047's Design fixes how
+the README's generated sections are written and checked. No catalog entry, no tag: it exists only
+as a test fixture.
 
-**The tasks.** Each runs through `kanban-delivery` (`pack: pack-foundation-software`), on its own
-branch `task/<task id>` from `main`, one after the other (WIP limit one):
+**The tasks.** task-047 to task-049 run through `kanban-delivery` (`pack:
+pack-foundation-software`); task-046 and task-050, which change no pack, through
+`tooling-delivery` (`pack: ""`), as task-040 inside plan-044 and task-044 inside plan-045 (bug-001).
+Each on its own branch `task/<task id>` from `main`, one after the other (WIP limit one):
 - **task-046 — the overlay (tooling, red first):** `--overlay <dir>` in `validate`, as ruling 1
   states, with its tests on WingFoil's stub and the golden tree, and `validate:publication`'s
   refusal; dl-018 R1–R3, the red run recorded. The CI step for `software` comes with task-047, when
@@ -81,32 +98,40 @@ branch `task/<task id>` from `main`, one after the other (WIP limit one):
   `determinism` directive; `sw-life-cycle` (`main`) and everything it reaches: the `inception`,
   `specification` and `end-of-life` defaults, `release`, `release-submit` and `release-publishing`;
   `CHANGELOG.md`; `README.md` per spec-002 §2, whose section 7 holds the CB-2 exemption line; the
-  fixture methodology; and a CI step validating the overlay. It composes through the overlay,
+  fixture methodology; one overlay composition on the parameters' defaults, with fictional
+  identities checked against 0.3.0 as task-039's Design did (task-049 keeps it or folds it into its
+  compositions); and a CI step validating the overlay. It composes through the overlay,
   passes the lint, and WingFoil 0.3.0 accepts it with no warning. It is larger than task-037,
-  because the main workflow reaches nearly every workflow; its Design may propose a split, the new task through `plan` and the approver's gate (dl-018 R3).
+  because the main workflow reaches nearly every workflow; its Design may propose a split, the
+  new task going through `plan` and the approver's gate before `in-progress`, as dl-018 R3 does
+  for tooling.
 - **task-048 — the rest:** `adr-ingest`, `bug-ingest`, each phase with its role, actions,
   approval, fallback and `produces` (R4); `agents/section.md` (spec-001 §10, R-10).
-- **task-049 — the exit criterion** (dl-022 S6): under the overlay, one example per distinct
+- **task-049 — the exit criterion** (dl-022 S6): under the overlay, one composition per distinct
   parameter set of WingFoil, UI, Benchmark and this repository (ruling 3), each a fictional project
   carrying the repository's real path and id values, `base`'s and `software`'s, copied from its
   public repository at a commit the Design names, with fictional approver and agent identities that
   WingFoil 0.3.0 accepts. Each composes and validates on 0.3.0 with no warning, through the overlay
-  and the CI. Its Execution Notes record which example matches which repository. The Design checks
+  and the CI. They are exit-criterion compositions, not README examples (spec-002 §2.4): section 7
+  keeps the exemption line until W10. Its Execution Notes record which composition matches which
+  repository. The Design checks
   first whether 0.3.0 accepts every value as given (for example WingFoil's `release_id`,
   `{kind}-{version}`, whose token is not in `software`'s required frontmatter); an exit criterion
   found unsatisfiable goes to the approver when it is found (dl-019).
 - **task-050 — spec-001 §8.3's `{release}` fold-back** (dl-020): §8.3 cites, for the project
-  tokens `{release}` and `{scope}`, a note this repository no longer holds (its Execution Notes' 2026-10-10
-  entry); it is amended in place to state `{release}` as `software`'s charter defines it (a task's
-  `release` field, as WingFoil does) and where `{scope}` is defined. Approved by the task's merge
-  OK, as task-044.
+  tokens `{release}` and `{scope}`, a note this repository no longer holds (its Execution Notes'
+  2026-10-10 entry); it is amended in place to state `{release}` as `software`'s charter defines it
+  (a task's `release` field, as WingFoil does) and `{scope}` as `base`'s charter (`plan_path`) and
+  dl-015 C10 do. Approved by the task's merge OK, as task-044.
 
 `packs/software` moves the counts the tooling tests take on this repository (index, lint,
 validate), as `packs/base` did in task-037; the task that moves them states it, under dl-018
 R1–R3. Each task runs `npm run index`, so the README's generated sections are never written by
 hand (`pack-authoring`). Section 3 ("Install and update") opens with spec-002 §2.3's temporary
 mark, links `CATALOG.md#install`, and gives the hand-adoption steps (F6.1, the charter's Adoption)
-with no WingFoil CLI command in code (CB-3).
+with no WingFoil CLI command in code (CB-3), including the charter's Compatibility note: WingFoil
+0.3.0's `init` writes a `custom/` `determinism` directive that wins over `software`'s, so an
+adopter removes the stub.
 
 Who runs what: claude drafts for the product-owner (`plan`) and is the pack-author (`design`,
 `build`, `deliver`), and the developer for any change under `src/`, `tests/` or `.github/` and of
@@ -117,7 +142,8 @@ Not in this plan: `software`'s `first-release`, its catalog entry and tag, and t
 the coordinating session and to WingFoil UI at the tag (W9, ruling 6); `methodology/scrum`'s
 charter (plan-047, ruling 5); the foundation packs' `retrospective`, after `software`'s
 `first-release`; this repository's adoption (W9); what is owed after W9 (plan-022's close, dl-024,
-dl-025, F-035, F-036, the first sync of the feedback inbox).
+dl-025, F-035, F-036, the first sync of the feedback inbox); a possible note on 0.3.0's
+`workflow finalize --dry-run` (plan-045).
 
 ## Steps
 
@@ -141,11 +167,15 @@ dl-025, F-035, F-036, the first sync of the feedback inbox).
    5. `deliver`: `--no-ff` merge into `main`, `approved → done`, `main` pushed and its CI's
       conclusion read (a red run from an advisory is a bug and a task, as bug-003), the branch
       removed; this plan's Execution Notes record it.
-3. **Configuration** (ruling 4), after task-049: `pack-cycle`'s `activate` reads "First version
+3. **Configuration** (ruling 4), after task-050: `pack-cycle`'s `activate` reads "First version
    published" and its pre-check names the pack's tag and its `catalog.yaml` entry, not a `released`
-   `pack-release` (which since `memory.yaml` v6 means authorized); independent review, then a
-   commit on `main`, `workflow list` with no warning.
-4. **Close:** the charter's Execution Notes record the pack written and the exit criterion met;
+   `pack-release` (which since `memory.yaml` v6 means authorized); `pack-cycle.yaml`'s `version`
+   4 → 5, as earlier configuration commits; independent review, then a commit on `main`,
+   `workflow list` with no warning.
+4. **Close:** the charter's Execution Notes record the pack written and the exit criterion met,
+   with the reading rulings 1 and 3 give its text (`base` and `software` stay in `packs/`, the
+   fixture holds the methodology and the compositions, coinciding sets share one, and the check is
+   `validate --overlay` in the CI, since `npm test` runs WingFoil's stub);
    per tech-spec, the errata and rulings recorded in W8 and their fold-back (dl-020); this plan
    goes `active → done`; `first-release` can be planned.
 
@@ -163,3 +193,12 @@ dl-025, F-035, F-036, the first sync of the feedback inbox).
 
 - 2026-10-24: written; `workflow` and `phase` filled by editing the draft (W-02). The approver gave
   the OK to the outline in chat; rulings 1–6 as recommended.
+- 2026-10-24: independent review: request changes, three blocking findings, no ruling changed: what
+  the lint, the schema check and the index see under the overlay, and the fixture methodology's
+  README and CHANGELOG, which `resolve` requires; no composition holding `software` before
+  task-049, since `base`'s required parameters have no default; task-046 and task-050 change no
+  pack, so they run through `tooling-delivery` (`pack: ""`). Applied, with the non-blocking ones:
+  the fixture requires `base@^1`, ruling 6's reason (`publish:pack`, not `validate:publication`),
+  the split's ground, the configuration step's version and order, the flag's word, the reading of
+  the charter's exit criterion recorded at the close, `{scope}`'s source, provisional task ids, the
+  `finalize --dry-run` note, the `determinism` stub note. Re-review requested.
