@@ -83,4 +83,5 @@ with the command and its output; the Design's red steps (R3) are those runs.
   `npm ci`, `npm test` (941 of 941), `lint`, `check:pins`, `check:schemas`, `check:packs`,
   `validate`, `index -- --check` and `workflow list` exit 0. Independent review of the branch:
   approve. CI run 40073617109: `success`, both jobs, the matrix audit step run and passed.
+- 2026-10-24: approved by the approver; merged into `main` (`f5f084b`), `approved → done`.
 
