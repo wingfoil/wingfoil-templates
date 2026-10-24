@@ -132,4 +132,8 @@ close).
 - 2026-10-24: task-041 `done`, merged (`868b8d0`): feedback notes F-032 (suspending an instance),
   F-033 (closing a plan that is not an instance) and F-034 (a `memory.add` action's arguments),
   reproduced with WingFoil 0.3.0 alone. CI run 39976556265 `success`. task-043 next.
+- 2026-10-24: `main` red again from run 40071365400 (`1dd597b`): six advisories on `body-parser`,
+  `zod` and `fast-uri` (bug-004). The approver ruled: bug-004 and a task as for bug-003, before
+  `template.frontmatter`. That task is task-043, so `template.frontmatter` (step 4) is task-044 and
+  the tests that depend on their environment (step 5) task-045.
 
