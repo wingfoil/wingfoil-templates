@@ -205,7 +205,8 @@ const SOFTWARE_FULL: PackSpec = { ...SOFTWARE_COMPOSABLE, fragments: ['memory'],
     description: 'x' } } },
   extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'fragments/memory.yaml': 'format: 1\n'
     + 'types:\n  adr:\n    path: "{{adr_path}}"\n    id_pattern: "adr-{n}-{slug}"\n'
-    + '    template: { file: memory/templates/built-in/adr.md }\n' } };
+    + '    template: { file: memory/templates/built-in/adr.md,\n'
+    + '      frontmatter: { required: [] } }\n' } };
 
 describe('foundation rules (spec-001 §3, §6.5, §10, §18)', () => {
   it('requires-software: a phase pack that does not require software', () => {

@@ -15,7 +15,7 @@ types:
   task:
     path: docs/memory/task/{id}.md
     id_pattern: "task-{n}-{slug}"
-    template: { file: memory/templates/built-in/task.md }
+    template: { file: memory/templates/built-in/task.md, frontmatter: { required: [] } }
     states:
       sequence: [draft, pending, backlog, in-progress, in-review, approved, done]
       gates:
@@ -24,7 +24,7 @@ types:
   adr:
     path: docs/memory/adr/{id}.md
     id_pattern: "adr-{n}-{slug}"
-    template: { file: memory/templates/built-in/adr.md }
+    template: { file: memory/templates/built-in/adr.md, frontmatter: { required: [] } }
   bug:
     path: docs/memory/bug/{id}.md
     id_pattern: "bug-{n}-{slug}"
@@ -154,7 +154,7 @@ types:
     ['a redefined template file', /task.*stage\/x.*template\.file/, `
 types:
   task:
-    template: { file: memory/templates/built-in/other.md }
+    template: { file: memory/templates/built-in/other.md, frontmatter: { required: [] } }
 `],
     ['a states that replaces the machine', /task.*stage\/x/, `
 types:
@@ -204,7 +204,7 @@ describe('memory: definition', () => {
 types:
   service:
     path: docs/{id}.md
-    template: { file: memory/templates/built-in/service.md }
+    template: { file: memory/templates/built-in/service.md, frontmatter: { required: [] } }
 `]);
   });
 
@@ -214,7 +214,7 @@ types:
   service:
     path: docs/{id}.md
     id_pattern: "s-{n}"
-    template: { file: memory/templates/built-in/service.md }
+    template: { file: memory/templates/built-in/service.md, frontmatter: { required: [] } }
     states:
       gates: {}
 `]);
@@ -234,7 +234,7 @@ types:
   service:
     path: docs/{id}.md
     id_pattern: "s-{n}"
-    template: { file: memory/templates/built-in/service.md }
+    template: { file: memory/templates/built-in/service.md, frontmatter: { required: [] } }
 `]);
     assert.deepEqual(Object.keys(doc['types'] as Doc), ['task', 'adr', 'bug', 'service']);
   });
@@ -257,7 +257,7 @@ types:
 `]);
   });
 
-  it('adds required fields, also when the defining pack declared none', () => {
+  it('adds required fields, also when the defining pack\'s required is empty', () => {
     const text = 'types:\n  task:\n    template:\n      frontmatter: { required: [id] }\n';
     const doc = compose(['stage/x', text]);
     const task = (doc['types'] as Record<string, Doc>)['task'] as Doc;
@@ -410,18 +410,18 @@ types:
     assert.deepEqual(frontmatter['required'], ['id', 'owner']);
   });
 
-  it('keeps the defining fragment key order, and an empty frontmatter', () => {
+  it('keeps the defining fragment key order, and an empty required', () => {
     const doc = compose(['blueprint/x', `
 types:
   service:
-    template: { frontmatter: {}, file: memory/templates/built-in/service.md }
+    template: { frontmatter: { required: [] }, file: memory/templates/built-in/service.md }
     id_pattern: "s-{n}"
     path: docs/{id}.md
 `]);
     const service = (doc['types'] as Record<string, Doc>)['service'] as Doc;
     assert.deepEqual(Object.keys(service), ['template', 'id_pattern', 'path']);
     assert.deepEqual(service['template'], {
-      frontmatter: {}, file: 'memory/templates/built-in/service.md',
+      frontmatter: { required: [] }, file: 'memory/templates/built-in/service.md',
     });
   });
 
@@ -431,7 +431,7 @@ types:
   adr:
     path: docs/{id}.md
     id_pattern: "a-{n}"
-    template: { file: memory/templates/built-in/adr.md }
+    template: { file: memory/templates/built-in/adr.md, frontmatter: { required: [] } }
 `) as Doc }], 'base'), /adr.*defaults/);
   });
 });
@@ -555,7 +555,8 @@ types:
     + 'to a state not earlier', () => {
     const define = (states: string): [string, string] => ['governance/x', 'types:\n  y:\n'
       + '    path: y/{id}.md\n    id_pattern: "y-{n}"\n    template: { file: memory/templates/'
-      + `built-in/y.md }\n    states:\n      sequence: [a, b, c]\n${states}`];
+      + `built-in/y.md, frontmatter: { required: [] } }\n    states:\n      sequence: [a, b, c]\n`
+      + states];
     fails(/y.*waiting z, not a state of the sequence/, define('      waiting: [z]\n'));
     fails(/y.*returns/, define('      returns: { z: a }\n'));
     fails(/y.*returns/, define('      returns: { b: z }\n'));
@@ -604,7 +605,8 @@ types:
     const base: [string, string] = ['base', 'defaults:\n  states:\n'
       + '    sequence: [draft, pending, approved]\n    returns: { approved: pending }\n'
       + '    limits: { pending: 4 }\ntypes:\n  adr:\n    path: a/{id}.md\n'
-      + '    id_pattern: "adr-{n}"\n    template: { file: memory/templates/built-in/adr.md }\n'];
+      + '    id_pattern: "adr-{n}"\n    template: { file: memory/templates/built-in/adr.md,\n'
+      + '      frontmatter: { required: [] } }\n'];
     const all = (...fragments: [string, string][]): Doc => mergeMemory(fragments.map(
       ([pack, text]) => ({ pack, data: parse(text) as Doc })), 'base');
     const doc = all(base, ['team-mode/x', 'types:\n  adr:\n    states:\n'

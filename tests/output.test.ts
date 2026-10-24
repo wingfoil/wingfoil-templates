@@ -51,7 +51,7 @@ function shipping(
 /** The memory fragment defining type `note`, with the given template file. */
 function noteType(templateFile: string): string {
   return 'format: 1\ntypes:\n  note:\n    path: docs/{id}.md\n    id_pattern: "note-{n}"\n'
-    + `    template: { file: ${templateFile} }\n`;
+    + `    template: { file: ${templateFile}, frontmatter: { required: [] } }\n`;
 }
 
 /** A pack defining Memory type `note` and shipping its template. */
