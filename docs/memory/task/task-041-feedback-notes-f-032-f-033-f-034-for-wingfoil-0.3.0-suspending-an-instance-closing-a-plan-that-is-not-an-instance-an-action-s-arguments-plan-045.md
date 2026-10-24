@@ -2,7 +2,7 @@
 id: task-041-feedback-notes-f-032-f-033-f-034-for-wingfoil-0.3.0-suspending-an-instance-closing-a-plan-that-is-not-an-instance-an-action-s-arguments-plan-045
 type: task
 title: "Feedback notes F-032, F-033, F-034 for WingFoil 0.3.0: suspending an instance, closing a plan that is not an instance, an action's arguments (plan-045)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-change › deliver, plan-045 ruling H)
 depends_on: []
 tags: ["tooling","feedback"]
@@ -86,4 +86,25 @@ WingFoil's v0.3 retrospective (`19a66000`) covers none of them.
   W-entry; the scratch project's setup and F-034's `workflow next`; the ledger's cells and the
   opening's provenance. (plan-043 and task-038 called the three topics one note, F-032; ruling H
   split them.)
+- 2026-10-22: the three notes reproduced with WingFoil 0.3.0 alone in scratch projects (`npm ci`
+  from `src/matrix/wingfoil-0.3.0/`, `wingfoil init --template Kanban`). A plan without `parent`
+  is taken for an instance of `sw-life-cycle`, so F-033's case needs `parent`, set by editing the
+  draft. Independent review of the branch: approve after amendments, the reviewer re-running every
+  command on 0.3.0. Applied (`2dc8c3f`): F-033's Expected narrowed to a plan carrying `parent`;
+  the scaffold's own commit; `--set` fills id and path tokens; F-034's title, in its ledger row
+  too. Seen by the reviewer, outside these notes: `workflow finalize --dry-run` fails in 0.3.0
+  (`Cannot read properties of undefined`), a possible later note.
+- 2026-10-23, `2dc8c3f`: from clean clones on Node.js 22.21.0 and 22.12.0, `npm ci`, `npm test`
+  (941 of 941), `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`,
+  `index -- --check` and `workflow list` exit 0. A local run of the suite gave 11 failures in the
+  `publish:pack` and `validate` tests, which spawn `dist/`: `dist/` was rebuilt during that run.
+  CI run 39850352899: `failure`, in "Audit the root lockfile" on both jobs, for a reason outside
+  this task: advisory GHSA-rxp7-6hxx-x8q5 (moderate) on `ip-address` 10.7.3, a transitive
+  development dependency (`wingfoil@0.2.2` → `@modelcontextprotocol/sdk` → `express-rate-limit`),
+  published after `main`'s last green run; `src/matrix/wingfoil-0.2.2/`'s lockfile has it too. The
+  approver ruled (2026-10-23): bug-003 and a tooling task fix the lockfiles first; `main` is then
+  merged into this branch and the CI run again.
+- 2026-10-23: `main` merged into this branch (`a743b36`) after task-042 fixed bug-003; the branch's
+  own changes are unchanged (the three notes, the ledger, this file). CI run 39974980600 on
+  `a743b36`: `success`, both jobs.
 
