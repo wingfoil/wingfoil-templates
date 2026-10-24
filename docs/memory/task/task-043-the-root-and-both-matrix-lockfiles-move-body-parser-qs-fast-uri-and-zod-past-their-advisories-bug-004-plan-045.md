@@ -68,4 +68,19 @@ with the command and its output; the Design's red steps (R3) are those runs.
   and R3's link as in task-042; the diff's size and why `qs` moves; other versions go to the
   approver too; the red's summary lines; adr-003's licence record, a follow-up; the matrix audit
   step in the green CI.
+- 2026-10-24, red (on the branch, before the fix, Node.js 22.21.0): `npm audit` in the root after
+  `npm ci`, exit 1, "3 vulnerabilities (1 moderate, 2 high)"; in `src/matrix/wingfoil-0.2.2`, exit
+  1, the same; in `src/matrix/wingfoil-0.3.0`, exit 1, "1 high severity vulnerability". The CI's
+  first red run: 40071365400 (`1dd597b`).
+- 2026-10-24, fix (`c1e5432`): `npm audit fix --package-lock-only` in the three folders, exit 0;
+  the diff is the three lockfiles, 15, 15 and 6 lines, with the versions of Acceptance 2; inside
+  `body-parser`'s entry its declared ranges move too (`qs`, `content-type`, `iconv-lite`), already
+  satisfied; the integrities agree across lockfiles.
+- 2026-10-24, green and adr-003's review: `npm audit` "found 0 vulnerabilities" in the three
+  folders; in the root after `npm ci`, `npm audit signatures`: 189 packages with verified registry
+  signatures, 43 with verified attestations; licences unchanged (`body-parser` and `zod` MIT, `qs`
+  and `fast-uri` BSD-3-Clause). From clean clones of `c1e5432` on Node.js 22.21.0 and 22.12.0:
+  `npm ci`, `npm test` (941 of 941), `lint`, `check:pins`, `check:schemas`, `check:packs`,
+  `validate`, `index -- --check` and `workflow list` exit 0. Independent review of the branch:
+  approve. CI run 40073617109: `success`, both jobs, the matrix audit step run and passed.
 
