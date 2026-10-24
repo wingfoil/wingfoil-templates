@@ -147,4 +147,9 @@ close).
   refuses a type's definition without `template.frontmatter.required` (an empty list at least, the
   least form WingFoil 0.3.0 accepts), the lint reports it through its compositions. CI run
   40095209344 `success`. task-045 next.
+- 2026-10-24, task-045's review: two departures from step 5, no ruling changed: `readme-rules`,
+  kept on the real `compat.yaml` by step 5, takes `FROZEN_COMPAT` too, since its default variant
+  is the test an intake with `pack-install` turns red; `isolatedGitEnv` drops every inherited
+  `GIT_*`, not the identity alone (`GIT_CONFIG_PARAMETERS` fails 65 tests, `GIT_DIR` from a hook
+  writes into the outer repository).
 

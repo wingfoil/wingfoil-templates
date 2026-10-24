@@ -12,46 +12,59 @@ tags: ["tooling","tests"]
 
 plan-045's step 5 (ruling I: one task for both): two ways the suite depends on its environment
 rather than on its fixtures, found in plan-044 (task-040's publication runs and its review).
-- **The git identity.** `isolatedGitEnv` (`tests/support/git-repo.ts`) gives a test repository its
-  own global configuration but spreads `process.env` whole, so `GIT_AUTHOR_NAME`,
-  `GIT_AUTHOR_EMAIL`, `GIT_COMMITTER_NAME` and `GIT_COMMITTER_EMAIL`, when set, override it:
-  `tests/publish.test.ts`'s "tags and commits as the caller, unsigned, with the dates the caller
-  pins" then fails (task-040's first publication run, 939 of 940). A developer or a CI that sets
-  them gets a red suite with nothing wrong.
+- **Git's environment.** `isolatedGitEnv` (`tests/support/git-repo.ts`) gives a test repository
+  its own global configuration but spreads `process.env` whole, so every inherited `GIT_*`
+  variable reaches the test's git:
+  - `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL`, `GIT_COMMITTER_NAME`, `GIT_COMMITTER_EMAIL` override
+    the test identity: `tests/publish.test.ts`'s "tags and commits as the caller, unsigned, with
+    the dates the caller pins" fails (task-040's first publication run, 939 of 940);
+  - `GIT_CONFIG_PARAMETERS` (and `GIT_CONFIG_COUNT`) override the test configuration:
+    `commit.gpgsign=true` fails 65 tests (the body's review);
+  - `GIT_DIR` and `GIT_INDEX_FILE`, which a git hook sets, send the test's commits and tags into
+    the outer repository (the body's review: `digest-cli`'s commits and a tag written into a
+    decoy).
+  `src/git.ts` already drops every `GIT_*` (`gitEnvironment`); the tests do not.
 - **This repository's `compat.yaml`.** `tests/check-packs.test.ts` (its `lint` helper),
   `tests/example-rules.test.ts` and `tests/readme-rules.test.ts` (its default `repository`
-  variant, and `pack-install` built from it) copy the real file into their trees. A WingFoil
-  intake that appends a release moves what they lint: a release that provides `pack-install`
-  turns spec-002 §2.3's temporary mark from required to refused, and `readme-rules` fails with
-  nothing wrong in the tooling. task-040 removed the same dependency on `catalog.yaml`; the real
-  `compat.yaml` stays checked by `tests/compat.test.ts`, by the lint and by the matrix.
+  variant, and `pack-install` built from it) copy the real file into their trees. An intake that
+  appends a release with `pack-install` turns spec-002 §2.3's temporary mark from required to
+  refused, and `readme-rules` fails with nothing wrong in the tooling (the body's review: a
+  simulated 0.4.0 intake, 3 failures in these files). task-040 removed the same dependency on
+  `catalog.yaml`. The real file stays checked by `tests/compat.test.ts`, by the lint and by the
+  matrix; `tests/fixtures/compose/tree/compat.yaml`, held byte-equal to it (dl-010), moves with
+  an intake on purpose and is not in scope.
+
+**Departures from plan-045 step 5** (recorded in its Execution Notes): `readme-rules`, which the
+plan kept on the real file, takes the fixture too, since its default variant is the test an
+intake turns red; the fix drops every inherited `GIT_*`, not the identity alone.
 
 ## Acceptance
 
 `npm run build` precedes the commands; tests run by `npm test` unless named.
 
-1. **The identity.** `isolatedGitEnv` drops `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL`,
-   `GIT_COMMITTER_NAME` and `GIT_COMMITTER_EMAIL` from the inherited environment (the dates stay:
-   tests pin them explicitly); no file under `src/` changes, `src/git.ts`'s caller identity
-   included.
-2. **A fixture `compat.yaml`**, `tests/fixtures/compat/compat.yaml`, a byte copy of today's real
-   file (0.2.2 and 0.3.0); `tests/support/paths.ts` exports its path. A drift test holds that the
-   real file starts with the fixture's `format`, `kinds` and `capabilities` and lists every
-   fixture release unchanged, so an intake that appends a release moves no test, and one that
-   changes a recorded release or the vocabulary updates the fixture knowingly.
-3. **The copies:** `tests/check-packs.test.ts`, `tests/example-rules.test.ts` and
-   `tests/readme-rules.test.ts` take the fixture; no test but `tests/compat.test.ts` and the
-   drift test reads this repository's `compat.yaml` into a tree; the tests that read this
-   repository as a whole keep doing so. Their assertions do not change.
+1. **Git's environment.** `isolatedGitEnv` drops every inherited `GIT_*` variable, as
+   `src/git.ts`'s `gitEnvironment` does, then sets `GIT_CONFIG_NOSYSTEM` and `GIT_CONFIG_GLOBAL`;
+   tests that pin dates keep passing them per call. No file under `src/` changes.
+2. **The fixture is `FROZEN_COMPAT`** (`tests/support/published-repo.ts`, 0.2.2 only), whose prefix
+   relation to the real file `tests/compat.test.ts` already holds; no new fixture file and no new
+   drift test. The three files write it into their trees (the `pack-install` variant built from
+   it), with their expected outcomes unchanged (the body's review ran them on it: unchanged).
+3. **No test but `tests/compat.test.ts` reads `REPO_ROOT`'s `compat.yaml` into a tree**; the tests
+   that read this repository as a whole (its lint, index and validate) keep doing so.
 4. **Red first** (dl-018), the red runs recorded:
-   - a test that sets the four variables in the environment it gives `isolatedGitEnv` (or in
-     `process.env`, restored after) and asserts the repository's commits carry the test identity;
-   - a guard, as task-040's, that fails on a read of `REPO_ROOT`'s `compat.yaml` outside its
-     allowlist, red on the three files;
-   - a simulated intake: the suite run on a scratch clone whose `compat.yaml` gains a release
-     with `pack-install`, failing before the fix and passing after (a recorded run, as task-040's
-     publication).
-5. **Green:** the whole suite passes, also with the four variables set in the shell; from clean
+   - a test that gives `isolatedGitEnv` an environment with the four identity variables,
+     `GIT_CONFIG_PARAMETERS` and `GIT_DIR` pointing at a decoy repository, and asserts that a
+     commit and a tag carry the test identity in all four fields (`%an`, `%ae`, `%cn`, `%ce`, the
+     tagger's name and email) and that the decoy is unchanged;
+   - a guard, as task-040's, failing on a read of `REPO_ROOT`'s `compat.yaml` outside its
+     allowlist (`tests/compat.test.ts` and the guard's own file), red on the three files;
+   - a simulated intake, a recorded run: a scratch clone whose `compat.yaml` appends a release
+     with `pack-install`; before the fix, the three files fail; after it, they pass, and the only
+     failures of the whole suite are the tests that check this repository as a whole
+     (`compat.test.ts`'s equalities and ranges, `index`'s up-to-date check, `check-packs`'s
+     "passes this repository", `validate`'s runs on this repository), listed by name.
+5. **Green:** the whole suite passes, also with the four identity variables,
+   `GIT_CONFIG_PARAMETERS` and `GIT_DIR` (at a decoy, left unchanged) set in the shell; from clean
    clones on Node.js 22.21.0 and 22.12.0, `npm ci`, `npm test`, `lint`, `check:pins`,
    `check:schemas`, `check:packs`, `validate`, `index -- --check` and `workflow list` exit 0;
    `compat.yaml`, `src/`, `packs/` and the expected fixtures unchanged; the CI run on the branch
@@ -67,3 +80,9 @@ rather than on its fixtures, found in plan-044 (task-040's publication runs and 
      command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019). -->
+- 2026-10-24: independent review of the body: approve after amendments. Applied: every inherited
+  `GIT_*` dropped (`GIT_CONFIG_PARAMETERS` and `GIT_DIR` shown to break or leak), the red test
+  covering them and all four identity fields; the simulated intake's expected outcome (the
+  whole-repository tests stay red after the fix, by design); `FROZEN_COMPAT` as the fixture, no
+  new drift test; the guard's allowlist; the departures from plan-045 step 5 recorded.
+
