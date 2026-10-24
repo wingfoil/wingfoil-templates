@@ -117,3 +117,7 @@ Rules:
   Execution Notes): the Node.js floor is tested in task 1 and in CI; the range subset's scope, and
   `semver` without `loose` or `includePrerelease`; fixed YAML output options with golden tests; two
   more alternatives (no `semver`, `commander`); T15 marked as an uncommitted note.
+- 2026-10-24, plan-045 (bug-004's review): the review above records `ajv`'s dependencies as MIT;
+  `fast-uri`, one of them, is BSD-3-Clause (at 3.1.8 then, at 3.1.9 since task-043), also
+  compatible with this repository's MIT. The body stays as approved.
+

@@ -57,4 +57,7 @@ each of the three folders moves, in the root and in 0.2.2, `body-parser` 2.3.0 â
   `body-parser`; six advisories on three packages; `fast-uri` as the one in adr-003's runtime tree,
   its two paths, and adr-003's review repeated for it; the reproduction's checks. Noticed, outside
   this bug: adr-003 records `ajv`'s dependencies as MIT, while `fast-uri` is BSD-3-Clause.
+- 2026-10-24: fixed by task-043, merged into `main` (`f5f084b`): the three lockfiles past the
+  advisories; `npm audit` 0 in the root and both matrix folders. `main`'s CI run 40082361897 on
+  `c12ae90`: `success`.
 

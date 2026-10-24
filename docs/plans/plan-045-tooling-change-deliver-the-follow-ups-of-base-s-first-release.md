@@ -139,4 +139,8 @@ close).
 - 2026-10-24, follow-up: adr-003 records `ajv`'s dependencies as MIT, while `fast-uri` is
   BSD-3-Clause (bug-004's review); its record is corrected by an Execution Note on adr-003 after
   task-043.
+- 2026-10-24: task-043 `done`, merged (`f5f084b`): the three lockfiles past bug-004's advisories.
+  CI run 40074670467 on the branch and 40082361897 on `main` (`c12ae90`): `success`. adr-003's
+  licence record corrected by an Execution Note. The approver ruled that plan-022, whose condition
+  (dl-015 ruled) plan-041 met, closes after W9, not in this plan. task-044 next.
 
