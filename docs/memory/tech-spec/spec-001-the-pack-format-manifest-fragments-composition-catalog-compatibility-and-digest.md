@@ -1225,4 +1225,3 @@ check the rest, and the composer refuses what they reject.
   least, the least form WingFoil 0.3.0 accepts (task-044's probe: no `frontmatter` and `{}` are
   refused); its table's row says "the defining pack's `required` is empty" in place of "declared
   none"; its "These fail composition" list and §18 gain the refusal. Nothing else changes.
-

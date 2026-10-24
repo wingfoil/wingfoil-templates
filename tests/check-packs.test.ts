@@ -790,7 +790,8 @@ describe('memory-fragment (spec-001 §7.5, §18)', () => {
         + '    template: { file: memory/templates/built-in/x.md }\n' } };
     const result = lint([...CLEAN, bare]);
     assert.deepEqual(rules(result), ['compose'], result.lines.join('\n'));
-    assert.match(result.lines.join('\n'), /type x.*template\.frontmatter\.required/);
+    assert.match(result.lines.join('\n'),
+      /type x.*template\.frontmatter\.required.*spec-001 §7\.5/);
   });
 
   for (const [label, frontmatter] of [['exempt', EXEMPT],

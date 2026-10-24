@@ -154,7 +154,7 @@ types:
     ['a redefined template file', /task.*stage\/x.*template\.file/, `
 types:
   task:
-    template: { file: memory/templates/built-in/other.md, frontmatter: { required: [] } }
+    template: { file: memory/templates/built-in/other.md }
 `],
     ['a states that replaces the machine', /task.*stage\/x/, `
 types:
