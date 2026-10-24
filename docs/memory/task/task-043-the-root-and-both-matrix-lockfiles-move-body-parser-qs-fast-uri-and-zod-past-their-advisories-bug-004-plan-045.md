@@ -2,7 +2,7 @@
 id: task-043-the-root-and-both-matrix-lockfiles-move-body-parser-qs-fast-uri-and-zod-past-their-advisories-bug-004-plan-045
 type: task
 title: "The root and both matrix lockfiles move body-parser, qs, fast-uri and zod past their advisories (bug-004, plan-045)"
-status: backlog
+status: in-progress
 pack: ""            # tooling task (bug-004; tooling-change › deliver, plan-045)
 depends_on: []
 tags: ["tooling","ci","dependencies"]
