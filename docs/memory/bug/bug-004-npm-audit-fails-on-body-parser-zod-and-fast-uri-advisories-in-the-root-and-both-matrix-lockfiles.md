@@ -2,7 +2,7 @@
 id: bug-004-npm-audit-fails-on-body-parser-zod-and-fast-uri-advisories-in-the-root-and-both-matrix-lockfiles
 type: bug
 title: "npm audit fails on body-parser, zod and fast-uri advisories in the root and both matrix lockfiles"
-status: pending
+status: approved
 severity: "major"        # critical | major | minor
 pack: ""            # tooling
 tags: ["tooling","ci","dependencies"]
