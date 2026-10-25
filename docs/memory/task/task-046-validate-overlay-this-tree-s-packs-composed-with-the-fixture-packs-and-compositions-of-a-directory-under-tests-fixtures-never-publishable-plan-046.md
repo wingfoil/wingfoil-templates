@@ -2,7 +2,7 @@
 id: task-046-validate-overlay-this-tree-s-packs-composed-with-the-fixture-packs-and-compositions-of-a-directory-under-tests-fixtures-never-publishable-plan-046
 type: task
 title: "validate --overlay: this tree's packs composed with the fixture packs and compositions of a directory under tests/fixtures/, never publishable (plan-046)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (pack-cycle › author, plan-046, ruling 1)
 depends_on: []
 tags: ["tooling","validate","software"]
@@ -214,3 +214,31 @@ so that the evidence reader's patterns (`src/evidence.ts`) hold.
   criterion 9 excepts criterion 7's characterization tests; `publish:pack`'s refusal stated as it
   is; the tree-relative paths kept whatever criterion 8's choice; criterion 6's READMEs; criterion
   3's "reached" pinned down. Submitted for the approver's acceptance into the backlog.
+- 2026-10-25, red (`a45b99f`): `node --test --test-name-pattern=overlay dist/tests/validate.test.js`
+  on Node.js 22.21: 11 of 12 failed, each on `Unknown option '--overlay'`; criterion 7's
+  characterization test (`publish:pack`, `index`, `site` refuse the option) passed.
+- 2026-10-25, green (`5efd108`): the whole suite 959 of 959 on Node.js 22.21. One red test changed
+  with the code: a composer error inside an overlay pack is now a YAML error in a workflow, since a
+  missing workflow file is reported by pack id, with no path for the mapping to show.
+- 2026-10-25, departures from the Design, no criterion changed: the tests move
+  `methodology/flow` into the overlay rather than a renamed copy; `lintContext(tree, broken,
+  problems)` rather than `lintContext(tree)`, as `runCheckPacks` holds both; `checkOverlay` also
+  runs `packLayoutProblems` on each overlay pack, so criterion 2's layout holds for a pack no
+  composition reaches.
+- 2026-10-25, build review: approve after amendments. Applied (`a155f3d`): given entries resolve on
+  the merged tree but no longer count as reaching an overlay pack (criterion 3); an absolute merged
+  path of an overlay pack maps to the overlay; a sentence-final path is mapped; `tests/fixtures`
+  resolved through its links; style. Tests after the code (dl-018 R2, the review's request):
+  schema failures of an overlay `pack.yaml` and `example.yaml`, `--param` on an overlay
+  composition, an overlay pack around a tree's pack (catalog pack ids do not nest, so its layout
+  refuses it before the shadowing check), entries not reaching, `validate:publication` with and
+  without `--evidence`. The fixes change behaviour: re-review requested (dl-017).
+- 2026-10-25, re-review: approve; nothing blocking. Applied its one fix: an absolute merged path is
+  mapped only at a path's end, so a tree pack whose id extends an overlay pack's
+  (`methodology/flow-x` beside `methodology/flow`) is never mapped into the overlay; a unit test
+  of `mapOverlayPaths`, exported for it, holds both passes.
+- 2026-10-25: checks from clean clones of `3c0b6a4` on Node.js 22.21.0 and 22.12.0: `npm ci`,
+  `npm test` 965 of 965, `lint`, `check:pins`, `check:schemas`, `check:packs`, `index -- --check`,
+  `validate` (this tree: 3 runs, 0 failed), the golden fixture's CI step (26 runs, 0 failed) and
+  `workflow list` exit 0 with no warning. CI run 40212289975 on the branch: `success`.
+  `in-progress → in-review`.
