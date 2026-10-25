@@ -1,0 +1,28 @@
+format: 1
+# The end-of-life slot's default: announce, deprecate the unreleased releases, archive.
+name: end-of-life
+kind: sub
+description: "Announce the end of the project, deprecate its unreleased releases, archive it"
+version: 1
+phases:
+  - name: announce
+    description: >-
+      A decision-log that announces the end of life and its date, approved by the approver.
+    role: product-owner
+    actions:
+      - 'memory.add(type: decision-log)'
+      - memory.submit
+    produces:
+      - { type: decision-log, path: "{{decision_log_path}}" }
+    approval: { by_role: approver }
+  - name: deprecate
+    description: "Deprecate every release not yet released."
+    role: tech-lead
+    actions:
+      - memory.deprecate
+    where: { type: release, status: [draft, planning, in-development, releasing] }
+  - name: archive
+    description: "Archive the repository and say where its records stay."
+    role: tech-lead
+    actions:
+      - agent.execute

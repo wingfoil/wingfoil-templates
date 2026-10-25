@@ -1,0 +1,5 @@
+format: 1
+assignments:
+  developer: [determinism]
+  reviewer: [determinism]
+  architect: [determinism]

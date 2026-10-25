@@ -1,0 +1,17 @@
+format: 1
+id: methodology/fixture
+axis: methodology
+name: fixture
+title: "Fixture"
+description: >-
+  A test fixture, never published: the smallest methodology whose delivery follows software's
+  contract, so that software composes and validates (dl-022 S6).
+version: 1.0.0
+formats:
+  workflow: 1
+requires:
+  - base@^1
+  - software@^1
+requires_capabilities: [workflow-engine]
+contents:
+  workflows: [delivery]

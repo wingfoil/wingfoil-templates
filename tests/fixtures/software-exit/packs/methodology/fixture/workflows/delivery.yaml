@@ -1,0 +1,24 @@
+format: 1
+# software's delivery contract (pack-foundation-software): one release created and moved to
+# in-development, the release slot included over it, then base's retrospective.
+name: delivery
+kind: sub
+description: "Plan one release, run the release slot over it, then the retrospective"
+version: 1
+phases:
+  - name: plan-release
+    description: >-
+      Add a release, giving its version and release-line as --set values (WingFoil 0.3.0 binds
+      only the type), and move it to in-development.
+    role: tech-lead
+    actions:
+      - 'memory.add(type: release)'
+      - element.set_state(in-development)
+    produces:
+      - { type: release, path: "{{release_path}}" }
+  - name: release
+    iterate_over: release
+    where: { status: [in-development] }
+    include: release
+  - name: retrospective
+    include: retrospective
