@@ -55,8 +55,9 @@ so that the evidence reader's patterns (`src/evidence.ts`) hold.
    way. An overlay pack whose path this tree's `packs/` already holds is refused (exit 1, naming
    the path): an overlay never shadows a pack of the tree. The overlay's packs pass every check
    the composer applies to a pack it composes (`resolve`'s inventory, format, layout and README
-   checks, the workflow rules, the merge). Every overlay pack is reached by at least one overlay
-   composition; one that is not is reported (exit 1, naming it), so no overlay pack goes
+   checks, the workflow rules, the merge). Every overlay pack is reached by the resolution of at
+   least one overlay composition (its entries or their `requires`, transitively) that criterion 4
+   does not skip; one that is not is reported (exit 1, naming it), so no overlay pack goes
    unchecked.
 4. **Its own checks.** `validate` checks the overlay's files that the tree's checks do not see:
    each `pack.yaml` and `example.yaml` against its schema; each `example.yaml`'s `id` against its
@@ -80,23 +81,27 @@ so that the evidence reader's patterns (`src/evidence.ts`) hold.
 6. **The tree unchanged.** With `--overlay`, the tree's `schemas:`, lint and `index:` lines and
    its own compositions are those of the same run without it. A test holds it on a temporary tree
    derived from the golden tree: its methodology packs and the compositions naming them removed,
-   its README's section 7 set to the exemption line (`EXEMPTION`, spec-002 §2.4), its index
+   and each pack README whose examples name a removed pack with its section 7 set to the
+   exemption line (`EXEMPTION`, spec-002 §2.4) and those examples' fixtures removed; its index
    regenerated so that `index -- --check` passes; its overlay, built in the test's temporary
    directory, holds a methodology and a composition of the tree's `software` with it. The tree's
    lint reports no problem, and the overlay's composition runs on the stub.
 7. **Never publishable.** `runValidate` refuses an overlay whenever its mode is `publication`,
-   with its own line, `--overlay: an overlay is never publishable (plan-046 ruling 1)`, exit 3:
-   so do `npm run validate:publication` (with or without `--evidence`) and `publish:pack`'s guard,
-   whose arguments reach the same parse. `publish:pack`, `index` and `site` take no `--overlay`
-   (their strict parsers refuse it, recorded as characterization tests, not red ones). No change to
-   `src/publish.ts`, `src/index*.ts`, `src/catalog*.ts` or `src/site*.ts`.
+   with its own line, `--overlay: an overlay is never publishable (plan-046 ruling 1)`, exit 3,
+   so `npm run validate:publication` refuses it, with or without `--evidence`; the refusal covers
+   any caller in publication mode. `publish:pack` refuses `--overlay` in its own parse, and its
+   guard builds its own arguments and could not pass one; `index` and `site` take no `--overlay`
+   either (their strict parsers refuse it): these are characterization tests, not red ones. No
+   change to `src/publish.ts`, `src/index*.ts`, `src/catalog*.ts` or `src/site*.ts`.
 8. **The composer's scope.** `composeTwice` and the composer read one tree (`--tree`), and
    `resolve`, `compose-documents`, `pack-files`, `layout-rules` and `readmeProblems` read files
    under it. The Design chooses how an overlay composition reaches them: a merged temporary tree
    built by `validate` (this tree's `packs/`, `catalog.yaml` and `compat.yaml` with the overlay's
    packs, never written inside the repository), or a second root taught to those modules; and it
-   states which. `npm run compose` gains no option.
-9. **Red first** (dl-018): the tests of criteria 1–7 are committed first and fail for the right
+   states which; either way, the report lines keep the tree-relative paths of the preamble (a
+   merged tree's paths mapped back). `npm run compose` gains no option.
+9. **Red first** (dl-018): the tests of criteria 1–7, except criterion 7's characterization
+   tests, are committed first and fail for the right
    reason (the behaviour or its own message missing; for criterion 7, the publication line), their
    failing count recorded in the Execution Notes; then the code.
 10. **Green.** From a clean clone on Node.js 22.21 and 22.12.0: `npm ci`, `npm test`,
@@ -127,3 +132,7 @@ so that the evidence reader's patterns (`src/evidence.ts`) hold.
   the preset format instead of spec-002 §2.4's, the composer's scope left to the Design, the
   option's path rules, the overlay lines' place and summary, the derived tree of criterion 6,
   `main`'s CI. Re-review requested.
+- 2026-10-25: re-review: approve after amendments, nothing blocking, no ruling changed. Applied:
+  criterion 9 excepts criterion 7's characterization tests; `publish:pack`'s refusal stated as it
+  is; the tree-relative paths kept whatever criterion 8's choice; criterion 6's READMEs; criterion
+  3's "reached" pinned down. Submitted for the approver's acceptance into the backlog.
