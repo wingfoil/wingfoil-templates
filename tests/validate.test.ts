@@ -816,7 +816,8 @@ describe('npm run validate --overlay (task-046, plan-046 ruling 1)', () => {
   it('names an overlay pack by its path in the tree, never the temporary tree\'s', () => {
     withTree((tree) => {
       moveFlow(tree);
-      rmSync(join(tree, OVERLAY, 'packs', 'methodology', 'flow', 'workflows', 'flow-board.yaml'));
+      writeFileSync(join(tree, OVERLAY, 'packs', 'methodology', 'flow', 'workflows',
+        'flow-board.yaml'), 'format: 1\nname: [flow-board\n');
     }, (tree) => {
       const result = validate(['--tree', tree, ...NAME, '--overlay', OVERLAY]);
       assert.equal(result.code, 1, result.lines.join('\n'));

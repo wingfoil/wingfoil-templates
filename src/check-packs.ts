@@ -155,6 +155,25 @@ const GROUPS: readonly ((context: LintContext, earlier: Problem[]) => Problem[])
   schemaNoteGroup,
 ];
 
+/**
+ * The context the rule groups read: the tree's layout (its problems added to `problems`), its
+ * catalog when it loads, and the packs whose pack.yaml loads and passes its schema. `validate`
+ * builds one on its merged tree for an overlay's compositions (task-046).
+ */
+export function lintContext(tree: string, broken: Set<string>, problems: Problem[]): LintContext {
+  const layout = treeLayout(tree);
+  problems.push(...layout.problems);
+  let catalog: Catalog | undefined;
+  if (existsSync(join(tree, 'catalog.yaml')) && !broken.has('catalog.yaml')) {
+    try {
+      catalog = loadCatalog(join(tree, 'catalog.yaml'));
+    } catch (error) {
+      if (!(error instanceof CatalogError) && !(error instanceof YamlError)) throw error;
+    }
+  }
+  return { tree, catalog, broken, files: new Map(), packs: loadPacks(tree, layout.packs, problems) };
+}
+
 export interface CheckPacksOptions {
   /**
    * Report each file that failed its schema as a `schema` problem, so that the command alone
@@ -177,18 +196,7 @@ export function runCheckPacks(tree: string, options: CheckPacksOptions = {}): Ch
           message: `${file} fails its schema; npm run check:schemas names the problems` });
       }
     }
-    const layout = treeLayout(tree);
-    problems.push(...layout.problems);
-    let catalog: Catalog | undefined;
-    if (existsSync(join(tree, 'catalog.yaml')) && !broken.has('catalog.yaml')) {
-      try {
-        catalog = loadCatalog(join(tree, 'catalog.yaml'));
-      } catch (error) {
-        if (!(error instanceof CatalogError) && !(error instanceof YamlError)) throw error;
-      }
-    }
-    const context: LintContext = { tree, catalog, broken, files: new Map(),
-      packs: loadPacks(tree, layout.packs, problems) };
+    const context = lintContext(tree, broken, problems);
     for (const group of GROUPS) problems.push(...group(context, problems));
     const sorted = sortProblems(problems);
     const checked = checkedFiles(tree);

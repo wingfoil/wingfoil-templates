@@ -1,28 +1,41 @@
 // `npm run validate`: the one validation command (F3.1). In one pass: the schema checks of the
 // tree's files, then every preset and the given entries, each composed twice and compared (F3.4),
 // then run through the compatibility matrix (F3.3, task-011) in the mode the caller fixes. The
-// report lines are stable: the release evidence of plan-015 task 11 reads them.
-import { existsSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+// report lines are stable: the release evidence of plan-015 task 11 reads them. With --overlay
+// (task-046, plan-046 ruling 1), the packs and compositions of a directory under tests/fixtures/
+// are composed with this tree's packs, on a merged temporary tree; never in publication mode.
+import {
+  cpSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync,
+  rmSync, statSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
+import { isAbsolute, join, relative, sep } from 'node:path';
 import { parseArgs } from 'node:util';
 
 import { CatalogError, loadCatalog, softwarePack } from './catalog';
 import type { Catalog } from './catalog';
 import { findFiles, runCheckSchemas } from './check-schemas';
-import { runCheckPacks } from './check-packs';
+import { lintContext, runCheckPacks } from './check-packs';
 import { CompatError, loadCompat } from './compat';
 import type { Compat } from './compat';
 import { composeTwice, type DeterminismOptions } from './determinism';
 import { exampleFiles } from './examples';
 import { runIndex } from './index';
+import { packLayoutProblems, treeLayout } from './layout-rules';
 import {
   DEFAULT_CACHE, MATRIX_PINS, MatrixIoError, installRelease, runRelease, selectReleases,
 } from './matrix';
 import type { MatrixMode } from './matrix';
+import { formatProblem, sortProblems } from './problems';
+import type { Problem } from './problems';
 import type { VersionRequirements } from './range';
 import { ResolveError, resolve } from './resolve';
 import type { ResolvedPack } from './resolve';
+import { repositorySchemas } from './schemas';
+import { secretProblems } from './secret-rules';
+import { presetChecks } from './tree-rules';
 import { YamlError, loadYamlFile } from './yaml-load';
+import { yamlProblems } from './yaml-rules';
 
 export interface ValidateOptions extends Omit<DeterminismOptions, 'use'> {
   /** Fixed by the entry point, never by argv or the data (dl-009); no default. */
@@ -51,7 +64,27 @@ interface Composition {
   skip?: boolean;
   /** A leg without software: the preset's values it dropped (plan-039 R5). */
   dropped?: string[];
+  /** The skip line's reason, when not the lint's. */
+  skipReason?: string;
+  /** An overlay's composition: the merged tree it resolves and composes on (task-046). */
+  overlay?: boolean;
 }
+
+/** The overlay of a run (task-046): the directory, its path in the tree, and the merged tree. */
+interface Overlay {
+  dir: string;
+  /** Relative to the tree, with `/` separators. */
+  rel: string;
+  /** Its pack paths under packs/, in byte order. */
+  packs: string[];
+  /** The temporary directory holding the merged tree; removed when the run ends. */
+  root: string;
+  merged: string;
+}
+
+/** The line of plan-046 ruling 1: an overlay never reaches a publication. */
+export const OVERLAY_PUBLICATION =
+  '--overlay: an overlay is never publishable (plan-046 ruling 1)';
 
 function parseParams(raw: string[]): Map<string, string> {
   const values = new Map<string, string>();
@@ -70,6 +103,7 @@ interface Args {
   params: Map<string, string>;
   entries: string[];
   cache: string;
+  overlay: string | undefined;
 }
 
 function parse(argv: string[]): Args {
@@ -80,12 +114,15 @@ function parse(argv: string[]): Args {
         tree: { type: 'string' },
         param: { type: 'string', multiple: true },
         cache: { type: 'string' },
+        overlay: { type: 'string', multiple: true },
       },
       allowPositionals: true,
       strict: true,
     });
+    const overlays = values.overlay ?? [];
+    if (overlays.length > 1) throw new UsageError('--overlay is given more than once');
     return { tree: values.tree ?? process.cwd(), params: parseParams(values.param ?? []),
-      entries: positionals, cache: values.cache ?? DEFAULT_CACHE };
+      entries: positionals, cache: values.cache ?? DEFAULT_CACHE, overlay: overlays[0] };
   } catch (error) {
     if (error instanceof UsageError) throw error;
     throw new UsageError(error instanceof Error ? error.message : String(error));
@@ -197,7 +234,223 @@ class Matrix {
   }
 }
 
+function posix(path: string): string {
+  return path.split(sep).join('/');
+}
+
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * A line from the merged tree, as this tree names it: the merged tree's own path becomes the
+ * tree's, and `packs/<p>` of an overlay pack `<p>` becomes `<overlay>/packs/<p>`.
+ */
+function mapOverlayPaths(text: string, tree: string, overlay: Overlay): string {
+  let mapped = text.split(overlay.merged).join(tree);
+  for (const pack of [...overlay.packs].sort((a, b) => b.length - a.length)) {
+    const pattern = new RegExp(`(^|[\\s'"\`(])packs/${escapeRegExp(pack)}(?=$|[/\\s'"\`):,;])`,
+      'g');
+    mapped = mapped.replace(pattern, (_match, lead: string) =>
+      `${lead}${overlay.rel}/packs/${pack}`);
+  }
+  return mapped;
+}
+
+/** The overlay `--overlay` names, or the exit code and line that refuse it (criterion 1). */
+function openOverlay(tree: string, given: string): Overlay | { code: number; line: string } {
+  const dir = isAbsolute(given) ? given : join(tree, given);
+  if (!existsSync(dir) || !statSync(dir).isDirectory()) {
+    return { code: 2, line: `${given}: not a directory` };
+  }
+  const real = realpathSync(dir);
+  const base = realpathSync(tree);
+  const fixtures = join(base, 'tests', 'fixtures');
+  if (!real.startsWith(`${fixtures}${sep}`)) {
+    return { code: 3, line: `--overlay ${given}: not under tests/fixtures/` };
+  }
+  if (`${real}${sep}`.startsWith(`${join(fixtures, 'examples')}${sep}`)) {
+    return { code: 3, line: `--overlay ${given}: under tests/fixtures/examples/, which the tree's `
+      + 'lint covers' };
+  }
+  const root = mkdtempSync(join(tmpdir(), 'validate-overlay-'));
+  return { dir: real, rel: posix(relative(base, real)), packs: [], root,
+    merged: join(root, 'tree') };
+}
+
+interface OverlayCheck {
+  checked: number;
+  problems: Problem[];
+  /** Its compositions' example.yaml, relative to the tree, in the byte order of their ids. */
+  files: string[];
+  /** An overlay pack shadows a pack of the tree: no composition of the overlay runs. */
+  shadowed: boolean;
+}
+
+/** Every regular file under a directory, relative to it, links not followed. */
+function overlayFiles(dir: string, rel = ''): string[] {
+  return readdirSync(join(dir, rel)).sort(byBytes).flatMap((name) => {
+    const path = rel === '' ? name : `${rel}/${name}`;
+    const stat = lstatSync(join(dir, path));
+    if (stat.isDirectory()) return overlayFiles(dir, path);
+    return stat.isFile() ? [path] : [];
+  });
+}
+
+/**
+ * The overlay's own checks (criteria 2–4), and the merged tree they leave: this tree's packs/,
+ * catalog.yaml and compat.yaml, and the overlay's packs that shadow none of the tree's.
+ */
+function checkOverlay(tree: string, overlay: Overlay): OverlayCheck {
+  const problems: Problem[] = [];
+  const inOverlay = (problem: Problem): Problem => ({ ...problem,
+    file: `${overlay.rel}/${problem.file}`,
+    message: problem.message.replace(/(^|[\s'"`(])packs\//g,
+      (_match, lead: string) => `${lead}${overlay.rel}/packs/`) });
+  for (const name of readdirSync(overlay.dir).sort(byBytes)) {
+    const stat = lstatSync(join(overlay.dir, name));
+    if ((name === 'packs' || name === 'compositions') && stat.isDirectory()) continue;
+    problems.push({ file: `${overlay.rel}/${name}`, rule: 'overlay-layout',
+      message: 'an overlay holds packs/ and compositions/ only (task-046)' });
+  }
+  const layout = treeLayout(overlay.dir);
+  overlay.packs = layout.packs;
+  problems.push(...layout.problems.map(inOverlay));
+  for (const pack of layout.packs) {
+    problems.push(...packLayoutProblems(overlay.dir, { id: pack, path: `packs/${pack}` })
+      .map(inOverlay));
+  }
+  const held = treeLayout(tree).packs;
+  let shadowed = false;
+  mkdirSync(overlay.merged);
+  if (existsSync(join(tree, 'packs'))) {
+    cpSync(join(tree, 'packs'), join(overlay.merged, 'packs'), { recursive: true });
+  }
+  for (const file of ['catalog.yaml', 'compat.yaml']) {
+    if (existsSync(join(tree, file))) cpSync(join(tree, file), join(overlay.merged, file));
+  }
+  for (const pack of layout.packs) {
+    const shadows = held.filter((other) => other === pack || pack.startsWith(`${other}/`)
+      || other.startsWith(`${pack}/`));
+    for (const other of shadows) {
+      problems.push({ file: `${overlay.rel}/packs/${pack}`, rule: 'overlay-shadow',
+        message: `this tree's packs/ already holds packs/${other}: an overlay never shadows a `
+          + 'pack of the tree (plan-046 ruling 1)' });
+    }
+    if (shadows.length > 0) {
+      shadowed = true;
+      continue;
+    }
+    cpSync(join(overlay.dir, 'packs', pack), join(overlay.merged, 'packs', pack),
+      { recursive: true });
+  }
+  const schemas = repositorySchemas();
+  const schemaProblems = (file: string, kind: 'pack' | 'preset', data: unknown,
+    positionOf: (pointer: string) => { line: number; column: number }): Problem[] =>
+    schemas.validate(kind, data).map((error) => ({ file, rule: 'schema',
+      ...positionOf(error.instancePath),
+      message: `${error.instancePath || '/'} ${error.keyword}: ${error.message ?? ''}` }));
+  for (const pack of layout.packs) {
+    const file = `${overlay.rel}/packs/${pack}/pack.yaml`;
+    try {
+      const yaml = loadYamlFile(join(overlay.dir, 'packs', pack, 'pack.yaml'), file);
+      problems.push(...schemaProblems(file, 'pack', yaml.data, (pointer) =>
+        yaml.positionOf(pointer)));
+    } catch (error) {
+      if (!(error instanceof YamlError) || error.reason === 'io') throw error;
+      problems.push({ file, rule: 'parse', message: error.message });
+    }
+  }
+  const files: string[] = [];
+  const compositions = join(overlay.dir, 'compositions');
+  if (existsSync(compositions) && lstatSync(compositions).isDirectory()) {
+    for (const id of readdirSync(compositions).sort(byBytes)) {
+      const rel = `${overlay.rel}/compositions/${id}`;
+      const stat = lstatSync(join(compositions, id));
+      if (!stat.isDirectory()) {
+        problems.push({ file: rel, rule: 'overlay-layout',
+          message: 'compositions/ holds one directory per composition (task-046)' });
+        continue;
+      }
+      for (const name of readdirSync(join(compositions, id)).sort(byBytes)) {
+        if (name === 'example.yaml') continue;
+        problems.push({ file: `${rel}/${name}`, rule: 'overlay-layout',
+          message: 'a composition\'s directory holds its example.yaml only (task-046)' });
+      }
+      const example = join(compositions, id, 'example.yaml');
+      if (!existsSync(example) || !lstatSync(example).isFile()) {
+        problems.push({ file: `${rel}/example.yaml`, rule: 'overlay-layout',
+          message: 'missing: a composition is an example.yaml (task-046)' });
+        continue;
+      }
+      files.push(`${rel}/example.yaml`);
+    }
+  }
+  const context = lintContext(overlay.merged, new Set(), []);
+  for (const file of files) {
+    let yaml;
+    try {
+      yaml = loadYamlFile(join(tree, file), file);
+    } catch (error) {
+      if (!(error instanceof YamlError) || error.reason === 'io') throw error;
+      problems.push({ file, rule: 'parse', message: error.message });
+      continue;
+    }
+    const loaded = yaml;
+    const invalid = schemaProblems(file, 'preset', loaded.data, (pointer) =>
+      loaded.positionOf(pointer));
+    problems.push(...invalid);
+    if (invalid.length > 0) continue;
+    const data = loaded.data as { id: string; profile?: unknown };
+    const id = file.split('/').at(-2) ?? '';
+    if (data.id !== id) {
+      problems.push({ file, rule: 'overlay-composition',
+        message: `id ${JSON.stringify(data.id)} is not its directory's name, ${id} (task-046)` });
+    }
+    if (data.profile !== undefined) {
+      problems.push({ file, rule: 'overlay-composition',
+        message: 'an overlay composition has no profile (task-046)' });
+    }
+    problems.push(...yamlProblems(file, loaded), ...presetChecks(context, loaded));
+  }
+  const all = overlayFiles(overlay.dir);
+  for (const file of all) {
+    problems.push(...secretProblems(`${overlay.rel}/${file}`,
+      readFileSync(join(overlay.dir, file), 'utf8')));
+  }
+  return { checked: all.length, problems: sortProblems(problems), files, shadowed };
+}
+
 export function runValidate(argv: string[], options: ValidateOptions): ValidateResult {
+  const mode = options.mode;
+  let args: Args;
+  try {
+    args = parse(argv);
+  } catch (error) {
+    return { code: 3, lines: [messageOf(error)], mode, tolerated: [] };
+  }
+  // plan-046 ruling 1: an overlay never reaches a publication, whoever calls in this mode.
+  if (args.overlay !== undefined && mode === 'publication') {
+    return { code: 3, lines: [OVERLAY_PUBLICATION], mode, tolerated: [] };
+  }
+  if (!existsSync(args.tree) || !statSync(args.tree).isDirectory()) {
+    return { code: 2, lines: [`${args.tree}: not a directory`], mode, tolerated: [] };
+  }
+  let overlay: Overlay | undefined;
+  if (args.overlay !== undefined) {
+    const opened = openOverlay(args.tree, args.overlay);
+    if ('line' in opened) return { code: opened.code, lines: [opened.line], mode, tolerated: [] };
+    overlay = opened;
+  }
+  try {
+    return validateTree(args, options, overlay);
+  } finally {
+    if (overlay !== undefined) rmSync(overlay.root, { recursive: true, force: true });
+  }
+}
+
+function validateTree(args: Args, options: ValidateOptions, overlay: Overlay | undefined):
+ValidateResult {
   const mode = options.mode;
   const lines: string[] = [];
   let code = 0;
@@ -205,15 +458,6 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     code = Math.max(code, level);
     lines.push(line);
   };
-  let args: Args;
-  try {
-    args = parse(argv);
-  } catch (error) {
-    return { code: 3, lines: [messageOf(error)], mode, tolerated: [] };
-  }
-  if (!existsSync(args.tree) || !statSync(args.tree).isDirectory()) {
-    return { code: 2, lines: [`${args.tree}: not a directory`], mode, tolerated: [] };
-  }
   const cache = args.cache;
   // The matrix's lines come after the composition lines, in their own block.
   const matrixLines: string[] = [];
@@ -255,6 +499,20 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
       if (index.code === 1 && index.lines.length === 1) fail(1, index.lines[0] ?? '');
       else lines.push(index.lines[0] ?? '');
       for (const line of index.lines.slice(1)) fail(1, line);
+    }
+  }
+
+  // The overlay's own checks (task-046), after the tree's: its files, which the tree's do not see.
+  let overlayCheck: OverlayCheck | undefined;
+  if (overlay !== undefined) {
+    try {
+      overlayCheck = checkOverlay(args.tree, overlay);
+      lines.push(`overlay: checked ${count(overlayCheck.checked, 'file')}, `
+        + `${count(overlayCheck.problems.length, 'problem')}`);
+      for (const problem of overlayCheck.problems) fail(1, formatProblem(problem));
+      if (overlayCheck.files.length === 0) fail(1, 'overlay: no composition');
+    } catch (error) {
+      fail(2, `overlay: ${messageOf(error)}`);
     }
   }
 
@@ -316,7 +574,31 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     }
   }
   if (args.entries.length > 0) {
-    compositions.push({ label: 'entries', entries: args.entries, preset: {} });
+    compositions.push({ label: 'entries', entries: args.entries, preset: {},
+      overlay: overlay !== undefined });
+  }
+  // The overlay's compositions (task-046), after the tree's, in the byte order of their ids.
+  if (overlayCheck !== undefined) {
+    const check = overlayCheck;
+    const reportedHere = (file: string): boolean => {
+      const dir = file.slice(0, file.lastIndexOf('/'));
+      return check.shadowed || check.problems.some((problem) => problem.file === file
+        || problem.file === dir || problem.file.startsWith(`${dir}/`));
+    };
+    for (const file of check.files) {
+      if (reportedHere(file)) {
+        unjudged = true;
+        compositions.push({ label: file, entries: [], preset: {}, skip: true, overlay: true,
+          skipReason: 'the overlay\'s checks report it' });
+        continue;
+      }
+      try {
+        compositions.push({ ...presetComposition(args.tree, file), overlay: true });
+      } catch (error) {
+        unjudged = true;
+        fail(error instanceof YamlError && error.reason !== 'syntax' ? 2 : 1, messageOf(error));
+      }
+    }
   }
 
   const used = new Set<string>();
@@ -336,6 +618,13 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     }
   }
   let composed = 0;
+  /** The pack paths the overlay's compositions resolved (task-046). */
+  const reached = new Set<string>();
+  const treeOf = (composition: Composition): string =>
+    composition.overlay === true && overlay !== undefined ? overlay.merged : args.tree;
+  const mapped = (composition: Composition, text: string): string =>
+    composition.overlay === true && overlay !== undefined
+      ? mapOverlayPaths(text, args.tree, overlay) : text;
   // plan-039 R6: the packs with a conditional part, and whether a composition with software ran.
   const parted = new Map<string, boolean>();
   /** Composes one composition twice and runs the matrix; its packs when they resolved. */
@@ -343,7 +632,7 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     const label = `composition ${composition.label}`;
     const skipped = (): void => { matrixLines.push(`matrix ${composition.label}: skipped`); };
     if (composition.skip === true) {
-      lines.push(`${label}: skipped, the lint reports it`);
+      lines.push(`${label}: skipped, ${composition.skipReason ?? 'the lint reports it'}`);
       skipped();
       return { ran: false };
     }
@@ -352,8 +641,9 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     let requirements: VersionRequirements[];
     let packs: ResolvedPack[];
     try {
-      const resolved = packsOf(args.tree, catalog, composition.entries);
+      const resolved = packsOf(treeOf(composition), catalog, composition.entries);
       packs = resolved.packs;
+      if (composition.overlay === true) for (const pack of packs) reached.add(pack.path);
       requirements = resolved.requirements;
       params = { ...composition.preset };
       for (const [name, value] of args.params) {
@@ -366,13 +656,14 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
       }
     } catch (error) {
       unjudged = true;
-      fail(1, `${label}: ${messageOf(error)}`);
+      fail(1, `${label}: ${mapped(composition, messageOf(error))}`);
       skipped();
       return { ran: false };
     }
     // The matrix runs inside the determinism check, on its first output.
     let ran = false;
-    const result = composeTwice({ tree: args.tree, entries: composition.entries, params }, {
+    const result = composeTwice({ tree: treeOf(composition), entries: composition.entries,
+      params }, {
       ...options,
       use: (output) => {
         if (compat === undefined) return;
@@ -381,7 +672,7 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
       },
     });
     if (result.code !== 0) {
-      fail(result.code, `${label}: ${result.message}`);
+      fail(result.code, `${label}: ${mapped(composition, result.message)}`);
       skipped();
       return { packs, ran: false };
     }
@@ -424,9 +715,9 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     const label = `${composition.label}[-software]`;
     let without: ResolvedPack[];
     try {
-      without = resolve(args.tree, catalog, entries);
+      without = resolve(treeOf(composition), catalog, entries);
     } catch (error) {
-      fail(1, `composition ${label}: ${messageOf(error)}`);
+      fail(1, `composition ${label}: ${mapped(composition, messageOf(error))}`);
       matrixLines.push(`matrix ${label}: skipped`);
       continue;
     }
@@ -438,7 +729,8 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
     const dropped = Object.keys(composition.preset).filter((name) => !declared.has(name)).sort();
     const preset = Object.fromEntries(Object.entries(composition.preset)
       .filter(([name]) => declared.has(name)));
-    const leg = runOne({ label, entries, preset, dropped });
+    const leg = runOne({ label, entries, preset, dropped,
+      ...composition.overlay === true ? { overlay: true } : {} });
     record(leg.packs, leg.ran);
   }
   if (mode === 'publication') {
@@ -447,6 +739,13 @@ export function runValidate(argv: string[], options: ValidateOptions): ValidateR
         fail(1, `matrix: ${id} has a conditional part and no composition with software that ran `
           + '(plan-039 R6)');
       }
+    }
+  }
+  if (overlay !== undefined && overlayCheck !== undefined) {
+    for (const pack of overlay.packs) {
+      if (reached.has(`packs/${pack}`)) continue;
+      fail(1, formatProblem({ file: `${overlay.rel}/packs/${pack}`, rule: 'overlay-unreached',
+        message: 'no overlay composition reaches it (plan-046 ruling 1)' }));
     }
   }
   for (const name of unjudged ? [] : args.params.keys()) {
