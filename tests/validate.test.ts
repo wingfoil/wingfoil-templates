@@ -12,7 +12,7 @@ import { MatrixIoError } from '../src/matrix';
 import { runIndex } from '../src/index';
 import { runPublish } from '../src/publish';
 import { runSite } from '../src/site';
-import { runValidate } from '../src/validate';
+import { mapOverlayPaths, runValidate } from '../src/validate';
 import type { ValidateOptions, ValidateResult } from '../src/validate';
 import { writePack } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
@@ -912,6 +912,16 @@ describe('npm run validate --overlay (task-046, plan-046 ruling 1)', () => {
       assert.equal(result.status, 3, result.stderr);
       assert.equal(result.stdout, `${PUBLICATION_LINE}\n`);
     }
+  });
+
+  it('maps an overlay pack\'s paths to the overlay, and no other pack\'s', () => {
+    const overlay = { merged: '/tmp/m/tree', rel: OVERLAY, packs: ['methodology/flow'] };
+    assert.equal(mapOverlayPaths('/tmp/m/tree/packs/methodology/flow/a.yaml: x; '
+      + '/tmp/m/tree/packs/methodology/flow-x/b.yaml: y', '/repo', overlay),
+    `/repo/${OVERLAY}/packs/methodology/flow/a.yaml: x; /repo/packs/methodology/flow-x/b.yaml: y`);
+    assert.equal(mapOverlayPaths('see packs/methodology/flow. And packs/methodology/flow-x.',
+      '/repo', overlay),
+    `see ${OVERLAY}/packs/methodology/flow. And packs/methodology/flow-x.`);
   });
 
   it('leaves --overlay to validate alone: publish:pack, index and site refuse it', () => {

@@ -233,3 +233,7 @@ so that the evidence reader's patterns (`src/evidence.ts`) hold.
   composition, an overlay pack around a tree's pack (catalog pack ids do not nest, so its layout
   refuses it before the shadowing check), entries not reaching, `validate:publication` with and
   without `--evidence`. The fixes change behaviour: re-review requested (dl-017).
+- 2026-10-25, re-review: approve; nothing blocking. Applied its one fix: an absolute merged path is
+  mapped only at a path's end, so a tree pack whose id extends an overlay pack's
+  (`methodology/flow-x` beside `methodology/flow`) is never mapped into the overlay; a unit test
+  of `mapOverlayPaths`, exported for it, holds both passes.

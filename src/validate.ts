@@ -248,17 +248,19 @@ function escapeRegExp(text: string): string {
  * A line from the merged tree, as this tree names it: the merged tree's own path becomes the
  * tree's, and `packs/<p>` of an overlay pack `<p>` becomes `<overlay>/packs/<p>`.
  */
-function mapOverlayPaths(text: string, tree: string, overlay: Overlay): string {
+export function mapOverlayPaths(text: string, tree: string,
+  overlay: Pick<Overlay, 'merged' | 'packs' | 'rel'>): string {
   const packs = [...overlay.packs].sort((a, b) => b.length - a.length);
+  // A path ends at a separator, a quote, a closing mark, or a sentence's last full stop.
+  const end = '(?=$|[/\\s\'"`):,;]|\\.(?=$|\\s))';
   let mapped = text;
   for (const pack of packs) {
-    mapped = mapped.split(`${overlay.merged}/packs/${pack}`)
-      .join(`${tree}/${overlay.rel}/packs/${pack}`);
+    mapped = mapped.replace(new RegExp(`${escapeRegExp(`${overlay.merged}/packs/${pack}`)}${end}`,
+      'g'), () => `${tree}/${overlay.rel}/packs/${pack}`);
   }
   mapped = mapped.split(overlay.merged).join(tree);
   for (const pack of packs) {
-    const pattern = new RegExp(`(^|[\\s'"\`(])packs/${escapeRegExp(pack)}`
-      + '(?=$|[/\\s\'"`):,;]|\\.(?=$|\\s))', 'g');
+    const pattern = new RegExp(`(^|[\\s'"\`(])packs/${escapeRegExp(pack)}${end}`, 'g');
     mapped = mapped.replace(pattern, (_match, lead: string) =>
       `${lead}${overlay.rel}/packs/${pack}`);
   }
