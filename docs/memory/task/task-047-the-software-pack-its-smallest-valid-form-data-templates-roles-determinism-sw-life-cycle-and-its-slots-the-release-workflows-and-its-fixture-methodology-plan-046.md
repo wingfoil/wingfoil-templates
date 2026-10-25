@@ -243,3 +243,10 @@ and dl-019 is not needed.
   whose `end-of-life` row and WingFoil step-key table no longer match the pack (the `approve`
   phase, a new step key), is recorded at plan-046's close (step 4) and reported with the key
   mapping, not amended mid-task. On WingFoil 0.3.0 the overlay run still gives 4 runs, 0 failed.
+- 2026-10-25: checks from clean clones of `2b80b1e` on Node.js 22.21.0 and 22.12.0: `npm ci`,
+  `npm test` 967 of 967, `lint`, `check:pins`, `check:schemas`, `check:packs`, `index -- --check`,
+  `validate` (3 runs, 0 failed), the golden fixture's step (26 runs, 0 failed),
+  `validate -- --overlay tests/fixtures/software-exit` (4 runs, 0 failed) and `workflow list`
+  exit 0 with no warning. Privacy grep of `git diff main`: no local path, no private project, only
+  a `*.example` address. CI run 40232352598 on the branch: `success`.
+  `in-progress → in-review`.
