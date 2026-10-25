@@ -237,3 +237,8 @@ so that the evidence reader's patterns (`src/evidence.ts`) hold.
   mapped only at a path's end, so a tree pack whose id extends an overlay pack's
   (`methodology/flow-x` beside `methodology/flow`) is never mapped into the overlay; a unit test
   of `mapOverlayPaths`, exported for it, holds both passes.
+- 2026-10-25: checks from clean clones of `3c0b6a4` on Node.js 22.21.0 and 22.12.0: `npm ci`,
+  `npm test` 965 of 965, `lint`, `check:pins`, `check:schemas`, `check:packs`, `index -- --check`,
+  `validate` (this tree: 3 runs, 0 failed), the golden fixture's CI step (26 runs, 0 failed) and
+  `workflow list` exit 0 with no warning. CI run 40212289975 on the branch: `success`.
+  `in-progress → in-review`.
