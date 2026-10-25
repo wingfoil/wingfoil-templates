@@ -1,13 +1,16 @@
 import { strict as assert } from 'node:assert';
 import {
-  chmodSync, cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
+  chmodSync, cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { after, describe, it } from 'node:test';
 
+import { EXEMPTION } from '../src/examples';
 import { MatrixIoError } from '../src/matrix';
 import { runIndex } from '../src/index';
+import { runPublish } from '../src/publish';
+import { runSite } from '../src/site';
 import { runValidate } from '../src/validate';
 import type { ValidateOptions, ValidateResult } from '../src/validate';
 import { writePack } from './support/pack-tree';
@@ -563,3 +566,270 @@ describe('npm run validate: both legs of a conditional part (spec-001 §15, plan
       });
   });
 
+
+describe('npm run validate --overlay (task-046, plan-046 ruling 1)', () => {
+  const OVERLAY = 'tests/fixtures/overlay';
+  const CORE = `${OVERLAY}/compositions/core-team/example.yaml`;
+  const DELIVERY = `${OVERLAY}/compositions/delivery-team/example.yaml`;
+  const PUBLICATION_LINE = '--overlay: an overlay is never publishable (plan-046 ruling 1)';
+
+  /** Moves a pack of the tree into the overlay. */
+  function movePack(tree: string, path: string): void {
+    cpSync(join(tree, 'packs', path), join(tree, OVERLAY, 'packs', path), { recursive: true });
+    rmSync(join(tree, 'packs', path), { recursive: true });
+  }
+
+  /** Writes an overlay composition. */
+  function writeComposition(tree: string, id: string, body: string): void {
+    mkdirSync(join(tree, OVERLAY, 'compositions', id), { recursive: true });
+    writeFileSync(join(tree, OVERLAY, 'compositions', id, 'example.yaml'), body);
+  }
+
+  /** methodology/flow and its two examples move from the golden tree into the overlay. */
+  function moveFlow(tree: string): void {
+    movePack(tree, 'methodology/flow');
+    for (const id of ['core-team', 'delivery-team']) {
+      writeComposition(tree, id, readFileSync(join(tree, 'tests', 'fixtures', 'examples', 'flow',
+        id, 'example.yaml'), 'utf8'));
+    }
+    rmSync(join(tree, 'tests', 'fixtures', 'examples', 'flow'), { recursive: true });
+  }
+
+  /** Section 7 of a README keeps the named examples, or the exemption line when none is left. */
+  function keepExamples(readme: string, keep: string[]): void {
+    const text = readFileSync(readme, 'utf8');
+    const start = text.indexOf('## Examples\n');
+    const end = text.indexOf('\n## ', start + 1);
+    assert.ok(start >= 0 && end > start, readme);
+    const parts = text.slice(start, end).split('\n### ').slice(1)
+      .filter((part) => keep.includes(part.slice(0, part.indexOf('\n'))));
+    const body = parts.length === 0 ? `\n${EXEMPTION}\n`
+      : parts.map((part) => `\n### ${part.trimEnd()}\n`).join('');
+    writeFileSync(readme, `${text.slice(0, start)}## Examples\n${body}${text.slice(end)}`);
+  }
+
+  /** The golden tree with no methodology: criterion 6's tree; the overlay holds kanban. */
+  function withoutMethodology(tree: string): void {
+    movePack(tree, 'methodology/kanban');
+    rmSync(join(tree, 'packs', 'methodology'), { recursive: true });
+    rmSync(join(tree, 'presets'), { recursive: true });
+    replaceIn(join(tree, 'catalog.yaml'),
+      'presets:\n  - { id: golden, path: presets/golden.yaml }\n', 'presets: []\n');
+    writeComposition(tree, 'delivery-team', readFileSync(join(tree, 'tests', 'fixtures',
+      'examples', 'software', 'delivery-team', 'example.yaml'), 'utf8'));
+    const examples = join(tree, 'tests', 'fixtures', 'examples');
+    for (const pack of ['agent-first', 'flow', 'kanban', 'lean', 'production', 'software',
+      'web-service']) {
+      rmSync(join(examples, pack), { recursive: true });
+    }
+    rmSync(join(examples, 'base', 'kanban-team'), { recursive: true });
+    keepExamples(join(tree, 'packs', 'base', 'README.md'), ['core-only']);
+    for (const pack of ['team-mode/agent-first', 'phase/inception/lean', 'stage/production',
+      'software', 'blueprint/web-service']) {
+      keepExamples(join(tree, 'packs', pack, 'README.md'), []);
+    }
+  }
+
+  const treeLines = (result: ValidateResult): string[] => result.lines.filter((line) =>
+    /^(schemas|lint|index):/.test(line)
+    || (line.startsWith('composition ') && !line.startsWith(`composition ${OVERLAY}/`)));
+
+  it('composes the overlay\'s compositions after the tree\'s, in id order, with their legs', () => {
+    withTree(moveFlow, (tree) => {
+      const result = validate(['--tree', tree, ...NAME, '--overlay', OVERLAY]);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      const composed = result.lines.filter((line) => line.startsWith('composition '));
+      const labels = [CORE, `${CORE}[+software]`, DELIVERY, `${DELIVERY}[-software]`];
+      assert.deepEqual(composed.slice(-4).map((line) => line.slice('composition '.length,
+        line.indexOf(': '))), labels, result.lines.join('\n'));
+      for (const line of composed.slice(-4)) assert.match(line, /: composed twice, /);
+      // The golden preset and its eight examples left, then the overlay's four.
+      assert.ok(result.lines.includes('compositions: 13'), result.lines.join('\n'));
+      for (const label of labels) {
+        assert.ok(result.lines.includes(
+          `matrix ${label} wingfoil@0.3.0 workflow list: pass (self-test)`), label);
+      }
+      const index = result.lines.findIndex((line) => line.startsWith('index:'));
+      const overlay = result.lines.findIndex((line) => line.startsWith('overlay: '));
+      assert.ok(index >= 0 && overlay === index + 1, result.lines.join('\n'));
+      assert.match(result.lines[overlay] ?? '', /^overlay: checked \d+ files, 0 problems$/);
+    });
+  });
+
+  it('leaves the tree\'s lines as a run without the overlay has them', () => {
+    withTree(moveFlow, (tree) => {
+      const without = validate(['--tree', tree, ...NAME]);
+      const withOverlay = validate(['--tree', tree, ...NAME, '--overlay', OVERLAY]);
+      assert.equal(without.code, 0, without.lines.join('\n'));
+      assert.deepEqual(treeLines(withOverlay), treeLines(without));
+    });
+  });
+
+  it('keeps the exemption line of a tree with no methodology, whose overlay holds one', () => {
+    withTree(withoutMethodology, (tree) => {
+      const without = validate(['--tree', tree, ...NAME]);
+      assert.equal(without.code, 0, without.lines.join('\n'));
+      assert.ok(without.lines.some((line) => /^lint: checked \d+ files, 0 problems$/.test(line)),
+        without.lines.join('\n'));
+      const result = validate(['--tree', tree, ...NAME, '--overlay', OVERLAY]);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      assert.deepEqual(treeLines(result), treeLines(without));
+      assert.ok(result.lines.some((line) => line.startsWith(`composition ${DELIVERY}: composed `
+        + 'twice, ')), result.lines.join('\n'));
+    });
+  });
+
+  it('refuses an overlay in publication mode, before any check', () => {
+    for (const argv of [['--overlay', OVERLAY], ['--overlay', 'missing', '--tree', TREE]]) {
+      const result = validate(argv, { mode: 'publication' });
+      assert.equal(result.code, 3);
+      assert.deepEqual(result.lines, [PUBLICATION_LINE]);
+    }
+  });
+
+  it('takes one overlay, under tests/fixtures/ and outside tests/fixtures/examples/', () => {
+    withTree(moveFlow, (tree) => {
+      const outside = mkdtempSync(join(tmpdir(), 'overlay-outside-'));
+      try {
+        mkdirSync(join(tree, 'elsewhere'));
+        symlinkSync(outside, join(tree, 'tests', 'fixtures', 'link'));
+        const usage: [string[], RegExp][] = [
+          [['--overlay', OVERLAY, '--overlay', OVERLAY], /^--overlay is given more than once$/],
+          [['--overlay', 'elsewhere'], /^--overlay elsewhere: not under tests\/fixtures\/$/],
+          [['--overlay', 'tests/fixtures/examples/base'],
+            /^--overlay tests\/fixtures\/examples\/base: under tests\/fixtures\/examples\//],
+          [['--overlay', 'tests/fixtures/link'],
+            /^--overlay tests\/fixtures\/link: not under tests\/fixtures\/$/],
+        ];
+        for (const [argv, line] of usage) {
+          const result = validate(['--tree', tree, ...NAME, ...argv]);
+          assert.equal(result.code, 3, `${argv.join(' ')}: ${result.lines.join('\n')}`);
+          assert.match(result.lines.join('\n'), line);
+        }
+        const missing = validate(['--tree', tree, ...NAME, '--overlay', 'tests/fixtures/none']);
+        assert.equal(missing.code, 2);
+        assert.deepEqual(missing.lines, ['tests/fixtures/none: not a directory']);
+        const absolute = validate(['--tree', tree, ...NAME, '--overlay', join(tree, OVERLAY)]);
+        assert.equal(absolute.code, 0, absolute.lines.join('\n'));
+      } finally {
+        rmSync(outside, { recursive: true, force: true });
+      }
+    });
+  });
+
+  it('reports what the overlay\'s layout does not allow', () => {
+    const cases: [(tree: string) => void, string][] = [
+      [(tree) => writeFileSync(join(tree, OVERLAY, 'notes.md'), 'x\n'), `${OVERLAY}/notes.md`],
+      [(tree) => writeFileSync(join(tree, OVERLAY, 'packs', 'stray.txt'), 'x\n'),
+        `${OVERLAY}/packs/stray.txt`],
+      [(tree) => writeFileSync(join(tree, OVERLAY, 'compositions', 'x.yaml'), 'x: 1\n'),
+        `${OVERLAY}/compositions/x.yaml`],
+      [(tree) => writeFileSync(join(tree, OVERLAY, 'compositions', 'core-team', 'extra.md'), 'x\n'),
+        `${OVERLAY}/compositions/core-team/extra.md`],
+      [(tree) => replaceIn(join(tree, CORE), 'id: core-team', 'id: other-team'), CORE],
+      [(tree) => replaceIn(join(tree, CORE), 'packs:', 'profile: "a profile"\npacks:'), CORE],
+    ];
+    for (const [edit, named] of cases) {
+      withTree((tree) => { moveFlow(tree); edit(tree); }, (tree) => {
+        const result = validate(['--tree', tree, ...NAME, '--overlay', OVERLAY]);
+        assert.equal(result.code, 1, `${named}: ${result.lines.join('\n')}`);
+        assert.ok(result.lines.some((line) => line.startsWith(named)), `${named}: `
+          + result.lines.join('\n'));
+      });
+    }
+  });
+
+  it('never lets an overlay pack shadow a pack of the tree', () => {
+    withTree((tree) => {
+      moveFlow(tree);
+      cpSync(join(tree, 'packs', 'methodology', 'kanban'),
+        join(tree, OVERLAY, 'packs', 'methodology', 'kanban'), { recursive: true });
+    }, (tree) => {
+      const result = validate(['--tree', tree, ...NAME, '--overlay', OVERLAY]);
+      assert.equal(result.code, 1, result.lines.join('\n'));
+      assert.ok(result.lines.some((line) => line.startsWith(`${OVERLAY}/packs/methodology/kanban`)
+        && line.includes(' packs/methodology/kanban')), result.lines.join('\n'));
+    });
+  });
+
+  it('reports an overlay pack no composition reaches, and an overlay with no composition', () => {
+    withTree((tree) => {
+      moveFlow(tree);
+      rmSync(join(tree, OVERLAY, 'compositions', 'delivery-team'), { recursive: true });
+      replaceIn(join(tree, CORE), 'methodology/flow@^1', 'base@^1');
+    }, (tree) => {
+      const result = validate(['--tree', tree, ...NAME, '--overlay', OVERLAY]);
+      assert.equal(result.code, 1, result.lines.join('\n'));
+      assert.ok(result.lines.some((line) => line.startsWith(`${OVERLAY}/packs/methodology/flow`)
+        && line.includes('no overlay composition reaches it')), result.lines.join('\n'));
+    });
+    withTree((tree) => {
+      moveFlow(tree);
+      rmSync(join(tree, OVERLAY, 'compositions'), { recursive: true });
+    }, (tree) => {
+      const result = validate(['--tree', tree, ...NAME, '--overlay', OVERLAY]);
+      assert.equal(result.code, 1, result.lines.join('\n'));
+      assert.ok(result.lines.includes('overlay: no composition'), result.lines.join('\n'));
+    });
+  });
+
+  it('checks the overlay compositions\' values and skips the ones it reports', () => {
+    const cases: [string, string][] = [
+      ['an undeclared parameter', 'parameters:\n  no_such_parameter: "x"\n'],
+      ['a value of the wrong YAML type', 'parameters:\n  wip_limit: "3"\n'],
+    ];
+    for (const [what, parameters] of cases) {
+      withTree((tree) => {
+        moveFlow(tree);
+        // kanban stays in the tree: an overlay composition may name the tree's packs.
+        writeComposition(tree, 'core-team', 'format: 1\nid: core-team\ntitle: "Core team"\n'
+          + 'description: "A fictional team on a board."\npacks:\n  - methodology/kanban@^1\n'
+          + parameters);
+      }, (tree) => {
+        const result = validate(['--tree', tree, ...NAME, '--param', 'unknown_name=1',
+          '--overlay', OVERLAY]);
+        assert.equal(result.code, 1, `${what}: ${result.lines.join('\n')}`);
+        assert.ok(result.lines.some((line) => line.startsWith(`${CORE}:`)), what);
+        assert.ok(result.lines.some((line) => line.startsWith(`composition ${CORE}: skipped, `)),
+          `${what}: ${result.lines.join('\n')}`);
+        assert.ok(result.lines.includes(`matrix ${CORE}: skipped`), what);
+        assert.ok(!result.lines.some((line) => line.startsWith('--param unknown_name')),
+          `${what}: the --param names stay unjudged`);
+      });
+    }
+  });
+
+  it('runs the secret rules over the overlay\'s files', () => {
+    withTree((tree) => {
+      moveFlow(tree);
+      writeFileSync(join(tree, OVERLAY, 'packs', 'methodology', 'flow', 'CHANGELOG.md'),
+        `# Changelog\n\nkey: ${['AK', 'IA', 'ABCDEFGH23456789'].join('')}\n`);
+    }, (tree) => {
+      const result = validate(['--tree', tree, ...NAME, '--overlay', OVERLAY]);
+      assert.equal(result.code, 1, result.lines.join('\n'));
+      assert.ok(result.lines.some((line) =>
+        line.startsWith(`${OVERLAY}/packs/methodology/flow/CHANGELOG.md`)),
+      result.lines.join('\n'));
+    });
+  });
+
+  it('names an overlay pack by its path in the tree, never the temporary tree\'s', () => {
+    withTree((tree) => {
+      moveFlow(tree);
+      rmSync(join(tree, OVERLAY, 'packs', 'methodology', 'flow', 'workflows', 'flow-board.yaml'));
+    }, (tree) => {
+      const result = validate(['--tree', tree, ...NAME, '--overlay', OVERLAY]);
+      assert.equal(result.code, 1, result.lines.join('\n'));
+      assert.ok(result.lines.some((line) => line.startsWith(`composition ${CORE}: `)
+        && line.includes(`${OVERLAY}/packs/methodology/flow`)), result.lines.join('\n'));
+      assert.ok(!result.lines.some((line) => line.includes(tmpdir()) && !line.includes(tree)),
+        result.lines.join('\n'));
+    });
+  });
+
+  it('leaves --overlay to validate alone: publish:pack, index and site refuse it', () => {
+    assert.equal(runPublish(['--pack', 'base', '--overlay', OVERLAY]).code, 3);
+    assert.equal(runIndex(['--overlay', OVERLAY]).code, 3);
+    assert.equal(runSite(['--overlay', OVERLAY]).code, 3);
+  });
+});
