@@ -17,8 +17,10 @@ phases:
     produces:
       - { type: release, path: "{{release_path}}" }
   - name: release
+    description: "The release slot, over each release in development."
     iterate_over: release
     where: { status: [in-development] }
     include: release
   - name: retrospective
+    description: "base's retrospective."
     include: retrospective

@@ -14,7 +14,9 @@ methodology: it holds the adr, tech-spec, bug, release and release-line types, t
 `end-of-life`), the release workflows `release-submit` and `release-publishing`, the
 `determinism` directive and the software roles (architect, developer, reviewer, qa, tech-lead).
 The methodology fills `delivery`, which creates the releases and runs the `release` slot over
-them. A project that is not software, such as a choir or a book, takes `base` alone. Every phase
+them. It serves every adoption profile of a software project (solo developer, code reviewer, team
+developer, tech lead, non-technical manager, architect), since every software composition contains
+it. A project that is not software, such as a choir or a book, takes `base` alone. Every phase
 pack requires `software`.
 
 ## Install and update
@@ -36,7 +38,7 @@ methodology, with a WingFoil release in the pack's range (see its catalog entry)
 3. Copy the composed `.wingfoil/` files into the project's `.wingfoil/`, keeping its `custom/`
    folders, then re-add to `dna.yaml`, `memory.yaml`, `roles.yaml` and `workflows.yaml` the
    project's own entries; copy the generated AGENTS.md region into its `AGENTS.md`.
-4. Remove the `determinism` directive WingFoil's `init` wrote under `directives/custom/`: a
+4. Remove the `determinism` directive WingFoil 0.3.0's `init` wrote under `directives/custom/`: a
    `custom/` file wins over the pack's.
 5. Migrate by explicit commits the elements whose state has another name in `software` (for
    example a `bug` on the default machine: `pending` → `open`, `approved` → `planned`).
@@ -65,7 +67,8 @@ methodology, with a WingFoil release in the pack's range (see its catalog entry)
 ### Workflows
 
 - `end-of-life` (sub)
-  - `announce`, role `product-owner`, gate `approver`
+  - `announce`, role `product-owner`
+  - `approve`, role `approver`, gate `approver`
   - `deprecate`, role `tech-lead`
   - `archive`, role `tech-lead`
 - `inception` (sub)
@@ -140,14 +143,16 @@ None yet: no methodology pack is published.
 
 ## Sources and adaptations
 
-- WingFoil 0.3.0's own configuration: the state names and gates of `adr`, `tech-spec`, `bug`,
+- WingFoil's own configuration, as of 0.3.0: the state names and gates of `adr`, `tech-spec`, `bug`,
   `release` and `release-line`. `software` keeps `waiting` only where WingFoil 0.3.0 drives the
   edge for every project (`supersedes:`), so `bug` moves with `submit` and `approve`.
-- WingFoil's `release-submit` and `release-publishing`: their eight phase names, roles and order;
-  the phases whose work is the project's own (checks, commit, rehearsal, tag) run as agent work,
-  and a project binds its own commands to them.
-- WingFoil's `end-of-life`: its three phases; its software life cycle's `sunset` is
-  `end-of-life` here.
+- WingFoil's `release-submit` and `release-publishing`, as of 0.3.0: their eight phase names and
+  their order; the phases whose work is the project's own (checks, commit, rehearsal, tag) run as
+  agent work, and a project that runs its own commands there gives those phases its own tokens and
+  binds them in its `workflows/bindings.yaml`.
+- WingFoil's `end-of-life`, as of 0.3.0: its three phases, with an `approve` phase after
+  `announce` that moves the decision-log to `ready`, as `base`'s `decision-log-ingest` does; its
+  software life cycle's `sunset` is `end-of-life` here.
 - wingfoil-templates' own `inception` and `specification` defaults: minimal, naming no method,
   for a phase pack to replace.
 
@@ -155,4 +160,3 @@ None yet: no methodology pack is published.
 
 - [Changelog](CHANGELOG.md)
 - [Catalog entry](https://github.com/wingfoil/wingfoil-templates/blob/main/CATALOG.md#pack-software)
-- 1.0.0: first version.

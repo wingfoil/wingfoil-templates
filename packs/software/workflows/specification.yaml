@@ -18,8 +18,8 @@ phases:
       The approver rules the tech-spec specify submitted; the step closes once none is pending. A
       reject goes back to specify.
     role: approver
+    where: { type: tech-spec, status: [pending] }
     actions:
       - memory.approve
-    where: { type: tech-spec, status: [pending] }
     approval: { by_role: approver }
     fallback: { step: specify }

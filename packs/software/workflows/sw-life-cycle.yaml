@@ -7,10 +7,14 @@ description: "Inception, specification, delivery and end of life of a software p
 version: 1
 phases:
   - name: inception
+    description: "The inception slot: a phase pack's workflow, or the default."
     include: inception
   - name: specification
+    description: "The specification slot: a phase pack's workflow, or the default."
     include: specification
   - name: delivery
+    description: "The delivery slot: the methodology's workflow."
     include: delivery
   - name: end-of-life
+    description: "The end-of-life slot: a phase pack's workflow, or the default."
     include: end-of-life

@@ -73,7 +73,7 @@ None: a test fixture.
 
 ## Sources and adaptations
 
-None: written for this repository's tests.
+None: written for this catalog.
 
 ## Versions
 

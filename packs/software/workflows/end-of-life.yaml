@@ -14,7 +14,14 @@ phases:
       - memory.submit
     produces:
       - { type: decision-log, path: "{{decision_log_path}}" }
+  - name: approve
+    description: "The approver rules the announcement; a reject goes back to announce."
+    role: approver
+    actions:
+      - memory.approve
+    where: { type: decision-log, status: [in-discussion] }
     approval: { by_role: approver }
+    fallback: { step: announce }
   - name: deprecate
     description: "Deprecate every release not yet released."
     role: tech-lead

@@ -1,7 +1,8 @@
 format: 1
 id: defaults
 title: "Defaults"
-description: "Kestrel Ledger, a fictional accounting tool, keeps every software parameter on its default."
+description: >-
+  Kestrel Ledger, a fictional accounting tool, keeps every software parameter on its default.
 packs:
   - software@^1
   - methodology/fixture@^1

@@ -215,3 +215,23 @@ and dl-019 is not needed.
   release phases keep their step keys; `agent.execute` on the four with no artefact is the pack's
   default, and a project with its own tokens for those phases binds them in its own
   `bindings.yaml`. Submitted for the approver's acceptance into the backlog.
+- 2026-10-25, red (`35b23d1`): on Node.js 22.21, six tests failed before `packs/software` and its
+  fixture existed: the index (4 → 5 files), the lint (23 → 42) and `validate`'s (schemas 3 → 4,
+  lint 23 → 42) counts of this repository, the CI step, the fixture README's generated sections
+  (the file missing) and the overlay run on this repository.
+- 2026-10-25, green (`fff34d3`): the six pass; `lint`, `check:packs` (42 files, 0 problems),
+  `check:schemas` (4 files), `index -- --check` (5 files) exit 0;
+  `npm run validate -- --overlay tests/fixtures/software-exit` on WingFoil 0.3.0: the defaults
+  composition composed twice byte-identical in 30 files, `compositions: 4`,
+  `matrix: self-test, 4 runs, 0 failed, tolerance applied: none`, no warning.
+- 2026-10-25, build review: approve after amendments. Applied: README section 9 without a version
+  line (spec-002 §2.2); section 2 names the adoption profiles (§2.1); section 8 names the source's
+  edition and no longer credits WingFoil with the roles, and says how a project binds its own
+  commands; `init`'s stub named for 0.3.0; a description on every include phase; the fixture's
+  lines and its "Sources" line; the directive's pinning rule. The approver ruled in chat
+  (2026-10-25), on the review's point that `announce`'s approval left the decision-log
+  `in-discussion`: `end-of-life` gains an `approve` phase after `announce` (approver,
+  `memory.approve` on `where: { type: decision-log, status: [in-discussion] }`,
+  `fallback: { step: announce }`), as `base`'s `decision-log-ingest`; criterion 6 reads with it,
+  its text unchanged (dl-019), and `end-of-life`'s step keys gain `approve`. The fixes change
+  behaviour: re-review requested (dl-017).
