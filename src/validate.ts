@@ -66,8 +66,10 @@ interface Composition {
   dropped?: string[];
   /** The skip line's reason, when not the lint's. */
   skipReason?: string;
-  /** An overlay's composition: the merged tree it resolves and composes on (task-046). */
+  /** Resolved and composed on the overlay's merged tree (task-046). */
   overlay?: boolean;
+  /** One of the overlay's compositions or its leg: its packs count as reached (criterion 3). */
+  reaches?: boolean;
 }
 
 /** The overlay of a run (task-046): the directory, its path in the tree, and the merged tree. */
@@ -247,10 +249,16 @@ function escapeRegExp(text: string): string {
  * tree's, and `packs/<p>` of an overlay pack `<p>` becomes `<overlay>/packs/<p>`.
  */
 function mapOverlayPaths(text: string, tree: string, overlay: Overlay): string {
-  let mapped = text.split(overlay.merged).join(tree);
-  for (const pack of [...overlay.packs].sort((a, b) => b.length - a.length)) {
-    const pattern = new RegExp(`(^|[\\s'"\`(])packs/${escapeRegExp(pack)}(?=$|[/\\s'"\`):,;])`,
-      'g');
+  const packs = [...overlay.packs].sort((a, b) => b.length - a.length);
+  let mapped = text;
+  for (const pack of packs) {
+    mapped = mapped.split(`${overlay.merged}/packs/${pack}`)
+      .join(`${tree}/${overlay.rel}/packs/${pack}`);
+  }
+  mapped = mapped.split(overlay.merged).join(tree);
+  for (const pack of packs) {
+    const pattern = new RegExp(`(^|[\\s'"\`(])packs/${escapeRegExp(pack)}`
+      + '(?=$|[/\\s\'"`):,;]|\\.(?=$|\\s))', 'g');
     mapped = mapped.replace(pattern, (_match, lead: string) =>
       `${lead}${overlay.rel}/packs/${pack}`);
   }
@@ -265,7 +273,8 @@ function openOverlay(tree: string, given: string): Overlay | { code: number; lin
   }
   const real = realpathSync(dir);
   const base = realpathSync(tree);
-  const fixtures = join(base, 'tests', 'fixtures');
+  const declared = join(base, 'tests', 'fixtures');
+  const fixtures = existsSync(declared) ? realpathSync(declared) : declared;
   if (!real.startsWith(`${fixtures}${sep}`)) {
     return { code: 3, line: `--overlay ${given}: not under tests/fixtures/` };
   }
@@ -507,6 +516,8 @@ ValidateResult {
   if (overlay !== undefined) {
     try {
       overlayCheck = checkOverlay(args.tree, overlay);
+      // The count is of these checks' problems; `overlay: no composition` and an unreached pack
+      // (after the compositions) are reported on their own lines.
       lines.push(`overlay: checked ${count(overlayCheck.checked, 'file')}, `
         + `${count(overlayCheck.problems.length, 'problem')}`);
       for (const problem of overlayCheck.problems) fail(1, formatProblem(problem));
@@ -593,7 +604,7 @@ ValidateResult {
         continue;
       }
       try {
-        compositions.push({ ...presetComposition(args.tree, file), overlay: true });
+        compositions.push({ ...presetComposition(args.tree, file), overlay: true, reaches: true });
       } catch (error) {
         unjudged = true;
         fail(error instanceof YamlError && error.reason !== 'syntax' ? 2 : 1, messageOf(error));
@@ -643,7 +654,7 @@ ValidateResult {
     try {
       const resolved = packsOf(treeOf(composition), catalog, composition.entries);
       packs = resolved.packs;
-      if (composition.overlay === true) for (const pack of packs) reached.add(pack.path);
+      if (composition.reaches === true) for (const pack of packs) reached.add(pack.path);
       requirements = resolved.requirements;
       params = { ...composition.preset };
       for (const [name, value] of args.params) {
@@ -730,7 +741,8 @@ ValidateResult {
     const preset = Object.fromEntries(Object.entries(composition.preset)
       .filter(([name]) => declared.has(name)));
     const leg = runOne({ label, entries, preset, dropped,
-      ...composition.overlay === true ? { overlay: true } : {} });
+      ...composition.overlay === true ? { overlay: true } : {},
+      ...composition.reaches === true ? { reaches: true } : {} });
     record(leg.packs, leg.ran);
   }
   if (mode === 'publication') {

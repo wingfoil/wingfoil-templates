@@ -171,7 +171,8 @@ export function lintContext(tree: string, broken: Set<string>, problems: Problem
       if (!(error instanceof CatalogError) && !(error instanceof YamlError)) throw error;
     }
   }
-  return { tree, catalog, broken, files: new Map(), packs: loadPacks(tree, layout.packs, problems) };
+  return { tree, catalog, broken, files: new Map(),
+    packs: loadPacks(tree, layout.packs, problems) };
 }
 
 export interface CheckPacksOptions {

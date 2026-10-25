@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+import { spawnSync } from 'node:child_process';
 import {
   chmodSync, cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync,
 } from 'node:fs';
@@ -566,7 +567,6 @@ describe('npm run validate: both legs of a conditional part (spec-001 §15, plan
       });
   });
 
-
 describe('npm run validate --overlay (task-046, plan-046 ruling 1)', () => {
   const OVERLAY = 'tests/fixtures/overlay';
   const CORE = `${OVERLAY}/compositions/core-team/example.yaml`;
@@ -826,6 +826,92 @@ describe('npm run validate --overlay (task-046, plan-046 ruling 1)', () => {
       assert.ok(!result.lines.some((line) => line.includes(tmpdir()) && !line.includes(tree)),
         result.lines.join('\n'));
     });
+  });
+
+  it('reports a schema failure of an overlay pack.yaml or example.yaml, and skips it', () => {
+    const cases: [(tree: string) => void, string][] = [
+      [(tree) => replaceIn(join(tree, OVERLAY, 'packs', 'methodology', 'flow', 'pack.yaml'),
+        'version: 1.0.0', 'version: 1.0.0\nbogus: 1'),
+      `${OVERLAY}/packs/methodology/flow/pack.yaml:`],
+      [(tree) => replaceIn(join(tree, CORE), 'title: "Core team"\n', ''), `${CORE}:`],
+    ];
+    for (const [edit, named] of cases) {
+      withTree((tree) => { moveFlow(tree); edit(tree); }, (tree) => {
+        const result = validate(['--tree', tree, ...NAME, '--overlay', OVERLAY]);
+        assert.equal(result.code, 1, `${named} ${result.lines.join('\n')}`);
+        assert.ok(result.lines.some((line) => line.startsWith(named)
+          && line.includes(': schema: ')), `${named} ${result.lines.join('\n')}`);
+      });
+    }
+    withTree((tree) => {
+      moveFlow(tree);
+      replaceIn(join(tree, CORE), 'title: "Core team"\n', '');
+    }, (tree) => {
+      const result = validate(['--tree', tree, ...NAME, '--overlay', OVERLAY]);
+      assert.ok(result.lines.some((line) => line.startsWith(`composition ${CORE}: skipped, `)),
+        result.lines.join('\n'));
+    });
+  });
+
+  it('applies --param to the overlay compositions as to an example', () => {
+    withTree((tree) => {
+      moveFlow(tree);
+      replaceIn(join(tree, CORE), 'packs:', 'parameters:\n  project_name: "Core"\npacks:');
+    }, (tree) => {
+      const result = validate(['--tree', tree, ...NAME, '--overlay', OVERLAY]);
+      assert.equal(result.code, 1, result.lines.join('\n'));
+      assert.ok(result.lines.includes(`composition ${CORE}: --param project_name overrides the `
+        + 'value the preset sets'), result.lines.join('\n'));
+    });
+    withTree((tree) => {
+      moveFlow(tree);
+      replaceIn(join(tree, OVERLAY, 'packs', 'methodology', 'flow', 'pack.yaml'), 'contents:',
+        'parameters:\n  board_name: { type: string, default: "Board", description: "The board" }\n'
+        + 'contents:');
+    }, (tree) => {
+      const result = validate(['--tree', tree, ...NAME, '--param', 'board_name=Main',
+        '--overlay', OVERLAY]);
+      assert.ok(!result.lines.some((line) => line.startsWith('--param board_name')),
+        result.lines.join('\n'));
+    });
+  });
+
+  // Catalog pack ids do not nest, so an overlay pack around a tree's pack fails its layout first.
+  it('refuses an overlay pack that would hold a pack of the tree', () => {
+    withTree((tree) => {
+      moveFlow(tree);
+      cpSync(join(tree, OVERLAY, 'packs', 'methodology', 'flow'),
+        join(tree, OVERLAY, 'packs', 'phase', 'inception'), { recursive: true });
+    }, (tree) => {
+      const result = validate(['--tree', tree, ...NAME, '--overlay', OVERLAY]);
+      assert.equal(result.code, 1, result.lines.join('\n'));
+      assert.ok(result.lines.some((line) =>
+        line.startsWith(`${OVERLAY}/packs/phase/inception/pack.yaml: layout: `)
+        && line.includes('phase/inception is not a catalog pack id')), result.lines.join('\n'));
+    });
+  });
+
+  it('counts only the overlay\'s compositions as reaching its packs, not given entries', () => {
+    withTree((tree) => {
+      moveFlow(tree);
+      rmSync(join(tree, OVERLAY, 'compositions', 'delivery-team'), { recursive: true });
+      replaceIn(join(tree, CORE), 'methodology/flow@^1', 'base@^1');
+    }, (tree) => {
+      const result = validate(['--tree', tree, ...NAME, '--overlay', OVERLAY,
+        'methodology/flow']);
+      assert.ok(result.lines.some((line) => line.startsWith(`${OVERLAY}/packs/methodology/flow`)
+        && line.includes('no overlay composition reaches it')), result.lines.join('\n'));
+    });
+  });
+
+  it('is refused by npm run validate:publication, with or without --evidence', () => {
+    const cli = join(REPO_ROOT, 'dist', 'src', 'validate-publication-cli.js');
+    for (const extra of [[], ['--evidence']]) {
+      const result = spawnSync(process.execPath, [cli, '--tree', TREE, '--overlay', OVERLAY,
+        ...extra], { encoding: 'utf8' });
+      assert.equal(result.status, 3, result.stderr);
+      assert.equal(result.stdout, `${PUBLICATION_LINE}\n`);
+    }
   });
 
   it('leaves --overlay to validate alone: publish:pack, index and site refuse it', () => {
