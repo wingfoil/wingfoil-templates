@@ -2,7 +2,7 @@
 id: task-046-validate-overlay-this-tree-s-packs-composed-with-the-fixture-packs-and-compositions-of-a-directory-under-tests-fixtures-never-publishable-plan-046
 type: task
 title: "validate --overlay: this tree's packs composed with the fixture packs and compositions of a directory under tests/fixtures/, never publishable (plan-046)"
-status: approved
+status: done
 pack: ""            # tooling task (pack-cycle › author, plan-046, ruling 1)
 depends_on: []
 tags: ["tooling","validate","software"]
