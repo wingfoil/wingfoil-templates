@@ -235,3 +235,11 @@ and dl-019 is not needed.
   `fallback: { step: announce }`), as `base`'s `decision-log-ingest`; criterion 6 reads with it,
   its text unchanged (dl-019), and `end-of-life`'s step keys gain `approve`. The fixes change
   behaviour: re-review requested (dl-017).
+- 2026-10-25, re-review: approve, nothing blocking. Its two points, ruled by the approver in chat
+  (2026-10-25): `end-of-life`'s announcement is tagged `end-of-life` (`memory.add(type:
+  decision-log, tags: [end-of-life])`, the description saying to pass `--tags`, since WingFoil
+  0.3.0 binds only `type`, F-034) and `approve` selects it by that tag, as `base`'s
+  `retrospective` does, so no other decision-log in discussion is ruled there; and the charter,
+  whose `end-of-life` row and WingFoil step-key table no longer match the pack (the `approve`
+  phase, a new step key), is recorded at plan-046's close (step 4) and reported with the key
+  mapping, not amended mid-task. On WingFoil 0.3.0 the overlay run still gives 4 runs, 0 failed.

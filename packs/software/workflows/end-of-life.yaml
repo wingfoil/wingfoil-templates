@@ -1,5 +1,5 @@
 format: 1
-# The end-of-life slot's default: announce, deprecate the unreleased releases, archive.
+# The end-of-life slot's default: announce and approve, deprecate the unreleased releases, archive.
 name: end-of-life
 kind: sub
 description: "Announce the end of the project, deprecate its unreleased releases, archive it"
@@ -7,19 +7,21 @@ version: 1
 phases:
   - name: announce
     description: >-
-      A decision-log that announces the end of life and its date, approved by the approver.
+      A decision-log tagged end-of-life that announces the end of life and its date, submitted for
+      discussion: pass --tags end-of-life to memory add, since the approve phase selects the
+      decision-log by that tag.
     role: product-owner
     actions:
-      - 'memory.add(type: decision-log)'
+      - 'memory.add(type: decision-log, tags: [end-of-life])'
       - memory.submit
     produces:
       - { type: decision-log, path: "{{decision_log_path}}" }
   - name: approve
     description: "The approver rules the announcement; a reject goes back to announce."
     role: approver
+    where: { type: decision-log, status: [in-discussion], tags: [end-of-life] }
     actions:
       - memory.approve
-    where: { type: decision-log, status: [in-discussion] }
     approval: { by_role: approver }
     fallback: { step: announce }
   - name: deprecate
