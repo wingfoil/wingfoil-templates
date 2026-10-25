@@ -164,3 +164,8 @@ the composition and the matrix (dl-018, pack tasks).
   `generatedSections`; the counts; README section 3 generic, the adopters' rows left in the
   charter as `base`'s README does (the reviewer's suggestion, the approver's choice); small
   precisions; the CI step's `if`. Re-review requested.
+- 2026-10-25: re-review: approve, nothing blocking, no ruling changed; section 3's generic
+  procedure is the charter's Adoption ("Any project"). Its optional point, recorded here: the eight
+  release phases keep their step keys; `agent.execute` on the four with no artefact is the pack's
+  default, and a project with its own tokens for those phases binds them in its own
+  `bindings.yaml`. Submitted for the approver's acceptance into the backlog.
