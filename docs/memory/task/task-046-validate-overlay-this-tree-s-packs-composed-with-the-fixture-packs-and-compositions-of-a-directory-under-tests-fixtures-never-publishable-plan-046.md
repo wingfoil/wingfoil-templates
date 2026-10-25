@@ -116,7 +116,85 @@ so that the evidence reader's patterns (`src/evidence.ts`) hold.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+- **Criterion 8's choice: a merged temporary tree.** With `--overlay`, `validate` builds, under
+  `os.tmpdir()` (`mkdtemp`, removed in a `finally`), a tree holding a copy of this tree's
+  `packs/`, `catalog.yaml` and `compat.yaml` and the overlay's `packs/` copied into the same
+  `packs/`. The overlay's compositions, and positional entries given with `--overlay`, resolve
+  and compose on it: `resolve`, `composeTwice`, the conditional legs and the matrix take the merged
+  tree instead of `args.tree`, and nothing else changes in them. The tree's own presets, examples
+  and entries without `--overlay` still use `args.tree`. A second root would touch `resolve`,
+  `compose-documents`, `pack-files`, `layout-rules`, `readme-rules` and the composer's CLI; the
+  merged tree touches `src/validate.ts` alone, plus one export of `src/check-packs.ts`. The copy
+  is about a hundred kilobytes (`packs/` today), made once per run.
+- **Paths mapped back.** Every line that comes from the merged tree goes through one function,
+  `mapOverlayPaths`: the merged tree's absolute path becomes this tree's; `packs/<p>` for an
+  overlay pack path `<p>` becomes `<overlay>/packs/<p>`, where `<overlay>` is the overlay's path
+  relative to the tree, longest path first and only at a path's start (after the line's start, a
+  space, a quote or a backtick). Paths of this tree's packs are already the same in both trees.
+  The matrix's lines name only the composed output's files, which have no tree path.
+- **The option** (criterion 1). `parseArgs` takes `overlay: { type: 'string', multiple: true }`;
+  more than one is a `UsageError`. `--overlay` resolved against `args.tree` (an absolute path as
+  given); not a directory, exit 2; then `realpathSync` of both, and the overlay's must start with
+  `<tree>/tests/fixtures/` and not with `<tree>/tests/fixtures/examples/`, otherwise a usage line,
+  exit 3. In publication mode, after the parse, an overlay returns exit 3 with criterion 7's line,
+  before any check runs.
+- **The overlay's checks** (criteria 2–4), after the `index:` line, summarized as
+  `overlay: checked <n> files, <m> problems`:
+  - the layout: the top level holds only `packs/` and `compositions/`; `treeLayout(<overlay>)`
+    (`src/layout-rules.ts`, which scans `packs/` under any root) gives the overlay's pack paths
+    and its layout problems; `compositions/` holds only directories, each holding only
+    `example.yaml`;
+  - a pack path the tree's `treeLayout` also lists, or one nested in or holding one of them, is
+    refused before the merge;
+  - each `pack.yaml` against the `pack` schema and each `example.yaml` against the `preset`
+    schema (`repositorySchemas()`), its `id` against its directory, no `profile`;
+  - the values: `yamlProblems` and `presetChecks` (`src/tree-rules.ts`) on each `example.yaml`,
+    with a `LintContext` built on the merged tree. `src/check-packs.ts` exports a
+    `lintContext(tree)` with the construction `runCheckPacks` does today (its schema check, its
+    `treeLayout`, its catalog, `loadPacks`), and `runCheckPacks` uses it, unchanged in behaviour;
+  - the secret rules: `secretProblems` over every file under the overlay;
+  - problems are sorted and printed as the lint prints them (`formatProblem`), with the overlay's
+    tree-relative paths.
+  A composition named by a problem is skipped as criterion 4 says; its packs do not count as
+  reached.
+- **The compositions** (criterion 5). After the tree's presets, examples and entries, one
+  `Composition` per `compositions/<id>/example.yaml` in the byte order of `<id>`, with the label
+  `<overlay>/compositions/<id>/example.yaml` and a `tree` field (the merged tree), read by
+  `runOne` and by the `[±software]` legs' `resolve`. `composed`, `used` and `unjudged` are those of
+  the whole run, so `compositions: <n>` and the `--param` rule count them. After the run, each
+  overlay pack path no resolved overlay composition holds is a problem (exit 1, naming
+  `<overlay>/packs/<p>`); none at all, `overlay: no composition` (exit 1).
+- **Red steps** (dl-018 R3), in `tests/validate.test.ts`, a new `describe('--overlay')` reusing
+  `withTree` and the stubs; each fails before the code for the reason given:
+  1. an overlay twice, one outside `tests/fixtures/`, one under `tests/fixtures/examples/`, one
+     reached through a symlink pointing outside: exit 3 with the usage line (today: exit 3 with
+     `Unknown option '--overlay'`, so the assertion is on the line's text); not a directory: exit 2;
+  2. a stray file at the top level, under `packs/` and under `compositions/`; a composition whose
+     `id` differs from its directory; one with `profile`: each reported, exit 1;
+  3. an overlay pack at a path the tree holds: refused, naming it; an overlay pack no composition
+     reaches: reported; an overlay with no composition: reported;
+  4. a composition with a parameter its packs do not declare, and one with a value of the wrong
+     YAML type: reported with the overlay's path, the composition skipped, its `--param` names
+     unjudged; a planted secret in an overlay file: reported;
+  5. on the golden tree with an overlay holding a copy of `methodology/flow` renamed
+     `methodology/overlay-flow` and two compositions: the compositions composed in byte order of
+     their ids, their `[±software]` legs run, `compositions: <n>` counting them, the matrix lines
+     on the stub carrying the tree-relative labels; a composer error inside an overlay pack names
+     `<overlay>/packs/…`, never the temporary tree;
+  6. criterion 6's tree: the golden tree copied with `packs/methodology/`, `presets/` and its
+     catalog `presets` entry removed, every example whose `packs` name a methodology removed, the
+     section 7 of each README left with no example set to `EXEMPTION`, the index regenerated;
+     the overlay holds the golden `methodology/kanban` and a composition of it with `software`.
+     The `schemas:`, `lint:` and `index:` lines equal those of the run without `--overlay`, with
+     no problem, and the overlay composition runs;
+  7. `runValidate` in publication mode with `--overlay`: exit 3 with criterion 7's line, nothing
+     else run; `validate:publication` with and without `--evidence` the same.
+  Characterization, green before the code: `publish:pack`, `index` and `site` refuse `--overlay`
+  (exit 3 or their usage code, with parseArgs' message).
+- **Files.** `src/validate.ts` (the option, the merged tree, the overlay's checks, the
+  compositions, the mapping), `src/check-packs.ts` (`lintContext` exported), `src/validate-cli.ts`
+  (its usage comment), `tests/validate.test.ts`. No fixture is committed: each test builds its
+  overlay in its temporary tree.
 
 ## Execution Notes
 
