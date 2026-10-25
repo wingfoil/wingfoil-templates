@@ -242,3 +242,4 @@ so that the evidence reader's patterns (`src/evidence.ts`) hold.
   `validate` (this tree: 3 runs, 0 failed), the golden fixture's CI step (26 runs, 0 failed) and
   `workflow list` exit 0 with no warning. CI run 40212289975 on the branch: `success`.
   `in-progress → in-review`.
+- 2026-10-25: delivered: merged into `main` (`2edc17d`), `approved → done`.

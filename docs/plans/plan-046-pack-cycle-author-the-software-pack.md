@@ -209,3 +209,6 @@ dl-025, F-035, F-036, the first sync of the feedback inbox); a possible note on 
   step 2 names both delivery loops; the Handoff says "composition"; ruling 1's added detail marked
   as this plan's, confirmed by task-046's Design; an overlay pack never shadows one of this tree;
   two paragraphs rewrapped. Plan submitted.
+- 2026-10-25: task-046 `done`, merged (`2edc17d`): `validate --overlay`, on a merged temporary
+  tree, never publishable; the tree's own lines unchanged. 965 of 965 from clean clones on both
+  Node.js versions; CI run 40213481751 on the branch `success`. task-047 next.
