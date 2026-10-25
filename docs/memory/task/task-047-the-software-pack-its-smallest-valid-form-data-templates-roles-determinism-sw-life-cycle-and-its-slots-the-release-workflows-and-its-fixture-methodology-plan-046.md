@@ -2,7 +2,7 @@
 id: task-047-the-software-pack-its-smallest-valid-form-data-templates-roles-determinism-sw-life-cycle-and-its-slots-the-release-workflows-and-its-fixture-methodology-plan-046
 type: task
 title: "The software pack, its smallest valid form: data, templates, roles, determinism, sw-life-cycle and its slots, the release workflows, and its fixture methodology (plan-046)"
-status: draft
+status: pending
 pack: "pack-foundation-software"
 depends_on: []
 tags: ["packs","software","W8"]
