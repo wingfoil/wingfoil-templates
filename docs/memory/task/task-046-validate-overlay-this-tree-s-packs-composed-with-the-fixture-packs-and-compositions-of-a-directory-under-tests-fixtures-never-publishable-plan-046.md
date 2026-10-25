@@ -214,3 +214,22 @@ so that the evidence reader's patterns (`src/evidence.ts`) hold.
   criterion 9 excepts criterion 7's characterization tests; `publish:pack`'s refusal stated as it
   is; the tree-relative paths kept whatever criterion 8's choice; criterion 6's READMEs; criterion
   3's "reached" pinned down. Submitted for the approver's acceptance into the backlog.
+- 2026-10-25, red (`a45b99f`): `node --test --test-name-pattern=overlay dist/tests/validate.test.js`
+  on Node.js 22.21: 11 of 12 failed, each on `Unknown option '--overlay'`; criterion 7's
+  characterization test (`publish:pack`, `index`, `site` refuse the option) passed.
+- 2026-10-25, green (`5efd108`): the whole suite 959 of 959 on Node.js 22.21. One red test changed
+  with the code: a composer error inside an overlay pack is now a YAML error in a workflow, since a
+  missing workflow file is reported by pack id, with no path for the mapping to show.
+- 2026-10-25, departures from the Design, no criterion changed: the tests move
+  `methodology/flow` into the overlay rather than a renamed copy; `lintContext(tree, broken,
+  problems)` rather than `lintContext(tree)`, as `runCheckPacks` holds both; `checkOverlay` also
+  runs `packLayoutProblems` on each overlay pack, so criterion 2's layout holds for a pack no
+  composition reaches.
+- 2026-10-25, build review: approve after amendments. Applied (`a155f3d`): given entries resolve on
+  the merged tree but no longer count as reaching an overlay pack (criterion 3); an absolute merged
+  path of an overlay pack maps to the overlay; a sentence-final path is mapped; `tests/fixtures`
+  resolved through its links; style. Tests after the code (dl-018 R2, the review's request):
+  schema failures of an overlay `pack.yaml` and `example.yaml`, `--param` on an overlay
+  composition, an overlay pack around a tree's pack (catalog pack ids do not nest, so its layout
+  refuses it before the shadowing check), entries not reaching, `validate:publication` with and
+  without `--evidence`. The fixes change behaviour: re-review requested (dl-017).
