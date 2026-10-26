@@ -45,9 +45,11 @@ request).
    frontmatter, `answered_by` empty); `Last sync` is unchanged; no `wingfoil-cli` W-entry and no
    change under `.wingfoil/` (the behaviour is 0.3.0's, recorded when the governance pin moves,
    its rule 5).
-6. **Tests:** `npm test` passes, the inbox checks included (numbering contiguous, F-035 and F-036
-   being reserved: the Design checks how `tests/support/inbox.ts` treats the gap and, if it refuses
-   it, goes to the approver, dl-019). No file under `src/`, `tests/`, `schema/`, `packs/` or
+6. **Tests:** `npm test` passes, the inbox checks included. `assertNumbering`
+   (`tests/support/inbox.ts`) requires the notes numbered from F-001 with no gap, and F-035 and
+   F-036 are reserved for the coordinating session's request (dl-024, dl-025), not yet written: the
+   note lands only once both exist, so this task's build waits for them, or the approver rules
+   otherwise (plan-048). No file under `src/`, `tests/`, `schema/`, `packs/` or
    `.github/` changes. The CI run on the branch is `success` and recorded.
 
 ## Design
