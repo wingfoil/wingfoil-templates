@@ -234,4 +234,5 @@ For the approver's acceptance:
   and `retrospective` may be included through sub-workflows the methodology ships, because WingFoil
   0.3.0 closes an earlier `iterate_over` phase once a later one completes, so a methodology with
   repeated Sprints nests its releases and retrospectives in its Sprint sub. No type, state,
-  workflow or phase of `software` changes.
+  workflow or phase of `software` changes. The text stays unapproved until dl-026 is approved and
+  the merge OK is given.
