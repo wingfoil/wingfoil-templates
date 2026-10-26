@@ -1058,8 +1058,8 @@ check the rest, and the composer refuses what they reject.
 - every `{{name}}` is in the pack's parameter scope (§8.1), checked per part (§6.5), and every
   default passes its type (§8);
 - a phase pack ships its slot workflow, a methodology ships `delivery` (in its conditional part, or
-  in `contents` when it requires `software`) and every workflow its `delivery` reaches, in the same
-  part, and no other pack ships a slot name (§9, dl-026);
+  in `contents` when it requires `software`) and every workflow of its own that its `delivery`
+  reaches, in the same part, and no other pack ships a slot name (§9, dl-026);
 - no pack other than `software` ships `sw-life-cycle` or a slot default, and no pack other than
   `base` ships `retrospective` or `governance-evolution` (§9, dl-022).
 

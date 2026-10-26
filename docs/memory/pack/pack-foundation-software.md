@@ -88,7 +88,8 @@ approval in a sub-workflow selects its element (`where`), so WingFoil 0.3.0 can 
 - **The `delivery` contract** (R2, R-11). `delivery` is the methodology's (spec-001 §9): its name,
   `kind: sub`, no `element` (`sw-life-cycle` includes it without iterating), and `release` and
   `retrospective` (`base`'s) included by name at its own cadence, directly or through
-  sub-workflows the same methodology ships (dl-026); the phase that includes `release` iterates
+  sub-workflows the same methodology ships, at any depth, each in the same part as `delivery`
+  (dl-026); the phase that includes `release` iterates
   over `release` with `where: { status: [in-development] }`, and the methodology creates its
   releases and moves them to `in-development`, which no `software` workflow does. A methodology
   that does not require `software` ships `delivery` in its conditional part, one that does in

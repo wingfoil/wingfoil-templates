@@ -89,12 +89,11 @@ Ruled by the approver, Roberto Pompermaier, in chat on 2026-10-26 (plan-047 ruli
   streams, Sprints and releases, as phases of one workflow. Written in a task of its own
   (`wingfoil-cli` rule 3), task-052.
 
-Consequences: each Sprint's `release` phase is one pass over the releases then `in-development`;
-it closes once the Sprint Review completes, and a release still open is picked up by the next
-Sprint, reported `late` under the closed one until it completes. `scrum`'s charter states it as an
-adaptation. A methodology that
-includes both directly, as `methodology/fixture` and the golden tree's `methodology/kanban` do,
-stays valid.
+Consequences: each Sprint's `release` phase is one pass over the releases then `in-development`; it
+closes once the Sprint Review completes, and a release still open is picked up by the next Sprint,
+reported `late` under the closed one until it completes. `scrum`'s charter states it as an
+adaptation. A methodology that includes both directly, as `methodology/fixture` and the golden
+tree's `methodology/kanban` do, stays valid.
 
 ## Execution Notes
 
@@ -104,3 +103,5 @@ stays valid.
   D2 also covers spec-001 §2, §9's table, §11 and §18; dl-003 D4 and D11 read with D1; the
   consequence for releases spanning Sprints; the open point on a release leaving `in-development`;
   the charter's note says the text awaits approval.
+- 2026-10-26: focused re-review: approve; two wordings applied (§18's "of its own", the charter's
+  bullet states all of D1) and a wrap. Submitted.
