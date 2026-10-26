@@ -2,7 +2,7 @@
 id: dl-026-a-methodology-s-delivery-may-include-release-and-retrospective-through-its-own-sub-workflows
 type: decision-log
 title: "A methodology's delivery may include release and retrospective through its own sub-workflows"
-status: draft
+status: pending
 tags: ["packs","software","methodology","scrum","W8"]
 ---
 
