@@ -78,7 +78,8 @@ branch `pack/methodology-scrum-charter`, in a worktree of its own, because plan-
    before a Sprint ends. A project may run one Sprint per release, as UI can. Rejected: one Sprint
    equal to one release (contrary to the Guide, and not reusable); a Sprint as the `plan` of a
    `main` workflow (it breaks the `delivery` contract).
-2. **The shape of `delivery`**, as amended after this plan's review (2026-10-26):
+2. **The shape of `delivery`**, as amended after this plan's review (2026-10-26), and superseded
+   by ruling 13 after steps 2–3 found it does not run on WingFoil 0.3.0:
    - a phase that creates a Sprint (`memory.add(type: sprint)`, with its `produces`) and one that
      creates a release and moves it to `in-development`, as the contract states;
    - a phase `sprint` (`iterate_over: sprint`, including a sub `sprint` bound to
@@ -153,6 +154,21 @@ branch `pack/methodology-scrum-charter`, in a worktree of its own, because plan-
 12. **Sequencer:** F4.3 (`scrum`) sits in W10; its charter now runs in W8 and its publication in
     W9. No decision-log now: W9's plan amends `07_sequencer.md`.
 
+13. **The nested shape** (2026-10-26, after steps 2–3, dl-019; it replaces ruling 2's shape and
+    rewords ruling 4): `delivery` holds a phase that adds the first Sprint and one phase
+    `iterate_over: sprint` including `sprint`. The `sprint` sub, in order: `sprint-planning` →
+    `plan-release` (optional) → `development` (optional, over the Sprint Backlog) → `release`
+    (optional, `iterate_over: release`, `where: { status: [in-development] }`, `include: release`)
+    → `sprint-review` → `retrospective`. To allow it, the approver chose option (a): `software`'s
+    `delivery` contract, spec-001 §9 and the lint `life-cycle-includes` accept `release` and
+    `retrospective` included by `delivery` **directly or through a sub-workflow the methodology
+    ships**; `methodology/fixture` stays valid. Recorded as dl-026, under this plan; the lint
+    change is a tooling task (from task-051) before `scrum`'s `author`. Rejected: (b) the contract
+    as written, which on 0.3.0 gives a project one Sprint in its whole life; (c) waiting for
+    WingFoil alone. A feedback note asks WingFoil anyway for an `iterate_over` phase that stays
+    open to new candidates, so that Sprints and releases could later be two streams of `delivery`
+    (approver, 2026-10-26).
+
 **The pack's identity:** id `methodology/scrum`, `axis: methodology`, `name: scrum`,
 `pack_path: packs/methodology/scrum`, Memory element `pack-methodology-scrum`;
 `requires: [base@^1, software@^1]`, `conflicts: []`, `delivery` in `contents`,
@@ -177,10 +193,12 @@ On branch `pack/methodology-scrum-charter`, from `main` at `ca1a19e`.
 | 1 | claude | This plan: written, independently reviewed, amended, submitted (`draft → active`) | this plan |
 | 2 | claude | A re-read at `wingfoil/wingfoil@v0.3.0` and at UI's head, recorded in the Execution Notes: the phase order and live deduction of `iterate_over` (how Sprint n+1 and release n+1 arise in one pass through `delivery`, when `delivery` completes, `optional: true` on the iterate phases), the `sprint` machine under `limits`, `not_applicable_allowed`, UI's step keys. Already settled by this plan's review: a `custom/` workflow never replaces a pack's (ruling 5), the new directive ids equal no built-in | — |
 | 3 | claude | A feasibility check outside the repository: a draft `scrum` (`sprint` type, `task` tightening, `delivery`, `sprint`, `backlog-item`) composed with `--overlay` and validated on 0.3.0, with a scripted run of two Sprints and two releases through `workflow` commands in a scratch repository; never committed; its outcome recorded here. What ruling 2 cannot do goes to the approver (dl-019), and an amendment of this active plan follows | — |
+| 3a | claude, drafting for the approver | dl-026 (ruling 13): `memory add --type decision-log`; it amends `pack-foundation-software`'s `delivery` contract and spec-001 §9, and names the lint change and the feedback note; reviewed, amended while `draft`, submitted (`draft → in-discussion`). The contract's text and §9 are amended in place on this branch, each with an Execution Note citing dl-026, approved with dl-026 and by the merge OK (as plan-041 did for O15) | dl-026 |
+| 3b | claude | the backlog that dl-026 implies, opened after the charter's acceptance with ids agreed with plan-046's session: a tooling task for `life-cycle-includes` (red first, dl-018) and a task for the feedback note; recorded here | — |
 | 4 | claude, drafting for the product-owner | `pack-methodology-scrum`: `memory add --type pack --title Scrum --set axis=methodology --set name=scrum`, `pack_path` filled by hand; written from the rulings above, `software`'s `delivery` contract and the Scrum Guide 2020 | `docs/memory/pack/pack-methodology-scrum.md` |
 | 5 | claude | an independent review of the charter (dl-017), amended while `draft`, re-reviewed when a fix changes a ruling; submitted (`draft → proposed`) | — |
 | 6 | claude | push; the CI run's conclusion recorded here | — |
-| 7 | approver | accepts the charter (`proposed → accepted`) from the command claude gives | — |
+| 7 | approver | approves dl-026 and accepts the charter (`proposed → accepted`) from the commands claude gives | — |
 | 8 | claude | on the approver's OK, coordinated with plan-046's session: `--no-ff` merge into `main`, push, `main`'s CI conclusion read, the branch removed locally and remotely; the acceptance reported to UI's session and the coordinating session | — |
 
 What the charter must hold, besides the rulings: Purpose; Ships (the `sprint` type with its
@@ -256,3 +274,6 @@ lists; Open points.
     the frontier; whether that is the scratch run's driving (status commits instead of the
     `wf(release): start …` form the engine expects) or the contract's `where` is left to the
     charter's review, with `software`'s fixture as the reference.
+- 2026-10-26: the approver ruled 13, option (a), with the feedback note of option (c). The two
+  defects of `base` 1.0.0 and the ruling reported to plan-046's session, with a request for the
+  bug and feedback-note numbers.
