@@ -138,8 +138,9 @@ build only commits them.
   line's count; `base`'s values per composition; set-describing ids and fresh fictional names;
   the overlay test's title and per-composition lines. Submitted for the approver's acceptance into
   the backlog.
-- 2026-10-26, red (`fd5c374`): on Node.js 22.21, the overlay test failed before the three
-  compositions existed (`flat-releases` not composed).
+- 2026-10-26, red (`fd5c374`): on Node.js 22.21, `node --test --test-name-pattern="four governed"
+  dist/tests/validate.test.js`: 1 of 1 failed before the three compositions existed
+  (`flat-releases` not composed).
 - 2026-10-26, green, on Node.js 22.21: the test passes; `npm run validate -- --overlay
   tests/fixtures/software-exit` on WingFoil 0.3.0: `overlay: checked 8 files, 0 problems`, the
   four compositions composed twice byte-identical in 32 files each, `compositions: 7`,
@@ -149,3 +150,6 @@ build only commits them.
   holds inputs, not a retrospective workflow's output, so `retrospective_path` keeps its default;
   it declares `release-line` with no element of it yet); `release-folders` is WingFoil's;
   `release-folders-lean` is WingFoil-UI's.
+- 2026-10-26, build review: approve after amendments, nothing blocking. Applied: the red run's
+  command and count; the per-composition assertion reports the run's lines; `release-folders-lean`'s
+  description stands alone.

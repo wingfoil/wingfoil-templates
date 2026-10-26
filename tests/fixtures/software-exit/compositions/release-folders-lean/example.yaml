@@ -2,8 +2,8 @@ format: 1
 id: release-folders-lean
 title: "Release folders, lean"
 description: >-
-  Marten Boards, a fictional board-game shop, files its records as Heron Atlas does, its release
-  folders named by the release line's version, and keeps no retrospective folder of its own.
+  Marten Boards, a fictional board-game shop, files its records under docs/04_memory/, its release
+  folders named by the release line's version, and keeps the default retrospective folder.
 packs:
   - software@^1
   - methodology/fixture@^1

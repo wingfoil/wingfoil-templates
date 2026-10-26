@@ -278,7 +278,8 @@ describe('npm run validate', () => {
     assert.equal(result.code, 0, result.lines.join('\n'));
     for (const id of ['defaults', 'flat-releases', 'release-folders', 'release-folders-lean']) {
       assert.ok(result.lines.some((line) => line.startsWith('composition '
-        + `tests/fixtures/software-exit/compositions/${id}/example.yaml: composed twice, `)), id);
+        + `tests/fixtures/software-exit/compositions/${id}/example.yaml: composed twice, `)),
+      `${id}\n${result.lines.join('\n')}`);
     }
     assert.ok(result.lines.includes('compositions: 7'), result.lines.join('\n'));
     assert.ok(result.lines.includes(
