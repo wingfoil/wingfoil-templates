@@ -39,7 +39,10 @@ reviewer is an independent subagent (dl-017), never the author's context; claude
 `memory approve` or `reject` and hands the approver the command.
 
 Not in this plan: `scrum`'s `author` (a `pack-cycle` plan once this one is done); `base`'s patch
-for bug-005 and bug-006 (plan-046's session); W9's publication.
+for bug-005 and bug-006 (plan-046's session); W9's publication; the `pack-authoring` directive's
+slot rule (`.wingfoil/directives/custom/pack-authoring.md`), which still says `delivery` includes
+`release` and `retrospective` "by name": its update to dl-026 and dl-027 is a configuration step of
+`scrum`'s `author` plan, before its first task.
 
 ## Steps
 
@@ -56,8 +59,10 @@ its own branch `task/<id>`, from `main`, one after the other (WIP limit one).
    runs, 0 failed.
 3. **task-052, F-037** (`tooling-delivery`, `pack: ""`): the note in `docs/wingfoil-feedback/`, in
    dl-163's format (`kind: request`), reproducible with WingFoil 0.3.0 alone, and its ledger row.
-4. **Close:** at the merge of the last task, the plan goes `active → done`; the merges reported to
-   plan-046's session and to the coordinating session (F-037).
+4. **Close:** at the merge of the last task, the plan lists the wave's errata and rulings per
+   tech-spec (dl-020; spec-001 is not changed by this plan, so nothing to fold back) and goes
+   `active → done`; the merges reported to plan-046's session and to the coordinating session
+   (F-037).
 
 ## Handoff
 

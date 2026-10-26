@@ -37,12 +37,13 @@ request).
    codes, showing a task added after the later phase completed reported `late` and the workflow
    reported complete. No command, path or file of this repository's tooling is needed to
    reproduce it. `wingfoil_version` is written by hand: this repository's governance pin is 0.2.2.
-3. **Told apart** from F-032 (suspending an instance) and F-033 (closing a plan that is not an
-   instance): it is about one instance's phases, not its plan.
+3. **Told apart** from F-032 (suspending an instance), F-033 (closing a plan that is not an
+   instance) and F-018 (a `where` on `iterate_over` that nothing evaluated, in 0.2.2): it is about
+   one instance's phases closing on 0.3.0, not its plan nor the filter.
 4. **No private content:** no local path, private repository or private project; WingFoil
    references are public ids, tags or commits.
 5. **The ledger** in `docs/wingfoil-feedback/README.md` gains its row (5 cells equal to the
-   frontmatter, `answered_by` empty); `Last sync` is unchanged; no `wingfoil-cli` W-entry and no
+   frontmatter, `answered_by` empty, any `|` in the title escaped); `Last sync` is unchanged; no `wingfoil-cli` W-entry and no
    change under `.wingfoil/` (the behaviour is 0.3.0's, recorded when the governance pin moves,
    its rule 5).
 6. **Tests:** `npm test` passes, the inbox checks included. `assertNumbering`
