@@ -1260,5 +1260,5 @@ check the rest, and the composer refuses what they reject.
 - 2026-10-26, **amended in place** (dl-027, plan-047 ruling 14; dl-027's approval and the merge OK
   approve the text): §9's phase that includes `release` iterates with `status:
   [in-development, releasing]` and may add scope keys, because on WingFoil 0.3.0 a release in
-  `releasing` left an `[in-development]` filter and its earlier evidence no longer counted, so it
-  stopped after `enter-releasing`. Nothing else changes.
+  `releasing` left an `[in-development]` filter before any phase of `release` had completed, so it
+  was skipped and stopped after `enter-releasing`. Nothing else changes.

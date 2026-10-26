@@ -294,9 +294,9 @@ lists; Open points.
   retrospective): the limit of one active Sprint holds (`submit` refused while Sprint 1 is
   `active`), and Sprint 2 starts after Sprint 1's `close`. Two findings on the release:
   - with the contract's `where: { status: [in-development] }`, a release stops after
-    `enter-releasing`: in `releasing` it leaves the entry filter, and WingFoil 0.3.0 counts no
-    evidence before the commit that put the element in its current state, so the candidate has
-    not progressed and is skipped. With `[in-development, releasing]` it runs to `released`. This
+    `enter-releasing`: in `releasing` it leaves the entry filter before any phase of `release`
+    has completed (`submit` completes only at `approve-release`), so the candidate has not
+    progressed and is skipped. With `[in-development, releasing]` it runs to `released`. This
     holds for any methodology, `methodology/fixture` included;
   - a released release counts as a complete candidate in every later Sprint's `release` phase,
     which then closes the Sprint's earlier optional phases (`plan-release`, `development`). A
