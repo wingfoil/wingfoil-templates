@@ -55,7 +55,7 @@ The key words **must**, **must not**, **should** and **may** are normative.
 | **axis** | A concern a project chooses a pack for (§3). The foundation packs are outside the axes. |
 | **foundation pack** | `base`, the core of every project governed by WingFoil, or `software`, the software layer above it (§3, dl-022). |
 | **conditional part** | The part of a pack's content and requirements that counts only in a composition holding a given pack (§6.5). |
-| **slot** | A workflow name that `sw-life-cycle` or `delivery` includes and that one pack fills (§9). Slots exist only in a composition with `software`. |
+| **slot** | A workflow name that `sw-life-cycle` or `delivery` (directly or through the methodology's sub-workflows) includes and that one pack fills (§9). Slots exist only in a composition with `software`. |
 | **overlay** | A pack that only adds to or tightens the packs composed before it (dl-001 D1). |
 | **fragment** | A partial `dna.yaml`, `roles.yaml` or `memory.yaml`, merged with the other packs' (§7). |
 | **asset file** | A file copied whole into the project: a workflow, a directive, a Memory template (§6). |
@@ -650,7 +650,7 @@ only in a composition with `software`:
 | `inception` | `sw-life-cycle` | `software` | a `phase/inception/*` pack |
 | `specification` | `sw-life-cycle` | `software` | a `phase/specification/*` pack |
 | `delivery` | `sw-life-cycle` | none | the `methodology` pack (required with `software`), in its conditional part |
-| `release` | `delivery` | `software` | a `phase/release/*` pack |
+| `release` | `delivery` (directly or through the methodology's sub-workflows) | `software` | a `phase/release/*` pack |
 | `end-of-life` | `sw-life-cycle` | `software` | a `phase/end-of-life/*` pack |
 
 - `software` ships `sw-life-cycle` (`kind: main`). It includes `inception`, `specification`,
@@ -659,8 +659,12 @@ only in a composition with `software`:
 - The methodology ships `delivery` (`kind: sub`): in its conditional part, with
   `with: software@^<major>` (§6.5), when it does not require `software`; in its `contents` when it
   does. `delivery` includes `release` and `retrospective` by name, at its own cadence (dl-003 D11,
-  dl-006). `retrospective` is not a slot, so no pack replaces it. In a composition without
-  `software`, what runs `retrospective` is fixed by `base`'s charter.
+  dl-006), directly or through sub-workflows the same methodology ships, at any depth, each shipped
+  in the same part as `delivery` (dl-026). The phase that includes `release` iterates over `release`
+  with a `where` whose `status` is `[in-development, releasing]`, and it may add scope keys, each a
+  frontmatter field the composed `release` type declares (dl-027). `retrospective` is not a slot, so
+  no pack replaces it. In a composition without `software`, what runs `retrospective` is fixed by
+  `base`'s charter.
 - A phase pack of slot `<slot>` **must** ship `workflows/<slot>.yaml`, with `name: <slot>` and
   `kind: sub`. Its file replaces `software`'s default. This is the only case in which a pack's file
   replaces another's (§7.6). A phase pack requires `software` (§3), so it carries no conditional
@@ -749,7 +753,8 @@ presets:
   `base` is in every composition; `software` only where a pack of the composition requires it
   unconditionally or the project chooses it (§6.5).
 - **`axes`** and **`slots`** carry §3 and §9 as data. The order of `axes` is the composition order
-  of §7.1, after the foundation packs.
+  of §7.1, after the foundation packs. A slot's `included_by` names the root workflow that reaches
+  it, directly or through the methodology's sub-workflows (§9).
   - The `methodology` axis is required only in a composition with `software`. Its data form is
     `required_with: software` in place of `required: true`; the other axes keep `required: false`.
   - The `default` of the slots `inception`, `specification`, `release` and `end-of-life` is
@@ -1069,7 +1074,8 @@ check the rest, and the composer refuses what they reject.
 - every `{{name}}` is in the pack's parameter scope (§8.1), checked per part (§6.5), and every
   default passes its type (§8);
 - a phase pack ships its slot workflow, a methodology ships `delivery` (in its conditional part, or
-  in `contents` when it requires `software`), and no other pack ships a slot name (§9);
+  in `contents` when it requires `software`) and every workflow of its own that its `delivery`
+  reaches, in the same part, and no other pack ships a slot name (§9, dl-026);
 - no pack other than `software` ships `sw-life-cycle` or a slot default, and no pack other than
   `base` ships `retrospective` or `governance-evolution` (§9, dl-022).
 
@@ -1245,3 +1251,16 @@ check the rest, and the composer refuses what they reject.
   it names `{release}` as a task's field, `{scope}` with `{workflow}` and `{phase}` as WingFoil's
   workflow-context tokens, and adds `{version}`, `{release-line}` and `{kind}`, each with its
   source. Nothing else changes.
+- 2026-10-26, **amended in place** (dl-026, plan-047 ruling 13; dl-026's approval and the merge OK
+  approve the text, as for O15): §9's `delivery` may include `release` and `retrospective` through
+  sub-workflows the same methodology ships, because on WingFoil 0.3.0 a later phase that completes
+  closes an earlier `iterate_over` phase, so repeated Sprints and releases cannot both be phases of
+  `delivery`. With it, the §2 term "slot", the `release` row of §9's table, §11's `slots` bullet
+  (`included_by` names the root that reaches the slot) and §18's placement check read the same;
+  `catalog.yaml`'s data is unchanged. The lint `life-cycle-includes` follows in a tooling task.
+- 2026-10-26, **amended in place** (dl-027, plan-047 ruling 14; dl-027's approval and the merge OK
+  approve the text): §9's phase that includes `release` iterates with
+  `status: [in-development, releasing]` and may add scope keys, each a field of the composed
+  `release`, because on WingFoil 0.3.0 a release in `releasing` left an `[in-development]` filter
+  before any phase of `release` had completed, so it was skipped and stopped after
+  `enter-releasing`. Nothing else changes.
