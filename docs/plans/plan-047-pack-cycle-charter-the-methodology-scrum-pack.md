@@ -277,3 +277,20 @@ lists; Open points.
 - 2026-10-26: the approver ruled 13, option (a), with the feedback note of option (c). The two
   defects of `base` 1.0.0 and the ruling reported to plan-046's session, with a request for the
   bug and feedback-note numbers.
+- 2026-10-26: dl-026 written, reviewed (approve after amendments), amended, re-reviewed (approve),
+  submitted (`pending`); spec-001 §2, §9, §11, §18 and `pack-foundation-software`'s contract
+  amended in place, pending its approval and the merge OK. plan-046's session opened bug-005 (the
+  plan type's tokens: `workflow start` fills `workflow` and `phase` only when `plan_id` or
+  `plan_path` declares them) and bug-006. `pack-methodology-scrum` added and written (step 4).
+- 2026-10-26, a second run on WingFoil 0.3.0 of the charter's shape (`close` after the
+  retrospective): the limit of one active Sprint holds (`submit` refused while Sprint 1 is
+  `active`), and Sprint 2 starts after Sprint 1's `close`. Two findings on the release:
+  - with the contract's `where: { status: [in-development] }`, a release stops after
+    `enter-releasing`: in `releasing` it leaves the entry filter, and WingFoil 0.3.0 counts no
+    evidence before the commit that put the element in its current state, so the candidate has
+    not progressed and is skipped. With `[in-development, releasing]` it runs to `released`. This
+    holds for any methodology, `methodology/fixture` included;
+  - a released release counts as a complete candidate in every later Sprint's `release` phase,
+    which then closes the Sprint's earlier optional phases (`plan-release`, `development`). A
+    scope key naming the Sprint, `sprint: "{sprint.id}"`, with the release's `sprint` field,
+    leaves the earlier releases out. Both go to the approver (dl-019).
