@@ -198,3 +198,12 @@ regenerated outputs; the task's notes.
   reach, the cycle, the `where`, the conditional part: `lint: checked 29 files, 0 problems`; the
   composer's acceptance, its `where` refusal, its part refusal: `Missing expected exception`),
   3 pass, the three characterization tests. On the branch: 10 of 10 pass.
+- 2026-10-26: focused re-review: approve; two cosmetic notes left as they are (an alias of
+  `subWorkflow` in the two test files, the `where` test linting twice), which change no behaviour.
+- 2026-10-26: the full suite in clean clones at `60d90e4`: 977 tests, 4 failed on both Node.js
+  versions, expectations the change moves that the targeted runs had not covered: the golden
+  tree's lint counts 71 files, not 70 (`tests/validate.test.ts`), its preset composes 20 files, not
+  19 (the `release` template); the example rules' tree counts 22, not 20
+  (`tests/example-rules.test.ts`); the derived "no memory fragment" composition is now `base`
+  alone, since `software` always ships one (`tests/output.test.ts`). Fixed; `output`,
+  `example-rules` and `validate` tests pass (44 and 57).
