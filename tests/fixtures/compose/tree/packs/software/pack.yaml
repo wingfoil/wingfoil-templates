@@ -16,5 +16,5 @@ parameters:
 contents:
   fragments: [memory]
   workflows: [sw-life-cycle, inception, specification, release, end-of-life]
-  memory_templates: [adr]
+  memory_templates: [adr, release]
   agents_section: true

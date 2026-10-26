@@ -14,7 +14,7 @@ import type { CheckPacksResult } from '../src/check-packs';
 import { FIXTURES, FIXTURE_CATALOG, REPO_ROOT } from './support/paths';
 import { FROZEN_COMPAT } from './support/published-repo';
 import {
-  BASE_COMPOSABLE as BASE, DELIVERY, FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN,
+  BASE_COMPOSABLE as BASE, DELIVERY, FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN, RELEASE_TYPE,
     SOFTWARE_COMPOSABLE,
   withPackTree,
 } from './support/pack-tree';
@@ -66,7 +66,7 @@ describe('npm run check:packs', () => {
     assert.equal(result.code, 0, result.lines.join('\n'));
     // catalog, compat, each pack's pack.yaml, README.md, CHANGELOG.md, workflows, fragments, and
     // each pack's example.yaml (task-022), software's included (task-031).
-    assert.equal(result.lines[0], 'lint: checked 20 files, 0 problems');
+    assert.equal(result.lines[0], 'lint: checked 22 files, 0 problems');
   });
 
   it('passes this repository: catalog.yaml, compat.yaml, the base and software packs and base\'s '
@@ -85,7 +85,7 @@ describe('npm run check:packs', () => {
     const result = lint([...FOUNDATION, { ...KANBAN, version: '0.9.0',
       manifest: { requires_capabilities: ['workflow-engine', 'pack-install'] } }]);
     assert.equal(result.code, 1);
-    assert.equal(result.lines[0], 'lint: checked 20 files, 2 problems');
+    assert.equal(result.lines[0], 'lint: checked 22 files, 2 problems');
     assert.deepEqual(result.lines.slice(1).map((line) => line.replace(/:\d+:\d+:/, ':L:C:')), [
       'packs/methodology/kanban/pack.yaml:L:C: capabilities-sorted: methodology/kanban: '
         + 'requires_capabilities must be sorted and unique',
@@ -201,13 +201,14 @@ describe('inventory and formats rules', () => {
 
 /** software with a Memory type, a directive and a parameter of its own. */
 const SOFTWARE_FULL: PackSpec = { ...SOFTWARE_COMPOSABLE, fragments: ['memory'],
-  directives: ['determinism'], memoryTemplates: ['adr'],
+  directives: ['determinism'], memoryTemplates: ['adr', 'release'],
   manifest: { parameters: { adr_path: { type: 'path', default: 'docs/adr/{id}.md',
     description: 'x' } } },
   extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'fragments/memory.yaml': 'format: 1\n'
     + 'types:\n  adr:\n    path: "{{adr_path}}"\n    id_pattern: "adr-{n}-{slug}"\n'
     + '    template: { file: memory/templates/built-in/adr.md,\n'
-    + '      frontmatter: { required: [] } }\n' } };
+    + '      frontmatter: { required: [] } }\n'
+    + RELEASE_TYPE.slice('format: 1\ntypes:\n'.length) } };
 
 describe('foundation rules (spec-001 §3, §6.5, §10, §18)', () => {
   it('requires-software: a phase pack that does not require software', () => {
@@ -218,8 +219,9 @@ describe('foundation rules (spec-001 §3, §6.5, §10, §18)', () => {
   });
 
   it('schema: software requiring a pack besides base', () => {
-    // A pack.yaml that fails its schema is not loaded, so the lint's compositions refuse too.
-    failsWith(['compose', 'schema'], [BASE, { ...SOFTWARE_COMPOSABLE,
+    // A pack.yaml that fails its schema is not loaded: kanban's delivery then iterates over a
+    // release type no loaded pack declares (task-051).
+    failsWith(['memory-type', 'schema'], [BASE, { ...SOFTWARE_COMPOSABLE,
       requires: ['base@^1', 'blueprint/api@^1'] }, KANBAN, { id: 'blueprint/api' }]);
   });
 
@@ -229,7 +231,8 @@ describe('foundation rules (spec-001 §3, §6.5, §10, §18)', () => {
     failsWith('compose', [{ ...BASE, extraFiles: files }, { ...SOFTWARE_COMPOSABLE,
       fragments: ['memory'],
       extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'fragments/memory.yaml':
-        'format: 1\ndefaults:\n  states:\n    sequence: [draft, done]\n' } }, KANBAN]);
+        'format: 1\ndefaults:\n  states:\n    sequence: [draft, done]\n'
+        + RELEASE_TYPE.slice('format: 1\n'.length) } }, KANBAN]);
     failsWith('compose', [BASE, { ...SOFTWARE_COMPOSABLE, agentsSection: true,
       extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'agents/section.md': '# Software\n' } },
     KANBAN]);
@@ -316,8 +319,9 @@ describe('the conditional part (spec-001 §6.5, §18)', () => {
   });
 
   it('slot: a methodology without software shipping delivery in contents', () => {
-    // Its delivery, always composed, also includes the slot release (isolation).
-    failsWith(['isolation', 'slot'], [...CLEAN, { id: 'methodology/flow',
+    // Its delivery, always composed, also includes the slot release (isolation) and iterates
+    // over software's release type, which it cannot see (memory-type).
+    failsWith(['isolation', 'memory-type', 'slot'], [...CLEAN, { id: 'methodology/flow',
       workflows: ['delivery'] }]);
   });
 
@@ -725,7 +729,7 @@ describe('F3.5 workflow rules', () => {
 
   it('life-cycle-includes: software\'s sw-life-cycle and a methodology\'s delivery (§9)', () => {
     failsWith('life-cycle-includes', [BASE, { ...SOFTWARE_COMPOSABLE, extraFiles: {
-      'workflows/sw-life-cycle.yaml': 'format: 1\nname: sw-life-cycle\nkind: main\nphases:\n'
+      ...SOFTWARE_COMPOSABLE.extraFiles, 'workflows/sw-life-cycle.yaml': 'format: 1\nname: sw-life-cycle\nkind: main\nphases:\n'
         + '  - { name: delivery, include: delivery }\n' } }, KANBAN]);
     failsWith('life-cycle-includes', [...FOUNDATION, { ...KANBAN, extraFiles: {
       'workflows/delivery.yaml': DELIVERY.replace(/ {2}- \{ name: retrospective[^\n]*\n/, '') } }]);
@@ -804,7 +808,10 @@ describe('F3.5 workflow rules', () => {
             '{ name: retrospective, include: retrospective }']),
           'workflows/shared.yaml': sub('shared', [RELEASE]),
           'workflows/board.yaml': sub('board', ['{ name: a, produces: [x.md] }']) } };
-      failsWith(['isolation', 'life-cycle-includes'], [BASE, SOFTWARE_RELEASE, KANBAN, flowPack]);
+      // shared, always composed, includes the slot release (isolation) and iterates over a type
+      // only the software layer declares (memory-type).
+      failsWith(['isolation', 'life-cycle-includes', 'memory-type'],
+        [BASE, SOFTWARE_RELEASE, KANBAN, flowPack]);
     });
 
     it('characterization: release reached by no path is reported; a pack workflow delivery does '

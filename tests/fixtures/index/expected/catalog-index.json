@@ -252,6 +252,8 @@
           "tag": "software@1.0.0",
           "wingfoil": "9.0.0",
           "formats": {
+            "memory": 1,
+            "memory-template": 1,
             "workflow": 1
           },
           "requires_capabilities": [],
@@ -269,7 +271,9 @@
         "sw-life-cycle"
       ],
       "conditional_workflows": [],
-      "memory_types": [],
+      "memory_types": [
+        "release"
+      ],
       "directives": [],
       "conditional_directives": [],
       "parameters": [],

@@ -48,8 +48,14 @@ function including(names: string[]): string {
 /** software's life cycle and a methodology's delivery, including their slots (spec-001 §9). */
 export const SW_LIFE_CYCLE = 'format: 1\nname: sw-life-cycle\nkind: main\n'
   + including(['inception', 'specification', 'delivery', 'end-of-life']);
-export const DELIVERY = `format: 1\nname: delivery\nkind: sub\n${including(['release',
-  'retrospective'])}`;
+export const DELIVERY = 'format: 1\nname: delivery\nkind: sub\nphases:\n'
+  + '  - { name: release, iterate_over: release, where: { status: [in-development, releasing] }, '
+  + 'include: release }\n  - { name: retrospective, include: retrospective }\n';
+/** software's release type: a methodology's delivery iterates over it (dl-027 D1). */
+export const RELEASE_TYPE = 'format: 1\ntypes:\n  release:\n    path: "docs/release/{id}.md"\n'
+  + '    id_pattern: "rel-{n}"\n    template: { file: memory/templates/built-in/release.md,\n'
+  + '      frontmatter: { required: [] } }\n';
+const RELEASE_TEMPLATE = '---\ntype: release\nformat: 1\n---\n';
 
 /** Placeholder content: each file a minimal valid asset of its kind (spec-001 §5, §6.1). */
 function placeholder(file: string): string {
@@ -142,7 +148,10 @@ export function withPackTree(specs: PackSpec[], body: (root: string) => void,
  * methodology that requires software ships delivery in contents (plan-038 ruling 7).
  */
 export const BASE: PackSpec = { id: 'base', workflows: ['retrospective'] };
-export const SOFTWARE: PackSpec = { id: 'software', workflows: ['sw-life-cycle'] };
+export const SOFTWARE: PackSpec = { id: 'software', workflows: ['sw-life-cycle'],
+  fragments: ['memory'], memoryTemplates: ['release'],
+  extraFiles: { 'fragments/memory.yaml': RELEASE_TYPE,
+    'memory-templates/release.md': RELEASE_TEMPLATE } };
 export const FOUNDATION: PackSpec[] = [BASE, SOFTWARE];
 export const KANBAN: PackSpec = {
   id: 'methodology/kanban', requires: ['base@^1', 'software@^1'], workflows: ['delivery'],
@@ -164,6 +173,9 @@ export const BASE_COMPOSABLE: PackSpec = {
 export const SOFTWARE_COMPOSABLE: PackSpec = {
   id: 'software',
   workflows: ['sw-life-cycle'],
-  extraFiles: { 'workflows/sw-life-cycle.yaml': SW_LIFE_CYCLE },
+  fragments: ['memory'],
+  memoryTemplates: ['release'],
+  extraFiles: { 'workflows/sw-life-cycle.yaml': SW_LIFE_CYCLE,
+    'fragments/memory.yaml': RELEASE_TYPE, 'memory-templates/release.md': RELEASE_TEMPLATE },
 };
 export const FOUNDATION_COMPOSABLE: PackSpec[] = [BASE_COMPOSABLE, SOFTWARE_COMPOSABLE];

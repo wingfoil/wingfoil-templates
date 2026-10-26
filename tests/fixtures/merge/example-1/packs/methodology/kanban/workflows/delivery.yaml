@@ -2,5 +2,6 @@ format: 1
 name: delivery
 kind: sub
 phases:
-  - { name: release, include: release }
+  - { name: release, iterate_over: release, where: { status: [in-development, releasing] },
+      include: release }
   - { name: retrospective, include: retrospective }
