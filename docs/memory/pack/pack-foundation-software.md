@@ -89,9 +89,9 @@ approval in a sub-workflow selects its element (`where`), so WingFoil 0.3.0 can 
   `kind: sub`, no `element` (`sw-life-cycle` includes it without iterating), and `release` and
   `retrospective` (`base`'s) included by name at its own cadence, directly or through
   sub-workflows the same methodology ships, at any depth, each in the same part as `delivery`
-  (dl-026); the phase that includes `release` iterates
-  over `release` with `where: { status: [in-development] }`, and the methodology creates its
-  releases and moves them to `in-development`, which no `software` workflow does. A methodology
+  (dl-026); the phase that includes `release` iterates over `release` with a `where` whose
+  `status` is `[in-development, releasing]`, scope keys allowed (dl-027), and the methodology
+  creates its releases and moves them to `in-development`, which no `software` workflow does. A methodology
   that does not require `software` ships `delivery` in its conditional part, one that does in
   `contents` (spec-001 §6.5).
 - **WingFoil's loop** (R2, R-11). WingFoil's `sw-life-cycle` is inception → specification → `init`
@@ -237,3 +237,7 @@ For the approver's acceptance:
   repeated Sprints nests its releases and retrospectives in its Sprint sub. No type, state,
   workflow or phase of `software` changes. The text stays unapproved until dl-026 is approved and
   the merge OK is given.
+- 2026-10-26: the `delivery` contract's `where` amended in place by dl-027 (plan-047 ruling 14):
+  `status: [in-development, releasing]`, scope keys allowed, because on WingFoil 0.3.0 a release
+  stopped after `enter-releasing` under `[in-development]`. The text stays unapproved until dl-027
+  is approved and the merge OK is given.
