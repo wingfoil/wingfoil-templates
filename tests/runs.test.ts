@@ -305,6 +305,7 @@ describe('check:runs (task-053)', () => {
   });
 
   it('runs each main in its own scratch repository and leaves none behind, failing or not', () => {
+    const before = new Set(readdirTmp());
     for (const quirk of [false, true]) {
       wingfoil.calls.length = 0;
       wingfoil.exploreEvidence = quirk ? 'docs/elsewhere/' : 'docs/retrospectives/';
@@ -316,8 +317,8 @@ describe('check:runs (task-053)', () => {
         assert.ok(!existsSync(dir), `${dir} removed`);
       }
     }
-    assert.deepEqual(readdirTmp().filter((name) => name.startsWith('runs-scratch-')
-      || name.startsWith('runs-compose-')), []);
+    assert.deepEqual(readdirTmp().filter((name) => !before.has(name)
+      && (name.startsWith('runs-scratch-') || name.startsWith('runs-compose-'))), []);
   });
 
   it('never passes an inherited GIT_* variable to WingFoil', () => {

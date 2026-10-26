@@ -212,3 +212,9 @@ follow-up in plan-049's notes.
   first `error:` line, or its last line, not its whole output (Acceptance 1 read so, the line
   staying one line). Acceptance 7 read as "task-051 not `in-progress` when task-053 entered it":
   task-051 was `in-review` on its branch.
+- 2026-10-26: re-review: approve; its three points applied. At `f98645b` `tsc` reported type
+  errors (the install's new signature, used before `src/runs.ts` took it): the red counts are
+  from the tests it emitted. The test of the parameters and `--cache` failed there also because
+  its `other` composition fails `explore` in the fake; `14db9c0` made it assert that failure
+  (`6 runs, 1 failed`) beside the parameters and the cache it checks. The clean-up test compares
+  the temporary directory with a snapshot taken before the run.
