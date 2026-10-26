@@ -49,8 +49,8 @@ request).
 6. **Tests:** `npm test` passes, the inbox checks included. `assertNumbering`
    (`tests/support/inbox.ts`) requires the notes numbered from F-001 with no gap, and F-035 and
    F-036 are reserved for the coordinating session's request (dl-024, dl-025), not yet written: the
-   note lands only once both exist, so this task's build waits for them, or the approver rules
-   otherwise (plan-048). No file under `src/`, `tests/`, `schema/`, `packs/` or
+   note lands only once both exist: this task's build waits for them, under the plan that writes
+   them or the next `tooling-change` plan after it (plan-048 ruling 2). No file under `src/`, `tests/`, `schema/`, `packs/` or
    `.github/` changes. The CI run on the branch is `success` and recorded.
 
 ## Design

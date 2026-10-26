@@ -31,8 +31,16 @@ items they name are owed before `scrum`'s `author` can put the pack in `packs/`:
   not take candidates added after a later phase progressed; the note asks for a phase that stays
   open to new candidates. Reproduced on 2026-10-26 with 0.3.0 alone, on `init --template Kanban`.
 
-The approver's ruling (2026-10-26, in chat): proceed with task-051 and task-052, the ids agreed
-with plan-046's session (task-053 is that session's next).
+The approver's rulings (2026-10-26, in chat):
+1. Proceed with task-051 and task-052, the ids agreed with plan-046's session (task-053 onwards,
+   plan-049, dl-028, bug-007 and F-038 are reserved for the session that patches `base`).
+2. **F-037 waits** (option (a) of the review): `assertNumbering` (`tests/support/inbox.ts`) requires
+   the notes numbered with no gap, and F-035 and F-036 are reserved for the coordinating session's
+   request (dl-024, dl-025), owed after W9. task-052's body is written, reviewed and accepted into
+   the backlog here; its build starts only once F-035 and F-036 are on `main`, under the plan that
+   writes them or the next `tooling-change` plan after it, which takes task-052 over. This plan
+   closes on task-051. Rejected: renumbering the reservation (b), a test that admits reserved
+   gaps (c).
 
 Who runs what: claude drafts for the product-owner (`plan`) and is the developer of both tasks; the
 reviewer is an independent subagent (dl-017), never the author's context; claude never runs
@@ -59,7 +67,7 @@ its own branch `task/<id>`, from `main`, one after the other (WIP limit one).
    runs, 0 failed.
 3. **task-052, F-037** (`tooling-delivery`, `pack: ""`): the note in `docs/wingfoil-feedback/`, in
    dl-163's format (`kind: request`), reproducible with WingFoil 0.3.0 alone, and its ledger row.
-4. **Close:** at the merge of the last task, the plan lists the wave's errata and rulings per
+4. **Close:** at task-051's merge, the plan lists the wave's errata and rulings per
    tech-spec (dl-020; spec-001 is not changed by this plan, so nothing to fold back) and goes
    `active → done`; the merges reported to plan-046's session and to the coordinating session
    (F-037).
@@ -69,8 +77,14 @@ its own branch `task/<id>`, from `main`, one after the other (WIP limit one).
 - **claude:** steps 1–4, except the approver's gates.
 - **Approver:** the ruling (given); each task's backlog acceptance, `approve` at `in-review`, and
   the merge OK.
-- Done when task-051 and task-052 are `done` on `main`, pushed.
+- Done when task-051 is `done` on `main`, pushed, and task-052 is in the backlog, handed over as
+  ruling 2 says.
 
 ## Execution Notes
 
 - 2026-10-26: written; `workflow` and `phase` filled by editing the draft (W-02).
+- 2026-10-26: independent review of the plan and both task bodies: plan request changes (F-037
+  cannot land while F-035 and F-036 are missing), tasks approve after amendments. The approver ruled
+  2 (F-037 waits); amended: the dl-020 account at close, `pack-authoring`'s slot rule owned by
+  `scrum`'s `author`, the task bodies (fixtures, the composed `release`'s fields, the composer,
+  red first, F-018). Focused re-review requested.
