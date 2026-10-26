@@ -152,8 +152,11 @@ describe('check:runs (task-053)', () => {
     composition('other', { retrospective_path: 'docs/retros/' });
     wingfoil.exploreEvidence = 'docs/retrospectives/';
     const result = runRuns(['--tree', tree, join(tree, 'tests/fixtures/runs/base.yaml')],
-      { ...options, compose: (t, e, p, o) => ({ ...fakeCompose(t, e, p, o),
-        params: { retrospective_path: 'docs/retrospectives/' } }) });
+      { ...options, compose: (t, e, p, o) => {
+        const composed = fakeCompose(t, e, p, o);
+        return { ...composed, params: { ...composed.params,
+          retrospective_path: 'docs/retrospectives/' } };
+      } });
     assert.equal(result.code, 0, result.lines.join('\n'));
     assert.deepEqual(result.lines, [
       'runs compositions/defaults/example.yaml decision-log-ingest wingfoil@0.3.0: pass',
@@ -190,8 +193,11 @@ describe('check:runs (task-053)', () => {
 
   it('commits a file inside the parameter\'s directory, even when it has no trailing slash', () => {
     wingfoil.exploreEvidence = 'docs/retrospectives/';
-    const noSlash = runRuns(['--tree', tree], { ...options, compose: (t, e, p, o) => ({
-      ...fakeCompose(t, e, p, o), params: { retrospective_path: 'docs/retrospectives' } }) });
+    const noSlash = runRuns(['--tree', tree], { ...options, compose: (t, e, p, o) => {
+      const composed = fakeCompose(t, e, p, o);
+      return { ...composed, params: { ...composed.params,
+        retrospective_path: 'docs/retrospectives' } };
+    } });
     // The file is inside the directory either way: what WingFoil then reads decides the outcome.
     assert.equal(noSlash.code, 0, noSlash.lines.join('\n'));
   });

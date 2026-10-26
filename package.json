@@ -16,6 +16,7 @@
     "check:pins": "node dist/src/check-pins.js",
     "check:schemas": "node dist/src/check-schemas.js",
     "check:packs": "node dist/src/check-packs-cli.js",
+    "check:runs": "node dist/src/runs-cli.js",
     "compose": "node dist/src/compose-cli.js",
     "digest": "node dist/src/digest-cli.js",
     "validate": "node dist/src/validate-cli.js",
