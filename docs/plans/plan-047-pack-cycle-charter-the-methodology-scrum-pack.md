@@ -327,3 +327,11 @@ lists; Open points.
 - 2026-10-26, step 7: the approver approved dl-026 and dl-027 and accepted `pack-methodology-scrum`
   (`proposed → accepted`), with its open points as written; the merge OK in chat approves the
   in-place amendments of spec-001 and of `pack-foundation-software`.
+- 2026-10-26, step 8: `--no-ff` merge into `main` (`49b1755`), pushed; `main`'s CI run 40360318802
+  on `49b1755`, conclusion `success` (`validate (22.12.0)` and `validate (22.21.0)` both
+  `success`), Pages run 40360318864 `success`; the branch removed locally and remotely. The merge
+  reported to plan-046's session; the acceptance reported to UI's session and the coordinating
+  session. `pack-methodology-scrum` is `accepted`, dl-026 and dl-027 `approved`. Next, outside
+  this plan: task-051 (the lint `life-cycle-includes` after dl-026 D3 and dl-027 D3, and
+  `methodology/fixture`'s `where`) and task-052 (F-037), then `scrum`'s `author`. This plan goes
+  `active → done`.
