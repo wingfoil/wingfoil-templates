@@ -2,7 +2,7 @@
 id: task-049-the-software-pack-s-exit-criterion-compositions-of-the-four-governed-software-repositories-parameters-through-the-fixture-methodology-plan-046
 type: task
 title: "The software pack's exit criterion: compositions of the four governed software repositories' parameters through the fixture methodology (plan-046)"
-status: draft
+status: pending
 pack: "pack-foundation-software"
 depends_on: [task-048]
 tags: ["packs","software","W8"]
