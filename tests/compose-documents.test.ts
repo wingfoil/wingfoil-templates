@@ -367,3 +367,32 @@ describe('composeDocuments: the other memory.yaml keys (spec-001 §7.5)', () => 
     });
   });
 });
+
+describe('composeDocuments: a methodology\'s delivery after dl-026 and dl-027 (task-051)', () => {
+  const SOFTWARE_RELEASE: PackSpec = { ...SOFTWARE, fragments: ['memory'],
+    memoryTemplates: ['release'], extraFiles: {
+      'fragments/memory.yaml': 'format: 1\ntypes:\n  release:\n    path: "docs/release/{id}.md"\n'
+        + '    id_pattern: "rel-{n}"\n    template: { file: memory/templates/built-in/release.md,'
+        + '\n      frontmatter: { required: [] } }\n',
+      'memory-templates/release.md': '---\ntype: release\nformat: 1\n---\n' } };
+  const sub = (name: string, phases: string[]): string =>
+    `format: 1\nname: ${name}\nkind: sub\nphases:\n${phases.map((phase) => `  - ${phase}\n`)
+      .join('')}`;
+  const kanban = (status: string): PackSpec => ({ ...KANBAN, workflows: ['delivery', 'sprint'],
+    extraFiles: {
+      'workflows/delivery.yaml': sub('delivery', ['{ name: sprints, include: sprint }']),
+      'workflows/sprint.yaml': sub('sprint', [`{ name: release, iterate_over: release, where: { `
+        + `status: ${status} }, include: release }`, '{ name: retrospective, include: '
+        + 'retrospective }']) } });
+
+  it('accepts release and retrospective reached through the methodology\'s sub', () => {
+    const result = compose([BASE_M, SOFTWARE_RELEASE, kanban('[in-development, releasing]')],
+      ['methodology/kanban'], NAME);
+    assert.ok(result.files.some((file) => file.path === 'workflows/sprint.yaml'));
+  });
+
+  it('refuses a phase including release with another status', () => {
+    fails([BASE_M, SOFTWARE_RELEASE, kanban('[in-development]')], ['methodology/kanban'],
+      /sprint\.yaml.*release.*in-development, releasing/, NAME);
+  });
+});

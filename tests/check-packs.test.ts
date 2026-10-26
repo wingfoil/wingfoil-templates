@@ -731,6 +731,93 @@ describe('F3.5 workflow rules', () => {
       'workflows/delivery.yaml': DELIVERY.replace(/ {2}- \{ name: retrospective[^\n]*\n/, '') } }]);
   });
 
+  describe('life-cycle-includes after dl-026 and dl-027 (task-051)', () => {
+    const SOFTWARE_RELEASE: PackSpec = { ...SOFTWARE_COMPOSABLE, fragments: ['memory'],
+      memoryTemplates: ['release'],
+      extraFiles: { ...SOFTWARE_COMPOSABLE.extraFiles, 'fragments/memory.yaml': 'format: 1\n'
+        + 'types:\n  release:\n    path: "docs/release/{id}.md"\n    id_pattern: "rel-{n}"\n'
+        + '    template: { file: memory/templates/built-in/release.md,\n'
+        + '      frontmatter: { required: [version] } }\n',
+      'memory-templates/release.md': '---\ntype: release\nformat: 1\nversion: ""\n'
+        + 'release-line: ""\n---\n' } };
+    const WHERE = 'where: { status: [in-development, releasing] }';
+    const RELEASE = `{ name: release, iterate_over: release, ${WHERE}, include: release }`;
+    const sub = (name: string, phases: string[]): string =>
+      `format: 1\nname: ${name}\nkind: sub\nphases:\n${phases.map((phase) => `  - ${phase}\n`)
+        .join('')}`;
+    /** A methodology requiring software, its delivery and subs as given. */
+    const nested = (files: Record<string, string>, extra: Partial<PackSpec> = {}): PackSpec => ({
+      ...KANBAN, workflows: Object.keys(files).map((file) => file.slice(10, -5)), ...extra,
+      extraFiles: { ...files, ...extra.extraFiles } });
+    const tree = (methodology: PackSpec): PackSpec[] => [BASE, SOFTWARE_RELEASE, methodology];
+    const passes = (methodology: PackSpec): void => {
+      const result = lint(tree(methodology));
+      assert.equal(result.code, 0, result.lines.join('\n'));
+    };
+
+    it('passes release and retrospective reached through subs, at any depth, from several '
+      + 'phases (dl-026 D1)', () => {
+      passes(nested({
+        'workflows/delivery.yaml': sub('delivery', ['{ name: one, include: sprint }',
+          '{ name: two, include: sprint }']),
+        'workflows/sprint.yaml': sub('sprint', ['{ name: work, include: wrap }',
+          '{ name: retrospective, include: retrospective }']),
+        'workflows/wrap.yaml': sub('wrap', [RELEASE]) }));
+    });
+
+    it('passes and terminates on an include cycle among the pack\'s subs', () => {
+      passes(nested({
+        'workflows/delivery.yaml': sub('delivery', ['{ name: a, include: ping }']),
+        'workflows/ping.yaml': sub('ping', ['{ name: b, include: pong }', RELEASE]),
+        'workflows/pong.yaml': sub('pong', ['{ name: c, include: ping }',
+          '{ name: retrospective, include: retrospective }']) }));
+    });
+
+    it('reports a phase including release without iterate_over, with another status, or with a '
+      + 'key that is no field of the composed release (dl-027 D1, D3)', () => {
+      const delivery = (release: string): Record<string, string> => ({
+        'workflows/delivery.yaml': sub('delivery', [release,
+          '{ name: retrospective, include: retrospective }']) });
+      failsWith('life-cycle-includes', tree(nested(delivery('{ name: r, include: release }'))));
+      failsWith('life-cycle-includes', tree(nested(delivery('{ name: r, iterate_over: release, '
+        + 'where: { status: [in-development] }, include: release }'))));
+      failsWith('life-cycle-includes', tree(nested(delivery('{ name: r, iterate_over: release, '
+        + 'where: { status: [in-development, releasing], sprint: x }, include: release }'))));
+      passes(nested(delivery('{ name: r, iterate_over: release, where: { status: [releasing, '
+        + 'in-development], version: "1", release-line: v1, type: release }, include: release }')));
+    });
+
+    it('passes a key the methodology\'s own tightening adds to release (dl-027 D1)', () => {
+      passes(nested({ 'workflows/delivery.yaml': sub('delivery', ['{ name: r, iterate_over: '
+        + 'release, where: { status: [in-development, releasing], sprint: x }, include: release }',
+      '{ name: retrospective, include: retrospective }']) }, { fragments: ['memory'],
+        manifest: { formats: { workflow: 1, memory: 1 } },
+        extraFiles: { 'fragments/memory.yaml': 'format: 1\ntypes:\n  release:\n    template:\n'
+          + '      frontmatter:\n        required: [sprint]\n' } }));
+    });
+
+    it('reports a conditional delivery reaching a workflow of contents (spec-001 §18)', () => {
+      const flowPack: PackSpec = { id: 'methodology/flow', workflows: ['board', 'shared'],
+        manifest: { conditional: [{ with: 'software@^1', contents: { workflows: ['delivery'] } }] },
+        extraFiles: {
+          'workflows/delivery.yaml': sub('delivery', ['{ name: a, include: shared }',
+            '{ name: retrospective, include: retrospective }']),
+          'workflows/shared.yaml': sub('shared', [RELEASE]),
+          'workflows/board.yaml': sub('board', ['{ name: a, produces: [x.md] }']) } };
+      failsWith(['isolation', 'life-cycle-includes'], [BASE, SOFTWARE_RELEASE, KANBAN, flowPack]);
+    });
+
+    it('characterization: release reached by no path is reported; a pack workflow delivery does '
+      + 'not reach is not checked', () => {
+      failsWith('life-cycle-includes', tree(nested({ 'workflows/delivery.yaml': sub('delivery',
+        ['{ name: retrospective, include: retrospective }']) })));
+      passes(nested({
+        'workflows/delivery.yaml': sub('delivery', [RELEASE,
+          '{ name: retrospective, include: retrospective }']),
+        'workflows/aside.yaml': sub('aside', ['{ name: r, include: release }']) }));
+    });
+  });
+
   it('role: a phase role or approval.by_role not in team.roles', () => {
     const base = BASE_WITH_APPROVER;
     assert.equal(lint([base, SOFTWARE_COMPOSABLE, withWorkflow('flow',
