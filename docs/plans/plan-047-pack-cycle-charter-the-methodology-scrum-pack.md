@@ -216,3 +216,43 @@ lists; Open points.
   Amended: the retrospective's cadence against Sprint n+1 and its per-Sprint evidence added to
   ruling 2's questions; UI's test-first steps an Adoption open point (ruling 11); a wrap. Plan
   submitted.
+- 2026-10-26, steps 2–3 (WingFoil 0.3.0, read at `v0.3.0` and run): a draft `scrum` (the `sprint`
+  type, the `task` tightening, `delivery`, `sprint`, `backlog-item`, two directives) composed with
+  `--overlay` and validated on 0.3.0 with no warning. `--overlay` takes only a directory under
+  `tests/fixtures/`, so the draft sat there untracked, never committed, instead of outside the
+  repository. Then a scratch repository ran `sw-life-cycle` through three Sprints and two releases
+  with the `workflow` and `memory` commands:
+  - **Ruling 2's shape fails on 0.3.0.** WingFoil evaluates phases in order, and a phase that
+    completes other than vacuously closes every earlier `iterate_over` phase: its new candidates
+    are reported `late` and never run. Once Sprint 1's retrospective (or a release) completed, a
+    new Sprint was `late`. Two independent repeating streams, Sprints and releases, cannot both be
+    phases of `delivery` in one pass, whatever `optional` says.
+  - **A nested shape works:** `delivery` = `plan-sprint` (the first Sprint) and one phase
+    `iterate_over: sprint` including `sprint`; the `sprint` sub (`element: sprint`) =
+    `sprint-planning` → `plan-release` (optional) → `development` (optional, `iterate_over: task`,
+    `where: { sprint: "{sprint.id}" }`) → `release` (optional, `iterate_over: release`, `where:
+    { status: [in-development] }`, `include: release`) → `sprint-review` → `retrospective`. The
+    optional phases run side by side with the review, so an Increment is released inside the
+    Sprint and the review gates nothing. Sprint n+1, added by `memory add` (the completed
+    `plan-sprint` step no longer takes evidence), joins the live iteration; with no Sprint open,
+    `delivery` completes and `end-of-life` becomes current, and a new Sprint reopens `delivery`
+    until `end-of-life` progresses. Its cost: `release` and `retrospective` are included by the
+    methodology's `sprint` sub, not by `delivery` directly, against `software`'s `delivery`
+    contract, spec-001 §9 and the lint `life-cycle-includes`; and the release phase passes once
+    per Sprint. Taken to the approver (dl-019).
+  - **For the charter:** `element.set_state` in the `sprint` sub moves the Sprint, so the release
+    the sub adds moves with `memory.submit`; `memory add --set` fills only id and path tokens, so
+    `goal` and a task's `sprint` are written by editing the draft; a task carrying
+    `sprint: "n/a — <reason>"` passes `submit` and is left out of the iteration; a `{sprint.id}`
+    token warns (`W_PHASE_TOKEN_OUT_OF_SCOPE`) unless the `sprint` template declares `id`; the
+    limit of one active Sprint holds.
+  - **Found in `base` 1.0.0, outside this plan** (reported to the approver, for plan-046's
+    session): `workflow start` adds an instance's plan with `workflow` and `phase` empty, and
+    `base`'s `plan` requires both, so the plan cannot be submitted without editing it; a `produces`
+    path naming a directory counts on 0.3.0 only with a trailing `/`, so `retrospective` ›
+    `explore` (`retrospective_path`, `docs/retrospectives`) is never satisfied by its default;
+    and once any file is there, `explore` completes for every later Sprint.
+  - Not settled by the run: a release that left `in-development` (`enter-releasing`) dropped from
+    the frontier; whether that is the scratch run's driving (status commits instead of the
+    `wf(release): start …` form the engine expects) or the contract's `where` is left to the
+    charter's review, with `software`'s fixture as the reference.
