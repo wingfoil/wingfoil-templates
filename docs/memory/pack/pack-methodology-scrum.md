@@ -2,7 +2,7 @@
 id: pack-methodology-scrum
 type: pack
 title: "Scrum"
-status: proposed
+status: accepted
 axis: "methodology"
 name: "scrum"
 slot: ""
