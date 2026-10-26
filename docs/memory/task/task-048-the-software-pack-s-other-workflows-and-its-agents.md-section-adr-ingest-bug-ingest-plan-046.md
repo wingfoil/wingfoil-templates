@@ -55,9 +55,9 @@ task-049 adds the compositions of the four governed repositories' parameters.
    with no warning (`matrix: self-test, 4 runs, 0 failed, tolerance applied: none`), and 0.3.0's
    `workflow list`, run by hand on the composed defaults committed in a scratch repository, lists
    from its JSON output `adr-ingest`, `bug-ingest`, `decision-log-ingest`, `governance-evolution`,
-   `retrospective-periodic` and `sw-life-cycle` as the startable workflows, `diagnostics` empty; the composed AGENTS.md region holds `base`'s section
-   then `software`'s. The two moved counts are asserted red first (dl-018 R1), the red run
-   recorded.
+   `retrospective-periodic` and `sw-life-cycle` as the startable workflows, `diagnostics` empty;
+   the composed AGENTS.md region holds `base`'s section then `software`'s. The two moved counts are
+   asserted red first (dl-018 R1), the red run recorded.
 7. **Checks** from a clean clone on Node.js 22.21 and 22.12.0: `npm ci`, `npm test`,
    `npm run lint`, `check:pins`, `check:schemas`, `check:packs`, `index -- --check`, `validate`,
    `validate -- --overlay tests/fixtures/software-exit`, the golden fixture's step and
