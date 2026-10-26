@@ -2,7 +2,7 @@
 id: task-048-the-software-pack-s-other-workflows-and-its-agents.md-section-adr-ingest-bug-ingest-plan-046
 type: task
 title: "The software pack's other workflows and its AGENTS.md section: adr-ingest, bug-ingest (plan-046)"
-status: in-review
+status: approved
 pack: "pack-foundation-software"
 depends_on: [task-047]
 tags: ["packs","software","W8"]
