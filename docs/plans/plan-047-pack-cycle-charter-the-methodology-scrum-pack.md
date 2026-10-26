@@ -177,6 +177,12 @@ branch `pack/methodology-scrum-charter`, in a worktree of its own, because plan-
     `sprint`, and a Sprint's `release` phase adds `sprint: "{sprint.id}"` to its `where`; a release
     that spans Sprints has the field rewritten.
 
+16. **Release after the Sprint Backlog** (2026-10-26, after the charter's review, dl-019): on
+    WingFoil 0.3.0 a release completing while a Sprint's items are open closes `development` and
+    leaves them `late`; the `sprint` sub runs `development` (not optional) before `plan-release`
+    and `release`, which then run beside the Sprint Review. The Sprint moves with `memory.submit`,
+    so the limit holds.
+
 **The pack's identity:** id `methodology/scrum`, `axis: methodology`, `name: scrum`,
 `pack_path: packs/methodology/scrum`, Memory element `pack-methodology-scrum`;
 `requires: [base@^1, software@^1]`, `conflicts: []`, `delivery` in `contents`,
@@ -306,3 +312,9 @@ lists; Open points.
   coordinating session's request) and written; `software`'s contract and spec-001 §9 amended in
   place with it; the charter follows both rulings. `main` merged into the branch after task-050
   (`17d6ac0`).
+- 2026-10-26: the charter's review: request changes. A third run on WingFoil 0.3.0 (the scratch
+  directory had been wiped by a session restart: a guarded script rebuilt it) reproduced the first
+  blocking finding, a mid-Sprint release closing `development`, and ran the approver's ruling 16:
+  Sprint 1 through its item, a release to `released`, the review, the retrospective and `close`,
+  with no `late` element; `memory.submit` moved the Sprint, and `workflow start` ran with
+  bug-005's workaround. Charter amended; focused re-review requested.
