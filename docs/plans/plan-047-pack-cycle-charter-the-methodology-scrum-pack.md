@@ -44,8 +44,8 @@ branch `pack/methodology-scrum-charter`, in a worktree of its own, because plan-
 - spec-001 §3 (axes, cardinalities), §6.3, §6.5, §7.5 (memory keys, `template.frontmatter.required`
   on every type a pack defines, `not_applicable_allowed`, `limits`), §9 (slots), §10 (the AGENTS.md
   section, level 2), §12, §18; spec-002 §2 (README, CB-1 … CB-6).
-- dl-001 (axes), dl-003, dl-015, dl-022 S5 (Scrum's rules belong to the methodology),
-  dl-023, dl-017 … dl-020; the directives `pack-authoring`, `pack-semver`, `pack-compatibility`,
+- dl-001 (axes), dl-003, dl-015, dl-022 S5 as `pack-foundation-software`'s Out of scope applies
+  it (Kanban's or Scrum's rules and `limits` are a methodology's), dl-023, dl-017 … dl-020; the directives `pack-authoring`, `pack-semver`, `pack-compatibility`,
   `traceability`.
 - The golden tree's `methodology/kanban` (`tests/fixtures/compose/tree/`) as the model of a
   methodology pack.
@@ -58,7 +58,8 @@ branch `pack/methodology-scrum-charter`, in a worktree of its own, because plan-
   TDD; their delivery is WingFoil's release-line loop (`release-line-cycle` → `release-cycle` →
   `dev-loop`), with no timebox, a retrospective per release, and a `release-cycle` phase that
   mentions story points no phase estimates. Benchmark runs Kanban. WingFoil 0.3.0's `init`
-  template "Scrum" only names the methodology in `dna.yaml` and writes a generic delivery.
+  template "Scrum" names Scrum among the methodologies of `dna.yaml` and writes a generic
+  delivery workflow.
 - **Research on the method** (2026-10-26): the Scrum Guide 2020 makes Sprints sequential, fixed in
   length and at most one month; it lets an Increment be released before a Sprint ends, says the
   Sprint Review is never a gate to releasing value, and allows several Increments per Sprint; it
@@ -76,32 +77,48 @@ branch `pack/methodology-scrum-charter`, in a worktree of its own, because plan-
    before a Sprint ends. A project may run one Sprint per release, as UI can. Rejected: one Sprint
    equal to one release (contrary to the Guide, and not reusable); a Sprint as the `plan` of a
    `main` workflow (it breaks the `delivery` contract).
-2. **The shape of `delivery`.** A phase `sprint` (`iterate_over: sprint`, including a sub
-   `sprint` bound to `element: sprint`: planning → the Sprint's tasks → review → `retrospective`)
-   and a phase `release` (`iterate_over: release`, `where: { status: [in-development] }`,
-   `include: release`) as the contract states, with a phase that creates the release and moves it
-   to `in-development`. Two points are checked on WingFoil 0.3.0 before the charter is written
-   (step 2, step 3): whether the engine's live deduction lets Sprints and releases advance without
-   waiting on each other in a strict order, and whether `retrospective` included from the `sprint`
-   sub meets the contract's "included by name, at its own cadence". If either fails, it goes to
-   the approver when found (dl-019).
+2. **The shape of `delivery`**, as amended after this plan's review (2026-10-26):
+   - a phase that creates a Sprint (`memory.add(type: sprint)`, with its `produces`) and one that
+     creates a release and moves it to `in-development`, as the contract states;
+   - a phase `sprint` (`iterate_over: sprint`, including a sub `sprint` bound to
+     `element: sprint`: Sprint Planning → the Sprint Backlog's items → Sprint Review);
+   - a phase `retrospective` in `delivery` itself, `iterate_over: sprint` with
+     `include: retrospective`: one retrospective per Sprint. spec-001 §9 and the lint
+     (`life-cycle-includes`) require `delivery` to include `retrospective` by name, so an include
+     from inside the `sprint` sub would fail; the approver chose this over amending §9
+     (2026-10-26). WingFoil 0.3.0 accepts it: `retrospective` binds no element;
+   - a phase `release` (`iterate_over: release`, `where: { status: [in-development] }`,
+     `include: release`), as the contract states.
+
+   WingFoil 0.3.0 evaluates phases in their declared order: the first incomplete phase is current,
+   and a later one waits unless it completes on its own. Steps 2 and 3 settle, before the charter
+   is written: how Sprint n+1 and release n+1 come about in the single pass `sw-life-cycle` makes
+   through `delivery`; when `delivery` completes; and whether `optional: true` on the iterate
+   phases lets Sprints and releases advance side by side, so that an Increment can be released
+   before a Sprint ends. What 0.3.0 cannot express goes to the approver when found (dl-019), and
+   the charter states it as an adaptation to the Guide.
 3. **Roles:** no new role. Product Owner → `product-owner`, Scrum Master → `facilitator` (`base`),
    Developers → `developer` with `software`'s `architect`, `reviewer`, `qa` and `tech-lead`. The
    `approver`'s gates are an adaptation the README declares. The agent works as a Developer and
    holds no Scrum accountability.
-4. **Events:** Sprint Planning, Sprint Review and the Retrospective are phases of the `sprint` sub;
+4. **Events:** Sprint Planning and Sprint Review are phases of the `sprint` sub, the Retrospective
+   a phase of `delivery` (ruling 2);
    the Daily Scrum is a rule of the `scrum` directive, with no phase, since it leaves no artefact;
    refinement is a rule too, not an event. The review's outcome is written in the sprint element's
    body: no new `produces`.
 5. **Backlog and `task`:** the Product Backlog is the `task` elements in `backlog`; the Sprint
    Backlog is those whose `sprint` field names the Sprint. `scrum` tightens `task` with `sprint` in
    `template.frontmatter.required` and `not_applicable_allowed: [sprint]`, so an item not yet
-   planned carries `n/a`. A task's link to a release stays the project's (WingFoil and UI already
-   require `release` on `task`). `scrum` ships a thin `dev-loop` sub (`element: task`; `start` →
-   `build` → `review` → `done`), named as WingFoil's and UI's; step 2 checks whether a project's
-   `custom/` workflow of the same name wins over the pack's.
-6. **`limits`:** `sprint` gets a limit of one on its active state (Sprints are sequential); no WIP
-   limit on `task` (Kanban's), none on `release`.
+   planned carries `n/a — <reason>`, the form WingFoil 0.3.0 accepts. The `sprint` sub iterates
+   over its items with `iterate_over: task` and `where: { sprint: "{sprint.id}" }`. A task's link
+   to a release stays the project's (WingFoil and UI already require `release` on `task`).
+   `scrum` ships a thin sub `backlog-item` (`element: task`; `start` → `build` → `review` →
+   `done`). Not `dev-loop`, as first proposed: WingFoil 0.3.0 refuses two workflows of one name
+   (`E_WORKFLOW_DUPLICATE_NAME`) and lets a `custom/` file win only for directives, so a pack's
+   `dev-loop` would collide with WingFoil's and UI's own; the approver chose the name (2026-10-26).
+6. **`limits`:** `sprint` gets a limit of one on its active state (Sprints are sequential;
+   WingFoil 0.3.0 enforces a limit at the transition); no WIP limit on `task` (Kanban's), none on
+   `release`. The charter fixes the `sprint` machine (sequence and gates) this rests on.
 7. **Directives:** `scrum` (events, timeboxes, artefacts and their commitments, the Daily Scrum,
    refinement) and `definition-of-done` (generic; a project overrides it in `custom/`), their ids
    checked against WingFoil's built-ins. Nothing of dl-013 (`pending`, another methodology, W15).
@@ -113,14 +130,18 @@ branch `pack/methodology-scrum-charter`, in a worktree of its own, because plan-
    `delivery`, always present since `scrum` requires `software`.
 10. **Examples and exit criterion:** when `packs/methodology/scrum` enters the tree, CB-2's
     exemption line falls, and the examples of `base`, `software` and `scrum` are due in the same
-    change (spec-002 §2.4). The charter puts them in `scrum`'s `author`: an example on the
-    parameters' defaults, one with UI's values, and the exit criterion: task-049's compositions
-    redone with `scrum` in place of the fixture methodology, on WingFoil 0.3.0. `base`'s README
-    then changes after 1.0.0 (likely a patch); the charter records it and W9's plan rules it.
+    change (spec-002 §2.4). The charter puts them in `scrum`'s `author`: README examples of
+    fictional projects only (spec-002 §2.4 names no real project), one on the parameters'
+    defaults and one carrying values like UI's; and the exit criterion, apart from the examples
+    as plan-046 keeps them apart: task-049's compositions redone with `scrum` in place of the
+    fixture methodology, on WingFoil 0.3.0. `base`'s README then changes after 1.0.0, a patch
+    under `pack-semver` (a README-only change); the charter records it and W9's plan rules it.
 11. **Adoption:** the procedure for any project, then one known adopter, UI: one Sprint per
-    release if it wishes, its own phases (`user-docs`, `e2e-smoke`, its TDD `dev-loop`) kept as
-    its own, its step keys mapped old → new (WingFoil dl-187). WingFoil keeps its `custom/`
-    delivery (M3, `software`'s R-11); Benchmark and this repository do not adopt `scrum`.
+    release if it wishes, its own phases (`user-docs`, `e2e-smoke`) and its TDD `dev-loop` kept as
+    its own `custom/` workflows beside `backlog-item`, its step keys mapped old → new (WingFoil
+    dl-187). WingFoil keeps its `custom/` delivery (the methodology modelled on its loop is
+    weighed in milestone M3, `software`'s R-11); Benchmark and this repository do not adopt
+    `scrum`.
 12. **Sequencer:** F4.3 (`scrum`) sits in W10; its charter now runs in W8 and its publication in
     W9. No decision-log now: W9's plan amends `07_sequencer.md`.
 
@@ -146,8 +167,8 @@ On branch `pack/methodology-scrum-charter`, from `main` at `ca1a19e`.
 | # | Who | Step | Produces |
 |---|---|---|---|
 | 1 | claude | This plan: written, independently reviewed, amended, submitted (`draft → active`) | this plan |
-| 2 | claude | A re-read at `wingfoil/wingfoil@v0.3.0` and at UI's head, recorded in the Execution Notes: the live deduction of `iterate_over` (Sprints and releases side by side), how `limits` is enforced, whether a `custom/` workflow wins over a pack's of the same name, `not_applicable_allowed`, the built-in directive ids, UI's step keys | — |
-| 3 | claude | A feasibility check outside the repository: a draft `scrum` (`sprint` type, `delivery`, `sprint`, `dev-loop`) composed with `--overlay` and validated on 0.3.0, never committed; its outcome recorded here. A failure of ruling 2 goes to the approver (dl-019) | — |
+| 2 | claude | A re-read at `wingfoil/wingfoil@v0.3.0` and at UI's head, recorded in the Execution Notes: the phase order and live deduction of `iterate_over` (how Sprint n+1 and release n+1 arise in one pass through `delivery`, when `delivery` completes, `optional: true` on the iterate phases), the `sprint` machine under `limits`, `not_applicable_allowed`, UI's step keys. Already settled by this plan's review: a `custom/` workflow never replaces a pack's (ruling 5), the new directive ids equal no built-in | — |
+| 3 | claude | A feasibility check outside the repository: a draft `scrum` (`sprint` type, `task` tightening, `delivery`, `sprint`, `backlog-item`) composed with `--overlay` and validated on 0.3.0, with a scripted run of two Sprints and two releases through `workflow` commands in a scratch repository; never committed; its outcome recorded here. What ruling 2 cannot do goes to the approver (dl-019), and an amendment of this active plan follows | — |
 | 4 | claude, drafting for the product-owner | `pack-methodology-scrum`: `memory add --type pack --title Scrum --set axis=methodology --set name=scrum`, `pack_path` filled by hand; written from the rulings above, `software`'s `delivery` contract and the Scrum Guide 2020 | `docs/memory/pack/pack-methodology-scrum.md` |
 | 5 | claude | an independent review of the charter (dl-017), amended while `draft`, re-reviewed when a fix changes a ruling; submitted (`draft → proposed`) | — |
 | 6 | claude | push; the CI run's conclusion recorded here | — |
@@ -157,11 +178,14 @@ On branch `pack/methodology-scrum-charter`, from `main` at `ca1a19e`.
 What the charter must hold, besides the rulings: Purpose; Ships (the `sprint` type with its
 machine, gates, `limits`, id pattern, path and required frontmatter; the `task` tightening; the
 workflows with phases, roles, actions, approvals, fallbacks and `produces`; directives; roles
-assignments; parameters; the AGENTS.md section); Commitments to adopters (as `base`'s and
-`software`'s, R1); Adoption; Out of scope (WingFoil's release-line loop, M3; Kanban's rules;
-estimation techniques; a scaled framework); Compatibility (formats, `workflow-engine`, 0.3.0 the
-oldest release of its matrix, no key newer than it); Acceptance (CB-1, CB-2 with ruling 10, CB-6
-at its first tag; the exit criterion); the adaptations to the Guide the README lists; Open points.
+assignments; parameters; the AGENTS.md section); Commitments to adopters (R1's four points, as
+`base`'s and `software`'s); every phase whose artefact is a file declaring it in `produces` (R4);
+Adoption; Out of scope (WingFoil's release-line loop, milestone M3; Kanban's rules; estimation
+techniques; a scaled framework); Compatibility (formats, `workflow-engine`, 0.3.0 the oldest
+release of its matrix, no key newer than it, the WingFoil range computed and never written; the
+provisional format-1 install mapping and lock, plan-041 ruling 9); Acceptance (CB-1, CB-2 with
+ruling 10, CB-6 at its first tag; the exit criterion); the adaptations to the Guide the README
+lists; Open points.
 
 ## Handoff
 
@@ -173,3 +197,10 @@ at its first tag; the exit criterion); the adaptations to the Guide the README l
 ## Execution Notes
 
 - 2026-10-26: written; `workflow` and `phase` filled by editing the draft (W-02).
+- 2026-10-26: independent review: request changes, two blocking findings. `retrospective` included
+  only from the `sprint` sub fails spec-001 §9 and the lint; nothing created the Sprints, and 0.3.0
+  runs phases in order. The approver ruled the retrospective in `delivery`, one per Sprint, and the
+  sub's name `backlog-item` (a pack's `dev-loop` would collide with the adopters' own). Also
+  amended: `n/a — <reason>`, README examples of fictional projects only, the dl-022 S5 citation,
+  the two meanings of "M3", the `init` template, the missing items of plan-041's list, steps 2
+  and 3 widened. Focused re-review requested.
