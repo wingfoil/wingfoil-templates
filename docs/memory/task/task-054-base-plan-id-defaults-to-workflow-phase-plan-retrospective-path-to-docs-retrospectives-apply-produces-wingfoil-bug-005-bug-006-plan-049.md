@@ -135,3 +135,20 @@ check is task-053's script, run from its branch with `--tree` at this branch's c
   Acceptance (the inventory's file committed inside the path, not at it, or `explore` reads as
   complete on 1.0.0; the expected red listed per composition), with the non-blocking ones applied
   to both bodies. Re-review: approve; its three wording points applied.
+- 2026-10-26, build on `task/task-054-base-fixes`: `16760ec` (the five files of Acceptance 4,
+  one commit) and `5a39fe6` (the notes on the charter and on dl-015). Two deviations from the
+  Design's texts, both kept: `pack.yaml`'s descriptions carry no backticks, as no other
+  description of the manifest does; the README says "which WingFoil needs", without "0.3.0",
+  so that it names no version (Acceptance 3).
+- 2026-10-26, interim evidence (Design, until task-053's script exists): plan-049's reproductions
+  rerun by hand on the branch's tree with WingFoil 0.3.0 (`cc31d7a8`), on `core-records`,
+  `release-folders` and `release-folders-lean`: the three `workflow start` exit 0, plans `active`
+  (`<main>-1-plan`, `workflow` the main's name, `phase` `1`); a file committed inside
+  `retrospective_path` makes `workflow next` name `retrospective.additional-points`;
+  `governance-evolution` (assess finalized, a decision-log added, submitted and approved by the
+  approver's email) is complete and `workflow end` exits 0. Also on the working tree:
+  `npm run validate` (3 runs, 0 failed), the overlay `software-exit` (7 runs, 0 failed), the
+  golden step, `check:packs`, `index -- --check` and `lint`, each exit 0.
+- 2026-10-26: independent review of the build: approve; its three non-blocking findings applied
+  (the two deviations recorded above; the interim evidence recorded; the charter's Adoption note
+  says what to write in `workflow` and `phase`).

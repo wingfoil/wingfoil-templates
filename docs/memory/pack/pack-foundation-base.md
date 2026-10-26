@@ -252,5 +252,6 @@ For the approver's acceptance:
     fixed file having none.
   - Adoption: a project that keeps `plan-{n}-{slug}` (this repository and Benchmark) states it
     (commitment 2) and, after each `workflow start`, fills the plan's `workflow` and `phase` by
-    hand and submits it; or it uses `{workflow}-{phase}-plan` for its new plans (commitment 3).
+    hand (the main's name and, as WingFoil itself writes them, the instance number, e.g. `1`) and
+    submits it; or it uses `{workflow}-{phase}-plan` for its new plans (commitment 3).
     A `retrospective_path` naming a directory gains its trailing `/`.
