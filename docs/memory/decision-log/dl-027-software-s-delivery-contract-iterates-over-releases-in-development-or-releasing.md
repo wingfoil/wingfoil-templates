@@ -46,8 +46,8 @@ keys.
    included sub completes: a feedback note, and the `release` slot unusable on 0.3.0 meanwhile.
 4. **Restructure `release`'s default** so that progress shows earlier, for example with
    `release-submit`'s phases as direct phases of `release`. Rejected: dl-015 C5 and plan-041's R3
-   keep the thin `release` and WingFoil's two sub-workflows with their phase names, which the
-   Commitments to adopters fix.
+   keep the thin `release` and WingFoil's two sub-workflows with their phase names, which
+   `software`'s Commitments to adopters keep.
 
 ## Decision
 
@@ -62,8 +62,9 @@ element is approved.
   slot pass silently). Everything else of the contract, as dl-026 amends it, stands.
 - **D2 — spec-001 §9** says the same, in the sentence dl-026 added; an Execution Note records it.
 - **D3 — The lint.** dl-026 D3's check of the `where` reads D1: `status` equal to
-  `[in-development, releasing]`, each other key a field of the composed `release` type; key
-  values are not checked. Part of the same tooling task, task-051.
+  `[in-development, releasing]`, each other key a field of the composed `release` type, the
+  methodology's tightening included; key values are not checked. Part of the same tooling task,
+  task-051.
 - **D4 — `pack-foundation-software`'s charter** states D1 in its `delivery` contract, amended in
   place with an Execution Note, approved with this element and the merge OK, as dl-026 D4.
 - **D5 — `methodology/fixture`** (`tests/fixtures/software-exit/packs/methodology/fixture/
@@ -73,10 +74,12 @@ element is approved.
 Consequences: the gap is only the window between `enter-releasing` and `approve-release`; a reject
 at `approve-release`, which returns to `pre-release-checks` with the release still `releasing`, is
 covered too; from `approve-release` on the candidate has progressed, and once `released` it counts
-as complete. `draft`, `planning` and `released` stay out: the methodology moves its releases to
-`in-development` itself. `software`'s Commitments to adopters are untouched (no name changes). A
-project that adopted the contract by hand iterates over `[in-development, releasing]`. dl-026 D1 and
-D3, which name `[in-development]`, are read with D1; dl-026 is not edited.
+as complete. `draft` and `planning` stay out because the methodology moves its releases to
+`in-development` itself; `released` stays out because a release this instance ran counts as complete
+anyway, and one it never ran must be ignored. `software`'s Commitments to adopters are untouched (no
+name changes). A project that adopted the contract by hand iterates over
+`[in-development, releasing]`. dl-026 D1 and D3, which name `[in-development]`, are read with D1;
+dl-026 is not edited.
 
 ## Execution Notes
 
@@ -84,3 +87,6 @@ D3, which name `[in-development]`, are read with D1; dl-026 is not edited.
 - 2026-10-26: independent review: approve after amendments. The cause corrected (a candidate
   progresses only when a phase of `release` completes, not by a cutoff of evidence); option 4
   added; scope keys limited to fields of the composed `release`; the consequences detailed.
+- 2026-10-26: focused re-review: approve after amendments. spec-001 §9 and the charter now state
+  the scope-key limit, with their notes; the reason `released` stays out; D3 reads the composed
+  `release`; a wording in option 4. Submitted.

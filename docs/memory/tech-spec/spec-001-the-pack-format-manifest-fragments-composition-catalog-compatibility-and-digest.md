@@ -661,9 +661,10 @@ only in a composition with `software`:
   does. `delivery` includes `release` and `retrospective` by name, at its own cadence (dl-003 D11,
   dl-006), directly or through sub-workflows the same methodology ships, at any depth, each shipped
   in the same part as `delivery` (dl-026). The phase that includes `release` iterates over `release`
-  with a `where` whose `status` is `[in-development, releasing]`, and it may add scope keys
-  (dl-027). `retrospective` is not a slot, so no pack replaces it. In a composition without
-  `software`, what runs `retrospective` is fixed by `base`'s charter.
+  with a `where` whose `status` is `[in-development, releasing]`, and it may add scope keys, each a
+  frontmatter field the composed `release` type declares (dl-027). `retrospective` is not a slot, so
+  no pack replaces it. In a composition without `software`, what runs `retrospective` is fixed by
+  `base`'s charter.
 - A phase pack of slot `<slot>` **must** ship `workflows/<slot>.yaml`, with `name: <slot>` and
   `kind: sub`. Its file replaces `software`'s default. This is the only case in which a pack's file
   replaces another's (§7.6). A phase pack requires `software` (§3), so it carries no conditional
@@ -1258,7 +1259,8 @@ check the rest, and the composer refuses what they reject.
   (`included_by` names the root that reaches the slot) and §18's placement check read the same;
   `catalog.yaml`'s data is unchanged. The lint `life-cycle-includes` follows in a tooling task.
 - 2026-10-26, **amended in place** (dl-027, plan-047 ruling 14; dl-027's approval and the merge OK
-  approve the text): §9's phase that includes `release` iterates with `status:
-  [in-development, releasing]` and may add scope keys, because on WingFoil 0.3.0 a release in
-  `releasing` left an `[in-development]` filter before any phase of `release` had completed, so it
-  was skipped and stopped after `enter-releasing`. Nothing else changes.
+  approve the text): §9's phase that includes `release` iterates with
+  `status: [in-development, releasing]` and may add scope keys, each a field of the composed
+  `release`, because on WingFoil 0.3.0 a release in `releasing` left an `[in-development]` filter
+  before any phase of `release` had completed, so it was skipped and stopped after
+  `enter-releasing`. Nothing else changes.
