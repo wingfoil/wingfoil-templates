@@ -142,15 +142,15 @@ branch `pack/methodology-scrum-charter`, in a worktree of its own, because plan-
     as plan-046 keeps them apart: task-049's compositions redone with `scrum` in place of the
     fixture methodology, on WingFoil 0.3.0. `base`'s README then changes after 1.0.0, a patch
     under `pack-semver` (a README-only change); the charter records it and W9's plan rules it.
-11. **Adoption:** the procedure for any project, then one known adopter, UI: one Sprint per
-    release if it wishes, its own phases (`user-docs`, `e2e-smoke`) and its TDD `dev-loop` kept as
-    its own, its step keys mapped old → new (WingFoil dl-187). The pack's `sprint` sub includes
-    `backlog-item`, which UI cannot change, and the composed `workflows.yaml` lists only
-    `built-in/` files: how UI's test-first steps live under `scrum` (a UI directive applied to
-    `backlog-item` › `build`, or a workflow UI includes by hand outside the composer's contract,
-    as WingFoil's `custom/` delivery) is an Adoption open point of the charter. WingFoil keeps its `custom/` delivery (the methodology modelled on its loop is
-    weighed in milestone M3, `software`'s R-11); Benchmark and this repository do not adopt
-    `scrum`.
+11. **Adoption:** the procedure for any project, then one known adopter, UI: one Sprint per release
+    if it wishes, its own phases (`user-docs`, `e2e-smoke`) and its TDD `dev-loop` kept as its own,
+    its step keys mapped old → new (WingFoil dl-187). The pack's `sprint` sub includes
+    `backlog-item`, which UI cannot change, and the composed `workflows.yaml` lists only `built-in/`
+    files: how UI's test-first steps live under `scrum` (a UI directive applied to `backlog-item` ›
+    `build`, or a workflow UI includes by hand outside the composer's contract, as WingFoil's
+    `custom/` delivery) is an Adoption open point of the charter. WingFoil keeps its `custom/`
+    delivery (the methodology modelled on its loop is weighed in milestone M3, `software`'s R-11);
+    Benchmark and this repository do not adopt `scrum`.
 12. **Sequencer:** F4.3 (`scrum`) sits in W10; its charter now runs in W8 and its publication in
     W9. No decision-log now: W9's plan amends `07_sequencer.md`.
 
