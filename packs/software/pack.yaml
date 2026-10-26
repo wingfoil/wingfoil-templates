@@ -58,5 +58,6 @@ contents:
   fragments: [dna, roles, memory]
   directives: [determinism]
   workflows: [sw-life-cycle, inception, specification, end-of-life, release, release-submit,
-    release-publishing]
+    release-publishing, adr-ingest, bug-ingest]
   memory_templates: [adr, tech-spec, bug, release, release-line]
+  agents_section: true

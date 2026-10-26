@@ -104,3 +104,13 @@ diagnostic, so no question is left for the build.
   narrower rule; the reason `triage` has no fallback (0.3.0's `W_PHASE_FALLBACK_NOT_REENTRANT`);
   `depends_on: [task-047]`; section 8's wording; how `workflow list` is run and what it lists; the
   privacy rule in full. Submitted for the approver's acceptance into the backlog.
+- 2026-10-26, red (the tests' commit): on Node.js 22.21, the two count tests failed (42 files where
+  45 are asserted) before the three files existed.
+- 2026-10-26, green: the two pass; `lint`, `check:packs` (45 files, 0 problems), `check:schemas`,
+  `index -- --check` (5 files) exit 0; `validate -- --overlay tests/fixtures/software-exit` on
+  WingFoil 0.3.0: `compositions: 4`, `matrix: self-test, 4 runs, 0 failed, tolerance applied:
+  none`. By hand: the defaults composed with `npm run compose` into a scratch repository, one
+  commit, and 0.3.0's `workflow list --format json`: startable `adr-ingest`, `bug-ingest`,
+  `decision-log-ingest`, `governance-evolution`, `retrospective-periodic`, `sw-life-cycle`,
+  `diagnostics` empty; the AGENTS.md region holds `base`'s section (`# Kestrel Ledger`) then
+  `software`'s (`## The software life cycle`).

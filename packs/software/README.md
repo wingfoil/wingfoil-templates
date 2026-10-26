@@ -11,7 +11,8 @@ Axis: foundation
 Every software project governed by WingFoil composes `software` right after `base`, with one
 methodology: it holds the adr, tech-spec, bug, release and release-line types, the life cycle
 `sw-life-cycle` with its slots and their defaults (`inception`, `specification`, `release`,
-`end-of-life`), the release workflows `release-submit` and `release-publishing`, the
+`end-of-life`), the release workflows `release-submit` and `release-publishing`, the workflows
+that capture an architecture decision (`adr-ingest`) and a bug (`bug-ingest`), the
 `determinism` directive and the software roles (architect, developer, reviewer, qa, tech-lead).
 The methodology fills `delivery`, which creates the releases and runs the `release` slot over
 them. It serves every adoption profile of a software project (solo developer, code reviewer, team
@@ -58,7 +59,7 @@ methodology, with a WingFoil release in the pack's range (see its catalog entry)
   - Memory types: `adr`, `bug`, `release`, `release-line`, `tech-spec`
   - roles: `architect`, `developer`, `qa`, `reviewer`, `tech-lead`
   - states: `accepted`, `active`, `approved`, `closed`, `done`, `draft`, `in-development`, `in-progress`, `in-review`, `open`, `pending`, `planned`, `planning`, `released`, `releasing`, `resolved`, `superseded`, `triaged`
-  - workflows: `end-of-life`, `inception`, `release`, `release-publishing`, `release-submit`, `specification`, `sw-life-cycle`
+  - workflows: `adr-ingest`, `bug-ingest`, `end-of-life`, `inception`, `release`, `release-publishing`, `release-submit`, `specification`, `sw-life-cycle`
 <!-- generated:end composition -->
 
 <!-- generated:begin what-it-adds -->
@@ -66,6 +67,12 @@ methodology, with a WingFoil release in the pack's range (see its catalog entry)
 
 ### Workflows
 
+- `adr-ingest` (main)
+  - `capture`, role `architect`
+  - `approve`, role `approver`, gate `approver`
+- `bug-ingest` (main)
+  - `capture`, role `developer`
+  - `triage`, role `tech-lead`, gate `approver`
 - `end-of-life` (sub)
   - `announce`, role `product-owner`
   - `approve`, role `approver`, gate `approver`
@@ -153,6 +160,7 @@ None yet: no methodology pack is published.
 - WingFoil's `end-of-life`, as of 0.3.0: its three phases, with an `approve` phase after
   `announce` that moves the decision-log to `ready`, as `base`'s `decision-log-ingest` does; its
   software life cycle's `sunset` is `end-of-life` here.
+- WingFoil's `adr-ingest` and `bug-ingest`, as of 0.3.0: their phases and step keys, unchanged.
 - wingfoil-templates' own `inception` and `specification` defaults: minimal, naming no method,
   for a phase pack to replace.
 
