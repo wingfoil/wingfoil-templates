@@ -142,3 +142,39 @@ regenerated outputs; the task's notes.
 
 - 2026-10-26: written under plan-048 (step 1).
 - 2026-10-26: reviewed with plan-048 (approve after amendments, then approve).
+- 2026-10-26: Design written; `backlog → in-progress`. Branch `task/task-051-lint-life-cycle-includes`.
+- 2026-10-26, red run (dl-018 R1), on `5db5935` (the tests only, `main`'s code): `npm run build &&
+  node --test --test-name-pattern="task-051" dist/tests/check-packs.test.js
+  dist/tests/compose-documents.test.js`: 8 tests, 6 fail (nested reach, the cycle, the `where`
+  checks, the conditional part, the composer's acceptance and refusal), 2 pass: the
+  characterization test (a `release` reached by no path reported; an unreached workflow not
+  checked), and the methodology's tightening (`sprint` in the `where`), green on `main` because it
+  checks no `where`, kept as the guard that the new rule accepts it. The conditional-part test also
+  expects `isolation` and `memory-type`: the reached workflow is always composed, includes the slot
+  `release` and iterates over a type only `software` declares.
+- 2026-10-26, the rule (`595a99c`): `deliveryProblems` and `releasePhaseProblems` in
+  `src/workflow-rules.ts`; the composer passes a Memory template's frontmatter to the rule
+  (`src/compose-documents.ts`), as the lint already reads it. The task-051 tests green.
+- 2026-10-26, the fixtures (`c51bc4a`). dl-026's consequence that the golden `methodology/kanban`
+  "stays valid" is superseded by dl-026 D3 and dl-027 D3 for these fixtures:
+  - `tests/support/pack-tree.ts`: `DELIVERY` iterates over `release`; `SOFTWARE` and
+    `SOFTWARE_COMPOSABLE` ship a `memory` fragment with a `release` type and its template
+    (`RELEASE_TYPE`);
+  - golden tree: `software` gains the `release` type and template (`contents.memory_templates`
+    `[adr, release]`); `kanban` and `flow` iterate; merge examples `example-1`, `example-2`: the
+    same in their `software` and `kanban`; `software-exit`'s fixture `where` is
+    `[in-development, releasing]`;
+  - regenerated with the repository's commands: `node dist/src/index-cli.js --tree
+    tests/fixtures/compose/tree` (the golden `software` README), `node dist/src/compose-cli.js
+    --tree tests/fixtures/compose/tree --out <set>` with each set's parameters and entries
+    (`expected`, `expected-base`, `expected-flow`, `expected-flow-software`; only `expected` and
+    `expected-flow-software` changed), `REFRESH_INDEX_EXPECTED=1 node --test
+    dist/tests/index.test.js`.
+  - Counts and expectations moved: the clean lint tree checks 22 files, not 20 (two more of
+    `software`); a `software` that fails its schema now gives `memory-type` with `schema`, in
+    place of `compose` (kanban's delivery iterates over a type no loaded pack declares); a
+    methodology without `software` shipping `delivery` in `contents` gives `memory-type` too; the
+    old `life-cycle-includes` test keeps `software`'s files; `SOFTWARE_FULL` ships `release` too.
+- 2026-10-26: `npm run lint` clean; `npm run validate` passes; the golden tree's `validate` passes
+  (26 runs, 0 failed); `validate --overlay tests/fixtures/software-exit` passes with 7 runs and 0
+  failed. `main` merged into the branch (`21c51a1`, plan-049's elements).
