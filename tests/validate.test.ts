@@ -266,7 +266,7 @@ describe('npm run validate', () => {
       const result = validate(['--tree', REPO_ROOT]);
       assert.equal(result.code, 0, result.lines.join('\n'));
       assert.ok(result.lines.includes('schemas: checked 4 files, 0 problems'));
-      assert.ok(result.lines.includes('lint: checked 42 files, 0 problems'));
+      assert.ok(result.lines.includes('lint: checked 45 files, 0 problems'));
       assert.ok(result.lines.includes('compositions: 3'));
       assert.ok(result.lines.includes(
         'matrix: self-test, 3 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
