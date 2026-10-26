@@ -58,11 +58,11 @@ contract it relies on.
 - **`release`**, `software`'s, gains a required `sprint`: the Sprint whose `release` phase carries
   it (plan-047 ruling 15). Without it, a released release is a complete candidate in every later
   Sprint's `release` phase, which then closes that Sprint's earlier phases (`development`,
-  `plan-release`) on WingFoil 0.3.0. Every release belongs to a Sprint: there is no `n/a` form, so a hotfix is added to the
-  current Sprint. A release still open when its Sprint closes has its `sprint` rewritten to the
-  next Sprint (`amendable: true`, `software`'s), an adaptation the README states. `version` and
-  `release-line` are given with `--set` (F-034), being path and id tokens; `sprint` is no token, so
-  it is written by editing the draft.
+  `plan-release`) on WingFoil 0.3.0. Every release belongs to a Sprint: there is no `n/a` form, so a
+  hotfix is added to the current Sprint. A release still open when its Sprint closes has its
+  `sprint` rewritten to the next Sprint (`amendable: true`, `software`'s), an adaptation the README
+  states. `version` and `release-line` are given with `--set` (F-034), being path and id tokens;
+  `sprint` is no token, so it is written by editing the draft.
 
 **Workflows** (`workflows/`; each phase whose artefact is a file declares it in `produces`, R4;
 `software`'s contract as dl-026 amends it).
@@ -84,16 +84,17 @@ contract it relies on.
 - **Releases** (plan-047 ruling 16). An Increment is released inside the Sprint, once its Sprint
   Backlog is done or moved. On WingFoil 0.3.0 a release completing while items are open closes
   `development` and leaves them `late`, wherever `release` sits; so `development` is not optional
-  and comes before `plan-release`, and the `scrum` directive adds the rule: no release of the
-  Sprint is approved or published before its Sprint Backlog is done or moved. The rule covers what
-  the order cannot: a release added outside the step, one spanning from the previous Sprint, and a
-  hotfix, which first moves the Sprint's open items or waits for the next Sprint. The optional release phases then run side by side with the
-  Sprint Review, which gates no release. Each Sprint's `release` phase is one pass over its own
-  releases in `in-development` or `releasing` (dl-027); it closes once a later phase of the Sprint
-  completes. A release still open then moves to the next Sprint by its `sprint` field, so a release
-  may span Sprints; its record-based steps (`pre-release-checks`, `release-commit`,
-  `staging-rehearsal`, `tag`) are recorded again under the new Sprint, WingFoil keying a step's
-  record by its scope. A release may also be added outside the step, as a Sprint is.
+  and comes before `plan-release`, and the `scrum` directive adds the rule: no release of the Sprint
+  is approved or published before its Sprint Backlog is done or moved. The rule covers what the
+  order cannot: a release added outside the step, one spanning from the previous Sprint, and a
+  hotfix, which first moves the Sprint's open items or waits for the next Sprint. The optional
+  release phases then run side by side with the Sprint Review, which gates no release. Each Sprint's
+  `release` phase is one pass over its own releases in `in-development` or `releasing` (dl-027); it
+  closes once a later phase of the Sprint completes. A release still open then moves to the next
+  Sprint by its `sprint` field, so a release may span Sprints; its record-based steps
+  (`pre-release-checks`, `release-commit`, `staging-rehearsal`, `tag`) are recorded again under the
+  new Sprint, WingFoil keying a step's record by its scope. A release may also be added outside the
+  step, as a Sprint is.
 - **The Retrospective concludes the Sprint.** `close` moves the Sprint to `done` after the
   `retrospective`, so the limit keeps Sprint n+1 from starting before Sprint n's Retrospective.
   `base`'s `retrospective` › `approve` selects any `in-discussion` decision-log tagged
@@ -231,11 +232,11 @@ not adopt `scrum`.
 - **Exit criterion:** task-049's compositions of the four governed software repositories'
   parameters, redone with `methodology/scrum` in place of `methodology/fixture`, compose and
   validate on WingFoil 0.3.0 with no warning; and a by-hand run, recorded in the `author`'s
-  Execution Notes, takes `sw-life-cycle` through two Sprints and two releases on 0.3.0, one of
-  them spanning both Sprints, as plan-047 steps 2–3 did; the spanning release completes in Sprint
-  2 only after its Sprint Backlog is done or moved, with no `late` element. Until `base`'s patch for bug-005 and
-  bug-006, the run uses their workarounds (`plan_id` carrying `{workflow}` and `{phase}`,
-  `retrospective_path: docs/retrospectives/`), recorded in those notes.
+  Execution Notes, takes `sw-life-cycle` through two Sprints and two releases on 0.3.0, one of them
+  spanning both Sprints, as plan-047 steps 2–3 did; the spanning release completes in Sprint 2 only
+  after its Sprint Backlog is done or moved, with no `late` element. Until `base`'s patch for
+  bug-005 and bug-006, the run uses their workarounds (`plan_id` carrying `{workflow}` and
+  `{phase}`, `retrospective_path: docs/retrospectives/`), recorded in those notes.
 
 ## Open points
 
