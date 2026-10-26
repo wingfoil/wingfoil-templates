@@ -1,0 +1,24 @@
+format: 1
+id: release-folders-lean
+title: "Release folders, lean"
+description: >-
+  Marten Boards, a fictional board-game shop, files its records as Heron Atlas does, its release
+  folders named by the release line's version, and keeps no retrospective folder of its own.
+packs:
+  - software@^1
+  - methodology/fixture@^1
+parameters:
+  project_name: "Marten Boards"
+  approver_name: "Marten Lead"
+  approver_email: "lead@marten-boards.example"
+  agent_name: "Marten Agent"
+  decision_log_path: "docs/04_memory/design/dls/{id}.md"
+  task_path: "docs/04_memory/{release}/{id}.md"
+  plan_path: "docs/05_plans/{scope}/{id}.md"
+  plan_id: "{workflow}-{phase}-plan"
+  adr_path: "docs/04_memory/design/adrs/{id}.md"
+  tech_spec_path: "docs/04_memory/design/specs/{id}.md"
+  bug_path: "docs/04_memory/bugs/{id}.md"
+  release_line_path: "docs/04_memory/planning/{id}.md"
+  release_path: "docs/04_memory/planning/{release-line}/{id}.md"
+  release_id: "{kind}-{version}"

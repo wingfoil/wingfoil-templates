@@ -138,3 +138,14 @@ build only commits them.
   line's count; `base`'s values per composition; set-describing ids and fresh fictional names;
   the overlay test's title and per-composition lines. Submitted for the approver's acceptance into
   the backlog.
+- 2026-10-26, red (`fd5c374`): on Node.js 22.21, the overlay test failed before the three
+  compositions existed (`flat-releases` not composed).
+- 2026-10-26, green, on Node.js 22.21: the test passes; `npm run validate -- --overlay
+  tests/fixtures/software-exit` on WingFoil 0.3.0: `overlay: checked 8 files, 0 problems`, the
+  four compositions composed twice byte-identical in 32 files each, `compositions: 7`,
+  `matrix: self-test, 7 runs, 0 failed, tolerance applied: none`, no warning.
+- 2026-10-26, the mapping (criterion 4), at the commits of the Context: `defaults` is this
+  repository's set; `flat-releases` is WingFoil-Benchmark's (its `docs/retrospective-inputs/`
+  holds inputs, not a retrospective workflow's output, so `retrospective_path` keeps its default;
+  it declares `release-line` with no element of it yet); `release-folders` is WingFoil's;
+  `release-folders-lean` is WingFoil-UI's.

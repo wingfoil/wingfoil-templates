@@ -1,0 +1,25 @@
+format: 1
+id: release-folders
+title: "Release folders"
+description: >-
+  Heron Atlas, a fictional atlas builder, files its records under docs/04_memory/, its releases in
+  a folder per release line, with ids from their kind and version.
+packs:
+  - software@^1
+  - methodology/fixture@^1
+parameters:
+  project_name: "Heron Atlas"
+  approver_name: "Heron Lead"
+  approver_email: "lead@heron-atlas.example"
+  agent_name: "Heron Agent"
+  decision_log_path: "docs/04_memory/design/dls/{id}.md"
+  task_path: "docs/04_memory/{release}/{id}.md"
+  plan_path: "docs/05_plans/{scope}/{id}.md"
+  plan_id: "{workflow}-{phase}-plan"
+  retrospective_path: "docs/09_retrospectives"
+  adr_path: "docs/04_memory/design/adrs/{id}.md"
+  tech_spec_path: "docs/04_memory/design/specs/{id}.md"
+  bug_path: "docs/04_memory/bugs/{id}.md"
+  release_line_path: "docs/04_memory/planning/{id}.md"
+  release_path: "docs/04_memory/planning/rl-{release-line}/{id}.md"
+  release_id: "{kind}-{version}"
