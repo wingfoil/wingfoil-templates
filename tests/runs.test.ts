@@ -43,6 +43,8 @@ const SCENARIO = [
 interface Call {
   args: string[];
   email: string;
+  cwd: string;
+  env: NodeJS.ProcessEnv;
 }
 
 function ok(stdout: unknown = {}): WingfoilOutput {
@@ -66,12 +68,14 @@ class FakeWingfoil {
   readonly calls: Call[] = [];
   /** The plan's workflow and phase are left empty, as bug-005. */
   emptyPlan = false;
+  /** `workflow start` exits 0 but leaves the plan's workflow empty, or not active. */
+  startQuirk: 'none' | 'empty-workflow' | 'not-active' = 'none';
   /** `explore` is complete only when this path exists (relative to the repository). */
   exploreEvidence = 'docs/retrospectives/';
   breaks: ((args: string[]) => WingfoilOutput | undefined)[] = [];
 
   readonly exec: Exec = (_cli, args, cwd, env) => {
-    this.calls.push({ args, email: gitEmail(cwd, env) });
+    this.calls.push({ args, email: gitEmail(cwd, env), cwd, env });
     for (const brk of this.breaks) {
       const out = brk(args);
       if (out !== undefined) return out;
@@ -81,11 +85,14 @@ class FakeWingfoil {
       const main = args[2] ?? '';
       const id = `${main}-1-plan`;
       mkdirSync(join(cwd, 'docs', 'plans'), { recursive: true });
-      const fields = this.emptyPlan ? 'workflow: ""\nphase: ""' : `workflow: "${main}"\nphase: "1"`;
+      const fields = this.emptyPlan ? 'workflow: ""\nphase: ""'
+        : this.startQuirk === 'empty-workflow' ? "workflow: ''\nphase: \"1\""
+          : `workflow: "${main}"\nphase: "1"`;
       writeFileSync(join(cwd, 'docs', 'plans', `${id}.md`),
         `---\nid: ${id}\ntype: plan\nstatus: ${this.emptyPlan ? 'draft' : 'active'}\n${fields}\n---\n`);
       if (this.emptyPlan) return failed(`plan ${id} was added but not submitted`);
-      return ok({ instance: { id, workflow: main, planStatus: 'active' } });
+      return ok({ instance: { id, workflow: main,
+        planStatus: this.startQuirk === 'not-active' ? 'draft' : 'active' } });
     }
     if (group === 'memory' && verb === 'search') {
       const dir = join(cwd, 'docs', 'plans');
@@ -126,6 +133,7 @@ describe('check:runs (task-053)', () => {
   let tree: string;
   let wingfoil: FakeWingfoil;
   let options: RunsOptions;
+  let installed: { version: string; cache: string }[];
 
   const write = (rel: string, text: string): void => {
     mkdirSync(join(tree, rel, '..'), { recursive: true });
@@ -145,6 +153,7 @@ describe('check:runs (task-053)', () => {
     composition('defaults', {});
     wingfoil = new FakeWingfoil();
     options = { compose: fakeCompose, install: () => '/fake/wingfoil.js', exec: wingfoil.exec };
+    installed = [];
   });
   afterEach(() => rmSync(tree, { recursive: true, force: true }));
 
@@ -239,7 +248,13 @@ describe('check:runs (task-053)', () => {
   });
 
   it('approves as the composition\'s approver and runs every other command as the agent', () => {
-    runRuns(['--tree', tree], options);
+    const result = runRuns(['--tree', tree], options);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    const approvals = wingfoil.calls.filter((call) => call.args[1] === 'approve');
+    assert.equal(approvals.length, 1);
+    const after = wingfoil.calls.slice(wingfoil.calls.indexOf(approvals[0] as Call) + 1);
+    assert.ok(after.length > 0 && after.every((call) => call.email === 'agent@runs.invalid'),
+      'the agent again after the approval');
     for (const call of wingfoil.calls) {
       const approving = call.args[0] === 'memory' && call.args[1] === 'approve';
       assert.equal(call.email, approving ? 'lead@demo.invalid' : 'agent@runs.invalid',
@@ -254,6 +269,8 @@ describe('check:runs (task-053)', () => {
     const result = runRuns(['--tree', tree], options);
     assert.ok(result.lines.every((line) => !line.includes(`${tmpdir()}/runs-`)),
       result.lines.join('\n'));
+    const line = result.lines.find((entry) => entry.includes(' governance-evolution '));
+    assert.match(line ?? '', /fail at end: .*<scratch>/);
   });
 
   it('exits 2 when a release cannot be installed', () => {
@@ -286,11 +303,127 @@ describe('check:runs (task-053)', () => {
     assert.match(missing.lines.join('\n'), /base\.yaml: identities: required/);
   });
 
-  it('leaves no scratch repository behind', () => {
-    const before = new Set(readdirTmp());
+  it('runs each main in its own scratch repository and leaves none behind, failing or not', () => {
+    for (const quirk of [false, true]) {
+      wingfoil.calls.length = 0;
+      wingfoil.exploreEvidence = quirk ? 'docs/elsewhere/' : 'docs/retrospectives/';
+      runRuns(['--tree', tree], options);
+      const dirs = [...new Set(wingfoil.calls.map((call) => call.cwd))];
+      assert.equal(dirs.length, 3, dirs.join('\n'));
+      for (const dir of dirs) {
+        assert.ok(dir.startsWith(join(tmpdir(), 'runs-scratch-')), dir);
+        assert.ok(!existsSync(dir), `${dir} removed`);
+      }
+    }
+    assert.deepEqual(readdirTmp().filter((name) => name.startsWith('runs-scratch-')
+      || name.startsWith('runs-compose-')), []);
+  });
+
+  it('never passes an inherited GIT_* variable to WingFoil', () => {
+    const saved = { ...process.env };
+    process.env['GIT_AUTHOR_EMAIL'] = 'intruder@example.invalid';
+    process.env['GIT_COMMITTER_EMAIL'] = 'intruder@example.invalid';
+    try {
+      const result = runRuns(['--tree', tree], options);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+    } finally {
+      for (const name of ['GIT_AUTHOR_EMAIL', 'GIT_COMMITTER_EMAIL']) {
+        if (saved[name] === undefined) delete process.env[name];
+        else process.env[name] = saved[name];
+      }
+    }
+    for (const call of wingfoil.calls) {
+      assert.ok(Object.keys(call.env).every((name) => !name.startsWith('GIT_')
+        || ['GIT_CONFIG_NOSYSTEM', 'GIT_CONFIG_GLOBAL', 'GIT_NO_REPLACE_OBJECTS'].includes(name)),
+      call.args.join(' '));
+    }
+  });
+
+  it('fails a start that exits 0 with an empty workflow, or a plan not active (bug-005)', () => {
+    wingfoil.startQuirk = 'empty-workflow';
+    const empty = runRuns(['--tree', tree], options);
+    assert.equal(empty.code, 1);
+    assert.match(empty.lines[0] ?? '', /fail at start: plan decision-log-ingest-1-plan has an empty workflow$/);
+    wingfoil.startQuirk = 'not-active';
+    const draft = runRuns(['--tree', tree], options);
+    assert.equal(draft.code, 1);
+    assert.match(draft.lines[0] ?? '', /fail at start: plan decision-log-ingest-1-plan is draft, not active$/);
+  });
+
+  it('reads the plans with --format json', () => {
     runRuns(['--tree', tree], options);
-    const left = readdirTmp().filter((name) => !before.has(name) && name.startsWith('runs-'));
-    assert.deepEqual(left.filter((name) => !name.startsWith('runs-tree-')), []);
+    assert.ok(wingfoil.calls.some((call) => call.args.join(' ')
+      === 'memory search --type plan --format json'));
+  });
+
+  it('names the command of a next that is not the expected one', () => {
+    wingfoil.exploreEvidence = 'docs/elsewhere/';
+    const result = runRuns(['--tree', tree], options);
+    assert.match(result.lines[1] ?? '', /fail at next: wingfoil workflow next retrospective-periodic-1-plan --format json: expected retrospective\.additional-points, WingFoil names retrospective\.explore$/);
+  });
+
+  it('passes the composition\'s parameters to the composer, and --cache to the install', () => {
+    composition('other', { retrospective_path: 'docs/retros/' });
+    const seen: Record<string, string>[] = [];
+    const result = runRuns(['--tree', tree, '--cache', '/some/cache'], { ...options,
+      install: (version, cache) => {
+        installed.push({ version, cache });
+        return '/fake/wingfoil.js';
+      },
+      compose: (t, e, p, o) => {
+        seen.push(p);
+        return fakeCompose(t, e, p, o);
+      } });
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    assert.equal(seen[1]?.['retrospective_path'], 'docs/retros/');
+    assert.equal(seen[0]?.['approver_email'], 'lead@demo.invalid');
+    assert.deepEqual(installed[0], { version: '0.3.0', cache: '/some/cache' });
+  });
+
+  it('exits 1 when a composition does not compose, 2 on an I/O error or no release', () => {
+    const refused = runRuns(['--tree', tree], { ...options, compose: () => {
+      throw new Error('composition: base: unknown parameter');
+    } });
+    assert.equal(refused.code, 1);
+    assert.match(refused.lines[0] ?? '', /^runs compositions\/defaults\/example\.yaml: composition: /);
+    const io = runRuns(['--tree', tree], { ...options, compose: () => {
+      throw Object.assign(new Error('ENOENT: no such file'), { code: 'ENOENT' });
+    } });
+    assert.equal(io.code, 2);
+    const none = runRuns(['--tree', tree], { ...options, compose: (t, e, p, o) => ({
+      ...fakeCompose(t, e, p, o), release: '' }) });
+    assert.equal(none.code, 2);
+  });
+
+  it('exits 3 when there is nothing to run', () => {
+    rmSync(join(tree, 'compositions'), { recursive: true });
+    const noCompositions = runRuns(['--tree', tree], options);
+    assert.equal(noCompositions.code, 3);
+    assert.match(noCompositions.lines.join('\n'), /base\.yaml: compositions: no example\.yaml under compositions/);
+    rmSync(join(tree, 'tests'), { recursive: true });
+    const noScenario = runRuns(['--tree', tree], options);
+    assert.equal(noScenario.code, 3);
+    assert.match(noScenario.lines.join('\n'), /no scenario file under tests\/fixtures\/runs/);
+  });
+
+  it('exits 3 on an unknown key, and on a path that leaves the repository', () => {
+    write('tests/fixtures/runs/base.yaml', SCENARIO.replace('format: 1', 'format: 1\nextra: 1'));
+    const unknown = runRuns(['--tree', tree], options);
+    assert.equal(unknown.code, 3);
+    assert.match(unknown.lines.join('\n'), /base\.yaml: extra: unknown key/);
+    write('tests/fixtures/runs/base.yaml', SCENARIO.replace('to: AGENTS.md', 'to: ../AGENTS.md'));
+    const escape = runRuns(['--tree', tree], options);
+    assert.equal(escape.code, 3);
+    assert.match(escape.lines.join('\n'), /commit_copy\.to: must stay inside the repository/);
+  });
+
+  it('fails a commit_inside whose parameter leaves the repository', () => {
+    const result = runRuns(['--tree', tree], { ...options, compose: (t, e, p, o) => {
+      const composed = fakeCompose(t, e, p, o);
+      return { ...composed, params: { ...composed.params, retrospective_path: '../outside/' } };
+    } });
+    assert.equal(result.code, 1);
+    assert.match(result.lines[1] ?? '', /fail at commit_inside: retrospective_path leaves the repository/);
   });
 });
 

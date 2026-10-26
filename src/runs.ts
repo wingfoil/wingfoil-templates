@@ -51,7 +51,7 @@ export type Compose = (tree: string, entries: string[], params: Record<string, s
 
 export interface RunsOptions {
   compose?: Compose;
-  install?: (version: string) => string;
+  install?: (version: string, cache: string) => string;
   exec?: Exec;
 }
 
