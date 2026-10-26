@@ -218,7 +218,8 @@ describe('check:runs (task-053)', () => {
     assert.deepEqual(result.lines, [
       'runs compositions/defaults/example.yaml decision-log-ingest wingfoil@0.3.0: pass',
       'runs compositions/defaults/example.yaml retrospective-periodic wingfoil@0.3.0: fail at '
-        + 'next: expected retrospective.additional-points, WingFoil names retrospective.explore',
+        + 'next: wingfoil workflow next retrospective-periodic-1-plan --format json: expected '
+        + 'retrospective.additional-points, WingFoil names retrospective.explore',
       'runs compositions/defaults/example.yaml governance-evolution wingfoil@0.3.0: pass',
       'runs: 3 runs, 1 failed',
     ]);
@@ -374,7 +375,8 @@ describe('check:runs (task-053)', () => {
         seen.push(p);
         return fakeCompose(t, e, p, o);
       } });
-    assert.equal(result.code, 0, result.lines.join('\n'));
+    // The fake completes explore under docs/retrospectives/ only: `other` fails there, by design.
+    assert.equal(result.lines.at(-1), 'runs: 6 runs, 1 failed');
     assert.equal(seen[1]?.['retrospective_path'], 'docs/retros/');
     assert.equal(seen[0]?.['approver_email'], 'lead@demo.invalid');
     assert.deepEqual(installed[0], { version: '0.3.0', cache: '/some/cache' });

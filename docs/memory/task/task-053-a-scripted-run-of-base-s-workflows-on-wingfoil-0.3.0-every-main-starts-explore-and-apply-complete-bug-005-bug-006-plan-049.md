@@ -184,3 +184,31 @@ follow-up in plan-049's notes.
   Acceptance (the inventory's file committed inside the path, not at it, or `explore` reads as
   complete on 1.0.0; the expected red listed per composition), with the non-blocking ones applied
   to both bodies. Re-review: approve; its three wording points applied.
+- 2026-10-26, red first (dl-018 R1), at `8bda97a` (`src/runs.ts` a stub):
+  `node --test dist/tests/runs.test.js dist/tests/ci-workflow.test.js`: 25 tests, 11 pass, 14
+  fail. Green at `f143e8a`.
+- 2026-10-26, the real run, red by design on this branch (`base` 1.0.0's content),
+  `npm run check:runs`: exit 1, 9 runs, 7 failed, as Acceptance 5 lists: `core-records` (the
+  defaults) fails each of the three starts (WingFoil: "missing required field on submit:
+  workflow, phase"); `release-folders` and `release-folders-lean` fail at `next` (WingFoil names
+  `retrospective.explore`) and at `end` ("not complete: current step
+  governance-evolution.apply"). The same command with `--tree` at task-054's tree (`0f8c9b0`):
+  exit 0, 9 runs, 0 failed.
+- 2026-10-26: independent review of the build: approve after amendments, two blocking: a run
+  with nothing to run passed (no scenario file, no composition: now exit 3), and three tests
+  could pass vacuously (the approval's identity, the hidden scratch path, the clean-up: now
+  each asserts what happened). Red after review at `f98645b`: 24 tests of `runs.test.js`, 16
+  pass, 8 fail against `f143e8a`; against `8bda97a`'s stub, 1 passes, 23 fail. Applied with
+  the non-blocking ones: the plan's frontmatter read with the repository's YAML loader, an empty
+  `workflow` or a plan not `active` after an exit 0 tested; unknown keys of a scenario refused
+  and its problems reported by key; a path leaving the scratch repository refused
+  (`commit_copy`, `commit_inside`); I/O errors and a missing release exit 2, the scratch
+  directory made inside the error handling; `--format json` on `memory search`; a `next`
+  failure names its command; `--cache` passed to the install; tests for the parameters reaching
+  the composer, a composition refused (1), an inherited `GIT_*` never reaching WingFoil.
+  Deviations kept: the approver's `finalize` of an approval phase is not a step kind, since
+  WingFoil 0.3.0 asks for no record there (the green runs complete `approve` from
+  `memory approve`); a scenario adds it if a release asks. A failure line carries WingFoil's
+  first `error:` line, or its last line, not its whole output (Acceptance 1 read so, the line
+  staying one line). Acceptance 7 read as "task-051 not `in-progress` when task-053 entered it":
+  task-051 was `in-review` on its branch.

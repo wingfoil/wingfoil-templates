@@ -19,6 +19,7 @@ import { dirname, isAbsolute, join, relative, resolve as resolvePath } from 'nod
 import { parseArgs } from 'node:util';
 
 import { loadCatalog } from './catalog';
+import { readFrontmatter } from './frontmatter';
 import { loadCompat } from './compat';
 import { runCompose } from './compose-cli';
 import { GitError, gitEnvironment, runGit } from './git';
@@ -75,6 +76,28 @@ class ScenarioError extends Error {
   }
 }
 
+/** A problem at a key of a scenario: the file's label is added by loadScenario. */
+class KeyProblem extends Error {
+  constructor(readonly where: string, readonly what: string) {
+    super(`${where}: ${what}`);
+  }
+}
+
+/** Throws a KeyProblem for every key of `value` outside `allowed`. */
+function onlyKeys(value: Record<string, unknown>, allowed: string[], where: string): void {
+  for (const key of Object.keys(value)) {
+    if (!allowed.includes(key)) {
+      throw new KeyProblem(where === '' ? key : `${where}.${key}`, 'unknown key');
+    }
+  }
+}
+
+/** A relative path that stays inside the repository. */
+function inside(path: string): boolean {
+  const parts = path.split('/');
+  return !isAbsolute(path) && !path.startsWith('\\') && !parts.includes('..');
+}
+
 interface Identity {
   name: string;
   email: string;
@@ -128,15 +151,21 @@ function labelOf(tree: string, file: string): string {
 
 function text(value: unknown, where: string): string {
   if (typeof value !== 'string' || value === '') {
-    throw new ScenarioError(`${where}: a non-empty string is required`, 3);
+    throw new KeyProblem(where, 'a non-empty string is required');
   }
   return value;
+}
+
+function repoPath(value: unknown, where: string): string {
+  const path = text(value, where);
+  if (!inside(path)) throw new KeyProblem(where, 'must stay inside the repository');
+  return path;
 }
 
 function readStep(raw: unknown, where: string): Step {
   if (raw === 'start' || raw === 'end') return { kind: raw };
   if (!isRecord(raw) || Object.keys(raw).length !== 1) {
-    throw new ScenarioError(`${where}: unknown step ${JSON.stringify(raw)}`, 3);
+    throw new KeyProblem(where, `unknown step ${JSON.stringify(raw)}`);
   }
   const [name, value] = Object.entries(raw)[0] as [string, unknown];
   switch (name) {
@@ -147,23 +176,23 @@ function readStep(raw: unknown, where: string): Step {
       return { kind: name, parameter: text(value, `${where}.${name}`) };
     case 'submit':
     case 'approve':
-      if (value !== 'added') {
-        throw new ScenarioError(`${where}.${name}: only "added" is supported`, 3);
-      }
+      if (value !== 'added') throw new KeyProblem(`${where}.${name}`, 'only "added" is supported');
       return { kind: name };
     case 'commit_copy': {
       const copy = isRecord(value) ? value : {};
-      return { kind: name, from: text(copy['from'], `${where}.${name}.from`),
-        to: text(copy['to'], `${where}.${name}.to`) };
+      onlyKeys(copy, ['from', 'to'], `${where}.${name}`);
+      return { kind: name, from: repoPath(copy['from'], `${where}.${name}.from`),
+        to: repoPath(copy['to'], `${where}.${name}.to`) };
     }
     case 'add': {
       const add = isRecord(value) ? value : {};
+      onlyKeys(add, ['type', 'title', 'step'], `${where}.add`);
       return { kind: name, type: text(add['type'], `${where}.add.type`),
         title: text(add['title'], `${where}.add.title`),
         step: text(add['step'], `${where}.add.step`) };
     }
     default:
-      throw new ScenarioError(`${where}: unknown step ${JSON.stringify(name)}`, 3);
+      throw new KeyProblem(where, `unknown step ${JSON.stringify(name)}`);
   }
 }
 
@@ -175,46 +204,43 @@ function loadScenario(file: string, label: string): Scenario {
     const io = error instanceof YamlError && error.reason === 'io';
     throw new ScenarioError(`${label}: ${messageOf(error)}`, io ? 2 : 3);
   }
-  const fail = (where: string, what: string): never => {
-    throw new ScenarioError(`${label}: ${where}: ${what}`, 3);
-  };
-  if (!isRecord(data)) return fail('(root)', 'a mapping is required');
-  if (data['format'] !== 1) fail('format', 'must be 1');
-  const within = (thunk: () => string): string => {
-    try {
-      return thunk();
-    } catch (error) {
-      return fail(messageOf(error).split(': ')[0] ?? '', messageOf(error).split(': ').slice(1)
-        .join(': '));
+  try {
+    if (!isRecord(data)) throw new KeyProblem('(root)', 'a mapping is required');
+    onlyKeys(data, ['format', 'compositions', 'identities', 'runs'], '');
+    if (data['format'] !== 1) throw new KeyProblem('format', 'must be 1');
+    const compositions = repoPath(data['compositions'], 'compositions');
+    const identities = data['identities'];
+    if (identities === undefined) throw new KeyProblem('identities', 'required');
+    if (!isRecord(identities)) throw new KeyProblem('identities', 'a mapping is required');
+    onlyKeys(identities, ['agent'], 'identities');
+    const agentData = identities['agent'];
+    if (!isRecord(agentData)) {
+      throw new KeyProblem('identities.agent', 'a mapping with name and email is required');
     }
-  };
-  const compositions = within(() => text(data['compositions'], 'compositions'));
-  const identities = data['identities'];
-  if (identities === undefined) fail('identities', 'required');
-  const agentRaw = isRecord(identities) ? identities['agent'] : undefined;
-  if (!isRecord(agentRaw)) fail('identities.agent', 'a mapping with name and email is required');
-  const agentData = agentRaw as Record<string, unknown>;
-  const agent = {
-    name: within(() => text(agentData['name'], 'identities.agent.name')),
-    email: within(() => text(agentData['email'], 'identities.agent.email')),
-  };
-  const runsRaw = data['runs'];
-  if (!Array.isArray(runsRaw) || runsRaw.length === 0) fail('runs', 'a non-empty list is required');
-  const runs = (runsRaw as unknown[]).map((raw, r) => {
-    if (!isRecord(raw)) return fail(`runs[${r}]`, 'a mapping is required');
-    const main = within(() => text(raw['main'], `runs[${r}].main`));
-    const steps = raw['steps'];
-    if (!Array.isArray(steps) || steps.length === 0) {
-      return fail(`runs[${r}].steps`, 'a non-empty list is required');
+    onlyKeys(agentData, ['name', 'email'], 'identities.agent');
+    const agent = {
+      name: text(agentData['name'], 'identities.agent.name'),
+      email: text(agentData['email'], 'identities.agent.email'),
+    };
+    const runsRaw = data['runs'];
+    if (!Array.isArray(runsRaw) || runsRaw.length === 0) {
+      throw new KeyProblem('runs', 'a non-empty list is required');
     }
-    try {
-      return { main, steps: steps.map((step, s) => readStep(step, `runs[${r}].steps[${s}]`)) };
-    } catch (error) {
-      return fail(messageOf(error).split(': ')[0] ?? '', messageOf(error).split(': ').slice(1)
-        .join(': '));
-    }
-  });
-  return { label, compositions, agent, runs };
+    const runs = runsRaw.map((raw: unknown, r) => {
+      if (!isRecord(raw)) throw new KeyProblem(`runs[${r}]`, 'a mapping is required');
+      onlyKeys(raw, ['main', 'steps'], `runs[${r}]`);
+      const main = text(raw['main'], `runs[${r}].main`);
+      const steps = raw['steps'];
+      if (!Array.isArray(steps) || steps.length === 0) {
+        throw new KeyProblem(`runs[${r}].steps`, 'a non-empty list is required');
+      }
+      return { main, steps: steps.map((step: unknown, n) => readStep(step, `runs[${r}].steps[${n}]`)) };
+    });
+    return { label, compositions, agent, runs };
+  } catch (error) {
+    if (error instanceof KeyProblem) throw new ScenarioError(`${label}: ${error.message}`, 3);
+    throw error;
+  }
 }
 
 /** The example.yaml files of a folder, `<folder>/<id>/example.yaml`, in byte order. */
@@ -245,7 +271,7 @@ export const realCompose: Compose = (tree, entries, params, out) => {
     requires_capabilities: pack.manifest.requires_capabilities ?? [],
   })), compat.releases, 'self-test');
   const newest = releases[releases.length - 1];
-  if (newest === undefined) throw new Error('no release in compat.yaml can run it');
+  if (newest === undefined) throw new NoReleaseError('no release in compat.yaml can run it');
   const outcome = runCompose(['--tree', tree, '--out', out,
     ...Object.entries(params).flatMap(([name, value]) => ['--param', `${name}=${value}`]),
     ...entries]);
@@ -279,12 +305,14 @@ function hideScratch(line: string): string {
 
 class StepFailure extends Error {}
 
-function frontmatterField(file: string, field: string): string | undefined {
-  const source = readFileSync(file, 'utf8');
-  const block = /^---\r?\n([\s\S]*?)\r?\n---/.exec(source)?.[1] ?? '';
-  const line = block.split(/\r?\n/).find((entry) => entry.startsWith(`${field}:`));
-  if (line === undefined) return undefined;
-  return line.slice(field.length + 1).trim().replace(/^"(.*)"$/, '$1');
+/** No release of compat.yaml can run a composition: exit 2, as Acceptance 1 lists it. */
+class NoReleaseError extends Error {}
+
+/** A field of a Markdown file's frontmatter, when it is a non-empty string. */
+function frontmatterString(file: string, field: string): string | undefined {
+  const data = readFrontmatter(readFileSync(file, 'utf8'), file)?.data;
+  const value = isRecord(data) ? data[field] : undefined;
+  return typeof value === 'string' && value.trim() !== '' ? value : undefined;
 }
 
 function parseJson(output: WingfoilOutput, what: string): Record<string, unknown> {
@@ -344,14 +372,13 @@ function runOne(run: Run, composed: string, params: Record<string, string>, agen
           if (found['planStatus'] !== 'active') {
             throw new StepFailure(`plan ${instance} is ${String(found['planStatus'])}, not active`);
           }
-          const search = parseJson(wingfoil(['memory', 'search', '--type', 'plan']), 'search');
+          const search = parseJson(wingfoil(['memory', 'search', '--type', 'plan', '--format', 'json']), 'search');
           const matches: unknown[] = Array.isArray(search['matches']) ? search['matches'] : [];
           const match = matches.find((entry) => isRecord(entry) && entry['id'] === instance);
           const path = isRecord(match) && typeof match['path'] === 'string' ? match['path'] : '';
           if (path === '') throw new StepFailure(`plan ${instance} not found`);
           for (const field of ['workflow', 'phase']) {
-            const value = frontmatterField(join(repo, path), field);
-            if (value === undefined || value === '') {
+            if (frontmatterString(join(repo, path), field) === undefined) {
               throw new StepFailure(`plan ${instance} has an empty ${field}`);
             }
           }
@@ -362,6 +389,7 @@ function runOne(run: Run, composed: string, params: Record<string, string>, agen
           if (value === undefined || value === '') {
             throw new StepFailure(`no value for parameter ${step.parameter}`);
           }
+          if (!inside(value)) throw new StepFailure(`${step.parameter} leaves the repository`);
           const file = join(repo, value.replace(/\/+$/, ''), INVENTORY);
           mkdirSync(dirname(file), { recursive: true });
           writeFileSync(file, '# Inventory\n\nWritten by check:runs.\n');
@@ -369,12 +397,13 @@ function runOne(run: Run, composed: string, params: Record<string, string>, agen
           break;
         }
         case 'next': {
-          const data = parseJson(wingfoil(['workflow', 'next', instance, '--format', 'json']),
-            'next');
+          const nextArgs = ['workflow', 'next', instance, '--format', 'json'];
+          const data = parseJson(wingfoil(nextArgs), 'next');
           const next = isRecord(data['next']) ? data['next'] : undefined;
           const key = next !== undefined && typeof next['key'] === 'string' ? next['key'] : 'none';
           if (key !== step.key) {
-            throw new StepFailure(`expected ${step.key}, WingFoil names ${key}`);
+            throw new StepFailure(`wingfoil ${nextArgs.join(' ')}: expected ${step.key}, `
+              + `WingFoil names ${key}`);
           }
           break;
         }
@@ -396,11 +425,9 @@ function runOne(run: Run, composed: string, params: Record<string, string>, agen
             ?? '' };
           if (approver.email === '') throw new StepFailure('no approver_email');
           as(approver);
-          try {
-            wingfoil(['memory', 'approve', added, '--reason', APPROVAL_REASON]);
-          } finally {
-            as(agent);
-          }
+          // A failure ends the run, whose repository is its own: the agent is restored on success.
+          wingfoil(['memory', 'approve', added, '--reason', APPROVAL_REASON]);
+          as(agent);
           break;
         }
         case 'commit_copy':
@@ -444,6 +471,14 @@ function parse(argv: string[]): { tree: string; cache: string; files: string[] }
   };
 }
 
+/** An I/O failure, exit 2: a release not installed or missing, a file or directory unreadable. */
+function isIoError(error: unknown): boolean {
+  if (error instanceof MatrixIoError || error instanceof NoReleaseError) return true;
+  if (error instanceof YamlError) return error.reason === 'io';
+  const code = (error as { code?: unknown }).code;
+  return typeof code === 'string' || code === 2;
+}
+
 export function runRuns(argv: string[], options: RunsOptions = {}): RunsResult {
   let args: ReturnType<typeof parse>;
   try {
@@ -457,14 +492,22 @@ export function runRuns(argv: string[], options: RunsOptions = {}): RunsResult {
   }
   const compose = options.compose ?? realCompose;
   const install = options.install
-    ?? ((version: string) => installRelease(version, { pins: MATRIX_PINS, cache: args.cache }));
+    ?? ((version: string, cache: string) => installRelease(version, { pins: MATRIX_PINS, cache }));
   const exec = options.exec ?? realExec;
 
-  const files = args.files.length > 0 ? args.files
-    : compositionDir(tree);
-  let scenarios: Scenario[];
+  const files = args.files.length > 0 ? args.files : scenarioFiles(tree);
+  if (files.length === 0) return { code: 3, lines: [`no scenario file under ${SCENARIOS}`] };
+  let scenarios: { scenario: Scenario; compositions: string[] }[];
   try {
-    scenarios = files.map((file) => loadScenario(file, labelOf(tree, file)));
+    scenarios = files.map((file) => {
+      const scenario = loadScenario(file, labelOf(tree, file));
+      const compositions = compositionFiles(tree, scenario.compositions);
+      if (compositions.length === 0) {
+        throw new ScenarioError(`${scenario.label}: compositions: no example.yaml under `
+          + `${scenario.compositions}`, 3);
+      }
+      return { scenario, compositions };
+    });
   } catch (error) {
     return { code: error instanceof ScenarioError ? error.code : 2, lines: [messageOf(error)] };
   }
@@ -473,43 +516,38 @@ export function runRuns(argv: string[], options: RunsOptions = {}): RunsResult {
   let code = 0;
   let total = 0;
   let failed = 0;
-  for (const scenario of scenarios) {
-    for (const file of compositionFiles(tree, scenario.compositions)) {
-      const out = mkdtempSync(join(tmpdir(), 'runs-compose-'));
+  for (const { scenario, compositions } of scenarios) {
+    for (const file of compositions) {
+      let out: string | undefined;
       try {
-        let composed: Composed;
-        let cli: string;
-        try {
-          const data = loadYamlFile(join(tree, file), file).data as {
-            packs?: string[];
-            parameters?: Record<string, string | number | boolean>;
-          };
-          const given = Object.fromEntries(Object.entries(data.parameters ?? {})
-            .map(([name, value]) => [name, String(value)]));
-          const output = join(out, 'output');
-          composed = compose(tree, data.packs ?? [], given, output);
-          cli = install(composed.release);
-          for (const run of scenario.runs) {
-            total += 1;
-            const failure = runOne(run, output, composed.params, scenario.agent, cli, exec);
-            const head = `runs ${file} ${run.main} wingfoil@${composed.release}`;
-            if (failure === undefined) {
-              lines.push(`${head}: pass`);
-            } else {
-              failed += 1;
-              code = Math.max(code, 1);
-              lines.push(hideScratch(`${head}: ${failure}`));
-            }
+        out = mkdtempSync(join(tmpdir(), 'runs-compose-'));
+        const data = loadYamlFile(join(tree, file), file).data as {
+          packs?: string[];
+          parameters?: Record<string, string | number | boolean>;
+        };
+        const given = Object.fromEntries(Object.entries(data.parameters ?? {})
+          .map(([name, value]) => [name, String(value)]));
+        const output = join(out, 'output');
+        const composed = compose(tree, data.packs ?? [], given, output);
+        if (composed.release === '') throw new NoReleaseError('no release in compat.yaml can run it');
+        const cli = install(composed.release, args.cache);
+        for (const run of scenario.runs) {
+          total += 1;
+          const failure = runOne(run, output, composed.params, scenario.agent, cli, exec);
+          const head = `runs ${file} ${run.main} wingfoil@${composed.release}`;
+          if (failure === undefined) {
+            lines.push(`${head}: pass`);
+          } else {
+            failed += 1;
+            code = Math.max(code, 1);
+            lines.push(hideScratch(`${head}: ${failure}`));
           }
-        } catch (error) {
-          const io = error instanceof MatrixIoError
-            || (error instanceof YamlError && error.reason === 'io')
-            || (error as { code?: number }).code === 2;
-          code = Math.max(code, io ? 2 : 1);
-          lines.push(hideScratch(`runs ${file}: ${messageOf(error)}`));
         }
+      } catch (error) {
+        code = Math.max(code, isIoError(error) ? 2 : 1);
+        lines.push(hideScratch(`runs ${file}: ${messageOf(error)}`));
       } finally {
-        rmSync(out, { recursive: true, force: true });
+        if (out !== undefined) rmSync(out, { recursive: true, force: true });
       }
     }
   }
@@ -518,7 +556,7 @@ export function runRuns(argv: string[], options: RunsOptions = {}): RunsResult {
 }
 
 /** The scenario files of the tree: tests/fixtures/runs/*.yaml, in byte order. */
-function compositionDir(tree: string): string[] {
+function scenarioFiles(tree: string): string[] {
   const dir = join(tree, SCENARIOS);
   if (!existsSync(dir)) return [];
   return readdirSync(dir).filter((name) => name.endsWith('.yaml')).sort(byBytes)
