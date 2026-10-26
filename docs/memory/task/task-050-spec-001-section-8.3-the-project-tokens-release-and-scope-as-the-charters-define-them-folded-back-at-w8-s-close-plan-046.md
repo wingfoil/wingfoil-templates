@@ -114,7 +114,8 @@ Written 2026-10-26, before the change. Branch `task/task-050-spec-section-8-3` f
 - 2026-10-26, the change: §8.3 rewritten as the Design states, the Execution Note appended. dl-018
   R1 applies to code; no test is written, so R2's after-the-fact tests and their mutation check do
   not arise. `grep -n "docs/notes/" docs/memory/tech-spec/spec-001*` finds only the 2026-10-10
-  Execution Note (line 1164 after the build review's amendment); every line of §8.3 and of the new note is at most 100 columns.
+  Execution Note (line 1164 after the build review's amendment); every line of §8.3 and of the new
+  note is at most 100 columns.
 - 2026-10-26, build review: approve after amendments, nothing blocking. Applied: `{axis}` and
   `{name}` are not WingFoil's element tokens but frontmatter-field tokens of this repository's
   `pack` id, so §8.3 now groups the id and path tokens (`{id}`, `{n}`, `{slug}`) apart from the
