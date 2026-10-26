@@ -59,7 +59,8 @@ belong to `prepare` (ruling 3), not to this task: `pack.yaml` keeps `version: 1.
    `check:schemas`, `check:packs`, `index -- --check`, `validate`, the overlay, the golden step
    and `workflow list` exit 0; the branch CI `success`, recorded; after the merge, `main`'s CI
    read. Counts moved by the change, if any, stated (dl-018 R1–R3 for any file under `tests/`).
-7. No file changes beyond those named in 1–5 and the task itself: `npm run index` regenerates only the Parameters section of
+7. No file changes beyond those named in 1–5 and the task itself: `npm run index` regenerates
+   only the Parameters section of
    `packs/base/README.md`; `CATALOG.md`, `catalog-index.json` and `llms.txt` are built from the
    latest tagged manifest and do not move.
 8. **Sequencing:** task-054 reaches `in-review` only once task-053's script exists on its branch
