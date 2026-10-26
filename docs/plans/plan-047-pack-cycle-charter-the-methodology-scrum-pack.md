@@ -318,3 +318,9 @@ lists; Open points.
   Sprint 1 through its item, a release to `released`, the review, the retrospective and `close`,
   with no `late` element; `memory.submit` moved the Sprint, and `workflow start` ran with
   bug-005's workaround. Charter amended; focused re-review requested.
+- 2026-10-26: the charter re-reviewed (approve after amendments: ruling 16 also a rule of the
+  `scrum` directive), amended and submitted (`proposed`); dl-027 reviewed twice and submitted
+  (`pending`). Step 6: branch pushed; CI run 40356879174 on `f6f2ce1`, conclusion `success`
+  (`validate (22.12.0)` and `validate (22.21.0)` both `success`). Privacy: the diff names no local
+  path, no private repository and no non-software project. Waiting for the approver's gates
+  (step 7) and the merge OK.
