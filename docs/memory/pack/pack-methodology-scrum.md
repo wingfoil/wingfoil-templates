@@ -23,8 +23,8 @@ technique. Its catalog pack id is `methodology/scrum`, its directory `packs/meth
 requires `base@^1` and `software@^1`, so it ships `delivery` in `contents` and carries no
 conditional part (spec-001 §6.5); a composition with `software` holds exactly one methodology, so
 it excludes the others by cardinality, with no `conflicts`. plan-047 holds the approver's rulings
-this charter applies (1–13), and dl-026 the amendment of `software`'s `delivery` contract it
-relies on.
+this charter applies (1–15), and dl-026 and dl-027 the amendments of `software`'s `delivery`
+contract it relies on.
 
 ## Ships
 
@@ -34,6 +34,7 @@ relies on.
 |---|---|---|---|---|---|---|---|
 | `sprint` (defined) | `[draft, planned, active, done]` | — | — | `active: 1` | `sprint_id`, default `sprint-{n}` | `sprint_path`, `docs/memory/sprint/{id}.md` | `title`, `goal` |
 | `task` (`base`'s, tightened) | unchanged | unchanged | — | — | unchanged | unchanged | adds `sprint`, with `not_applicable_allowed: [sprint]` |
+| `release` (`software`'s, tightened) | unchanged | unchanged | — | — | unchanged | unchanged | adds `sprint` |
 
 - **`sprint`** holds the Sprint's timebox and its Sprint Goal (`goal`), and its body the Sprint
   Review's outcome. `amendable: true`, so the review is recorded after the Sprint starts. Its edges
@@ -51,6 +52,12 @@ relies on.
   field is written by editing the draft; `memory add --set` fills only id and path tokens. A
   task's link to a release stays the project's (WingFoil and UI already require `release` on
   `task`). No `limits` on `task`: WIP limits are Kanban's.
+- **`release`**, `software`'s, gains a required `sprint`: the Sprint whose `release` phase carries
+  it (plan-047 ruling 15). Without it, a released release is a complete candidate in every later
+  Sprint's `release` phase, which then closes that Sprint's earlier optional phases on WingFoil
+  0.3.0. A release still open when its Sprint closes has its `sprint` rewritten to the next Sprint
+  (`amendable: true`, `software`'s), an adaptation the README states. The field is written by
+  editing the draft, as `version` and `release-line` cannot carry it.
 
 **Workflows** (`workflows/`; each phase whose artefact is a file declares it in `produces`, R4;
 `software`'s contract as dl-026 amends it).
@@ -58,7 +65,7 @@ relies on.
 | Workflow | Kind | Phases (role) |
 |---|---|---|
 | `delivery` | sub, no `element` | `plan-sprint` (product-owner: `memory.add(type: sprint)`, `memory.submit` `draft → planned`; produces `{ type: sprint, path: "{{sprint_path}}" }`) → `sprints` (`iterate_over: sprint`, `where: { status: [planned, active, done] }`, `include: sprint`) |
-| `sprint` | sub, `element: sprint` | `sprint-planning` (product-owner: the Sprint Goal, the Sprint Backlog selected by writing `sprint` on its tasks, how the work is done; `element.set_state(active)`) → `plan-release` (product-owner, `optional: true`: `memory.add(type: release)`, then `memory.submit` to `planning` and `in-development`, the action that names the release, since `element.set_state` in this sub names the Sprint; produces `{ type: release, path: "{{release_path}}" }`) → `development` (`optional: true`, `iterate_over: task`, `where: { status: [backlog, in-progress, in-review, approved], sprint: "{sprint.id}" }`, `include: backlog-item`) → `release` (`optional: true`, `iterate_over: release`, `where: { status: [in-development] }`, `include: release`) → `sprint-review` (product-owner: the Increment inspected with the stakeholders, the outcome written in the Sprint's body; `agent.execute`) → `retrospective` (`include: retrospective`, `base`'s) → `close` (facilitator: `element.set_state(done)`) |
+| `sprint` | sub, `element: sprint` | `sprint-planning` (product-owner: the Sprint Goal, the Sprint Backlog selected by writing `sprint` on its tasks, how the work is done; `element.set_state(active)`) → `plan-release` (product-owner, `optional: true`: `memory.add(type: release)`, then `memory.submit` to `planning` and `in-development`, the action that names the release, since `element.set_state` in this sub names the Sprint; produces `{ type: release, path: "{{release_path}}" }`) → `development` (`optional: true`, `iterate_over: task`, `where: { status: [backlog, in-progress, in-review, approved], sprint: "{sprint.id}" }`, `include: backlog-item`) → `release` (`optional: true`, `iterate_over: release`, `where: { status: [in-development, releasing], sprint: "{sprint.id}" }`, `include: release`, dl-027) → `sprint-review` (product-owner: the Increment inspected with the stakeholders, the outcome written in the Sprint's body; `agent.execute`) → `retrospective` (`include: retrospective`, `base`'s) → `close` (facilitator: `element.set_state(done)`) |
 | `backlog-item` | sub, `element: task` | `start` (developer: `element.set_state(in-progress)`) → `build` (developer: `agent.execute`, to the Definition of Done) → `review` (reviewer: `memory.submit` `in-progress → in-review`) → `approve` (approver: `memory.approve` `in-review → approved`, approval by the approver, fallback `build`) → `done` (developer: `memory.submit` `approved → done`) |
 
 - **How it runs on WingFoil 0.3.0** (plan-047 ruling 13, steps 2–3). WingFoil evaluates a
@@ -71,10 +78,11 @@ relies on.
   Sprint reopens `delivery` until `end-of-life` progresses.
 - **Releases.** The optional phases run side by side with the Sprint Review: an Increment is
   released inside the Sprint, and the review gates no release. Each Sprint's `release` phase is one
-  pass over the releases then `in-development`; it closes once a later phase of the Sprint
-  completes, and a release still open is picked up by the next Sprint (reported `late` under the
-  closed one meanwhile), so a release may span Sprints. A release may also be added outside the
-  step, as a Sprint is.
+  pass over its own releases in `in-development` or `releasing` (dl-027: a release in `releasing`
+  must stay in the filter, or WingFoil 0.3.0 drops it after `enter-releasing`); it closes once a
+  later phase of the Sprint completes. A release still open then moves to the next Sprint by its
+  `sprint` field, so a release may span Sprints. A release may also be added outside the step, as a
+  Sprint is.
 - **The Retrospective concludes the Sprint.** `close` moves the Sprint to `done` after the
   `retrospective`, so the limit keeps Sprint n+1 from starting before Sprint n's Retrospective.
 - **Not a phase:** the Daily Scrum (the `scrum` directive: 15 minutes, the Developers, progress
@@ -126,7 +134,8 @@ Listed in the README's "Sources and adaptations" (spec-002 §2):
   Scrum's; they are WingFoil's governance;
 - the Daily Scrum and refinement have no phase: they leave no artefact;
 - a release passes through one Sprint's `release` phase at a time, and an Increment released
-  outside it waits for the next Sprint's pass (WingFoil 0.3.0, dl-026);
+  outside it waits for the next Sprint's pass (WingFoil 0.3.0, dl-026); a release that spans
+  Sprints has its `sprint` field rewritten by hand;
 - Sprint n+1 and further releases are added outside a step (`memory add`), WingFoil 0.3.0 taking a
   completed step's evidence once;
 - the Scrum Master is `base`'s facilitator, and Developers are `software`'s roles.
@@ -189,8 +198,8 @@ not adopt `scrum`.
   `[A-Za-z0-9._/{}-]`.
 - Install mapping and lock: the format-1 `built-in/` mapping, provisional (spec-001 O12, O13;
   plan-041 ruling 9).
-- It relies on dl-026: until the lint `life-cycle-includes` follows it (task-051), `packs/` cannot
-  hold the pack; its `author` starts after task-051.
+- It relies on dl-026 and dl-027: until the lint `life-cycle-includes` follows them (task-051),
+  `packs/` cannot hold the pack; its `author` starts after task-051.
 
 ## Acceptance
 
@@ -214,13 +223,14 @@ For the approver's acceptance:
    opened by plan-046's session): `retrospective` › `explore`'s directory evidence needs a
    trailing `/`, and once a file is there it completes for every later Sprint. `scrum` adds
    nothing until `base`'s patch.
-3. **A release leaving `in-development`** dropped from the frontier in plan-047's run, WingFoil
-   skipping a candidate outside the `where` status that has not progressed; whether a release in
-   `releasing` finishes its pass is checked in the `author` against `software`'s fixture.
-4. **The Sprint machine's names** (`planned`, `active`, `done`) become fixed with the first
+3. **The Sprint machine's names** (`planned`, `active`, `done`) become fixed with the first
    version (R1).
 
 ## Execution Notes
 
 - 2026-10-26: written under plan-047 (step 4), from its rulings 1–13, dl-026 and the Scrum Guide
   2020.
+- 2026-10-26: a second run on WingFoil 0.3.0 (plan-047): the limit of one active Sprint holds, and
+  `close` after the retrospective keeps Sprint n+1 waiting. `release` gains `sprint` and the
+  `release` phase its scope key (ruling 15); the `where` follows dl-027 (ruling 14); open point 3
+  resolved by dl-027.

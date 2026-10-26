@@ -169,6 +169,14 @@ branch `pack/methodology-scrum-charter`, in a worktree of its own, because plan-
     open to new candidates, so that Sprints and releases could later be two streams of `delivery`
     (approver, 2026-10-26).
 
+14. **The `release` filter** (2026-10-26, after the second run, dl-019): `software`'s contract
+    iterates over releases with `status: [in-development, releasing]`, scope keys allowed, in a
+    decision-log of its own, dl-027, apart from dl-026; `methodology/fixture` follows it in
+    task-051, coordinated with plan-046's session.
+15. **A Sprint's releases** (2026-10-26): `scrum` tightens `software`'s `release` with a required
+    `sprint`, and a Sprint's `release` phase adds `sprint: "{sprint.id}"` to its `where`; a release
+    that spans Sprints has the field rewritten.
+
 **The pack's identity:** id `methodology/scrum`, `axis: methodology`, `name: scrum`,
 `pack_path: packs/methodology/scrum`, Memory element `pack-methodology-scrum`;
 `requires: [base@^1, software@^1]`, `conflicts: []`, `delivery` in `contents`,
@@ -294,3 +302,7 @@ lists; Open points.
     which then closes the Sprint's earlier optional phases (`plan-release`, `development`). A
     scope key naming the Sprint, `sprint: "{sprint.id}"`, with the release's `sprint` field,
     leaves the earlier releases out. Both go to the approver (dl-019).
+- 2026-10-26: the approver ruled 14 and 15. dl-027 added (dl-024 and dl-025 stay reserved for the
+  coordinating session's request) and written; `software`'s contract and spec-001 §9 amended in
+  place with it; the charter follows both rulings. `main` merged into the branch after task-050
+  (`17d6ac0`).
