@@ -152,3 +152,14 @@ check is task-053's script, run from its branch with `--tree` at this branch's c
 - 2026-10-26: independent review of the build: approve; its three non-blocking findings applied
   (the two deviations recorded above; the interim evidence recorded; the charter's Adoption note
   says what to write in `workflow` and `phase`).
+- 2026-10-26, checks at `0f8c9b0` (Acceptance 6): from clean clones on Node.js 22.21.0 and
+  22.12.0, `npm ci`, `npm test` (967 of 967), `lint`, `check:pins`, `check:schemas`,
+  `check:packs`, `index -- --check`, `validate` (3 runs, 0 failed), the overlay `software-exit`
+  (7 runs, 0 failed), the golden step (26 runs, 0 failed, tolerance 0.2.2) and `workflow list`,
+  each exit 0. Branch CI run 40392613846 on `0f8c9b0`: `success`.
+- 2026-10-26, task-053's script (Acceptance 6 and 8): `npm run check:runs -- --tree <this
+  branch's tree at 0f8c9b0> <task-053's tests/fixtures/runs/base.yaml>`, run from
+  `task/task-053-workflow-runs` at `f143e8a` with WingFoil 0.3.0: exit 0, 9 runs, 0 failed
+  (every `main` of `base` started on the three README examples, `explore` complete,
+  `governance-evolution` ended). The same command on `main` (1.0.0's content): 7 of 9 fail, as
+  bug-005 and bug-006 say. Later commits on this branch change only `docs/memory`.
