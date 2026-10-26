@@ -77,8 +77,8 @@ its own branch `task/<id>`, from `main`, one after the other (WIP limit one).
 ## Handoff
 
 - **claude:** steps 1–4, except the approver's gates.
-- **Approver:** the rulings 1 and 2 (given); each task's backlog acceptance, `approve` at `in-review`, and
-  the merge OK.
+- **Approver:** the rulings 1 and 2 (given); each task's backlog acceptance, `approve` at
+  `in-review`, and the merge OK.
 - Done when task-051 is `done` on `main`, pushed, and task-052 is in the backlog, handed over as
   ruling 2 says.
 
