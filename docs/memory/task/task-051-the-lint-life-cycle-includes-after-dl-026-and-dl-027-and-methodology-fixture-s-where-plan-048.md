@@ -179,3 +179,22 @@ regenerated outputs; the task's notes.
 - 2026-10-26: `npm run lint` clean; `npm run validate` passes; the golden tree's `validate` passes
   (26 runs, 0 failed); `validate --overlay tests/fixtures/software-exit` passes with 7 runs and 0
   failed. `main` merged into the branch (`21c51a1`, plan-049's elements).
+- 2026-10-26: independent review of the build: request changes, two blocking findings, both on the
+  tests: the conditional-part test had been red on `main` for another reason (it expected
+  `isolation` and `life-cycle-includes`, and `main` reported `memory-type` too; once corrected it
+  passed on `main`, through "must include release by name"), so the part check had no red-first
+  evidence and the note above miscounts it; and the composer's refusal of a reached sub in the
+  other part was untested. Fixed: the part test isolated (`release` iterated in `delivery`,
+  `shared` with no slot, one rule expected and the message asserted); a composer test of the
+  refusal; a message asserted in the `where` test; the two tests green on `main` named as
+  characterization (the tightening's key; a conditional `delivery` using a field of `software`'s
+  `release` without requiring `software`); `subWorkflow` and `RELEASE_TEMPLATE` shared from
+  `tests/support/pack-tree.ts`; the part check tests `contents` explicitly; a malformed Memory
+  template frontmatter reaches the user as a `CompositionError`.
+- 2026-10-26, red run again (dl-018 R1), the branch's tests on `main`'s
+  `src/workflow-rules.ts` and `src/compose-documents.ts` (`6a58e13`), in a copy outside the
+  repository: `npm run build && node --test --test-name-pattern="task-051"
+  dist/tests/check-packs.test.js dist/tests/compose-documents.test.js`: 10 tests, 7 fail (the
+  reach, the cycle, the `where`, the conditional part: `lint: checked 29 files, 0 problems`; the
+  composer's acceptance, its `where` refusal, its part refusal: `Missing expected exception`),
+  3 pass, the three characterization tests. On the branch: 10 of 10 pass.

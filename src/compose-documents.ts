@@ -132,8 +132,13 @@ function checkWorkflows(tree: string, catalog: Catalog, packs: ResolvedPack[],
     if (file.yaml !== undefined) ruleFile.yaml = file.yaml;
     // A Memory template's frontmatter, as the lint reads it: dl-027 D3 counts its fields.
     if (file.path.startsWith('memory-templates/')) {
-      const frontmatter = readFrontmatter(file.text, ruleFile.file);
-      if (frontmatter !== undefined) ruleFile.yaml = frontmatter;
+      try {
+        const frontmatter = readFrontmatter(file.text, ruleFile.file);
+        if (frontmatter !== undefined) ruleFile.yaml = frontmatter;
+      } catch (error) {
+        if (error instanceof YamlError) throw new CompositionError(`${file.pack}: ${error.message}`);
+        throw error;
+      }
     }
     byPack.set(file.pack, [...(byPack.get(file.pack) ?? []), ruleFile]);
   }

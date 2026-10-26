@@ -15,7 +15,7 @@ import { FIXTURES, FIXTURE_CATALOG, REPO_ROOT } from './support/paths';
 import { FROZEN_COMPAT } from './support/published-repo';
 import {
   BASE_COMPOSABLE as BASE, DELIVERY, FOUNDATION_COMPOSABLE as FOUNDATION, KANBAN, RELEASE_TYPE,
-    SOFTWARE_COMPOSABLE,
+    SOFTWARE_COMPOSABLE, subWorkflow,
   withPackTree,
 } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
@@ -746,13 +746,18 @@ describe('F3.5 workflow rules', () => {
         + 'release-line: ""\n---\n' } };
     const WHERE = 'where: { status: [in-development, releasing] }';
     const RELEASE = `{ name: release, iterate_over: release, ${WHERE}, include: release }`;
-    const sub = (name: string, phases: string[]): string =>
-      `format: 1\nname: ${name}\nkind: sub\nphases:\n${phases.map((phase) => `  - ${phase}\n`)
-        .join('')}`;
+    const sub = subWorkflow;
+    const stemOf = (file: string): string => file.slice('workflows/'.length, -'.yaml'.length);
     /** A methodology requiring software, its delivery and subs as given. */
     const nested = (files: Record<string, string>, extra: Partial<PackSpec> = {}): PackSpec => ({
-      ...KANBAN, workflows: Object.keys(files).map((file) => file.slice(10, -5)), ...extra,
+      ...KANBAN, workflows: Object.keys(files).map(stemOf), ...extra,
       extraFiles: { ...files, ...extra.extraFiles } });
+    /** A methodology without software, its delivery in the conditional part (spec-001 §6.5). */
+    const flowLike = (files: Record<string, string>, always: string[]): PackSpec => ({
+      id: 'methodology/flow', workflows: always,
+      manifest: { conditional: [{ with: 'software@^1', contents: { workflows: Object.keys(files)
+        .map(stemOf).filter((name) => !always.includes(name)) } }] },
+      extraFiles: files });
     const tree = (methodology: PackSpec): PackSpec[] => [BASE, SOFTWARE_RELEASE, methodology];
     const passes = (methodology: PackSpec): void => {
       const result = lint(tree(methodology));
@@ -783,6 +788,10 @@ describe('F3.5 workflow rules', () => {
         'workflows/delivery.yaml': sub('delivery', [release,
           '{ name: retrospective, include: retrospective }']) });
       failsWith('life-cycle-includes', tree(nested(delivery('{ name: r, include: release }'))));
+      assert.ok(lint(tree(nested(delivery('{ name: r, include: release }')))).lines.some((line) =>
+        line.endsWith('life-cycle-includes: methodology/kanban: workflows/delivery.yaml: phase r '
+          + 'includes release, so it iterates over release with where: { status: [in-development, '
+          + 'releasing] } (spec-001 §9, dl-027 D1)')));
       failsWith('life-cycle-includes', tree(nested(delivery('{ name: r, iterate_over: release, '
         + 'where: { status: [in-development] }, include: release }'))));
       failsWith('life-cycle-includes', tree(nested(delivery('{ name: r, iterate_over: release, '
@@ -791,7 +800,8 @@ describe('F3.5 workflow rules', () => {
         + 'in-development], version: "1", release-line: v1, type: release }, include: release }')));
     });
 
-    it('passes a key the methodology\'s own tightening adds to release (dl-027 D1)', () => {
+    it('characterization (green on main, which checks no where): passes a key the '
+      + 'methodology\'s own tightening adds to release (dl-027 D1)', () => {
       passes(nested({ 'workflows/delivery.yaml': sub('delivery', ['{ name: r, iterate_over: '
         + 'release, where: { status: [in-development, releasing], sprint: x }, include: release }',
       '{ name: retrospective, include: retrospective }']) }, { fragments: ['memory'],
@@ -801,17 +811,26 @@ describe('F3.5 workflow rules', () => {
     });
 
     it('reports a conditional delivery reaching a workflow of contents (spec-001 §18)', () => {
-      const flowPack: PackSpec = { id: 'methodology/flow', workflows: ['board', 'shared'],
-        manifest: { conditional: [{ with: 'software@^1', contents: { workflows: ['delivery'] } }] },
-        extraFiles: {
-          'workflows/delivery.yaml': sub('delivery', ['{ name: a, include: shared }',
-            '{ name: retrospective, include: retrospective }']),
-          'workflows/shared.yaml': sub('shared', [RELEASE]),
-          'workflows/board.yaml': sub('board', ['{ name: a, produces: [x.md] }']) } };
-      // shared, always composed, includes the slot release (isolation) and iterates over a type
-      // only the software layer declares (memory-type).
-      failsWith(['isolation', 'life-cycle-includes', 'memory-type'],
-        [BASE, SOFTWARE_RELEASE, KANBAN, flowPack]);
+      const methodology = flowLike({
+        'workflows/delivery.yaml': sub('delivery', [RELEASE, '{ name: a, include: shared }',
+          '{ name: retrospective, include: retrospective }']),
+        'workflows/shared.yaml': sub('shared', ['{ name: s, produces: [x.md] }']),
+        'workflows/board.yaml': sub('board', ['{ name: b, produces: [y.md] }']) },
+      ['board', 'shared']);
+      failsWith('life-cycle-includes', [BASE, SOFTWARE_RELEASE, KANBAN, methodology]);
+      assert.ok(lint([BASE, SOFTWARE_RELEASE, KANBAN, methodology]).lines.some((line) =>
+        line.includes('phase a includes shared, which the pack ships in another part than '
+          + 'delivery')));
+    });
+
+    it('characterization (green on main, which checks no where): passes a conditional delivery '
+      + 'whose where uses a field of software\'s release, software not being required', () => {
+      const result = lint([BASE, SOFTWARE_RELEASE, KANBAN, flowLike({
+        'workflows/delivery.yaml': sub('delivery', ['{ name: r, iterate_over: release, where: { '
+          + 'status: [in-development, releasing], version: "1" }, include: release }',
+        '{ name: retrospective, include: retrospective }']),
+        'workflows/board.yaml': sub('board', ['{ name: b, produces: [y.md] }']) }, ['board'])]);
+      assert.equal(result.code, 0, result.lines.join('\n'));
     });
 
     it('characterization: release reached by no path is reported; a pack workflow delivery does '

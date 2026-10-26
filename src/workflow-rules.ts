@@ -246,6 +246,7 @@ function deliveryProblems(catalog: Catalog | undefined, pack: RulePack,
   const delivery = workflows.get('delivery');
   if (delivery === undefined) return [];
   const conditional = new Set(conditionalContents(pack.manifest).workflows ?? []);
+  const always = new Set(pack.manifest.contents.workflows ?? []);
   const deliveryInPart = conditional.has('delivery');
   const softwareId = softwarePack(catalog);
   const fields = releaseFields(packs.has(softwareId) ? softwareId : undefined, pack, files);
@@ -268,7 +269,7 @@ function deliveryProblems(catalog: Catalog | undefined, pack: RulePack,
       if (!workflows.has(include) || visited.has(include)) return;
       visited.add(include);
       // The other mismatch, a contents workflow including a conditional one, is isolation's.
-      if (deliveryInPart && !conditional.has(include)) {
+      if (deliveryInPart && always.has(include)) {
         problems.push(problemAt(file, `/phases/${index}/include`, 'life-cycle-includes',
           `${pack.id}: workflows/${name}.yaml: phase ${String(phase['name'])} includes ${include}, `
           + 'which the pack ships in another part than delivery; every workflow delivery reaches '

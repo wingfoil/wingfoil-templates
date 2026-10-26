@@ -55,7 +55,12 @@ export const DELIVERY = 'format: 1\nname: delivery\nkind: sub\nphases:\n'
 export const RELEASE_TYPE = 'format: 1\ntypes:\n  release:\n    path: "docs/release/{id}.md"\n'
   + '    id_pattern: "rel-{n}"\n    template: { file: memory/templates/built-in/release.md,\n'
   + '      frontmatter: { required: [] } }\n';
-const RELEASE_TEMPLATE = '---\ntype: release\nformat: 1\n---\n';
+export const RELEASE_TEMPLATE = '---\ntype: release\nformat: 1\n---\n';
+/** A sub-workflow with the given flow-style phases. */
+export function subWorkflow(name: string, phases: string[]): string {
+  return `format: 1\nname: ${name}\nkind: sub\nphases:\n${phases.map((phase) => `  - ${phase}\n`)
+    .join('')}`;
+}
 
 /** Placeholder content: each file a minimal valid asset of its kind (spec-001 §5, §6.1). */
 function placeholder(file: string): string {
