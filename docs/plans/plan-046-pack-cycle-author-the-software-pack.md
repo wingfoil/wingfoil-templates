@@ -2,7 +2,7 @@
 id: plan-046-pack-cycle-author-the-software-pack
 type: plan
 title: "pack-cycle author: the software pack"
-status: active
+status: done
 workflow: "pack-cycle"
 phase: "author"
 tags: ["packs","software","W8"]
