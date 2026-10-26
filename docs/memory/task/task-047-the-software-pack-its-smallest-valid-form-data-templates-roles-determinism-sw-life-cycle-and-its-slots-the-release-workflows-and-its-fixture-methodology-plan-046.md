@@ -2,7 +2,7 @@
 id: task-047-the-software-pack-its-smallest-valid-form-data-templates-roles-determinism-sw-life-cycle-and-its-slots-the-release-workflows-and-its-fixture-methodology-plan-046
 type: task
 title: "The software pack, its smallest valid form: data, templates, roles, determinism, sw-life-cycle and its slots, the release workflows, and its fixture methodology (plan-046)"
-status: in-progress
+status: approved
 pack: "pack-foundation-software"
 depends_on: []
 tags: ["packs","software","W8"]
@@ -215,3 +215,38 @@ and dl-019 is not needed.
   release phases keep their step keys; `agent.execute` on the four with no artefact is the pack's
   default, and a project with its own tokens for those phases binds them in its own
   `bindings.yaml`. Submitted for the approver's acceptance into the backlog.
+- 2026-10-25, red (`35b23d1`): on Node.js 22.21, six tests failed before `packs/software` and its
+  fixture existed: the index (4 → 5 files), the lint (23 → 42) and `validate`'s (schemas 3 → 4,
+  lint 23 → 42) counts of this repository, the CI step, the fixture README's generated sections
+  (the file missing) and the overlay run on this repository.
+- 2026-10-25, green (`fff34d3`): the six pass; `lint`, `check:packs` (42 files, 0 problems),
+  `check:schemas` (4 files), `index -- --check` (5 files) exit 0;
+  `npm run validate -- --overlay tests/fixtures/software-exit` on WingFoil 0.3.0: the defaults
+  composition composed twice byte-identical in 30 files, `compositions: 4`,
+  `matrix: self-test, 4 runs, 0 failed, tolerance applied: none`, no warning.
+- 2026-10-25, build review: approve after amendments. Applied: README section 9 without a version
+  line (spec-002 §2.2); section 2 names the adoption profiles (§2.1); section 8 names the source's
+  edition and no longer credits WingFoil with the roles, and says how a project binds its own
+  commands; `init`'s stub named for 0.3.0; a description on every include phase; the fixture's
+  lines and its "Sources" line; the directive's pinning rule. The approver ruled in chat
+  (2026-10-25), on the review's point that `announce`'s approval left the decision-log
+  `in-discussion`: `end-of-life` gains an `approve` phase after `announce` (approver,
+  `memory.approve` on `where: { type: decision-log, status: [in-discussion] }`,
+  `fallback: { step: announce }`), as `base`'s `decision-log-ingest`; criterion 6 reads with it,
+  its text unchanged (dl-019), and `end-of-life`'s step keys gain `approve`. The fixes change
+  behaviour: re-review requested (dl-017).
+- 2026-10-25, re-review: approve, nothing blocking. Its two points, ruled by the approver in chat
+  (2026-10-25): `end-of-life`'s announcement is tagged `end-of-life` (`memory.add(type:
+  decision-log, tags: [end-of-life])`, the description saying to pass `--tags`, since WingFoil
+  0.3.0 binds only `type`, F-034) and `approve` selects it by that tag, as `base`'s
+  `retrospective` does, so no other decision-log in discussion is ruled there; and the charter,
+  whose `end-of-life` row and WingFoil step-key table no longer match the pack (the `approve`
+  phase, a new step key), is recorded at plan-046's close (step 4) and reported with the key
+  mapping, not amended mid-task. On WingFoil 0.3.0 the overlay run still gives 4 runs, 0 failed.
+- 2026-10-25: checks from clean clones of `2b80b1e` on Node.js 22.21.0 and 22.12.0: `npm ci`,
+  `npm test` 967 of 967, `lint`, `check:pins`, `check:schemas`, `check:packs`, `index -- --check`,
+  `validate` (3 runs, 0 failed), the golden fixture's step (26 runs, 0 failed),
+  `validate -- --overlay tests/fixtures/software-exit` (4 runs, 0 failed) and `workflow list`
+  exit 0 with no warning. Privacy grep of `git diff main`: no local path, no private project, only
+  a `*.example` address. CI run 40232352598 on the branch: `success`.
+  `in-progress → in-review`.

@@ -7,7 +7,7 @@ import { describe, it } from 'node:test';
 import { indexOutputs } from '../src/index';
 import { generatedSections, rewriteReadme } from '../src/readme-generate';
 import { withPackTree } from './support/pack-tree';
-import { FIXTURES } from './support/paths';
+import { FIXTURES, REPO_ROOT } from './support/paths';
 
 const TREE = join(FIXTURES, 'compose', 'tree');
 
@@ -148,5 +148,14 @@ describe('rewriteReadme (acceptance 10)', () => {
         if (path !== 'packs/base/README.md') assert.equal(after.get(path), text, path);
       }
     });
+  });
+});
+
+describe('the fixture methodology of software\'s exit criterion (task-047)', () => {
+  it('holds the generated sections its README would be given', () => {
+    const tree = join(REPO_ROOT, 'tests', 'fixtures', 'software-exit');
+    const readme = join(tree, 'packs', 'methodology', 'fixture', 'README.md');
+    const text = readFileSync(readme, 'utf8');
+    assert.equal(rewriteReadme(text, generatedSections(tree, 'methodology/fixture')), text);
   });
 });

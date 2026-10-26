@@ -75,6 +75,9 @@ jobs:
       - name: Validate the golden fixture against the listed releases (self-test, W6 exit criterion)
         if: github.ref_type != 'tag'
         run: npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden
+      - name: Validate software through its fixture methodology (self-test, dl-022 S6)
+        if: github.ref_type != 'tag'
+        run: npm run validate -- --overlay tests/fixtures/software-exit
       - name: Validate for publication (dl-009)
         if: github.ref_type == 'tag'
         run: npm run validate:publication

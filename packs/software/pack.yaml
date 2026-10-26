@@ -1,0 +1,62 @@
+format: 1
+id: software
+name: software
+title: "Software"
+description: >-
+  The software foundation layer: the Memory types, workflows and directive that software projects
+  share and other governed projects do not use, above all the life cycle sw-life-cycle with its
+  slots and their defaults.
+version: 1.0.0
+formats:
+  dna: 1
+  roles: 1
+  memory: 1
+  workflow: 1
+  directive: 1
+  memory-template: 1
+requires:
+  - base@^1
+requires_capabilities: [workflow-engine]
+parameters:
+  adr_path:
+    type: path
+    default: "docs/memory/adr/{id}.md"
+    description: "The adr type's path; only letters, digits and . _ / { } -"
+  tech_spec_path:
+    type: path
+    default: "docs/memory/tech-spec/{id}.md"
+    description: "The tech-spec type's path; only letters, digits and . _ / { } -"
+  bug_path:
+    type: path
+    default: "docs/memory/bug/{id}.md"
+    description: "The bug type's path; only letters, digits and . _ / { } -"
+  release_line_path:
+    type: path
+    default: "docs/memory/release-line/{id}.md"
+    description: "The release-line type's path; only letters, digits and . _ / { } -"
+  release_path:
+    type: path
+    default: "docs/memory/release/{release-line}/{id}.md"
+    description: >-
+      The release type's path, {release-line} being the release's field of that name; only
+      letters, digits and . _ / { } -
+  release_line_id:
+    type: pattern
+    default: "rl-{version}"
+    description: "The release-line type's id pattern, {version} being the element's version"
+  release_id:
+    type: pattern
+    default: "rel-{version}"
+    description: "The release type's id pattern, {version} being the element's version"
+  inception_path:
+    type: path
+    default: "docs/inception.md"
+    description: >-
+      The document the default inception produces: the project's purpose and scope; only letters,
+      digits and . _ / { } -
+contents:
+  fragments: [dna, roles, memory]
+  directives: [determinism]
+  workflows: [sw-life-cycle, inception, specification, end-of-life, release, release-submit,
+    release-publishing]
+  memory_templates: [adr, tech-spec, bug, release, release-line]

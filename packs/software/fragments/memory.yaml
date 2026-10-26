@@ -1,0 +1,68 @@
+format: 1
+types:
+  adr:
+    path: "{{adr_path}}"
+    id_pattern: "adr-{n}-{slug}"
+    amendable: true
+    template:
+      file: memory/templates/built-in/adr.md
+      frontmatter:
+        required: [title]
+    states:
+      sequence: [draft, pending, accepted, superseded]
+      gates:
+        pending: { reject: draft }
+      waiting: [accepted]
+  tech-spec:
+    path: "{{tech_spec_path}}"
+    id_pattern: "spec-{n}-{slug}"
+    amendable: true
+    template:
+      file: memory/templates/built-in/tech-spec.md
+      frontmatter:
+        required: [title]
+    states:
+      sequence: [draft, pending, approved, superseded]
+      gates:
+        pending: { reject: draft }
+      waiting: [approved]
+  bug:
+    path: "{{bug_path}}"
+    id_pattern: "bug-{n}-{slug}"
+    amendable: true
+    template:
+      file: memory/templates/built-in/bug.md
+      frontmatter:
+        required: [title]
+    states:
+      sequence: [draft, open, triaged, planned, in-progress, in-review, resolved, closed]
+      gates:
+        open: { reject: closed }
+        triaged: { reject: closed }
+        planned: { reject: closed }
+        in-review: { reject: in-progress }
+        resolved: { reject: in-progress }
+      returns:
+        in-progress: planned
+  release-line:
+    path: "{{release_line_path}}"
+    id_pattern: "{{release_line_id}}"
+    amendable: false
+    template:
+      file: memory/templates/built-in/release-line.md
+      frontmatter:
+        required: [title, version]
+    states:
+      sequence: [draft, planning, active, done]
+      gates:
+        planning: { reject: draft }
+  release:
+    path: "{{release_path}}"
+    id_pattern: "{{release_id}}"
+    amendable: true
+    template:
+      file: memory/templates/built-in/release.md
+      frontmatter:
+        required: [title, version, release-line]
+    states:
+      sequence: [draft, planning, in-development, releasing, released]

@@ -261,15 +261,27 @@ describe('npm run validate', () => {
     assert.ok(entries.lines.some((line) => line.startsWith('composition entries: composed twice')));
   });
 
-  it('validates this repository: the base pack and its three examples, three runs (task-039)',
-    () => {
+  it('validates this repository: the base and software packs, base\'s three examples, three runs '
+    + '(task-039, task-047)', () => {
       const result = validate(['--tree', REPO_ROOT]);
       assert.equal(result.code, 0, result.lines.join('\n'));
-      assert.ok(result.lines.includes('schemas: checked 3 files, 0 problems'));
-      assert.ok(result.lines.includes('lint: checked 23 files, 0 problems'));
+      assert.ok(result.lines.includes('schemas: checked 4 files, 0 problems'));
+      assert.ok(result.lines.includes('lint: checked 42 files, 0 problems'));
       assert.ok(result.lines.includes('compositions: 3'));
       assert.ok(result.lines.includes(
         'matrix: self-test, 3 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
+    });
+
+  it('validates software through its fixture methodology: the defaults composition (task-047)',
+    () => {
+      const result = validate(['--tree', REPO_ROOT, '--overlay', 'tests/fixtures/software-exit']);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      assert.ok(result.lines.some((line) => line.startsWith('composition '
+        + 'tests/fixtures/software-exit/compositions/defaults/example.yaml: composed twice, ')),
+      result.lines.join('\n'));
+      assert.ok(result.lines.includes('compositions: 4'), result.lines.join('\n'));
+      assert.ok(result.lines.includes(
+        'matrix: self-test, 4 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
     });
 
   it('passes a publication run of this repository: the three examples of base on 0.3.0 (task-039)',

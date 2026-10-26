@@ -1,0 +1,17 @@
+format: 1
+team:
+  roles:
+    - name: architect
+      description: "Shapes the system: writes the tech-specs and the architecture decisions."
+    - name: developer
+      description: "Writes the code and its tests, and captures the bugs found."
+    - name: reviewer
+      description: "Reviews the work of others before it is accepted."
+    - name: qa
+      description: "Checks a release before it is published and rehearses its publication."
+    - name: tech-lead
+      description: "Triages bugs and runs a release: its states, commit, tag and publication."
+  agents:
+    - name: "{{agent_name}}"
+      executes_as: [developer, reviewer, qa, architect]
+      approval_authority: false
