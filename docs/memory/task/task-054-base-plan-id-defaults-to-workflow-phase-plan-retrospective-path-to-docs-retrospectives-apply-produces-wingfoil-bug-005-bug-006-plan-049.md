@@ -2,7 +2,7 @@
 id: task-054-base-plan-id-defaults-to-workflow-phase-plan-retrospective-path-to-docs-retrospectives-apply-produces-wingfoil-bug-005-bug-006-plan-049
 type: task
 title: "base: plan_id defaults to {workflow}-{phase}-plan, retrospective_path to docs/retrospectives/, apply produces .wingfoil/ (bug-005, bug-006, plan-049)"
-status: backlog
+status: in-progress
 pack: "pack-foundation-base"
 depends_on: []
 tags: ["packs","base"]
