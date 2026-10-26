@@ -142,7 +142,8 @@ regenerated outputs; the task's notes.
 
 - 2026-10-26: written under plan-048 (step 1).
 - 2026-10-26: reviewed with plan-048 (approve after amendments, then approve).
-- 2026-10-26: Design written; `backlog → in-progress`. Branch `task/task-051-lint-life-cycle-includes`.
+- 2026-10-26: Design written; `backlog → in-progress`; branch
+  `task/task-051-lint-life-cycle-includes`.
 - 2026-10-26, red run (dl-018 R1), on `5db5935` (the tests only, `main`'s code): `npm run build &&
   node --test --test-name-pattern="task-051" dist/tests/check-packs.test.js
   dist/tests/compose-documents.test.js`: 8 tests, 6 fail (nested reach, the cycle, the `where`
