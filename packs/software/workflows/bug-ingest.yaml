@@ -1,6 +1,6 @@
 format: 1
-# A bug found: captured, opened, and triaged by the approver. Its later states move by approve,
-# the approver's (the charter's R-1).
+# A bug found: captured, opened, and triaged by the approver. Its triaged and planned states move
+# by approve, the approver's (the charter's R-1).
 name: bug-ingest
 kind: main
 description: "Capture a bug and open it, then have it triaged"

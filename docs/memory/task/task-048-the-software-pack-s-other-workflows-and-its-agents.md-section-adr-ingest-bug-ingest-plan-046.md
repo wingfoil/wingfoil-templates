@@ -106,7 +106,7 @@ diagnostic, so no question is left for the build.
   privacy rule in full. Submitted for the approver's acceptance into the backlog.
 - 2026-10-26, red (the tests' commit): on Node.js 22.21, the two count tests failed (42 files where
   45 are asserted) before the three files existed.
-- 2026-10-26, green: the two pass; `lint`, `check:packs` (45 files, 0 problems), `check:schemas`,
+- 2026-10-26, green, on Node.js 22.21: the two pass; `lint`, `check:packs` (45 files, 0 problems), `check:schemas`,
   `index -- --check` (5 files) exit 0; `validate -- --overlay tests/fixtures/software-exit` on
   WingFoil 0.3.0: `compositions: 4`, `matrix: self-test, 4 runs, 0 failed, tolerance applied:
   none`. By hand: the defaults composed with `npm run compose` into a scratch repository, one
@@ -114,3 +114,10 @@ diagnostic, so no question is left for the build.
   `decision-log-ingest`, `governance-evolution`, `retrospective-periodic`, `sw-life-cycle`,
   `diagnostics` empty; the AGENTS.md region holds `base`'s section (`# Kestrel Ledger`) then
   `software`'s (`## The software life cycle`).
+- 2026-10-26, build review: approve after amendments. Its blocking finding, applied: the section
+  said that a `bug` past `triaged` and an element after `memory park` move only by `approve`;
+  on 0.3.0 a parked task resumes by `submit` (`backlog` is no gate) and a bug goes to `in-review`
+  by `submit`. It now says what the charter's R-1 costs: a `bug` at `triaged` or `planned`,
+  including one parked back to `planned`, moves only by the approver's `approve`; `bug-ingest`'s
+  header comment likewise. The Design's sentence is read with this correction, its text unchanged
+  (dl-019).
