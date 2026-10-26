@@ -2,7 +2,7 @@
 id: task-049-the-software-pack-s-exit-criterion-compositions-of-the-four-governed-software-repositories-parameters-through-the-fixture-methodology-plan-046
 type: task
 title: "The software pack's exit criterion: compositions of the four governed software repositories' parameters through the fixture methodology (plan-046)"
-status: pending
+status: done
 pack: "pack-foundation-software"
 depends_on: [task-048]
 tags: ["packs","software","W8"]
@@ -90,7 +90,39 @@ its exemption line until W10. Three compositions add three matrix runs to the ov
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Written 2026-10-26, before the build. Branch `task/task-049-software-exit` from `main`. The
+review already composed the four sets and ran them on WingFoil 0.3.0 with no diagnostic, so the
+build only commits them.
+
+- **Test first** (dl-018 R1), committed red before the compositions exist: the overlay test of
+  `tests/validate.test.ts`, its title "validates software through its fixture methodology: the
+  four governed repositories' parameter sets (task-047, task-049)", asserting the `composed twice`
+  line of `defaults`, `flat-releases`, `release-folders` and `release-folders-lean`,
+  `compositions: 7` and `matrix: self-test, 7 runs, 0 failed, tolerance applied: none`.
+- **The compositions** (`format: 1`, `id` as the directory, a `title`, a `description` naming
+  the fictional project and what its set shows, `packs: [software@^1, methodology/fixture@^1]`):
+  - `flat-releases`: Osprey Tickets, a fictional ticket desk, its lead and agent
+    (`lead@osprey-tickets.example`); `release_path: "docs/memory/release/{id}.md"`,
+    `release_id: "rel-{slug}"`, `release_line_id: "rl-{n}"`;
+  - `release-folders`: Heron Atlas, a fictional atlas builder (`lead@heron-atlas.example`);
+    `adr_path: "docs/04_memory/design/adrs/{id}.md"`,
+    `tech_spec_path: "docs/04_memory/design/specs/{id}.md"`,
+    `bug_path: "docs/04_memory/bugs/{id}.md"`,
+    `release_line_path: "docs/04_memory/planning/{id}.md"`,
+    `release_path: "docs/04_memory/planning/rl-{release-line}/{id}.md"`,
+    `release_id: "{kind}-{version}"`; `base`'s `decision_log_path`
+    `"docs/04_memory/design/dls/{id}.md"`, `task_path` `"docs/04_memory/{release}/{id}.md"`,
+    `plan_path` `"docs/05_plans/{scope}/{id}.md"`, `plan_id` `"{workflow}-{phase}-plan"`,
+    `retrospective_path` `"docs/09_retrospectives"`;
+  - `release-folders-lean`: Marten Boards, a fictional board-game shop
+    (`lead@marten-boards.example`); as `release-folders` but `release_path:
+    "docs/04_memory/planning/{release-line}/{id}.md"` and no `retrospective_path`.
+- **The fixture's `plan-release` description**: "…as --set values (WingFoil 0.3.0 binds only the
+  type); a required field the id and the path do not carry is filled by editing the draft before
+  submit".
+- **The evidence** after `npm run build`: `npm run validate -- --overlay
+  tests/fixtures/software-exit`, its composition and matrix lines in the Execution Notes, with the
+  mapping of criterion 4.
 
 ## Execution Notes
 
@@ -106,3 +138,24 @@ its exemption line until W10. Three compositions add three matrix runs to the ov
   line's count; `base`'s values per composition; set-describing ids and fresh fictional names;
   the overlay test's title and per-composition lines. Submitted for the approver's acceptance into
   the backlog.
+- 2026-10-26, red (`fd5c374`): on Node.js 22.21, `node --test --test-name-pattern="four governed"
+  dist/tests/validate.test.js`: 1 of 1 failed before the three compositions existed
+  (`flat-releases` not composed).
+- 2026-10-26, green, on Node.js 22.21: the test passes; `npm run validate -- --overlay
+  tests/fixtures/software-exit` on WingFoil 0.3.0: `overlay: checked 8 files, 0 problems`, the
+  four compositions composed twice byte-identical in 32 files each, `compositions: 7`,
+  `matrix: self-test, 7 runs, 0 failed, tolerance applied: none`, no warning.
+- 2026-10-26, the mapping (criterion 4), at the commits of the Context: `defaults` is this
+  repository's set; `flat-releases` is WingFoil-Benchmark's (its `docs/retrospective-inputs/`
+  holds inputs, not a retrospective workflow's output, so `retrospective_path` keeps its default;
+  it declares `release-line` with no element of it yet); `release-folders` is WingFoil's;
+  `release-folders-lean` is WingFoil-UI's.
+- 2026-10-26, build review: approve after amendments, nothing blocking. Applied: the red run's
+  command and count; the per-composition assertion reports the run's lines; `release-folders-lean`'s
+  description stands alone.
+- 2026-10-26: checks from clean clones of `29a5623` on Node.js 22.21.0 and 22.12.0: `npm ci`,
+  `npm test` 967 of 967, `lint`, `check:pins`, `check:schemas`, `check:packs`, `index -- --check`,
+  `validate` (3 runs, 0 failed), the golden fixture's step (26 runs, 0 failed),
+  `validate -- --overlay tests/fixtures/software-exit` (7 runs, 0 failed) and `workflow list`
+  exit 0 with no warning. CI run 40306836924 on the branch: `success`. `in-progress → in-review`.
+- 2026-10-26: delivered: merged into `main` (`babf1e9`), `approved → done`.
