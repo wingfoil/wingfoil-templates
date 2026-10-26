@@ -221,3 +221,8 @@ dl-025, F-035, F-036, the first sync of the feedback inbox); a possible note on 
   row and WingFoil step-key table, which no longer match, are recorded at this plan's close (step
   4). 967 of 967 from clean clones on both Node.js versions; CI run 40232352598 on the branch
   `success`. task-048 next.
+- 2026-10-26: `main`'s CI after task-047's delivery (`4ee77f6`): run 40288258413 `success`.
+- 2026-10-26: task-048 `done`, merged (`a264f9f`): `adr-ingest`, `bug-ingest` and `software`'s
+  AGENTS.md section; WingFoil 0.3.0 lists six startable workflows with no diagnostic, and the
+  composed region holds `base`'s section then `software`'s. 967 of 967 from clean clones on both
+  Node.js versions; CI run 40293895886 on the branch `success`. task-049 next.

@@ -127,3 +127,4 @@ diagnostic, so no question is left for the build.
   runs, 0 failed), `validate -- --overlay tests/fixtures/software-exit` (4 runs, 0 failed) and
   `workflow list` exit 0 with no warning. CI run 40293895886 on the branch: `success`.
   `in-progress → in-review`.
+- 2026-10-26: delivered: merged into `main` (`a264f9f`), `approved → done`.
