@@ -2,7 +2,7 @@
 id: task-050-spec-001-section-8.3-the-project-tokens-release-and-scope-as-the-charters-define-them-folded-back-at-w8-s-close-plan-046
 type: task
 title: "spec-001 section 8.3: the project tokens release and scope as the charters define them, folded back at W8's close (plan-046)"
-status: in-progress
+status: in-review
 pack: ""            # tooling task (pack-cycle › author, plan-046, ruling 4)
 depends_on: []
 tags: ["tooling","spec","W8"]
