@@ -5,7 +5,7 @@ format: 1
 name: governance-evolution
 kind: main
 description: "Assess, propose, approve and apply a change of the project's governance"
-version: 1
+version: 2
 phases:
   - name: assess
     description: >-
@@ -38,5 +38,6 @@ phases:
       it has one, otherwise one at a time under this run's plan.
     role: facilitator
     produces:
-      - .wingfoil
+      # A directory ends with /: WingFoil reads any other path as a file.
+      - .wingfoil/
       - AGENTS.md

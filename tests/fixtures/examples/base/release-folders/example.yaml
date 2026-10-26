@@ -13,4 +13,4 @@ parameters:
   task_path: "docs/04_memory/{release}/{id}.md"
   plan_path: "docs/05_plans/{scope}/{id}.md"
   plan_id: "{workflow}-{phase}-plan"
-  retrospective_path: "docs/09_retrospectives"
+  retrospective_path: "docs/09_retrospectives/"
