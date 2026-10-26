@@ -324,3 +324,6 @@ lists; Open points.
   (`validate (22.12.0)` and `validate (22.21.0)` both `success`). Privacy: the diff names no local
   path, no private repository and no non-software project. Waiting for the approver's gates
   (step 7) and the merge OK.
+- 2026-10-26, step 7: the approver approved dl-026 and dl-027 and accepted `pack-methodology-scrum`
+  (`proposed → accepted`), with its open points as written; the merge OK in chat approves the
+  in-place amendments of spec-001 and of `pack-foundation-software`.
