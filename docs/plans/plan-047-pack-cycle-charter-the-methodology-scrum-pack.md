@@ -45,7 +45,8 @@ branch `pack/methodology-scrum-charter`, in a worktree of its own, because plan-
   on every type a pack defines, `not_applicable_allowed`, `limits`), §9 (slots), §10 (the AGENTS.md
   section, level 2), §12, §18; spec-002 §2 (README, CB-1 … CB-6).
 - dl-001 (axes), dl-003, dl-015, dl-022 S5 as `pack-foundation-software`'s Out of scope applies
-  it (Kanban's or Scrum's rules and `limits` are a methodology's), dl-023, dl-017 … dl-020; the directives `pack-authoring`, `pack-semver`, `pack-compatibility`,
+  it (Kanban's or Scrum's rules and `limits` are a methodology's), dl-023, dl-017 … dl-020; the
+  directives `pack-authoring`, `pack-semver`, `pack-compatibility`,
   `traceability`.
 - The golden tree's `methodology/kanban` (`tests/fixtures/compose/tree/`) as the model of a
   methodology pack.
@@ -95,7 +96,11 @@ branch `pack/methodology-scrum-charter`, in a worktree of its own, because plan-
    is written: how Sprint n+1 and release n+1 come about in the single pass `sw-life-cycle` makes
    through `delivery`; when `delivery` completes; and whether `optional: true` on the iterate
    phases lets Sprints and releases advance side by side, so that an Increment can be released
-   before a Sprint ends. What 0.3.0 cannot express goes to the approver when found (dl-019), and
+   before a Sprint ends; whether Sprint n's retrospective runs before Sprint n+1 is created (if
+   not, a `delivery` phase moves the Sprint to its closing state after the retrospective, or the
+   charter records an adaptation); and how each phase of `retrospective` completes for a second
+   Sprint (`explore`'s fixed-directory evidence, `approve`'s repository-wide selection, known
+   from `base`). What 0.3.0 cannot express goes to the approver when found (dl-019), and
    the charter states it as an adaptation to the Guide.
 3. **Roles:** no new role. Product Owner → `product-owner`, Scrum Master → `facilitator` (`base`),
    Developers → `developer` with `software`'s `architect`, `reviewer`, `qa` and `tech-lead`. The
@@ -138,8 +143,11 @@ branch `pack/methodology-scrum-charter`, in a worktree of its own, because plan-
     under `pack-semver` (a README-only change); the charter records it and W9's plan rules it.
 11. **Adoption:** the procedure for any project, then one known adopter, UI: one Sprint per
     release if it wishes, its own phases (`user-docs`, `e2e-smoke`) and its TDD `dev-loop` kept as
-    its own `custom/` workflows beside `backlog-item`, its step keys mapped old → new (WingFoil
-    dl-187). WingFoil keeps its `custom/` delivery (the methodology modelled on its loop is
+    its own, its step keys mapped old → new (WingFoil dl-187). The pack's `sprint` sub includes
+    `backlog-item`, which UI cannot change, and the composed `workflows.yaml` lists only
+    `built-in/` files: how UI's test-first steps live under `scrum` (a UI directive applied to
+    `backlog-item` › `build`, or a workflow UI includes by hand outside the composer's contract,
+    as WingFoil's `custom/` delivery) is an Adoption open point of the charter. WingFoil keeps its `custom/` delivery (the methodology modelled on its loop is
     weighed in milestone M3, `software`'s R-11); Benchmark and this repository do not adopt
     `scrum`.
 12. **Sequencer:** F4.3 (`scrum`) sits in W10; its charter now runs in W8 and its publication in
@@ -204,3 +212,7 @@ lists; Open points.
   amended: `n/a — <reason>`, README examples of fictional projects only, the dl-022 S5 citation,
   the two meanings of "M3", the `init` template, the missing items of plan-041's list, steps 2
   and 3 widened. Focused re-review requested.
+- 2026-10-26: focused re-review: approve after amendments, nothing blocking, no ruling changed.
+  Amended: the retrospective's cadence against Sprint n+1 and its per-Sprint evidence added to
+  ruling 2's questions; UI's test-first steps an Adoption open point (ruling 11); a wrap. Plan
+  submitted.
