@@ -92,3 +92,6 @@ its own branch `task/<id>`, from `main`, one after the other (WIP limit one).
   red first, F-018). Focused re-review requested.
 - 2026-10-26: focused re-review: approve (plan and both tasks), three wordings applied. Plan
   submitted, both tasks submitted (`pending`).
+- 2026-10-26, step 1: branch pushed; CI run 40386927804 on `b6efdeb`, conclusion `success`
+  (`validate (22.12.0)` and `validate (22.21.0)` both `success`). Privacy: no local path, private
+  repository or private project in the diff. Waiting for the merge OK and the backlog acceptance.
