@@ -153,3 +153,8 @@ build only commits them.
 - 2026-10-26, build review: approve after amendments, nothing blocking. Applied: the red run's
   command and count; the per-composition assertion reports the run's lines; `release-folders-lean`'s
   description stands alone.
+- 2026-10-26: checks from clean clones of `29a5623` on Node.js 22.21.0 and 22.12.0: `npm ci`,
+  `npm test` 967 of 967, `lint`, `check:pins`, `check:schemas`, `check:packs`, `index -- --check`,
+  `validate` (3 runs, 0 failed), the golden fixture's step (26 runs, 0 failed),
+  `validate -- --overlay tests/fixtures/software-exit` (7 runs, 0 failed) and `workflow list`
+  exit 0 with no warning. CI run 40306836924 on the branch: `success`. `in-progress → in-review`.
