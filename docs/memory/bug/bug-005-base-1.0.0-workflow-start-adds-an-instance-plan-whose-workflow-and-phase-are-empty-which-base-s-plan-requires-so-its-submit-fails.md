@@ -2,7 +2,7 @@
 id: bug-005-base-1.0.0-workflow-start-adds-an-instance-plan-whose-workflow-and-phase-are-empty-which-base-s-plan-requires-so-its-submit-fails
 type: bug
 title: "base 1.0.0: workflow start adds an instance plan whose workflow and phase are empty, which base's plan requires, so its submit fails"
-status: pending
+status: approved
 severity: "major"        # critical | major | minor
 pack: "pack-foundation-base"
 tags: ["packs","base","workflow"]
