@@ -3,19 +3,48 @@ id: bug-006-base-1.0.0-a-produces-that-names-a-directory-without-a-trailing-slas
 type: bug
 title: "base 1.0.0: a produces that names a directory without a trailing slash is never satisfied on WingFoil 0.3.0 (retrospective explore, governance-evolution apply)"
 status: draft
-severity: ""        # critical | major | minor
-pack: ""            # the pack element id, or empty for tooling
+severity: "major"        # critical | major | minor
+pack: "pack-foundation-base"
 tags: ["packs","base","workflow"]
 ---
 
 ## Observed
 
-<!-- What happens, with the command and its output. -->
+Found by the session running plan-047 on WingFoil 0.3.0 and confirmed here on 2026-10-26 in
+WingFoil 0.3.0's code (`cc31d7a8`, `dist/workflow/deduce.js`, `exists`): a `produces` string is
+looked up as a file unless it ends with `/`, and only then as a directory prefix:
+
+```
+exists(path) {
+    if (!path.endsWith('/'))
+        return this.tree.has(path);
+    return this.snapshot.tree.some((file) => file.startsWith(path));
+}
+```
+
+`base` 1.0.0 declares two directories without the slash:
+- `retrospective` › `explore` produces `"{{retrospective_path}}"`, whose default is
+  `docs/retrospectives` (a directory, the charter's "weak evidence"): the phase is never satisfied
+  by the files written there; with `docs/retrospectives/` it is;
+- `governance-evolution` › `apply` produces `.wingfoil` (a directory) beside `AGENTS.md`: the
+  directory half is never satisfied (not run end to end).
+
+A related limit, already recorded as the charter's weak evidence: once a file is in the directory,
+`explore` reads as complete for every later retrospective.
 
 ## Expected
 
+Each `produces` that names a directory is satisfied when the directory holds a file: `base` writes
+it with a trailing slash (`retrospective_path`'s default `docs/retrospectives/`, its description
+saying a directory ends with `/`; `apply`'s `.wingfoil/`), in a patch of `base`. Whether the lint
+should refuse a directory without the slash, and whether `software`'s path parameters need the
+same care, is the triage's.
+
 ## Reproduction
 
-<!-- Minimal steps on a clean checkout. -->
+1. Compose `base` on its defaults into a scratch repository, commit; start `retrospective-periodic`
+   (bug-005's edit to its plan first), and write a file under `docs/retrospectives/`, committed.
+2. `wingfoil workflow next`: `explore` is still the open step; with `retrospective_path` set to
+   `docs/retrospectives/` it is complete.
 
 ## Execution Notes
