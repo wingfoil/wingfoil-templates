@@ -207,3 +207,8 @@ regenerated outputs; the task's notes.
   (`tests/example-rules.test.ts`); the derived "no memory fragment" composition is now `base`
   alone, since `software` always ships one (`tests/output.test.ts`). Fixed; `output`,
   `example-rules` and `validate` tests pass (44 and 57).
+- 2026-10-26: the full suite in clean clones at `c0d719c`: 977 of 977 on Node.js 22.21.0 and on
+  the floor 22.12.0. Branch pushed; CI run 40406847268 on `c0d719c`, conclusion `success`
+  (`validate (22.12.0)` and `validate (22.21.0)` both `success`). Privacy: no local path,
+  private repository or private project in the diff. `in-progress → in-review`; waiting for the
+  approver's `approve` and the merge OK.
