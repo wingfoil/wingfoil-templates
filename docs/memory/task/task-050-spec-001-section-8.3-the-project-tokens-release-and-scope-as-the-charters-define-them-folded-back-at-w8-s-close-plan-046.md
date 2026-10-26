@@ -111,3 +111,7 @@ Written 2026-10-26, before the change. Branch `task/task-050-spec-section-8-3` f
   path and its spec-017 §1, WingFoil's specifications named by their ids. The title, fixed at
   `memory add`, still says "project tokens"; the body states the reading. Submitted for the
   approver's acceptance into the backlog.
+- 2026-10-26, the change: §8.3 rewritten as the Design states, the Execution Note appended. dl-018
+  R1 applies to code; no test is written, so R2's after-the-fact tests and their mutation check do
+  not arise. `grep -n "docs/notes/" docs/memory/tech-spec/spec-001*` finds only the 2026-10-10
+  Execution Note (line 1160); every line of §8.3 and of the new note is at most 100 columns.

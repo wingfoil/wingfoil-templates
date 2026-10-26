@@ -620,10 +620,21 @@ parameters:
 ### 8.3 WingFoil tokens pass through
 
 Single-brace tokens belong to WingFoil and to the project, and the composer never interprets any of
-them. Examples: `{id}`, `{n}`, `{slug}`, `{axis}`, `{name}`, `{workflow}`, `{phase}`, and the
-project tokens `{release}` and `{scope}` (`docs/notes/base-regeneration-inputs.md` §2). A `path` or `pattern` value may contain them, so a
-project can set, for example, `task_path: "docs/04_memory/{release}/{id}.md"`. Which tokens WingFoil
-fills, and from where, is WingFoil's.
+them. Examples:
+- WingFoil's element tokens: `{id}`, `{n}`, `{slug}`, `{axis}`, `{name}`, and the element fields
+  `software`'s parameters use: `{version}` (an element's version), `{release-line}` (a release's
+  field of that name) and `{kind}` (a release's kind, a field a project adds to `release`), as
+  `software`'s charter states (Tokens and ids);
+- WingFoil's workflow-context tokens `{workflow}`, `{phase}` and `{scope}`, which its engine fills
+  and which are given by hand from the CLI (WingFoil's `spec-001-memory-yaml-schema` at
+  `wingfoil/wingfoil@cc31d7a8`, its v0.3.0); WingFoil's own `plan` path uses `{scope}` for the
+  release-line and release nesting, for example `rl-v1/rel-v0.1` (its `.wingfoil/memory.yaml` and
+  `spec-017-workflow-commands-and-state-deduction` §1, same commit);
+- the project token `{release}`, a task's `release` field (`software`'s charter, dl-015 C10).
+
+A `path` or `pattern` value may contain them, so a project can set, for example,
+`task_path: "docs/04_memory/{release}/{id}.md"` or `plan_path: "docs/05_plans/{scope}/{id}.md"`
+(`base`'s parameters). Which tokens WingFoil fills, and from where, is WingFoil's.
 
 ## 9. Slots
 
@@ -1225,3 +1236,8 @@ check the rest, and the composer refuses what they reject.
   least, the least form WingFoil 0.3.0 accepts (task-044's probe: no `frontmatter` and `{}` are
   refused); its table's row says "the defining pack's `required` is empty" in place of "declared
   none"; its "These fail composition" list and §18 gain the refusal. Nothing else changes.
+- 2026-10-26, **amended in place** (plan-046 ruling 4, task-050; its merge OK approves the text, as
+  for task-044): W8's fold-back (dl-020): §8.3 no longer cites the working note plan-022 removed;
+  it names `{release}` as a task's field, `{scope}` with `{workflow}` and `{phase}` as WingFoil's
+  workflow-context tokens, and adds `{version}`, `{release-line}` and `{kind}`, each with its
+  source. Nothing else changes.
