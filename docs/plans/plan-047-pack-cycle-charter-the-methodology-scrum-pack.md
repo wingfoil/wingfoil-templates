@@ -2,7 +2,7 @@
 id: plan-047-pack-cycle-charter-the-methodology-scrum-pack
 type: plan
 title: "pack-cycle charter: the methodology/scrum pack"
-status: active
+status: done
 workflow: "pack-cycle"
 phase: "charter"
 tags: ["packs","scrum","methodology","W8"]
