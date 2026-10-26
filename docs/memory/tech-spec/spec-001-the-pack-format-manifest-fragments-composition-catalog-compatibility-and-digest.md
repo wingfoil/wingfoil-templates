@@ -659,11 +659,11 @@ only in a composition with `software`:
 - The methodology ships `delivery` (`kind: sub`): in its conditional part, with
   `with: software@^<major>` (§6.5), when it does not require `software`; in its `contents` when it
   does. `delivery` includes `release` and `retrospective` by name, at its own cadence (dl-003 D11,
-  dl-006), directly or through sub-workflows the same methodology ships, at any depth, each
-  shipped in the same part as `delivery` (dl-026). The phase that includes `release` iterates over
-  `release` with a `where` whose `status` is `[in-development, releasing]`, and it may add scope
-  keys (dl-027). `retrospective` is not a slot, so no pack replaces it. In a composition without `software`, what runs `retrospective` is fixed by `base`'s
-  charter.
+  dl-006), directly or through sub-workflows the same methodology ships, at any depth, each shipped
+  in the same part as `delivery` (dl-026). The phase that includes `release` iterates over `release`
+  with a `where` whose `status` is `[in-development, releasing]`, and it may add scope keys
+  (dl-027). `retrospective` is not a slot, so no pack replaces it. In a composition without
+  `software`, what runs `retrospective` is fixed by `base`'s charter.
 - A phase pack of slot `<slot>` **must** ship `workflows/<slot>.yaml`, with `name: <slot>` and
   `kind: sub`. Its file replaces `software`'s default. This is the only case in which a pack's file
   replaces another's (§7.6). A phase pack requires `software` (§3), so it carries no conditional
