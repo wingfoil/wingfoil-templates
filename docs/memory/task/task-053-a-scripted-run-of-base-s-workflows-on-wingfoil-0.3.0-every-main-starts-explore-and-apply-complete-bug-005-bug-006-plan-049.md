@@ -79,7 +79,9 @@ regression check on every push. It changes no file under `packs/`, no matrix com
    - `release-folders`: `explore` incomplete (`docs/09_retrospectives`) and `apply` incomplete,
      `workflow end` refused (`.wingfoil`) (bug-006);
    - `release-folders-lean`: `explore` incomplete (the default `docs/retrospectives`) and `apply`
-     incomplete (bug-006).
+     incomplete (bug-006);
+   - if the Design adds it, `sw-life-cycle`'s start on `software-exit`'s `defaults` exits 1
+     (bug-005).
    The branch's CI is red by design on this step while `main` holds 1.0.0's content.
 6. **Green:** after task-054's merge, `main` is merged into this branch; the command exits 0 on
    every composition; from clean clones on Node.js 22.21.0 and 22.12.0, `npm ci`, `npm test`,
@@ -106,3 +108,8 @@ Optional, the Design decides: a start of `sw-life-cycle` on the overlay `softwar
      command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019). -->
+
+- 2026-10-26: independent review: approve after amendments, two blocking findings in task-053's
+  Acceptance (the inventory's file committed inside the path, not at it, or `explore` reads as
+  complete on 1.0.0; the expected red listed per composition), with the non-blocking ones applied
+  to both bodies. Re-review: approve; its three wording points applied.

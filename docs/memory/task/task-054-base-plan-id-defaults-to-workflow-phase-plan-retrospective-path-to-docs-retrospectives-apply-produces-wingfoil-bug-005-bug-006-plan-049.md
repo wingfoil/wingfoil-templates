@@ -43,7 +43,7 @@ belong to `prepare` (ruling 3), not to this task: `pack.yaml` keeps `version: 1.
    says whether the examples that restate `{workflow}-{phase}-plan` keep it.
 4. **One commit** holds `pack.yaml`, the README's example prose and the compositions that set a
    directory without the slash (plan-049 step 3), so that no commit has a README disagreeing with
-   its fixtures or its defaults:
+   its fixtures or its defaults, with the regenerated Parameters section:
    `tests/fixtures/examples/base/release-folders/example.yaml` and
    `tests/fixtures/software-exit/compositions/release-folders/example.yaml`, both
    `retrospective_path: "docs/09_retrospectives/"`.
@@ -59,7 +59,7 @@ belong to `prepare` (ruling 3), not to this task: `pack.yaml` keeps `version: 1.
    `check:schemas`, `check:packs`, `index -- --check`, `validate`, the overlay, the golden step
    and `workflow list` exit 0; the branch CI `success`, recorded; after the merge, `main`'s CI
    read. Counts moved by the change, if any, stated (dl-018 R1–R3 for any file under `tests/`).
-7. No other file changes: `npm run index` regenerates only the Parameters section of
+7. No file changes beyond those named in 1–5 and the task itself: `npm run index` regenerates only the Parameters section of
    `packs/base/README.md`; `CATALOG.md`, `catalog-index.json` and `llms.txt` are built from the
    latest tagged manifest and do not move.
 8. **Sequencing:** task-054 reaches `in-review` only once task-053's script exists on its branch
@@ -76,3 +76,8 @@ belong to `prepare` (ruling 3), not to this task: `pack.yaml` keeps `version: 1.
      command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019). -->
+
+- 2026-10-26: independent review: approve after amendments, two blocking findings in task-053's
+  Acceptance (the inventory's file committed inside the path, not at it, or `explore` reads as
+  complete on 1.0.0; the expected red listed per composition), with the non-blocking ones applied
+  to both bodies. Re-review: approve; its three wording points applied.
