@@ -81,7 +81,62 @@ sub includes both. dl-026 D3 and dl-027 D3 name this task; dl-027 D5 moves `meth
 
 ## Design
 
-<!-- The red steps, written at design (dl-018): what is tested first and how. -->
+**The rule** (`src/workflow-rules.ts`). `lifeCycleProblems` keeps `sw-life-cycle`'s check; for a
+methodology's `delivery` it gets the pack's own workflow documents and walks the includes:
+- a breadth-first walk from `delivery` over `include` names that are workflows the pack ships, with
+  a visited set; `release` and `retrospective` are reached when a visited workflow includes them;
+- **part:** a visited workflow of the pack in the other part than `delivery` (`contents` against
+  `conditional[0].contents.workflows`) is reported under `life-cycle-includes`, unless the
+  existing `isolation` rule already reports that include (a `contents` workflow including a
+  conditional one);
+- **`where`:** every phase of a visited workflow whose `include` is `release` needs
+  `iterate_over: release` and `where.status` equal, as a set, to `[in-development, releasing]`;
+  each other `where` key must be in the composed `release`'s fields: the
+  `template.frontmatter.required` of `release` in the `memory.yaml` fragments of the catalog's
+  `software` pack and of the methodology, the frontmatter keys of the `release` Memory template
+  shipped by either, and `id`, `type`, `title`, `status`, `tags`. The software pack is read from
+  `packs` whether or not the methodology requires it (`flow`'s conditional `delivery`).
+- messages cite spec-001 §9, dl-026 and dl-027 and name the workflow and the phase.
+
+**The fixtures.**
+- Test constants (`tests/support/pack-tree.ts`): `DELIVERY` becomes a `release` phase with
+  `iterate_over: release` and `where: { status: [in-development, releasing] }`, then a
+  `retrospective` phase; `SOFTWARE` and `SOFTWARE_COMPOSABLE` gain a `memory` fragment declaring a
+  `release` type (path, id pattern, template, `frontmatter.required: []`) so the existing
+  `memory-type` rule accepts the `iterate_over`.
+- Golden tree (`tests/fixtures/compose/tree/`): `software` gains a `release` type in its memory
+  fragment and a `release` Memory template; `methodology/kanban` and `methodology/flow` move their
+  `release` phase to the iterating form. Merge examples (`tests/fixtures/merge/example-1`,
+  `example-2`): the same in their `software` and `kanban`. `tests/compose-documents.test.ts`'s
+  inline `include: release` follows.
+- `tests/fixtures/software-exit/.../fixture/workflows/delivery.yaml`: `status: [in-development,
+  releasing]`.
+- Regenerated, never by hand: `tests/fixtures/compose/expected*` with `npm run compose -- --tree
+  tests/fixtures/compose/tree --out <dir>` and each set's existing parameters and entries (read
+  from the tests that compare them), the golden READMEs and `tests/fixtures/index/expected` with
+  the index command the tests use; the merge examples' expected outputs with their own command.
+
+**Red steps** (dl-018 R1), tests first in `tests/check-packs.test.ts` and
+`tests/compose-documents.test.ts`, run on `main`'s code with `npm run build && node --test
+dist/tests/check-packs.test.js dist/tests/compose-documents.test.js`:
+1. a `delivery` reaching `release` and `retrospective` through a sub (two levels, two phases
+   including the same sub) passes; red on `main` (`life-cycle-includes` reported);
+2. an include cycle among the pack's subs with both reached passes and terminates; red;
+3. a conditional `delivery` reaching a `contents` workflow is reported; red (nothing on `main`);
+4. a phase including `release` with no `iterate_over`, with `status: [in-development]`, and with a
+   key that is no field of the composed `release` are each reported; red; a key declared by the
+   methodology's tightening (`sprint`) passes;
+5. the composer accepts the nested shape and refuses a wrong `where`; red;
+6. characterization (green on `main`, named as such): `release` reached by no path is reported; a
+   `contents` workflow including a conditional one stays `isolation`; a pack workflow not reached
+   from `delivery` that includes `release` without iterating is not reported.
+Then the rule (green), then the fixtures and their regeneration, then the full suite.
+
+**Checks:** `npm test` on 22.21 and on the floor 22.12.0 in clean clones; `npm run validate`, the
+golden-tree `validate`, the overlay `validate` (7 runs, 0 failed); `npm run lint`.
+
+**Commits** on `task/task-051-lint-life-cycle-includes`: the red tests; the rule; the fixtures and
+regenerated outputs; the task's notes.
 
 ## Execution Notes
 
