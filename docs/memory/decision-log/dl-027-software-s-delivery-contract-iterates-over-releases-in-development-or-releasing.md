@@ -70,13 +70,13 @@ element is approved.
   workflows/delivery.yaml`) moves to D1's `where` in task-051, coordinated with plan-046's
   session, which owns the fixture; its compositions keep validating.
 
-Consequences: the gap is only the window between `enter-releasing` and `approve-release`; a
-reject at `approve-release`, which returns to `pre-release-checks` with the release still
-`releasing`, is covered too; from `approve-release` on the candidate has progressed, and once
-`released` it counts as complete. `draft`, `planning` and `released` stay out: the methodology
-moves its releases to `in-development` itself. `software`'s Commitments to adopters are untouched (no name changes). A project that
-adopted the contract by hand iterates over `[in-development, releasing]`. dl-026 D1 and D3, which
-name `[in-development]`, are read with D1; dl-026 is not edited.
+Consequences: the gap is only the window between `enter-releasing` and `approve-release`; a reject
+at `approve-release`, which returns to `pre-release-checks` with the release still `releasing`, is
+covered too; from `approve-release` on the candidate has progressed, and once `released` it counts
+as complete. `draft`, `planning` and `released` stay out: the methodology moves its releases to
+`in-development` itself. `software`'s Commitments to adopters are untouched (no name changes). A
+project that adopted the contract by hand iterates over `[in-development, releasing]`. dl-026 D1 and
+D3, which name `[in-development]`, are read with D1; dl-026 is not edited.
 
 ## Execution Notes
 
