@@ -2,7 +2,7 @@
 id: task-053-a-scripted-run-of-base-s-workflows-on-wingfoil-0.3.0-every-main-starts-explore-and-apply-complete-bug-005-bug-006-plan-049
 type: task
 title: "A scripted run of base's workflows on WingFoil 0.3.0: every main starts, explore and apply complete (bug-005, bug-006, plan-049)"
-status: draft
+status: pending
 pack: ""            # tooling task (pack-release › release, plan-049 step 2, ruling 4)
 depends_on: []
 tags: ["packs","base","tooling"]
