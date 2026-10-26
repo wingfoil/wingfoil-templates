@@ -250,3 +250,4 @@ and dl-019 is not needed.
   exit 0 with no warning. Privacy grep of `git diff main`: no local path, no private project, only
   a `*.example` address. CI run 40232352598 on the branch: `success`.
   `in-progress → in-review`.
+- 2026-10-26: delivered: merged into `main` (`0214cc0`), `approved → done`.

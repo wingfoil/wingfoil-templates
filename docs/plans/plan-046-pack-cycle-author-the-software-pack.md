@@ -212,3 +212,12 @@ dl-025, F-035, F-036, the first sync of the feedback inbox); a possible note on 
 - 2026-10-25: task-046 `done`, merged (`2edc17d`): `validate --overlay`, on a merged temporary
   tree, never publishable; the tree's own lines unchanged. 965 of 965 from clean clones on both
   Node.js versions; CI run 40213481751 on the branch `success`. task-047 next.
+- 2026-10-25: `main`'s CI after task-046's delivery (`0d42458`): run 40216101348 `success`.
+- 2026-10-26: task-047 `done`, merged (`0214cc0`): `packs/software` in its smallest valid form (19
+  files) and `tests/fixtures/software-exit` (`methodology/fixture`, the defaults composition),
+  validated on WingFoil 0.3.0 through the overlay with no warning (4 runs, 0 failed), and the CI
+  step. The approver ruled in chat (2026-10-25) that `end-of-life` gains an `approve` phase after
+  `announce`, selecting the announcement by the tag `end-of-life`; the charter's `end-of-life`
+  row and WingFoil step-key table, which no longer match, are recorded at this plan's close (step
+  4). 967 of 967 from clean clones on both Node.js versions; CI run 40232352598 on the branch
+  `success`. task-048 next.
