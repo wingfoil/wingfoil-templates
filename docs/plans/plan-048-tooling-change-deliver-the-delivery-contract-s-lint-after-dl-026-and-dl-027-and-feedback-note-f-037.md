@@ -65,8 +65,10 @@ its own branch `task/<id>`, from `main`, one after the other (WIP limit one).
    includes` after dl-026 D3 and dl-027 D3, its tests, `methodology/fixture`'s `where` (dl-027 D5),
    and the count of tests the change moves; `validate --overlay tests/fixtures/software-exit` at 7
    runs, 0 failed.
-3. **task-052, F-037** (`tooling-delivery`, `pack: ""`): the note in `docs/wingfoil-feedback/`, in
-   dl-163's format (`kind: request`), reproducible with WingFoil 0.3.0 alone, and its ledger row.
+3. **task-052, F-037** (`tooling-delivery`, `pack: ""`): accepted into the backlog only; its build
+   (the note in `docs/wingfoil-feedback/`, in WingFoil dl-163's format, `kind: request`,
+   reproducible with WingFoil 0.3.0 alone, and its ledger row) waits for F-035 and F-036
+   (ruling 2).
 4. **Close:** at task-051's merge, the plan lists the wave's errata and rulings per
    tech-spec (dl-020; spec-001 is not changed by this plan, so nothing to fold back) and goes
    `active → done`; the merges reported to plan-046's session and to the coordinating session
