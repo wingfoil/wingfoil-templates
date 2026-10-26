@@ -241,3 +241,29 @@ For the approver's acceptance:
   `status: [in-development, releasing]`, scope keys allowed (each a field of the composed
   `release`), because on WingFoil 0.3.0 a release stopped after `enter-releasing` under
   `[in-development]`. The text stays unapproved until dl-027 is approved and the merge OK is given.
+- 2026-10-26: written by plan-046 (`pack-cycle` › `author`): `packs/software`, 22 files, on `main`
+  through task-047 (`0214cc0`: the five types, templates, roles and DNA, `determinism`,
+  `sw-life-cycle` and its defaults, `release`, `release-submit`, `release-publishing`) and task-048
+  (`a264f9f`: `adr-ingest`, `bug-ingest`, the AGENTS.md section). Not published: its catalog entry
+  and tag come with `first-release`, which needs a methodology in `packs/` (plan-046 ruling 6).
+- 2026-10-26: the exit criterion (dl-022 S6) met by task-049 (`babf1e9`), against the `delivery`
+  contract before dl-027, read as plan-046's rulings 1 and 3 give it: `base` and `software` stay in
+  `packs/`; the overlay `tests/fixtures/software-exit` holds the fixture methodology
+  (`methodology/fixture`, never published, R-12) and one composition per distinct parameter set of
+  the four governed software repositories (`defaults` this repository's, `flat-releases`
+  Benchmark's, `release-folders` WingFoil's, `release-folders-lean` UI's, at the commits task-049
+  names), coinciding sets sharing one; the check is `npm run validate -- --overlay
+  tests/fixtures/software-exit` on every branch push by the CI (task-046's overlay, task-047's
+  step), since `npm test` runs WingFoil's stub: 7 runs, 0 failed, no warning, on WingFoil 0.3.0.
+  The fixture's `where` follows dl-027's `[in-development, releasing]` with plan-047's task-051.
+- 2026-10-26: what the pack does beyond this charter's text. The approver's rulings in chat
+  (2026-10-25, task-047): `end-of-life` gains an `approve` phase after `announce` (approver,
+  `memory.approve` on `where: { type: decision-log, status: [in-discussion], tags: [end-of-life]
+  }`, `fallback: { step: announce }`), as `base`'s `decision-log-ingest`, and `announce` tags its
+  decision-log `end-of-life`, as `base`'s `retrospective`; so the Ships table's `end-of-life` row
+  reads with it, and WingFoil's step-key table gains a new key, `end-of-life.approve`
+  (`end-of-life.{announce, deprecate, archive}` unchanged). From task-047's review: the five phases
+  with no artefact and no other action (`pre-release-checks`, `release-commit`,
+  `staging-rehearsal`, `tag`, `archive`) declare `agent.execute`, their step keys unchanged; a
+  project binds its own commands to them. Owed: WingFoil is told of `end-of-life.approve` with the
+  key mapping, at `software`'s tag.

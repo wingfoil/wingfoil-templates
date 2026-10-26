@@ -249,3 +249,37 @@ dl-025, F-035, F-036, the first sync of the feedback inbox); a possible note on 
   `catalog.yaml` on origin/main, no longer a `released` `pack-release` (since `memory.yaml` v6,
   the authorization); independent review: approve, its two wording points applied (origin named;
   backticks); `workflow list` with no diagnostic.
+- 2026-10-26, step 4: the charter's Execution Notes record the pack written, the exit criterion
+  met and its reading (rulings 1 and 3), and what the pack does beyond the charter's text (the
+  approver's rulings of 2026-10-25 on `end-of-life`, and its new WingFoil step key, owed to WingFoil
+  at the tag). Waited for plan-047's merge (`49b1755`), which amended the charter's `delivery`
+  contract in place (dl-026, dl-027), so that both edits of the charter landed in turn.
+- 2026-10-26, `main`'s CI: after task-050's delivery (`0295525`) run 40352496784 `success`; after
+  step 3 (`95b2eba`) run 40355463300 `success`; after plan-047's merge (`49b1755`) run 40360318802
+  `success`; after plan-047's close (`14bf317`) run 40362981642 `success`. This closing commit's
+  own run is read after its push.
+- 2026-10-26, per tech-spec (dl-020), for W8 (plan-041 to plan-047), which this plan closes
+  (ruling 4): spec-001 was amended in place six times in the wave, each approved by its merge OK:
+  §16's O15 (plan-041 ruling 14); §12 (plan-042, task-036); §7.5 and §18 (plan-045 ruling G,
+  task-044); §8.3, the erratum owned by W8 (task-050, `dba5cb8`); §2, §9, §11 and §18 (dl-026,
+  plan-047 ruling 13); §9 (dl-027, plan-047 ruling 14). Nothing is left to fold back; the approver
+  ruled in chat (2026-10-26, dl-020 R2) that no further element is needed. spec-002 has no W8
+  entry. dl-026's lint change (`life-cycle-includes`) follows in plan-047's task-051.
+- 2026-10-26: closed. Done: task-046 (`validate --overlay`), task-047 and task-048
+  (`packs/software`), task-049 (the exit criterion), task-050 (spec-001 §8.3), step 3
+  (`pack-cycle` v5); bug-005 and bug-006 opened and triaged, their fix a patch of `base`; the
+  Handoff's "Done when" met, `main`'s CI `success`. Owed after this plan, besides those of "Not in
+  this plan": `software`'s `first-release` with `methodology/scrum` (W9, ruling 6), with the
+  notices to WingFoil UI and to the coordinating session at the tag and `end-of-life.approve`
+  reported to WingFoil; `software`'s README examples (CB-2), due in the change that adds
+  `methodology/scrum` to `packs/`, since spec-002 §2.4's exemption holds only while `packs/` holds
+  no methodology; `methodology/fixture`'s `where` and the `life-cycle-includes` lint (plan-047's
+  task-051); the patch of `base` for bug-005 and bug-006; the foundation packs' `retrospective`
+  after `software`'s `first-release`; the intake of WingFoil 0.3.1 when it is published; plan-022's
+  close, dl-024, dl-025, F-035, F-036 and the first sync of the feedback inbox after W9; the
+  possible note on 0.3.0's `workflow finalize --dry-run`.
+- 2026-10-26: independent review of the close: request changes, two blocking findings (the
+  Handoff's CI evidence; the per-tech-spec account for the whole wave, with the approver's R2
+  ruling), applied with the non-blocking ones (the owed items; the charter's notes: the contract
+  the exit criterion was met against, the source of `agent.execute`, the repository names).
+- 2026-10-26: re-review of the close: approve, nothing blocking. Plan `active → done`.
