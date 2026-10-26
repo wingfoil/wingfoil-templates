@@ -114,7 +114,7 @@ Written 2026-10-26, before the change. Branch `task/task-050-spec-section-8-3` f
 - 2026-10-26, the change: §8.3 rewritten as the Design states, the Execution Note appended. dl-018
   R1 applies to code; no test is written, so R2's after-the-fact tests and their mutation check do
   not arise. `grep -n "docs/notes/" docs/memory/tech-spec/spec-001*` finds only the 2026-10-10
-  Execution Note (line 1160); every line of §8.3 and of the new note is at most 100 columns.
+  Execution Note (line 1164 after the build review's amendment); every line of §8.3 and of the new note is at most 100 columns.
 - 2026-10-26, build review: approve after amendments, nothing blocking. Applied: `{axis}` and
   `{name}` are not WingFoil's element tokens but frontmatter-field tokens of this repository's
   `pack` id, so §8.3 now groups the id and path tokens (`{id}`, `{n}`, `{slug}`) apart from the
@@ -122,3 +122,11 @@ Written 2026-10-26, before the change. Branch `task/task-050-spec-section-8-3` f
   `patch`); `{version}`, `{release-line}` and `{kind}` name the parameters that carry them, as
   criterion 1 asks. The Design's text is read with these corrections (dl-019); the Execution Note
   on spec-001 still holds as written.
+- 2026-10-26: build review re-check: approve. Checks from clean clones of `123680e` on Node.js
+  22.21.0 and 22.12.0: `npm ci`, `npm test` 967 of 967, `lint`, `check:pins`, `check:schemas`,
+  `check:packs`, `index -- --check`, `validate` (3 runs, 0 failed), the golden fixture's step (26
+  runs, 0 failed), `validate -- --overlay tests/fixtures/software-exit` (7 runs, 0 failed) and
+  `workflow list` exit 0 with no warning. `0dadb9d` after it changes only spec-001's text: the
+  tests that read the documents (`markdown-lines`, `index-urls`, `compat`, `parameters`) pass on
+  it, and CI run 40332076248 on the branch at `0dadb9d`: `success`. Privacy grep of
+  `git diff main`: clean. `in-progress → in-review`.
