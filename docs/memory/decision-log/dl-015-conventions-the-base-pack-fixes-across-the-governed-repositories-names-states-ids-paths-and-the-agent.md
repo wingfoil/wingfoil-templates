@@ -119,3 +119,10 @@ Consequences:
   - **Consequences.** The list of this repository's changes at its adoption is replaced by the two
     charters' Adoption sections, which its adoption plan (W9) maps. The consumer's provisional
     choices now differ on C5 (five phases, in `base`) and C6 (`{line}`), no longer on C9.
+- 2026-10-26, plan-049 (rulings 1 and 6), task-054: C7's default is replaced. `base`'s
+  `plan_id` defaults to `{workflow}-{phase}-plan`, WingFoil's and UI's convention, in place of
+  `plan-{n}-{slug}`: WingFoil 0.3.0's `workflow start` fills a started plan's `workflow` and
+  `phase`, which `base`'s `plan` requires, only from the tokens its id pattern or path declares,
+  so on the old default every start failed (bug-005). Ids already given never change; a project
+  that keeps `plan-{n}-{slug}`, as this repository and Benchmark do, states it and fills those
+  two fields by hand. In `base` 2.0.0.

@@ -241,3 +241,16 @@ For the approver's acceptance:
   live check passed. Activated (`accepted → active`) before `pack-cycle`'s `retrospective`, which
   runs once for both foundation packs after `software`'s `first-release` (plan-044 ruling B).
 
+- 2026-10-26, plan-049, task-054 (for `base` 2.0.0; bug-005, bug-006): on WingFoil 0.3.0 a
+  `produces` names a directory only with a trailing slash, and `workflow start` fills a plan's
+  `workflow` and `phase` only from the tokens its id pattern or path declares. So:
+  - Ships, `governance-evolution` › `apply`: it produces `.wingfoil/` and `AGENTS.md`; with
+    `.wingfoil` its evidence was never satisfied, not "always satisfied". It now is once
+    `AGENTS.md` exists, `.wingfoil/` always holding files (weak evidence).
+  - Parameters: `plan_id`'s default is `{workflow}-{phase}-plan` (dl-015 C7 replaced, plan-049
+    ruling 6); `retrospective_path`'s is `docs/retrospectives/`, a directory ending with `/`, a
+    fixed file having none.
+  - Adoption: a project that keeps `plan-{n}-{slug}` (this repository and Benchmark) states it
+    (commitment 2) and, after each `workflow start`, fills the plan's `workflow` and `phase` by
+    hand and submits it; or it uses `{workflow}-{phase}-plan` for its new plans (commitment 3).
+    A `retrospective_path` naming a directory gains its trailing `/`.
