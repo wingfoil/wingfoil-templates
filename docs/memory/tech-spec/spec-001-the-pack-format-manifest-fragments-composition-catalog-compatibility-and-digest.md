@@ -621,16 +621,20 @@ parameters:
 
 Single-brace tokens belong to WingFoil and to the project, and the composer never interprets any of
 them. Examples:
-- WingFoil's element tokens: `{id}`, `{n}`, `{slug}`, `{axis}`, `{name}`, and the element fields
-  `software`'s parameters use: `{version}` (an element's version), `{release-line}` (a release's
-  field of that name) and `{kind}` (a release's kind, a field a project adds to `release`), as
-  `software`'s charter states (Tokens and ids);
+- WingFoil's id and path tokens `{id}`, `{n}` and `{slug}`;
+- frontmatter-field tokens, each naming the element's field of that name (WingFoil's `{<field>}`):
+  `{axis}` and `{name}` of this repository's `pack` id, and the fields `software`'s parameters use,
+  `{version}` (`release_line_id`, `release_id`), `{release-line}` (`release_path`), as
+  `software`'s charter states (Tokens and ids), and `{kind}`, the release kind (`minor` or
+  `patch`) that WingFoil's own `release` adds and `software`'s does not declare, used by a
+  project's `release_id` (WingFoil's `{kind}-{version}`);
 - WingFoil's workflow-context tokens `{workflow}`, `{phase}` and `{scope}`, which its engine fills
   and which are given by hand from the CLI (WingFoil's `spec-001-memory-yaml-schema` at
   `wingfoil/wingfoil@cc31d7a8`, its v0.3.0); WingFoil's own `plan` path uses `{scope}` for the
   release-line and release nesting, for example `rl-v1/rel-v0.1` (its `.wingfoil/memory.yaml` and
   `spec-017-workflow-commands-and-state-deduction` §1, same commit);
-- the project token `{release}`, a task's `release` field (`software`'s charter, dl-015 C10).
+- the project token `{release}`, a task's `release` field, also a frontmatter-field token
+  (`software`'s charter, dl-015 C10).
 
 A `path` or `pattern` value may contain them, so a project can set, for example,
 `task_path: "docs/04_memory/{release}/{id}.md"` or `plan_path: "docs/05_plans/{scope}/{id}.md"`

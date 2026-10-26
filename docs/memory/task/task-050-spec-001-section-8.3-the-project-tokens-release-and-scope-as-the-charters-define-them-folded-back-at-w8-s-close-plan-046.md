@@ -115,3 +115,10 @@ Written 2026-10-26, before the change. Branch `task/task-050-spec-section-8-3` f
   R1 applies to code; no test is written, so R2's after-the-fact tests and their mutation check do
   not arise. `grep -n "docs/notes/" docs/memory/tech-spec/spec-001*` finds only the 2026-10-10
   Execution Note (line 1160); every line of §8.3 and of the new note is at most 100 columns.
+- 2026-10-26, build review: approve after amendments, nothing blocking. Applied: `{axis}` and
+  `{name}` are not WingFoil's element tokens but frontmatter-field tokens of this repository's
+  `pack` id, so §8.3 now groups the id and path tokens (`{id}`, `{n}`, `{slug}`) apart from the
+  frontmatter-field tokens (WingFoil's `{<field>}`); `{kind}`'s source is WingFoil's (`minor` or
+  `patch`); `{version}`, `{release-line}` and `{kind}` name the parameters that carry them, as
+  criterion 1 asks. The Design's text is read with these corrections (dl-019); the Execution Note
+  on spec-001 still holds as written.
