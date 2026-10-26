@@ -71,13 +71,13 @@ its own branch `task/<id>`, from `main`, one after the other (WIP limit one).
    (ruling 2).
 4. **Close:** at task-051's merge, the plan lists the wave's errata and rulings per
    tech-spec (dl-020; spec-001 is not changed by this plan, so nothing to fold back) and goes
-   `active → done`; the merges reported to plan-046's session and to the coordinating session
-   (F-037).
+   `active → done`; task-051's merge reported to plan-046's session, and task-052's handover (F-037
+   waiting for F-035 and F-036) to the coordinating session.
 
 ## Handoff
 
 - **claude:** steps 1–4, except the approver's gates.
-- **Approver:** the ruling (given); each task's backlog acceptance, `approve` at `in-review`, and
+- **Approver:** the rulings 1 and 2 (given); each task's backlog acceptance, `approve` at `in-review`, and
   the merge OK.
 - Done when task-051 is `done` on `main`, pushed, and task-052 is in the backlog, handed over as
   ruling 2 says.
@@ -90,3 +90,5 @@ its own branch `task/<id>`, from `main`, one after the other (WIP limit one).
   2 (F-037 waits); amended: the dl-020 account at close, `pack-authoring`'s slot rule owned by
   `scrum`'s `author`, the task bodies (fixtures, the composed `release`'s fields, the composer,
   red first, F-018). Focused re-review requested.
+- 2026-10-26: focused re-review: approve (plan and both tasks), three wordings applied. Plan
+  submitted, both tasks submitted (`pending`).

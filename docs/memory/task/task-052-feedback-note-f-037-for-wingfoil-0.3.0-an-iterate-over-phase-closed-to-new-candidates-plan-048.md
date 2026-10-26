@@ -61,3 +61,5 @@ request).
 ## Execution Notes
 
 - 2026-10-26: written under plan-048 (step 1).
+- 2026-10-26: reviewed with plan-048 (approve after amendments, then approve); accepted under
+  plan-048, its build taken over as plan-048 ruling 2 says.

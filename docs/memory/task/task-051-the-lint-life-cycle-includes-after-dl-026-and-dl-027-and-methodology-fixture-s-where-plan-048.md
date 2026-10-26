@@ -86,3 +86,4 @@ sub includes both. dl-026 D3 and dl-027 D3 name this task; dl-027 D5 moves `meth
 ## Execution Notes
 
 - 2026-10-26: written under plan-048 (step 1).
+- 2026-10-26: reviewed with plan-048 (approve after amendments, then approve).
