@@ -2,7 +2,7 @@
 id: task-052-feedback-note-f-037-for-wingfoil-0.3.0-an-iterate-over-phase-closed-to-new-candidates-plan-048
 type: task
 title: "Feedback note F-037 for WingFoil 0.3.0: an iterate_over phase closed to new candidates (plan-048)"
-status: draft
+status: pending
 pack: ""            # tooling task (tooling-change › deliver, plan-048)
 depends_on: []
 tags: ["tooling","feedback"]
