@@ -19,10 +19,12 @@ by WingFoil:
 - `{release}`: a task's `release` field, which a project may use in `base`'s `task_path` (for
   example `docs/04_memory/{release}/{id}.md`); `software`'s charter (Tokens and ids) and dl-015 C10;
 - `{scope}`: not a field but, with `{workflow}` and `{phase}`, which §8.3 already lists, a token of
-  the workflow's execution context that WingFoil's engine fills (by hand from the CLI): the
-  release-line and release nesting, for example `rl-v1/rel-v0.1` (WingFoil's memory.yaml
-  specification at `wingfoil/wingfoil@cc31d7a8`, its v0.3.0); a project may use it in `base`'s
-  `plan_path` (`base`'s charter, Parameters; dl-015 C10);
+  the workflow's execution context that WingFoil's engine fills, and that is given by hand from the
+  CLI (WingFoil's `spec-001-memory-yaml-schema` at `wingfoil/wingfoil@cc31d7a8`, its v0.3.0);
+  WingFoil's own `plan` path `docs/05_plans/{scope}/{id}.md` uses it for the release-line and
+  release nesting, for example `rl-v1/rel-v0.1` (its `.wingfoil/memory.yaml` and
+  `spec-017-workflow-commands-and-state-deduction` §1 at the same commit); a project may use it in
+  `base`'s `plan_path` (`base`'s charter, Parameters; dl-015 C10);
 - `{release-line}`, `{version}` and `{kind}`, WingFoil's tokens that `software`'s parameter
   defaults and the governed repositories' values use (a release's field `release-line`, an
   element's `version`, WingFoil's release `kind`; `software`'s charter, Tokens and ids). §8.3 does
@@ -36,8 +38,10 @@ sentence), so no code or test changes. It is approved by this task's merge OK, a
 
 1. **spec-001 §8.3, amended in place**: the citation of the deleted note is gone; `{release}` is
    named as a project token with its source (`software`'s charter, dl-015 C10); `{scope}` is placed
-   with `{workflow}` and `{phase}` as WingFoil's workflow-context tokens, with its meaning and
-   WingFoil's specification cited at `cc31d7a8`; `{release-line}`, `{version}` and `{kind}` are
+   with `{workflow}` and `{phase}` as WingFoil's workflow-context tokens, its meaning cited from
+   WingFoil's `spec-001-memory-yaml-schema` and its nesting use from WingFoil's own `plan` path
+   (`.wingfoil/memory.yaml`, `spec-017-workflow-commands-and-state-deduction` §1), both at
+   `wingfoil/wingfoil@cc31d7a8`; `{release-line}`, `{version}` and `{kind}` are
    added to the examples with `software`'s charter as the source of their use; each names the
    parameter that may carry it; the section's rule is unchanged (the composer interprets no
    single-brace token; which tokens WingFoil fills, and from where, is WingFoil's); the section is
@@ -74,3 +78,8 @@ sentence), so no code or test changes. It is approved by this task's merge OK, a
   `{workflow}` and `{phase}`; `{release-line}`, `{version}` and `{kind}` as WingFoil's tokens, and
   their naming beyond plan-046's entry stated; "interprets"; dl-018's reason; the Execution Note
   without the deleted path; the privacy rule; the rewrap. Re-review requested.
+- 2026-10-26: re-review: approve after amendments, nothing blocking. Applied: `{scope}`'s meaning
+  from WingFoil's `spec-001-memory-yaml-schema`, its nesting example from WingFoil's own `plan`
+  path and its spec-017 §1, WingFoil's specifications named by their ids. The title, fixed at
+  `memory add`, still says "project tokens"; the body states the reading. Submitted for the
+  approver's acceptance into the backlog.
