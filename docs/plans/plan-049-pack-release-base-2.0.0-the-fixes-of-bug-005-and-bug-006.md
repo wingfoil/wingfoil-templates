@@ -93,34 +93,32 @@ WingFoil 0.3.0 (`cc31d7a8`):
    to `plan-{n}-{slug}`; its change is recorded by an Execution Note on dl-015, written in
    task-054, as dl-015's notes recorded plan-041's rulings; no new decision-log.
 
-**Adopters of 1.0.0** (adoption is by hand: no release in `compat.yaml` provides
-`pack-install`). To keep their current values (commitment 2), a project that relied on a default
-states it: `plan_id: plan-{n}-{slug}`, and `retrospective_path` with its trailing slash if it
-names a directory (a value set without it, e.g. `docs/09_retrospectives`, meets bug-006 as the
-default did); then it recomposes `.wingfoil/`. No file moves, no id changes. An instance left
-`draft` by bug-005 is repaired by filling `workflow` and `phase` and `memory submit`. A project
-that keeps `plan-{n}-{slug}` still meets bug-005 at every `workflow start` and repairs each plan
-the same way, unless it adopts the new pattern for its new plans (commitment 3): this
-repository and Benchmark name their plans so today, which the charter's Adoption section states
-(task-054) and this repository's own adoption plan (W9) takes up. The CHANGELOG and the README's
-"Install and update" say it; the notices repeat it. 1.0.0 stays tagged and
-listed, frozen (`pack-semver`, one living line before WingFoil 1.0).
+**Adopters of 1.0.0** (adoption is by hand: no release in `compat.yaml` provides `pack-install`). To
+keep their current values (commitment 2), a project that relied on a default states it: `plan_id:
+plan-{n}-{slug}`, and `retrospective_path` with its trailing slash if it names a directory (a value
+set without it, e.g. `docs/09_retrospectives`, meets bug-006 as the default did); then it recomposes
+`.wingfoil/`. No file moves, no id changes. An instance left `draft` by bug-005 is repaired by
+filling `workflow` and `phase` and `memory submit`. A project that keeps `plan-{n}-{slug}` still
+meets bug-005 at every `workflow start` and repairs each plan the same way, unless it adopts the new
+pattern for its new plans (commitment 3): this repository and Benchmark name their plans so today,
+which the charter's Adoption section states (task-054) and this repository's own adoption plan (W9)
+takes up. The CHANGELOG and the README's "Install and update" say it; the notices repeat it. 1.0.0
+stays tagged and listed, frozen (`pack-semver`, one living line before WingFoil 1.0).
 
 **WingFoil 0.3.1.** The intake of 0.3.1, when it is released, recomputes the range of every
 published version, 1.0.0 and 2.0.0 (today `0.3.0` for both), and reruns this plan's two
 reproductions on 0.3.1.
 
-Who runs what: claude drafts for the product-owner (`plan`), is the pack-author of the tasks and
-the tech-lead of `prepare` and `publish`; the reviewer is an independent subagent (dl-017), never
-the author's context; claude never runs `memory approve` or `reject` and hands the approver the
-command.
+Who runs what: claude drafts for the product-owner (`plan`), is the developer of task-053, the
+pack-author of task-054 and the tech-lead of `prepare` and `publish`; the reviewer is an independent
+subagent (dl-017), never the author's context; claude never runs `memory approve` or `reject` and
+hands the approver the command.
 
-Not in this plan: a feedback note asking WingFoil that `workflow start` fill a plan's `workflow`
-and `phase` whatever its `id_pattern` (not a WingFoil defect; it would be F-038, reserved for
-this plan's session, and waits until F-035 and F-036 exist and F-037 has landed, as the inbox's
-numbering requires); a `pack-semver` rule for fixes and for
-a changed parameter default; `software`'s first release (W9); this repository's adoption of
-`base`; the foundation packs' `retrospective`.
+Not in this plan: a feedback note asking WingFoil that `workflow start` fill a plan's `workflow` and
+`phase` whatever its `id_pattern` (not a WingFoil defect; it would be F-038, reserved for this
+plan's session, and waits until F-035 and F-036 exist and F-037 has landed, as the inbox's numbering
+requires); a `pack-semver` rule for fixes and for a changed parameter default; `software`'s first
+release (W9); this repository's adoption of `base`; the foundation packs' `retrospective`.
 
 ## Steps
 
@@ -138,7 +136,11 @@ a changed parameter default; `software`'s first release (W9); this repository's 
    `tests/ci-workflow.test.ts`). Optionally, the Design adds a start of `sw-life-cycle` on the
    overlay `software-exit`'s `defaults` composition, so that W9 inherits the check. Red first
    (dl-018 R1–R3): the run fails against 1.0.0's content, recorded on the branch; it is built and
-   reviewed up to `in-review`, then merged after task-054, green on `main`.
+   reviewed on its branch, whose CI is red by design while `main` holds 1.0.0's content; after
+   task-054's merge, `main` is merged into task-053's branch, its CI runs green there, and only
+   then come `in-review`, the approver's acceptance and the `--no-ff` merge. `tooling-delivery`'s
+   WIP limit (one tooling task in progress, one in review) holds with plan-048's task-051:
+   task-053 goes `in-progress` only once task-051 has left it.
 3. **task-054 — the fixes (pack content)**, through `kanban-delivery`, its body accepted with
    task-053's: `plan_id`'s and `retrospective_path`'s defaults and descriptions in `pack.yaml`,
    `apply`'s `.wingfoil/`; the README's parameter table, its "Install and update" (the adopters
@@ -151,7 +153,9 @@ a changed parameter default; `software`'s first release (W9); this repository's 
    and the Design says whether the examples that restate
    `{workflow}-{phase}-plan` keep it; Execution Notes on the charter (Ships, the parameter table,
    Adoption: the known adopters on `plan-{n}-{slug}`, their repair, the new pattern for new
-   plans) and on dl-015 (ruling 6). Its branch is checked with task-053's run as well (green).
+   plans) and on dl-015 (ruling 6). Its tree is also checked with task-053's
+   script, run from task-053's branch against task-054's tree, green, the command recorded in
+   task-054's Execution Notes.
    Each task: its body reviewed and accepted into the backlog, its Design on `main`, the build on
    `task/<task id>`, an independent review, the checks from clean clones on Node.js 22.21 and
    22.12.0 (`npm ci`, `npm test`, `lint`, `check:pins`, `check:schemas`, `check:packs`,
@@ -198,7 +202,10 @@ a changed parameter default; `software`'s first release (W9); this repository's 
 - **The other session** (plan-048, then `methodology/scrum`'s author): numbers agreed (this plan
   holds plan-049, task-053, task-054, `prel-002`, and bug-007, dl-028 and F-038 if needed; that
   session holds plan-048, task-051, task-052, and reserves plan-050, task-055 to task-059 and
-  dl-029 for scrum's author; further numbers from task-060 and dl-030, agreed first); told before
+  dl-029 for scrum's author, as agreed between the two sessions on 2026-10-26; further numbers
+  from task-060 and dl-030, agreed first; task-051's and task-053's places under
+  `tooling-delivery`'s WIP limit, and task-051's and the cascade's order on `methodology/fixture`,
+  agreed with it); told before
   each merge on `main` and before `prepare`.
 - Done when `base@2.0.0` is tagged and pushed, `catalog.yaml` lists it on `main` with the CI
   `success` on the tag and on `main`, CB-6's live check recorded, bug-005 and bug-006 noted fixed,
@@ -221,3 +228,6 @@ a changed parameter default; `software`'s first release (W9); this repository's 
   the class; where the run lives and the scratch identities; `validate`'s byte-identity and
   Validation section; CB-6's checks for 2.0.0; the reserved ids; the optional `sw-life-cycle`
   start. WingFoil's `release/0.3` branch is public, so citing it stays.
+- 2026-10-26: re-review: approve; its non-blocking findings applied (task-053's branch CI red by
+  design and its acceptance after `main` is merged in; task-054 checked with task-053's script;
+  the tooling WIP limit with task-051; the roles; reflow).
