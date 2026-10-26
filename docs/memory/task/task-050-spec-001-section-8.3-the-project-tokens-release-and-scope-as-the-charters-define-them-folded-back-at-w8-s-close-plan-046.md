@@ -131,4 +131,5 @@ Written 2026-10-26, before the change. Branch `task/task-050-spec-section-8-3` f
   tests that read the documents (`markdown-lines`, `index-urls`, `compat`, `parameters`) pass on
   it, and CI run 40332076248 on the branch at `0dadb9d`: `success`. Privacy grep of
   `git diff main`: clean. `in-progress → in-review`.
-- 2026-10-26: delivered: merged into `main` (`dba5cb8`), `approved → done`; the merge OK approves spec-001 §8.3's amended text.
+- 2026-10-26: delivered: merged into `main` (`dba5cb8`), `approved → done`;
+  the merge OK approves spec-001 §8.3's amended text.
