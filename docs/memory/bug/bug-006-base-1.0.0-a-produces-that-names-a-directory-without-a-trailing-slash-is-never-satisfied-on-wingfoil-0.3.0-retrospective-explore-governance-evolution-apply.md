@@ -2,7 +2,7 @@
 id: bug-006-base-1.0.0-a-produces-that-names-a-directory-without-a-trailing-slash-is-never-satisfied-on-wingfoil-0.3.0-retrospective-explore-governance-evolution-apply
 type: bug
 title: "base 1.0.0: a produces that names a directory without a trailing slash is never satisfied on WingFoil 0.3.0 (retrospective explore, governance-evolution apply)"
-status: draft
+status: pending
 severity: "major"        # critical | major | minor
 pack: "pack-foundation-base"
 tags: ["packs","base","workflow"]
