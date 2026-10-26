@@ -100,7 +100,78 @@ Optional, the Design decides: a start of `sw-life-cycle` on the overlay `softwar
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-053-workflow-runs` from `main`. A tooling task (dl-018 R1–R3): unit tests
+first, red; then the code; then the real run, red against `base` 1.0.0's content on this branch.
+
+**The command:** `npm run check:runs -- [--tree <dir>] [--cache <dir>] [<scenario file>...]`
+(`src/runs-cli.ts`, logic in `src/runs.ts`), exit 0 / 1 / 2 / 3 as `validate`. With no file it
+reads every `tests/fixtures/runs/*.yaml` of the tree. It reuses what exists: the composition as
+`validate` composes an example (resolution, parameters with their defaults, the composer's
+output), `selectReleases` in self-test mode and `installRelease` with `MATRIX_PINS` and the
+cache (`.cache/wingfoil-matrix` by default), taking the newest compatible release; git through
+`src/git.ts` (`gitEnvironment`, no inherited `GIT_*`). It changes neither `src/matrix.ts`'s
+`COMMANDS` nor `validate`.
+
+**The scenario file** (`tests/fixtures/runs/base.yaml`, schema-checked like the other fixtures'
+YAML by the code that reads it):
+
+```yaml
+format: 1
+compositions: tests/fixtures/examples/base   # every <id>/example.yaml under it
+identities:
+  agent: { name: "Runs Agent", email: "agent@runs.invalid" }   # the approver comes from the composition
+runs:
+  - main: decision-log-ingest
+    steps: [start]
+  - main: retrospective-periodic
+    steps:
+      - start
+      - commit_inside: retrospective_path      # a file inside the parameter's resolved value
+      - next: retrospective.additional-points
+  - main: governance-evolution
+    steps:
+      - start
+      - finalize: governance-evolution.assess
+      - add: { type: decision-log, title: "Change who approves", step: governance-evolution.propose }
+      - submit: added
+      - approve: added                         # as the approver
+      - commit_copy: { from: AGENTS.region.md, to: AGENTS.md }
+      - end
+```
+
+Steps: `start` (`workflow start <main>`, then the plan read back: `active`, `workflow` and
+`phase` non-empty); `commit_inside` (`<value without its trailing />/inventory.md`); `next`
+(`workflow next <instance>` names the step); `finalize` (`workflow finalize <instance> --step`;
+an approval phase's finalize as the approver with `--reason`, only when `next` asks for a
+record); `add`, `submit`, `approve` (the `memory` verbs, the added element's id taken from
+`add`'s JSON); `commit_copy`; `end` (`workflow end <instance>`, exit 0). Each run gets its own
+scratch repository (the composed `.wingfoil/` and region, committed), so one instance is open at
+a time; its git identity is set with `git config` in that repository, the approver's
+(`approver_email`, `approver_name`) only for `approve` and an approval's finalize. A failed step
+ends its run and the next run starts (Acceptance 2). The report: one line per run and
+composition (`runs <composition> <main> wingfoil@<version>: pass` or `fail at <step>: <command>
+exit <n>: <last line>`), then `runs: <n> runs, <m> failed`. Scratch paths are hidden as the
+matrix hides them.
+
+**Tests** (`tests/runs.test.ts`, under `npm test`, a fake runner standing for WingFoil and git,
+never the real release): the arguments (`--tree`, `--cache`, files; bad usage exit 3); the
+scenario's reading (unknown step, missing field: exit 3 with the file and the key); the steps'
+order and commands for each step kind; a failed step ending its run only; the identities
+switched for `approve`; the report and exit codes 0, 1 and 2 (an install failure). Red before
+`src/runs.ts` exists; the counts recorded.
+
+**CI:** `.github/workflows/ci.yml`, after the overlay step, `if: github.ref_type != 'tag'`:
+`Run base's workflows on WingFoil (task-053)`, `npm run check:runs`; `tests/ci-workflow.test.ts`
+asserts the step, its self-test condition and no `continue-on-error`.
+
+**The real run, red** (Acceptance 5), on this branch before `main` holds task-054: the expected
+failures per composition, recorded with the report. After task-054's merge, `main` merged into
+this branch, green (Acceptance 6). Before that, task-054's tree is checked with
+`npm run check:runs -- --tree <task-054's checkout>` (task-054, Acceptance 8).
+
+**Not done:** the optional `sw-life-cycle` start on the overlay `software-exit`: the command
+takes no overlay, and adding one is `software`'s first release's to decide (W9); recorded as a
+follow-up in plan-049's notes.
 
 ## Execution Notes
 
