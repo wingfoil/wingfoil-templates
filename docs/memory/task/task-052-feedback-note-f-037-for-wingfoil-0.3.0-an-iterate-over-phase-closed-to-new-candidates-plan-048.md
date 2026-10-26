@@ -43,9 +43,9 @@ request).
 4. **No private content:** no local path, private repository or private project; WingFoil
    references are public ids, tags or commits.
 5. **The ledger** in `docs/wingfoil-feedback/README.md` gains its row (5 cells equal to the
-   frontmatter, `answered_by` empty, any `|` in the title escaped); `Last sync` is unchanged; no `wingfoil-cli` W-entry and no
-   change under `.wingfoil/` (the behaviour is 0.3.0's, recorded when the governance pin moves,
-   its rule 5).
+   frontmatter, `answered_by` empty, any `|` in the title escaped); `Last sync` is unchanged; no
+   `wingfoil-cli` W-entry and no change under `.wingfoil/` (the behaviour is 0.3.0's, recorded when
+   the governance pin moves, its rule 5).
 6. **Tests:** `npm test` passes, the inbox checks included. `assertNumbering`
    (`tests/support/inbox.ts`) requires the notes numbered from F-001 with no gap, and F-035 and
    F-036 are reserved for the coordinating session's request (dl-024, dl-025), not yet written: the

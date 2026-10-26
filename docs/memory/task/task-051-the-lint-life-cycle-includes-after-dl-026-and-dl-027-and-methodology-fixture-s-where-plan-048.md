@@ -22,9 +22,9 @@ spec-001 §9 and §18:
   checked (dl-027 D1, D3).
 
 `life-cycle-includes` (`src/workflow-rules.ts`, `lifeCycleProblems`) checks today only that
-`workflows/delivery.yaml` itself includes `release` and `retrospective` by name; it reads no `where`.
-The composer applies the same rules, so it refuses `scrum`'s accepted shape, whose `sprint` sub
-includes both. dl-026 D3 and dl-027 D3 name this task; dl-027 D5 moves `methodology/fixture`'s
+`workflows/delivery.yaml` itself includes `release` and `retrospective` by name; it reads no
+`where`. The composer applies the same rules, so it refuses `scrum`'s accepted shape, whose `sprint`
+sub includes both. dl-026 D3 and dl-027 D3 name this task; dl-027 D5 moves `methodology/fixture`'s
 `where` here, agreed with plan-046's session, which owned the fixture.
 
 ## Acceptance
