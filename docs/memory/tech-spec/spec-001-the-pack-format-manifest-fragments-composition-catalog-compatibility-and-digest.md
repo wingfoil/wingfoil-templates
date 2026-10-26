@@ -644,8 +644,10 @@ only in a composition with `software`:
 - The methodology ships `delivery` (`kind: sub`): in its conditional part, with
   `with: software@^<major>` (§6.5), when it does not require `software`; in its `contents` when it
   does. `delivery` includes `release` and `retrospective` by name, at its own cadence (dl-003 D11,
-  dl-006). `retrospective` is not a slot, so no pack replaces it. In a composition without
-  `software`, what runs `retrospective` is fixed by `base`'s charter.
+  dl-006), directly or through sub-workflows the same methodology ships, at any depth, each
+  shipped in the same part as `delivery` (dl-026). The phase that includes `release` iterates over
+  `release` with `where: { status: [in-development] }`. `retrospective` is not a slot, so no pack
+  replaces it. In a composition without `software`, what runs `retrospective` is fixed by `base`'s charter.
 - A phase pack of slot `<slot>` **must** ship `workflows/<slot>.yaml`, with `name: <slot>` and
   `kind: sub`. Its file replaces `software`'s default. This is the only case in which a pack's file
   replaces another's (§7.6). A phase pack requires `software` (§3), so it carries no conditional
@@ -1225,3 +1227,8 @@ check the rest, and the composer refuses what they reject.
   least, the least form WingFoil 0.3.0 accepts (task-044's probe: no `frontmatter` and `{}` are
   refused); its table's row says "the defining pack's `required` is empty" in place of "declared
   none"; its "These fail composition" list and §18 gain the refusal. Nothing else changes.
+- 2026-10-26, **amended in place** (dl-026, plan-047 ruling 13; dl-026's approval and the merge OK
+  approve the text, as for O15): §9's `delivery` may include `release` and `retrospective` through
+  sub-workflows the same methodology ships, because on WingFoil 0.3.0 a later phase that completes
+  closes an earlier `iterate_over` phase, so repeated Sprints and releases cannot both be phases of
+  `delivery`. Nothing else changes; the lint `life-cycle-includes` follows in a tooling task.
