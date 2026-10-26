@@ -147,7 +147,8 @@ a changed parameter default; `software`'s first release (W9); this repository's 
    `docs/09_retrospectives`); in the same commit the compositions that set a directory without
    the slash, the README example `release-folders`
    (`tests/fixtures/examples/base/release-folders`, CB-2) and the exit-criterion composition
-   `tests/fixtures/software-exit/compositions/release-folders`, both to `docs/09_retrospectives/`, and the Design says whether the examples that restate
+   `tests/fixtures/software-exit/compositions/release-folders`, both to `docs/09_retrospectives/`,
+   and the Design says whether the examples that restate
    `{workflow}-{phase}-plan` keep it; Execution Notes on the charter (Ships, the parameter table,
    Adoption: the known adopters on `plan-{n}-{slug}`, their repair, the new pattern for new
    plans) and on dl-015 (ruling 6). Its branch is checked with task-053's run as well (green).
