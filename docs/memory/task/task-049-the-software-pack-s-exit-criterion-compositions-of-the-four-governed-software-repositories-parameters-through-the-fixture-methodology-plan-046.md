@@ -158,3 +158,4 @@ build only commits them.
   `validate` (3 runs, 0 failed), the golden fixture's step (26 runs, 0 failed),
   `validate -- --overlay tests/fixtures/software-exit` (7 runs, 0 failed) and `workflow list`
   exit 0 with no warning. CI run 40306836924 on the branch: `success`. `in-progress → in-review`.
+- 2026-10-26: delivered: merged into `main` (`babf1e9`), `approved → done`.

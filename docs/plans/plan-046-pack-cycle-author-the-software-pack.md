@@ -226,3 +226,12 @@ dl-025, F-035, F-036, the first sync of the feedback inbox); a possible note on 
   AGENTS.md section; WingFoil 0.3.0 lists six startable workflows with no diagnostic, and the
   composed region holds `base`'s section then `software`'s. 967 of 967 from clean clones on both
   Node.js versions; CI run 40293895886 on the branch `success`. task-049 next.
+- 2026-10-26: `main`'s CI after task-048's delivery (`4b43816`): run 40300623927 `success`.
+- 2026-10-26: task-049 `done`, merged (`babf1e9`): `software`'s exit criterion (dl-022 S6) met:
+  the overlay holds four compositions, one per distinct parameter set of the four governed
+  software repositories (`defaults` this repository's, `flat-releases` Benchmark's,
+  `release-folders` WingFoil's, `release-folders-lean` UI's), each composed twice byte-identical
+  and validated on WingFoil 0.3.0 with no warning (7 runs, 0 failed), on every branch push by the
+  CI. One friction recorded: with Benchmark's `rel-{slug}`, 0.3.0 refuses `--set` for
+  `release`'s required fields, filled by editing the draft. 967 of 967 from clean clones on both
+  Node.js versions; CI run 40306836924 on the branch `success`. task-050 next.
