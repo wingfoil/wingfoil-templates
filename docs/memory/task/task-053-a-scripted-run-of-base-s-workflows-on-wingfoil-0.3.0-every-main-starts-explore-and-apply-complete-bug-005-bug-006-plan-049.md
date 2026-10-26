@@ -3,18 +3,76 @@ id: task-053-a-scripted-run-of-base-s-workflows-on-wingfoil-0.3.0-every-main-sta
 type: task
 title: "A scripted run of base's workflows on WingFoil 0.3.0: every main starts, explore and apply complete (bug-005, bug-006, plan-049)"
 status: draft
-pack: ""            # the pack element id this task works on; empty for tooling tasks
+pack: ""            # tooling task (pack-release › release, plan-049 step 2, ruling 4)
 depends_on: []
 tags: ["packs","base","tooling"]
 ---
 
 ## Context
 
-<!-- Why this task exists, and the element it comes from (pack charter, spec, DL, bug). -->
+plan-049's step 2 (ruling 4: the tooling half of the fix of bug-005 and bug-006, through
+`tooling-delivery`). Neither defect of `base` 1.0.0 is seen by this repository's checks: the
+matrix runs `workflow list`, `dna show` and `directives list` (`pack-compatibility`, `COMMANDS`
+in `src/matrix.ts`), which load the composed configuration but drive no workflow, and `npm test`
+runs WingFoil's stub. Both defects appear only when WingFoil 0.3.0 runs a workflow:
+- bug-005: `workflow start <main>` on `base`'s defaults exits 1, the instance's plan left `draft`
+  with `workflow` and `phase` empty;
+- bug-006: `retrospective` › `explore` is never complete when `retrospective_path` names a
+  directory without a trailing slash, and `governance-evolution` › `apply` never is (`.wingfoil`),
+  so `workflow end` refuses.
+
+This task adds a scripted run that drives them, as plan-049's reproductions did by hand. It is
+written red against `base` 1.0.0's content and turns green with task-054's fixes; it stays as a
+regression check on every push. It changes no file under `packs/`, no matrix command, and not
+`pack-compatibility`: the run is its own check beside the matrix.
 
 ## Acceptance
 
-<!-- Verifiable criteria: the command to run and the expected result. -->
+`npm run build` precedes the commands; tests run by `npm test` unless named.
+
+1. **A command.** A new npm script (its name fixed at Design, e.g. `check:runs`) runs, for each
+   composition it is given, a scenario on the newest WingFoil release the composition's matrix
+   selects (0.3.0 today), installed and cached as the matrix installs it (`.cache/wingfoil-matrix`,
+   the pinned lockfile; never the repository's own `wingfoil` 0.2.2). By default it takes `base`
+   on its defaults (the four required parameters given fictional values) and the README examples
+   of `base` (`tests/fixtures/examples/base/*`). Each composition is composed from the tree and
+   committed in its own scratch repository. Exit 0 when every scenario passes, 1 when one fails
+   (each failure printed with the step, the command, its exit code and its output), 2 on an I/O
+   error (an install that fails, a missing release).
+2. **The scenario** (`base`'s workflows, as plan-049's reproductions):
+   - every `main` of `base` (`decision-log-ingest`, `governance-evolution`,
+     `retrospective-periodic`) is started with `workflow start`: exit 0, and the instance's plan
+     is `active` with `workflow` and `phase` non-empty;
+   - in `retrospective-periodic`, a file committed under the composition's `retrospective_path`
+     (inside it when it ends with `/`, the file itself otherwise) makes `retrospective.explore`
+     complete: `workflow next` names `retrospective.additional-points`;
+   - `governance-evolution` is run to its end: `assess` finalized, a decision-log added under
+     `propose`, submitted and approved by the approver, an `AGENTS.md` committed (the composer
+     writes the region only), then `workflow end` exits 0.
+   The scratch repository's agent and approver are the composition's fictional identities (the
+   approver's `approver_email`, a fixed agent identity): their commits and approvals there are
+   fixture data, not a governance act of this repository. The scenario is data the Design fixes
+   (a file beside the command or in `tests/fixtures/`), so a later pack adds its own.
+3. **CI.** A step in `.github/workflows/ci.yml` runs the command on every branch push (self-test
+   mode, not on tags), after the overlay step; `tests/ci-workflow.test.ts` asserts it.
+4. **Unit tests** of the command's logic (arguments, the scenario's reading, the report, the exit
+   codes) under `npm test`, with a fake runner or WingFoil's stub, never the real release.
+5. **Red first** (dl-018 R1–R3), the red runs recorded in the Execution Notes: the unit tests red
+   before the code; then the command, on this branch with `base` 1.0.0's content, fails: the
+   defaults composition at the first `workflow start` (bug-005), and every composition at
+   `explore` or `apply` (bug-006), each failure listed. The branch's CI is red by design on this
+   step while `main` holds 1.0.0's content.
+6. **Green:** after task-054's merge, `main` is merged into this branch; the command exits 0 on
+   every composition; from clean clones on Node.js 22.21.0 and 22.12.0, `npm ci`, `npm test`,
+   `lint`, `check:pins`, `check:schemas`, `check:packs`, `index -- --check`, `validate`,
+   `validate -- --overlay tests/fixtures/software-exit` (7 runs, 0 failed), the golden step,
+   `workflow list` and the new command exit 0; the branch CI `success`, recorded; only then
+   `in-review`. No file under `packs/` changes; `src/matrix.ts`'s `COMMANDS` unchanged.
+7. **WIP** (`tooling-delivery`): `in-progress` only once plan-048's task-051 has left
+   `in-progress`, and not `in-review` while task-051 is.
+
+Optional, the Design decides: a start of `sw-life-cycle` on the overlay `software-exit`'s
+`defaults` composition, so that `software`'s first release (W9) inherits the check.
 
 ## Design
 
