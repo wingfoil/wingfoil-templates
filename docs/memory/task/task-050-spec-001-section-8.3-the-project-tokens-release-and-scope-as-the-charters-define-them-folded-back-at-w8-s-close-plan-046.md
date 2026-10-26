@@ -64,7 +64,35 @@ sentence), so no code or test changes. It is approved by this task's merge OK, a
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Written 2026-10-26, before the change. Branch `task/task-050-spec-section-8-3` from `main`.
+
+- **§8.3, the new text** (its heading and first sentence unchanged):
+
+  > Single-brace tokens belong to WingFoil and to the project, and the composer never interprets
+  > any of them. Examples:
+  > - WingFoil's element tokens: `{id}`, `{n}`, `{slug}`, `{axis}`, `{name}`, and the element
+  >   fields `software`'s parameters use: `{version}` (an element's version), `{release-line}`
+  >   (a release's field of that name) and `{kind}` (a release's kind, a field a project adds to
+  >   `release`), as `software`'s charter states (Tokens and ids);
+  > - WingFoil's workflow-context tokens `{workflow}`, `{phase}` and `{scope}`, which its engine
+  >   fills and which are given by hand from the CLI (WingFoil's `spec-001-memory-yaml-schema` at
+  >   `wingfoil/wingfoil@cc31d7a8`, its v0.3.0); WingFoil's own `plan` path uses `{scope}` for the
+  >   release-line and release nesting, for example `rl-v1/rel-v0.1` (its `.wingfoil/memory.yaml`
+  >   and `spec-017-workflow-commands-and-state-deduction` §1, same commit);
+  > - the project token `{release}`, a task's `release` field (`software`'s charter, dl-015 C10).
+  >
+  > A `path` or `pattern` value may contain them, so a project can set, for example,
+  > `task_path: "docs/04_memory/{release}/{id}.md"` or `plan_path:
+  > "docs/05_plans/{scope}/{id}.md"` (`base`'s parameters). Which tokens WingFoil fills, and from
+  > where, is WingFoil's.
+
+- **The Execution Note**, appended to spec-001's: "2026-10-26, **amended in place** (plan-046
+  ruling 4, task-050; its merge OK approves the text, as for task-044): W8's fold-back (dl-020):
+  §8.3 no longer cites the working note plan-022 removed; it names `{release}` as a task's field,
+  `{scope}` with `{workflow}` and `{phase}` as WingFoil's workflow-context tokens, and adds
+  `{version}`, `{release-line}` and `{kind}`, each with its source. Nothing else changes."
+- **The checks** of criterion 4 from clean clones; `git diff main` touches spec-001 and this task
+  only; criterion 3's grep run and recorded.
 
 ## Execution Notes
 
