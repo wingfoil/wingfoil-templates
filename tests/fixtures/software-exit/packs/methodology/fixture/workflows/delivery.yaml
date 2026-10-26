@@ -9,7 +9,8 @@ phases:
   - name: plan-release
     description: >-
       Add a release, giving its version and release-line as --set values (WingFoil 0.3.0 binds
-      only the type), and move it to in-development.
+      only the type); a required field the id and the path do not carry is filled by editing the
+      draft before submit. Then move it to in-development.
     role: tech-lead
     actions:
       - 'memory.add(type: release)'

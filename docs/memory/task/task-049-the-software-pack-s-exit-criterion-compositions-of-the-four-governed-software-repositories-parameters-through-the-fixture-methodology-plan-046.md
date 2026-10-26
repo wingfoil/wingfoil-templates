@@ -2,7 +2,7 @@
 id: task-049-the-software-pack-s-exit-criterion-compositions-of-the-four-governed-software-repositories-parameters-through-the-fixture-methodology-plan-046
 type: task
 title: "The software pack's exit criterion: compositions of the four governed software repositories' parameters through the fixture methodology (plan-046)"
-status: in-progress
+status: approved
 pack: "pack-foundation-software"
 depends_on: [task-048]
 tags: ["packs","software","W8"]
@@ -138,3 +138,23 @@ build only commits them.
   line's count; `base`'s values per composition; set-describing ids and fresh fictional names;
   the overlay test's title and per-composition lines. Submitted for the approver's acceptance into
   the backlog.
+- 2026-10-26, red (`fd5c374`): on Node.js 22.21, `node --test --test-name-pattern="four governed"
+  dist/tests/validate.test.js`: 1 of 1 failed before the three compositions existed
+  (`flat-releases` not composed).
+- 2026-10-26, green, on Node.js 22.21: the test passes; `npm run validate -- --overlay
+  tests/fixtures/software-exit` on WingFoil 0.3.0: `overlay: checked 8 files, 0 problems`, the
+  four compositions composed twice byte-identical in 32 files each, `compositions: 7`,
+  `matrix: self-test, 7 runs, 0 failed, tolerance applied: none`, no warning.
+- 2026-10-26, the mapping (criterion 4), at the commits of the Context: `defaults` is this
+  repository's set; `flat-releases` is WingFoil-Benchmark's (its `docs/retrospective-inputs/`
+  holds inputs, not a retrospective workflow's output, so `retrospective_path` keeps its default;
+  it declares `release-line` with no element of it yet); `release-folders` is WingFoil's;
+  `release-folders-lean` is WingFoil-UI's.
+- 2026-10-26, build review: approve after amendments, nothing blocking. Applied: the red run's
+  command and count; the per-composition assertion reports the run's lines; `release-folders-lean`'s
+  description stands alone.
+- 2026-10-26: checks from clean clones of `29a5623` on Node.js 22.21.0 and 22.12.0: `npm ci`,
+  `npm test` 967 of 967, `lint`, `check:pins`, `check:schemas`, `check:packs`, `index -- --check`,
+  `validate` (3 runs, 0 failed), the golden fixture's step (26 runs, 0 failed),
+  `validate -- --overlay tests/fixtures/software-exit` (7 runs, 0 failed) and `workflow list`
+  exit 0 with no warning. CI run 40306836924 on the branch: `success`. `in-progress → in-review`.
