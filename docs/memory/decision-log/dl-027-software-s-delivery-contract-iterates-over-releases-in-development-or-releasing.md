@@ -2,7 +2,7 @@
 id: dl-027-software-s-delivery-contract-iterates-over-releases-in-development-or-releasing
 type: decision-log
 title: "Software's delivery contract iterates over releases in development or releasing"
-status: pending
+status: approved
 tags: ["packs","software","methodology","W8"]
 ---
 
