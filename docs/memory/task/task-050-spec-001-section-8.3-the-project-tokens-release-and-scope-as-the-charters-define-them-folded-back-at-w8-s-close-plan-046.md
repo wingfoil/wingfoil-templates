@@ -14,28 +14,38 @@ plan-046's ruling 4 (the approver, 2026-10-24): W8's close folds back spec-001 �
 note (dl-020). §8.3 ("WingFoil tokens pass through") names the project tokens `{release}` and
 `{scope}` and cites, for them, `docs/notes/base-regeneration-inputs.md` §2, a working note that
 plan-022 deleted (`1aa50c3`), as spec-001's Execution Note of 2026-10-10 records: a reader of the
-specification finds it only in the history. The definitions now live in accepted elements:
+specification finds it only in the history. The meanings are now stated by accepted elements and
+by WingFoil:
 - `{release}`: a task's `release` field, which a project may use in `base`'s `task_path` (for
   example `docs/04_memory/{release}/{id}.md`); `software`'s charter (Tokens and ids) and dl-015 C10;
-- `{scope}`: a plan's field of that name, which a project may use in `base`'s `plan_path` (for
-  example `docs/05_plans/{scope}/{id}.md`); `base`'s charter (Parameters) and dl-015 C10;
-- `{release-line}` and `{version}`, `software`'s, which §8.3 does not name today: a release's field
-  `release-line` and an element's `version`, used by `release_path`, `release_line_id` and
-  `release_id`'s defaults (`software`'s charter).
+- `{scope}`: not a field but, with `{workflow}` and `{phase}`, which §8.3 already lists, a token of
+  the workflow's execution context that WingFoil's engine fills (by hand from the CLI): the
+  release-line and release nesting, for example `rl-v1/rel-v0.1` (WingFoil's memory.yaml
+  specification at `wingfoil/wingfoil@cc31d7a8`, its v0.3.0); a project may use it in `base`'s
+  `plan_path` (`base`'s charter, Parameters; dl-015 C10);
+- `{release-line}`, `{version}` and `{kind}`, WingFoil's tokens that `software`'s parameter
+  defaults and the governed repositories' values use (a release's field `release-line`, an
+  element's `version`, WingFoil's release `kind`; `software`'s charter, Tokens and ids). §8.3 does
+  not name them today; the task-050 entry of plan-046 names only `{release}` and `{scope}`, so
+  naming them rests on this task's merge OK. §8.3's list stays a list of examples.
 
-The amendment is text only: the composer never reads a single-brace token (§8.3's first sentence),
-so no code or test changes. It is approved by this task's merge OK, as task-044's was.
+The amendment is text only: the composer never interprets a single-brace token (§8.3's first
+sentence), so no code or test changes. It is approved by this task's merge OK, as task-044's was.
 
 ## Acceptance
 
-1. **spec-001 §8.3, amended in place**: the citation of the local note is gone; the project tokens
-   are named with their sources as above (`{release}`, `{scope}`, and `software`'s
-   `{release-line}` and `{version}`), each with the parameter that may carry it and the accepted
-   element that defines it; the section's rule is unchanged (the composer interprets no
-   single-brace token; which tokens WingFoil fills, and from where, is WingFoil's).
+1. **spec-001 §8.3, amended in place**: the citation of the deleted note is gone; `{release}` is
+   named as a project token with its source (`software`'s charter, dl-015 C10); `{scope}` is placed
+   with `{workflow}` and `{phase}` as WingFoil's workflow-context tokens, with its meaning and
+   WingFoil's specification cited at `cc31d7a8`; `{release-line}`, `{version}` and `{kind}` are
+   added to the examples with `software`'s charter as the source of their use; each names the
+   parameter that may carry it; the section's rule is unchanged (the composer interprets no
+   single-brace token; which tokens WingFoil fills, and from where, is WingFoil's); the section is
+   rewrapped to at most 100 columns.
 2. **spec-001's Execution Notes**: an entry dated with the merge, saying what §8.3 now states and
-   why (W8's fold-back, plan-046 ruling 4, dl-020), approved by the merge OK; the 2026-10-10 entry
-   is left as it stands.
+   why (W8's fold-back, plan-046 ruling 4, dl-020), approved by the merge OK, naming the deleted
+   note as "the working note plan-022 removed" without its path; the 2026-10-10 entry is left as it
+   stands.
 3. **No other change**: no file under `src/`, `tests/`, `packs/`, `schema/` or `.github/`; no
    other section of spec-001 or spec-002; `grep -n "docs/notes/" docs/memory/tech-spec/spec-001*`
    finds only the 2026-10-10 Execution Note.
@@ -43,8 +53,10 @@ so no code or test changes. It is approved by this task's merge OK, as task-044'
    `npm run lint`, `check:pins`, `check:schemas`, `check:packs`, `index -- --check`, `validate`,
    `validate -- --overlay tests/fixtures/software-exit`, the golden fixture's step and
    `workflow list` exit 0 with no warning; the CI run on the pushed branch concludes `success`.
-   No test is written: the change is a specification's text, with no behaviour a test could hold
-   (dl-018 covers code); the Execution Notes say so.
+   dl-018 R1 applies to code; no test is written, so R2's after-the-fact tests and their mutation
+   check do not arise; the Execution Notes say so. Privacy (plan-041's rule): `git diff main` holds
+   no local path (`/home/`), no name of a private project, no real person's name or address, and
+   no address but `*.example`.
 
 ## Design
 
@@ -56,3 +68,9 @@ so no code or test changes. It is approved by this task's merge OK, as task-044'
      command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019). -->
+- 2026-10-26: independent review: request changes, one blocking finding: `{scope}` is not a plan's
+  field but WingFoil's workflow-context token (its memory.yaml specification at v0.3.0; WingFoil's
+  `plan` has no `scope` field). Applied, with the non-blocking ones: `{scope}` grouped with
+  `{workflow}` and `{phase}`; `{release-line}`, `{version}` and `{kind}` as WingFoil's tokens, and
+  their naming beyond plan-046's entry stated; "interprets"; dl-018's reason; the Execution Note
+  without the deleted path; the privacy rule; the rewrap. Re-review requested.
