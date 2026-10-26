@@ -244,3 +244,8 @@ dl-025, F-035, F-036, the first sync of the feedback inbox); a possible note on 
   dl-020), its tokens named with their sources, no longer citing the deleted working note; the
   merge OK approves the text. 967 of 967 from clean clones on both Node.js versions; CI run
   40332076248 on the branch `success`. The configuration step (step 3) next.
+- 2026-10-26: step 3 done: `pack-cycle` v5: `activate` reads "First version published" and
+  pre-checks the tag `<catalog pack id>@<version>` on origin and the version listed by
+  `catalog.yaml` on origin/main, no longer a `released` `pack-release` (since `memory.yaml` v6,
+  the authorization); independent review: approve, its two wording points applied (origin named;
+  backticks); `workflow list` with no diagnostic.

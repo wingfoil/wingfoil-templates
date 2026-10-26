@@ -3,7 +3,7 @@
 name: pack-cycle
 kind: sub
 description: "Charter, author and first-release one pack"
-version: 4
+version: 5
 element: pack
 phases:
   - name: charter
@@ -43,9 +43,14 @@ phases:
     description: "Learn from the pack's whole charter-to-release cycle (dl-006 R1)."
     include: retrospective
   - name: activate
-    description: "First version released: the pack becomes active (accepted → active)."
+    description: >-
+      First version published: the pack becomes active (accepted → active) once its tag
+      `<catalog pack id>@<version>` is on origin and `catalog.yaml` on origin/main lists that
+      version.
     role: tech-lead
     actions:
       - memory.submit            # accepted → active
     checks:
-      pre: ["pack-release of this pack is released"]
+      pre:
+        - "the tag <catalog pack id>@<version> of this pack's first version is on origin"
+        - "catalog.yaml on origin/main lists that version of this pack"
