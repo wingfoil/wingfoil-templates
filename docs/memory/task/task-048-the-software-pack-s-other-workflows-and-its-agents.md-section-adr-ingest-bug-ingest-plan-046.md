@@ -106,14 +106,14 @@ diagnostic, so no question is left for the build.
   privacy rule in full. Submitted for the approver's acceptance into the backlog.
 - 2026-10-26, red (the tests' commit): on Node.js 22.21, the two count tests failed (42 files where
   45 are asserted) before the three files existed.
-- 2026-10-26, green, on Node.js 22.21: the two pass; `lint`, `check:packs` (45 files, 0 problems), `check:schemas`,
-  `index -- --check` (5 files) exit 0; `validate -- --overlay tests/fixtures/software-exit` on
-  WingFoil 0.3.0: `compositions: 4`, `matrix: self-test, 4 runs, 0 failed, tolerance applied:
-  none`. By hand: the defaults composed with `npm run compose` into a scratch repository, one
-  commit, and 0.3.0's `workflow list --format json`: startable `adr-ingest`, `bug-ingest`,
-  `decision-log-ingest`, `governance-evolution`, `retrospective-periodic`, `sw-life-cycle`,
-  `diagnostics` empty; the AGENTS.md region holds `base`'s section (`# Kestrel Ledger`) then
-  `software`'s (`## The software life cycle`).
+- 2026-10-26, green, on Node.js 22.21: the two pass; `lint`, `check:packs` (45 files, 0 problems),
+  `check:schemas`, `index -- --check` (5 files) exit 0; `validate -- --overlay
+  tests/fixtures/software-exit` on WingFoil 0.3.0: `compositions: 4`, `matrix: self-test, 4 runs, 0
+  failed, tolerance applied: none`. By hand: the defaults composed with `npm run compose` into a
+  scratch repository, one commit, and 0.3.0's `workflow list --format json`: startable `adr-ingest`,
+  `bug-ingest`, `decision-log-ingest`, `governance-evolution`, `retrospective-periodic`,
+  `sw-life-cycle`, `diagnostics` empty; the AGENTS.md region holds `base`'s section (`# Kestrel
+  Ledger`) then `software`'s (`## The software life cycle`).
 - 2026-10-26, build review: approve after amendments. Its blocking finding, applied: the section
   said that a `bug` past `triaged` and an element after `memory park` move only by `approve`;
   on 0.3.0 a parked task resumes by `submit` (`backlog` is no gate) and a bug goes to `in-review`
@@ -121,3 +121,9 @@ diagnostic, so no question is left for the build.
   including one parked back to `planned`, moves only by the approver's `approve`; `bug-ingest`'s
   header comment likewise. The Design's sentence is read with this correction, its text unchanged
   (dl-019).
+- 2026-10-26: re-review of the fix: approve. Checks from clean clones of `b07dae6` on Node.js
+  22.21.0 and 22.12.0: `npm ci`, `npm test` 967 of 967, `lint`, `check:pins`, `check:schemas`,
+  `check:packs`, `index -- --check`, `validate` (3 runs, 0 failed), the golden fixture's step (26
+  runs, 0 failed), `validate -- --overlay tests/fixtures/software-exit` (4 runs, 0 failed) and
+  `workflow list` exit 0 with no warning. CI run 40293895886 on the branch: `success`.
+  `in-progress → in-review`.
