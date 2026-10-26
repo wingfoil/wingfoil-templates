@@ -67,7 +67,31 @@ task-049 adds the compositions of the four governed repositories' parameters.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Written 2026-10-26, before the build. Branch `task/task-048-software-ingest` from `main`. The
+review composed a draft of these three files with `base` and the fixture on WingFoil 0.3.0 with no
+diagnostic, so no question is left for the build.
+
+- **Tests first** (dl-018 R1), committed red before the files exist: `tests/check-packs.test.ts`
+  (this repository's lint, 42 → 45 files) and `tests/validate.test.ts` (its `lint:` line, 42 →
+  45).
+- **`workflows/adr-ingest.yaml`** and **`workflows/bug-ingest.yaml`**, as `base`'s
+  `decision-log-ingest`: a header comment (what the workflow captures), `name`, `kind: main`,
+  `description`, `version: 1`, the phases of criteria 1 and 2, each with a `description`
+  (`triage`'s: the approver triages the bug; a reject closes it, `open`'s gate).
+- **`agents/section.md`**: `## The software life cycle`, then short paragraphs and a list, as
+  `base`'s section: `sw-life-cycle` runs inception, specification, delivery and end of life; each
+  slot's workflow is a phase pack's or the default, and `delivery` is the methodology's, which
+  creates the releases and runs `release` (submit, then publishing) over each; which workflow to
+  start for an architecture decision (`adr-ingest`) and a bug (`bug-ingest`); `{{agent_name}}`
+  acts as developer, reviewer, qa and architect, never approves, and hands the approver the exact
+  command; a `bug` past `triaged`, and an element after `memory park`, moves only by the
+  approver's `approve`; `end-of-life` › `announce` passes `--tags end-of-life` to `memory add`.
+- **`pack.yaml`**: `adr-ingest` and `bug-ingest` appended to `contents.workflows`;
+  `agents_section: true` after `memory_templates`.
+- **README**: section 2 and section 8 by hand, sections 4–6 by `npm run index`.
+- **The evidence** of criterion 6 after `npm run build`: the commands and, for `workflow list`, a
+  scratch repository holding the composed defaults (`npm run compose` into it, `git init`, one
+  commit), its JSON output read for the startable workflows and `diagnostics`.
 
 ## Execution Notes
 
