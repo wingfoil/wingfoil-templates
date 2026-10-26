@@ -3,31 +3,174 @@ id: plan-049-pack-release-base-2.0.0-the-fixes-of-bug-005-and-bug-006
 type: plan
 title: "pack-release: base 2.0.0, the fixes of bug-005 and bug-006"
 status: draft
-workflow: ""
-phase: ""
+workflow: "pack-release"
+phase: "release"
 tags: ["packs","base"]
 ---
 
 ## Context
 
-<!-- Why this phase runs now, its preconditions, and what it produces. Keep it coherent with the
-     workflow definition's phases, roles and produces. A plan that opens a wave names the
-     tech-specs its work builds on and their errata not yet folded back; the wave starts after
-     their amendment, or after the approver rules it may start without (dl-020). -->
+`base` 1.0.0 is published (plan-044: tag `base@1.0.0` at `3f34dfc`, range `0.3.0`) and its
+charter `pack-foundation-base` is `active`. Two defects of it on WingFoil 0.3.0, both triaged
+`approved`, `major`:
+- **bug-005:** `workflow start <main>` on `base`'s defaults adds the instance's plan with
+  `workflow` and `phase` empty, which `base`'s `plan` requires, so its submit fails (exit 1).
+  WingFoil 0.3.0 fills only the tokens the plan type's `id_pattern` or `path` declares, and
+  `plan_id`'s default `plan-{n}-{slug}` declares none.
+- **bug-006:** a `produces` naming a directory is satisfied only with a trailing slash.
+  `retrospective` › `explore` (`retrospective_path`'s default `docs/retrospectives`) and
+  `governance-evolution` › `apply` (`.wingfoil`) never complete; `workflow finalize` and
+  `workflow end` refuse them.
+
+This plan is the `pack-release` instance that fixes them and publishes the next version of
+`base`, through `pack-release-cycle` (`prepare → validate → approve-publication → publish`), the
+fixing tasks first, as task-040 ran inside plan-044.
+
+**Reproduced on 2026-10-26** in scratch repositories, `base` composed from `main` and committed,
+WingFoil 0.3.0 (`cc31d7a8`):
+- on the defaults, `workflow start retrospective-periodic` exits 1, the plan left `draft` with
+  `workflow: ""` and `phase: ""`; with `plan_id` set to `{workflow}-{phase}-plan` it exits 0 and
+  the plan is `active` (`retrospective-periodic-1-plan`; a second start of the same `main` gives
+  `retrospective-periodic-1-2-plan`, no clash). `plan-{n}-{workflow}-{phase}` was tried and
+  rejected: `{n}` counts apart for each workflow and phase, so `plan-001-…` repeats;
+- a project with a plan named on the old pattern, recomposed with the new one: `workflow list`,
+  `dna show` and `directives list` exit 0 with no warning, and the old plan is still the
+  instance `workflow next` reads (ids are immutable; a new pattern names new plans only);
+- `explore` with `docs/retrospectives` stays open after a file is committed there; with
+  `docs/retrospectives/` it is complete and `workflow next` moves on to `additional-points`;
+- `governance-evolution` run end to end (start, `assess` finalized, the decision-log added,
+  submitted and approved, `AGENTS.md` committed): with `.wingfoil`, `apply` is never complete and
+  `workflow end` refuses; with `.wingfoil/`, the instance is complete;
+- WingFoil's `release/0.3` branch (patch-v0.3.1, not released) changes neither `exists` in
+  `deduce` nor `planTokens` since `v0.3.0`: both defects hold there, and the fix serves both.
+
+**The approver's rulings** (2026-10-26, in chat, as recommended):
+1. **The fix.** `plan_id`'s default becomes `{workflow}-{phase}-plan`, WingFoil's and UI's own
+   convention; `plan` keeps requiring `[title, workflow, phase]` (dl-023, plan-043 ruling 6),
+   since dropping them loses the instance's trace and departs from WingFoil.
+   `retrospective_path`'s default becomes `docs/retrospectives/`, its description saying that a
+   directory ends with `/`; `governance-evolution` › `apply` produces `.wingfoil/`. No lint rule
+   on the slash: whether a path names a directory is not known statically; the scripted runs of
+   the tasks and the parameter's description cover it.
+2. **The class: `major`, version 2.0.0.** Not a `patch`: the composed content changes
+   (`pack-semver`: a patch changes nothing in a composed project but wording, comments, typos
+   and the pack's README). A project composed on 1.0.0's defaults and recomposed gets other ids
+   for its new plans and another evidence for `explore`: "a project composed from the previous
+   version changes behaviour", `major`'s clause. A `minor` could be argued (commitment 2: an
+   adopter sets its own values; `apply` never completed, so nothing relies on it), which is the
+   doubt the directive settles by the higher class. No decision-log: the directive's own rule
+   decides; the reasoning is recorded here and in the pack-release's Changes.
+3. **The cascade of the major.** Every `base@^1` moves to `base@^2` in the commit that sets
+   `version: 2.0.0` (`prepare`), so that `validate` never sees a tree whose `base` no range
+   accepts: `packs/software/pack.yaml` and its README, the fixture `methodology/fixture`
+   (`tests/fixtures/software-exit`), the README examples of `base`
+   (`tests/fixtures/examples/base/*`, CB-2), and the `requires` of the charter
+   `pack-foundation-software` (an Execution Note records it). `software` and
+   `methodology/scrum` are not published, so no release of theirs follows. The charter
+   `pack-methodology-scrum` is held by the session running its author, which records the move
+   itself; it is told before `prepare`.
+4. **Two tasks**, one per bug, through `kanban-delivery` (`pack: pack-foundation-base`), before
+   `prepare`.
+5. **`base` before `software`.** This release is published before `software`'s and
+   `methodology/scrum`'s first release (W9), so that both are written and published on
+   `base@^2` and the projects adopting `base` with `software` do not meet bug-005.
+
+**Adopters of 1.0.0** (adoption is by hand: no release in `compat.yaml` provides
+`pack-install`). To keep their current values (commitment 2), a project that relied on a default
+states it: `plan_id: plan-{n}-{slug}`, and `retrospective_path` with its trailing slash if it
+names a directory (a value set without it, e.g. `docs/09_retrospectives`, meets bug-006 as the
+default did); then it recomposes `.wingfoil/`. No file moves, no id changes. An instance left
+`draft` by bug-005 is repaired by filling `workflow` and `phase` and `memory submit`. A project
+that keeps `plan-{n}-{slug}` still meets bug-005 at every `workflow start` and repairs each plan
+the same way, unless it adopts the new pattern for its new plans (commitment 3). The CHANGELOG
+and the README's "Install and update" say it; the notices repeat it. 1.0.0 stays tagged and
+listed, frozen (`pack-semver`, one living line before WingFoil 1.0).
+
+**WingFoil 0.3.1.** The intake of 0.3.1, when it is released, recomputes the range of every
+published version, 1.0.0 and 2.0.0 (today `0.3.0` for both), and reruns this plan's two
+reproductions on 0.3.1.
+
+Who runs what: claude drafts for the product-owner (`plan`), is the pack-author of the tasks and
+the tech-lead of `prepare` and `publish`; the reviewer is an independent subagent (dl-017), never
+the author's context; claude never runs `memory approve` or `reject` and hands the approver the
+command.
+
+Not in this plan: a feedback note asking WingFoil that `workflow start` fill a plan's `workflow`
+and `phase` whatever its `id_pattern` (not a WingFoil defect; it waits until the feedback notes
+F-035 and F-036 exist, as the inbox's numbering requires); a `pack-semver` rule for fixes and for
+a changed parameter default; `software`'s first release (W9); this repository's adoption of
+`base`; the foundation packs' `retrospective`.
 
 ## Steps
 
-<!-- The ordered steps, with the role of each and the artifact it produces. -->
+1. **This plan:** an independent review by a subagent (dl-017), amended, then submitted
+   (`draft → active`). A finding that changes a ruling goes to the approver.
+2. **task-053 — bug-005**, through `kanban-delivery`: `plan_id`'s default and description in
+   `pack.yaml`, the README's parameter table, its "Install and update" section (the adopters
+   above); the charter's parameter table changed by an Execution Note on the charter. Its Design
+   fixes where a scripted run on the real WingFoil 0.3.0 lives (a test on the release the matrix
+   installs, or a step of the matrix): compose `base` on its defaults into a committed scratch
+   repository and start every `main` (`decision-log-ingest`, `governance-evolution`,
+   `retrospective-periodic`), each exit 0 with its plan `active`. Red first (dl-018 R1–R3): the run
+   fails on 1.0.0's default before the fix. A Design that finds the check too large for the task
+   splits it at Design (dl-018 R3), the new task through `plan` and the approver's gate.
+3. **task-054 — bug-006**, through `kanban-delivery`, after task-053: `retrospective_path`'s
+   default and description, `apply`'s `.wingfoil/`, the README; in the same commit the
+   compositions that set a directory without the slash: the README example `release-folders`
+   (`tests/fixtures/examples/base/release-folders`, CB-2) and the exit-criterion composition
+   `tests/fixtures/software-exit/compositions/release-folders`, both to `docs/09_retrospectives/`.
+   The scripted run of task-053 extended past `explore` (a file committed under the inventory's
+   directory) and through `governance-evolution` to `workflow end`, red first. The charter's
+   Ships and parameter rows changed by an Execution Note.
+   Each task: its body reviewed and accepted into the backlog, its Design on `main`, the build on
+   `task/<task id>`, an independent review, the checks from clean clones on Node.js 22.21 and
+   22.12.0 (`npm ci`, `npm test`, `lint`, `check:pins`, `check:schemas`, `check:packs`,
+   `index -- --check`, `validate`, `validate -- --overlay tests/fixtures/software-exit` with 7
+   runs and 0 failed, the golden step, `workflow list`), the branch CI's conclusion in its
+   Execution Notes, `in-review`, the approver's acceptance and merge OK, a `--no-ff` merge, the
+   CI of `main` read, `done`; the bug's Execution Notes record the fix.
+4. **`prepare`** (tech-lead, on `main`): `memory add --type pack-release` with the gap rule's
+   placeholder if needed, `pack`, `version: 2.0.0`, `bump: major`, `wingfoil` (computed) and
+   `line: current` filled (W-02); its Changes: the two fixes, the class and its reasoning (ruling
+   2), the adopters' migration; `CHANGELOG.md`'s 2.0.0 entry with the migration; `pack.yaml`'s
+   `version`; the cascade of ruling 3 in the same commit; the README's "Install and update"
+   checked against `compat.yaml` (CB-3); submitted (`draft → validating`). The session holding
+   the scrum charter is told first.
+5. **`validate`** (reviewer): `npm run validate:publication -- --evidence` on the README's three
+   examples, WingFoil 0.3.0 the oldest and newest release; the overlay `software-exit` (7 runs, 0
+   failed); the clean-clone checks of step 3; `npm run publish:pack -- --pack base --dry-run`;
+   the check against the three private, non-software projects, run outside this repository,
+   its outcome only recorded (as task-039); the privacy check of the element and of
+   `packs/base/`. An independent review of the pack-release, its findings fixed, then
+   `validating → releasing`; `main` pushed and its CI read.
+6. **`approve-publication`** (approver): `memory approve prel-002-…` (`releasing → released`),
+   which authorizes the tag (plan-044 ruling C), or a rejection back to `validating`.
+7. **`publish`** (tech-lead): as plan-044's step 6: `npm run build`, a clean tree, HEAD the
+   approval's commit with `main`'s CI `success`; `npm run publish:pack -- --pack base` (tag
+   `base@2.0.0`, the catalog commit with `CATALOG.md` and `catalog-index.json`);
+   `git push --atomic origin base@2.0.0 main`; the CI on the tag and on `main` and the Pages run
+   read; CB-6's live check; all recorded in the Publication section.
+8. **After the tag:** the charter's Execution Notes record 2.0.0; the notices (tag, date, range,
+   what changes for an adopter of 1.0.0 and how to migrate) to WingFoil UI's session and to the
+   coordinating session, as for 1.0.0.
+9. **Close:** this plan's Execution Notes record the release; `active → done`.
 
 ## Handoff
 
-<!-- What needs the approver and what the agent does alone; checkpoints and completion criteria.
-     Every element the plan creates, and the plan itself, gets an independent review before the
-     approver's gate (dl-017). -->
+- **claude:** every step but the approver's gates.
+- **Approver:** each task's backlog acceptance, its acceptance after the build and its merge OK;
+  the pack-release's approval (step 6), which authorizes the tag.
+- **The other session** (plan-048, then `methodology/scrum`'s author): numbers agreed (this plan
+  holds plan-049, task-053, task-054, `prel-002`, dl-028 if one is needed); told before each merge
+  on `main` and before `prepare`.
+- Done when `base@2.0.0` is tagged and pushed, `catalog.yaml` lists it on `main` with the CI
+  `success` on the tag and on `main`, CB-6's live check recorded, bug-005 and bug-006 noted fixed,
+  the charter's notes written and the notices sent.
 
 ## Execution Notes
 
-<!-- Filled while the plan runs: deviations, blockers, decisions taken, WingFoil friction
-     (also recorded in docs/wingfoil-feedback/). At wave close: per tech-spec, the errata and
-     rulings recorded in the wave, and the element the approver names to fold them back, or the
-     ruling that none is needed (dl-020). -->
+- 2026-10-26: written. The approver gave the OK to the outline in chat; rulings 1–5 as
+  recommended. `memory add` numbered the plan after `main`'s last (plan-048 lives on the other
+  session's branch): the local commit was dropped before any push and the plan added again with
+  an untracked placeholder for plan-048, then removed. `workflow` and `phase` filled by editing
+  the draft (W-02).
