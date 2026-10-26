@@ -22,17 +22,18 @@ submit plan-001-retrospective-periodic
   missing required field on submit: workflow, phase
 ```
 
-It exits 1, leaving the plan committed (`wf(plan): add plan-001-retrospective-periodic`) as
-`draft` with `workflow: ""` and `phase: ""`. `base`'s `plan` requires `[title, workflow, phase]`
-(dl-023, plan-043 ruling 6), but WingFoil 0.3.0's `workflow start` fills only the tokens the plan
-type's `id_pattern` or `path` declares (`planTokens`, `dist/core/workflow-start-end.js`; its
-spec-017 §7.1): `{workflow}` as the workflow's name, `{phase}` as the element's id or `1`,
-`{scope}` as the name. WingFoil's own `plan` (`{workflow}-{phase}-plan`, path
-`docs/05_plans/{scope}/{id}.md`) declares them, so its required list is filled; `base`'s defaults
-(`plan_id` `plan-{n}-{slug}`, `plan_path` `docs/plans/{id}.md`) declare none. The requirement was
-taken from WingFoil without the `id_pattern` it relies on (the charter notes that WingFoil and UI
-set `{workflow}-{phase}-plan`). WingFoil behaves as its specification says: the defect is
-`base`'s. Every adopter of `base`'s defaults meets it at every `main` start, `software`'s included.
+(WingFoil prints the first line as one; it is wrapped here.) It exits 1, leaving the plan committed
+(`wf(plan): add plan-001-retrospective-periodic`) as `draft` with `workflow: ""` and `phase: ""`.
+`base`'s `plan` requires `[title, workflow, phase]` (dl-023, plan-043 ruling 6), but WingFoil
+0.3.0's `workflow start` fills only the tokens the plan type's `id_pattern` or `path` declares
+(`planTokens`, `dist/core/workflow-start-end.js`; its spec-017 §7.1): `{workflow}` as the workflow's
+name, `{phase}` as the element's id or `1`, `{scope}` as the name. WingFoil's own `plan`
+(`{workflow}-{phase}-plan`, path `docs/05_plans/{scope}/{id}.md`) declares them, so its required
+list is filled; `base`'s defaults (`plan_id` `plan-{n}-{slug}`, `plan_path` `docs/plans/{id}.md`)
+declare none. The requirement was taken from WingFoil without the `id_pattern` it relies on (the
+charter notes that WingFoil and UI set `{workflow}-{phase}-plan`). WingFoil behaves as its
+specification says: the defect is `base`'s. Every adopter of `base`'s defaults meets it at every
+`main` start, `software`'s included.
 
 Workarounds: edit the plan's `workflow` and `phase` by hand, then `memory submit`; or compose with
 `plan_id` set to `{workflow}-{phase}-plan`, which `start` then fills (checked: plan
@@ -63,3 +64,4 @@ the `id_pattern` (not a defect of WingFoil's).
   `workflow` and `phase` only for tokens the `id_pattern` or `path` declares, `base`'s defaults
   declare none) and the exit code (1, not 0). Applied, with the non-blocking ones: the options for
   the triage, `plan_id`'s default first; the workarounds; plan-047's place; a long line.
+- 2026-10-26: re-review: approve; its nit applied (the wrapped output line marked). Submitted.

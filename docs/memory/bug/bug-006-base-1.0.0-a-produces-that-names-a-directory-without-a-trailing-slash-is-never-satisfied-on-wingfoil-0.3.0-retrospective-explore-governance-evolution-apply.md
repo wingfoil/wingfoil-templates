@@ -65,3 +65,4 @@ charter's intent. Whether the lint should refuse a directory without the slash i
 - 2026-10-26: independent review: approve after amendments. Applied: the steps cannot be finalized
   by hand either; the contradiction with the charter and its history; `software` has no such
   `produces`; the reproduction through bug-005's workaround.
+- 2026-10-26: re-review: approve. Submitted.
