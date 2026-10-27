@@ -2,7 +2,7 @@
 id: bug-008-base-2.0.0-retrospective-s-approve-selects-every-in-discussion-retrospective-decision-log-so-a-closed-sprint-s-approve-step-reopens-on-the-next-sprint-s
 type: bug
 title: "base 2.0.0: retrospective's approve selects every in-discussion retrospective decision-log, so a closed Sprint's approve step reopens on the next Sprint's"
-status: pending
+status: approved
 severity: "minor"        # critical | major | minor
 pack: "pack-foundation-base"
 tags: ["packs","base","workflow","scrum"]
