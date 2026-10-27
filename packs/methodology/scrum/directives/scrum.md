@@ -14,10 +14,14 @@ inspection, adaptation) and the values commitment, focus, openness, respect and 
 
 - **Accountabilities.** The Product Owner is `product-owner`, the Scrum Master is `facilitator`,
   the Developers are `developer` with `architect`, `reviewer`, `qa` and `tech-lead`. An agent works
-  as a Developer and holds no Scrum accountability; it never approves.
+  for the Developers, as their tool, and holds no Scrum accountability; it never approves.
 - **The Sprint** lasts {{sprint_length}}, never more than one month, and the next starts only when
-  the previous one is done: one Sprint is active at a time. Its events are Sprint Planning, the
-  Daily Scrum, the Sprint Review and the Sprint Retrospective, which concludes it.
+  the previous one is done: one Sprint is active at a time. Its events are Sprint Planning (at most
+  eight hours for a one-month Sprint), the Daily Scrum (fifteen minutes), the Sprint Review (at
+  most four hours) and the Sprint Retrospective (at most three hours), which concludes it; a
+  shorter Sprint has shorter events.
+- **The Sprint Retrospective** plans ways to increase quality and effectiveness: it runs `base`'s
+  `retrospective` for the Sprint, before the Sprint closes.
 - **Sprint Planning** answers why the Sprint is valuable (the Sprint Goal, in the sprint's `goal`),
   what can be done (the Sprint Backlog: the tasks whose `sprint` names the Sprint) and how.
 - **The Daily Scrum** is fifteen minutes for the Developers to inspect progress toward the Sprint

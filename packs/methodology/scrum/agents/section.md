@@ -10,5 +10,5 @@ This project runs Scrum (the Scrum Guide, November 2020) as the `delivery` of it
 - **Definition of Done:** an item is done only when the `definition-of-done` directive holds.
 - **Releases** are decoupled from the Sprint boundary and gated by no review, but a release of a
   Sprint is approved and published only once its Sprint Backlog is done or moved.
-- **{{agent_name}}** works as a Developer, holds no Scrum accountability and never approves: it
-  hands the approver the exact command.
+- **{{agent_name}}** works for the Developers, as their tool, holds no Scrum accountability and
+  never approves: it hands the approver the exact command.

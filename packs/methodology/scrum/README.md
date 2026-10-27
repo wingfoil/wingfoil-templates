@@ -128,8 +128,10 @@ tasks it selects get its id in their `sprint` field, and the Sprint moves to `ac
 
 Fixture: tests/fixtures/examples/scrum/release-folders-lean/
 
-Otter Ledger, a fictional bookkeeping app, files its records by release under `docs/04_memory/`
-and works in one-week Sprints, its sprints under `docs/04_memory/sprints/`. It releases once its
+Otter Ledger, a fictional bookkeeping app, composes `base`, `software` and `methodology/scrum` with
+its own path values: its records by release under `docs/04_memory/`, its release ids made of the
+release's kind and version, and one-week Sprints (`sprint_length: 1 week`) filed under
+`docs/04_memory/sprints/` (`sprint_path`). It releases once its
 Sprint Backlog is done: the Product Owner adds the release in `plan-release`, and the release slot
 runs its checks, approval and publication inside the Sprint, beside the Sprint Review.
 

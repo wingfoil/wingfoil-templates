@@ -3,7 +3,7 @@ id: release-folders-lean
 title: "Release folders, lean"
 description: >-
   Marten Boards, a fictional board-game shop, files its records under docs/04_memory/, its release
-  folders named by the release line's version, and keeps the default retrospective folder.
+  folders named by the release line, and keeps the default retrospective folder.
 packs:
   - software@^1
   - methodology/scrum@^1
