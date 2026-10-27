@@ -2,7 +2,7 @@
 id: plan-050-pack-cycle-author-the-methodology-scrum-pack
 type: plan
 title: "pack-cycle author: the methodology/scrum pack"
-status: draft
+status: active
 workflow: "pack-cycle"
 phase: "author"
 tags: ["packs","scrum","methodology","W9"]
