@@ -117,7 +117,8 @@ plan-049's `prepare` reaches `main` first (plan-050 ruling 1).
 
 **The pack** (`packs/methodology/scrum/`), from the charter and plan-047's runs (the draft, kept
 out of the repository, is only a reference): `pack.yaml`, `fragments/roles.yaml`,
-`fragments/memory.yaml`, `memory-templates/sprint.md`, `workflows/{delivery,sprint,backlog-item}.yaml`,
+`fragments/memory.yaml`, `memory-templates/sprint.md`,
+`workflows/{delivery,sprint,backlog-item}.yaml`,
 `directives/{scrum,definition-of-done}.md`, `agents/section.md`, `CHANGELOG.md`, `README.md`
 (hand-written sections; the generated ones by `npm run index`).
 
@@ -147,3 +148,18 @@ the worktree before the branch (`tests/fixtures/scrum-draft/`), so no check sees
 - 2026-10-27: independent review (approve after amendments), amended, re-reviewed (approve);
   submitted.
 - 2026-10-27: accepted into the backlog; Design written; `backlog → in-progress`.
+- 2026-10-27: the pack (`dee5b02`) and the examples with `software`'s section 7 (`bcd6c09`); the
+  README's generated sections written by `npm run index` within those commits, not apart as the
+  Design listed. Checks: `npm run index -- --check` (6 files), `npm run check:packs` (61 files,
+  0 problems), `npm run validate` (7 runs, 0 failed, tolerance none), the overlay `software-exit`
+  (11 runs, 0 failed, tolerance none), the golden tree (26 runs, 0 failed);
+  `node dist/src/validate-publication-cli.js --tree .` (7 runs, 0 failed). `CATALOG.md`,
+  `catalog-index.json`, `llms.txt` and `catalog.yaml` unchanged.
+- 2026-10-27, the counts moved (one commit): `tests/check-packs.test.ts` this repository's lint
+  45 → 61 files; `tests/index.test.ts` 5 → 6 files; `tests/validate.test.ts` schemas 4 → 5, lint
+  45 → 61, compositions and runs 3 → 7, the `software-exit` overlay 7 → 11, the publication run
+  3 → 7; the three titles say so.
+- 2026-10-27: independent review: approve after amendments, nothing blocking. Applied: the events'
+  timeboxes and the Retrospective's purpose in `scrum`; the two examples naming their composition
+  and parameters; Marten Boards' description; the agent "works for the Developers, as their tool";
+  the defaults example's roles; a test title.
