@@ -2,7 +2,7 @@
 id: plan-048-tooling-change-deliver-the-delivery-contract-s-lint-after-dl-026-and-dl-027-and-feedback-note-f-037
 type: plan
 title: "tooling-change deliver: the delivery contract's lint after dl-026 and dl-027, and feedback note F-037"
-status: active
+status: done
 workflow: "tooling-change"
 phase: "deliver"
 tags: ["tooling","W8"]
