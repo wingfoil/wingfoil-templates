@@ -2,7 +2,7 @@
 id: task-055-the-methodology-scrum-pack-and-the-readme-examples-now-due-for-software-and-scrum-plan-050
 type: task
 title: "The methodology/scrum pack and the README examples now due for software and scrum (plan-050)"
-status: backlog
+status: approved
 pack: "pack-methodology-scrum"
 depends_on: []
 tags: ["packs","scrum"]
@@ -115,10 +115,65 @@ plan-049's `prepare` reaches `main` first (plan-050 ruling 1).
 
 ## Design
 
-<!-- Written at design: the files, the order of the commits, how each check is run. -->
+**The pack** (`packs/methodology/scrum/`), from the charter and plan-047's runs (the draft, kept
+out of the repository, is only a reference): `pack.yaml`, `fragments/roles.yaml`,
+`fragments/memory.yaml`, `memory-templates/sprint.md`,
+`workflows/{delivery,sprint,backlog-item}.yaml`,
+`directives/{scrum,definition-of-done}.md`, `agents/section.md`, `CHANGELOG.md`, `README.md`
+(hand-written sections; the generated ones by `npm run index`).
+
+**The examples**, fictional, `.example` addresses, `packs` naming `software@^1` and
+`methodology/scrum@^1`:
+- `tests/fixtures/examples/software/defaults/` (every parameter on its default) and
+  `tests/fixtures/examples/software/release-folders-lean/` (task-049's UI-like values, renamed);
+- `tests/fixtures/examples/scrum/defaults/` (`sprint_length` and the rest on their defaults) and
+  `tests/fixtures/examples/scrum/release-folders-lean/` (the same UI-like values, with
+  `sprint_length: "1 week"` and `sprint_path` under `docs/04_memory/sprints/`);
+- `packs/software/README.md` section 7 and `packs/methodology/scrum/README.md` section 7 describing
+  them as spec-002 §2.4 asks.
+
+**Checks**, in order: `npm run index` then `npm run index -- --check`; `npm run check:packs`;
+`npm run validate`; the overlay `software-exit` and the golden tree's `validate`; then the tests
+that take the counts, run first to see which move (`node --test` on `validate`, `check-packs`,
+`index`, `example-rules`), each moved count stated; the full `npm test` in clean clones on both
+Node.js versions.
+
+**Commits** on `task/task-055-scrum-pack`: the pack; the examples and `software`'s section 7; the
+generated sections; the moved counts; the notes. The untracked draft of plan-047 was moved out of
+the worktree before the branch (`tests/fixtures/scrum-draft/`), so no check sees it.
 
 ## Execution Notes
 
 - 2026-10-27: written under plan-050 (step 4).
 - 2026-10-27: independent review (approve after amendments), amended, re-reviewed (approve);
   submitted.
+- 2026-10-27: accepted into the backlog; Design written; `backlog → in-progress`.
+- 2026-10-27: the pack (`dee5b02`) and the examples with `software`'s section 7 (`bcd6c09`); the
+  README's generated sections written by `npm run index` within those commits, not apart as the
+  Design listed. Checks: `npm run index -- --check` (6 files), `npm run check:packs` (61 files,
+  0 problems), `npm run validate` (7 runs, 0 failed, tolerance none), the overlay `software-exit`
+  (11 runs, 0 failed, tolerance none), the golden tree (26 runs, 0 failed);
+  `node dist/src/validate-publication-cli.js --tree .` (7 runs, 0 failed). `CATALOG.md`,
+  `catalog-index.json`, `llms.txt` and `catalog.yaml` unchanged.
+- 2026-10-27, the counts moved (one commit): `tests/check-packs.test.ts` this repository's lint
+  45 → 61 files; `tests/index.test.ts` 5 → 6 files; `tests/validate.test.ts` schemas 4 → 5, lint
+  45 → 61, compositions and runs 3 → 7, the `software-exit` overlay 7 → 11, the publication run
+  3 → 7; the three titles say so.
+- 2026-10-27: independent review: approve after amendments, nothing blocking. Applied: the events'
+  timeboxes and the Retrospective's purpose in `scrum`; the two examples naming their composition
+  and parameters; Marten Boards' description; the agent "works for the Developers, as their tool";
+  the defaults example's roles; a test title.
+- 2026-10-27: the full suite in clean clones at `9847e02`: 977 of 977 on Node.js 22.21.0 and on
+  the floor 22.12.0; branch CI run 40486043059 on `9847e02`, conclusion `success`. Waiting for
+  plan-049's `prepare` (`base` 2.0.0) on `main`: then `main` merged into the branch and `scrum`
+  moved to `base@^2` (plan-050 ruling 1), the suite and the CI rerun, before `in-review`.
+- 2026-10-27: plan-049's `prepare` reached `main` (`274af0c`): `main` merged into the branch
+  (`55887ab`), and `scrum` moved to `base@^2` (`2d13c49`: `pack.yaml`, the README's Requires line
+  by `npm run index`, the charter's `requires`, Purpose, Compatibility and an Execution Note).
+  Checks at `2d13c49`: `validate` 7 runs, the overlay `software-exit` 11, the golden tree 26, the
+  publication run 7, all 0 failed; `npm run check:runs` 9 runs, 0 failed; the full suite in clean
+  clones 1002 of 1002 on Node.js 22.21.0 and on the floor 22.12.0.
+- 2026-10-27: branch CI run 40492297696 on `59679d8`, conclusion `success` (`validate (22.12.0)`
+  and `validate (22.21.0)` both `success`). Privacy: no local path, private repository or private
+  project in the diff. `in-progress → in-review`; waiting for the approver's `approve` and the
+  merge OK.

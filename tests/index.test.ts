@@ -42,7 +42,7 @@ describe('npm run index (acceptance 3)', () => {
       assert.equal(result.code, 0, result.lines.join('\n'));
     }
     assert.deepEqual(runIndex(['--tree', REPO_ROOT, '--check']).lines,
-      ['index: checked 5 files, 0 not up to date']);
+      ['index: checked 6 files, 0 not up to date']);
   });
 
   it('writes the outputs, then reports them unchanged; two runs are byte-identical', () => {

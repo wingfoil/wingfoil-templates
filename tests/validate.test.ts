@@ -261,15 +261,15 @@ describe('npm run validate', () => {
     assert.ok(entries.lines.some((line) => line.startsWith('composition entries: composed twice')));
   });
 
-  it('validates this repository: the base and software packs, base\'s three examples, three runs '
-    + '(task-039, task-047)', () => {
+  it('validates this repository: base, software and methodology/scrum, their seven examples, seven '
+    + 'runs (task-039, task-047, task-055)', () => {
       const result = validate(['--tree', REPO_ROOT]);
       assert.equal(result.code, 0, result.lines.join('\n'));
-      assert.ok(result.lines.includes('schemas: checked 4 files, 0 problems'));
-      assert.ok(result.lines.includes('lint: checked 45 files, 0 problems'));
-      assert.ok(result.lines.includes('compositions: 3'));
+      assert.ok(result.lines.includes('schemas: checked 5 files, 0 problems'));
+      assert.ok(result.lines.includes('lint: checked 61 files, 0 problems'));
+      assert.ok(result.lines.includes('compositions: 7'));
       assert.ok(result.lines.includes(
-        'matrix: self-test, 3 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
+        'matrix: self-test, 7 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
     });
 
   it('validates software through its fixture methodology: the four governed repositories\' '
@@ -281,17 +281,18 @@ describe('npm run validate', () => {
         + `tests/fixtures/software-exit/compositions/${id}/example.yaml: composed twice, `)),
       `${id}\n${result.lines.join('\n')}`);
     }
-    assert.ok(result.lines.includes('compositions: 7'), result.lines.join('\n'));
+    assert.ok(result.lines.includes('compositions: 11'), result.lines.join('\n'));
     assert.ok(result.lines.includes(
-      'matrix: self-test, 7 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
+      'matrix: self-test, 11 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
   });
 
-  it('passes a publication run of this repository: the three examples of base on 0.3.0 (task-039)',
+  it('passes a publication run of this repository: the seven examples on 0.3.0 (task-039, '
+    + 'task-055)',
     () => {
       const result = validate(['--tree', REPO_ROOT], { mode: 'publication' });
       assert.equal(result.code, 0, result.lines.join('\n'));
       assert.ok(result.lines.includes(
-        'matrix: publication, 3 runs, 0 failed, tolerance applied: none'),
+        'matrix: publication, 7 runs, 0 failed, tolerance applied: none'),
       result.lines.join('\n'));
     });
 

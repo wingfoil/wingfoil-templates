@@ -1,0 +1,39 @@
+format: 1
+id: methodology/scrum
+axis: methodology
+name: scrum
+title: "Scrum"
+description: >-
+  Scrum after the Scrum Guide, November 2020: repeated fixed-length Sprints, each with its
+  planning, its Sprint Backlog, its review and its retrospective, and releases decided by the
+  Product Owner inside the Sprints, as the delivery of software's life cycle.
+version: 1.0.0
+formats:
+  roles: 1
+  memory: 1
+  workflow: 1
+  directive: 1
+  memory-template: 1
+requires:
+  - base@^2
+  - software@^1
+requires_capabilities: [workflow-engine]
+parameters:
+  sprint_length:
+    type: string
+    default: "2 weeks"
+    description: "The Sprints' fixed length, at most one month"
+  sprint_path:
+    type: path
+    default: "docs/memory/sprint/{id}.md"
+    description: "The sprint type's path; only letters, digits and . _ / { } -"
+  sprint_id:
+    type: pattern
+    default: "sprint-{n}"
+    description: "The sprint type's id pattern"
+contents:
+  fragments: [roles, memory]
+  directives: [scrum, definition-of-done]
+  workflows: [delivery, sprint, backlog-item]
+  memory_templates: [sprint]
+  agents_section: true
