@@ -163,3 +163,8 @@ check is task-053's script, run from its branch with `--tree` at this branch's c
   (every `main` of `base` started on the three README examples, `explore` complete,
   `governance-evolution` ended). The same command on `main` (1.0.0's content): 7 of 9 fail, as
   bug-005 and bug-006 say. Later commits on this branch change only `docs/memory`.
+- 2026-10-27: approved by the approver (`in-review → approved`, `2cd7e3c`) with the merge OK;
+  merged into `main` with `--no-ff` (`52db4dc`), on top of plan-048's task-051 (`7371e5e`):
+  `check:packs`, `index -- --check` and the overlay `software-exit` (7 runs, 0 failed) on the
+  merged tree, exit 0. `main`'s CI run 40473070720 on `52db4dc`: `success` (Pages 40473070631
+  `success`). Branch deleted. The notes on bug-005 and bug-006 written.
