@@ -129,3 +129,20 @@ with no warning (`format_key: true`).
   superseded note; red first stated; the branch cut after task-058's merge; the out-of-scope texts;
   the CI's expected outcome.
 - 2026-10-27: re-review: approve; its nit applied. Submitted.
+- 2026-10-27, red first (dl-018 R1), at `d8f6f20` (the tests changed, `compat.yaml` unchanged):
+  `node --test dist/tests/compat.test.js dist/tests/validate.test.js`: 68 tests, 55 pass, 13 fail.
+  Green at `337534d`: 68 of 68.
+- 2026-10-27, the 0.3.1 check (Acceptance 1), with 0.3.1 from the matrix's cache
+  (`0.3.1 (870bd4406f3b9bba5ecde7a5f8198b80c2a98583)`): the golden tree (`presets/golden.yaml`,
+  `project_name=Golden`) and the seven README examples composed from the branch, each committed in
+  a scratch repository by the matrix's own `runRelease` in publication mode: `workflow list`,
+  `dna show` and `directives list` with `--format json`, 8 of 8 exit 0, no warning; the golden
+  tree's `format:` keys accepted (`format_key: true`).
+- 2026-10-27, the record (`337534d`, one commit): `compat.yaml`, the golden fixture's and §12's
+  example byte-equal; `catalog.yaml`'s two `base` entries `wingfoil: ">=0.3.0 <=0.3.1"`, as
+  `toYaml` writes it; `npm run index`: `CATALOG.md` (base's range cell) and `catalog-index.json`
+  (its two ranges), nothing else, `llms.txt` and the fixture outputs unchanged. Then
+  (Acceptance 6): `validate` 14 runs, the overlays `software-exit` and `scrum-exit` 22 each, the
+  golden step 26 (0.2.2 tolerated and 0.3.1), `validate:publication` 14 (0.3.0 and 0.3.1),
+  `check:runs` 26, 0 failed in each, `check:packs` 0 problems, each exit 0. The texts: spec-001
+  §12's prose and Execution Note, dl-009's Execution Note. CI unchanged (Acceptance 5).

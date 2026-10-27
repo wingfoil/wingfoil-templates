@@ -846,6 +846,13 @@ releases:
   every kind, and it provides `workflow-engine`, its CHANGELOG naming `workflow start`, `end`,
   `next` and `finalize` (dl-021 R4).
 
+  WingFoil 0.3.1 accepts the key too: on the composed golden tree and the seven README examples
+  of this repository, each committed in a scratch repository, `workflow list`, `dna show` and
+  `directives list` run with `--format json` exit 0 with no warning (checked on 2026-10-27,
+  task-059, with `0.3.1 (870bd4406f3b9bba5ecde7a5f8198b80c2a98583)`). Its `format_key` is
+  `true`, it reads format 1 for every kind, and it provides `workflow-engine`; its CHANGELOG
+  names no new format and no feature behind a capability of the vocabulary (dl-021 R4).
+
   `wingfoil-release-intake` appends one entry per WingFoil release (dl-002).
 
 `V.formats` counts the kinds of both parts of a pack with a conditional part (§6.5), so the check
@@ -1269,3 +1276,9 @@ check the rest, and the composer refuses what they reject.
   `release`, because on WingFoil 0.3.0 a release in `releasing` left an `[in-development]` filter
   before any phase of `release` had completed, so it was skipped and stopped after
   `enter-releasing`. Nothing else changes.
+- 2026-10-27, task-059 (plan-051), amended in place, approved by the task's merge OK: §12's
+  example lists WingFoil 0.3.1 (`format_key: true`, format 1 for every kind, `workflow-engine`),
+  equal to `compat.yaml` and to the golden fixture's (dl-010); §12's prose records 0.3.1's check.
+  The intake applied the recomputed range of the published versions of `base` (1.0.0, 2.0.0:
+  `>=0.3.0 <=0.3.1`) to `catalog.yaml` by hand, and `check:packs`' `catalog-range` verifies it:
+  the value is the computed one, not a chosen one (§12, dl-002); §11 allows the field's edit.
