@@ -50,28 +50,31 @@ describe('compat.yaml', () => {
       assert.ok(readFileSync(REAL, 'utf8').startsWith(FROZEN_COMPAT));
     });
 
-  it('loads the releases of the real file: 0.2.2, then 0.3.0 with workflow-engine (task-036)',
-    () => {
+  it('loads the releases of the real file: 0.2.2, then 0.3.0 and 0.3.1 with workflow-engine '
+    + '(task-036, task-059)', () => {
       const compat = loadCompat(REAL);
       assert.deepEqual(compat.releases.map((release) => [release.wingfoil, release.format_key,
-        release.capabilities]), [['0.2.2', false, []], ['0.3.0', true, ['workflow-engine']]]);
-      assert.deepEqual(compat.releases[1]?.reads, { dna: [1], memory: [1], roles: [1],
-        workflows: [1], workflow: [1], directive: [1], 'memory-template': [1] });
+        release.capabilities]), [['0.2.2', false, []], ['0.3.0', true, ['workflow-engine']],
+        ['0.3.1', true, ['workflow-engine']]]);
+      for (const index of [1, 2]) {
+        assert.deepEqual(compat.releases[index]?.reads, { dna: [1], memory: [1], roles: [1],
+          workflows: [1], workflow: [1], directive: [1], 'memory-template': [1] });
+      }
       assert.deepEqual(Object.keys(compat.capabilities),
         ['pack-install', 'workflow-engine']);
     });
 
-  it('gives a version requiring workflow-engine the range 0.3.0 from the real file (task-036)',
-    () => {
+  it('gives a version requiring workflow-engine the range >=0.3.0 <=0.3.1 from the real file '
+    + '(task-036, task-059)', () => {
       const formats = { dna: 1, memory: 1, roles: 1, workflow: 1, directive: 1 };
       assert.equal(computeRange({ formats, requires_capabilities: ['workflow-engine'] },
-        loadCompat(REAL).releases), '0.3.0');
+        loadCompat(REAL).releases), '>=0.3.0 <=0.3.1');
     });
 
   it('loads releases in ascending order', () => {
     withCompat((text) => `${text}${SECOND_RELEASE}`, (path) => {
       assert.deepEqual(loadCompat(path).releases.map((release) => release.wingfoil),
-        ['0.2.2', '0.3.0', '0.4.0']);
+        ['0.2.2', '0.3.0', '0.3.1', '0.4.0']);
     });
   });
 
@@ -84,9 +87,9 @@ describe('compat.yaml', () => {
   });
 
   it('refuses a repeated release', () => {
-    withCompat((text) => `${text}${SECOND_RELEASE.replace('0.4.0', '0.3.0')}`, (path) => {
+    withCompat((text) => `${text}${SECOND_RELEASE.replace('0.4.0', '0.3.1')}`, (path) => {
       assert.throws(() => loadCompat(path),
-        (error: unknown) => error instanceof CompatError && /0\.3\.0/.test(error.message));
+        (error: unknown) => error instanceof CompatError && /0\.3\.1/.test(error.message));
     });
   });
 
