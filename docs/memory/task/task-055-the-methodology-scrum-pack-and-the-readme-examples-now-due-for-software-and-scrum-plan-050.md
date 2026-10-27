@@ -2,7 +2,7 @@
 id: task-055-the-methodology-scrum-pack-and-the-readme-examples-now-due-for-software-and-scrum-plan-050
 type: task
 title: "The methodology/scrum pack and the README examples now due for software and scrum (plan-050)"
-status: in-progress
+status: in-review
 pack: "pack-methodology-scrum"
 depends_on: []
 tags: ["packs","scrum"]
