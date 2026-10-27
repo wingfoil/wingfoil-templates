@@ -37,7 +37,7 @@ packs:
           - workflow-engine
         requires: []
         conflicts: []
-        wingfoil: 0.3.0
+        wingfoil: ">=0.3.0 <=0.3.1"
       - version: 2.0.0
         commit: 6d04472f0694e6238ca73fb65dd730245187d329
         digest: sha256:9cad63f17b1ffee435cf1a6d6b32a1a0ddb8b0ff746a51351f3a2147d33fc9ff
@@ -52,6 +52,6 @@ packs:
           - workflow-engine
         requires: []
         conflicts: []
-        wingfoil: 0.3.0
+        wingfoil: ">=0.3.0 <=0.3.1"
 transitions: []
 presets: []

@@ -105,3 +105,7 @@ bumped.
   to 0.2.2 only. Publication mode selects 0.3.0. Self-test mode drops only the `format_key`
   condition, not capabilities, so a composition requiring `workflow-engine` (the foundation packs,
   once authored) runs 0.3.0 alone.
+- 2026-10-27, task-059 (plan-051): WingFoil 0.3.1 recorded (`format_key: true`). It supersedes the
+  note on 0.3.0: publication mode now selects 0.3.0 and 0.3.1 (the golden tree included, 26 runs);
+  the self-tests run a composition requiring `workflow-engine` on 0.3.0 and 0.3.1, and the golden
+  tree, whose packs require no capability, on 0.2.2 (tolerated) and 0.3.1.

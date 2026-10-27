@@ -811,6 +811,11 @@ releases:
     reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
     capabilities: [workflow-engine]
     notes: "Accepts the format: key. workflow-engine recorded because the CHANGELOG names workflow start, end, next and finalize (dl-021 R4); the vocabulary is provisional, WingFoil's to name (dl-177)."
+  - wingfoil: 0.3.1
+    format_key: true
+    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
+    capabilities: [workflow-engine]
+    notes: "Accepts the format: key; format 1; no new capability (plan-051 ruling 2, dl-021 R4). A fresh 0.3.0 install resolving zod 4.6 showed zod's bare message on a refused cadence; 0.3.1 names the key again (bug-415)."
 ```
 
 - **`kinds`** are the seven dl-149 kinds a composition involves, all of them required. `workflows`
@@ -840,6 +845,14 @@ releases:
   warning (checked on 2026-10-21, task-035). Its `format_key` is `true`, it reads format 1 for
   every kind, and it provides `workflow-engine`, its CHANGELOG naming `workflow start`, `end`,
   `next` and `finalize` (dl-021 R4).
+
+  WingFoil 0.3.1 accepts the key too: on the composed golden tree and the seven README examples
+  of this repository, each committed in a scratch repository, `workflow list`, `dna show` and
+  `directives list` run with `--format json` exit 0 with no warning (checked on 2026-10-27,
+  task-059, with `0.3.1 (870bd4406f3b9bba5ecde7a5f8198b80c2a98583)`). Its `format_key` is
+  `true`, it reads format 1 for every kind, and it provides `workflow-engine`; its CHANGELOG
+  names no new format, and its additions (`workflow adopt`, `workflow rekey`, manual checks) need
+  no new capability (plan-051 ruling 2, dl-021 R4).
 
   `wingfoil-release-intake` appends one entry per WingFoil release (dl-002).
 
@@ -1264,3 +1277,9 @@ check the rest, and the composer refuses what they reject.
   `release`, because on WingFoil 0.3.0 a release in `releasing` left an `[in-development]` filter
   before any phase of `release` had completed, so it was skipped and stopped after
   `enter-releasing`. Nothing else changes.
+- 2026-10-27, task-059 (plan-051), amended in place, approved by the task's merge OK: §12's
+  example lists WingFoil 0.3.1 (`format_key: true`, format 1 for every kind, `workflow-engine`),
+  equal to `compat.yaml` and to the golden fixture's (dl-010); §12's prose records 0.3.1's check.
+  The intake applied the recomputed range of the published versions of `base` (1.0.0, 2.0.0:
+  `>=0.3.0 <=0.3.1`) to `catalog.yaml`, copied by hand, and `check:packs`' `catalog-range` verifies it:
+  the value is the computed one, not a chosen one (§12, dl-002); §11 allows the field's edit.
