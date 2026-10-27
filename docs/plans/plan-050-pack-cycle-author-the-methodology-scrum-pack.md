@@ -25,7 +25,8 @@ plan-047 (rulings 1–16, open points 1–3 as written). WingFoil UI adopts `bas
 - `software` is written (plan-046, `done`); `base` 1.0.0 is published, and plan-049 (another
   session) is releasing `base` 2.0.0, the fixes of bug-005 and bug-006, before `software`'s and
   `scrum`'s first release (plan-049 ruling 5). The fixes are already on `main` (task-054,
-  `52db4dc`), `base`'s `pack.yaml` still at 1.0.0 until plan-049's `prepare`.- plan-047's runs on WingFoil 0.3.0 proved the charter's shape in a scratch repository (the draft
+  `52db4dc`), `base`'s `pack.yaml` still at 1.0.0 until plan-049's `prepare`.
+- plan-047's runs on WingFoil 0.3.0 proved the charter's shape in a scratch repository (the draft
   stays untracked, never committed).
 
 **The approver's rulings** (2026-10-27, the outline approved in chat, as recommended):
@@ -75,7 +76,8 @@ dl-029 are reserved for a split or a ruling (agreed with plan-049's session).
   not change: its examples compose `base` alone, with no methodology, and its section 7 holds no
   exemption line; this departs from the charter's "`base`'s README then changes", recorded in its
   Execution Notes at close. The lint, the index and `npm run validate` pass; WingFoil 0.3.0 accepts
-  every composition with no warning.- **task-056 — the exit criterion** (the charter's Acceptance; dl-022 S6 for `software`, now with
+  every composition with no warning.
+- **task-056 — the exit criterion** (the charter's Acceptance; dl-022 S6 for `software`, now with
   a real methodology): `tests/fixtures/scrum-exit/compositions/<set>/example.yaml`, one per
   distinct parameter set of WingFoil, UI, Benchmark and this repository, the values copied from
   `tests/fixtures/software-exit/compositions/` (task-049) with `methodology/scrum` in place of

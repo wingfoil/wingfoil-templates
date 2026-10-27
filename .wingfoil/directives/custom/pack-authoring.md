@@ -71,6 +71,7 @@ Applies to every role that writes or reviews pack content under `packs/`.
   `specification`, `release`, `end-of-life` by shipping a workflow with the slot's name; this is the
   one case where a pack file replaces another pack's file. `delivery` is filled by the methodology,
   never by a phase pack: in its conditional entry, or in `contents` when the methodology requires
-  `software`.- `AGENTS.md` and every agent file at the repository root are never pack files (dl-003 R1). A pack
+  `software`.
+- `AGENTS.md` and every agent file at the repository root are never pack files (dl-003 R1). A pack
   contributes at most one section (`agents_section`), and WingFoil generates the file (WingFoil
   dl-137).
