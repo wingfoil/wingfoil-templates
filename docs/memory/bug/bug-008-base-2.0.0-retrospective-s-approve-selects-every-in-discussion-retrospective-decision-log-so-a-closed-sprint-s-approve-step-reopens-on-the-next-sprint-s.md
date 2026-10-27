@@ -12,34 +12,49 @@ tags: ["packs","base","workflow","scrum"]
 
 Found on 2026-10-27 by plan-051's `recheck` (task-057's run of `sw-life-cycle` with
 `methodology/scrum`, two Sprints, rerun on WingFoil 0.3.1), and the same on 0.3.0: every commit of
-the run gave byte-identical `workflow status` and `workflow next --format json` on both.
+the run gives identical `workflow status` and `workflow next --format json` on both.
 
 `methodology/scrum`'s `sprint` includes `base`'s `retrospective` once per Sprint (`iterate_over:
 sprint`). Its `approve` phase selects `where: { type: decision-log, status: [in-discussion], tags:
-[retrospective] }`, with no relation to the Sprint in scope. While Sprint 2's retrospective
-decision-log (`dl-002`) is `in-discussion`, `workflow next` lists, beside
-`retrospective.approve@sprint:sprint-002`, the step of Sprint 1, already `done`:
+[retrospective] }`, with no relation to the Sprint in scope. Right after Sprint 2's retrospective
+decision-log (`dl-002`) is submitted to `in-discussion`, Sprint 1 being `done`:
 
 ```
-retrospective.approve@sprint:sprint-001 scope={sprint-001, done} role=approver
-  awaiting approval of decision-log dl-002-sprint-2-retrospective (in-discussion)
+$ wingfoil workflow status
+…
+- retrospective.approve@sprint:sprint-001 (approver; missing: selection)
+- retrospective.approve@sprint:sprint-002 (approver; missing: selection)
+…
+pending approvals: 2
 ```
 
-(from `workflow next --format json`, reduced here), and `workflow status` reads
-`pending approvals: 2` for the one decision-log. One `memory approve dl-002` clears both steps;
-nothing is reported `late`, and one retrospective decision-log is pending at a time, as the charter
-of `methodology/scrum` asks. The charter of `base` records that the selection is repository-wide
-(its Execution Notes, task-038); this effect on an iterated retrospective is not recorded.
+(reduced); `workflow next --format json` gives the first step's scope as `{type: sprint, id:
+sprint-001, status: done}`, awaiting `dl-002-sprint-2-retrospective`. One `memory approve` clears
+both; nothing is reported `late`, and one retrospective decision-log is pending at a time.
+
+The selection's reach is recorded: `pack-methodology-scrum`'s charter says `base`'s approve selects
+any `in-discussion` decision-log tagged `retrospective`, so a later Sprint's (or
+`retrospective-periodic`'s) can satisfy or hold Sprint n's step. What is not: (a) the visible effect,
+a closed Sprint's step back on the frontier and the one decision-log counted once per step; (b)
+`pack-foundation-base`'s workflow table, whose `retrospective` row says the tag lets WingFoil bind
+the approve "in a sub to the retrospective's decision-log only", which an iterated sub contradicts;
+(c) neither `base`'s nor `methodology/scrum`'s README states the effect.
 
 ## Expected
 
-A closed Sprint's retrospective step stays complete: the approve step of one iteration selects only
-its own decision-log, or the composition says why it cannot on WingFoil 0.3.x. The options, for
-the triage: the decision-log carries its scope (for example a `sprint` field or tag set by
-`capture`) and `approve`'s `where` selects it, if WingFoil's `where` can bind the scope's id; or
-`base`'s and `methodology/scrum`'s texts state the effect (a closed iteration's approve listed
-again, cleared by the same approval); or a feedback note asking WingFoil that a `where` be bound to
-the iteration's scope.
+A closed Sprint's retrospective step stays off the frontier, or the texts say why it returns. The
+options, for the triage:
+- (i) `methodology/scrum` ships its own retrospective sub, under another name, whose `approve`
+  selects on the Sprint: WingFoil 0.3.x resolves `{…}` tokens in a `where` (checked: with
+  `tags: ["{id}"]` and the decision-log tagged with its Sprint, only that Sprint's step is listed,
+  `pending approvals: 1`, on 0.3.0 and 0.3.1); `base`'s own `retrospective` cannot do it, since
+  under `retrospective-periodic` no element is in scope and the token is unresolved
+  (`W_UNRESOLVED_TOKEN`), and a list field matches on any shared value, so the scope needs a field
+  of its own;
+- (ii) the texts state the effect: `base`'s charter row corrected, a line in both READMEs;
+- (iii) a feedback note to WingFoil for what 0.3.x lacks: a `where` key skipped when no element is
+  in scope, or a closed iteration's steps not deduced again (binding a `where` to the scope exists
+  already).
 
 ## Reproduction
 
@@ -48,8 +63,12 @@ the iteration's scope.
    decision-log approved and Sprint 1 closed (`done`).
 2. In Sprint 2, add the retrospective's decision-log at `capture` (`--tags retrospective`) and
    submit it to `in-discussion`.
-3. `wingfoil workflow next --format json`: `retrospective.approve@sprint:sprint-001` is listed,
-   awaiting the approval of Sprint 2's decision-log; `wingfoil workflow status`: `pending
-   approvals: 2`.
+3. Right after step 2's `memory submit`: `wingfoil workflow status` lists
+   `retrospective.approve@sprint:sprint-001` and reads `pending approvals: 2`.
 
 ## Execution Notes
+- 2026-10-27: independent review: request changes, two blocking findings: the effect's reach is
+  already recorded in `pack-methodology-scrum`'s charter (the defect is the unstated effect and
+  `base`'s charter row), and Expected's options restated after checking WingFoil's token
+  resolution in `where` (option (i) works in a methodology's own sub, not in `base`'s). Applied,
+  with the exact output and the reproduction's timing.
