@@ -66,5 +66,5 @@ charter's intent. Whether the lint should refuse a directory without the slash i
   by hand either; the contradiction with the charter and its history; `software` has no such
   `produces`; the reproduction through bug-005's workaround.
 - 2026-10-26: re-review: approve. Submitted.
-- 2026-10-27: fixed on `main` by the merge `52db4dc` (task-054, plan-049); released in `base`
-  2.0.0 (plan-049 step 8). task-053's `check:runs` drives it on WingFoil 0.3.0.
+- 2026-10-27: fixed on `main` by the merge `52db4dc` (task-054, plan-049); to be released in
+  `base` 2.0.0 (plan-049 step 8). task-053's `check:runs` drives it on WingFoil 0.3.0.

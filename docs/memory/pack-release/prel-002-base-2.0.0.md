@@ -2,7 +2,7 @@
 id: prel-002-base-2.0.0
 type: pack-release
 title: "base 2.0.0"
-status: validating
+status: released
 pack: "pack-foundation-base"            # the pack element id (pack-<axis>-<name>)
 version: "2.0.0"         # the semver being published
 bump: "major"            # major | minor | patch (pack-semver directive)
@@ -37,20 +37,20 @@ version changes behaviour"); a `minor` could be argued (commitment 2: an adopter
 values; `apply` never completed, so nothing relied on it), the doubt the directive settles by the
 higher class.
 
-**Cascade** (plan-049 ruling 3), in the same commit as `version: 2.0.0`: `software` (`pack.yaml`
-and its README's Requires line, regenerated) and the fixture methodology of
-`tests/fixtures/software-exit` require `base@^2`; the README examples compose `base@^2`; the
-charter `pack-foundation-software` records it. `software` is not published: no release of its own
-follows. `methodology/scrum`, not on `main` yet, moves to `base@^2` when it lands (plan-050
-ruling 1).
+**Cascade** (plan-049 ruling 3), in the same commit as `version: 2.0.0`: `software` (`pack.yaml` and
+its README's Requires line, regenerated) and the fixture methodology of
+`tests/fixtures/software-exit` require `base@^2`; the README examples compose `base@^2`; the charter
+`pack-foundation-software` records it. `software` is not published: no release of its own follows.
+`methodology/scrum` landed on `base@^2` with plan-050's task-055 (`2d13c49`, ruling 1); not
+published.
 
 **Updating from 1.0.0** (the CHANGELOG and the README say it): a project that relied on a default
 and keeps its values states them (`plan_id: plan-{n}-{slug}`); a `retrospective_path` naming a
 directory gains its trailing `/`; a project that keeps a `plan_id` without `{workflow}` and
 `{phase}` fills a started plan's `workflow` and `phase` by hand (the main's name and the instance
-number, e.g. `1`) and submits it, or uses the new pattern for its new plans. Ids already given
-never change; no file moves. 1.0.0 stays tagged and listed, frozen (`pack-semver`: one living line
-before WingFoil 1.0).
+number, e.g. `1`) and submits it, or uses the new pattern for its new plans; then it recomposes
+`base` and copies the `.wingfoil/` files. Ids already given never change; no file moves. 1.0.0 stays
+tagged and listed, frozen (`pack-semver`: one living line before WingFoil 1.0).
 
 `CHANGELOG.md`: the 2.0.0 entry. `pack.yaml`: `version: 2.0.0`; `formats`, `requires: []` and
 `requires_capabilities: [workflow-engine]` unchanged, so the computed range is 1.0.0's: `0.3.0`,
@@ -58,10 +58,90 @@ the only release of `compat.yaml` that reads every format and provides `workflow
 (confirmed by `publish:pack`'s dry run at `validate`). The README's "Install and update" keeps
 spec-002 §2.3's temporary mark: no release in `compat.yaml` provides `pack-install` (CB-3).
 
+At `publish`, `publish:pack` adds 2.0.0 beside 1.0.0 under `base`'s `versions` in `catalog.yaml`
+and regenerates `CATALOG.md` and `catalog-index.json`; CB-6's live check then reads `latest:
+2.0.0` with both versions listed, and `base`'s README and `pack.yaml` at `refs/tags/base@2.0.0`
+(plan-049 step 7). The notices to WingFoil UI's session and to the coordinating session follow
+the tag (step 8). The tag's annotation carries the CHANGELOG entry's first line, which is a
+complete summary.
+
 ## Validation
 
-<!-- The compatibility matrix: every WingFoil version tested, every preset composed, the
-     determinism double-run, with the commands and their exit codes. -->
+- Commit: `3f5f591d40028edbfb020849b844fa0d329781e1`
+- Command: `npm run validate:publication -- --evidence`
+- Mode: publication
+- Exit code: 0
+- WingFoil releases: 0.3.0
+- Compositions: tests/fixtures/examples/base/core-records/example.yaml, tests/fixtures/examples/base/release-folders-lean/example.yaml, tests/fixtures/examples/base/release-folders/example.yaml, tests/fixtures/examples/scrum/defaults/example.yaml, tests/fixtures/examples/scrum/release-folders-lean/example.yaml, tests/fixtures/examples/software/defaults/example.yaml, tests/fixtures/examples/software/release-folders-lean/example.yaml
+
+Report:
+
+```text
+schemas: checked 5 files, 0 problems
+lint: checked 61 files, 0 problems
+index: checked 6 files, 0 not up to date
+composition tests/fixtures/examples/base/core-records/example.yaml: composed twice, 16 files, byte-identical
+composition tests/fixtures/examples/base/release-folders-lean/example.yaml: composed twice, 16 files, byte-identical
+composition tests/fixtures/examples/base/release-folders/example.yaml: composed twice, 16 files, byte-identical
+composition tests/fixtures/examples/scrum/defaults/example.yaml: composed twice, 37 files, byte-identical
+composition tests/fixtures/examples/scrum/release-folders-lean/example.yaml: composed twice, 37 files, byte-identical
+composition tests/fixtures/examples/software/defaults/example.yaml: composed twice, 37 files, byte-identical
+composition tests/fixtures/examples/software/release-folders-lean/example.yaml: composed twice, 37 files, byte-identical
+compositions: 7
+matrix tests/fixtures/examples/base/core-records/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/base/core-records/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/base/core-records/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders-lean/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders-lean/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/base/release-folders-lean/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/scrum/defaults/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/scrum/defaults/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/scrum/defaults/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/scrum/release-folders-lean/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/scrum/release-folders-lean/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/scrum/release-folders-lean/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/software/defaults/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/software/defaults/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/software/defaults/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/software/release-folders-lean/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/software/release-folders-lean/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/software/release-folders-lean/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix: publication, 7 runs, 0 failed, tolerance applied: none
+```
+
+- Presets: none (`catalog.yaml` `presets: []`). The documented combinations holding `base` are the
+  README examples of `base` (3), and, since plan-050's task-055 (`2987234`), of `software` (2) and
+  `methodology/scrum` (2), which compose `base` through `software`'s `requires`; each composed
+  twice and byte-identical. No conditional part (spec-001 §6.5).
+
+Also on `3f5f591` (the 2.0.0 content as `prepare` left it, with the CHANGELOG entry's first line
+made a complete summary and the README's update note completed after this element's review; on
+`2987234` the same checks had passed):
+- from clean clones on Node.js 22.21.0 and 22.12.0: `npm ci`, `npm test` (1002 of 1002), `lint`,
+  `check:pins`, `check:schemas`, `check:packs`, `index -- --check`, `validate` (7 runs, 0 failed),
+  the overlay `software-exit` (11 runs, 0 failed: 7 → 11 with task-055's four examples), the
+  golden step (26 runs, 0 failed, tolerance 0.2.2), `workflow list` and `check:runs` (9 runs, 0
+  failed: `base`'s three `main` workflows on WingFoil 0.3.0, task-053), each exit 0. `main`'s CI
+  on `274af0c` (`prepare`), run 40488843601, and on `2987234`, run 40502555770: `success`; on
+  this head it is read once pushed;
+- `npm run publish:pack -- --pack base --dry-run`: exit 0, in a temporary clone; the tag
+  `base@2.0.0` at `3f5f591`, the range `0.3.0`, the digest
+  `sha256:9cad63f17b1ffee435cf1a6d6b32a1a0ddb8b0ff746a51351f3a2147d33fc9ff`; the clone left as it
+  was. The tag goes on the approval's commit, where `publish:pack` validates again;
+- the check against the three private, non-software projects, run outside this repository on
+  2026-10-27, `base` at `274af0c` (at `3f5f591` `packs/base` differs only in its CHANGELOG's
+  and README's wording, which the check does not compose), WingFoil 0.3.0: 3 projects, each on a scratch tree (`packs/base`,
+  `catalog.yaml`, `compat.yaml`, the index outputs, the tag `base@1.0.0`; README section 7 reduced
+  to the exemption line), `npm run validate -- --tree <scratch> base --param …` with the project's
+  path and id values (redacted) and fictional identities: 3 of 3 exit 0, each
+  `matrix: self-test, 1 run, 0 failed, tolerance applied: none`, 0 warnings. A first run exited 2
+  on the scratch tree alone (not a git repository, so the published version's tag was missing),
+  not on the projects. The scratch trees and logs were removed;
+- the privacy check of this element and of `packs/base/`: no local path, no private repository,
+  nothing on the private projects beyond their number.
 
 ## Publication
 
@@ -72,3 +152,14 @@ spec-002 §2.3's temporary mark: no release in `compat.yaml` provides `pack-inst
   filled by editing the draft (W-02); the Changes above; `CHANGELOG.md`, `pack.yaml`'s `version`
   and the cascade in one commit; the README's "Install and update" checked against `compat.yaml`
   (CB-3). The session running plan-050 told first.
+- 2026-10-27, `validate`: the evidence on `2987234` (`main` after plan-050's task-055, so seven
+  compositions), the clean clones on both Node.js versions, the dry run and the private check
+  above.
+- 2026-10-27: independent review: approve after amendments, nothing blocking. Applied: the
+  CHANGELOG entry's first line, which `publish:pack` writes into the tag's annotation, made a
+  complete summary; the README's and this element's migration completed; `methodology/scrum`'s
+  line updated (on `main`, `base@^2`); the overlay's 7 → 11 explained; the publication's effects
+  and the notices stated ahead; bug-005's and bug-006's notes say "to be released". The evidence,
+  the dry run and the clean clones redone on `3f5f591`.
+- 2026-10-27: re-review: approve; its optional note applied (the private check's commit). Submitted
+  (`validating → releasing`).

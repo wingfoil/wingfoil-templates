@@ -65,5 +65,5 @@ the `id_pattern` (not a defect of WingFoil's).
   declare none) and the exit code (1, not 0). Applied, with the non-blocking ones: the options for
   the triage, `plan_id`'s default first; the workarounds; plan-047's place; a long line.
 - 2026-10-26: re-review: approve; its nit applied (the wrapped output line marked). Submitted.
-- 2026-10-27: fixed on `main` by the merge `52db4dc` (task-054, plan-049); released in `base`
-  2.0.0 (plan-049 step 8). task-053's `check:runs` drives it on WingFoil 0.3.0.
+- 2026-10-27: fixed on `main` by the merge `52db4dc` (task-054, plan-049); to be released in
+  `base` 2.0.0 (plan-049 step 8). task-053's `check:runs` drives it on WingFoil 0.3.0.
