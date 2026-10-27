@@ -25,7 +25,8 @@ phases:
       When the Product Owner decides to release an Increment: add a release, giving its version
       and release-line with --set and its sprint by editing the draft, and move it to
       in-development (draft, planning, in-development). Only once the Sprint Backlog is done or
-      moved.
+      moved, and before a release carried from the previous Sprint completes, which closes this
+      phase (a release can still be added outside the step).
     role: product-owner
     optional: true
     actions:
@@ -43,7 +44,9 @@ phases:
   - name: sprint-review
     description: >-
       Inspect the Increment with the stakeholders and adapt the Product Backlog; write the outcome
-      in the Sprint's Sprint Review section. The review gates no release.
+      in the Sprint's Sprint Review section. The review gates no release. Before the review
+      completes, a release still open has its sprint rewritten to the next Sprint, or it is
+      reported late in this one.
     role: product-owner
     actions:
       - agent.execute
@@ -54,7 +57,7 @@ phases:
     description: >-
       Close the Sprint (active to done). An unfinished item first has its sprint rewritten, to the
       next Sprint or to n/a with its reason (back to the Product Backlog), with memory park where
-      it was started; an open release has its sprint rewritten to the next Sprint.
+      it was started. A release still open was moved before the review completed.
     role: facilitator
     actions:
       - memory.submit
