@@ -230,3 +230,8 @@ follow-up in plan-049's notes.
   run 40476099734 on `a5e4bee`: `success`, both jobs, the new step included. In its own diff
   against `main`: no file under `packs/`, `src/matrix.ts`'s `COMMANDS` unchanged. task-051
   `done` (plan-048), so `in-review` (Acceptance 7).
+- 2026-10-27: approved by the approver (`in-review → approved`, `39e33df`) with the merge OK;
+  merged into `main` with `--no-ff` (`610c26f`), on top of plan-050's merge (`6102e7b`):
+  `check:runs` 9 runs, 0 failed, and the tests of `runs`, `ci-workflow` and `digest` on the
+  merged tree. `main`'s CI run 40486529395 on `610c26f`: `success` (Pages 40486529342
+  `success`). Branch deleted.

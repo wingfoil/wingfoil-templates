@@ -234,3 +234,8 @@ release (W9); this repository's adoption of `base`; the foundation packs' `retro
 - 2026-10-27: task-054 `done`, merged (`52db4dc`), `main`'s CI run 40473070720 `success`;
   bug-005 and bug-006 noted fixed. task-053 built and reviewed (approve after re-review), `main`
   merged into its branch (`beef8d0`): `check:runs` 9 runs, 0 failed; its clean-clone checks run.
+- 2026-10-27: task-053 `done`, merged (`610c26f`), `main`'s CI run 40486529395 `success`:
+  `check:runs` runs on every branch push. Not done: the optional `sw-life-cycle` start
+  (task-053's Design; for `software`'s first release, W9). Next: `prepare`, the session running
+  plan-050 told first (its task-055 not on `main`: this release goes first, and that session
+  moves `methodology/scrum` to `base@^2` when it lands, plan-050 ruling 1).
