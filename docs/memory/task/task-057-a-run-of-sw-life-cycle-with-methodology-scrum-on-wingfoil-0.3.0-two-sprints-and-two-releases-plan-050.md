@@ -2,7 +2,7 @@
 id: task-057-a-run-of-sw-life-cycle-with-methodology-scrum-on-wingfoil-0.3.0-two-sprints-and-two-releases-plan-050
 type: task
 title: "A run of sw-life-cycle with methodology/scrum on WingFoil 0.3.0: two Sprints and two releases (plan-050)"
-status: in-review
+status: approved
 pack: "pack-methodology-scrum"
 depends_on: ["task-055"]
 tags: ["packs","scrum"]
