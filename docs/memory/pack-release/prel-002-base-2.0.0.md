@@ -37,26 +37,33 @@ version changes behaviour"); a `minor` could be argued (commitment 2: an adopter
 values; `apply` never completed, so nothing relied on it), the doubt the directive settles by the
 higher class.
 
-**Cascade** (plan-049 ruling 3), in the same commit as `version: 2.0.0`: `software` (`pack.yaml`
-and its README's Requires line, regenerated) and the fixture methodology of
-`tests/fixtures/software-exit` require `base@^2`; the README examples compose `base@^2`; the
-charter `pack-foundation-software` records it. `software` is not published: no release of its own
-follows. `methodology/scrum`, not on `main` yet, moves to `base@^2` when it lands (plan-050
-ruling 1).
+**Cascade** (plan-049 ruling 3), in the same commit as `version: 2.0.0`: `software` (`pack.yaml` and
+its README's Requires line, regenerated) and the fixture methodology of
+`tests/fixtures/software-exit` require `base@^2`; the README examples compose `base@^2`; the charter
+`pack-foundation-software` records it. `software` is not published: no release of its own follows.
+`methodology/scrum` landed on `base@^2` with plan-050's task-055 (`2d13c49`, ruling 1); not
+published.
 
 **Updating from 1.0.0** (the CHANGELOG and the README say it): a project that relied on a default
 and keeps its values states them (`plan_id: plan-{n}-{slug}`); a `retrospective_path` naming a
 directory gains its trailing `/`; a project that keeps a `plan_id` without `{workflow}` and
 `{phase}` fills a started plan's `workflow` and `phase` by hand (the main's name and the instance
-number, e.g. `1`) and submits it, or uses the new pattern for its new plans. Ids already given
-never change; no file moves. 1.0.0 stays tagged and listed, frozen (`pack-semver`: one living line
-before WingFoil 1.0).
+number, e.g. `1`) and submits it, or uses the new pattern for its new plans; then it recomposes
+`base` and copies the `.wingfoil/` files. Ids already given never change; no file moves. 1.0.0 stays
+tagged and listed, frozen (`pack-semver`: one living line before WingFoil 1.0).
 
 `CHANGELOG.md`: the 2.0.0 entry. `pack.yaml`: `version: 2.0.0`; `formats`, `requires: []` and
 `requires_capabilities: [workflow-engine]` unchanged, so the computed range is 1.0.0's: `0.3.0`,
 the only release of `compat.yaml` that reads every format and provides `workflow-engine`
 (confirmed by `publish:pack`'s dry run at `validate`). The README's "Install and update" keeps
 spec-002 §2.3's temporary mark: no release in `compat.yaml` provides `pack-install` (CB-3).
+
+At `publish`, `publish:pack` adds 2.0.0 beside 1.0.0 under `base`'s `versions` in `catalog.yaml`
+and regenerates `CATALOG.md` and `catalog-index.json`; CB-6's live check then reads `latest:
+2.0.0` with both versions listed, and `base`'s README and `pack.yaml` at `refs/tags/base@2.0.0`
+(plan-049 step 7). The notices to WingFoil UI's session and to the coordinating session follow
+the tag (step 8). The tag's annotation carries the CHANGELOG entry's first line, which is a
+complete summary.
 
 ## Validation
 
@@ -113,7 +120,7 @@ matrix: publication, 7 runs, 0 failed, tolerance applied: none
 Also on `2987234`:
 - from clean clones on Node.js 22.21.0 and 22.12.0: `npm ci`, `npm test` (1002 of 1002), `lint`,
   `check:pins`, `check:schemas`, `check:packs`, `index -- --check`, `validate` (7 runs, 0 failed),
-  the overlay `software-exit` (11 runs, 0 failed), the golden step (26 runs, 0 failed, tolerance
+  the overlay `software-exit` (11 runs, 0 failed: 7 → 11 with task-055's four examples), the golden step (26 runs, 0 failed, tolerance
   0.2.2), `workflow list` and `check:runs` (9 runs, 0 failed: `base`'s three `main` workflows on
   WingFoil 0.3.0, task-053), each exit 0. `main`'s CI run 40502555770 on `2987234`: `success`;
   on `274af0c` (`prepare`), run 40488843601: `success`, and the clean clones there likewise green;
