@@ -9,7 +9,7 @@
       "status": "active",
       "axis": null,
       "slot": null,
-      "latest": "1.0.0",
+      "latest": "2.0.0",
       "versions": [
         {
           "version": "1.0.0",
@@ -30,6 +30,26 @@
           "conflicts": [],
           "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@1.0.0/packs/base/README.md",
           "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@1.0.0/packs/base/pack.yaml"
+        },
+        {
+          "version": "2.0.0",
+          "tag": "base@2.0.0",
+          "wingfoil": "0.3.0",
+          "formats": {
+            "directive": 1,
+            "dna": 1,
+            "memory": 1,
+            "memory-template": 1,
+            "roles": 1,
+            "workflow": 1
+          },
+          "requires_capabilities": [
+            "workflow-engine"
+          ],
+          "requires": [],
+          "conflicts": [],
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.0/packs/base/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.0/packs/base/pack.yaml"
         }
       ],
       "title": "Base",
@@ -78,8 +98,8 @@
         {
           "name": "plan_id",
           "type": "pattern",
-          "default": "plan-{n}-{slug}",
-          "description": "The plan type's id pattern"
+          "default": "{workflow}-{phase}-plan",
+          "description": "The plan type's id pattern. WingFoil's workflow start fills a started plan's workflow and phase only from the tokens the id pattern or the path declares; a pattern without {workflow} and {phase} leaves them to be filled by hand"
         },
         {
           "name": "plan_path",
@@ -95,8 +115,8 @@
         {
           "name": "retrospective_path",
           "type": "path",
-          "default": "docs/retrospectives",
-          "description": "Where the retrospective's friction inventory goes: a directory by default, weak evidence; a project may set a fixed file. Only letters, digits and . _ / { } -, and no {...} token, since no element is in scope"
+          "default": "docs/retrospectives/",
+          "description": "Where the retrospective's friction inventory goes: a directory, ending with /, by default (weak evidence: any file in it); a project may set a fixed file, with no trailing /. Only letters, digits and . _ / { } -, and no {...} token, since no element is in scope"
         },
         {
           "name": "task_path",
