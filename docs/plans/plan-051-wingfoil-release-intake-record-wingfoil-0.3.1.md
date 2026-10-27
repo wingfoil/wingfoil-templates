@@ -187,3 +187,11 @@ plan takes task-058 and task-059.
     fails `workflow list` with `E_WORKFLOW_DUPLICATE_NAME` (bug-007, triaged `approved`);
     `software`'s and `methodology/scrum`'s READMEs fixed before W9, `base`'s in a patch.
 - 2026-10-27, step 4, `plan-migrations`: empty: 0.3.1 reads every format as 0.3.0 does.
+- 2026-10-27, step 5, close: bug-007 triaged `approved` (`6a641c8`), bug-008 submitted (`pending`,
+  the approver's triage); `pack-foundation-base`'s notes record the 0.3.1 range. The notices
+  (0.3.1 recorded, the range `>=0.3.0 <=0.3.1` of `base` 1.0.0 and 2.0.0, the recheck, bug-007's
+  adoption note) sent to WingFoil UI's session and to the coordinating session. Owed, outside this
+  plan: bug-007's fix (`software`'s and `methodology/scrum`'s READMEs before W9, `base`'s in a
+  patch); bug-008 after its triage; `software`'s agent `executes_as` without `tech-lead` (W9);
+  `wingfoil-release-intake` › `recheck`'s wording (its next version); a `check:runs` scenario of
+  the full scrum run (W9). `active → done`; W9 can start.
