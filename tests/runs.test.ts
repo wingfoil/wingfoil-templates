@@ -473,8 +473,7 @@ describe('check:runs (task-053)', () => {
         } });
       assert.equal(result.code, 2);
       assert.deepEqual(result.lines.slice(3), [
-        'runs compositions/defaults/example.yaml wingfoil@0.3.1: '
-          + 'wingfoil@0.3.1: npm ci failed: offline',
+        'runs compositions/defaults/example.yaml wingfoil@0.3.1: npm ci failed: offline',
         'runs: 3 runs, 0 failed',
       ]);
       assert.ok(result.lines.slice(0, 3).every((line) => line.endsWith('wingfoil@0.3.0: pass')));
@@ -514,7 +513,6 @@ function readdirTmp(): string[] {
   return execFileSync('ls', ['-1', tmpdir()], { encoding: 'utf8' }).split('\n').filter(Boolean);
 }
 
-// The fixture of the real run (task-053): the README examples of base, the three mains.
 describe('tests/fixtures/runs/software.yaml and scrum.yaml (task-058)', () => {
   for (const [file, folder] of [['software', 'software'], ['scrum', 'scrum']] as const) {
     it(`starts sw-life-cycle on the README examples of ${folder}`, () => {
@@ -526,6 +524,7 @@ describe('tests/fixtures/runs/software.yaml and scrum.yaml (task-058)', () => {
   }
 });
 
+// The fixture of the real run (task-053): the README examples of base, the three mains.
 describe('tests/fixtures/runs/base.yaml', () => {
   it('runs base\'s three mains on base\'s README examples', () => {
     const text = readFileSync(join(__dirname, '..', '..', 'tests', 'fixtures', 'runs', 'base.yaml'),
