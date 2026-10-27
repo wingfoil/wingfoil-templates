@@ -134,3 +134,5 @@ exit codes in condensed form, and the answers Acceptance 2 asks for.
 - 2026-10-27: branch CI run 40520606513 on `3ee57b2`, conclusion `success` (`validate (22.12.0)`
   and `validate (22.21.0)` both `success`). Privacy: no local path, private repository or private
   project in the diff. `in-progress → in-review`; the merge waits for `base@2.0.0`'s tag.
+- 2026-10-27: `main` merged into the branch (lint and index clean); approved by the approver;
+  `--no-ff` merge into `main` (`61d1980`); `approved → done`.
