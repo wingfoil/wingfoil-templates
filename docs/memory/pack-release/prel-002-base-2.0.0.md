@@ -132,7 +132,8 @@ made a complete summary and the README's update note completed after this elemen
   `sha256:9cad63f17b1ffee435cf1a6d6b32a1a0ddb8b0ff746a51351f3a2147d33fc9ff`; the clone left as it
   was. The tag goes on the approval's commit, where `publish:pack` validates again;
 - the check against the three private, non-software projects, run outside this repository on
-  2026-10-27, `base` at `274af0c`, WingFoil 0.3.0: 3 projects, each on a scratch tree (`packs/base`,
+  2026-10-27, `base` at `274af0c` (at `3f5f591` `packs/base` differs only in its CHANGELOG's
+  and README's wording, which the check does not compose), WingFoil 0.3.0: 3 projects, each on a scratch tree (`packs/base`,
   `catalog.yaml`, `compat.yaml`, the index outputs, the tag `base@1.0.0`; README section 7 reduced
   to the exemption line), `npm run validate -- --tree <scratch> base --param …` with the project's
   path and id values (redacted) and fictional identities: 3 of 3 exit 0, each
@@ -160,3 +161,5 @@ made a complete summary and the README's update note completed after this elemen
   line updated (on `main`, `base@^2`); the overlay's 7 → 11 explained; the publication's effects
   and the notices stated ahead; bug-005's and bug-006's notes say "to be released". The evidence,
   the dry run and the clean clones redone on `3f5f591`.
+- 2026-10-27: re-review: approve; its optional note applied (the private check's commit). Submitted
+  (`validating → releasing`).
