@@ -286,6 +286,20 @@ describe('npm run validate', () => {
       'matrix: self-test, 11 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
   });
 
+  it('validates methodology/scrum with the four governed repositories\' parameter sets (task-056)',
+    () => {
+      const result = validate(['--tree', REPO_ROOT, '--overlay', 'tests/fixtures/scrum-exit']);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      for (const id of ['defaults', 'flat-releases', 'release-folders', 'release-folders-lean']) {
+        assert.ok(result.lines.some((line) => line.startsWith('composition '
+          + `tests/fixtures/scrum-exit/compositions/${id}/example.yaml: composed twice, `)),
+        `${id}\n${result.lines.join('\n')}`);
+      }
+      assert.ok(result.lines.includes('compositions: 11'), result.lines.join('\n'));
+      assert.ok(result.lines.includes(
+        'matrix: self-test, 11 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
+    });
+
   it('passes a publication run of this repository: the seven examples on 0.3.0 (task-039, '
     + 'task-055)',
     () => {

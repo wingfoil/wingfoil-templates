@@ -101,7 +101,8 @@ describe('the CI workflow (task-013)', () => {
     const tag = "github.ref_type == 'tag'";
     for (const command of ['npm run validate',
       'npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden',
-      'npm run validate -- --overlay tests/fixtures/software-exit', 'npm run check:runs']) {
+      'npm run validate -- --overlay tests/fixtures/software-exit',
+      'npm run validate -- --overlay tests/fixtures/scrum-exit', 'npm run check:runs']) {
       assert.equal(stepRunning(command)?.if, branch, command);
     }
     assert.equal(stepRunning('npm run validate:publication')?.if, tag);
