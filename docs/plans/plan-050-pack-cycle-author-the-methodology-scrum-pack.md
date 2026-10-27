@@ -5,7 +5,7 @@ title: "pack-cycle author: the methodology/scrum pack"
 status: draft
 workflow: "pack-cycle"
 phase: "author"
-tags: ["packs","scrum","methodology","W8"]
+tags: ["packs","scrum","methodology","W9"]
 ---
 
 ## Context
@@ -148,3 +148,5 @@ own branch.
   step approve after amendments. Amended: the base fixes already on `main`, the examples' layout and
   `base`'s unchanged README, the cascade's sites, the CI test, the matching notes, the account,
   where a defect found by task-057 is fixed; the directive's wording. Focused re-review requested.
+- 2026-10-27: focused re-review: approve (plan and directive); tagged `W9`, the wave its account
+  reports to (W8 closed with plan-046). Plan submitted.
