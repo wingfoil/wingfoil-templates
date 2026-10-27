@@ -101,12 +101,19 @@ describe('the CI workflow (task-013)', () => {
     const tag = "github.ref_type == 'tag'";
     for (const command of ['npm run validate',
       'npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden',
-      'npm run validate -- --overlay tests/fixtures/software-exit']) {
+      'npm run validate -- --overlay tests/fixtures/software-exit', 'npm run check:runs']) {
       assert.equal(stepRunning(command)?.if, branch, command);
     }
     assert.equal(stepRunning('npm run validate:publication')?.if, tag);
     const onTag = steps.filter((step) => step.if === tag);
     assert.ok(onTag.every((step) => !/npm run validate(\s|$)/.test(step.run ?? '')),
       'no self-test step on the tag path');
+  });
+
+  it('runs the packs\' workflows on WingFoil after the overlay (task-053)', () => {
+    const runs = stepRunning('npm run check:runs');
+    const overlay = stepRunning('npm run validate -- --overlay tests/fixtures/software-exit');
+    assert.ok(runs !== undefined && overlay !== undefined);
+    assert.ok(steps.indexOf(runs) > steps.indexOf(overlay), 'after the overlay step');
   });
 });
