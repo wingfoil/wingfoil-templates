@@ -88,7 +88,32 @@ version; plan-051's recheck and W9 take them), and the root `README.md`'s line o
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-059-record-0.3.1` from `main` after task-058's merge (`00c0eaa`). A tooling task
+(dl-018 R1–R3).
+
+**Red commit** (`test(compat): red first, …`): the tests of Acceptance 4 changed, nothing else:
+`tests/validate.test.ts` (a `stubbed031` and its warned variant, a third `byRelease` parameter,
+each listed expectation re-derived), `tests/compat.test.ts` (the three cases). Run against the
+unchanged `compat.yaml`; the failing count recorded.
+
+**Green commit** (`feat(compat): record WingFoil 0.3.1 …`), one commit: `compat.yaml` (0.3.1 as
+Acceptance 1), `tests/fixtures/compose/tree/compat.yaml` and spec-001 §12's example byte-equal to
+it, `catalog.yaml` (`base` 1.0.0 and 2.0.0: `wingfoil: ">=0.3.0 <=0.3.1"`), and the regenerated
+root `CATALOG.md` and `catalog-index.json` (`npm run index`).
+
+**Texts commit** (`docs(memory): …`): spec-001 §12's prose, after the paragraph on 0.3.0's check,
+a paragraph on 0.3.1's (date, `--version` line, the golden tree and the seven README examples
+composed and committed in scratch repositories, the three commands with `--format json`, exit 0,
+no warning), with no YAML fence before the example; spec-001's Execution Note (the changes, their
+approval by the merge OK, the hand-applied computed range that `catalog-range` verifies); dl-009's
+Execution Note superseding its 0.3.0 note (Acceptance 2).
+
+**The 0.3.1 check** (Acceptance 1), before the green commit and recorded: with 0.3.1 from the
+matrix's cache, the golden tree composed (`npm run compose` on its presets' entries) and the
+seven README examples composed from the branch, each committed in a scratch repository, then the
+three commands with `--format json`: exit 0, no stderr line, no `Warning:` line, no diagnostic of
+severity warning or error, no `directives list` warning; the golden tree's `format:` keys accepted
+with no warning (`format_key: true`).
 
 ## Execution Notes
 
