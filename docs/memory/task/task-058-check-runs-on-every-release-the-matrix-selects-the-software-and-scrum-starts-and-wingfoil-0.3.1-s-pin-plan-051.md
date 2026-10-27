@@ -2,7 +2,7 @@
 id: task-058-check-runs-on-every-release-the-matrix-selects-the-software-and-scrum-starts-and-wingfoil-0.3.1-s-pin-plan-051
 type: task
 title: "check:runs on every release the matrix selects, the software and scrum starts, and WingFoil 0.3.1's pin (plan-051)"
-status: pending
+status: backlog
 pack: ""            # tooling task (wingfoil-release-intake › record, plan-051 ruling 1)
 depends_on: []
 tags: ["tooling","wingfoil","compat"]
