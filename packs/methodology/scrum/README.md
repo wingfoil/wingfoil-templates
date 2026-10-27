@@ -145,7 +145,7 @@ runs its checks, approval and publication inside the Sprint, beside the Sprint R
   - the Daily Scrum and refinement have no phase: they leave no artefact;
   - an Increment is released only once the Sprint Backlog is done or moved, and a release passes
     through one Sprint's `release` phase at a time; a release that spans Sprints has its `sprint`
-    rewritten and its recorded steps recorded again;
+    rewritten before the Sprint Review completes, and resumes where it stopped;
   - the next Sprint and further releases are added outside a step (`memory add`), WingFoil 0.3.0
     taking a completed step's evidence once;
   - the Scrum Master is `base`'s facilitator, and the Developers are `software`'s roles.

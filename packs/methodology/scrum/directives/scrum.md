@@ -34,6 +34,7 @@ inspection, adaptation) and the values commitment, focus, openness, respect and 
   belongs to the Sprint that carries it (its `sprint`), and none is approved or published before
   that Sprint's Backlog is done or moved.
 - **At the end of a Sprint** an unfinished item goes to the next Sprint or back to the Product
-  Backlog, and an open release to the next Sprint, by rewriting their `sprint`.
+  Backlog, by rewriting its `sprint`; a release still open goes to the next Sprint the same way
+  before the Sprint Review completes.
 - The project chooses how it estimates and plans; nothing here requires user stories, story points
   or burn-down charts.

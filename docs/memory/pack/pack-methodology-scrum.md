@@ -59,10 +59,10 @@ contract it relies on.
   it (plan-047 ruling 15). Without it, a released release is a complete candidate in every later
   Sprint's `release` phase, which then closes that Sprint's earlier phases (`development`,
   `plan-release`) on WingFoil 0.3.0. Every release belongs to a Sprint: there is no `n/a` form, so a
-  hotfix is added to the current Sprint. A release still open when its Sprint closes has its
-  `sprint` rewritten to the next Sprint (`amendable: true`, `software`'s), an adaptation the README
-  states. `version` and `release-line` are given with `--set` (F-034), being path and id tokens;
-  `sprint` is no token, so it is written by editing the draft.
+  hotfix is added to the current Sprint. A release still open has its `sprint` rewritten to the next
+  Sprint before the Sprint Review completes (`amendable: true`, `software`'s), an adaptation the
+  README states. `version` and `release-line` are given with `--set` (F-034), being path and id
+  tokens; `sprint` is no token, so it is written by editing the draft.
 
 **Workflows** (`workflows/`; each phase whose artefact is a file declares it in `produces`, R4;
 `software`'s contract as dl-026 amends it).
@@ -90,11 +90,11 @@ contract it relies on.
   hotfix, which first moves the Sprint's open items or waits for the next Sprint. The optional
   release phases then run side by side with the Sprint Review, which gates no release. Each Sprint's
   `release` phase is one pass over its own releases in `in-development` or `releasing` (dl-027); it
-  closes once a later phase of the Sprint completes. A release still open then moves to the next
-  Sprint by its `sprint` field, so a release may span Sprints; its record-based steps
-  (`pre-release-checks`, `release-commit`, `staging-rehearsal`, `tag`) are recorded again under the
-  new Sprint, WingFoil keying a step's record by its scope. A release may also be added outside the
-  step, as a Sprint is.
+  closes once a later phase of the Sprint completes, so a release still open moves to the next
+  Sprint by its `sprint` field before the Sprint Review completes, or it is reported `late`; a
+  release may span Sprints, and resumes there where it stopped, WingFoil keying a step's record by
+  the release. A carried release that completes closes the Sprint's `plan-release`, so the
+  Sprint's own releases are added before it, or outside the step, as a Sprint is.
 - **The Retrospective concludes the Sprint.** `close` moves the Sprint to `done` after the
   `retrospective`, so the limit keeps Sprint n+1 from starting before Sprint n's Retrospective.
   `base`'s `retrospective` › `approve` selects any `in-discussion` decision-log tagged
@@ -150,8 +150,8 @@ Listed in the README's "Sources and adaptations" (spec-002 §2):
 - the Daily Scrum and refinement have no phase: they leave no artefact;
 - an Increment is released only once the Sprint Backlog is done or moved, not at any moment of the
   Sprint (WingFoil 0.3.0, ruling 16); a release passes through one Sprint's `release` phase at a
-  time, and one that spans Sprints has its `sprint` field rewritten by hand and its record-based
-  steps recorded again;
+  time, and one that spans Sprints has its `sprint` field rewritten by hand before the Sprint
+  Review completes;
 - Sprint n+1 and further releases are added outside a step (`memory add`), WingFoil 0.3.0 taking a
   completed step's evidence once;
 - the Scrum Master is `base`'s facilitator, and Developers are `software`'s roles.
@@ -271,3 +271,8 @@ For the approver's acceptance:
 - 2026-10-27: `requires` moved from `base@^1` to `base@^2` (frontmatter, Purpose, Compatibility),
   as plan-050 ruling 1 sets: plan-049's `prepare` of `base` 2.0.0 (the fixes of bug-005 and
   bug-006, a major) reached `main` before `methodology/scrum`, so task-055 makes the move.
+- 2026-10-27: amended in place by task-057 (plan-050), after a run on WingFoil 0.3.0: a release
+  still open moves to the next Sprint before the Sprint Review completes, not at `close` (it is
+  reported `late` meanwhile); a spanning release resumes where it stopped (its steps are not
+  recorded again); a carried release that completes closes the Sprint's `plan-release`. No type,
+  state, workflow or phase changes. Approved by task-057's merge OK.
