@@ -35,7 +35,8 @@ and `sw-life-cycle`'s start on the four examples 4 runs, 0 failed.
    composition, with `--cache`) and every run of the scenario made on it. The report has one line
    per composition, release and `main`, in that order, e.g.
    `runs tests/fixtures/examples/base/core-records/example.yaml decision-log-ingest wingfoil@0.3.0: pass`
-   then the same `main`'s other runs on 0.3.0, then the composition's runs on 0.3.1; the summary
+   then the composition's other runs (its other mains) on 0.3.0, then the composition's runs on
+   0.3.1; the summary
    counts every run made. A composition no release can run exits 2, as today. A release whose
    install fails: one line `runs <composition> wingfoil@<version>: <message>`, its runs not made
    and not counted, the other release's runs made, exit 2.
@@ -93,3 +94,4 @@ and `sw-life-cycle`'s start on the four examples 4 runs, 0 failed.
   task-035's, with dl-019 and adr-003; the network for the real run, the CI running 0.3.1 from
   task-059; a test of the selection and a guard of the new scenario files; the texts stated by
   what they say; `install` per release; the red run behavioural, not a compile error.
+- 2026-10-27: re-review: approve; its nit applied. Submitted.
