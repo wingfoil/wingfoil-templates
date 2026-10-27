@@ -67,7 +67,7 @@ complete summary.
 
 ## Validation
 
-- Commit: `298723491ca8e54316b8e8e20922ae833c1593d4`
+- Commit: `3f5f591d40028edbfb020849b844fa0d329781e1`
 - Command: `npm run validate:publication -- --evidence`
 - Mode: publication
 - Exit code: 0
@@ -117,16 +117,19 @@ matrix: publication, 7 runs, 0 failed, tolerance applied: none
   `methodology/scrum` (2), which compose `base` through `software`'s `requires`; each composed
   twice and byte-identical. No conditional part (spec-001 §6.5).
 
-Also on `2987234`:
+Also on `3f5f591` (the 2.0.0 content as `prepare` left it, with the CHANGELOG entry's first line
+made a complete summary and the README's update note completed after this element's review; on
+`2987234` the same checks had passed):
 - from clean clones on Node.js 22.21.0 and 22.12.0: `npm ci`, `npm test` (1002 of 1002), `lint`,
   `check:pins`, `check:schemas`, `check:packs`, `index -- --check`, `validate` (7 runs, 0 failed),
-  the overlay `software-exit` (11 runs, 0 failed: 7 → 11 with task-055's four examples), the golden step (26 runs, 0 failed, tolerance
-  0.2.2), `workflow list` and `check:runs` (9 runs, 0 failed: `base`'s three `main` workflows on
-  WingFoil 0.3.0, task-053), each exit 0. `main`'s CI run 40502555770 on `2987234`: `success`;
-  on `274af0c` (`prepare`), run 40488843601: `success`, and the clean clones there likewise green;
+  the overlay `software-exit` (11 runs, 0 failed: 7 → 11 with task-055's four examples), the
+  golden step (26 runs, 0 failed, tolerance 0.2.2), `workflow list` and `check:runs` (9 runs, 0
+  failed: `base`'s three `main` workflows on WingFoil 0.3.0, task-053), each exit 0. `main`'s CI
+  on `274af0c` (`prepare`), run 40488843601, and on `2987234`, run 40502555770: `success`; on
+  this head it is read once pushed;
 - `npm run publish:pack -- --pack base --dry-run`: exit 0, in a temporary clone; the tag
-  `base@2.0.0` at `2987234`, the range `0.3.0`, the digest
-  `sha256:bc90f531eccffac9cf91b5c09113a03edd4bbbd78e02e84bdf84e6a6d0427f2f`; the clone left as it
+  `base@2.0.0` at `3f5f591`, the range `0.3.0`, the digest
+  `sha256:9cad63f17b1ffee435cf1a6d6b32a1a0ddb8b0ff746a51351f3a2147d33fc9ff`; the clone left as it
   was. The tag goes on the approval's commit, where `publish:pack` validates again;
 - the check against the three private, non-software projects, run outside this repository on
   2026-10-27, `base` at `274af0c`, WingFoil 0.3.0: 3 projects, each on a scratch tree (`packs/base`,
@@ -151,3 +154,9 @@ Also on `2987234`:
 - 2026-10-27, `validate`: the evidence on `2987234` (`main` after plan-050's task-055, so seven
   compositions), the clean clones on both Node.js versions, the dry run and the private check
   above.
+- 2026-10-27: independent review: approve after amendments, nothing blocking. Applied: the
+  CHANGELOG entry's first line, which `publish:pack` writes into the tag's annotation, made a
+  complete summary; the README's and this element's migration completed; `methodology/scrum`'s
+  line updated (on `main`, `base@^2`); the overlay's 7 → 11 explained; the publication's effects
+  and the notices stated ahead; bug-005's and bug-006's notes say "to be released". The evidence,
+  the dry run and the clean clones redone on `3f5f591`.
