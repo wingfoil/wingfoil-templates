@@ -42,8 +42,8 @@ compose and validate on WingFoil 0.3.0 with no warning. plan-050 ruling 2: a new
 **Red first** (dl-018), on branch `task/task-056-scrum-exit`:
 1. `tests/ci-workflow.test.ts`: the branch-only commands gain `npm run validate -- --overlay
    tests/fixtures/scrum-exit`; red on `main`'s `ci.yml` (no such step).
-2. `tests/validate.test.ts`: a case as task-049's, validating the overlay `tests/fixtures/scrum-exit`
-   and pinning the four `composed twice` lines, `compositions: 11` and `matrix: self-test, 11 runs,
+2. `tests/validate.test.ts`: a case as task-049's, validating the overlay
+   `tests/fixtures/scrum-exit` and pinning the four `composed twice` lines, `compositions: 11` and `matrix: self-test, 11 runs,
    0 failed, tolerance applied: none`; red with no overlay directory.
 Then the compositions (`tests/fixtures/scrum-exit/compositions/{defaults,flat-releases,
 release-folders,release-folders-lean}/example.yaml`, copied from `software-exit`'s with
@@ -78,3 +78,8 @@ suite in clean clones on both Node.js versions; the branch CI, the new step incl
   it ran; rerun alone, 11. The two task-056 tests and `ci-workflow` (10 of 10) pass; the full
   suite in clean clones at `64afe4c`: 1003 of 1003 on Node.js 22.21.0 and on the floor 22.12.0.
 - 2026-10-27: independent review: approve; the notes above complete it.
+- 2026-10-27: branch CI run 40507121569 on `2f3cb13`, conclusion `success` (`validate (22.12.0)`
+  and `validate (22.21.0)` both `success`), the new step "Validate methodology/scrum with the
+  governed repositories' parameters" `success` with the four `composed twice` lines. Privacy: no
+  local path, private repository or private project in the diff. `in-progress → in-review`; the
+  merge waits for `base@2.0.0`'s tag (plan-049's session asked that `main` stay still until it).
