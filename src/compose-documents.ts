@@ -8,6 +8,7 @@ import { corePack } from './catalog';
 import type { Catalog } from './catalog';
 import { CompositionError } from './composition-error';
 import { checkFormat } from './formats';
+import { readFrontmatter } from './frontmatter';
 import { checkDnaFragment, checkRoleDirectives, mergeFragments } from './merge';
 import type { Fragment } from './merge';
 import { mergeMemoryWithOwners } from './memory-merge';
@@ -129,6 +130,16 @@ function checkWorkflows(tree: string, catalog: Catalog, packs: ResolvedPack[],
     const pack = packs.find((candidate) => candidate.id === file.pack);
     const ruleFile: RuleFile = { path: file.path, file: `${pack?.path ?? file.pack}/${file.path}` };
     if (file.yaml !== undefined) ruleFile.yaml = file.yaml;
+    // A Memory template's frontmatter, as the lint reads it: dl-027 D3 counts its fields.
+    if (file.path.startsWith('memory-templates/')) {
+      try {
+        const frontmatter = readFrontmatter(file.text, ruleFile.file);
+        if (frontmatter !== undefined) ruleFile.yaml = frontmatter;
+      } catch (error) {
+        if (error instanceof YamlError) throw new CompositionError(`${file.pack}: ${error.message}`);
+        throw error;
+      }
+    }
     byPack.set(file.pack, [...(byPack.get(file.pack) ?? []), ruleFile]);
   }
   const byId = new Map(packs.map((pack) => [pack.id, pack]));

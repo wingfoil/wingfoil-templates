@@ -1,0 +1,6 @@
+format: 1
+types:
+  release:
+    path: "docs/release/{id}.md"
+    id_pattern: "rel-{n}"
+    template: { file: memory/templates/built-in/release.md, frontmatter: { required: [] } }

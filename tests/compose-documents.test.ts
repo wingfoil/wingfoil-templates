@@ -6,7 +6,9 @@ import { describe, it } from 'node:test';
 import { loadCatalog } from '../src/catalog';
 import { composeDocuments } from '../src/compose-documents';
 import type { ParameterValues } from '../src/compose-documents';
-import { BASE, DELIVERY, KANBAN, SOFTWARE, withPackTree } from './support/pack-tree';
+import {
+  BASE, DELIVERY, KANBAN, RELEASE_TEMPLATE, RELEASE_TYPE, SOFTWARE, subWorkflow, withPackTree,
+} from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
 import { FIXTURES, FIXTURE_CATALOG } from './support/paths';
 import { conformingReadme } from './support/readme';
@@ -365,5 +367,42 @@ describe('composeDocuments: the other memory.yaml keys (spec-001 §7.5)', () => 
       states: { sequence: ['draft', 'active', 'blocked', 'parked', 'done'],
         waiting: ['parked', 'blocked'], returns: { parked: 'active' }, limits: { active: 1 } },
     });
+  });
+});
+
+describe('composeDocuments: a methodology\'s delivery after dl-026 and dl-027 (task-051)', () => {
+  const SOFTWARE_RELEASE: PackSpec = { ...SOFTWARE, extraFiles: {
+    'fragments/memory.yaml': RELEASE_TYPE, 'memory-templates/release.md': RELEASE_TEMPLATE } };
+  const sub = subWorkflow;
+  const kanban = (status: string): PackSpec => ({ ...KANBAN, workflows: ['delivery', 'sprint'],
+    extraFiles: {
+      'workflows/delivery.yaml': sub('delivery', ['{ name: sprints, include: sprint }']),
+      'workflows/sprint.yaml': sub('sprint', [`{ name: release, iterate_over: release, where: { `
+        + `status: ${status} }, include: release }`, '{ name: retrospective, include: '
+        + 'retrospective }']) } });
+
+  it('accepts release and retrospective reached through the methodology\'s sub', () => {
+    const result = compose([BASE_M, SOFTWARE_RELEASE, kanban('[in-development, releasing]')],
+      ['methodology/kanban'], NAME);
+    assert.ok(result.files.some((file) => file.path === 'workflows/sprint.yaml'));
+  });
+
+  it('refuses a phase including release with another status', () => {
+    fails([BASE_M, SOFTWARE_RELEASE, kanban('[in-development]')], ['methodology/kanban'],
+      /sprint\.yaml.*release.*in-development, releasing/, NAME);
+  });
+
+  it('refuses a conditional delivery reaching a workflow of contents (spec-001 §18)', () => {
+    const flow: PackSpec = { id: 'methodology/flow', workflows: ['board', 'shared'],
+      manifest: { formats: { workflow: 1 },
+        conditional: [{ with: 'software@^1', contents: { workflows: ['delivery'] } }] },
+      extraFiles: {
+        'workflows/delivery.yaml': sub('delivery', ['{ name: r, iterate_over: release, where: { '
+          + 'status: [in-development, releasing] }, include: release }',
+        '{ name: a, include: shared }', '{ name: retrospective, include: retrospective }']),
+        'workflows/shared.yaml': sub('shared', ['{ name: s, produces: [x.md] }']),
+        'workflows/board.yaml': sub('board', ['{ name: b, produces: [y.md] }']) } };
+    fails([BASE_M, SOFTWARE_RELEASE, flow], ['software', 'methodology/flow'],
+      /phase a includes shared, which the pack ships in another part than delivery/, NAME);
   });
 });

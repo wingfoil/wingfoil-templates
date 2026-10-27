@@ -21,10 +21,10 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 
 - **Requires:** `base@^1`
 - **Conflicts:** none
-- **Formats:** `workflow` 1
+- **Formats:** `memory` 1, `memory-template` 1, `workflow` 1
 - **Requires capabilities:** none
 - **Declares:**
-  - Memory types: none
+  - Memory types: `release`
   - roles: none
   - states: none
   - workflows: `sw-life-cycle`
@@ -43,7 +43,7 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 
 ### Memory types
 
-None.
+- `release`: —
 
 ### Directives
 
@@ -55,7 +55,7 @@ None.
 
 ### Memory templates
 
-None.
+- `release`
 <!-- generated:end what-it-adds -->
 
 <!-- generated:begin parameters -->

@@ -6,3 +6,9 @@ types:
     template:
       file: memory/templates/built-in/adr.md
       frontmatter: { required: [id, title] }
+  release:
+    path: "docs/memory/release/{id}.md"
+    id_pattern: "rel-{version}"
+    template:
+      file: memory/templates/built-in/release.md
+      frontmatter: { required: [id, title, version] }

@@ -78,7 +78,7 @@ describe('examples as fixtures (task-022)', () => {
   });
 
   it('counts the example files among the files it checks', () => {
-    assert.equal(lint().lines[0], 'lint: checked 20 files, 0 problems');
+    assert.equal(lint().lines[0], 'lint: checked 22 files, 0 problems');
   });
 
   describe('example-section (acceptance 3, 5)', () => {

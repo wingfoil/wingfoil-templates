@@ -102,7 +102,7 @@ describe('npm run validate', () => {
     assert.ok(result.lines.some((line) => /^schemas: checked 11 files, 0 problems$/.test(line)),
       result.lines.join('\n'));
     assert.ok(result.lines.some((line) =>
-      /^composition presets\/golden\.yaml: composed twice, 19 files, byte-identical$/.test(line)),
+      /^composition presets\/golden\.yaml: composed twice, 20 files, byte-identical$/.test(line)),
     result.lines.join('\n'));
     // The golden preset, the ten examples of its packs, and flow's two other legs (task-032).
     assert.ok(result.lines.includes('compositions: 13'));
@@ -225,7 +225,7 @@ describe('npm run validate', () => {
 
   it('runs the lint after the schema checks, on the golden tree', () => {
     const result = validate(['--tree', TREE, ...NAME]);
-    assert.equal(result.lines[1], 'lint: checked 70 files, 0 problems', result.lines.join('\n'));
+    assert.equal(result.lines[1], 'lint: checked 71 files, 0 problems', result.lines.join('\n'));
   });
 
   it('exits 1 on a lint problem, and composes no preset the lint rejects', () => {

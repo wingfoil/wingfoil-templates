@@ -4,6 +4,8 @@ kind: sub
 version: 1
 phases:
   - name: release
+    iterate_over: release
+    where: { status: [in-development, releasing] }
     include: release
   - name: retrospective
     include: retrospective
