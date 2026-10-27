@@ -3,7 +3,7 @@ id: core-records
 title: "Core records"
 description: "Harbour Choir, a fictional amateur choir, keeps its decisions and tasks."
 packs:
-  - base@^1
+  - base@^2
 parameters:
   project_name: "Harbour Choir"
   approver_name: "Choir Director"

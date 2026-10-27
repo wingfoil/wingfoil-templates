@@ -7,7 +7,7 @@ axis: "foundation"
 name: "software"
 slot: ""
 pack_path: "packs/software"
-requires: ["base@^1"]
+requires: ["base@^2"]
 conflicts: []
 ---
 
@@ -267,3 +267,7 @@ For the approver's acceptance:
   `staging-rehearsal`, `tag`, `archive`) declare `agent.execute`, their step keys unchanged; a
   project binds its own commands to them. Owed: WingFoil is told of `end-of-life.approve` with the
   key mapping, at `software`'s tag.
+- 2026-10-27, plan-049 (ruling 3), `base` 2.0.0's `prepare`: `requires` is `base@^2` (the
+  frontmatter above and `packs/software/pack.yaml`); where this charter's Purpose and
+  Compatibility say `base@^1`, they read `base@^2`. `software` is not published, so no release of
+  its own follows.

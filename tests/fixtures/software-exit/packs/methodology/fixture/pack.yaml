@@ -10,7 +10,7 @@ version: 1.0.0
 formats:
   workflow: 1
 requires:
-  - base@^1
+  - base@^2
   - software@^1
 requires_capabilities: [workflow-engine]
 contents:

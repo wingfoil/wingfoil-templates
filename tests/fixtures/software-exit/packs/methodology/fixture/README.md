@@ -23,7 +23,7 @@ It is not installed: it exists only under tests/fixtures/.
 <!-- generated:begin composition -->
 ## Composition
 
-- **Requires:** `base@^1`, `software@^1`
+- **Requires:** `base@^2`, `software@^1`
 - **Conflicts:** none
 - **Formats:** `workflow` 1
 - **Requires capabilities:** `workflow-engine`
