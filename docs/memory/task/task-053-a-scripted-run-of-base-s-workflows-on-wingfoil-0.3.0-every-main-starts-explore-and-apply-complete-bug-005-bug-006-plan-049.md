@@ -222,3 +222,11 @@ follow-up in plan-049's notes.
   1 test of 1002: `digest.test.js`'s "src/ runs no shell" matched `exec(` in `src/runs.ts`, a
   local name for the injected WingFoil runner, not `child_process.exec`. Renamed `execute`; the
   checks rerun from clean clones.
+- 2026-10-27, checks at `a5e4bee` (`main` with task-054 merged in, Acceptance 6): from clean
+  clones on Node.js 22.21.0 and 22.12.0, `npm ci`, `npm test` (1002 of 1002), `lint`,
+  `check:pins`, `check:schemas`, `check:packs`, `index -- --check`, `validate` (3 runs, 0
+  failed), the overlay `software-exit` (7 runs, 0 failed), the golden step (26 runs, 0 failed,
+  tolerance 0.2.2), `workflow list` and `check:runs` (9 runs, 0 failed), each exit 0. Branch CI
+  run 40476099734 on `a5e4bee`: `success`, both jobs, the new step included. In its own diff
+  against `main`: no file under `packs/`, `src/matrix.ts`'s `COMMANDS` unchanged. task-051
+  `done` (plan-048), so `in-review` (Acceptance 7).
