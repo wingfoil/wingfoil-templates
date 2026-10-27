@@ -2,7 +2,7 @@
 id: task-051-the-lint-life-cycle-includes-after-dl-026-and-dl-027-and-methodology-fixture-s-where-plan-048
 type: task
 title: "The lint life-cycle-includes after dl-026 and dl-027, and methodology/fixture's where (plan-048)"
-status: in-review
+status: approved
 pack: ""            # tooling task (tooling-change › deliver, plan-048)
 depends_on: []
 tags: ["tooling","lint"]
