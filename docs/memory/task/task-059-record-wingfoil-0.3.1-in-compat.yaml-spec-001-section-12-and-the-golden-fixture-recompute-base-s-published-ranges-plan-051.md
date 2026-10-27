@@ -156,3 +156,7 @@ with no warning (`format_key: true`).
   `workflow list` and `check:runs` (26 runs, 0 failed), each exit 0; `npm audit` 0 in the root and
   every matrix folder. Branch CI run 40575708896 on `64c2ddc` and run 40579739923 on `c3dc6d2`
   (the wording commit, `docs/memory` only): `success`. `packs/` unchanged.
+- 2026-10-27: approved by the approver (`in-review → approved`, `05dfec2`) with the merge OK;
+  merged into `main` with `--no-ff` (`609127e`): `compat.test` (10 of 10), `check:packs` and
+  `index -- --check` on the merged tree. `main`'s CI run 40585068798 on `609127e`: `success`.
+  Branch deleted.
