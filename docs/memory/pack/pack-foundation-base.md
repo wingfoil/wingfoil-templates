@@ -258,3 +258,7 @@ For the approver's acceptance:
 - 2026-10-27, plan-049: `base` 2.0.0 published (`prel-002-base-2.0.0`, `major`): tag `base@2.0.0`
   at `6d04472`, catalog commit `16f53fa`, range `0.3.0`, CI on the tag and on `main` `success`,
   CB-6's live check passed. It fixes bug-005 and bug-006; 1.0.0 stays listed, frozen.
+- 2026-10-27, plan-051: WingFoil 0.3.1 recorded (task-059); the published versions' computed range
+  is `>=0.3.0 <=0.3.1` for 1.0.0 and 2.0.0 (`catalog.yaml`). 1.0.0 still meets bug-005 and bug-006
+  on 0.3.1. Found by the recheck: bug-007 (the README's install step 3 and `init`'s `custom/`
+  workflows), bug-008 (`retrospective` › `approve` in an iterated retrospective).

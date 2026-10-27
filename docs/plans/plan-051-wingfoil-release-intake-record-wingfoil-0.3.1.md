@@ -157,3 +157,33 @@ plan takes task-058 and task-059.
   a project initialised by 0.3.1; the outcome to UI's session and the charter's note; `npm audit`;
   the `compat` tag; what 0.3.1 changes that this plan does not act on.
 - 2026-10-27: re-review: approve; its three nits applied. Submitted (`draft → active`).
+- 2026-10-27: task-058 `done` (merged `00c0eaa`; `main`'s CI on `cdb81f9`, run 40571686917,
+  `success`): `check:runs` on every selected release, `software`'s and `methodology/scrum`'s starts,
+  0.3.1's pin. task-059 `done` (merged `609127e`; run 40585068798 `success`): 0.3.1 recorded,
+  spec-001 §12, the golden fixture, `base` 1.0.0's and 2.0.0's range `>=0.3.0 <=0.3.1`.
+- 2026-10-27, step 3, `recheck`:
+  - `base` 2.0.0: `main`'s `packs/base` equals `base@2.0.0`'s (`git diff` empty);
+    `npm run validate:publication` 14 runs, 0 failed (0.3.0 and 0.3.1); `check:runs` 26 runs, 0
+    failed; this repository's self-test 14 runs, the overlays `software-exit` and `scrum-exit` 22
+    each, the golden tree 26 (0.2.2 tolerated and 0.3.1), each 0 failed (task-059's notes).
+  - `base@1.0.0`, on a scratch copy of its tag with `main`'s `compat.yaml`: the matrix's three
+    commands pass on 0.3.0 and 0.3.1 for its three README examples (its range holds);
+    `check:runs`: 18 runs, 14 failed, 7 of 9 on each release, as bug-005 and bug-006 say (0.3.1
+    kept the behaviour behind both).
+  - Ruling 3's run, on 0.3.1 (`870bd440`), `base`, `software` and `methodology/scrum` composed from
+    `609127e` in a scratch repository outside this one: `sw-life-cycle` with two Sprints and two
+    releases to `delivery complete, end-of-life current`, nothing reported `late`, the Sprint
+    limit refusing a second active Sprint as on 0.3.0; task-057's Findings 1 and 2 hold unchanged;
+    every commit of the run replayed on 0.3.0 and 0.3.1 gave byte-identical `workflow status` and
+    `workflow next --format json`; no command wrote configuration (0.3.1's `version:` raise
+    unused). Seen on both releases: `base`'s `retrospective` › `approve` lists a closed Sprint's
+    step while the next Sprint's decision-log is `in-discussion` (bug-008); the agent's
+    `executes_as` lacks `tech-lead`, which `software`'s release phases name, and WingFoil does not
+    refuse it (a W9 item for `software`'s DNA); `retrospective.capture`'s printed command omits
+    `--tags retrospective` (known, F-032).
+  - The install steps on a project initialised by 0.3.1 (and by 0.3.0, the same): `init` writes
+    `custom/` workflows named as the packs' (`decision-log-ingest`, `sw-life-cycle`,
+    `adr-ingest`, `bug-ingest`) and its delivery workflow; the READMEs' step 3, re-including them,
+    fails `workflow list` with `E_WORKFLOW_DUPLICATE_NAME` (bug-007, triaged `approved`);
+    `software`'s and `methodology/scrum`'s READMEs fixed before W9, `base`'s in a patch.
+- 2026-10-27, step 4, `plan-migrations`: empty: 0.3.1 reads every format as 0.3.0 does.
