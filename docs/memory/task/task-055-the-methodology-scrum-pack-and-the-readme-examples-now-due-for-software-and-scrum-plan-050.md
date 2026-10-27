@@ -115,10 +115,35 @@ plan-049's `prepare` reaches `main` first (plan-050 ruling 1).
 
 ## Design
 
-<!-- Written at design: the files, the order of the commits, how each check is run. -->
+**The pack** (`packs/methodology/scrum/`), from the charter and plan-047's runs (the draft, kept
+out of the repository, is only a reference): `pack.yaml`, `fragments/roles.yaml`,
+`fragments/memory.yaml`, `memory-templates/sprint.md`, `workflows/{delivery,sprint,backlog-item}.yaml`,
+`directives/{scrum,definition-of-done}.md`, `agents/section.md`, `CHANGELOG.md`, `README.md`
+(hand-written sections; the generated ones by `npm run index`).
+
+**The examples**, fictional, `.example` addresses, `packs` naming `software@^1` and
+`methodology/scrum@^1`:
+- `tests/fixtures/examples/software/defaults/` (every parameter on its default) and
+  `tests/fixtures/examples/software/release-folders-lean/` (task-049's UI-like values, renamed);
+- `tests/fixtures/examples/scrum/defaults/` (`sprint_length` and the rest on their defaults) and
+  `tests/fixtures/examples/scrum/release-folders-lean/` (the same UI-like values, with
+  `sprint_length: "1 week"` and `sprint_path` under `docs/04_memory/sprints/`);
+- `packs/software/README.md` section 7 and `packs/methodology/scrum/README.md` section 7 describing
+  them as spec-002 §2.4 asks.
+
+**Checks**, in order: `npm run index` then `npm run index -- --check`; `npm run check:packs`;
+`npm run validate`; the overlay `software-exit` and the golden tree's `validate`; then the tests
+that take the counts, run first to see which move (`node --test` on `validate`, `check-packs`,
+`index`, `example-rules`), each moved count stated; the full `npm test` in clean clones on both
+Node.js versions.
+
+**Commits** on `task/task-055-scrum-pack`: the pack; the examples and `software`'s section 7; the
+generated sections; the moved counts; the notes. The untracked draft of plan-047 was moved out of
+the worktree before the branch (`tests/fixtures/scrum-draft/`), so no check sees it.
 
 ## Execution Notes
 
 - 2026-10-27: written under plan-050 (step 4).
 - 2026-10-27: independent review (approve after amendments), amended, re-reviewed (approve);
   submitted.
+- 2026-10-27: accepted into the backlog; Design written; `backlog → in-progress`.
