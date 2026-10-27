@@ -37,7 +37,8 @@ cut from `main` after task-058's merge (`check:runs` on every release and 0.3.1'
 2. **spec-001**, amended in place (the merge OK approves the text, as task-036): §12's example and
    `tests/fixtures/compose/tree/compat.yaml` equal to the real file (dl-010), §12's new prose adding
    no YAML block before the example (`compat.test` reads the first fence); §12's prose gaining
-   0.3.1's check (date, `--version` line, commands, result); an Execution Note saying that the
+   0.3.1's check (date, `--version` line, commands, result); an Execution Note listing the
+   changes and their approval and saying that the
    intake applies the recomputed range to the published entries by hand and `check:packs`'
    `catalog-range` verifies it, so the edit is the computed value, not a chosen one (dl-002).
    dl-009's Execution Note for 0.3.1, superseding its note on 0.3.0: publication selects 0.3.0 and
@@ -102,3 +103,4 @@ version; plan-051's recheck and W9 take them), and the root `README.md`'s line o
   for 0.3.0; the hand edit of the range explained against §12's "never written by hand"; dl-009's
   superseded note; red first stated; the branch cut after task-058's merge; the out-of-scope texts;
   the CI's expected outcome.
+- 2026-10-27: re-review: approve; its nit applied. Submitted.
