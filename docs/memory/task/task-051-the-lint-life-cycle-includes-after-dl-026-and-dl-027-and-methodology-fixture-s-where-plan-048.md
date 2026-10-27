@@ -212,3 +212,4 @@ regenerated outputs; the task's notes.
   (`validate (22.12.0)` and `validate (22.21.0)` both `success`). Privacy: no local path,
   private repository or private project in the diff. `in-progress → in-review`; waiting for the
   approver's `approve` and the merge OK.
+- 2026-10-27: approved by the approver; `--no-ff` merge into `main` (`ac12de6`); `approved → done`.
