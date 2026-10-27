@@ -95,3 +95,17 @@ its own branch `task/<id>`, from `main`, one after the other (WIP limit one).
 - 2026-10-26, step 1: branch pushed; CI run 40386927804 on `b6efdeb`, conclusion `success`
   (`validate (22.12.0)` and `validate (22.21.0)` both `success`). Privacy: no local path, private
   repository or private project in the diff. Waiting for the merge OK and the backlog acceptance.
+- 2026-10-26, step 1 closed: the bodies merged into `main` (`ce35c4e`); its own CI run was
+  cancelled by the next push, and the first completed run including it, 40391673331 on `b91b282`,
+  was `success`. The approver accepted task-051 and task-052 into the backlog.
+- 2026-10-27, step 2: task-051 built (red first, independently reviewed twice, 977 of 977 on both
+  Node.js versions in clean clones, branch CI 40406847268 `success`), approved, merged (`ac12de6`)
+  and delivered (`7371e5e`); `main`'s run on `7371e5e` was cancelled by plan-049's next push, and
+  run 40473070720 on `52db4dc`, which includes it, was `success`.
+- 2026-10-27, step 3: task-052 stays in the backlog; its build waits for F-035 and F-036, under the
+  plan that writes them or the next `tooling-change` plan after it (ruling 2).
+- 2026-10-27, step 4, the wave's account per tech-spec (dl-020): spec-001 and spec-002 are not
+  changed by this plan, so nothing to fold back; the rules this plan implements were amended in
+  place by dl-026 and dl-027 under plan-047. task-051's merge reported to plan-049's session (the
+  W8 session had ended); task-052's handover to the coordinating session. This plan goes
+  `active → done`.
