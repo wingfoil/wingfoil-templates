@@ -49,6 +49,13 @@ pack's range (see its catalog entry):
    plan.
 7. Record the adopted version of `base` in the project's own Memory.
 
+**Updating from 1.0.0.** A project that relied on 1.0.0's defaults and keeps its values states
+them (`plan_id: plan-{n}-{slug}`). A `retrospective_path` that names a directory gains its
+trailing `/`, which WingFoil needs to read it as one. A project that keeps a `plan_id` without
+`{workflow}` and `{phase}` fills a started plan's `workflow` and `phase` by hand and submits it,
+or uses the new pattern for its new plans: ids already given never change. Then it recomposes
+`base` and copies the `.wingfoil/` files as in steps 2 and 3.
+
 <!-- generated:begin composition -->
 ## Composition
 
@@ -113,10 +120,10 @@ pack's range (see its catalog entry):
 | `approver_email` | string | required | The approver's email, which WingFoil matches to the git user to grant approval |
 | `approver_name` | string | required | The name of the approver, the team member who approves |
 | `decision_log_path` | path | `docs/memory/decision-log/{id}.md` | The decision-log type's path; only letters, digits and . _ / { } - |
-| `plan_id` | pattern | `plan-{n}-{slug}` | The plan type's id pattern |
+| `plan_id` | pattern | `{workflow}-{phase}-plan` | The plan type's id pattern. WingFoil's workflow start fills a started plan's workflow and phase only from the tokens the id pattern or the path declares; a pattern without {workflow} and {phase} leaves them to be filled by hand |
 | `plan_path` | path | `docs/plans/{id}.md` | The plan type's path; only letters, digits and . _ / { } - |
 | `project_name` | string | required | The project's name: dna.yaml project.name |
-| `retrospective_path` | path | `docs/retrospectives` | Where the retrospective's friction inventory goes: a directory by default, weak evidence; a project may set a fixed file. Only letters, digits and . _ / { } -, and no {...} token, since no element is in scope |
+| `retrospective_path` | path | `docs/retrospectives/` | Where the retrospective's friction inventory goes: a directory, ending with /, by default (weak evidence: any file in it); a project may set a fixed file, with no trailing /. Only letters, digits and . _ / { } -, and no {...} token, since no element is in scope |
 | `task_path` | path | `docs/memory/task/{id}.md` | The task type's path; only letters, digits and . _ / { } - |
 <!-- generated:end parameters -->
 
@@ -127,23 +134,24 @@ pack's range (see its catalog entry):
 Fixture: tests/fixtures/examples/base/core-records/
 
 Harbour Choir, a fictional amateur choir, has no software life cycle: it keeps its decisions, its
-tasks and its plans. It composes `base` alone and sets only its name, its director as the
-approver and its assistant agent; the paths and ids keep their defaults (`docs/memory/<type>/`,
-`docs/plans/`, `plan-{n}-{slug}`). When the choir decides to rehearse on Sundays, its assistant
-runs `decision-log-ingest`: it captures a decision-log, and the director approves it.
+tasks and its plans. It composes `base` alone and sets only its name, its director as the approver
+and its assistant agent; the paths and ids keep their defaults (`docs/memory/<type>/`,
+`docs/plans/`, `{workflow}-{phase}-plan`). When the choir decides to rehearse on Sundays, its
+assistant runs `decision-log-ingest`: it captures a decision-log, and the director approves it.
 
 ### release-folders
 
 Fixture: tests/fixtures/examples/base/release-folders/
 
-Seabird Maps, a fictional mapping tool, composes `base` alone with its own path and id values: its
-tasks in a folder per release (`docs/04_memory/{release}/`), its plans in a folder per scope
-(`docs/05_plans/{scope}/`) with ids `{workflow}-{phase}-plan`, its decision-logs under
-`docs/04_memory/design/dls/` and its retrospective inventories under `docs/09_retrospectives`. Its
-records land where its tools already look, and no file moves. This example shows `base`'s
-parameters alone: a task's `release` is given when the task is added, nothing in `base` fills it.
-When the team changes who may approve, it runs `governance-evolution`: the assessment in the run's
-plan, a decision-log proposing the change, the approver's ruling, then the change applied.
+Seabird Maps, a fictional mapping tool, composes `base` alone with its own path values: its tasks in
+a folder per release (`docs/04_memory/{release}/`), its plans in a folder per scope
+(`docs/05_plans/{scope}/`), its decision-logs under `docs/04_memory/design/dls/` and its
+retrospective inventories under `docs/09_retrospectives/`. It keeps the default plan ids,
+`{workflow}-{phase}-plan`, stated in its example as its own value. Its records land where its tools
+already look, and no file moves. This example shows `base`'s parameters alone: a task's `release` is
+given when the task is added, nothing in `base` fills it. When the team changes who may approve, it
+runs `governance-evolution`: the assessment in the run's plan, a decision-log proposing the change,
+the approver's ruling, then the change applied.
 
 ### release-folders-lean
 

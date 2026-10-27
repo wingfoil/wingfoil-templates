@@ -37,15 +37,18 @@ parameters:
     description: "The plan type's path; only letters, digits and . _ / { } -"
   plan_id:
     type: pattern
-    default: "plan-{n}-{slug}"
-    description: "The plan type's id pattern"
+    default: "{workflow}-{phase}-plan"
+    description: >-
+      The plan type's id pattern. WingFoil's workflow start fills a started plan's workflow and
+      phase only from the tokens the id pattern or the path declares; a pattern without {workflow}
+      and {phase} leaves them to be filled by hand
   retrospective_path:
     type: path
-    default: "docs/retrospectives"
+    default: "docs/retrospectives/"
     description: >-
-      Where the retrospective's friction inventory goes: a directory by default, weak evidence; a
-      project may set a fixed file. Only letters, digits and . _ / { } -, and no {...} token, since
-      no element is in scope
+      Where the retrospective's friction inventory goes: a directory, ending with /, by default
+      (weak evidence: any file in it); a project may set a fixed file, with no trailing /. Only
+      letters, digits and . _ / { } -, and no {...} token, since no element is in scope
 contents:
   fragments: [dna, roles, memory]
   directives: [traceability, doc-versioning, security-secrets, claim-sources]
