@@ -63,7 +63,10 @@ Applies to every role that writes or reviews pack content under `packs/`.
 - Slots (dl-003 D4, D11). They exist only with `software`. `sw-life-cycle` and the slot defaults
   belong to `software`, `retrospective` and `governance-evolution` to `base` (dl-022).
   `sw-life-cycle` includes `inception`, `specification`, `delivery` and `end-of-life` by name; the
-  methodology's `delivery` includes `release` and `retrospective` by name, at its own cadence. A
+  methodology's `delivery` includes `release` and `retrospective` by name, at its own cadence,
+  directly or through sub-workflows the methodology ships in the same part (dl-026), and every
+  phase that includes `release` iterates over `release` with `status: [in-development,
+  releasing]`, any other `where` key being a field of the composed `release` (dl-027). A
   phase pack fills one of the slots `inception`, `specification`, `release`, `end-of-life` by
   shipping a workflow with the slot's name; this is the one case where a pack file replaces another
   pack's file. `delivery` is filled by the methodology, never by a phase pack: in its conditional

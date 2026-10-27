@@ -47,8 +47,8 @@ plan-047 (rulings 1–16, open points 1–3 as written). WingFoil UI adopts `bas
 **The configuration step, before the first task** (plan-048's handover): the `pack-authoring`
 directive's slot rule says `delivery` includes `release` and `retrospective` "by name"; it is
 brought to dl-026 and dl-027 (directly or through the methodology's own sub-workflows; the phase
-including `release` iterates with `status: [in-development, releasing]`), its `version` bumped
-(`doc-versioning`), reviewed independently, and committed on this plan's branch; `npm run -s
+including `release` iterates with `status: [in-development, releasing]`; the directive carries no
+version field to bump), reviewed independently, and committed on this plan's branch; `npm run -s
 wingfoil -- directives list` with no warning after it.
 
 **The tasks.** task-055 and task-056 run through `kanban-delivery` (`pack:
