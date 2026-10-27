@@ -39,10 +39,24 @@ compose and validate on WingFoil 0.3.0 with no warning. plan-050 ruling 2: a new
 
 ## Design
 
-<!-- Written at design. -->
+**Red first** (dl-018), on branch `task/task-056-scrum-exit`:
+1. `tests/ci-workflow.test.ts`: the branch-only commands gain `npm run validate -- --overlay
+   tests/fixtures/scrum-exit`; red on `main`'s `ci.yml` (no such step).
+2. `tests/validate.test.ts`: a case as task-049's, validating the overlay `tests/fixtures/scrum-exit`
+   and pinning the four `composed twice` lines, `compositions: 11` and `matrix: self-test, 11 runs,
+   0 failed, tolerance applied: none`; red with no overlay directory.
+Then the compositions (`tests/fixtures/scrum-exit/compositions/{defaults,flat-releases,
+release-folders,release-folders-lean}/example.yaml`, copied from `software-exit`'s with
+`methodology/scrum@^1`), then the CI step after `software-exit`'s.
+
+**Checks:** the two tests green; `npm run validate -- --overlay tests/fixtures/scrum-exit`; the full
+suite in clean clones on both Node.js versions; the branch CI, the new step included.
+
+**Commits:** the red tests; the compositions and the CI step; the notes.
 
 ## Execution Notes
 
 - 2026-10-27: written under plan-050 (step 4).
 - 2026-10-27: independent review (approve after amendments), amended, re-reviewed (approve);
   submitted.
+- 2026-10-27: Design written; `backlog → in-progress`.
