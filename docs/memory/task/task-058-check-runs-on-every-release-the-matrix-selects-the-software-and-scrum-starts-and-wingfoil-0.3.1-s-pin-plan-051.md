@@ -165,3 +165,8 @@ network for 0.3.1's install into this repository's `.cache/wingfoil-matrix`.
   `workflow list` and `check:runs` (13 runs, 0 failed: `compat.yaml` lists 0.3.0 alone until
   task-059), each exit 0; `npm audit` 0 in the root and every matrix folder (the CI's step).
   Branch CI run 40567676606 on `6c1bc23`: `success`. `compat.yaml` and `packs/` unchanged.
+- 2026-10-27: approved by the approver (`in-review → approved`, `ac45039`) with the merge OK;
+  merged into `main` with `--no-ff` (`00c0eaa`): the tests of `runs`, `ci-workflow` and `digest`
+  (75 of 75), `check:runs` (13 runs, 0 failed) and `check:pins` on the merged tree. `main`'s CI on
+  `00c0eaa` was cancelled by the next push (task-059's Design); run 40571686917 on `cdb81f9`,
+  which includes it: `success`. Branch deleted.
