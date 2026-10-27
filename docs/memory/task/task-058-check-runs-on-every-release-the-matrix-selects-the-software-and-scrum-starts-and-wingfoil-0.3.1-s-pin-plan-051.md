@@ -132,3 +132,19 @@ network for 0.3.1's install into this repository's `.cache/wingfoil-matrix`.
   task-059; a test of the selection and a guard of the new scenario files; the texts stated by
   what they say; `install` per release; the red run behavioural, not a compile error.
 - 2026-10-27: re-review: approve; its nit applied. Submitted.
+- 2026-10-27, red first (dl-018 R1), at `4ee66fe` (the `Compose` type changed, the loop still on
+  the first release, `selectedReleases` returning the newest only): `node --test
+  dist/tests/runs.test.js`: 31 tests, 24 pass, 7 fail, for behaviour (the five release tests, the
+  two scenario guards). Green at `2dc634f`: runs, ci-workflow and digest tests 75 of 75. The
+  selection test runs on a copy of the golden tree whose `compat.yaml` holds three releases
+  (7.0.0, 7.1.0, 7.2.0): the golden `base` requires no capability, so the copy needs no pack of
+  its own (the Design's temporary tree with a `workflow-engine` pack, simplified).
+- 2026-10-27, the pin: `src/matrix/wingfoil-0.3.1/` (`npm install --package-lock-only
+  --ignore-scripts`), `npm audit` 0 vulnerabilities there, `npm run check:pins` exit 0.
+- 2026-10-27, the real two-release run (Acceptance 7): on a `git archive` of `2dc634f` whose
+  `compat.yaml` appends 0.3.1 (`format_key: true`, `reads` at format 1, `capabilities:
+  [workflow-engine]`), `npm run check:runs -- --tree <copy> <copy>/tests/fixtures/runs/{base,
+  software,scrum}.yaml`: exit 0, `runs: 26 runs, 0 failed` (13 on 0.3.0, 13 on 0.3.1). 0.3.1
+  installed from the new lockfile into `.cache/wingfoil-matrix`: `--version` prints
+  `0.3.1 (870bd4406f3b9bba5ecde7a5f8198b80c2a98583)`. On the tree itself (0.3.0 alone):
+  `runs: 13 runs, 0 failed`.
