@@ -811,6 +811,11 @@ releases:
     reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
     capabilities: [workflow-engine]
     notes: "Accepts the format: key. workflow-engine recorded because the CHANGELOG names workflow start, end, next and finalize (dl-021 R4); the vocabulary is provisional, WingFoil's to name (dl-177)."
+  - wingfoil: 0.3.1
+    format_key: true
+    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
+    capabilities: [workflow-engine]
+    notes: "Accepts the format: key; format 1; no new capability (plan-051 ruling 2, dl-021 R4). A fresh 0.3.0 install resolving zod 4.6 showed zod's bare message on a refused cadence; 0.3.1 names the key again (bug-415)."
 ```
 
 - **`kinds`** are the seven dl-149 kinds a composition involves, all of them required. `workflows`
