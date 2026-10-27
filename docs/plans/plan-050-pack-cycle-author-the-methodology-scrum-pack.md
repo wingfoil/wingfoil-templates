@@ -153,3 +153,7 @@ own branch.
 - 2026-10-27: task-055, task-056 and task-057 written, reviewed (approve after amendments; one
   blocking count: the overlay's runs move from 7 to 11), amended, re-reviewed (approve) and
   submitted (`pending`), on this branch with the plan.
+- 2026-10-27, step 3: branch pushed; CI run 40477316767 on `7f0d6bf`, conclusion `success`
+  (`validate (22.12.0)` and `validate (22.21.0)` both `success`; the run on `f29ed7f` was
+  cancelled by the next push). Privacy: no local path, private repository or private project in
+  the diff. Waiting for the merge OK and the three tasks' backlog acceptance.
