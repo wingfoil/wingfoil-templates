@@ -100,14 +100,14 @@ exit codes in condensed form, and the answers Acceptance 2 asks for.
     (`sprint-planning@sprint:sprint-002` ready). **The limit:** `memory submit sprint-002` while
     `sprint-001` was `active` exited 1, `WIP limit reached for 'active' on type 'sprint' (limit 1):
     held by sprint-001`. `close`: `memory submit sprint-001` → `done`.
-  - Sprint 2: `sprint-002` → `active`; item B to `done`; then `plan-release`, R1's
-    `approve-release` and `sprint-review` ready together. **Finding 2:** R1 resumed at
-    `approve-release`: its `pre-release-checks` record and its `enter-releasing` move, made in
-    Sprint 1, were not asked again, WingFoil keying a step's record by the release, not by the Sprint; the
-    charter and the README say they are recorded again. R2 (`rel-1.1.0`) added at `plan-release`
-    before R1 completed (once R1 is `released` and no other release is open, the `release` phase
-    completes and would close `plan-release`; a release can still be added outside the step), both released through every
-    phase of `release-submit` and `release-publishing` (`approve-release` of R1 in Sprint 2),
+- Sprint 2: `sprint-002` → `active`; item B to `done`; then `plan-release`, R1's `approve-release`
+    and `sprint-review` ready together. **Finding 2:** R1 resumed at `approve-release`: its
+    `pre-release-checks` record and its `enter-releasing` move, made in Sprint 1, were not asked
+    again, WingFoil keying a step's record by the release, not by the Sprint; the charter and the
+    README say they are recorded again. R2 (`rel-1.1.0`) added at `plan-release` before R1 completed
+    (once R1 is `released` and no other release is open, the `release` phase completes and would
+    close `plan-release`; a release can still be added outside the step), both released through
+    every phase of `release-submit` and `release-publishing` (`approve-release` of R1 in Sprint 2),
     each to `released` by `wf(release): finalize <id> [releasing → released]`.
   - Sprint 2's review, retrospective (`explore` complete at once on the directory, the known
     weak evidence of the charter's open point 2), its decision-log approved, `close`: `done`.
