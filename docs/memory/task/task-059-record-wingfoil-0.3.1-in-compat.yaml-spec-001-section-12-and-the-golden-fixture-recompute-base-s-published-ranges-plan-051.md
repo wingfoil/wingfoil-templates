@@ -146,3 +146,6 @@ with no warning (`format_key: true`).
   golden step 26 (0.2.2 tolerated and 0.3.1), `validate:publication` 14 (0.3.0 and 0.3.1),
   `check:runs` 26, 0 failed in each, `check:packs` 0 problems, each exit 0. The texts: spec-001
   §12's prose and Execution Note, dl-009's Execution Note. CI unchanged (Acceptance 5).
+- 2026-10-27: independent review of the build: approve, nothing blocking; its two wording nits
+  applied to spec-001 (0.3.1's additions need no new capability; the range "copied by hand").
+  This commit changes only `docs/memory`, after the clean clones' head `64c2ddc`.

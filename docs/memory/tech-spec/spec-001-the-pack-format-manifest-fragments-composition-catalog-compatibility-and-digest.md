@@ -851,7 +851,8 @@ releases:
   `directives list` run with `--format json` exit 0 with no warning (checked on 2026-10-27,
   task-059, with `0.3.1 (870bd4406f3b9bba5ecde7a5f8198b80c2a98583)`). Its `format_key` is
   `true`, it reads format 1 for every kind, and it provides `workflow-engine`; its CHANGELOG
-  names no new format and no feature behind a capability of the vocabulary (dl-021 R4).
+  names no new format, and its additions (`workflow adopt`, `workflow rekey`, manual checks) need
+  no new capability (plan-051 ruling 2, dl-021 R4).
 
   `wingfoil-release-intake` appends one entry per WingFoil release (dl-002).
 
@@ -1280,5 +1281,5 @@ check the rest, and the composer refuses what they reject.
   example lists WingFoil 0.3.1 (`format_key: true`, format 1 for every kind, `workflow-engine`),
   equal to `compat.yaml` and to the golden fixture's (dl-010); §12's prose records 0.3.1's check.
   The intake applied the recomputed range of the published versions of `base` (1.0.0, 2.0.0:
-  `>=0.3.0 <=0.3.1`) to `catalog.yaml` by hand, and `check:packs`' `catalog-range` verifies it:
+  `>=0.3.0 <=0.3.1`) to `catalog.yaml`, copied by hand, and `check:packs`' `catalog-range` verifies it:
   the value is the computed one, not a chosen one (§12, dl-002); §11 allows the field's edit.
