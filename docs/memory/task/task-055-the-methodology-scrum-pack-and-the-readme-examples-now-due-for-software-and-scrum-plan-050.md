@@ -167,3 +167,9 @@ the worktree before the branch (`tests/fixtures/scrum-draft/`), so no check sees
   the floor 22.12.0; branch CI run 40486043059 on `9847e02`, conclusion `success`. Waiting for
   plan-049's `prepare` (`base` 2.0.0) on `main`: then `main` merged into the branch and `scrum`
   moved to `base@^2` (plan-050 ruling 1), the suite and the CI rerun, before `in-review`.
+- 2026-10-27: plan-049's `prepare` reached `main` (`274af0c`): `main` merged into the branch
+  (`55887ab`), and `scrum` moved to `base@^2` (`2d13c49`: `pack.yaml`, the README's Requires line
+  by `npm run index`, the charter's `requires`, Purpose, Compatibility and an Execution Note).
+  Checks at `2d13c49`: `validate` 7 runs, the overlay `software-exit` 11, the golden tree 26, the
+  publication run 7, all 0 failed; `npm run check:runs` 9 runs, 0 failed; the full suite in clean
+  clones 1002 of 1002 on Node.js 22.21.0 and on the floor 22.12.0.
