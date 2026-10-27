@@ -2,7 +2,7 @@
 id: bug-007-the-readmes-install-steps-keep-the-custom-workflows-wingfoil-s-init-writes-under-the-packs-workflow-names-so-workflow-list-fails-with-e-workflow-duplicate-name
 type: bug
 title: "The READMEs' install steps keep the custom/ workflows WingFoil's init writes under the packs' workflow names, so workflow list fails with E_WORKFLOW_DUPLICATE_NAME"
-status: draft
+status: pending
 severity: "major"        # critical | major | minor
 pack: "pack-foundation-base"
 tags: ["packs","base","software","scrum","readme"]
