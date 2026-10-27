@@ -47,10 +47,26 @@ pack as written on `main`.
 
 ## Design
 
-<!-- Written at design. -->
+**The scratch repository**, in the session's scratchpad, never committed: `git init`; `base`,
+`software` and `methodology/scrum` composed from `main` at this branch's base commit with `npm run
+compose -- --tree <worktree> --out <dir>` and fictional values (`.example` addresses, an approver
+member and an agent); `.wingfoil/` copied and committed; WingFoil 0.3.0 from the matrix's cache
+(`.cache/wingfoil-matrix/0.3.0`, the lockfile's install). Each command is run by a guarded script
+(it stops if the scratch directory is missing), its output and exit code kept.
+
+**The run**, step by step as Acceptance 2 lists it, each state move by `memory submit`, `memory
+approve`, `memory park` or the commit form `workflow next` prints for an `element.set_state`, each
+record by `workflow finalize --step <key>`; `workflow next` and `workflow status` captured at each
+Sprint's boundaries and after each release move.
+
+**The record**: the Execution Notes carry the composed commit, the commands with their output and
+exit codes in condensed form, and the answers Acceptance 2 asks for.
+
+**Commits** on `task/task-057-scrum-run`: the notes only.
 
 ## Execution Notes
 
 - 2026-10-27: written under plan-050 (step 4).
 - 2026-10-27: independent review (approve after amendments), amended, re-reviewed (approve);
   submitted.
+- 2026-10-27: Design written; `backlog → in-progress`.
