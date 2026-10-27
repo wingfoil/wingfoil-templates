@@ -2,7 +2,7 @@
 id: task-054-base-plan-id-defaults-to-workflow-phase-plan-retrospective-path-to-docs-retrospectives-apply-produces-wingfoil-bug-005-bug-006-plan-049
 type: task
 title: "base: plan_id defaults to {workflow}-{phase}-plan, retrospective_path to docs/retrospectives/, apply produces .wingfoil/ (bug-005, bug-006, plan-049)"
-status: in-progress
+status: approved
 pack: "pack-foundation-base"
 depends_on: []
 tags: ["packs","base"]
@@ -135,3 +135,31 @@ check is task-053's script, run from its branch with `--tree` at this branch's c
   Acceptance (the inventory's file committed inside the path, not at it, or `explore` reads as
   complete on 1.0.0; the expected red listed per composition), with the non-blocking ones applied
   to both bodies. Re-review: approve; its three wording points applied.
+- 2026-10-26, build on `task/task-054-base-fixes`: `16760ec` (the five files of Acceptance 4,
+  one commit) and `5a39fe6` (the notes on the charter and on dl-015). Two deviations from the
+  Design's texts, both kept: `pack.yaml`'s descriptions carry no backticks, as no other
+  description of the manifest does; the README says "which WingFoil needs", without "0.3.0",
+  so that it names no version (Acceptance 3).
+- 2026-10-26, interim evidence (Design, until task-053's script exists): plan-049's reproductions
+  rerun by hand on the branch's tree with WingFoil 0.3.0 (`cc31d7a8`), on `core-records`,
+  `release-folders` and `release-folders-lean`: the three `workflow start` exit 0, plans `active`
+  (`<main>-1-plan`, `workflow` the main's name, `phase` `1`); a file committed inside
+  `retrospective_path` makes `workflow next` name `retrospective.additional-points`;
+  `governance-evolution` (assess finalized, a decision-log added, submitted and approved by the
+  approver's email) is complete and `workflow end` exits 0. Also on the working tree:
+  `npm run validate` (3 runs, 0 failed), the overlay `software-exit` (7 runs, 0 failed), the
+  golden step, `check:packs`, `index -- --check` and `lint`, each exit 0.
+- 2026-10-26: independent review of the build: approve; its three non-blocking findings applied
+  (the two deviations recorded above; the interim evidence recorded; the charter's Adoption note
+  says what to write in `workflow` and `phase`).
+- 2026-10-26, checks at `0f8c9b0` (Acceptance 6): from clean clones on Node.js 22.21.0 and
+  22.12.0, `npm ci`, `npm test` (967 of 967), `lint`, `check:pins`, `check:schemas`,
+  `check:packs`, `index -- --check`, `validate` (3 runs, 0 failed), the overlay `software-exit`
+  (7 runs, 0 failed), the golden step (26 runs, 0 failed, tolerance 0.2.2) and `workflow list`,
+  each exit 0. Branch CI run 40392613846 on `0f8c9b0`: `success`.
+- 2026-10-26, task-053's script (Acceptance 6 and 8): `npm run check:runs -- --tree <this
+  branch's tree at 0f8c9b0> <task-053's tests/fixtures/runs/base.yaml>`, run from
+  `task/task-053-workflow-runs` at `f143e8a` with WingFoil 0.3.0: exit 0, 9 runs, 0 failed
+  (every `main` of `base` started on the three README examples, `explore` complete,
+  `governance-evolution` ended). The same command on `main` (1.0.0's content): 7 of 9 fail, as
+  bug-005 and bug-006 say. Later commits on this branch change only `docs/memory`.

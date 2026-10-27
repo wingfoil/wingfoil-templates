@@ -139,10 +139,12 @@ describe('output: assets (spec-001 §7.6)', () => {
   });
 
   it('fails on a composition without a dna, roles or memory fragment (derived)', () => {
+    // base alone: with software, whose memory fragment declares release, there is always one
+    // (task-051).
     const files = { ...BASE.extraFiles };
     delete files['fragments/memory.yaml'];
     const base = { ...BASE, fragments: ['dna', 'roles'], extraFiles: files };
-    fails([base, SOFTWARE_COMPOSABLE, KANBAN], ['methodology/kanban'], /ships a memory fragment/);
+    fails([base], ['base'], /ships a memory fragment/);
   });
 });
 

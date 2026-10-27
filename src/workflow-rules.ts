@@ -34,6 +34,10 @@ type Doc = Record<string, unknown>;
 const BARE_NAME = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 /** Included by every methodology's delivery, besides the slots it includes (spec-001 §9). */
 const DELIVERY_ALSO_INCLUDES = ['retrospective'];
+/** The states a phase including `release` iterates over (dl-027 D1). */
+const RELEASE_STATUS = ['in-development', 'releasing'];
+/** Frontmatter keys every Memory element carries, whatever its template declares. */
+const ELEMENT_KEYS = ['id', 'type', 'title', 'status', 'tags'];
 
 function isDoc(value: unknown): value is Doc {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -162,6 +166,7 @@ export function workflowProblems(
     });
     problems.push(...lifeCycleProblems(catalog, pack, file, includes));
   }
+  problems.push(...deliveryProblems(catalog, pack, packs, files));
   const roles = own.find((file) => file.path === 'fragments/roles.yaml');
   if (roles?.yaml !== undefined && isDoc(roles.yaml.data)) {
     const data = roles.yaml.data;
@@ -189,20 +194,113 @@ export function workflowProblems(
   return problems;
 }
 
-/** §9: software's sw-life-cycle includes its slots; a methodology's delivery includes its own. */
+/** §9: software's sw-life-cycle includes its slots (a methodology's delivery: deliveryProblems). */
 function lifeCycleProblems(catalog: Catalog | undefined, pack: RulePack, file: RuleFile,
   includes: string[]): Problem[] {
   if (catalog === undefined) return [];
   const stem = file.path.slice('workflows/'.length, -'.yaml'.length);
-  let expected: string[] = [];
-  if (pack.id === softwarePack(catalog) && stem === 'sw-life-cycle') {
-    expected = catalog.slots.filter((slot) => slot.includedBy === 'sw-life-cycle')
-      .map((slot) => slot.name);
-  } else if (pack.manifest.axis === 'methodology' && stem === 'delivery') {
-    expected = [...catalog.slots.filter((slot) => slot.includedBy === 'delivery')
-      .map((slot) => slot.name), ...DELIVERY_ALSO_INCLUDES];
-  }
+  if (pack.id !== softwarePack(catalog) || stem !== 'sw-life-cycle') return [];
+  const expected = catalog.slots.filter((slot) => slot.includedBy === 'sw-life-cycle')
+    .map((slot) => slot.name);
   return expected.filter((name) => !includes.includes(name)).map((name) =>
     problemAt(file, '/phases', 'life-cycle-includes', `${pack.id}: ${file.path} must include `
       + `${name} by name (spec-001 §9)`));
+}
+
+/** The frontmatter fields of the composed `release` type: software's and the pack's own. */
+function releaseFields(softwareId: string | undefined, pack: RulePack,
+  files: Map<string, RuleFile[]>): Set<string> {
+  const fields = new Set(ELEMENT_KEYS);
+  for (const id of [softwareId, pack.id]) {
+    if (id === undefined) continue;
+    const own = files.get(id) ?? [];
+    const types = dataOf(own, 'fragments/memory.yaml')['types'];
+    const release = isDoc(types) ? types['release'] : undefined;
+    const template = isDoc(release) ? release['template'] : undefined;
+    const frontmatter = isDoc(template) ? template['frontmatter'] : undefined;
+    for (const field of list(isDoc(frontmatter) ? frontmatter['required'] : undefined)) {
+      if (typeof field === 'string') fields.add(field);
+    }
+    const templateFile = isDoc(template) ? template['file'] : undefined;
+    const name = typeof templateFile === 'string'
+      ? templateFile.slice(templateFile.lastIndexOf('/') + 1) : 'release.md';
+    for (const key of Object.keys(dataOf(own, `memory-templates/${name}`))) fields.add(key);
+  }
+  return fields;
+}
+
+/**
+ * A methodology's delivery (spec-001 §9, dl-026 D1, D3; dl-027 D1, D3): release and retrospective
+ * reached from delivery, directly or through the pack's own workflows, each in delivery's part;
+ * every phase of them including release iterates over release with dl-027's status.
+ */
+function deliveryProblems(catalog: Catalog | undefined, pack: RulePack,
+  packs: Map<string, RulePack>, files: Map<string, RuleFile[]>): Problem[] {
+  if (catalog === undefined || pack.manifest.axis !== 'methodology') return [];
+  const own = files.get(pack.id) ?? [];
+  const workflows = new Map<string, RuleFile>();
+  for (const file of own) {
+    if (!file.path.startsWith('workflows/') || !isDoc(file.yaml?.data)) continue;
+    workflows.set(file.path.slice('workflows/'.length, -'.yaml'.length), file);
+  }
+  const delivery = workflows.get('delivery');
+  if (delivery === undefined) return [];
+  const conditional = new Set(conditionalContents(pack.manifest).workflows ?? []);
+  const always = new Set(pack.manifest.contents.workflows ?? []);
+  const deliveryInPart = conditional.has('delivery');
+  const softwareId = softwarePack(catalog);
+  const fields = releaseFields(packs.has(softwareId) ? softwareId : undefined, pack, files);
+  const label = `${pack.id}: workflows/delivery.yaml`;
+  const problems: Problem[] = [];
+  const reached = new Set<string>();
+  const visited = new Set<string>(['delivery']);
+  const queue = ['delivery'];
+  while (queue.length > 0) {
+    const name = queue.shift() as string;
+    const file = workflows.get(name) as RuleFile;
+    const data = file.yaml?.data as Doc;
+    list(data['phases']).forEach((phase, index) => {
+      if (!isDoc(phase) || typeof phase['include'] !== 'string') return;
+      const include = phase['include'];
+      reached.add(include);
+      if (include === 'release') {
+        problems.push(...releasePhaseProblems(file, `/phases/${index}`, phase, fields, pack.id));
+      }
+      if (!workflows.has(include) || visited.has(include)) return;
+      visited.add(include);
+      // The other mismatch, a contents workflow including a conditional one, is isolation's.
+      if (deliveryInPart && always.has(include)) {
+        problems.push(problemAt(file, `/phases/${index}/include`, 'life-cycle-includes',
+          `${pack.id}: workflows/${name}.yaml: phase ${String(phase['name'])} includes ${include}, `
+          + 'which the pack ships in another part than delivery; every workflow delivery reaches '
+          + 'is shipped in delivery\'s part (spec-001 §9, §18, dl-026 D1)'));
+      }
+      queue.push(include);
+    });
+  }
+  const expected = [...catalog.slots.filter((slot) => slot.includedBy === 'delivery')
+    .map((slot) => slot.name), ...DELIVERY_ALSO_INCLUDES];
+  for (const name of expected.filter((candidate) => !reached.has(candidate))) {
+    problems.push(problemAt(delivery, '/phases', 'life-cycle-includes', `${label} must include `
+      + `${name}, directly or through workflows the pack ships (spec-001 §9, dl-026 D1)`));
+  }
+  return problems;
+}
+
+/** dl-027 D1, D3: a phase including release iterates over release, status as given, known keys. */
+function releasePhaseProblems(file: RuleFile, pointer: string, phase: Doc, fields: Set<string>,
+  packId: string): Problem[] {
+  const at = `${packId}: ${file.path}: phase ${String(phase['name'])}`;
+  const where = phase['where'];
+  const status = isDoc(where) ? list(where['status']).map(String) : [];
+  const exact = status.length === RELEASE_STATUS.length
+    && RELEASE_STATUS.every((state) => status.includes(state));
+  if (phase['iterate_over'] !== 'release' || !exact) {
+    return [problemAt(file, pointer, 'life-cycle-includes', `${at} includes release, so it `
+      + 'iterates over release with where: { status: [in-development, releasing] } (spec-001 §9, '
+      + 'dl-027 D1)')];
+  }
+  return Object.keys(where as Doc).filter((key) => key !== 'status' && !fields.has(key))
+    .map((key) => problemAt(file, `${pointer}/where/${key}`, 'life-cycle-includes', `${at}: where `
+      + `key ${key} is no frontmatter field of the composed release type (dl-027 D1, D3)`));
 }

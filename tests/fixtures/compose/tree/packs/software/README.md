@@ -24,7 +24,7 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 - **Formats:** `memory` 1, `memory-template` 1, `workflow` 1
 - **Requires capabilities:** none
 - **Declares:**
-  - Memory types: `adr`
+  - Memory types: `adr`, `release`
   - roles: none
   - states: none
   - workflows: `end-of-life`, `inception`, `release`, `specification`, `sw-life-cycle`
@@ -52,6 +52,7 @@ See the [Install block](https://github.com/wingfoil/wingfoil-templates/blob/main
 ### Memory types
 
 - `adr`: —
+- `release`: —
 
 ### Directives
 
@@ -64,6 +65,7 @@ None.
 ### Memory templates
 
 - `adr`
+- `release`
 <!-- generated:end what-it-adds -->
 
 <!-- generated:begin parameters -->
