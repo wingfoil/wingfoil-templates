@@ -150,8 +150,8 @@ plan takes task-058 and task-059.
 - 2026-10-27: independent review: approve after amendments, three findings to amend before
   `active`, none changing a ruling's aim: task-059's tests listed expectation by expectation, as
   task-036 did; the catalog's published ranges edited by hand, guarded by `catalog-range`; 0.3.1's
-  pin moved into task-058 so that it proves a real two-release run (the approver's confirmation
-  asked in chat). Applied with the non-blocking ones: spec-001's and dl-009's texts; `recheck`'s
+  pin moved into task-058 so that it proves a real two-release run (confirmed by the approver
+  in chat, 2026-10-27). Applied with the non-blocking ones: spec-001's and dl-009's texts; `recheck`'s
   wording; the recheck's targets (`base@1.0.0` on a scratch copy of its tag); the install steps on
   a project initialised by 0.3.1; the outcome to UI's session and the charter's note; `npm audit`;
   the `compat` tag; what 0.3.1 changes that this plan does not act on.
