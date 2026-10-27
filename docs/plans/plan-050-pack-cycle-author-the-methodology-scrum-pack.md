@@ -157,3 +157,24 @@ own branch.
   (`validate (22.12.0)` and `validate (22.21.0)` both `success`; the run on `f29ed7f` was
   cancelled by the next push). Privacy: no local path, private repository or private project in
   the diff. Waiting for the merge OK and the three tasks' backlog acceptance.
+- 2026-10-27, step 3 closed: the plan, the configuration step and the three task bodies merged into
+  `main` (`6102e7b`, CI run 40479901293 `success`); the approver accepted the three tasks into the
+  backlog.
+- 2026-10-27, step 4:
+  - task-055 (the pack, the README examples of `software` and `scrum`, the moved counts): built,
+    reviewed, moved to `base@^2` after plan-049's `prepare` (ruling 1: `base` 2.0.0 reached `main`
+    first), approved, merged (`a048d0d`), delivered (`2987234`); `main`'s CI run 40502555770
+    `success`.
+  - task-056 (the exit criterion, `tests/fixtures/scrum-exit/`, its CI step): built red first,
+    reviewed, approved, merged after `base@2.0.0`'s tag as plan-049's session asked (`990b29c`),
+    delivered (`4159ca9`); its own run cancelled by plan-049's next push, run 40528613603 on
+    `e428cb0`, which includes it, `success`.
+  - task-057 (the run on WingFoil 0.3.0): two Sprints and two releases, one spanning both, no
+    `late` element once an open release moves before the Sprint Review; two text findings went to
+    the approver (dl-019) and were fixed in the task as ruled; approved, merged (`61d1980`),
+    delivered (`40e4bd3`); `main`'s CI run 40544763784 `success`.
+- 2026-10-27, step 5, the account per tech-spec (dl-020), reported to W9's plan: none amended by
+  this plan (spec-001 and spec-002 unchanged; the charter amended in place by task-055's
+  `base@^2` move and task-057's text fixes, each with its Execution Note). The charter's notes
+  record the pack written and the exit criterion's results. The merges reported to plan-049's
+  session, UI's session and the coordinating session. This plan goes `active → done`.

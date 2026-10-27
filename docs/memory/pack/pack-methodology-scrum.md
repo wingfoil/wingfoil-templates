@@ -277,3 +277,11 @@ For the approver's acceptance:
   reported `late` meanwhile); a spanning release resumes where it stopped (its steps are not
   recorded again); a carried release that completes closes the Sprint's `plan-release`. No type,
   state, workflow or phase changes. Approved by task-057's merge OK.
+- 2026-10-27, plan-050 (`author`) done: `packs/methodology/scrum` written (task-055) on
+  `base@^2` and `software@^1`, with the README examples of `software` and `scrum` that CB-2 makes
+  due; `base`'s README and examples unchanged, its examples composing `base` alone, a departure
+  from the Acceptance's "`base`'s README then changes". Exit criterion: the four governed
+  repositories' parameter sets compose and validate on WingFoil 0.3.0 with `methodology/scrum`,
+  `tests/fixtures/scrum-exit` (task-056: 11 runs, 0 failed, tolerance none); the run of
+  `sw-life-cycle` on 0.3.0 through two Sprints and two releases, recorded in task-057 (composed
+  from `main` at `2987234`). Publication: W9, with `software`.
