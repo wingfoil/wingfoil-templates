@@ -43,8 +43,8 @@ compose and validate on WingFoil 0.3.0 with no warning. plan-050 ruling 2: a new
 1. `tests/ci-workflow.test.ts`: the branch-only commands gain `npm run validate -- --overlay
    tests/fixtures/scrum-exit`; red on `main`'s `ci.yml` (no such step).
 2. `tests/validate.test.ts`: a case as task-049's, validating the overlay
-   `tests/fixtures/scrum-exit` and pinning the four `composed twice` lines, `compositions: 11` and `matrix: self-test, 11 runs,
-   0 failed, tolerance applied: none`; red with no overlay directory.
+   `tests/fixtures/scrum-exit` and pinning the four `composed twice` lines, `compositions: 11` and
+   `matrix: self-test, 11 runs, 0 failed, tolerance applied: none`; red with no overlay directory.
 Then the compositions (`tests/fixtures/scrum-exit/compositions/{defaults,flat-releases,
 release-folders,release-folders-lean}/example.yaml`, copied from `software-exit`'s with
 `methodology/scrum@^1`), then the CI step after `software-exit`'s.
