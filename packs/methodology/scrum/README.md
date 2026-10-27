@@ -49,7 +49,7 @@ and `software`, with a WingFoil release in the pack's range (see its catalog ent
 <!-- generated:begin composition -->
 ## Composition
 
-- **Requires:** `base@^1`, `software@^1`
+- **Requires:** `base@^2`, `software@^1`
 - **Conflicts:** none
 - **Formats:** `directive` 1, `memory` 1, `memory-template` 1, `roles` 1, `workflow` 1
 - **Requires capabilities:** `workflow-engine`

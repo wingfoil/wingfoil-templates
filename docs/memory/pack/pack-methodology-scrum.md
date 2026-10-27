@@ -7,7 +7,7 @@ axis: "methodology"
 name: "scrum"
 slot: ""
 pack_path: "packs/methodology/scrum"
-requires: ["base@^1", "software@^1"]
+requires: ["base@^2", "software@^1"]
 conflicts: []
 ---
 
@@ -20,7 +20,7 @@ Sprint Planning, Sprint Backlog, Sprint Review and Retrospective, and with relea
 decided by the Product Owner and decoupled from the Sprint boundary, as the Guide allows. It
 prescribes nothing the Guide leaves open: no user stories, story points, burn-downs or estimation
 technique. Its catalog pack id is `methodology/scrum`, its directory `packs/methodology/scrum`. It
-requires `base@^1` and `software@^1`, so it ships `delivery` in `contents` and carries no
+requires `base@^2` and `software@^1`, so it ships `delivery` in `contents` and carries no
 conditional part (spec-001 §6.5); a composition with `software` holds exactly one methodology, so
 it excludes the others by cardinality, with no `conflicts`. plan-047 holds the approver's rulings
 this charter applies (1–16), and dl-026 and dl-027 the amendments of `software`'s `delivery`
@@ -212,7 +212,7 @@ not adopt `scrum`.
 ## Compatibility
 
 - `formats`: `roles: 1`, `memory: 1`, `workflow: 1`, `directive: 1`, `memory-template: 1`.
-  `requires: [base@^1, software@^1]`. `requires_capabilities: [workflow-engine]`, as `base` and
+  `requires: [base@^2, software@^1]`. `requires_capabilities: [workflow-engine]`, as `base` and
   `software` (element-bound includes, `element.set_state`, `limits`).
 - The oldest release of its matrix is WingFoil 0.3.0; no workflow uses a key newer than it. The
   range is computed, never written here. A `path` parameter used in a `produces` takes only
@@ -268,3 +268,6 @@ For the approver's acceptance:
   rule of the `scrum` directive too, since the order alone does not stop a release added outside
   the step, a spanning one or a hotfix from closing `development`; ruling 15's wording; the exit
   run covers the spanning release. Submitted.
+- 2026-10-27: `requires` moved from `base@^1` to `base@^2` (frontmatter, Purpose, Compatibility),
+  as plan-050 ruling 1 sets: plan-049's `prepare` of `base` 2.0.0 (the fixes of bug-005 and
+  bug-006, a major) reached `main` before `methodology/scrum`, so task-055 makes the move.
