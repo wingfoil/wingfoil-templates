@@ -34,8 +34,10 @@ plan-049's `prepare` reaches `main` first (plan-050 ruling 1).
      `amendable: true`, `template.file: memory/templates/built-in/sprint.md`,
      `template.frontmatter.required: [title, goal]`, `states: { sequence: [draft, planned, active,
      done], limits: { active: 1 } }`, no gate, no `waiting`;
-   - `task` tightened: `required: [sprint]`, `not_applicable_allowed: [sprint]`;
-   - `release` tightened: `required: [sprint]`;
+   - `task` tightened: `template.frontmatter.required: [sprint]`,
+     `template.frontmatter.not_applicable_allowed: [sprint]`;
+   - `release` tightened: `template.frontmatter.required: [sprint]` (the path task-051's rule
+     reads for the `where` key `sprint`);
    - nothing else (spec-001 §7.5).
 3. **`memory-templates/sprint.md`**: `type: sprint`, `format: 1`, and the fields `id`, `title`,
    `goal` (WingFoil 0.3.0 warns on a `{sprint.id}` token unless the template declares `id`); body
@@ -51,7 +53,8 @@ plan-049's `prepare` reaches `main` first (plan-050 ruling 1).
    refinement; one Sprint at a time; releases decided by the Product Owner, never gated by the
    review, none approved or published before the Sprint Backlog is done or moved, plan-047 ruling
    16; unfinished items at `close`); `definition-of-done` (generic, overridden by a project in
-   `custom/`). No story points, user stories or burn-downs.
+   `custom/`). No story points, user stories or burn-downs. Neither id equals a WingFoil 0.3.0
+   built-in directive id, checked by `directives list` with no warning (`pack-compatibility`).
 6. **The workflows**, as the charter's table states them, each `format: 1`, no key newer than
    WingFoil 0.3.0, every phase with its role or an include:
    - `delivery` (`kind: sub`, no `element`): `plan-sprint` (product-owner;
@@ -74,7 +77,10 @@ plan-049's `prepare` reaches `main` first (plan-050 ruling 1).
 
    Each phase's `description` says what the role does (the charter's wording), including what a
    step cannot bind (`goal`, a task's or a release's `sprint`, a release's `version` and
-   `release-line` are written by editing the draft or with `--set`, F-034).
+   `release-line` are written by editing the draft or with `--set`, F-034); `close`'s says that an
+   unfinished item has its `sprint` rewritten (to the next Sprint, or `n/a — <reason>` back to the
+   Product Backlog) with `memory park` where it was started, and an open release its `sprint` to
+   the next Sprint.
 7. **`agents/section.md`**: a level-2 section `## Scrum`, no level-1 heading, no markers, as the
    charter's paragraph states it; it names `delivery`.
 8. **`CHANGELOG.md`** with `- 1.0.0: …`, and **`README.md`** per spec-002 §2: generated sections
@@ -88,13 +94,22 @@ plan-049's `prepare` reaches `main` first (plan-050 ruling 1).
    `tests/fixtures/examples/software/<example>/example.yaml`, each pack with one example on its
    parameters' defaults and one carrying values like UI's (task-049's UI set, its names
    fictional); `packs/software/README.md`'s section 7 rewritten from the exemption line to its
-   examples; `base`'s README and examples unchanged. Each example composes and validates.
-10. **Validation:** `npm run check:packs`, `npm run index -- --check` and `npm run validate` pass;
-    every new composition passes WingFoil 0.3.0's matrix with no warning (`tolerance applied:
-    none`); `npm run validate -- --overlay tests/fixtures/software-exit` still passes with 7 runs,
-    0 failed; the golden tree's `validate` passes.
-11. **Tests:** the counts the tooling tests take on this repository (index, lint, validate) move,
-    each stated in the Execution Notes with the test it changes; `npm test` passes on Node.js
+   examples; `base`'s README and examples unchanged. Each README example gives its `Fixture:` line,
+   a fictional situation, its packs and parameters, what the project gets, and how one phase runs
+   (spec-002 §2.4); no README or `example.yaml` names a real adopter ("like UI's" is this task's
+   wording only). Each example composes and validates.
+10. **Validation**, in a clean clone (the untracked draft of plan-047 removed from the worktree
+    before the checks): `npm run check:packs`, `npm run index -- --check` and `npm run validate`
+    pass; every new composition passes WingFoil 0.3.0's matrix with no warning (`tolerance
+    applied: none`); `npm run validate -- --overlay tests/fixtures/software-exit` passes with 0
+    failed, its count moving from 7 to 11 runs (the four new tree examples are composed by every
+    run); the golden tree's `validate` passes. `catalog.yaml`, `CATALOG.md`, `catalog-index.json`
+    and `llms.txt` are unchanged (an unpublished pack, spec-002 §3.1); `index --check` covers the
+    READMEs' generated sections.
+11. **Tests:** the counts the tooling tests take on this repository move, each stated in the
+    Execution Notes with the test it changes: `tests/validate.test.ts` (plain `validate` from 3 to
+    7 runs, the overlay's from 7 to 11, the publication run, `lint: checked 45 files`),
+    `tests/check-packs.test.ts` (this repository's file count) and the index tests; `npm test` passes on Node.js
     22.21 and on the floor 22.12.0 in clean clones; the CI run on the branch is `success` and
     recorded. No file under `src/` or `.wingfoil/` changes.
 

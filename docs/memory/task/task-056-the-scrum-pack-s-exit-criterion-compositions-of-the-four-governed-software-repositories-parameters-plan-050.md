@@ -17,14 +17,18 @@ compose and validate on WingFoil 0.3.0 with no warning. plan-050 ruling 2: a new
 
 ## Acceptance
 
-1. **The compositions**: `tests/fixtures/scrum-exit/compositions/<set>/example.yaml`, one per
-   composition of `tests/fixtures/software-exit/compositions/` (task-049), the same parameter
-   values and fictional identities, `packs` naming `methodology/scrum` in place of
-   `methodology/fixture`, plus `scrum`'s parameters left on their defaults; no `packs/` folder.
+1. **The compositions**: `tests/fixtures/scrum-exit/compositions/<set>/example.yaml` for the four
+   sets of `tests/fixtures/software-exit/compositions/` (task-049): `defaults`, `flat-releases`,
+   `release-folders`, `release-folders-lean`, the same parameter values and fictional identities,
+   `packs: [software@^1, methodology/scrum@^1]`, `scrum`'s parameters on their defaults; no
+   `packs/` folder. They name no `base`, so plan-050 ruling 1's cascade does not touch them.
    The Execution Notes state which repository each matches, copied from task-049's.
 2. **Validation:** `npm run validate -- --overlay tests/fixtures/scrum-exit` passes, every
    composition composed twice byte-identical and run on WingFoil 0.3.0 with no failed run and no
-   warning (`tolerance applied: none`).
+   warning: `compositions: 11` (the tree's seven examples and the four sets) and `matrix:
+   self-test, 11 runs, 0 failed, tolerance applied: none`. A case in `tests/validate.test.ts`, as
+   task-049's, pins the four `composed twice` lines and the counts, written red first with the CI
+   pin.
 3. **CI:** a step in `.github/workflows/ci.yml` running that command off tags, after the
    `software-exit` step; `tests/ci-workflow.test.ts`, which pins the CI's overlay commands, extended
    red first (dl-018: the test is written, red on `main`'s `ci.yml`, then the step), the red run

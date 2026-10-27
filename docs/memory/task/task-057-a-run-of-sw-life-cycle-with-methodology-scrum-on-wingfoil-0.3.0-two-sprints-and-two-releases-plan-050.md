@@ -30,7 +30,13 @@ pack as written on `main`.
    Sprint 2), the limit refusing Sprint 2's start while Sprint 1 is `active`; Sprint 2 (an item,
    R1 completing to `released` after the Sprint Backlog is done, a release R2 added and released,
    review, retrospective, `close`); then `delivery` complete and `end-of-life` current. Each state
-   move uses the verb or the commit form WingFoil 0.3.0 expects.
+   move uses the verb or the commit form WingFoil 0.3.0 expects. Sprint 1 also holds a second item
+   left unfinished at `close`, moved to Sprint 2 with `memory park` and its `sprint` rewritten.
+   The run shows: in which Sprint R1's `approve-release` happens; Sprint 1's `release` phase
+   closing with R1 not `late`; R1's record-based steps (`pre-release-checks`, `release-commit`,
+   `staging-rehearsal`, `tag`) recorded again under Sprint 2; Sprint 2 added by `memory add`
+   outside a step and joining the live `sprints` iteration; one retrospective decision-log pending
+   at a time.
 3. **The record**: the Execution Notes give the commands, their output and exit codes (`workflow
    next`, `workflow status` at each Sprint's boundaries), the commit composed, and state that no
    element was reported `late`. A finding that the charter's shape does not hold goes to the
