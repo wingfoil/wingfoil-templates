@@ -1,0 +1,23 @@
+format: 1
+types:
+  sprint:
+    path: "{{sprint_path}}"
+    id_pattern: "{{sprint_id}}"
+    amendable: true
+    template:
+      file: memory/templates/built-in/sprint.md
+      frontmatter:
+        required: [title, goal]
+    states:
+      sequence: [draft, planned, active, done]
+      limits:
+        active: 1
+  task:
+    template:
+      frontmatter:
+        required: [sprint]
+        not_applicable_allowed: [sprint]
+  release:
+    template:
+      frontmatter:
+        required: [sprint]

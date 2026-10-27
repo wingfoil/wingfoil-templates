@@ -1,0 +1,60 @@
+format: 1
+# One Sprint (the Scrum Guide 2020): planning, the Sprint Backlog, a release once the Backlog is
+# done or moved, the review, the retrospective, then the Sprint closes.
+name: sprint
+kind: sub
+element: sprint
+description: "One Sprint: planning, its backlog items, its releases, review and retrospective"
+version: 1
+phases:
+  - name: sprint-planning
+    description: >-
+      Agree the Sprint Goal, select the Sprint Backlog by writing the Sprint's id in the sprint
+      field of its tasks (an item not selected keeps n/a with its reason), plan how the work is
+      done, and start the Sprint (planned to active; one Sprint is active at a time).
+    role: product-owner
+    actions:
+      - memory.submit
+  - name: development
+    description: "Each item of the Sprint Backlog, to the Definition of Done."
+    iterate_over: task
+    where: { status: [backlog, in-progress, in-review, approved], sprint: "{sprint.id}" }
+    include: backlog-item
+  - name: plan-release
+    description: >-
+      When the Product Owner decides to release an Increment: add a release, giving its version
+      and release-line with --set and its sprint by editing the draft, and move it to
+      in-development (draft, planning, in-development). Only once the Sprint Backlog is done or
+      moved.
+    role: product-owner
+    optional: true
+    actions:
+      - 'memory.add(type: release)'
+      - memory.submit
+      - memory.submit
+    produces:
+      - { type: release, path: "{{release_path}}" }
+  - name: release
+    description: "The release slot, over this Sprint's releases in development or releasing."
+    optional: true
+    iterate_over: release
+    where: { status: [in-development, releasing], sprint: "{sprint.id}" }
+    include: release
+  - name: sprint-review
+    description: >-
+      Inspect the Increment with the stakeholders and adapt the Product Backlog; write the outcome
+      in the Sprint's Sprint Review section. The review gates no release.
+    role: product-owner
+    actions:
+      - agent.execute
+  - name: retrospective
+    description: "base's retrospective, for this Sprint."
+    include: retrospective
+  - name: close
+    description: >-
+      Close the Sprint (active to done). An unfinished item first has its sprint rewritten, to the
+      next Sprint or to n/a with its reason (back to the Product Backlog), with memory park where
+      it was started; an open release has its sprint rewritten to the next Sprint.
+    role: facilitator
+    actions:
+      - memory.submit

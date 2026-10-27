@@ -1,0 +1,7 @@
+format: 1
+assignments:
+  product-owner: [scrum]
+  facilitator: [scrum]
+  developer: [scrum, definition-of-done]
+  reviewer: [definition-of-done]
+  qa: [definition-of-done]
