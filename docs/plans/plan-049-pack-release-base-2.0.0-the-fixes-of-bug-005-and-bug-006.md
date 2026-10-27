@@ -2,7 +2,7 @@
 id: plan-049-pack-release-base-2.0.0-the-fixes-of-bug-005-and-bug-006
 type: plan
 title: "pack-release: base 2.0.0, the fixes of bug-005 and bug-006"
-status: active
+status: done
 workflow: "pack-release"
 phase: "release"
 tags: ["packs","base"]
