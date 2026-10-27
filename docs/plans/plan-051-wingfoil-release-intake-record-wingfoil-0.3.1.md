@@ -117,7 +117,9 @@ plan takes task-058 and task-059.
      `base@1.0.0` on a scratch copy whose `packs/base` holds the tag's content, as plan-049's red
      run did: on 0.3.1 its matrix passes and `check:runs` fails as bug-005 and bug-006 say
      (0.3.1 kept the behaviour behind both); `base` 2.0.0 passes;
-   - the tree's self-test and the overlays `software-exit` and `scrum-exit` on both releases;
+   - this repository's self-test and the overlays `software-exit` and `scrum-exit` on both
+     releases (the golden tree's self-test runs 0.2.2 and 0.3.1); `check:runs` on `main`: 26
+     runs, 0 failed;
    - ruling 3's run of `sw-life-cycle` with `methodology/scrum` on 0.3.1;
    - the install steps of the READMEs of `base`, `software` and `methodology/scrum` on a project
      initialised by 0.3.1: its `init` writes guidable `workflows/custom/` files (`sw-life-cycle`,
@@ -146,7 +148,6 @@ plan takes task-058 and task-059.
 - 2026-10-27: written. The approver gave the OK to the outline in chat; rulings 1–4 as
   recommended (decisions A–D). The session running plan-050 is archived; the numbers were read
   from `main`. `workflow` and `phase` filled by editing the draft (W-02).
-
 - 2026-10-27: independent review: approve after amendments, three findings to amend before
   `active`, none changing a ruling's aim: task-059's tests listed expectation by expectation, as
   task-036 did; the catalog's published ranges edited by hand, guarded by `catalog-range`; 0.3.1's
@@ -155,3 +156,4 @@ plan takes task-058 and task-059.
   wording; the recheck's targets (`base@1.0.0` on a scratch copy of its tag); the install steps on
   a project initialised by 0.3.1; the outcome to UI's session and the charter's note; `npm audit`;
   the `compat` tag; what 0.3.1 changes that this plan does not act on.
+- 2026-10-27: re-review: approve; its three nits applied. Submitted (`draft → active`).
