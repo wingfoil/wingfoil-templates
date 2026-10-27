@@ -80,7 +80,44 @@ and `sw-life-cycle`'s start on the four examples 4 runs, 0 failed.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-058-runs-every-release` from `main`. A tooling task (dl-018 R1–R3).
+
+**`src/runs.ts`:**
+- `Composed.release: string` becomes `releases: string[]`; `realCompose` returns every release of
+  `selectReleases(…, 'self-test')`, in its order (the oldest and the newest, one when they
+  coincide), through a helper `selectedReleases(tree, packs)` exported for the selection test; an
+  empty list throws `NoReleaseError`, as today.
+- `runRuns`, per composition: compose once; then for each release in order, `install(version,
+  cache)` in its own `try`: an error is that release's line, `runs <file> wingfoil@<version>:
+  <message>` (exit 2 for an I/O error, as `isIoError`), its runs not made; otherwise each run of
+  the scenario, its line `runs <file> <main> wingfoil@<version>: …`. A composition that does not
+  compose, or a compose returning no release, keeps its one line `runs <file>: …`.
+- The header (lines 1–11) says each scenario runs on every release the matrix selects in
+  self-test mode.
+
+**Fixtures:** `tests/fixtures/runs/software.yaml` and `scrum.yaml` (the header, `compositions`,
+the agent identity of `base.yaml`, one run `sw-life-cycle`, `steps: [start]`);
+`tests/fixtures/runs/base.yaml`'s header, "on each selected release".
+
+**Pin:** `src/matrix/wingfoil-0.3.1/package.json` as Acceptance 3; its lockfile by
+`npm install --package-lock-only --ignore-scripts` there; `npm audit` there.
+
+**CI:** the step renamed "Run the packs' workflows on every selected WingFoil release (task-053,
+task-058)"; its command unchanged.
+
+**Tests, red first** (`tests/runs.test.ts`): the fake composer returns `releases`; first commit,
+the type changed in `src/runs.ts` with the loop still on the first release only (so the suite
+compiles), and the tests: two releases' lines in order (exact `deepEqual`, 2 × 3 runs on a
+three-`main` scenario), one release, a failure on 0.3.1 only, 0.3.1's install failing (its line,
+exit 2, 0.3.0's runs made), `install` called with each version and the cache; the selection
+test on a temporary tree (its own `catalog.yaml` copied from the fixture catalog, a `packs/`
+with one pack requiring `workflow-engine`, a `compat.yaml` with 0.2.2 without it and two
+releases with it: the two returned, in order); the guard of `software.yaml` and `scrum.yaml`. Red
+for behaviour, recorded; then the loop; green.
+
+**The real run** (Acceptance 7): a scratch copy (`git archive` of the branch) whose `compat.yaml`
+appends 0.3.1, `npm run check:runs -- --tree <copy> <copy>/tests/fixtures/runs/*.yaml`, with
+network for 0.3.1's install into this repository's `.cache/wingfoil-matrix`.
 
 ## Execution Notes
 
