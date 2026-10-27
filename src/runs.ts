@@ -42,8 +42,8 @@ WingfoilOutput;
 export interface Composed {
   /** Every parameter of the composition's packs, as text: the given values, then the defaults. */
   params: Record<string, string>;
-  /** The release to run on. */
-  release: string;
+  /** The releases to run on: those the matrix selects, in compat.yaml order. */
+  releases: string[];
 }
 
 /** Composes `entries` of `tree` with `params` into the empty directory `out`. */
@@ -253,6 +253,17 @@ function compositionFiles(tree: string, folder: string): string[] {
 }
 
 /** The composer of task-007, in process, and the newest release the matrix selects. */
+/** The releases a composition's packs select in self-test mode (task-058): stub until the build. */
+export function selectedReleases(tree: string, entries: string[]): string[] {
+  const packs = resolve(tree, loadCatalog(join(tree, 'catalog.yaml')), entries);
+  const compat = loadCompat(join(tree, 'compat.yaml'));
+  const releases = selectReleases(packs.map((pack) => ({
+    formats: pack.manifest.formats,
+    requires_capabilities: pack.manifest.requires_capabilities ?? [],
+  })), compat.releases, 'self-test');
+  return releases.slice(-1).map((release) => release.wingfoil);
+}
+
 export const realCompose: Compose = (tree, entries, params, out) => {
   const catalog = loadCatalog(join(tree, 'catalog.yaml'));
   const packs = resolve(tree, catalog, entries);
@@ -280,7 +291,7 @@ export const realCompose: Compose = (tree, entries, params, out) => {
     (error as Error & { code?: number }).code = outcome.code;
     throw error;
   }
-  return { params: all, release: newest.wingfoil };
+  return { params: all, releases: [newest.wingfoil] };
 };
 
 export const realExec: Exec = (cli, args, cwd, env) => {
@@ -529,12 +540,13 @@ export function runRuns(argv: string[], options: RunsOptions = {}): RunsResult {
           .map(([name, value]) => [name, String(value)]));
         const output = join(out, 'output');
         const composed = compose(tree, data.packs ?? [], given, output);
-        if (composed.release === '') throw new NoReleaseError('no release in compat.yaml can run it');
-        const cli = install(composed.release, args.cache);
+        const release = composed.releases[0] ?? '';
+        if (release === '') throw new NoReleaseError('no release in compat.yaml can run it');
+        const cli = install(release, args.cache);
         for (const run of scenario.runs) {
           total += 1;
           const failure = runOne(run, output, composed.params, scenario.agent, cli, execute);
-          const head = `runs ${file} ${run.main} wingfoil@${composed.release}`;
+          const head = `runs ${file} ${run.main} wingfoil@${release}`;
           if (failure === undefined) {
             lines.push(`${head}: pass`);
           } else {
