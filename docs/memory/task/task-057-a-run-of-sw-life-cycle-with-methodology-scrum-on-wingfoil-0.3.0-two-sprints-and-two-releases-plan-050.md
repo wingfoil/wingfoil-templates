@@ -70,3 +70,46 @@ exit codes in condensed form, and the answers Acceptance 2 asks for.
 - 2026-10-27: independent review (approve after amendments), amended, re-reviewed (approve);
   submitted.
 - 2026-10-27: Design written; `backlog → in-progress`.
+- 2026-10-27, the run (WingFoil 0.3.0 `cc31d7a8`, the matrix's install), in a scratch repository
+  outside this one, `base` (2.0.0 on `main`, its fixes of bug-005 and bug-006), `software` and
+  `methodology/scrum` composed from `main` at `2987234` (`npm run compose`, fictional project Wren
+  Atlas, `.example` addresses), `.wingfoil/` committed, `workflow list` with no diagnostic. No
+  workaround: `workflow start sw-life-cycle` exits 0 with `sw-life-cycle-1-plan (active)`
+  (bug-005's fix), and `retrospective` › `explore` completes on a file under
+  `docs/retrospectives/` (bug-006's fix).
+  - `inception` (the document committed, `approve` finalized), `specification` (a tech-spec added
+    at its step, submitted, approved), then `delivery` › `plan-sprint`: `sprint-001` added at the
+    step, its goal written by editing the draft, submitted to `planned`.
+  - Three tasks: two with `sprint: "sprint-001"`, one with `sprint: "n/a — not planned yet"`,
+    each submitted and approved to `backlog`; the `n/a` one is left out of `development`.
+    `sprint-planning`: `memory submit sprint-001` → `active`.
+  - Sprint 1: item A through `backlog-item` to `done`; item B started (`in-progress`), then
+    `memory park` → `backlog` and its `sprint` rewritten to `sprint-002`: nothing `late`, and
+    `plan-release` became current beside `sprint-review` only then (ruling 16 holds).
+    R1 (`rel-1.0.0`, `--set version=1.0.0 --set release-line=v1`, its `sprint` by editing) added at
+    `plan-release`, moved to `in-development` by two `memory submit`; `pre-release-checks`
+    finalized; `wf(release): start rel-1.0.0 [in-development → releasing]`.
+  - **Finding 1:** completing `sprint-review` with R1 still in Sprint 1 reported
+    `late: release:rel-1.0.0 (releasing)`; rewriting R1's `sprint` to `sprint-002` removed it. An
+    open release has to move before the Sprint Review completes, not at `close` as the pack's
+    `close` description, the `scrum` directive and the charter say.
+  - Retrospective: `explore` complete on `docs/retrospectives/sprint-001.md`,
+    `additional-points` finalized, a decision-log tagged `retrospective` added at `capture`,
+    submitted, approved to `ready`. `sprint-002` added by `memory add` outside a step, its goal
+    written, submitted to `planned`, and joined the live `sprints` iteration
+    (`sprint-planning@sprint:sprint-002` ready). **The limit:** `memory submit sprint-002` while
+    `sprint-001` was `active` exited 1, `WIP limit reached for 'active' on type 'sprint' (limit 1):
+    held by sprint-001`. `close`: `memory submit sprint-001` → `done`.
+  - Sprint 2: `sprint-002` → `active`; item B to `done`; then `plan-release`, R1's
+    `approve-release` and `sprint-review` ready together. **Finding 2:** R1 resumed at
+    `approve-release`: its `pre-release-checks` and `enter-releasing`, recorded under Sprint 1,
+    were not asked again, WingFoil keying a step's record by the release, not by the Sprint; the
+    charter and the README say they are recorded again. R2 (`rel-1.1.0`) added at `plan-release`
+    before R1 completed (once R1 is `released`, the `release` phase completes and would close
+    `plan-release`; a release can still be added outside the step), both released through every
+    phase of `release-submit` and `release-publishing` (`approve-release` of R1 in Sprint 2),
+    each to `released` by `wf(release): finalize <id> [releasing → released]`.
+  - Sprint 2's review, retrospective (`explore` complete at once on the directory, the known
+    weak evidence of the charter's open point 2), its decision-log approved, `close`: `done`.
+    `workflow status`: `delivery complete, end-of-life current`; no element was reported `late`
+    at any boundary after Finding 1's move. One retrospective decision-log was pending at a time.
