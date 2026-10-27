@@ -1,0 +1,13 @@
+format: 1
+id: defaults
+title: "Defaults"
+description: >-
+  Kestrel Ledger, a fictional accounting tool, keeps every software parameter on its default.
+packs:
+  - software@^1
+  - methodology/scrum@^1
+parameters:
+  project_name: "Kestrel Ledger"
+  approver_name: "Kestrel Lead"
+  approver_email: "lead@kestrel-ledger.example"
+  agent_name: "Kestrel Agent"
