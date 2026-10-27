@@ -83,3 +83,7 @@ suite in clean clones on both Node.js versions; the branch CI, the new step incl
   governed repositories' parameters" `success` with the four `composed twice` lines. Privacy: no
   local path, private repository or private project in the diff. `in-progress → in-review`; the
   merge waits for `base@2.0.0`'s tag (plan-049's session asked that `main` stay still until it).
+- 2026-10-27: `main` (with `base@2.0.0`'s release) merged into the branch, the overlay `scrum-exit`
+  rerun (11 runs, 0 failed, tolerance none) and the task-056 tests green; approved by the approver;
+  `--no-ff` merge into `main` (`990b29c`), after `base@2.0.0`'s tag as agreed with plan-049's
+  session; `approved → done`.
