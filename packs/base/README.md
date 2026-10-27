@@ -52,8 +52,9 @@ pack's range (see its catalog entry):
 **Updating from 1.0.0.** A project that relied on 1.0.0's defaults and keeps its values states
 them (`plan_id: plan-{n}-{slug}`). A `retrospective_path` that names a directory gains its
 trailing `/`, which WingFoil needs to read it as one. A project that keeps a `plan_id` without
-`{workflow}` and `{phase}` fills a started plan's `workflow` and `phase` by hand and submits it,
-or uses the new pattern for its new plans: ids already given never change. Then it recomposes
+`{workflow}` and `{phase}` fills a started plan's `workflow` and `phase` by hand (the main's name
+and the instance number, e.g. `1`) and submits it, or uses the new pattern for its new plans: ids
+already given never change. Then it recomposes
 `base` and copies the `.wingfoil/` files as in steps 2 and 3.
 
 <!-- generated:begin composition -->

@@ -1,0 +1,17 @@
+format: 1
+id: flat-releases
+title: "Flat releases"
+description: >-
+  Osprey Tickets, a fictional ticket desk, keeps its releases in one folder, with ids from their
+  titles and numbered release lines.
+packs:
+  - software@^1
+  - methodology/scrum@^1
+parameters:
+  project_name: "Osprey Tickets"
+  approver_name: "Osprey Lead"
+  approver_email: "lead@osprey-tickets.example"
+  agent_name: "Osprey Agent"
+  release_path: "docs/memory/release/{id}.md"
+  release_id: "rel-{slug}"
+  release_line_id: "rl-{n}"

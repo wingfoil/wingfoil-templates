@@ -2,7 +2,7 @@
 id: plan-049-pack-release-base-2.0.0-the-fixes-of-bug-005-and-bug-006
 type: plan
 title: "pack-release: base 2.0.0, the fixes of bug-005 and bug-006"
-status: active
+status: done
 workflow: "pack-release"
 phase: "release"
 tags: ["packs","base"]
@@ -239,3 +239,21 @@ release (W9); this repository's adoption of `base`; the foundation packs' `retro
   (task-053's Design; for `software`'s first release, W9). Next: `prepare`, the session running
   plan-050 told first (its task-055 not on `main`: this release goes first, and that session
   moves `methodology/scrum` to `base@^2` when it lands, plan-050 ruling 1).
+- 2026-10-27: `prepare`, `validate`, `approve-publication` and `publish` of `prel-002-base-2.0.0`
+  (its Execution Notes): `prepare` at `975399e` with the `base@^2` cascade (ruling 3);
+  `methodology/scrum` reached `main` after it, on `base@^2` (plan-050 ruling 1), so the
+  publication validated seven compositions; after the element's review, the CHANGELOG entry's
+  first line (the tag's annotation) was made a complete summary and the evidence, the dry run and
+  the clean clones redone. Approved (`6d04472`); tag `base@2.0.0` at `6d04472`, catalog commit
+  `16f53fa`, range `0.3.0`, pushed atomically; CI on the tag (run 40525763074), on `main` (run
+  40525763001) and Pages `success`; CB-6's live check passed. The charter and bug-005, bug-006
+  record the release.
+- 2026-10-27, step 8: the notices (tag, date, range, what changes for an adopter of 1.0.0 and how
+  to migrate) sent to WingFoil UI's session and to the coordinating session.
+- 2026-10-27, close. Owed, outside this plan: the feedback note asking WingFoil that
+  `workflow start` fill a plan's `workflow` and `phase` whatever its id pattern (F-038, after
+  F-035 and F-036 exist); a `pack-semver` rule for fixes and for a changed parameter default; the
+  intake of WingFoil 0.3.1 reruns bug-005's and bug-006's reproductions and recomputes the range of
+  1.0.0 and 2.0.0; `check:runs`' optional `sw-life-cycle` start, for `software`'s first release
+  (W9); this repository's adoption of `base` keeps `plan-{n}-{slug}` or takes the new pattern
+  (the charter's Adoption). `active → done`.
