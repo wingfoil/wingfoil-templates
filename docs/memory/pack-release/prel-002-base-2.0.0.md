@@ -60,8 +60,77 @@ spec-002 §2.3's temporary mark: no release in `compat.yaml` provides `pack-inst
 
 ## Validation
 
-<!-- The compatibility matrix: every WingFoil version tested, every preset composed, the
-     determinism double-run, with the commands and their exit codes. -->
+- Commit: `298723491ca8e54316b8e8e20922ae833c1593d4`
+- Command: `npm run validate:publication -- --evidence`
+- Mode: publication
+- Exit code: 0
+- WingFoil releases: 0.3.0
+- Compositions: tests/fixtures/examples/base/core-records/example.yaml, tests/fixtures/examples/base/release-folders-lean/example.yaml, tests/fixtures/examples/base/release-folders/example.yaml, tests/fixtures/examples/scrum/defaults/example.yaml, tests/fixtures/examples/scrum/release-folders-lean/example.yaml, tests/fixtures/examples/software/defaults/example.yaml, tests/fixtures/examples/software/release-folders-lean/example.yaml
+
+Report:
+
+```text
+schemas: checked 5 files, 0 problems
+lint: checked 61 files, 0 problems
+index: checked 6 files, 0 not up to date
+composition tests/fixtures/examples/base/core-records/example.yaml: composed twice, 16 files, byte-identical
+composition tests/fixtures/examples/base/release-folders-lean/example.yaml: composed twice, 16 files, byte-identical
+composition tests/fixtures/examples/base/release-folders/example.yaml: composed twice, 16 files, byte-identical
+composition tests/fixtures/examples/scrum/defaults/example.yaml: composed twice, 37 files, byte-identical
+composition tests/fixtures/examples/scrum/release-folders-lean/example.yaml: composed twice, 37 files, byte-identical
+composition tests/fixtures/examples/software/defaults/example.yaml: composed twice, 37 files, byte-identical
+composition tests/fixtures/examples/software/release-folders-lean/example.yaml: composed twice, 37 files, byte-identical
+compositions: 7
+matrix tests/fixtures/examples/base/core-records/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/base/core-records/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/base/core-records/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders-lean/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders-lean/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/base/release-folders-lean/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/scrum/defaults/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/scrum/defaults/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/scrum/defaults/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/scrum/release-folders-lean/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/scrum/release-folders-lean/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/scrum/release-folders-lean/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/software/defaults/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/software/defaults/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/software/defaults/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/software/release-folders-lean/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/software/release-folders-lean/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/software/release-folders-lean/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix: publication, 7 runs, 0 failed, tolerance applied: none
+```
+
+- Presets: none (`catalog.yaml` `presets: []`). The documented combinations holding `base` are the
+  README examples of `base` (3), and, since plan-050's task-055 (`2987234`), of `software` (2) and
+  `methodology/scrum` (2), which compose `base` through `software`'s `requires`; each composed
+  twice and byte-identical. No conditional part (spec-001 §6.5).
+
+Also on `2987234`:
+- from clean clones on Node.js 22.21.0 and 22.12.0: `npm ci`, `npm test` (1002 of 1002), `lint`,
+  `check:pins`, `check:schemas`, `check:packs`, `index -- --check`, `validate` (7 runs, 0 failed),
+  the overlay `software-exit` (11 runs, 0 failed), the golden step (26 runs, 0 failed, tolerance
+  0.2.2), `workflow list` and `check:runs` (9 runs, 0 failed: `base`'s three `main` workflows on
+  WingFoil 0.3.0, task-053), each exit 0. `main`'s CI run 40502555770 on `2987234`: `success`;
+  on `274af0c` (`prepare`), run 40488843601: `success`, and the clean clones there likewise green;
+- `npm run publish:pack -- --pack base --dry-run`: exit 0, in a temporary clone; the tag
+  `base@2.0.0` at `2987234`, the range `0.3.0`, the digest
+  `sha256:bc90f531eccffac9cf91b5c09113a03edd4bbbd78e02e84bdf84e6a6d0427f2f`; the clone left as it
+  was. The tag goes on the approval's commit, where `publish:pack` validates again;
+- the check against the three private, non-software projects, run outside this repository on
+  2026-10-27, `base` at `274af0c`, WingFoil 0.3.0: 3 projects, each on a scratch tree (`packs/base`,
+  `catalog.yaml`, `compat.yaml`, the index outputs, the tag `base@1.0.0`; README section 7 reduced
+  to the exemption line), `npm run validate -- --tree <scratch> base --param …` with the project's
+  path and id values (redacted) and fictional identities: 3 of 3 exit 0, each
+  `matrix: self-test, 1 run, 0 failed, tolerance applied: none`, 0 warnings. A first run exited 2
+  on the scratch tree alone (not a git repository, so the published version's tag was missing),
+  not on the projects. The scratch trees and logs were removed;
+- the privacy check of this element and of `packs/base/`: no local path, no private repository,
+  nothing on the private projects beyond their number.
 
 ## Publication
 
@@ -72,3 +141,6 @@ spec-002 §2.3's temporary mark: no release in `compat.yaml` provides `pack-inst
   filled by editing the draft (W-02); the Changes above; `CHANGELOG.md`, `pack.yaml`'s `version`
   and the cascade in one commit; the README's "Install and update" checked against `compat.yaml`
   (CB-3). The session running plan-050 told first.
+- 2026-10-27, `validate`: the evidence on `2987234` (`main` after plan-050's task-055, so seven
+  compositions), the clean clones on both Node.js versions, the dry run and the private check
+  above.
