@@ -149,3 +149,10 @@ with no warning (`format_key: true`).
 - 2026-10-27: independent review of the build: approve, nothing blocking; its two wording nits
   applied to spec-001 (0.3.1's additions need no new capability; the range "copied by hand").
   This commit changes only `docs/memory`, after the clean clones' head `64c2ddc`.
+- 2026-10-27, checks at `64c2ddc` (Acceptance 7): from clean clones on Node.js 22.21.0 and
+  22.12.0, `npm ci`, `npm test` (1010 of 1010), `lint`, `check:pins`, `check:schemas`,
+  `check:packs`, `index -- --check`, `validate` (14 runs, 0 failed), the overlays `software-exit`
+  and `scrum-exit` (22 runs each, 0 failed), the golden step (26 runs, 0 failed, tolerance 0.2.2),
+  `workflow list` and `check:runs` (26 runs, 0 failed), each exit 0; `npm audit` 0 in the root and
+  every matrix folder. Branch CI run 40575708896 on `64c2ddc` and run 40579739923 on `c3dc6d2`
+  (the wording commit, `docs/memory` only): `success`. `packs/` unchanged.
