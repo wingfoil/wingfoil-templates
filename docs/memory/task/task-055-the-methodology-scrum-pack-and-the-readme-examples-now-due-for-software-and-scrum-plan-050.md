@@ -177,3 +177,4 @@ the worktree before the branch (`tests/fixtures/scrum-draft/`), so no check sees
   and `validate (22.21.0)` both `success`). Privacy: no local path, private repository or private
   project in the diff. `in-progress → in-review`; waiting for the approver's `approve` and the
   merge OK.
+- 2026-10-27: approved by the approver; `--no-ff` merge into `main` (`a048d0d`); `approved → done`.
