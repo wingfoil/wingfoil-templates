@@ -155,3 +155,13 @@ network for 0.3.1's install into this repository's `.cache/wingfoil-matrix`.
   comment. Kept: the selection test does not cover the capability filter, which `selectReleases`'
   own tests (`matrix.test`) cover; the new path only keeps every release it returns, in order.
   The clean clones rerun on the new head.
+- 2026-10-27: re-review of the build: approve. Its optional nit kept: the repeated prefix is
+  removed with `replace`, which drops its first occurrence; every message of `installRelease`
+  starts with it, so the line is exact today.
+- 2026-10-27, checks at `6c1bc23` (Acceptance 8): from clean clones on Node.js 22.21.0 and
+  22.12.0, `npm ci`, `npm test` (1010 of 1010), `lint`, `check:pins`, `check:schemas`,
+  `check:packs`, `index -- --check`, `validate` (7 runs, 0 failed), the overlays `software-exit`
+  and `scrum-exit` (11 runs each, 0 failed), the golden step (26 runs, 0 failed, tolerance 0.2.2),
+  `workflow list` and `check:runs` (13 runs, 0 failed: `compat.yaml` lists 0.3.0 alone until
+  task-059), each exit 0; `npm audit` 0 in the root and every matrix folder (the CI's step).
+  Branch CI run 40567676606 on `6c1bc23`: `success`. `compat.yaml` and `packs/` unchanged.
