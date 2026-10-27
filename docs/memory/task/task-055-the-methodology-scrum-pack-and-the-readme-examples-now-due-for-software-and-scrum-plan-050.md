@@ -163,3 +163,7 @@ the worktree before the branch (`tests/fixtures/scrum-draft/`), so no check sees
   timeboxes and the Retrospective's purpose in `scrum`; the two examples naming their composition
   and parameters; Marten Boards' description; the agent "works for the Developers, as their tool";
   the defaults example's roles; a test title.
+- 2026-10-27: the full suite in clean clones at `9847e02`: 977 of 977 on Node.js 22.21.0 and on
+  the floor 22.12.0; branch CI run 40486043059 on `9847e02`, conclusion `success`. Waiting for
+  plan-049's `prepare` (`base` 2.0.0) on `main`: then `main` merged into the branch and `scrum`
+  moved to `base@^2` (plan-050 ruling 1), the suite and the CI rerun, before `in-review`.
