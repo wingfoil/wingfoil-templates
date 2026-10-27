@@ -31,7 +31,8 @@ pack as written on `main`.
    R1 completing to `released` after the Sprint Backlog is done, a release R2 added and released,
    review, retrospective, `close`); then `delivery` complete and `end-of-life` current. Each state
    move uses the verb or the commit form WingFoil 0.3.0 expects. Sprint 1 also holds a second item
-   left unfinished at `close`, moved to Sprint 2 with `memory park` and its `sprint` rewritten.
+   left unfinished, moved to Sprint 2 with `memory park` and its `sprint` rewritten before
+   `close` completes.
    The run shows: in which Sprint R1's `approve-release` happens; Sprint 1's `release` phase
    closing with R1 not `late`; R1's record-based steps (`pre-release-checks`, `release-commit`,
    `staging-rehearsal`, `tag`) recorded again under Sprint 2; Sprint 2 added by `memory add`
@@ -51,3 +52,5 @@ pack as written on `main`.
 ## Execution Notes
 
 - 2026-10-27: written under plan-050 (step 4).
+- 2026-10-27: independent review (approve after amendments), amended, re-reviewed (approve);
+  submitted.

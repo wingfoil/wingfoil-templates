@@ -150,3 +150,6 @@ own branch.
   where a defect found by task-057 is fixed; the directive's wording. Focused re-review requested.
 - 2026-10-27: focused re-review: approve (plan and directive); tagged `W9`, the wave its account
   reports to (W8 closed with plan-046). Plan submitted.
+- 2026-10-27: task-055, task-056 and task-057 written, reviewed (approve after amendments; one
+  blocking count: the overlay's runs move from 7 to 11), amended, re-reviewed (approve) and
+  submitted (`pending`), on this branch with the plan.

@@ -120,3 +120,5 @@ plan-049's `prepare` reaches `main` first (plan-050 ruling 1).
 ## Execution Notes
 
 - 2026-10-27: written under plan-050 (step 4).
+- 2026-10-27: independent review (approve after amendments), amended, re-reviewed (approve);
+  submitted.
