@@ -2,7 +2,7 @@
 id: task-059-record-wingfoil-0.3.1-in-compat.yaml-spec-001-section-12-and-the-golden-fixture-recompute-base-s-published-ranges-plan-051
 type: task
 title: "Record WingFoil 0.3.1 in compat.yaml, spec-001 section 12 and the golden fixture, recompute base's published ranges (plan-051)"
-status: pending
+status: backlog
 pack: ""            # tooling task (wingfoil-release-intake › record, plan-051 ruling 1)
 depends_on: [task-058]
 tags: ["tooling","wingfoil","compat"]
