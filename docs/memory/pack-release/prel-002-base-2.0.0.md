@@ -145,7 +145,31 @@ made a complete summary and the README's update note completed after this elemen
 
 ## Publication
 
-<!-- The tag (<catalog pack id>@<version>, dl-004), the commit, the catalog.yaml digest. -->
+- Date: 2026-10-27. Line: current.
+- Tag: `base@2.0.0` (annotated), at `6d04472f0694e6238ca73fb65dd730245187d329` (the approval's
+  commit; its `main` CI run 40523026260 `success` before the tag). Annotation: the CHANGELOG
+  entry's first line.
+- Catalog commit: `16f53faa5f283f5fe38f23288c09800c11d10d37` (`catalog.yaml`'s `base` entry with
+  2.0.0 beside 1.0.0, `CATALOG.md`, `catalog-index.json`), by `npm run publish:pack -- --pack
+  base`, exit 0.
+- Digest: `sha256:9cad63f17b1ffee435cf1a6d6b32a1a0ddb8b0ff746a51351f3a2147d33fc9ff` (as the dry
+  run).
+- WingFoil range: `0.3.0`.
+- Pushed together: `git push --atomic origin base@2.0.0 main`.
+- CI on the tag, run 40525763074 (publication mode): `success`, both jobs. CI on `main` at
+  `16f53fa`, run 40525763001: `success`. Pages, run 40525763102: `success`.
+- CB-6, live (spec-002 §6), anonymous, following `llms.txt`'s steps:
+  - `https://wingfoil.github.io/wingfoil-templates/llms.txt`: 200;
+  - `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/catalog-index.json`: 200;
+    filtered locally to `id: base`, `status: active`, `latest: 2.0.0`, versions `1.0.0` and
+    `2.0.0`, 2.0.0's `wingfoil` `0.3.0`;
+  - 2.0.0's `readme_url`,
+    `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.0/packs/base/README.md`:
+    200, the README's title section;
+  - 2.0.0's `manifest_url`,
+    `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.0/packs/base/pack.yaml`:
+    200, `id: base`, `version: 2.0.0`;
+  - `https://wingfoil.github.io/wingfoil-templates/catalog-index.json`: 200, `latest: 2.0.0`.
 
 ## Execution Notes
 - 2026-10-27, `prepare`: added by `memory add`; `pack`, `version`, `bump`, `wingfoil` and `line`
@@ -163,3 +187,7 @@ made a complete summary and the README's update note completed after this elemen
   the dry run and the clean clones redone on `3f5f591`.
 - 2026-10-27: re-review: approve; its optional note applied (the private check's commit). Submitted
   (`validating → releasing`).
+- 2026-10-27, `approve-publication`: approved by the approver (`releasing → released`, `6d04472`),
+  authorizing the publication (plan-044 ruling C).
+- 2026-10-27, `publish`: published as above; the tag and `main` pushed atomically, the CI and
+  Pages `success`, CB-6's live check passed.

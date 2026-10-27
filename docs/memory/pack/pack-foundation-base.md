@@ -255,3 +255,6 @@ For the approver's acceptance:
     hand (the main's name and, as WingFoil itself writes them, the instance number, e.g. `1`) and
     submits it; or it uses `{workflow}-{phase}-plan` for its new plans (commitment 3).
     A `retrospective_path` naming a directory gains its trailing `/`.
+- 2026-10-27, plan-049: `base` 2.0.0 published (`prel-002-base-2.0.0`, `major`): tag `base@2.0.0`
+  at `6d04472`, catalog commit `16f53fa`, range `0.3.0`, CI on the tag and on `main` `success`,
+  CB-6's live check passed. It fixes bug-005 and bug-006; 1.0.0 stays listed, frozen.
