@@ -2,7 +2,7 @@
 id: task-058-check-runs-on-every-release-the-matrix-selects-the-software-and-scrum-starts-and-wingfoil-0.3.1-s-pin-plan-051
 type: task
 title: "check:runs on every release the matrix selects, the software and scrum starts, and WingFoil 0.3.1's pin (plan-051)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (wingfoil-release-intake › record, plan-051 ruling 1)
 depends_on: []
 tags: ["tooling","wingfoil","compat"]
@@ -132,3 +132,36 @@ network for 0.3.1's install into this repository's `.cache/wingfoil-matrix`.
   task-059; a test of the selection and a guard of the new scenario files; the texts stated by
   what they say; `install` per release; the red run behavioural, not a compile error.
 - 2026-10-27: re-review: approve; its nit applied. Submitted.
+- 2026-10-27, red first (dl-018 R1), at `4ee66fe` (the `Compose` type changed, the loop still on
+  the first release, `selectedReleases` returning the newest only): `node --test
+  dist/tests/runs.test.js`: 31 tests, 24 pass, 7 fail, for behaviour (the five release tests, the
+  two scenario guards). Green at `2dc634f`: runs, ci-workflow and digest tests 75 of 75. The
+  selection test runs on a copy of the golden tree whose `compat.yaml` holds three releases
+  (7.0.0, 7.1.0, 7.2.0): the golden `base` requires no capability, so the copy needs no pack of
+  its own (the Design's temporary tree with a `workflow-engine` pack, simplified).
+- 2026-10-27, the pin: `src/matrix/wingfoil-0.3.1/` (`npm install --package-lock-only
+  --ignore-scripts`), `npm audit` 0 vulnerabilities there, `npm run check:pins` exit 0.
+- 2026-10-27, the real two-release run (Acceptance 7): on a `git archive` of `2dc634f` whose
+  `compat.yaml` appends 0.3.1 (`format_key: true`, `reads` at format 1, `capabilities:
+  [workflow-engine]`), `npm run check:runs -- --tree <copy> <copy>/tests/fixtures/runs/{base,
+  software,scrum}.yaml`: exit 0, `runs: 26 runs, 0 failed` (13 on 0.3.0, 13 on 0.3.1). 0.3.1
+  installed from the new lockfile into `.cache/wingfoil-matrix`: `--version` prints
+  `0.3.1 (870bd4406f3b9bba5ecde7a5f8198b80c2a98583)`. On the tree itself (0.3.0 alone):
+  `runs: 13 runs, 0 failed`.
+- 2026-10-27: independent review of the build: approve, nothing blocking. Applied: an install
+  failure's line names its release once (`installRelease`'s messages already start with
+  `wingfoil@<version>:`), red after review at the previous commit (31 tests, 30 pass, 1 fail),
+  green; `realCompose`'s comment reattached; the scenario guards placed after `base.yaml`'s
+  comment. Kept: the selection test does not cover the capability filter, which `selectReleases`'
+  own tests (`matrix.test`) cover; the new path only keeps every release it returns, in order.
+  The clean clones rerun on the new head.
+- 2026-10-27: re-review of the build: approve. Its optional nit kept: the repeated prefix is
+  removed with `replace`, which drops its first occurrence; every message of `installRelease`
+  starts with it, so the line is exact today.
+- 2026-10-27, checks at `6c1bc23` (Acceptance 8): from clean clones on Node.js 22.21.0 and
+  22.12.0, `npm ci`, `npm test` (1010 of 1010), `lint`, `check:pins`, `check:schemas`,
+  `check:packs`, `index -- --check`, `validate` (7 runs, 0 failed), the overlays `software-exit`
+  and `scrum-exit` (11 runs each, 0 failed), the golden step (26 runs, 0 failed, tolerance 0.2.2),
+  `workflow list` and `check:runs` (13 runs, 0 failed: `compat.yaml` lists 0.3.0 alone until
+  task-059), each exit 0; `npm audit` 0 in the root and every matrix folder (the CI's step).
+  Branch CI run 40567676606 on `6c1bc23`: `success`. `compat.yaml` and `packs/` unchanged.

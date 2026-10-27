@@ -4,14 +4,16 @@
 import { strict as assert } from 'node:assert';
 import { execFileSync } from 'node:child_process';
 import {
-  existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
+  cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 
+import { FIXTURES } from './support/paths';
+
 import { MatrixIoError } from '../src/matrix';
-import { runRuns } from '../src/runs';
+import { runRuns, selectedReleases } from '../src/runs';
 import type { Compose, Exec, RunsOptions, WingfoilOutput } from '../src/runs';
 
 const SCENARIO = [
@@ -125,7 +127,7 @@ const fakeCompose: Compose = (_tree, _entries, params, out) => {
   writeFileSync(join(out, 'AGENTS.region.md'), '# region\n');
   return {
     params: { retrospective_path: 'docs/retrospectives/', ...params },
-    release: '0.3.0',
+    releases: ['0.3.0'],
   };
 };
 
@@ -380,7 +382,8 @@ describe('check:runs (task-053)', () => {
     assert.equal(result.lines.at(-1), 'runs: 6 runs, 1 failed');
     assert.equal(seen[1]?.['retrospective_path'], 'docs/retros/');
     assert.equal(seen[0]?.['approver_email'], 'lead@demo.invalid');
-    assert.deepEqual(installed[0], { version: '0.3.0', cache: '/some/cache' });
+    assert.deepEqual(installed, [{ version: '0.3.0', cache: '/some/cache' },
+      { version: '0.3.0', cache: '/some/cache' }], 'once per release per composition');
   });
 
   it('exits 1 when a composition does not compose, 2 on an I/O error or no release', () => {
@@ -394,7 +397,7 @@ describe('check:runs (task-053)', () => {
     } });
     assert.equal(io.code, 2);
     const none = runRuns(['--tree', tree], { ...options, compose: (t, e, p, o) => ({
-      ...fakeCompose(t, e, p, o), release: '' }) });
+      ...fakeCompose(t, e, p, o), releases: [] }) });
     assert.equal(none.code, 2);
   });
 
@@ -420,6 +423,82 @@ describe('check:runs (task-053)', () => {
     assert.match(escape.lines.join('\n'), /commit_copy\.to: must stay inside the repository/);
   });
 
+  describe('on every release the matrix selects (task-058)', () => {
+    const two: Compose = (t, e, p, o) => ({ ...fakeCompose(t, e, p, o),
+      releases: ['0.3.0', '0.3.1'] });
+    const byVersion = (version: string): string => `/fake/wingfoil-${version}.js`;
+
+    it('runs every run on each release, in compat.yaml order', () => {
+      const result = runRuns(['--tree', tree], { ...options, compose: two,
+        install: (version) => byVersion(version) });
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      const head = 'runs compositions/defaults/example.yaml';
+      assert.deepEqual(result.lines, [
+        `${head} decision-log-ingest wingfoil@0.3.0: pass`,
+        `${head} retrospective-periodic wingfoil@0.3.0: pass`,
+        `${head} governance-evolution wingfoil@0.3.0: pass`,
+        `${head} decision-log-ingest wingfoil@0.3.1: pass`,
+        `${head} retrospective-periodic wingfoil@0.3.1: pass`,
+        `${head} governance-evolution wingfoil@0.3.1: pass`,
+        'runs: 6 runs, 0 failed',
+      ]);
+    });
+
+    it('installs each release once per composition, with the cache', () => {
+      const calls: string[] = [];
+      runRuns(['--tree', tree, '--cache', '/c'], { ...options, compose: two,
+        install: (version, cache) => {
+          calls.push(`${version} ${cache}`);
+          return byVersion(version);
+        } });
+      assert.deepEqual(calls, ['0.3.0 /c', '0.3.1 /c']);
+    });
+
+    it('fails a run on one release only', () => {
+      const exec: Exec = (cli, args, cwd, env) => (cli.includes('0.3.1') && args[1] === 'end'
+        ? failed('not complete') : wingfoil.exec(cli, args, cwd, env));
+      const result = runRuns(['--tree', tree], { ...options, compose: two,
+        install: (version) => byVersion(version), exec });
+      assert.equal(result.code, 1);
+      assert.match(result.lines[2] ?? '', /governance-evolution wingfoil@0\.3\.0: pass$/);
+      assert.match(result.lines[5] ?? '', /governance-evolution wingfoil@0\.3\.1: fail at end: /);
+      assert.equal(result.lines.at(-1), 'runs: 6 runs, 1 failed');
+    });
+
+    it('reports a release that cannot be installed and runs the other one', () => {
+      const result = runRuns(['--tree', tree], { ...options, compose: two,
+        install: (version) => {
+          if (version === '0.3.1') throw new MatrixIoError('wingfoil@0.3.1: npm ci failed: offline');
+          return byVersion(version);
+        } });
+      assert.equal(result.code, 2);
+      assert.deepEqual(result.lines.slice(3), [
+        'runs compositions/defaults/example.yaml wingfoil@0.3.1: npm ci failed: offline',
+        'runs: 3 runs, 0 failed',
+      ]);
+      assert.ok(result.lines.slice(0, 3).every((line) => line.endsWith('wingfoil@0.3.0: pass')));
+    });
+
+    it('selects the oldest and the newest compatible release (selectedReleases)', () => {
+      const golden = join(FIXTURES, 'compose', 'tree');
+      const copy = mkdtempSync(join(tmpdir(), 'runs-select-'));
+      try {
+        cpSync(golden, copy, { recursive: true });
+        const release = (version: string): string => [`  - wingfoil: ${version}`,
+          '    format_key: true',
+          '    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], '
+            + 'directive: [1], memory-template: [1] }',
+          '    capabilities: [workflow-engine]'].join('\n');
+        const compat = readFileSync(join(golden, 'compat.yaml'), 'utf8');
+        writeFileSync(join(copy, 'compat.yaml'), `${compat.slice(0, compat.indexOf('releases:'))}`
+          + `releases:\n${['7.0.0', '7.1.0', '7.2.0'].map(release).join('\n')}\n`);
+        assert.deepEqual(selectedReleases(copy, ['base']), ['7.0.0', '7.2.0']);
+      } finally {
+        rmSync(copy, { recursive: true, force: true });
+      }
+    });
+  });
+
   it('fails a commit_inside whose parameter leaves the repository', () => {
     const result = runRuns(['--tree', tree], { ...options, compose: (t, e, p, o) => {
       const composed = fakeCompose(t, e, p, o);
@@ -433,6 +512,17 @@ describe('check:runs (task-053)', () => {
 function readdirTmp(): string[] {
   return execFileSync('ls', ['-1', tmpdir()], { encoding: 'utf8' }).split('\n').filter(Boolean);
 }
+
+describe('tests/fixtures/runs/software.yaml and scrum.yaml (task-058)', () => {
+  for (const [file, folder] of [['software', 'software'], ['scrum', 'scrum']] as const) {
+    it(`starts sw-life-cycle on the README examples of ${folder}`, () => {
+      const text = readFileSync(join(FIXTURES, 'runs', `${file}.yaml`), 'utf8');
+      assert.match(text, new RegExp(`^compositions: tests/fixtures/examples/${folder}$`, 'm'));
+      assert.match(text, /- main: sw-life-cycle$/m);
+      assert.match(text, /steps: \[start\]/);
+    });
+  }
+});
 
 // The fixture of the real run (task-053): the README examples of base, the three mains.
 describe('tests/fixtures/runs/base.yaml', () => {
