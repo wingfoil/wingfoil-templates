@@ -102,14 +102,30 @@ exit codes in condensed form, and the answers Acceptance 2 asks for.
     held by sprint-001`. `close`: `memory submit sprint-001` → `done`.
   - Sprint 2: `sprint-002` → `active`; item B to `done`; then `plan-release`, R1's
     `approve-release` and `sprint-review` ready together. **Finding 2:** R1 resumed at
-    `approve-release`: its `pre-release-checks` and `enter-releasing`, recorded under Sprint 1,
-    were not asked again, WingFoil keying a step's record by the release, not by the Sprint; the
+    `approve-release`: its `pre-release-checks` record and its `enter-releasing` move, made in
+    Sprint 1, were not asked again, WingFoil keying a step's record by the release, not by the Sprint; the
     charter and the README say they are recorded again. R2 (`rel-1.1.0`) added at `plan-release`
-    before R1 completed (once R1 is `released`, the `release` phase completes and would close
-    `plan-release`; a release can still be added outside the step), both released through every
+    before R1 completed (once R1 is `released` and no other release is open, the `release` phase
+    completes and would close `plan-release`; a release can still be added outside the step), both released through every
     phase of `release-submit` and `release-publishing` (`approve-release` of R1 in Sprint 2),
     each to `released` by `wf(release): finalize <id> [releasing → released]`.
   - Sprint 2's review, retrospective (`explore` complete at once on the directory, the known
     weak evidence of the charter's open point 2), its decision-log approved, `close`: `done`.
     `workflow status`: `delivery complete, end-of-life current`; no element was reported `late`
     at any boundary after Finding 1's move. One retrospective decision-log was pending at a time.
+- 2026-10-27, more of the record: after R1's move, Sprint 1's `release` phase had no candidate
+  left and completed with nothing `late` (`before-close`, `after-close-1`); R1 and item B had their
+  `sprint` rewritten to `sprint-002` before `sprint-002` existed, and WingFoil 0.3.0 gave no
+  diagnostic, so the next Sprint may be named before it is added; `workflow status` read
+  `delivery current` at every Sprint boundary, with no `late` but Finding 1's, until
+  `delivery complete, end-of-life current`.
+- 2026-10-27: Findings 1 and 2 went to the approver when found (dl-019), who approved fixing them
+  in this task (Acceptance 3): `b6dc551` amends `sprint.yaml` (`plan-release`, `sprint-review`,
+  `close` descriptions), the `scrum` directive, the README's adaptation and, in place, the
+  charter (its `release` and Releases bullets, its Adaptations, an Execution Note); no type, state,
+  workflow or phase changes. Acceptance 2's "recorded again" is answered by Finding 2.
+- 2026-10-27: independent review: approve after amendments; the notes above and the charter's
+  Adaptations bullet ("resumes where it stopped", the next Sprint named before it is added) complete
+  it. dl-026's Consequences still describe a carried release reported `late` until it completes,
+  as before plan-047 ruling 15; the approved decision-log is left as it is, the charter's note
+  records the change for `scrum`.

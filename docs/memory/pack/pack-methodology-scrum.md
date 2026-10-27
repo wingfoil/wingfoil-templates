@@ -151,7 +151,8 @@ Listed in the README's "Sources and adaptations" (spec-002 §2):
 - an Increment is released only once the Sprint Backlog is done or moved, not at any moment of the
   Sprint (WingFoil 0.3.0, ruling 16); a release passes through one Sprint's `release` phase at a
   time, and one that spans Sprints has its `sprint` field rewritten by hand before the Sprint
-  Review completes;
+  Review completes (the next Sprint may be named before it is added), and resumes where it
+  stopped;
 - Sprint n+1 and further releases are added outside a step (`memory add`), WingFoil 0.3.0 taking a
   completed step's evidence once;
 - the Scrum Master is `base`'s facilitator, and Developers are `software`'s roles.
