@@ -72,3 +72,4 @@ if one comes first.
   removed too in Expected; the 0.3.1 CHANGELOG's upgrade note stated exactly (harmless unless
   included); every workflow command blocked, not only `list`; `base`'s README fix a patch
   (`pack-semver`); the two step 4s; `software`'s "0.3.0's `init`"; the fifth entry harmless.
+- 2026-10-27: re-review: approve. Submitted.
