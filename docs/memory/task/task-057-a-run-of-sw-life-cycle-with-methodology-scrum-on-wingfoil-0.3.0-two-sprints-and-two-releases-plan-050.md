@@ -129,3 +129,5 @@ exit codes in condensed form, and the answers Acceptance 2 asks for.
   it. dl-026's Consequences still describe a carried release reported `late` until it completes,
   as before plan-047 ruling 15; the approved decision-log is left as it is, the charter's note
   records the change for `scrum`.
+- 2026-10-27: the full suite in clean clones at `b6dc551` (the pack's text fixes; the later commits
+  change only Memory documents): 1002 of 1002 on Node.js 22.21.0 and on the floor 22.12.0.
