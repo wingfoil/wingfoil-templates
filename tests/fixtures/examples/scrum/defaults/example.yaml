@@ -1,0 +1,13 @@
+format: 1
+id: defaults
+title: "Defaults"
+description: >-
+  Puffin Tickets, a fictional ticketing service, runs two-week Sprints on every default.
+packs:
+  - software@^1
+  - methodology/scrum@^1
+parameters:
+  project_name: "Puffin Tickets"
+  approver_name: "Puffin Lead"
+  approver_email: "lead@puffin-tickets.example"
+  agent_name: "Puffin Agent"

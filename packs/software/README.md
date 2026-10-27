@@ -146,7 +146,24 @@ methodology, with a WingFoil release in the pack's range (see its catalog entry)
 
 ## Examples
 
-None yet: no methodology pack is published.
+### defaults
+
+Fixture: tests/fixtures/examples/software/defaults/
+
+Kestrel Ledger, a fictional accounting tool, composes `software` with `base` and
+`methodology/scrum` and keeps every path and id on its default: its adrs, tech-specs, bugs,
+releases and release lines under `docs/memory/`. When it starts, its agent runs `sw-life-cycle`:
+the inception's document, then a tech-spec the approver approves, then the methodology's delivery.
+
+### release-folders-lean
+
+Fixture: tests/fixtures/examples/software/release-folders-lean/
+
+Marten Boards, a fictional board-game shop, files its records under `docs/04_memory/`: its design
+records under `design/`, its releases in a folder per release line, its release ids made of the
+release's kind and version (`{kind}-{version}`). Its records stay where its tools look, and no file
+moves. When a release is ready, the release slot runs: the checks, `releasing`, the approver's
+approval, then commit, rehearsal, tag, publication and `released`.
 
 ## Sources and adaptations
 
