@@ -78,6 +78,9 @@ jobs:
       - name: Validate software through its fixture methodology (self-test, dl-022 S6)
         if: github.ref_type != 'tag'
         run: npm run validate -- --overlay tests/fixtures/software-exit
+      - name: Run base's workflows on WingFoil (task-053; bug-005, bug-006)
+        if: github.ref_type != 'tag'
+        run: npm run check:runs
       - name: Validate for publication (dl-009)
         if: github.ref_type == 'tag'
         run: npm run validate:publication

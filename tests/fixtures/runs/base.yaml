@@ -1,0 +1,27 @@
+# The scripted run of base's workflows on WingFoil (task-053, plan-049; bug-005, bug-006), run by
+# `npm run check:runs` and the CI on every branch push. Each run starts one main of base in its own
+# scratch repository holding a README example's composition, committed; the approver of each
+# composition approves, the agent below runs every other command (fixture data, no governance act).
+format: 1
+compositions: tests/fixtures/examples/base
+identities:
+  agent: { name: "Runs Agent", email: "agent@runs.invalid" }
+runs:
+  - main: decision-log-ingest
+    steps: [start]
+  - main: retrospective-periodic
+    steps:
+      - start
+      # A file inside the inventory's directory completes explore (bug-006).
+      - commit_inside: retrospective_path
+      - next: retrospective.additional-points
+  - main: governance-evolution
+    steps:
+      - start
+      - finalize: governance-evolution.assess
+      - add: { type: decision-log, title: "Change who approves", step: governance-evolution.propose }
+      - submit: added
+      - approve: added
+      # The composer writes the AGENTS.md region; an adopted project has an AGENTS.md.
+      - commit_copy: { from: AGENTS.region.md, to: AGENTS.md }
+      - end

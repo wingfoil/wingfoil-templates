@@ -15,7 +15,7 @@ formats:
   directive: 1
   memory-template: 1
 requires:
-  - base@^1
+  - base@^2
 requires_capabilities: [workflow-engine]
 parameters:
   adr_path:

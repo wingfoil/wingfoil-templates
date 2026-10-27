@@ -3,7 +3,7 @@ id: release-folders-lean
 title: "Release folders, no retrospective folder"
 description: "Lantern Notes, a fictional note-taking app, files its records by release."
 packs:
-  - base@^1
+  - base@^2
 parameters:
   project_name: "Lantern Notes"
   approver_name: "Lantern Lead"

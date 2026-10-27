@@ -3,7 +3,7 @@ id: release-folders
 title: "Release folders"
 description: "Seabird Maps, a fictional mapping tool, files its records by release."
 packs:
-  - base@^1
+  - base@^2
 parameters:
   project_name: "Seabird Maps"
   approver_name: "Seabird Lead"
