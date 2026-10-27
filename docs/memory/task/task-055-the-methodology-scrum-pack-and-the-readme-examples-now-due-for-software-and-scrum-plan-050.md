@@ -173,3 +173,7 @@ the worktree before the branch (`tests/fixtures/scrum-draft/`), so no check sees
   Checks at `2d13c49`: `validate` 7 runs, the overlay `software-exit` 11, the golden tree 26, the
   publication run 7, all 0 failed; `npm run check:runs` 9 runs, 0 failed; the full suite in clean
   clones 1002 of 1002 on Node.js 22.21.0 and on the floor 22.12.0.
+- 2026-10-27: branch CI run 40492297696 on `59679d8`, conclusion `success` (`validate (22.12.0)`
+  and `validate (22.21.0)` both `success`). Privacy: no local path, private repository or private
+  project in the diff. `in-progress → in-review`; waiting for the approver's `approve` and the
+  merge OK.
