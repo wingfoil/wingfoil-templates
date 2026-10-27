@@ -2,7 +2,7 @@
 id: task-056-the-scrum-pack-s-exit-criterion-compositions-of-the-four-governed-software-repositories-parameters-plan-050
 type: task
 title: "The scrum pack's exit criterion: compositions of the four governed software repositories' parameters (plan-050)"
-status: in-review
+status: approved
 pack: "pack-methodology-scrum"
 depends_on: ["task-055"]
 tags: ["packs","scrum"]
