@@ -14,8 +14,8 @@ Found on 2026-10-27 by plan-051's `recheck` (task-057's run of `sw-life-cycle` w
 `methodology/scrum`, two Sprints, rerun on WingFoil 0.3.1), and the same on 0.3.0: every commit of
 the run gives identical `workflow status` and `workflow next --format json` on both.
 
-`methodology/scrum`'s `sprint` includes `base`'s `retrospective` once per Sprint (`iterate_over:
-sprint`). Its `approve` phase selects `where: { type: decision-log, status: [in-discussion], tags:
+`methodology/scrum`'s `delivery` iterates `sprint` over every Sprint (`iterate_over: sprint`), and
+each `sprint` includes `base`'s `retrospective`. Its `approve` phase selects `where: { type: decision-log, status: [in-discussion], tags:
 [retrospective] }`, with no relation to the Sprint in scope. Right after Sprint 2's retrospective
 decision-log (`dl-002`) is submitted to `in-discussion`, Sprint 1 being `done`:
 
@@ -72,3 +72,4 @@ options, for the triage:
   `base`'s charter row), and Expected's options restated after checking WingFoil's token
   resolution in `where` (option (i) works in a methodology's own sub, not in `base`'s). Applied,
   with the exact output and the reproduction's timing.
+- 2026-10-27: re-review: approve; its wording nit applied. Submitted.
