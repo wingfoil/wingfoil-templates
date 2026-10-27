@@ -218,3 +218,7 @@ follow-up in plan-049's notes.
   its `other` composition fails `explore` in the fake; `14db9c0` made it assert that failure
   (`6 runs, 1 failed`) beside the parameters and the cache it checks. The clean-up test compares
   the temporary directory with a snapshot taken before the run.
+- 2026-10-27: branch CI run 40473226554 on `beef8d0` (`main` merged in): `failure`, both jobs,
+  1 test of 1002: `digest.test.js`'s "src/ runs no shell" matched `exec(` in `src/runs.ts`, a
+  local name for the injected WingFoil runner, not `child_process.exec`. Renamed `execute`; the
+  checks rerun from clean clones.

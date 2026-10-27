@@ -327,7 +327,7 @@ function parseJson(output: WingfoilOutput, what: string): Record<string, unknown
 
 /** One run in its own scratch repository; the failure's line, or undefined when it passed. */
 function runOne(run: Run, composed: string, params: Record<string, string>, agent: Identity,
-  cli: string, exec: Exec): string | undefined {
+  cli: string, execute: Exec): string | undefined {
   const root = mkdtempSync(join(tmpdir(), 'runs-scratch-'));
   const repo = join(root, 'repo');
   const env = gitEnvironment();
@@ -346,7 +346,7 @@ function runOne(run: Run, composed: string, params: Record<string, string>, agen
   let added = '';
   let current = 'setup';
   const wingfoil = (args: string[]): WingfoilOutput => {
-    const output = exec(cli, args, repo, env);
+    const output = execute(cli, args, repo, env);
     if (output.status !== 0) {
       const text = output.stderr.trim() !== '' ? output.stderr : output.stdout;
       const why = text.split(/\r?\n/).find((line) => line.startsWith('error:')) ?? lastLine(text);
@@ -493,7 +493,7 @@ export function runRuns(argv: string[], options: RunsOptions = {}): RunsResult {
   const compose = options.compose ?? realCompose;
   const install = options.install
     ?? ((version: string, cache: string) => installRelease(version, { pins: MATRIX_PINS, cache }));
-  const exec = options.exec ?? realExec;
+  const execute = options.exec ?? realExec;
 
   const files = args.files.length > 0 ? args.files : scenarioFiles(tree);
   if (files.length === 0) return { code: 3, lines: [`no scenario file under ${SCENARIOS}`] };
@@ -533,7 +533,7 @@ export function runRuns(argv: string[], options: RunsOptions = {}): RunsResult {
         const cli = install(composed.release, args.cache);
         for (const run of scenario.runs) {
           total += 1;
-          const failure = runOne(run, output, composed.params, scenario.agent, cli, exec);
+          const failure = runOne(run, output, composed.params, scenario.agent, cli, execute);
           const head = `runs ${file} ${run.main} wingfoil@${composed.release}`;
           if (failure === undefined) {
             lines.push(`${head}: pass`);
