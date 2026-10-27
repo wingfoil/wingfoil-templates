@@ -107,11 +107,11 @@ plan-049's `prepare` reaches `main` first (plan-050 ruling 1).
     and `llms.txt` are unchanged (an unpublished pack, spec-002 §3.1); `index --check` covers the
     READMEs' generated sections.
 11. **Tests:** the counts the tooling tests take on this repository move, each stated in the
-    Execution Notes with the test it changes: `tests/validate.test.ts` (plain `validate` from 3 to
-    7 runs, the overlay's from 7 to 11, the publication run, `lint: checked 45 files`),
-    `tests/check-packs.test.ts` (this repository's file count) and the index tests; `npm test` passes on Node.js
-    22.21 and on the floor 22.12.0 in clean clones; the CI run on the branch is `success` and
-    recorded. No file under `src/` or `.wingfoil/` changes.
+    Execution Notes with the test it changes: `tests/validate.test.ts` (plain `validate` from 3 to 7
+    runs, the overlay's from 7 to 11, the publication run, `lint: checked 45 files`),
+    `tests/check-packs.test.ts` (this repository's file count) and the index tests; `npm test`
+    passes on Node.js 22.21 and on the floor 22.12.0 in clean clones; the CI run on the branch is
+    `success` and recorded. No file under `src/` or `.wingfoil/` changes.
 
 ## Design
 
