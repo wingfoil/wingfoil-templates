@@ -269,7 +269,6 @@ export function selectedReleases(tree: string, entries: string[]): string[] {
 }
 
 /** The composer of task-007, in process, and every release the matrix selects (task-058). */
-
 export const realCompose: Compose = (tree, entries, params, out) => {
   const catalog = loadCatalog(join(tree, 'catalog.yaml'));
   const packs = resolve(tree, catalog, entries);
@@ -551,7 +550,9 @@ export function runRuns(argv: string[], options: RunsOptions = {}): RunsResult {
           } catch (error) {
             // One release that cannot be installed: its line, and the other releases go on.
             code = Math.max(code, isIoError(error) ? 2 : 1);
-            lines.push(hideScratch(`runs ${file} wingfoil@${release}: ${messageOf(error)}`));
+            // installRelease's messages already name the release: it is said once.
+            const message = messageOf(error).replace(`wingfoil@${release}: `, '');
+            lines.push(hideScratch(`runs ${file} wingfoil@${release}: ${message}`));
             continue;
           }
           for (const run of scenario.runs) {

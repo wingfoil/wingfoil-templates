@@ -148,3 +148,10 @@ network for 0.3.1's install into this repository's `.cache/wingfoil-matrix`.
   installed from the new lockfile into `.cache/wingfoil-matrix`: `--version` prints
   `0.3.1 (870bd4406f3b9bba5ecde7a5f8198b80c2a98583)`. On the tree itself (0.3.0 alone):
   `runs: 13 runs, 0 failed`.
+- 2026-10-27: independent review of the build: approve, nothing blocking. Applied: an install
+  failure's line names its release once (`installRelease`'s messages already start with
+  `wingfoil@<version>:`), red after review at the previous commit (31 tests, 30 pass, 1 fail),
+  green; `realCompose`'s comment reattached; the scenario guards placed after `base.yaml`'s
+  comment. Kept: the selection test does not cover the capability filter, which `selectReleases`'
+  own tests (`matrix.test`) cover; the new path only keeps every release it returns, in order.
+  The clean clones rerun on the new head.
