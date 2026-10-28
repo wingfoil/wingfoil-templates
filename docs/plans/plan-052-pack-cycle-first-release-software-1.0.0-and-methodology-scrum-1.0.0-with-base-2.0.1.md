@@ -163,10 +163,11 @@ as a `check:runs` scenario.
    runs in the existing `check:runs` CI step; the Design says whether a step changes (then
    `tests/ci-workflow.test.ts`). `tooling-delivery`'s WIP limit holds.
    Each task (steps 4–6): its body reviewed and accepted into the backlog, its Design on `main`, the
-   build on `task/<task id>` (red first for task-060, a tooling task), an independent review, the checks from clean clones on
-   Node.js 22.21 and 22.12.0 (`npm ci`, `npm test`, `lint`, `check:pins`, `check:schemas`,
-   `check:packs`, `index -- --check`, `validate`, the overlays `software-exit` and `scrum-exit`, the
-   golden step, `workflow list`, `check:runs`, `npm audit` in the root and in every matrix folder),
+   build on `task/<task id>` (red first for task-060, a tooling task), an independent review, the
+   checks from clean clones on Node.js 22.21 and 22.12.0 (`npm ci`, `npm test`, `lint`,
+   `check:pins`, `check:schemas`, `check:packs`, `index -- --check`, `validate`, the overlays
+   `software-exit` and `scrum-exit`, the golden step, `workflow list`, `check:runs`, `npm audit` in
+   the root and in every matrix folder),
    the branch CI's conclusion in its Execution Notes, `in-review`, the approver's acceptance and
    merge OK, a `--no-ff` merge, `main`'s CI read, `done`.
 7. **`prepare`** (tech-lead, on `main`), `prel-003`, `prel-004`, `prel-005` in order (the gap
@@ -207,8 +208,9 @@ as a `check:runs` scenario.
     Note.
 12. **Notices**, at the tags: to WingFoil UI's session and to the coordinating session, the tags,
     the date, the range, what changes for an adopter (bug-007's removal list and the update from
-    `base` 2.0.0, bug-008's note, the `tech-lead` holder); to WingFoil, through the coordinating session, `software`'s new step
-    `end-of-life.approve` with the key mapping (`pack-foundation-software`'s notes).
+    `base` 2.0.0, bug-008's note, the `tech-lead` holder); to WingFoil, through the coordinating
+    session, `software`'s new step `end-of-life.approve` with the key mapping
+    (`pack-foundation-software`'s notes).
 13. **Close:** the account per tech-spec (dl-020); the owed items; `active → done`.
 
 ## Handoff
