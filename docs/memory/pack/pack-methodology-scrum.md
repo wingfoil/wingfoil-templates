@@ -2,7 +2,7 @@
 id: pack-methodology-scrum
 type: pack
 title: "Scrum"
-status: accepted
+status: active
 axis: "methodology"
 name: "scrum"
 slot: ""
@@ -291,3 +291,8 @@ For the approver's acceptance:
   the Sprint machine's names (`planned`, `active`, `done`) are fixed with 1.0.0. bug-008's effect
   (a closed Sprint's `retrospective` › `approve` listed again) is stated in the README, not changed
   (plan-052 ruling 2). The body stays as approved.
+- 2026-10-28, plan-052 (`first-release`): **`methodology/scrum` 1.0.0 published**: tag
+  `methodology/scrum@1.0.0` at `6373282`, catalog commit `bd388bf`, range `>=0.3.0 <=0.3.1`, CI on
+  the tag and on `main` `success`, CB-6's live check passed (prel-005), the first tag holding a
+  slash fetched live. `accepted → active` (plan-052 step 11, as plan-044 ruling B); the
+  `retrospective` of `pack-cycle` runs after this plan, for the three cycles.
