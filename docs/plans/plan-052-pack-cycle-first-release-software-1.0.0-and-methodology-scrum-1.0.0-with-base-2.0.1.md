@@ -2,7 +2,7 @@
 id: plan-052-pack-cycle-first-release-software-1.0.0-and-methodology-scrum-1.0.0-with-base-2.0.1
 type: plan
 title: "pack-cycle first-release: software 1.0.0 and methodology/scrum 1.0.0, with base 2.0.1"
-status: draft
+status: active
 workflow: "pack-cycle"
 phase: "first-release"
 tags: ["packs","software","scrum","base","W9"]
