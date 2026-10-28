@@ -54,7 +54,7 @@ coordinating session follow the tags (step 12).
 
 ## Validation
 
-- Commit: `7ab9cd0ad99a568631689360b68d86351076e5f6`
+- Commit: `f6e42fc97b5b4fb23a37e00ae5abcea356de7276`
 - Command: `npm run validate:publication -- --evidence`
 - Mode: publication
 - Exit code: 0
@@ -121,21 +121,29 @@ matrix: publication, 14 runs, 0 failed, tolerance applied: none
 ```
 
 Also, at `validate` (plan-052 step 8):
-- `npm run publish:pack -- --pack base --dry-run`, in a temporary clone of `7ab9cd0` (the three
-  packs in order, `base`, `software`, `methodology/scrum`): exit 0; the tag `base@2.0.1` at
-  `7ab9cd0`, the range `>=0.3.0 <=0.3.1`, the digest
-  `sha256:df95a18bb87104baf096959ff68d40064d06e44f154b5505f8d24449b33a1494`; the clone left as it
-  was. The tag goes on the approval's commit, where `publish:pack` validates again;
-- `check:runs` with task-060's adoption run: 34 runs, 0 failed (the clean clones below);
-- the check against the three private, non-software projects, run outside this repository on
-  2026-10-28, `base` at `7ab9cd0` (2.0.1's content), WingFoil 0.3.0 and 0.3.1: 3 projects, each on
-  a scratch tree (a clone holding `packs/base` alone, its README's section 7 reduced to the
-  exemption line), `npm run validate -- --tree <scratch> base --param …` with the projects' path
-  and id values (redacted) and fictional identities: 3 of 3 exit 0, each `matrix: self-test, 2
-  runs, 0 failed, tolerance applied: none`, lint 0 problems, 0 warnings. A first run on the
-  repository's own tree exited 1 only because `--param` overrides the README examples' values
-  (every matrix run passed). The scratch tree and logs were removed;
-- the privacy check of this element and of the pack's files: no local path, no private repository,
+- Presets: none (`catalog.yaml` `presets: []`); the documented combinations are the seven README
+  examples above, each composed twice, byte-identical; no conditional part (spec-001 §6.5).
+- `npm run publish:pack -- --pack base --dry-run`, one of three separate dry runs, each in its own
+  temporary clone of `f6e42fc` against the current catalog (the chained order, `base`, `software`,
+  `methodology/scrum`, was rehearsed at plan-052 step 3): exit 0; the tag `base@2.0.1` at `f6e42fc`,
+  the range `>=0.3.0 <=0.3.1`, the digest
+  `sha256:8e3e91d4be754f686daa346311d53dd0e4dccb7bd916b8f868c852105ff3961c`; the clone left clean,
+  no tag added. The tag goes on the approval's commit, where `publish:pack` validates again.
+- The check against the three private, non-software projects, run outside this repository on
+  2026-10-28, `base` at `7ab9cd0` (at `f6e42fc` `packs/base` differs only in its CHANGELOG's 2.0.1
+  entry, which the check does not compose), WingFoil 0.3.0 and 0.3.1: 3 projects, each on a scratch
+  tree (a clone holding `packs/base` alone, its README's section 7 reduced to the exemption line),
+  `npm run validate -- --tree <scratch> base --param …` with the projects' path and id values
+  (redacted) and fictional identities: 3 of 3 exit 0, each `matrix: self-test, 2 runs, 0 failed,
+  tolerance applied: none`, lint 0 problems, 0 warnings. A first run on this repository's own tree
+  exited 1 only because `--param` overrides the README examples' values (every matrix run passed).
+  The scratch tree and logs were removed.
+- The composition of `base` from the tag `base@2.0.0` and from `f6e42fc`, with the same parameters:
+  16 files each, byte-identical (the independent review), as a patch requires.
+- The clean-clone checks on Node.js 22.21.0 and 22.12.0, the overlays `software-exit` and
+  `scrum-exit`, `check:runs` with task-060's adoption run, and `main`'s CI: recorded in the
+  Execution Notes once run on the submitted head.
+- The privacy check of this element and of the pack's files: no local path, no private repository,
   nothing on the private projects beyond their number.
 
 ## Publication
@@ -148,3 +156,11 @@ Also, at `validate` (plan-052 step 8):
   `wingfoil` and `line` filled by editing the draft (W-02); Changes written; the README's "Install
   and update" checked against `compat.yaml` (CB-3: the temporary mark kept, no release provides
   `pack-install`).
+- 2026-10-28, `validate` (plan-052 step 8): the evidence on `7ab9cd0`, three dry runs, `base`'s
+  private check. Independent review of the three elements: `base` request changes (two blocking
+  findings: the CHANGELOG's first line, the tag's annotation, named only bug-007; the clean clones
+  not recorded), `software` and `methodology/scrum` approve after amendments (the same record).
+  Applied (`f6e42fc`): the first line names both fixes; the evidence and the three dry runs redone
+  on `f6e42fc` (`base`'s digest changes with its CHANGELOG, the other two do not); the presets
+  line; "three separate dry runs"; the publication paragraph; the sources of `base@^2`; task-057's
+  fixes named. The clean-clone checks run on the submitted head; re-review requested.

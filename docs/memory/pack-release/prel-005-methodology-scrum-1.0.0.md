@@ -44,7 +44,7 @@ notices to WingFoil UI's session and to the coordinating session follow the tags
 
 ## Validation
 
-- Commit: `7ab9cd0ad99a568631689360b68d86351076e5f6`
+- Commit: `f6e42fc97b5b4fb23a37e00ae5abcea356de7276`
 - Command: `npm run validate:publication -- --evidence`
 - Mode: publication
 - Exit code: 0
@@ -111,13 +111,18 @@ matrix: publication, 14 runs, 0 failed, tolerance applied: none
 ```
 
 Also, at `validate` (plan-052 step 8):
-- `npm run publish:pack -- --pack methodology/scrum --dry-run`, in a temporary clone of `7ab9cd0`
-  (the three packs in order, `base`, `software`, `methodology/scrum`): exit 0; the tag
-  `methodology/scrum@1.0.0` at `7ab9cd0`, the range `>=0.3.0 <=0.3.1`, the digest
-  `sha256:532f103ba59ce39afb2db8b7d6a98d57ee92581d012d78eacd18f8341838534f`; the clone left as it
-  was. The tag goes on the approval's commit, where `publish:pack` validates again;
-- `check:runs` with task-060's adoption run: 34 runs, 0 failed (the clean clones below);
-- the privacy check of this element and of the pack's files: no local path, no private repository,
+- Presets: none (`catalog.yaml` `presets: []`); the documented combinations are the seven README
+  examples above, each composed twice, byte-identical; no conditional part (spec-001 §6.5).
+- `npm run publish:pack -- --pack methodology/scrum --dry-run`, one of three separate dry runs, each
+  in its own temporary clone of `f6e42fc` against the current catalog (the chained order, `base`,
+  `software`, `methodology/scrum`, was rehearsed at plan-052 step 3): exit 0; the tag
+  `methodology/scrum@1.0.0` at `f6e42fc`, the range `>=0.3.0 <=0.3.1`, the digest
+  `sha256:532f103ba59ce39afb2db8b7d6a98d57ee92581d012d78eacd18f8341838534f`; the clone left clean,
+  no tag added. The tag goes on the approval's commit, where `publish:pack` validates again.
+- The clean-clone checks on Node.js 22.21.0 and 22.12.0, the overlays `software-exit` and
+  `scrum-exit`, `check:runs` with task-060's adoption run, and `main`'s CI: recorded in the
+  Execution Notes once run on the submitted head.
+- The privacy check of this element and of the pack's files: no local path, no private repository,
   nothing on the private projects beyond their number.
 
 ## Publication
@@ -130,3 +135,11 @@ Also, at `validate` (plan-052 step 8):
   `wingfoil` and `line` filled by editing the draft (W-02); Changes written; the README's "Install
   and update" checked against `compat.yaml` (CB-3: the temporary mark kept, no release provides
   `pack-install`).
+- 2026-10-28, `validate` (plan-052 step 8): the evidence on `7ab9cd0`, three dry runs, `base`'s
+  private check. Independent review of the three elements: `base` request changes (two blocking
+  findings: the CHANGELOG's first line, the tag's annotation, named only bug-007; the clean clones
+  not recorded), `software` and `methodology/scrum` approve after amendments (the same record).
+  Applied (`f6e42fc`): the first line names both fixes; the evidence and the three dry runs redone
+  on `f6e42fc` (`base`'s digest changes with its CHANGELOG, the other two do not); the presets
+  line; "three separate dry runs"; the publication paragraph; the sources of `base@^2`; task-057's
+  fixes named. The clean-clone checks run on the submitted head; re-review requested.
