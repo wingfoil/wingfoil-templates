@@ -107,3 +107,12 @@ accepts it.
   (blocking: with `base` alone, keeping `init`'s software workflows fails on 0.3.1; step 4 now
   removes every workflow `init` scaffolded (bug-007's Expected)). Applied.
 - 2026-10-28: re-review: approve. Submitted.
+- 2026-10-28: built (`d48bc2e` the README, `f75eccb` the charter's note). `npm run index -- --check`
+  6 files, 0 not up to date; `check:packs` 61 files, 0 problems. Acceptance 5, by hand outside the
+  repository: `base` composed alone from `core-records`, copied into four projects initialised by
+  `wingfoil init --template Scrum` and `--template Kanban` on WingFoil 0.3.0 and 0.3.1, steps 3
+  and 4 applied as written (the five scaffolded workflows and the three directive stubs removed,
+  the `include` entries left are `base`'s four), committed: `workflow list --format json` and
+  `workflow next --format json` exit 0, no diagnostic, empty stderr, on all four. With the steps
+  before this task (no workflow removed), on 0.3.0 and 0.3.1 (Scrum): both exit 1,
+  `E_WORKFLOW_DUPLICATE_NAME` for `decision-log-ingest`.
