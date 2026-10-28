@@ -132,3 +132,17 @@ runs, each a `main` started and its steps; the step kinds are `start`, `end`, `n
   8 runs, 0 failed; `npm run check:runs`: 34 runs, 0 failed; `npm run lint` exit 0. The CI step
   and `tests/ci-workflow.test.ts` unchanged (the step runs every scenario file); `runs-cli.ts`'s
   header points to `runs.ts`, unchanged.
+- 2026-10-28, correction of the red count above: of the 15 new tests, 7 failed and 8 passed before
+  the code: the seven refusals (any `adopt` key was unknown) and "leaves no scratch repository
+  behind", which asserted no exit code.
+- 2026-10-28: independent review: approve after amendments, nothing blocking. Red first for the
+  behaviour it asked for (`5cdf11a`): 48 tests, 3 failed (an `include` absent,
+  an `include` not a list, WingFoil's JSON error line). Fixed (`649c346`): `include` created
+  when absent or null, refused when not a list (stage `include`, and in `check`); `check` also
+  refuses a listed directive that remains; a JSON stderr reported by its `error` and the count of
+  its `details`; the refusal tests assert the whole location and problem; the fixture's test
+  parses the file and compares each run; byte order tested with three workflows left; the scratch
+  test asserts exit 0. 48 of 48; `check:runs` 34 runs, 0 failed; the red variant 8 of 8 failed at
+  `list`; lint exit 0. Deviation from the Design (dl-019 not needed: no Acceptance changes):
+  `runs-cli.ts`' usage is not changed, its header pointing to `runs.ts`, whose header names the
+  adoption run. Re-review requested.
