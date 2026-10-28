@@ -2,7 +2,7 @@
 id: dl-024-mcp-servers-declared-by-packs
 type: decision-log
 title: "MCP servers declared by packs"
-status: draft
+status: pending
 tags: ["packs","format","mcp","wingfoil"]
 ---
 
