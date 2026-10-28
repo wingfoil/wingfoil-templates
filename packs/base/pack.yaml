@@ -5,7 +5,7 @@ title: "Base"
 description: >-
   The core of every project governed by WingFoil, software or not: the Memory types, workflows,
   directives and DNA that all of them use, and nothing that only some use.
-version: 2.0.0
+version: 2.0.1
 formats:
   dna: 1
   roles: 1
