@@ -74,7 +74,37 @@ runs, each a `main` started and its steps; the step kinds are `start`, `end`, `n
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+- **The format.** A run is either the existing `{ main, steps }` or `{ adopt: { template, remove:
+  { workflows, directives } } }`: `template` a non-empty string passed to `wingfoil init
+  --template`; `workflows` and `directives` lists of ids (possibly empty, so that a red variant can
+  remove none), each id a plain name with no `/`. The reader keeps its exit 3 for an unknown key,
+  a missing key, an empty template or a wrong type. `runs[i]` holds exactly one of `main` and
+  `adopt`.
+- **The run** (`runOne`'s adoption branch, its own scratch repository as every run): `git init`,
+  the scenario's agent set in the repository's config before anything (`init` commits); `wingfoil
+  init --template <template>`; the composed output copied over the repository, `custom/` folders
+  kept (a copy, nothing deleted); each listed workflow's `.wingfoil/workflows/custom/<id>.yaml`
+  and each listed directive's `.wingfoil/directives/custom/<id>.md` removed when present (a
+  template writes `scrum-delivery` or `kanban-delivery`, so a list may name both); every
+  `workflows/custom/*.yaml` left re-included in `.wingfoil/workflows.yaml`'s `include`, after the
+  composed entries, in byte order (README step 3: the project's own workflows); a commit; then
+  `wingfoil workflow list --format json` and `wingfoil workflow next --format json`, each exit 0,
+  empty stderr, and for `list` an empty `diagnostics` list; last, the run's own check: no
+  `include` entry names a workflow of the removal list, and none of its files remains. The first
+  failure ends the run, reported as the other runs are: `runs <file> adopt:<template>
+  wingfoil@<release>: pass` or `fail at <stage>: <why>`.
+- **The scenario** `tests/fixtures/runs/adoption.yaml`: `compositions: tests/fixtures/examples/scrum`
+  (2), runs `adopt` with `Scrum` and with `Kanban`, the removal list bug-007's (five workflows,
+  both delivery names, four stubs): 2 × 2 × 2 releases = 8 runs; `check:runs` 26 → 34.
+- **Tests first** in `tests/runs.test.ts`, the fake WingFoil gaining `init` (writes the five
+  `custom/` workflows, the four stubs and an `include` list) and a `list` that reports
+  `E_WORKFLOW_DUPLICATE_NAME` when a `custom/` workflow has a composed workflow's name and is
+  included: the reader's accepted and refused shapes; a passing adoption; the red variant failing
+  at `list`; a diagnostic, a stderr line, a kept included workflow each failing; the identity set
+  before `init`; the report line. The red runs' failing counts in the Execution Notes.
+- **CI:** the existing `check:runs` step runs the new file; no step changes, so
+  `tests/ci-workflow.test.ts` does not either; the step's name gains no release. Headers of
+  `src/runs.ts` and `runs-cli.ts`' usage name the adoption run.
 
 ## Execution Notes
 
