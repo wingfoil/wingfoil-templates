@@ -73,3 +73,6 @@ options, for the triage:
   resolution in `where` (option (i) works in a methodology's own sub, not in `base`'s). Applied,
   with the exact output and the reproduction's timing.
 - 2026-10-27: re-review: approve; its wording nit applied. Submitted.
+- 2026-10-28: fixed on `main` by the merges of task-061 (`66b783f`, `base`'s README) and task-062
+  (`eebfe21`, `software`'s and `methodology/scrum`'s READMEs), plan-052; released in `base` 2.0.1,
+  `software` 1.0.0 and `methodology/scrum` 1.0.0 (the tags recorded at publication).

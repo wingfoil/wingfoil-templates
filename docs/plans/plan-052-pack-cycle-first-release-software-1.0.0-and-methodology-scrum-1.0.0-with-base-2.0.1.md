@@ -269,3 +269,20 @@ as a `check:runs` scenario.
 - 2026-10-28, step 2 closed: the approver's merge OK; `plan/plan-052-sequencer` merged into `main`
   (`c10de8c`), the branch removed. The approver accepted task-060, task-061 and task-062 into the
   backlog (`b6d82e3`, `eb6363a`, `d5087af`, on the branch before the merge).
+- 2026-10-28, step 3, the rehearsal (Node.js 22.21.0, a scratch clone of `99b4ea5`, nothing
+  pushed): a simulated `prepare` commit (`base`'s `version: 2.0.1` and a CHANGELOG line), then
+  `npm run publish:pack -- --pack base`, `software`, `methodology/scrum` in order: each exit 0, its
+  publication matrix 14 runs, 0 failed, a tag and a catalog commit (`software@1.0.0` at `base`'s
+  catalog commit, `methodology/scrum@1.0.0` at `software`'s, as step 10 says). On the result:
+  `npm test` 1010 of 1010; `check:packs` 61 files, 0 problems; `check:schemas` 5 files;
+  `index -- --check` 6 files, 0 not up to date; `validate` 14 runs, 0 failed; `check:runs` 26
+  runs, 0 failed. No tooling task is needed (task-063 not opened). A first attempt failed at
+  `base`'s `publish:pack` because the simulated CHANGELOG line was not written (the rehearsal's own
+  script), and was redone.
+- 2026-10-28, steps 4 and 5: task-061 `done` (merged `66b783f`): `base`'s README, step 4 removing
+  every workflow `init` scaffolds, "Updating from 2.0.0", bug-008's effect in "Sources and
+  adaptations", the charter's note. task-062 `done` (merged `eebfe21`): `software`'s and
+  `methodology/scrum`'s READMEs, the `tech-lead` holder, scrum's open points 2 and 3. Each: clean
+  clones on both Node.js versions, 1010 of 1010, every check exit 0; branch CI `success`. bug-007's
+  and bug-008's notes record the fix. `main`'s CI after task-061's merge: run 40669019831 (read
+  next).

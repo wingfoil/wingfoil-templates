@@ -2,7 +2,7 @@
 id: task-061-base-s-readme-init-s-custom-workflows-removed-at-adoption-bug-008-s-effect-stated-the-update-from-2.0.0-bug-007-bug-008-plan-052
 type: task
 title: "base's README: init's custom/ workflows removed at adoption, bug-008's effect stated, the update from 2.0.0 (bug-007, bug-008, plan-052)"
-status: backlog
+status: done
 pack: "pack-foundation-base"
 depends_on: []
 tags: ["packs","base","readme"]
@@ -107,3 +107,27 @@ accepts it.
   (blocking: with `base` alone, keeping `init`'s software workflows fails on 0.3.1; step 4 now
   removes every workflow `init` scaffolded (bug-007's Expected)). Applied.
 - 2026-10-28: re-review: approve. Submitted.
+- 2026-10-28: built (`d48bc2e` the README, `f75eccb` the charter's note). `npm run index -- --check`
+  6 files, 0 not up to date; `check:packs` 61 files, 0 problems. Acceptance 5, by hand outside the
+  repository: `base` composed alone from `core-records`, copied into four projects initialised by
+  `wingfoil init --template Scrum` and `--template Kanban` on WingFoil 0.3.0 and 0.3.1, steps 3
+  and 4 applied as written (the five scaffolded workflows and the three directive stubs removed,
+  the `include` entries left are `base`'s four), committed: `workflow list --format json` and
+  `workflow next --format json` exit 0, no diagnostic, empty stderr, on all four. With the steps
+  before this task (no workflow removed), on 0.3.0 and 0.3.1 (Scrum): both exit 1,
+  `E_WORKFLOW_DUPLICATE_NAME` for `decision-log-ingest`.
+- 2026-10-28: independent review: approve, nothing blocking; it reproduced Acceptance 5 on 0.3.0
+  and 0.3.1 with both templates, and each `init` workflow re-added alone fails as step 4 says on
+  0.3.1 (`decision-log-ingest` also on 0.3.0). Applied (`2121749`): step 4's wording, the `include`
+  entry for every workflow. Noted, not changed (outside bug-007): step 3's "own entries" draws the
+  "wrote itself" line only for workflows, so a literal reader might re-add `init`'s Memory types or
+  roles; for a later README pass. The clean-clone checks rerun on the final commit.
+- 2026-10-28, checks from clean clones (`2121749` on Node.js 22.21.0, `8ac7ff0` on 22.12.0, which
+  adds only these notes): `npm ci` (0 vulnerabilities), `npm test` 1010 of 1010, `lint`,
+  `check:pins`, `check:schemas`, `check:packs` (61 files, 0 problems), `index -- --check` (6 files,
+  0 not up to date), `validate` (14 runs, 0 failed), the golden step (26 runs, 0 failed), the
+  overlays `software-exit` and `scrum-exit` (22 runs each, 0 failed), `workflow list`,
+  `check:runs` (26 runs, 0 failed), `npm audit` in the root and in the three matrix folders (0
+  vulnerabilities): every command exit 0 on both. Branch CI: run 40660549898 on `8ac7ff0`,
+  conclusion `success` (the two runs before it cancelled by the next push). In review.
+- 2026-10-28: approved by the approver (`90a9107`); merged into `main` (`66b783f`). Delivered.

@@ -262,3 +262,11 @@ For the approver's acceptance:
   is `>=0.3.0 <=0.3.1` for 1.0.0 and 2.0.0 (`catalog.yaml`). 1.0.0 still meets bug-005 and bug-006
   on 0.3.1. Found by the recheck: bug-007 (the README's install step 3 and `init`'s `custom/`
   workflows), bug-008 (`retrospective` › `approve` in an iterated retrospective).
+- 2026-10-28, plan-052 (ruling 2), task-061: the Ships table's `retrospective` row says the tag lets
+  WingFoil 0.3.0 bind `approve` "in a sub to the retrospective's decision-log only". That holds for
+  one instance only: the selection is not bound to an iteration, so under a methodology that
+  includes `retrospective` in an iterated sub (`methodology/scrum`'s Sprint), a closed iteration's
+  `approve` step is listed again while a later iteration's retrospective decision-log is
+  `in-discussion`, `pending approvals` counting it once per step; one approval clears both
+  (bug-008). The README says so in "Sources and adaptations"; its "Install and update" removes
+  every workflow `init` scaffolded under `custom/` (bug-007). The body stays as approved.
