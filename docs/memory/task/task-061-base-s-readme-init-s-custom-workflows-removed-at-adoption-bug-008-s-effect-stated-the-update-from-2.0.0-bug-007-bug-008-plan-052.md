@@ -130,3 +130,4 @@ accepts it.
   `check:runs` (26 runs, 0 failed), `npm audit` in the root and in the three matrix folders (0
   vulnerabilities): every command exit 0 on both. Branch CI: run 40660549898 on `8ac7ff0`,
   conclusion `success` (the two runs before it cancelled by the next push). In review.
+- 2026-10-28: approved by the approver (`90a9107`); merged into `main` (`66b783f`). Delivered.
