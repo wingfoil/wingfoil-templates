@@ -140,3 +140,8 @@ On the branch `dl/dl-024-dl-025-mcp-and-conflicts`, from `main` at `8242f52`.
 - 2026-10-28: re-review: approve; three nits applied (the move-aside's safety, W-14's directive
   version, the feedback-note question left to the retrospective).
 - 2026-10-28: the approver gave the OK in chat ("ok, procedi con il submit"); submitted.
+- 2026-10-28, step 2: dl-026 and dl-027 moved to the session's scratchpad for the two
+  `memory add`, which gave dl-024 (`70c76be`) and dl-025 (`8e15f29`); the files put back at once,
+  `git status` clean (`wingfoil-cli` rule 4; W-14 follows in task-063). Bodies committed as
+  received (`d72fd76`): the words compared one by one with the received text, identical; two prose
+  lines of dl-024 rewrapped, dl-025's table rows kept; an Execution Note each. Reviews running.
