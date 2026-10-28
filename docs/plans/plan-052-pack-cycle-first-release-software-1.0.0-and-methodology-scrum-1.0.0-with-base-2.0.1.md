@@ -290,3 +290,10 @@ as a `check:runs` scenario.
   `tests/fixtures/runs/adoption.yaml`, red (8 of 8 at `list`, `E_WORKFLOW_DUPLICATE_NAME`) then
   green on 0.3.0 and 0.3.1; `check:runs` 34 runs; clean clones 1027 of 1027 on both Node.js
   versions; branch CI `success`. Steps 4–6 done; `prepare` next.
+- 2026-10-28, steps 7 and 8: `prepare` (`7ab9cd0`) and `validate` of prel-003 (`base` 2.0.1,
+  patch), prel-004 (`software` 1.0.0) and prel-005 (`methodology/scrum` 1.0.0), each `releasing`.
+  The independent review asked that the CHANGELOG's first line (the tag's annotation) name both
+  fixes and that the clean clones be recorded: applied (`f6e42fc`), evidence and dry runs redone
+  there; re-review approve. Clean clones of `ba1e46a` on both Node.js versions, every check exit 0
+  (1027 of 1027; `check:runs` 34 runs); `main`'s CI run 40673992563 `success`; `base`'s private
+  check 3 of 3. Waiting for the approver's approvals (step 9).
