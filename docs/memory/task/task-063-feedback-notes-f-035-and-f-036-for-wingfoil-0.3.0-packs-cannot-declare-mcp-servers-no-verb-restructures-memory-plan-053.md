@@ -2,7 +2,7 @@
 id: task-063-feedback-notes-f-035-and-f-036-for-wingfoil-0.3.0-packs-cannot-declare-mcp-servers-no-verb-restructures-memory-plan-053
 type: task
 title: "Feedback notes F-035 and F-036 for WingFoil 0.3.0: packs cannot declare MCP servers, no verb restructures Memory (plan-053)"
-status: in-review
+status: approved
 pack: ""            # tooling task (decision-log-ingest › capture, plan-053 step 4)
 depends_on: []
 tags: ["tooling","feedback"]
