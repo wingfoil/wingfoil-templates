@@ -139,3 +139,4 @@ On the branch `dl/dl-024-dl-025-mcp-and-conflicts`, from `main` at `8242f52`.
   branch and `tooling-delivery` transitions; the inbox test's `prel-` alternative.
 - 2026-10-28: re-review: approve; three nits applied (the move-aside's safety, W-14's directive
   version, the feedback-note question left to the retrospective).
+- 2026-10-28: the approver gave the OK in chat ("ok, procedi con il submit"); submitted.
