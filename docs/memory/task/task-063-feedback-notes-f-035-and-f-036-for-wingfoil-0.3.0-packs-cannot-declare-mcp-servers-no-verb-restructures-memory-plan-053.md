@@ -21,10 +21,11 @@ unchanged on 2026-10-28). The texts are final; only the task number in their ope
 The notes block the inbox's numbering (`tests/support/inbox.ts`: contiguous numbers), so task-052
 (F-037) and the retrospective's notes wait for this task.
 
-The same task records W-14 in the `wingfoil-cli` directive: WingFoil 0.2.2's `memory add` numbers
-a `{n}` id by count (1 + the files of the type), not by the first free number; plan-053 step 2
-moved dl-026 and dl-027 aside to get dl-024 and dl-025 (rule 4). Whether it also needs a feedback
-note is decided by the retrospective after re-checking it on 0.3.1 (plan-053 step 4).
+The same task records W-14 in the `wingfoil-cli` directive: WingFoil 0.2.2's `memory add` numbers a
+`{n}` id by count (1 + the type's files in the working tree), so with a gap it gives a number
+already in use, under another slug; plan-053 step 2 moved dl-026 and dl-027 aside to get dl-024 and
+dl-025 (rule 4). Whether it also needs a feedback note is decided by the retrospective after
+re-checking it on 0.3.1 (plan-053 step 4).
 
 ## Acceptance
 
@@ -34,11 +35,14 @@ note is decided by the retrospective after re-checking it on 0.3.1 (plan-053 ste
    `F-036-no-verb-restructures-memory.md`, each the received text: the six fields in order (`id`,
    `title`, `kind: request`, `status: open`, `wingfoil_version: 0.3.0`, `answered_by: []`), a body
    opening with `New note (task-063).` followed by the received provenance, `## Observed` and
-   `## Expected`; no `## Replies`. Prose over 100 characters is rewrapped with no word changed;
-   code blocks are kept. F-035's "(proposed, not yet ruled)" stays even if dl-024 is ruled first.
+   `## Expected`; no `## Replies`. The text is kept byte for byte except the opening's task number
+   (F-035's 114-character code line and F-036's 102-character title kept); `wingfoil_version:
+   0.3.0` is the received value, written by hand: the governance pin is 0.2.2. F-035's "(proposed,
+   not yet ruled)" stays even if dl-024 is ruled first.
 2. **Reproduced with WingFoil alone**: each `## Observed` command re-run in a scratch project
    (`git init`, WingFoil installed with `npm ci` from `src/matrix/wingfoil-0.3.0/`, then
-   `wingfoil init --template Kanban --no-interactive`); its output matches the note's, where a
+   `wingfoil init --template Kanban --no-interactive`); its output, and the exit codes the note
+   shows, match the note's, where a
    difference beyond hashes or paths goes to the approver before the note is changed (dl-019). The
    same commands on `src/matrix/wingfoil-0.3.1/`: the result recorded in the Execution Notes; a
    difference goes to the approver.
@@ -47,12 +51,16 @@ note is decided by the retrospective after re-checking it on 0.3.1 (plan-053 ste
 4. **The ledger** in `docs/wingfoil-feedback/README.md` gains one row per note, in order (5 cells
    equal to the frontmatter, `answered_by` empty); `Last sync` unchanged.
 5. **W-14** in `.wingfoil/directives/custom/wingfoil-cli.md`, after W-13: the behaviour (`memory
-   add` numbers a `{n}` id as 1 + the count of the type's files, so a gap is never filled and a
-   number on another branch is reused) and how to work with it (move the higher-numbered files out
-   of the repository for the command and back, or a placeholder for a number held elsewhere; check
-   the id before going on); `Note` and `WingFoil element` empty. The directive's Version 1.4 → 1.5
-   and its Date. No W-entry for the notes' 0.3.0 and 0.3.1 behaviours: they are recorded when the
-   governance pin moves (rule 5), as task-041.
+   add` numbers a `{n}` id as 1 + the count of the type's files in the working tree, so with a gap
+   it gives a number already in use, a second id with that number and another slug, which WingFoil
+   does not refuse since it refuses only an identical path; and a number taken only on another
+   branch is given again) and how to work with it (when the numbers below the wanted one have no
+   gap, move the higher-numbered files out of the repository for the command and back; for a number
+   held on another branch, a placeholder file in the type's directory, which raises the count by
+   one, removed after the command and never committed; check the id before going on); `Note` and
+   `WingFoil element` empty. The directive's Version 1.4 → 1.5 and its Date 2026-10-28; *Checked
+   against* `wingfoil@0.2.2` unchanged (no pin move, rule 5). No W-entry for the notes' 0.3.0 and
+   0.3.1 behaviours: they are recorded when the governance pin moves (rule 5), as task-041.
 6. **Tests and checks:** from clean clones on Node.js 22.21.0 and 22.12.0, `npm ci`, `npm test`
    (the inbox checks included, numbering contiguous from F-001), `npm run lint`,
    `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check` and
@@ -64,14 +72,17 @@ note is decided by the retrospective after re-checking it on 0.3.1 (plan-053 ste
 
 - **Red steps:** none of code. The change is content (notes, a directive entry), dl-018 R2's named
   exception; the inbox test already covers it, checked by mutation: a note numbered F-037, a ledger
-  row with a wrong cell, an opening naming another task, each making `npm test` fail, listed in the
-  Execution Notes.
+  row with a wrong cell, an opening not in the form (`New note task-063.`), `F-099` in W-14's
+  `Note` cell, each making `npm test` fail, listed in the Execution Notes. The task number of the
+  opening, which the test does not check, is checked by a diff against the received text.
 - **The scratch projects**, in the session's scratchpad and never committed: one per WingFoil
   version, `git init`, `npm ci` from the version's lockfile, `wingfoil init --template Kanban
   --no-interactive`, a commit; the notes' commands run there, output and exit codes compared with
   the notes'.
-- **The notes** copied from the received text, the opening's task number replaced, the wrap
-  checked word by word against the received text; the ledger rows appended; W-14 written.
+- **The notes** copied from the received text, the opening's task number replaced, the diff against
+  the received text showing that line only; the ledger rows appended; W-14 written.
+- **Privacy:** a grep of the two notes and W-14 for local paths (`/home/`, `/tmp/`), and a read
+  for private project or repository names.
 - **Commits** on `task/task-063-feedback-notes`, from plan-053's branch: the two notes and the
   ledger (one commit), W-14 (one commit), then this task's notes.
 
@@ -81,3 +92,11 @@ note is decided by the retrospective after re-checking it on 0.3.1 (plan-053 ste
      command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019). -->
+- 2026-10-28: independent review of the body: approve after amendments, two blocking findings:
+  the mutation "an opening naming another task" cannot fail the inbox test (any number passes), so
+  it is replaced by an opening not in the form and an unknown note in W-14's `Note` cell, with the
+  task number checked by a diff; W-14's behaviour stated exactly (with a gap, `memory add` gives a
+  number already in use under another slug, refused only for an identical path). Applied with the
+  others: `wingfoil_version` written by hand; the placeholder workaround spelled out and the
+  move-aside's no-gap condition; the Date and *Checked against*; the text kept byte for byte (no
+  prose line of the notes is over 100 characters); the privacy grep; the exit codes compared.
