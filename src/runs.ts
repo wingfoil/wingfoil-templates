@@ -7,7 +7,11 @@
 // composition's approver for an approval. Those commits and approvals are fixture data. Each run
 // is made on every release the composition's matrix selects in self-test mode (the oldest and the
 // newest, task-058), each installed as the matrix installs it. A failed step ends its run; the
-// next run goes on. Exit 0 every run passed, 1 a run
+// next run goes on. An adoption run (task-060, bug-007) starts instead from a project `wingfoil
+// init --template` wrote and takes the composed `.wingfoil/` as the packs' READMEs say: copied over
+// the project's, `custom/` kept, the `custom/` workflows and directives it names removed, the
+// `custom/` workflows left re-included, committed; then `workflow list` and `workflow next` exit
+// 0 with no diagnostic and no stderr line. Exit 0 every run passed, 1 a run
 // failed or a composition could not be composed, 2 an I/O error, 3 bad usage or a scenario it
 // cannot read.
 import { spawnSync } from 'node:child_process';
@@ -18,6 +22,8 @@ import {
 import { tmpdir } from 'node:os';
 import { dirname, isAbsolute, join, relative, resolve as resolvePath } from 'node:path';
 import { parseArgs } from 'node:util';
+
+import { isScalar, isSeq, parseDocument } from 'yaml';
 
 import { loadCatalog } from './catalog';
 import { readFrontmatter } from './frontmatter';
@@ -116,9 +122,25 @@ type Step =
   | { kind: 'submit' }
   | { kind: 'approve' };
 
-interface Run {
+interface MainRun {
+  kind: 'main';
   main: string;
   steps: Step[];
+}
+
+/** An adoption (task-060): `init --template`, then the composed `.wingfoil/` adopted. */
+interface AdoptRun {
+  kind: 'adopt';
+  template: string;
+  workflows: string[];
+  directives: string[];
+}
+
+type Run = MainRun | AdoptRun;
+
+/** The run's name in the report: its `main`, or `adopt:<template>`. */
+function runName(run: Run): string {
+  return run.kind === 'main' ? run.main : `adopt:${run.template}`;
 }
 
 interface Scenario {
@@ -162,6 +184,30 @@ function repoPath(value: unknown, where: string): string {
   const path = text(value, where);
   if (!inside(path)) throw new KeyProblem(where, 'must stay inside the repository');
   return path;
+}
+
+/** A list of plain ids (no `/`), possibly empty. */
+function idList(value: unknown, where: string): string[] {
+  if (!Array.isArray(value)) throw new KeyProblem(where, 'a list is required');
+  return value.map((item: unknown, n) => {
+    const id = text(item, `${where}[${n}]`);
+    if (id.includes('/') || id.includes('\\') || id === '.' || id === '..') {
+      throw new KeyProblem(`${where}[${n}]`, 'a plain id is required');
+    }
+    return id;
+  });
+}
+
+function readAdopt(raw: unknown, where: string): AdoptRun {
+  if (!isRecord(raw)) throw new KeyProblem(where, 'a mapping is required');
+  onlyKeys(raw, ['template', 'remove'], where);
+  const template = text(raw['template'], `${where}.template`);
+  const remove = raw['remove'];
+  if (!isRecord(remove)) throw new KeyProblem(`${where}.remove`, 'a mapping is required');
+  onlyKeys(remove, ['workflows', 'directives'], `${where}.remove`);
+  return { kind: 'adopt', template,
+    workflows: idList(remove['workflows'], `${where}.remove.workflows`),
+    directives: idList(remove['directives'], `${where}.remove.directives`) };
 }
 
 function readStep(raw: unknown, where: string): Step {
@@ -228,15 +274,19 @@ function loadScenario(file: string, label: string): Scenario {
     if (!Array.isArray(runsRaw) || runsRaw.length === 0) {
       throw new KeyProblem('runs', 'a non-empty list is required');
     }
-    const runs = runsRaw.map((raw: unknown, r) => {
+    const runs = runsRaw.map((raw: unknown, r): Run => {
       if (!isRecord(raw)) throw new KeyProblem(`runs[${r}]`, 'a mapping is required');
+      if ('adopt' in raw) {
+        onlyKeys(raw, ['adopt'], `runs[${r}]`);
+        return readAdopt(raw['adopt'], `runs[${r}].adopt`);
+      }
       onlyKeys(raw, ['main', 'steps'], `runs[${r}]`);
       const main = text(raw['main'], `runs[${r}].main`);
       const steps = raw['steps'];
       if (!Array.isArray(steps) || steps.length === 0) {
         throw new KeyProblem(`runs[${r}].steps`, 'a non-empty list is required');
       }
-      return { main, steps: steps.map((step: unknown, n) => readStep(step, `runs[${r}].steps[${n}]`)) };
+      return { kind: 'main', main, steps: steps.map((step: unknown, n) => readStep(step, `runs[${r}].steps[${n}]`)) };
     });
     return { label, compositions, agent, runs };
   } catch (error) {
@@ -366,6 +416,12 @@ function runOne(run: Run, composed: string, params: Record<string, string>, agen
     return output;
   };
   try {
+    if (run.kind === 'adopt') {
+      adopt(run, composed, repo, git, as, agent, commitAll, wingfoil, (stage) => {
+        current = stage;
+      });
+      return undefined;
+    }
     cpSync(composed, repo, { recursive: true });
     git(['init', '--quiet']);
     git(['config', 'commit.gpgSign', 'false']);
@@ -458,6 +514,82 @@ function runOne(run: Run, composed: string, params: Record<string, string>, agen
     return `fail at ${current}: ${messageOf(error)}`;
   } finally {
     rmSync(root, { recursive: true, force: true });
+  }
+}
+
+const WORKFLOWS_FILE = join('.wingfoil', 'workflows.yaml');
+const CUSTOM_WORKFLOWS = 'workflows/custom/';
+
+/** The `include` entries of a `workflows.yaml`, as written. */
+function includesOf(file: string): string[] {
+  const include = parseDocument(readFileSync(file, 'utf8')).get('include');
+  if (!isSeq(include)) return [];
+  return include.items.map((item) => (isScalar(item) ? String(item.value) : String(item)));
+}
+
+/**
+ * The adoption run (task-060): the README's steps 3 and 4 on a project `init` wrote. `stage`
+ * names the stage for a failure's line.
+ */
+function adopt(run: AdoptRun, composed: string, repo: string, git: (args: string[]) => void,
+  as: (who: Identity) => void, agent: Identity, commitAll: (message: string) => void,
+  wingfoil: (args: string[]) => WingfoilOutput, stage: (name: string) => void): void {
+  stage('init');
+  mkdirSync(repo, { recursive: true });
+  git(['init', '--quiet']);
+  git(['config', 'commit.gpgSign', 'false']);
+  as(agent);
+  wingfoil(['init', '--template', run.template]);
+  stage('copy');
+  cpSync(composed, repo, { recursive: true });
+  stage('remove');
+  for (const id of run.workflows) {
+    rmSync(join(repo, '.wingfoil', 'workflows', 'custom', `${id}.yaml`), { force: true });
+  }
+  for (const id of run.directives) {
+    rmSync(join(repo, '.wingfoil', 'directives', 'custom', `${id}.md`), { force: true });
+  }
+  stage('include');
+  const file = join(repo, WORKFLOWS_FILE);
+  const document = parseDocument(readFileSync(file, 'utf8'));
+  const present = new Set(includesOf(file));
+  const customDir = join(repo, '.wingfoil', 'workflows', 'custom');
+  const own = existsSync(customDir) ? readdirSync(customDir)
+    .filter((name) => name.endsWith('.yaml')).sort(byBytes)
+    .map((name) => `${CUSTOM_WORKFLOWS}${name}`) : [];
+  for (const entry of own) {
+    if (!present.has(entry)) document.addIn(['include'], entry);
+  }
+  writeFileSync(file, document.toString());
+  stage('commit');
+  commitAll('adopted the composition');
+  stage('list');
+  const list = wingfoil(['workflow', 'list', '--format', 'json']);
+  quiet(list, 'workflow list --format json');
+  const data = parseJson(list, 'list');
+  const diagnostics: unknown[] = Array.isArray(data['diagnostics']) ? data['diagnostics'] : [];
+  if (diagnostics.length > 0) {
+    const codes = diagnostics.map((d) => (isRecord(d) && typeof d['code'] === 'string'
+      ? d['code'] : JSON.stringify(d)));
+    throw new StepFailure(`WingFoil reports ${diagnostics.length} diagnostic`
+      + `${diagnostics.length === 1 ? '' : 's'}: ${codes.join(', ')}`);
+  }
+  stage('next');
+  quiet(wingfoil(['workflow', 'next', '--format', 'json']), 'workflow next --format json');
+  stage('check');
+  const included = includesOf(file);
+  for (const id of run.workflows) {
+    const entry = `${CUSTOM_WORKFLOWS}${id}.yaml`;
+    if (included.includes(entry)) throw new StepFailure(`workflows.yaml still includes ${entry}`);
+    if (existsSync(join(repo, '.wingfoil', entry))) throw new StepFailure(`${entry} remains`);
+  }
+}
+
+/** A command that exited 0 but wrote to stderr fails its stage. */
+function quiet(output: WingfoilOutput, command: string): void {
+  const line = output.stderr.trim();
+  if (line !== '') {
+    throw new StepFailure(`wingfoil ${command} wrote to stderr: ${lastLine(line)}`);
   }
 }
 
@@ -558,7 +690,7 @@ export function runRuns(argv: string[], options: RunsOptions = {}): RunsResult {
           for (const run of scenario.runs) {
             total += 1;
             const failure = runOne(run, output, composed.params, scenario.agent, cli, execute);
-            const head = `runs ${file} ${run.main} wingfoil@${release}`;
+            const head = `runs ${file} ${runName(run)} wingfoil@${release}`;
             if (failure === undefined) {
               lines.push(`${head}: pass`);
             } else {
