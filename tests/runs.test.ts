@@ -535,3 +535,245 @@ describe('tests/fixtures/runs/base.yaml', () => {
     }
   });
 });
+
+// task-060 (plan-052): an adoption run. A project initialised by `wingfoil init --template` takes
+// the composed `.wingfoil/` as the READMEs' "Install and update" steps say (bug-007).
+const INIT_WORKFLOWS = ['sw-life-cycle', 'bug-ingest', 'decision-log-ingest', 'adr-ingest'];
+const INIT_STUBS = ['traceability', 'doc-versioning', 'security-secrets', 'determinism'];
+
+function adoptionScenario(adopt: string[]): string {
+  return [
+    'format: 1',
+    'compositions: compositions',
+    'identities:',
+    '  agent: { name: "Runs Agent", email: "agent@runs.invalid" }',
+    'runs:',
+    ...adopt,
+    '',
+  ].join('\n');
+}
+
+const FULL_REMOVAL = [
+  '  - adopt:',
+  '      template: Scrum',
+  '      remove:',
+  '        workflows: [decision-log-ingest, sw-life-cycle, adr-ingest, bug-ingest, scrum-delivery,',
+  '          kanban-delivery]',
+  '        directives: [traceability, doc-versioning, security-secrets, determinism]',
+];
+
+function includesOf(repo: string): string[] {
+  const text = readFileSync(join(repo, '.wingfoil', 'workflows.yaml'), 'utf8');
+  return text.split('\n').filter((line) => line.startsWith('  - ')).map((line) => line.slice(4)
+    .replace(/^"|"$/g, ''));
+}
+
+/**
+ * A fake `init` and a `workflow list` that refuses an included `custom/` workflow named as a
+ * composed one, as WingFoil 0.3.0 and 0.3.1 do (E_WORKFLOW_DUPLICATE_NAME).
+ */
+class FakeAdoption extends FakeWingfoil {
+  repos: string[] = [];
+  initEmails: string[] = [];
+  listDiagnostics: unknown[] = [];
+  nextStderr = '';
+
+  readonly adoptExec: Exec = (cli, args, cwd, env) => {
+    const [group, verb] = args;
+    if (group === 'init') {
+      this.calls.push({ args, email: gitEmail(cwd, env), cwd, env });
+      this.initEmails.push(gitEmail(cwd, env));
+      this.repos.push(cwd);
+      const template = args[2] ?? '';
+      const custom = join(cwd, '.wingfoil', 'workflows', 'custom');
+      mkdirSync(custom, { recursive: true });
+      const names = [...INIT_WORKFLOWS, `${template.toLowerCase()}-delivery`];
+      for (const name of names) writeFileSync(join(custom, `${name}.yaml`), `name: ${name}\n`);
+      const directives = join(cwd, '.wingfoil', 'directives', 'custom');
+      mkdirSync(directives, { recursive: true });
+      for (const id of INIT_STUBS) writeFileSync(join(directives, `${id}.md`), `# ${id}\n`);
+      writeFileSync(join(cwd, '.wingfoil', 'workflows.yaml'), ['version: 1', 'include:',
+        ...names.map((name) => `  - workflows/custom/${name}.yaml`), ''].join('\n'));
+      return ok({});
+    }
+    if (group === 'workflow' && verb === 'list') {
+      this.calls.push({ args, email: gitEmail(cwd, env), cwd, env });
+      const included = includesOf(cwd);
+      for (const entry of included.filter((e) => e.startsWith('workflows/custom/'))) {
+        const name = entry.slice('workflows/custom/'.length, -'.yaml'.length);
+        if (included.includes(`workflows/built-in/${name}.yaml`)) {
+          return { status: 1, stdout: '', stderr: `{"error":"E_WORKFLOW_DUPLICATE_NAME name (${entry}): `
+            + `duplicate workflow name '${name}'"}\n` };
+        }
+      }
+      return ok({ manifest: {}, workflows: [], diagnostics: this.listDiagnostics });
+    }
+    if (group === 'workflow' && verb === 'next' && args.length === 4) {
+      this.calls.push({ args, email: gitEmail(cwd, env), cwd, env });
+      return { status: 0, stdout: JSON.stringify({ next: null }), stderr: this.nextStderr };
+    }
+    return this.exec(cli, args, cwd, env);
+  };
+}
+
+/** The composer's output for an adoption: two pack workflows, included as built-in. */
+const adoptionCompose = (extraInclude: string[] = []): Compose => (_tree, _entries, params, out) => {
+  const workflows = join(out, '.wingfoil', 'workflows', 'built-in');
+  mkdirSync(workflows, { recursive: true });
+  for (const name of ['sw-life-cycle', 'decision-log-ingest']) {
+    writeFileSync(join(workflows, `${name}.yaml`), `name: ${name}\n`);
+  }
+  writeFileSync(join(out, '.wingfoil', 'workflows.yaml'), ['version: 1', 'include:',
+    '  - workflows/built-in/sw-life-cycle.yaml', '  - workflows/built-in/decision-log-ingest.yaml',
+    ...extraInclude.map((entry) => `  - ${entry}`), ''].join('\n'));
+  writeFileSync(join(out, '.wingfoil', 'dna.yaml'), 'project: {}\n');
+  return { params: { ...params }, releases: ['0.3.0'] };
+};
+
+describe('check:runs: an adoption run (task-060)', () => {
+  let tree: string;
+  let wingfoil: FakeAdoption;
+  let kept: string[];
+
+  const write = (rel: string, text: string): void => {
+    mkdirSync(join(tree, rel, '..'), { recursive: true });
+    writeFileSync(join(tree, rel), text);
+  };
+  const run = (adopt: string[], compose: Compose = adoptionCompose()): ReturnType<typeof runRuns> => {
+    write('tests/fixtures/runs/adoption.yaml', adoptionScenario(adopt));
+    return runRuns(['--tree', tree, join(tree, 'tests/fixtures/runs/adoption.yaml')], {
+      compose, install: () => '/fake/wingfoil.js',
+      // Keeps a copy of each scratch repository's .wingfoil before the run removes it.
+      exec: (cli, args, cwd, env) => {
+        const out = wingfoil.adoptExec(cli, args, cwd, env);
+        if (args[0] === 'workflow' && args[1] === 'list') {
+          const copy = mkdtempSync(join(tmpdir(), 'adoption-kept-'));
+          cpSync(join(cwd, '.wingfoil'), join(copy, '.wingfoil'), { recursive: true });
+          kept.push(copy);
+        }
+        return out;
+      },
+    });
+  };
+
+  beforeEach(() => {
+    tree = mkdtempSync(join(tmpdir(), 'runs-tree-'));
+    write('compositions/defaults/example.yaml', ['format: 1', 'id: defaults', 'title: "d"',
+      'description: "A fixture."', 'packs:', '  - base@^2', 'parameters:',
+      '  project_name: "Demo"', '  approver_name: "Demo Lead"',
+      '  approver_email: "lead@demo.invalid"', '  agent_name: "Demo Agent"', ''].join('\n'));
+    wingfoil = new FakeAdoption();
+    kept = [];
+  });
+  afterEach(() => {
+    rmSync(tree, { recursive: true, force: true });
+    for (const dir of kept) rmSync(dir, { recursive: true, force: true });
+  });
+
+  it('adopts the composition on a project init wrote, and passes', () => {
+    const result = run(FULL_REMOVAL);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    assert.deepEqual(result.lines, [
+      'runs compositions/defaults/example.yaml adopt:Scrum wingfoil@0.3.0: pass',
+      'runs: 1 run, 0 failed',
+    ]);
+    const commands = wingfoil.calls.map((call) => call.args.join(' '));
+    assert.deepEqual(commands, ['init --template Scrum', 'workflow list --format json',
+      'workflow next --format json']);
+    const repo = kept[0] ?? '';
+    assert.deepEqual(includesOf(repo), ['workflows/built-in/sw-life-cycle.yaml',
+      'workflows/built-in/decision-log-ingest.yaml']);
+    for (const id of INIT_STUBS) {
+      assert.equal(existsSync(join(repo, '.wingfoil', 'directives', 'custom', `${id}.md`)), false);
+    }
+  });
+
+  it('sets the scenario\'s agent in the repository before init, which commits', () => {
+    const result = run(FULL_REMOVAL);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    assert.deepEqual(wingfoil.initEmails, ['agent@runs.invalid']);
+  });
+
+  it('re-includes, after the composed entries, the custom/ workflows left (the project\'s own)',
+    () => {
+      const result = run([
+        '  - adopt:',
+        '      template: Kanban',
+        '      remove:',
+        '        workflows: [decision-log-ingest, sw-life-cycle, adr-ingest, kanban-delivery]',
+        '        directives: []',
+      ]);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      assert.deepEqual(includesOf(kept[0] ?? ''), ['workflows/built-in/sw-life-cycle.yaml',
+        'workflows/built-in/decision-log-ingest.yaml', 'workflows/custom/bug-ingest.yaml']);
+    });
+
+  it('fails at list when init\'s workflows are kept and re-included (the steps before bug-007)',
+    () => {
+      const result = run([
+        '  - adopt:',
+        '      template: Scrum',
+        '      remove:',
+        '        workflows: []',
+        '        directives: [traceability, doc-versioning, security-secrets, determinism]',
+      ]);
+      assert.equal(result.code, 1);
+      assert.match(result.lines[0] ?? '', /^runs compositions\/defaults\/example\.yaml adopt:Scrum wingfoil@0\.3\.0: fail at list: wingfoil workflow list --format json exit 1: .*E_WORKFLOW_DUPLICATE_NAME/);
+      assert.equal(result.lines.at(-1), 'runs: 1 run, 1 failed');
+    });
+
+  it('fails at list on a diagnostic, and at next on a stderr line', () => {
+    wingfoil.listDiagnostics = [{ code: 'W_SOMETHING', severity: 'warning', message: 'm' }];
+    const listed = run(FULL_REMOVAL);
+    assert.equal(listed.code, 1);
+    assert.match(listed.lines[0] ?? '', /fail at list: WingFoil reports 1 diagnostic: W_SOMETHING/);
+    wingfoil.listDiagnostics = [];
+    wingfoil.nextStderr = 'Warning: something\n';
+    const next = run(FULL_REMOVAL);
+    assert.equal(next.code, 1);
+    assert.match(next.lines[0] ?? '', /fail at next: wingfoil workflow next --format json wrote to stderr: Warning: something/);
+  });
+
+  it('fails its own check when a removed workflow is still included', () => {
+    const result = run(FULL_REMOVAL, adoptionCompose(['workflows/custom/scrum-delivery.yaml']));
+    assert.equal(result.code, 1);
+    assert.match(result.lines[0] ?? '',
+      /fail at check: workflows\.yaml still includes workflows\/custom\/scrum-delivery\.yaml/);
+  });
+
+  it('leaves no scratch repository behind', () => {
+    const before = readdirTmp().filter((name) => name.startsWith('runs-scratch-'));
+    run(FULL_REMOVAL);
+    const after = readdirTmp().filter((name) => name.startsWith('runs-scratch-'));
+    assert.deepEqual(after, before);
+  });
+
+  for (const [what, adopt] of [
+    ['both main and adopt', ['  - main: x', '    adopt: { template: Scrum, remove: { workflows: [], directives: [] } }']],
+    ['an unknown key', ['  - adopt: { template: Scrum, remove: { workflows: [], directives: [] }, extra: 1 }']],
+    ['an empty template', ['  - adopt: { template: "", remove: { workflows: [], directives: [] } }']],
+    ['a missing remove', ['  - adopt: { template: Scrum }']],
+    ['an id with a slash', ['  - adopt: { template: Scrum, remove: { workflows: [a/b], directives: [] } }']],
+    ['a list that is not one', ['  - adopt: { template: Scrum, remove: { workflows: x, directives: [] } }']],
+    ['a missing directives list', ['  - adopt: { template: Scrum, remove: { workflows: [] } }']],
+  ] as const) {
+    it(`exits 3 on ${what}`, () => {
+      const result = run([...adopt]);
+      assert.equal(result.code, 3, result.lines.join('\n'));
+      assert.match(result.lines[0] ?? '', /adoption\.yaml: runs\[0\]/);
+    });
+  }
+});
+
+describe('tests/fixtures/runs/adoption.yaml (task-060)', () => {
+  it('adopts the README examples of methodology/scrum with bug-007\'s removal list', () => {
+    const text = readFileSync(join(FIXTURES, 'runs', 'adoption.yaml'), 'utf8');
+    assert.match(text, /^compositions: tests\/fixtures\/examples\/scrum$/m);
+    for (const template of ['Scrum', 'Kanban']) {
+      assert.match(text, new RegExp(`template: ${template}$`, 'm'));
+    }
+    for (const id of [...INIT_WORKFLOWS, 'scrum-delivery', 'kanban-delivery', ...INIT_STUBS]) {
+      assert.ok(text.includes(id), `${id} in the removal list`);
+    }
+  });
+});
