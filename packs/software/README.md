@@ -54,10 +54,11 @@ methodology, with a WingFoil release in the pack's range (see its catalog entry)
 
 **Who holds `tech-lead`.** The composed DNA gives `tech-lead` to no one: its only member is the
 approver, and the agent's `executes_as` lists `base`'s `facilitator` and `product-owner` and
-`software`'s `developer`, `reviewer`, `qa` and `architect`. Its phases are `release-submit` › `enter-releasing`; `release-publishing` › `release-commit`, `tag`,
-`publish` and `mark-released`; `end-of-life` › `deprecate` and `archive`; and `bug-ingest` ›
-`triage`. A project gives `tech-lead` to a member in its `dna.yaml`, or adds it to its agent's
-`executes_as`.
+`software`'s `developer`, `reviewer`, `qa` and `architect`. `tech-lead`'s phases are
+`release-submit` › `enter-releasing`; `release-publishing` › `release-commit`, `tag`, `publish`
+and `mark-released`; `end-of-life` › `deprecate` and `archive`; and `bug-ingest` › `triage`. A
+project adds `tech-lead` to a member's `roles` under `team.members` in its `dna.yaml`, or to its
+agent's `executes_as` under `team.agents`.
 
 <!-- generated:begin composition -->
 ## Composition
