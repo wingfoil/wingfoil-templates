@@ -88,3 +88,7 @@ Configuration changes this decision implies, applied after approval:
   `methodology/kanban` (dl-003's Execution Note of the same date); until then `capture`'s points of
   governance are ruled as R2's note of 2026-10-15 says. `retrospective.yaml` v4 says W10. The body
   stays as approved.
+- 2026-10-28, plan-052 (ruling 6): **R1**'s order deviated from again, for `software` and
+  `methodology/scrum`: both charters activated at their first tag, and `pack-cycle`'s
+  `retrospective` runs once for the three cycles (`base`, `software`, `methodology/scrum`) in its
+  own plan after plan-052. The body stays as approved.

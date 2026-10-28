@@ -130,7 +130,31 @@ Also, at `validate` (plan-052 step 8):
 
 ## Publication
 
-<!-- The tag (<catalog pack id>@<version>, dl-004), the commit, the catalog.yaml digest. -->
+- Date: 2026-10-28. Line: current.
+- Tag: `software@1.0.0` (annotated), at `8d4adb3038c48922713e9b6b777687c10234abae` (`base@2.0.1`'s
+  catalog commit, which differs from the approval's commit only in `catalog.yaml`, `CATALOG.md` and
+  `catalog-index.json` (plan-052 step 10)). Annotation: the tag's name, then the CHANGELOG entry `- 1.0.0: first version.`
+- Catalog commit: `63732824a6893fbc666eb2e7484b5004c7f6d384` (the new `software` entry,
+  `CATALOG.md`, `catalog-index.json`), by `npm run publish:pack -- --pack software`, exit 0.
+- Digest: `sha256:364a8ac72c7060b9af27a33a5135251e6aac202a38f350f6bf269c9d9c8c6f4f` (as the dry
+  run).
+- WingFoil range: `>=0.3.0 <=0.3.1`.
+- Pushed together: `git push --atomic origin base@2.0.1 software@1.0.0 methodology/scrum@1.0.0 main`
+  (`main` at `bd388bf`).
+- CI on the tag, run 40697576858 (publication mode): `success`. CI on `main` at `bd388bf`, run
+  40697576737: `success`. Pages, run 40697576861: `success`.
+- CB-6, live (spec-002 §6), anonymous, following `llms.txt`'s steps:
+  - `https://wingfoil.github.io/wingfoil-templates/llms.txt`: 200;
+  - `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/catalog-index.json`: 200;
+    filtered locally to `id: software`, `status: active`, `latest: 1.0.0`, versions `1.0.0`, its
+    `wingfoil` `>=0.3.0 <=0.3.1`;
+  - the version's `readme_url`,
+    `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/software@1.0.0/packs/software/README.md`:
+    200, the title `# Software`;
+  - the version's `manifest_url`,
+    `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/software@1.0.0/packs/software/pack.yaml`:
+    200, `id: software`, `version: 1.0.0`;
+  - `https://wingfoil.github.io/wingfoil-templates/catalog-index.json`: 200, `latest: 1.0.0`.
 
 ## Execution Notes
 
@@ -154,3 +178,7 @@ Also, at `validate` (plan-052 step 8):
   `check:runs` with task-060's adoption run (34 runs, 0 failed), `npm audit` in the root and in
   the three matrix folders (0 vulnerabilities): every command exit 0 on both. `main`'s CI on
   `ba1e46a`: run 40673992563, `success`. The re-review's condition met: `validating → releasing`.
+- 2026-10-28, `approve-publication`: approved by the approver (`releasing → released`), which
+  authorized the publication (plan-044 ruling C).
+- 2026-10-28, `publish`: published as above; the three tags and `main` pushed atomically, the CI and
+  Pages read, CB-6's live check passed.

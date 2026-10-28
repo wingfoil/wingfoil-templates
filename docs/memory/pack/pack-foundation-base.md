@@ -270,3 +270,6 @@ For the approver's acceptance:
   `in-discussion`, `pending approvals` counting it once per step; one approval clears both
   (bug-008). The README says so in "Sources and adaptations"; its "Install and update" removes
   every workflow `init` scaffolded under `custom/` (bug-007). The body stays as approved.
+- 2026-10-28, plan-052: **`base` 2.0.1 published** (patch, the README: bug-007 and bug-008): tag
+  `base@2.0.1` at `abc36c0`, catalog commit `8d4adb3`, range `>=0.3.0 <=0.3.1`, CI on the tag and
+  on `main` `success`, CB-6's live check passed (prel-003). 1.0.0 and 2.0.0 stay listed, frozen.
