@@ -284,13 +284,14 @@ as a `check:runs` scenario.
   adaptations", the charter's note. task-062 `done` (merged `eebfe21`): `software`'s and
   `methodology/scrum`'s READMEs, the `tech-lead` holder, scrum's open points 2 and 3. Each: clean
   clones on both Node.js versions, 1010 of 1010, every check exit 0; branch CI `success`. bug-007's
-  and bug-008's notes record the fix. `main`'s CI after task-061's merge: run 40669019831 (read
-  next).
+  and bug-008's notes record the fix. `main`'s CI after task-061's merge: run 40669019831
+  `cancelled` by the next push, as every run on the merge commits; the first run covering the three
+  merges, 40673992563 on `ba1e46a`, `success`.
 - 2026-10-28, step 6: task-060 `done` (merged `d542f30`): `check:runs`' adoption run and
   `tests/fixtures/runs/adoption.yaml`, red (8 of 8 at `list`, `E_WORKFLOW_DUPLICATE_NAME`) then
   green on 0.3.0 and 0.3.1; `check:runs` 34 runs; clean clones 1027 of 1027 on both Node.js
   versions; branch CI `success`. Steps 4–6 done; `prepare` next.
-- 2026-10-28, steps 7 and 8: `prepare` (`7ab9cd0`) and `validate` of prel-003 (`base` 2.0.1,
+- 2026-10-28, steps 7 and 8: `prepare` (`897dc6b`, submitted by `7ab9cd0`) and `validate` of prel-003 (`base` 2.0.1,
   patch), prel-004 (`software` 1.0.0) and prel-005 (`methodology/scrum` 1.0.0), each `releasing`.
   The independent review asked that the CHANGELOG's first line (the tag's annotation) name both
   fixes and that the clean clones be recorded: applied (`f6e42fc`), evidence and dry runs redone
@@ -323,6 +324,8 @@ as a `check:runs` scenario.
   - bug-008's feedback note to WingFoil (option (iii)), after F-038, once F-035 and F-036 exist;
     task-052 (F-037) and F-038 wait for the same;
   - a `check:runs` scenario of the full scrum run (`memory park`, a field rewritten, `set_state`);
+    with it, a test of the adoption run's `include:` with no value (the `null` branch; task-060's
+    re-review), at the next tooling task on `runs.ts`;
   - `wingfoil-release-intake` › `recheck`'s wording, at its next version; a `pack-semver` rule for
     fixes and changed defaults;
   - the README's step 3 "own entries" for Memory types and roles a project `init` scaffolded
@@ -330,3 +333,8 @@ as a `check:runs` scenario.
   - the sequencer: W8's four features (its next review); dl-012's F4.9 placement (the approver's);
   - W10: `methodology/kanban`, presets, `governance/wingfoil-dogfood`, this repository's adoption,
     its WingFoil pin and the first inbox sync (ruling 7); dl-024, dl-025 and plan-022's close.
+- 2026-10-28: independent review of the close: approve after amendments, nothing blocking.
+  Applied: the CI runs on the merge commits (cancelled, superseded by `ba1e46a`'s); `prepare`'s
+  content commit; the `null`-branch test owed; the WingFoil notice recorded on the charter and on
+  prel-004; `software`'s open points read as the charter's note says (1 fixed with the names, 2 and
+  3 fixed as written). `main`'s CI on the closing head read before `active → done`.

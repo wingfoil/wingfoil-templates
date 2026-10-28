@@ -42,7 +42,7 @@ regenerates `CATALOG.md` and `catalog-index.json`; CB-6's live check then reads 
 the pack's README and `pack.yaml` at `refs/tags/software@1.0.0` (plan-052 step 10). The notices to
 WingFoil UI's session and to the coordinating session follow the tags (step 12).
 
-Owed at the tag: WingFoil is told of the new step `end-of-life.approve` with the key mapping
+At the tag (sent, plan-052 step 12): WingFoil is told of the new step `end-of-life.approve` with the key mapping
 (`pack-foundation-software`'s notes, plan-052 step 12).
 
 ## Validation

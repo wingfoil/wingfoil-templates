@@ -280,4 +280,5 @@ For the approver's acceptance:
   `title`, `version`, `release-line`) stand as written. The Adoption table's "its adoption plan
   (W9)" for this repository reads W10 (plan-052 ruling 7, with `methodology/kanban`). `accepted →
   active` (plan-052 step 11, as plan-044 ruling B); the `retrospective` of `pack-cycle` runs after
-  this plan, for the three cycles.
+  this plan, for the three cycles. The owed notice is sent: `end-of-life.approve` and the step-key
+  mapping to WingFoil, through the coordinating session (plan-052 step 12).
