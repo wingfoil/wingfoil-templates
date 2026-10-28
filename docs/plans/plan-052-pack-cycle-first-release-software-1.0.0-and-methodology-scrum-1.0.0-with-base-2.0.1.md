@@ -261,3 +261,8 @@ as a `check:runs` scenario.
   (spec-002 §2.1, §2.3, §3.3); scrum's open point 2 resolved in part; the bug notes after the later
   merge; task-060's own check of the removal list, its identity before `init`, its red variant and
   counts (`check:runs` 26 → 34 runs). Re-review requested.
+- 2026-10-28: task-060, task-061 and task-062 re-reviewed (approve) and submitted (`pending`).
+  Branch `plan/plan-052-sequencer` pushed; CI run 40654868428 on `ef035dc`, conclusion `success`.
+  `main`'s CI on `26a22f5` (this plan's submit), run 40653789258, `success`. Privacy: no local
+  path, private repository or private project in the branch's diff. Waiting for the merge OK (step
+  2's texts, the plan's notes, the three task bodies) and the three tasks' backlog acceptance.
