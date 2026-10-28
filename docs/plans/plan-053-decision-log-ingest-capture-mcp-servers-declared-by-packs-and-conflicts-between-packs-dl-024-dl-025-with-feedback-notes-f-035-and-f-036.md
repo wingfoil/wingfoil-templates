@@ -164,3 +164,9 @@ On the branch `dl/dl-024-dl-025-mcp-and-conflicts`, from `main` at `8242f52`.
 - 2026-10-28, step 7: CI run 40757575636 on `c7665aa`, conclusion `success`. Privacy: no local
   path, private repository or private project in the branch's diff. The approver gave the merge
   OK in chat; `--no-ff` merge into `main`.
+- 2026-10-28, close: merged into `main` (`cc8179d`), pushed, the branch removed; `main`'s CI on
+  `cc8179d` (runs 40760698956 and 40760699058) `success`. Done: dl-024 and dl-025 `pending`, with
+  their review findings; F-035, F-036 (task-063) and F-037 (task-052) on `main` with their ledger
+  rows; W-14 in `wingfoil-cli` 1.5. The Handoff's "Done when" met once the coordinating session
+  has its reply (sent with this close). Next free note: F-038. Next: the pack-cycle retrospective
+  of the three first releases (approver, 2026-10-28). `active → done`.
