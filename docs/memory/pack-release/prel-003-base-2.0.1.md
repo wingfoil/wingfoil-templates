@@ -48,8 +48,89 @@ update" keeps spec-002 §2.3's temporary mark: no release in `compat.yaml` provi
 
 ## Validation
 
-<!-- The compatibility matrix: every WingFoil version tested, every preset composed, the
-     determinism double-run, with the commands and their exit codes. -->
+- Commit: `7ab9cd0ad99a568631689360b68d86351076e5f6`
+- Command: `npm run validate:publication -- --evidence`
+- Mode: publication
+- Exit code: 0
+- WingFoil releases: 0.3.0, 0.3.1
+- Compositions: tests/fixtures/examples/base/core-records/example.yaml, tests/fixtures/examples/base/release-folders-lean/example.yaml, tests/fixtures/examples/base/release-folders/example.yaml, tests/fixtures/examples/scrum/defaults/example.yaml, tests/fixtures/examples/scrum/release-folders-lean/example.yaml, tests/fixtures/examples/software/defaults/example.yaml, tests/fixtures/examples/software/release-folders-lean/example.yaml
+
+Report:
+
+```text
+schemas: checked 5 files, 0 problems
+lint: checked 61 files, 0 problems
+index: checked 6 files, 0 not up to date
+composition tests/fixtures/examples/base/core-records/example.yaml: composed twice, 16 files, byte-identical
+composition tests/fixtures/examples/base/release-folders-lean/example.yaml: composed twice, 16 files, byte-identical
+composition tests/fixtures/examples/base/release-folders/example.yaml: composed twice, 16 files, byte-identical
+composition tests/fixtures/examples/scrum/defaults/example.yaml: composed twice, 37 files, byte-identical
+composition tests/fixtures/examples/scrum/release-folders-lean/example.yaml: composed twice, 37 files, byte-identical
+composition tests/fixtures/examples/software/defaults/example.yaml: composed twice, 37 files, byte-identical
+composition tests/fixtures/examples/software/release-folders-lean/example.yaml: composed twice, 37 files, byte-identical
+compositions: 7
+matrix tests/fixtures/examples/base/core-records/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/base/core-records/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/base/core-records/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/base/core-records/example.yaml wingfoil@0.3.1 workflow list: pass (publication)
+matrix tests/fixtures/examples/base/core-records/example.yaml wingfoil@0.3.1 dna show: pass (publication)
+matrix tests/fixtures/examples/base/core-records/example.yaml wingfoil@0.3.1 directives list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders-lean/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders-lean/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/base/release-folders-lean/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders-lean/example.yaml wingfoil@0.3.1 workflow list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders-lean/example.yaml wingfoil@0.3.1 dna show: pass (publication)
+matrix tests/fixtures/examples/base/release-folders-lean/example.yaml wingfoil@0.3.1 directives list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.1 workflow list: pass (publication)
+matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.1 dna show: pass (publication)
+matrix tests/fixtures/examples/base/release-folders/example.yaml wingfoil@0.3.1 directives list: pass (publication)
+matrix tests/fixtures/examples/scrum/defaults/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/scrum/defaults/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/scrum/defaults/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/scrum/defaults/example.yaml wingfoil@0.3.1 workflow list: pass (publication)
+matrix tests/fixtures/examples/scrum/defaults/example.yaml wingfoil@0.3.1 dna show: pass (publication)
+matrix tests/fixtures/examples/scrum/defaults/example.yaml wingfoil@0.3.1 directives list: pass (publication)
+matrix tests/fixtures/examples/scrum/release-folders-lean/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/scrum/release-folders-lean/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/scrum/release-folders-lean/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/scrum/release-folders-lean/example.yaml wingfoil@0.3.1 workflow list: pass (publication)
+matrix tests/fixtures/examples/scrum/release-folders-lean/example.yaml wingfoil@0.3.1 dna show: pass (publication)
+matrix tests/fixtures/examples/scrum/release-folders-lean/example.yaml wingfoil@0.3.1 directives list: pass (publication)
+matrix tests/fixtures/examples/software/defaults/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/software/defaults/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/software/defaults/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/software/defaults/example.yaml wingfoil@0.3.1 workflow list: pass (publication)
+matrix tests/fixtures/examples/software/defaults/example.yaml wingfoil@0.3.1 dna show: pass (publication)
+matrix tests/fixtures/examples/software/defaults/example.yaml wingfoil@0.3.1 directives list: pass (publication)
+matrix tests/fixtures/examples/software/release-folders-lean/example.yaml wingfoil@0.3.0 workflow list: pass (publication)
+matrix tests/fixtures/examples/software/release-folders-lean/example.yaml wingfoil@0.3.0 dna show: pass (publication)
+matrix tests/fixtures/examples/software/release-folders-lean/example.yaml wingfoil@0.3.0 directives list: pass (publication)
+matrix tests/fixtures/examples/software/release-folders-lean/example.yaml wingfoil@0.3.1 workflow list: pass (publication)
+matrix tests/fixtures/examples/software/release-folders-lean/example.yaml wingfoil@0.3.1 dna show: pass (publication)
+matrix tests/fixtures/examples/software/release-folders-lean/example.yaml wingfoil@0.3.1 directives list: pass (publication)
+matrix: publication, 14 runs, 0 failed, tolerance applied: none
+```
+
+Also, at `validate` (plan-052 step 8):
+- `npm run publish:pack -- --pack base --dry-run`, in a temporary clone of `7ab9cd0` (the three
+  packs in order, `base`, `software`, `methodology/scrum`): exit 0; the tag `base@2.0.1` at
+  `7ab9cd0`, the range `>=0.3.0 <=0.3.1`, the digest
+  `sha256:df95a18bb87104baf096959ff68d40064d06e44f154b5505f8d24449b33a1494`; the clone left as it
+  was. The tag goes on the approval's commit, where `publish:pack` validates again;
+- `check:runs` with task-060's adoption run: 34 runs, 0 failed (the clean clones below);
+- the check against the three private, non-software projects, run outside this repository on
+  2026-10-28, `base` at `7ab9cd0` (2.0.1's content), WingFoil 0.3.0 and 0.3.1: 3 projects, each on
+  a scratch tree (a clone holding `packs/base` alone, its README's section 7 reduced to the
+  exemption line), `npm run validate -- --tree <scratch> base --param …` with the projects' path
+  and id values (redacted) and fictional identities: 3 of 3 exit 0, each `matrix: self-test, 2
+  runs, 0 failed, tolerance applied: none`, lint 0 problems, 0 warnings. A first run on the
+  repository's own tree exited 1 only because `--param` overrides the README examples' values
+  (every matrix run passed). The scratch tree and logs were removed;
+- the privacy check of this element and of the pack's files: no local path, no private repository,
+  nothing on the private projects beyond their number.
 
 ## Publication
 
