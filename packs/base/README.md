@@ -42,11 +42,11 @@ pack's range (see its catalog entry):
 4. Remove what WingFoil's `init` scaffolded under `custom/` and a composition replaces:
    - the directives with the ids of `base`'s directives (`traceability`, `doc-versioning`,
      `security-secrets`), since a `custom/` file wins over the pack's;
-   - the workflows `decision-log-ingest`, which `base` ships, and `sw-life-cycle`, `adr-ingest`,
-     `bug-ingest` and `scrum-delivery` or `kanban-delivery`, which need `software` and a
-     methodology, whose packs ship or replace them, each with its `include` entry in
-     `workflows.yaml`: a workflow named as a pack's makes every `workflow` command fail, and the
-     others need roles and Memory types `base` alone does not define.
+   - the workflows, each with its `include` entry in `workflows.yaml`: `decision-log-ingest`,
+     which `base` ships, and `sw-life-cycle`, `adr-ingest`, `bug-ingest` and `scrum-delivery` or
+     `kanban-delivery`, which need `software` and a methodology, whose packs ship or replace them.
+     A workflow named as a pack's makes every `workflow` command fail; the others need roles or
+     Memory types `base` alone does not define.
 5. Migrate by explicit commits the elements whose state has another name in `base` (for example a
    `decision-log` on the default machine: `pending` → `in-discussion`, `approved` → `ready`), and
    record an old → new key mapping for the workflows and phases the project renames.
