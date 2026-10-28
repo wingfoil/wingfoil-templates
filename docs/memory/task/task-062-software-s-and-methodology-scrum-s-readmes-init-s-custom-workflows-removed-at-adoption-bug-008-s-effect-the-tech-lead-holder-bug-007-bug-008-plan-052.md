@@ -62,7 +62,30 @@ A project's own `custom/` workflows, in this task, are those the project wrote i
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+- **`software`, step 3:** the project's own entries re-added name, among them, the `include`
+  entries of the `custom/` workflows the project wrote itself. **Step 4** becomes "remove what
+  `init` scaffolded under `custom/` and the composition replaces": the `determinism` directive, as
+  now, and the workflows `sw-life-cycle`, `adr-ingest`, `bug-ingest`, which `software` ships, each
+  with its `include` entry (a workflow named as a pack's makes every `workflow` command fail);
+  `base`'s step 4 covers the rest. WingFoil's `init` named with no release. No renumbering.
+- **`software`'s `tech-lead` holder:** a paragraph after the steps, led by a bold phrase (no
+  heading, spec-002 §2.1), naming the eight phases and the two ways (`dna.yaml`'s members, the
+  agent's `executes_as`); not in "When to use it", whose first paragraph is the excerpt.
+- **`methodology/scrum`, step 3:** the project's own entries as in `software`'s, and the delivery
+  workflow `init` scaffolded (`scrum-delivery` or `kanban-delivery`) removed with its `include`
+  entry, the methodology's `delivery` replacing it; `base`'s and `software`'s step 4 named for the
+  other workflows. In step 3, so that no step is renumbered.
+- **bug-008's sentence in `methodology/scrum`:** a new item of "Sources and adaptations" ›
+  "Adaptations to the Guide": the Sprint Retrospective is `base`'s `retrospective`, whose approval
+  is not bound to the Sprint; a closed Sprint's `approve` step is listed again while a later
+  Sprint's retrospective decision-log is `in-discussion`, one approval clearing both.
+- **The charter's note** (Acceptance 4) on this branch; the generated sections untouched
+  (`npm run index -- --check`).
+- **The by-hand check (Acceptance 6):** the same script as task-061's, outside the repository:
+  `base`, `software` and `methodology/scrum` composed from the README example `scrum/defaults`,
+  copied into projects initialised with both templates on 0.3.0 and 0.3.1, the three READMEs'
+  steps applied together (the five scaffolded workflows and the four stubs removed), committed;
+  `workflow list` and `workflow next`, exit codes and diagnostics recorded.
 
 ## Execution Notes
 
