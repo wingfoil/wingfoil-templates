@@ -64,8 +64,10 @@ On the branch `dl/dl-024-dl-025-mcp-and-conflicts`, from `main` at `8242f52`.
 2. **dl-024 and dl-025** (claude, facilitator): `memory add --type decision-log` with the
    request's titles. WingFoil 0.2.2's `memory add` numbers by count (1 + the files of the type),
    not by the first free number, so it would give dl-026 again: dl-026 and dl-027 are moved out of
-   `docs/memory/decision-log/` for the two commands, which then give dl-024 and dl-025, and put
-   back at once; `git status` and the new ids are checked before going on. The bodies are
+   the repository (to the session's scratchpad) for the two commands, which then give dl-024 and
+   dl-025, and put back at once; WingFoil commits only the new file, so the move is never
+   committed; `git status` and the new ids are checked before going on, and the workaround is
+   recorded in these Execution Notes (`wingfoil-cli` rule 4) ahead of W-14. The bodies are
    committed by hand as received: frontmatter `tags` as the texts give them, `status` left `draft`
    until `submit` (the received `pending` is not copied); prose rewrapped to 100 characters with
    no word changed (as `d1b7261` did for dl-027), tables and code blocks kept. An Execution Note
@@ -91,9 +93,11 @@ On the branch `dl/dl-024-dl-025-mcp-and-conflicts`, from `main` at `8242f52`.
       as received when 0.3.0's output matches, and a difference on 0.3.1 is recorded in the task's
       Execution Notes and goes to the approver; one ledger row each in
       `docs/wingfoil-feedback/README.md`, `Last sync` unchanged; a `wingfoil-cli` entry W-14 for
-      step 2's numbering by count (0.2.2, the governance pin; rule 3); no W-entry for the notes'
-      0.3.0 and 0.3.1 behaviours (recorded when the pin moves, as task-041); no other file
-      changed outside `docs/wingfoil-feedback/`, the directive and the task's own file; the
+      step 2's numbering by count (0.2.2, the governance pin; rule 3), with the directive's Version
+      1.4 → 1.5 and its Date; whether it also needs a feedback note (rule 3) is decided by the
+      retrospective after re-checking it on 0.3.1, its note numbered after F-037; no W-entry for
+      the notes' 0.3.0 and 0.3.1 behaviours (recorded when the pin moves, as task-041); no other
+      file changed outside `docs/wingfoil-feedback/`, the directive and the task's own file; the
       privacy grep on the notes; `npm test`, `lint`, `check:pins`, `check:schemas`,
       `check:packs`, `validate`, `index -- --check` and `workflow list` exit 0 from clean clones
       on Node.js 22.21.0 and 22.12.0; the branch's CI conclusion recorded;
@@ -133,3 +137,5 @@ On the branch `dl/dl-024-dl-025-mcp-and-conflicts`, from `main` at `8242f52`.
   the others: the changes since `c12ae90` listed in full; task-052 taken over by this plan
   (plan-048's ruling 2, step 5); the received texts' wrapping and `status`; task-063's full checks,
   branch and `tooling-delivery` transitions; the inbox test's `prel-` alternative.
+- 2026-10-28: re-review: approve; three nits applied (the move-aside's safety, W-14's directive
+  version, the feedback-note question left to the retrospective).
