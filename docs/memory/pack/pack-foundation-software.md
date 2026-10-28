@@ -2,7 +2,7 @@
 id: pack-foundation-software
 type: pack
 title: "Software"
-status: accepted
+status: active
 axis: "foundation"
 name: "software"
 slot: ""
@@ -271,3 +271,13 @@ For the approver's acceptance:
   frontmatter above and `packs/software/pack.yaml`); where this charter's Purpose and
   Compatibility say `base@^1`, they read `base@^2`. `software` is not published, so no release of
   its own follows.
+- 2026-10-28, plan-052 (`first-release`): **`software` 1.0.0 published**: tag `software@1.0.0` at
+  `8d4adb3`, catalog commit `6373282`, range `>=0.3.0 <=0.3.1`, CI on the tag and on `main`
+  `success`, CB-6's live check passed (prel-004). The README's adoption steps fixed before it
+  (bug-007, task-062) and who holds `tech-lead` stated (plan-052 ruling 5: the agent's
+  `executes_as` unchanged). With the first version, open point 1's phase names (`frame`/`approve`,
+  `specify`/`approve`) are fixed; open points 2 (no `inception_path`) and 3 (`release`'s required
+  `title`, `version`, `release-line`) stand as written. The Adoption table's "its adoption plan
+  (W9)" for this repository reads W10 (plan-052 ruling 7, with `methodology/kanban`). `accepted →
+  active` (plan-052 step 11, as plan-044 ruling B); the `retrospective` of `pack-cycle` runs after
+  this plan, for the three cycles.
