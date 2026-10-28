@@ -152,3 +152,7 @@ On the branch `dl/dl-024-dl-025-mcp-and-conflicts`, from `main` at `8242f52`.
   the approver rules them; both submitted `pending`. `workflow list` and `lint` exit 0. task-063's
   body reviewed twice (approve after amendments, then approve) and accepted into the backlog by
   the approver (`6e7b777`, on the task branch).
+- 2026-10-28, step 4: task-063 `done` (merged `59e6275`): F-035 and F-036 as received, the opening
+  naming task-063; their commands re-run on 0.3.0 and 0.3.1, identical; W-14 in `wingfoil-cli` 1.5;
+  mutations and clean clones on both Node.js versions, 1027 of 1027; branch CI `success` (run
+  40726615137). Its build review added to dl-024's review note: D3 5 to say "install or update".

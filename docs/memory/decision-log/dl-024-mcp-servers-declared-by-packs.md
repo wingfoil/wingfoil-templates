@@ -175,4 +175,6 @@ the fragment, and the server entry is removed from section 3 (as F6.1's hand ste
      reaches it;
   4. D1 and D2's "exception to §6.3" overstates the rule: they extend §6.3's list to workflows
      named in `phases`, and a restricted server is not added to it;
-  5. F-035's six requests to be checked against D3's items by task-063's review.
+  5. F-035's six requests to be checked against D3's items by task-063's review. Done there: they
+     match one to one; D3 5 says "a pack update", where D4 and F-035 say install or update, so D3 5
+     to read "a pack install or update".
