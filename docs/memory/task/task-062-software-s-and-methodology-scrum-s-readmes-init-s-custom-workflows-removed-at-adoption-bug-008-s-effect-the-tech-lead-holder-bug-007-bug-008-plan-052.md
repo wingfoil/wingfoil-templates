@@ -106,3 +106,8 @@ A project's own `custom/` workflows, in this task, are those the project wrote i
   0.3.0 and 0.3.1, the three READMEs' steps applied together (the five scaffolded workflows and
   the four directive stubs removed), committed: `workflow list --format json` and
   `workflow next --format json` exit 0, no diagnostic, empty stderr, on all four.
+- 2026-10-28: independent review: approve, nothing blocking; it reproduced Acceptance 6 on 0.3.0
+  and 0.3.1 with both templates and checked the union of the three READMEs' removals is bug-007's
+  list. Nits applied (`6f72b99`): "`tech-lead`'s phases", the paragraph rewrapped, the keys
+  named (`team.members` › `roles`, `team.agents` › `executes_as`). Its merge-order note stands:
+  task-061 merges first (step 4 of `base` removes `decision-log-ingest`), no publication between.
