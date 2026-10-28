@@ -2,7 +2,7 @@
 id: prel-004-software-1.0.0
 type: pack-release
 title: "software 1.0.0"
-status: releasing
+status: released
 pack: "pack-foundation-software"            # the pack element id (pack-<axis>-<name>)
 version: "1.0.0"         # the semver being published
 bump: "major"            # major | minor | patch (pack-semver directive)
