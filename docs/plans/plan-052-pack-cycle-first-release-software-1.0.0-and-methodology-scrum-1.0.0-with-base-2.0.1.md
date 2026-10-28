@@ -269,3 +269,13 @@ as a `check:runs` scenario.
 - 2026-10-28, step 2 closed: the approver's merge OK; `plan/plan-052-sequencer` merged into `main`
   (`c10de8c`), the branch removed. The approver accepted task-060, task-061 and task-062 into the
   backlog (`b6d82e3`, `eb6363a`, `d5087af`, on the branch before the merge).
+- 2026-10-28, step 3, the rehearsal (Node.js 22.21.0, a scratch clone of `99b4ea5`, nothing
+  pushed): a simulated `prepare` commit (`base`'s `version: 2.0.1` and a CHANGELOG line), then
+  `npm run publish:pack -- --pack base`, `software`, `methodology/scrum` in order: each exit 0, its
+  publication matrix 14 runs, 0 failed, a tag and a catalog commit (`software@1.0.0` at `base`'s
+  catalog commit, `methodology/scrum@1.0.0` at `software`'s, as step 10 says). On the result:
+  `npm test` 1010 of 1010; `check:packs` 61 files, 0 problems; `check:schemas` 5 files;
+  `index -- --check` 6 files, 0 not up to date; `validate` 14 runs, 0 failed; `check:runs` 26
+  runs, 0 failed. No tooling task is needed (task-063 not opened). A first attempt failed at
+  `base`'s `publish:pack` because the simulated CHANGELOG line was not written (the rehearsal's own
+  script), and was redone.
