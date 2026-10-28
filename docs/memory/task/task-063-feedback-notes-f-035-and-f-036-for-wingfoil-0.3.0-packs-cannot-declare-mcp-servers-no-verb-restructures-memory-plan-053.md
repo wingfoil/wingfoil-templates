@@ -101,3 +101,22 @@ re-checking it on 0.3.1 (plan-053 step 4).
   move-aside's no-gap condition; the Date and *Checked against*; the text kept byte for byte (no
   prose line of the notes is over 100 characters); the privacy grep; the exit codes compared.
 - 2026-10-28: re-review: approve; two nits applied (the placeholder's name, a ragged wrap).
+- 2026-10-28, build (`backlog → in-progress`): scratch projects in the session's scratchpad, one per
+  version (`npm ci` from `src/matrix/wingfoil-0.3.0/` and `wingfoil-0.3.1/`, `git init`, `wingfoil
+  init --template Kanban --no-interactive`). Every `## Observed` command of F-035 and F-036 gives
+  the notes' output and exit codes on 0.3.0 (`cc31d7a8`) and, identically, on 0.3.1 (`870bd440`):
+  `--help` excerpts, the two built-in adapters and their `mcp:` blocks, `custom/` empty, `memory
+  move` and `rename` exit 2, `memory search`'s three filters, `grep -c superseded` 0. No
+  difference to bring to the approver.
+- The notes (`c6e9bf4`): the received files with the opening's task number replaced; `diff` against
+  the received text shows that line only. Two ledger rows. W-14 and the directive's 1.5
+  (`e9297c4`). Privacy grep (`/home/`, `/tmp/`, the maintainer's names) on the notes and the
+  directive: no match.
+- Mutations (dl-018 R2), `node --test dist/tests/wingfoil-feedback.test.js
+  dist/tests/feedback-note.test.js`, 13 of 13 pass unmutated: F-036 renumbered F-037 → 3 fail; a
+  ledger row's `kind` changed → 2 fail; the opening `New note task-063.` → 2 fail; `F-099` in
+  W-14's `Note` cell → 1 fail. Each reverted.
+- Clean clones of `e9297c4` on Node.js 22.21.0 and 22.12.0: `npm ci`, `npm test` 1027 of 1027,
+  `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check`,
+  `check:runs` and `workflow list` exit 0. Files changed: the two notes, the ledger, the
+  directive, this file. CI run 40719699764 on `e9297c4`: `success`.
