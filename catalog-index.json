@@ -9,7 +9,7 @@
       "status": "active",
       "axis": null,
       "slot": null,
-      "latest": "2.0.0",
+      "latest": "2.0.1",
       "versions": [
         {
           "version": "1.0.0",
@@ -50,6 +50,26 @@
           "conflicts": [],
           "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.0/packs/base/README.md",
           "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.0/packs/base/pack.yaml"
+        },
+        {
+          "version": "2.0.1",
+          "tag": "base@2.0.1",
+          "wingfoil": ">=0.3.0 <=0.3.1",
+          "formats": {
+            "directive": 1,
+            "dna": 1,
+            "memory": 1,
+            "memory-template": 1,
+            "roles": 1,
+            "workflow": 1
+          },
+          "requires_capabilities": [
+            "workflow-engine"
+          ],
+          "requires": [],
+          "conflicts": [],
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.1/packs/base/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.1/packs/base/pack.yaml"
         }
       ],
       "title": "Base",

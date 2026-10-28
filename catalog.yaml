@@ -53,5 +53,20 @@ packs:
         requires: []
         conflicts: []
         wingfoil: ">=0.3.0 <=0.3.1"
+      - version: 2.0.1
+        commit: abc36c063de3d040cbe771f0fbd88035e45cecc4
+        digest: sha256:8e3e91d4be754f686daa346311d53dd0e4dccb7bd916b8f868c852105ff3961c
+        formats:
+          dna: 1
+          roles: 1
+          memory: 1
+          workflow: 1
+          directive: 1
+          memory-template: 1
+        requires_capabilities:
+          - workflow-engine
+        requires: []
+        conflicts: []
+        wingfoil: ">=0.3.0 <=0.3.1"
 transitions: []
 presets: []

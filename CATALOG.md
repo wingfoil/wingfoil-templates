@@ -15,7 +15,7 @@ No released WingFoil installs packs yet: section "Install and update" of each pa
 
 | Pack | Summary | Status | Latest | WingFoil | README |
 | --- | --- | --- | --- | --- | --- |
-| <a id="pack-base"></a>`base` | The core of every project governed by WingFoil, software or not: the Memory types, workflows, directives and DNA that all of them use, and nothing that only some use. | active | 2.0.0 | >=0.3.0 <=0.3.1 | [README](https://github.com/wingfoil/wingfoil-templates/blob/base@2.0.0/packs/base/README.md) |
+| <a id="pack-base"></a>`base` | The core of every project governed by WingFoil, software or not: the Memory types, workflows, directives and DNA that all of them use, and nothing that only some use. | active | 2.0.1 | >=0.3.0 <=0.3.1 | [README](https://github.com/wingfoil/wingfoil-templates/blob/base@2.0.1/packs/base/README.md) |
 
 ## Methodology
 
