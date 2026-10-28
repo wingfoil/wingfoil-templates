@@ -81,3 +81,7 @@ accepts it.
      command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019). -->
+
+- 2026-10-28: independent review (with task-060, task-061 and task-062): approve after amendments
+  (blocking: with `base` alone, keeping `init`'s software workflows fails on 0.3.1; step 4 now removes every workflow `init` scaffolded (bug-007's Expected)). Applied.
+- 2026-10-28: re-review: approve. Submitted.
