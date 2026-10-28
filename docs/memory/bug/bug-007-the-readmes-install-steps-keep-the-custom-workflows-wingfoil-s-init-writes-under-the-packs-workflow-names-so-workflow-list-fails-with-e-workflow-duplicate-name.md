@@ -73,3 +73,6 @@ if one comes first.
   included); every workflow command blocked, not only `list`; `base`'s README fix a patch
   (`pack-semver`); the two step 4s; `software`'s "0.3.0's `init`"; the fifth entry harmless.
 - 2026-10-27: re-review: approve. Submitted.
+- 2026-10-28: fixed on `main` by the merges of task-061 (`66b783f`, `base`'s README) and task-062
+  (`eebfe21`, `software`'s and `methodology/scrum`'s READMEs), plan-052; released in `base` 2.0.1,
+  `software` 1.0.0 and `methodology/scrum` 1.0.0 (the tags recorded at publication).

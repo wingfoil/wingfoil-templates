@@ -279,3 +279,10 @@ as a `check:runs` scenario.
   runs, 0 failed. No tooling task is needed (task-063 not opened). A first attempt failed at
   `base`'s `publish:pack` because the simulated CHANGELOG line was not written (the rehearsal's own
   script), and was redone.
+- 2026-10-28, steps 4 and 5: task-061 `done` (merged `66b783f`): `base`'s README, step 4 removing
+  every workflow `init` scaffolds, "Updating from 2.0.0", bug-008's effect in "Sources and
+  adaptations", the charter's note. task-062 `done` (merged `eebfe21`): `software`'s and
+  `methodology/scrum`'s READMEs, the `tech-lead` holder, scrum's open points 2 and 3. Each: clean
+  clones on both Node.js versions, 1010 of 1010, every check exit 0; branch CI `success`. bug-007's
+  and bug-008's notes record the fix. `main`'s CI after task-061's merge: run 40669019831 (read
+  next).
