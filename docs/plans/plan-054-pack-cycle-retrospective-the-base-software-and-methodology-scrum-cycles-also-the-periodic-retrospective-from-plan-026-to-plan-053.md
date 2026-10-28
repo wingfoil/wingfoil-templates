@@ -238,3 +238,4 @@ or intermediary session); after every commit under `docs/memory/`, `docs/plans/`
 - 2026-10-28: third review (task-065 is a new decision): approve after amendments, nothing
   blocking; applied: claude's step-5 work in the Handoff, task-065's `directives list` check and
   directive header, its red-first in Design, wording nits.
+- 2026-10-28: the approver gave the OK in chat; submitted.
