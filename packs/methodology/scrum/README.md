@@ -35,7 +35,11 @@ and `software`, with a WingFoil release in the pack's range (see its catalog ent
    wingfoil-templates, giving `base`'s four required parameters and, for a project that is
    already governed, its current values of the path and id parameters, so that no file moves.
 3. Copy the composed `.wingfoil/` files into the project's `.wingfoil/`, keeping its `custom/`
-   folders and re-adding its own entries; copy the generated AGENTS.md region into its `AGENTS.md`.
+   folders and re-adding its own entries, among them the `include` entries of the `custom/`
+   workflows the project wrote itself; copy the generated AGENTS.md region into its `AGENTS.md`.
+   Remove the delivery workflow WingFoil's `init` scaffolded under `workflows/custom/`
+   (`scrum-delivery` or `kanban-delivery`) with its `include` entry: `scrum`'s `delivery` replaces
+   it. `base`'s and `software`'s step 4 remove the other workflows `init` scaffolded.
 4. Give every open task `sprint: "n/a — <reason>"` until a Sprint selects it, and every existing
    release a `sprint` (or list it in the project's own `exempt`), before they are next submitted
    or amended.
@@ -148,7 +152,11 @@ runs its checks, approval and publication inside the Sprint, beside the Sprint R
     rewritten before the Sprint Review completes, and resumes where it stopped;
   - the next Sprint and further releases are added outside a step (`memory add`), WingFoil 0.3.0
     taking a completed step's evidence once;
-  - the Scrum Master is `base`'s facilitator, and the Developers are `software`'s roles.
+  - the Scrum Master is `base`'s facilitator, and the Developers are `software`'s roles;
+  - the Sprint Retrospective is `base`'s `retrospective`, whose approval is not bound to the
+    Sprint: a closed Sprint's `retrospective` › `approve` step is listed again while a later
+    Sprint's retrospective decision-log is `in-discussion`, and `pending approvals` counts that one
+    decision-log once per step; one approval clears both, and nothing is reported `late`.
 
 ## Versions
 

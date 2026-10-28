@@ -38,15 +38,26 @@ methodology, with a WingFoil release in the pack's range (see its catalog entry)
    already governed, its current values of the path and id parameters, so that no file moves.
 3. Copy the composed `.wingfoil/` files into the project's `.wingfoil/`, keeping its `custom/`
    folders, then re-add to `dna.yaml`, `memory.yaml`, `roles.yaml` and `workflows.yaml` the
-   project's own entries; copy the generated AGENTS.md region into its `AGENTS.md`.
-4. Remove the `determinism` directive WingFoil 0.3.0's `init` wrote under `directives/custom/`: a
-   `custom/` file wins over the pack's.
+   project's own entries, among them the `include` entries of the `custom/` workflows the project
+   wrote itself; copy the generated AGENTS.md region into its `AGENTS.md`.
+4. Remove what WingFoil's `init` scaffolded under `custom/` and the composition replaces: the
+   `determinism` directive, since a `custom/` file wins over the pack's, and the workflows
+   `sw-life-cycle`, `adr-ingest` and `bug-ingest`, which `software` ships, each with its `include`
+   entry in `workflows.yaml`, since a workflow named as a pack's makes every `workflow` command
+   fail (`base`'s step 4 removes the others).
 5. Migrate by explicit commits the elements whose state has another name in `software` (for
    example a `bug` on the default machine: `pending` → `open`, `approved` → `planned`).
 6. Record an old → new key mapping for the workflows and phases the project renames: a slot's
    filler carries the slot's name (an inception workflow becomes `inception`), and the phases of
    `release-submit` and `release-publishing` keep their names.
 7. Record the adopted version of `software` in the project's own Memory.
+
+**Who holds `tech-lead`.** The composed DNA gives `tech-lead` to no one: its only member is the
+approver, and the agent's `executes_as` lists `developer`, `reviewer`, `qa` and `architect`. Its
+phases are `release-submit` › `enter-releasing`; `release-publishing` › `release-commit`, `tag`,
+`publish` and `mark-released`; `end-of-life` › `deprecate` and `archive`; and `bug-ingest` ›
+`triage`. A project gives `tech-lead` to a member in its `dna.yaml`, or adds it to its agent's
+`executes_as`.
 
 <!-- generated:begin composition -->
 ## Composition
