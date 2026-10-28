@@ -128,3 +128,4 @@ re-checking it on 0.3.1 (plan-053 step 4).
   dl-024's review note, outside this task: D3 5 to say "install or update", as F-035 and D4 do;
   F-035's "only by" sentence stays accurate (a custom copy under its own name), the received
   text unchanged. The inbox tests 13 of 13, `lint` and `workflow list` exit 0 after the change.
+- 2026-10-28: CI run 40726615137 on `b0353aa`: `success`. Submitted for the approver's review.
