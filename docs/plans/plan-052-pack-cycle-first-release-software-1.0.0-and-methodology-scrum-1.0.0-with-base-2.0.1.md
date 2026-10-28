@@ -338,3 +338,5 @@ as a `check:runs` scenario.
   content commit; the `null`-branch test owed; the WingFoil notice recorded on the charter and on
   prel-004; `software`'s open points read as the charter's note says (1 fixed with the names, 2 and
   3 fixed as written). `main`'s CI on the closing head read before `active → done`.
+- 2026-10-28: `main`'s CI on `cc5a4a4` (the closing notes), run 40701149523, `success`.
+  `active → done`.
