@@ -159,3 +159,20 @@ the fragment, and the server entry is removed from section 3 (as F6.1's hand ste
   2026-10-28, the first copy lost with the session that queued it). The number is the one the text
   gives. Changes to the received text: the frontmatter `status` is this repository's (`draft` until
   `submit`), and two prose lines over 100 characters rewrapped. No word changed.
+- 2026-10-28, plan-053: independent review on adding (dl-017): approve after amendments, nothing
+  blocking; every citation still holds on `main` (`8242f52`), and the WingFoil claims hold on 0.3.0
+  and on 0.3.1 (identical adapter manifests and agent code). Findings, ruled by the approver to be
+  recorded here and applied, if at all, while `pending` when the approver rules this element:
+  1. a custom adapter cannot reuse a built-in adapter's name (refused on 0.3.0 and 0.3.1: an
+     adapter name is unique across `built-in/` and `custom/`, not an override); a project copies
+     a built-in adapter under a name of its own and selects it in `dna.yaml` › `team.agents` ›
+     `adapter`: the Context, D5 and option (a)'s "Against" to say so;
+  2. D6's spec-001 list misses §2 (the term "fragment"), §6.2 (`formats`), §12 and `compat.yaml`
+     (`kinds`, each release's `reads`), §17 (D2's composition notice) and
+     `schema/pack.schema.json` (`contents.fragments`); §18's change to say the restriction notice
+     is not a refusal;
+  3. D3 item 2: an adapter with `mcp.via: args` has no template, so only a merge WingFoil performs
+     reaches it;
+  4. D1 and D2's "exception to §6.3" overstates the rule: they extend §6.3's list to workflows
+     named in `phases`, and a restricted server is not added to it;
+  5. F-035's six requests to be checked against D3's items by task-063's review.

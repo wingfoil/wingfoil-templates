@@ -215,3 +215,29 @@ F3.5 is extended: each pack is composed with every pack its `tensions` name and 
   2026-10-28, the first copy lost with the session that queued it). The number is the one the text
   gives. Changes to the received text: the frontmatter `status` is this repository's (`draft` until
   `submit`), and none to the prose; the table rows stay over 100 characters. No word changed.
+- 2026-10-28, plan-053: independent review on adding (dl-017): approve after amendments, nothing
+  blocking. The point left to this review: D2's classes 1–2 stay defined by subject (an axis
+  would put a law in class 5, below `base`); optional: a directive that only partly implements a
+  law is split, and the first line names the act (`Precedence: law (<act>)`) so a lint can check
+  it. Findings, ruled by the approver to be recorded here and applied, if at all, while `pending`
+  when the approver rules this element:
+  1. D4's exit-check half cannot be written with D4's format change: a workflow is listed once
+     (§6.4) and copied whole (§7.6), and §6.5's isolation forbids an unconditional workflow to
+     reach a conditional one; a further item is needed, (i) a conditional entry replacing the same
+     pack's workflow of the same name, or (ii) the pre-swap step reading the exit-check
+     directives that conditional entries ship (the approver's choice);
+  2. D7's list misses the conditional part's other places: spec-001 §6.2, §6.3, §6.4, §7.7, §8.1,
+     §11, §12, §15 and §17, spec-002's Composition section and index field, and the F3.5 lint's
+     run with `software` only; each entry composed with and without its `with` pack;
+  3. D5: a ruling that becomes a `custom/` directive changes governance, so it is applied through
+     `governance-evolution`, not `decision-log-ingest`;
+  4. D4: dl-026's "same part" rule (§9, §18, after this text was written) is to be read per entry;
+  5. D2: a `custom/` directive with a pack directive's id overrides it in WingFoil, so D2 needs "a
+     `custom/` directive never reuses the id of a pack's directive";
+  6. nits: D1's waiver heuristic would report the bridges D1 permits (exempt those whose `with`
+     pack declares the tension); gap 3 to say "with `base`, and with the first methodology when
+     they need `software` (task-012, task-031)"; D2's bridge class "the highest class among the S
+     directives it reconciles"; D2's "by axis" to read "by pack or axis" (`foundation` has no
+     axis); D3's `tensions` entry without a range syntax; dl-011 cited as if approved, and §10 has
+     no content guidance yet; the precedence table reaches agents only once a project pastes the
+     AGENTS.md region.
