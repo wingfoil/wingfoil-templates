@@ -145,3 +145,10 @@ On the branch `dl/dl-024-dl-025-mcp-and-conflicts`, from `main` at `8242f52`.
   `git status` clean (`wingfoil-cli` rule 4; W-14 follows in task-063). Bodies committed as
   received (`d72fd76`): the words compared one by one with the received text, identical; two prose
   lines of dl-024 rewrapped, dl-025's table rows kept; an Execution Note each. Reviews running.
+- 2026-10-28, step 3: independent reviews of dl-024 and dl-025: approve after amendments, nothing
+  blocking, no citation made stale by a change since `c12ae90` except dl-026's "same part" rule
+  (dl-025); dl-025 D2's classes 1–2 kept by subject. The approver ruled (chat): the findings
+  recorded as an Execution Note on each, the received text unchanged, amended while `pending` when
+  the approver rules them; both submitted `pending`. `workflow list` and `lint` exit 0. task-063's
+  body reviewed twice (approve after amendments, then approve) and accepted into the backlog by
+  the approver (`6e7b777`, on the task branch).
