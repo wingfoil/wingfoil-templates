@@ -146,3 +146,11 @@ Also, at `validate` (plan-052 step 8):
   on `f6e42fc` (`base`'s digest changes with its CHANGELOG, the other two do not); the presets
   line; "three separate dry runs"; the publication paragraph; the sources of `base@^2`; task-057's
   fixes named. The clean-clone checks run on the submitted head; re-review requested.
+- 2026-10-28, checks from clean clones of `main` at `ba1e46a` (this element's content as reviewed)
+  on Node.js 22.21.0 and 22.12.0: `npm ci` (0 vulnerabilities), `npm test` 1027 of 1027, `lint`,
+  `check:pins`, `check:schemas`, `check:packs` (61 files, 0 problems), `index -- --check` (6 files,
+  0 not up to date), `validate` (14 runs, 0 failed), the golden step (26 runs, 0 failed), the
+  overlays `software-exit` and `scrum-exit` (22 runs each, 0 failed), `workflow list`,
+  `check:runs` with task-060's adoption run (34 runs, 0 failed), `npm audit` in the root and in
+  the three matrix folders (0 vulnerabilities): every command exit 0 on both. `main`'s CI on
+  `ba1e46a`: run 40673992563, `success`. The re-review's condition met: `validating → releasing`.
