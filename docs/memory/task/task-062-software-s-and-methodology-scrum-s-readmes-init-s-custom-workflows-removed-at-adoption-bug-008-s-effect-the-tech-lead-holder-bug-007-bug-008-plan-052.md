@@ -21,6 +21,10 @@ names "WingFoil 0.3.0's `init`", which 0.3.1 also is. `methodology/scrum` iterat
 `retrospective` per Sprint (bug-008, option (ii)). The composed DNA gives `tech-lead` to no one,
 and `software`'s agent keeps `executes_as: [developer, reviewer, qa, architect]` (ruling 5).
 
+A project's own `custom/` workflows, in this task, are those the project wrote itself, not those
+`wingfoil init` scaffolded (`sw-life-cycle`, `bug-ingest`, `decision-log-ingest`, `adr-ingest` and
+`scrum-delivery` or `kanban-delivery`); task-061 and task-062 use the same words.
+
 ## Acceptance
 
 1. **`packs/software/README.md`, "Install and update":** step 3 keeps and re-includes only the
@@ -38,18 +42,23 @@ and `software`'s agent keeps `executes_as: [developer, reviewer, qa, architect]`
    (`scrum-delivery` or `kanban-delivery`) with its `include` entry, the methodology's `delivery`
    replacing it; and bug-008's effect, in a hand-written part: a closed Sprint's
    `retrospective.approve` step is listed again while a later Sprint's retrospective decision-log
-   is `in-discussion`, one `memory approve` clearing both.
-4. **`pack-methodology-scrum`:** an Execution Note: open point 2 resolved by `base` 2.0.0 (bug-006
-   fixed), open point 3's Sprint state names fixed by 1.0.0; the body as approved.
+   is `in-discussion`, one approval clearing both.
+   The text adds no level-1 or level-2 heading (spec-002 §2.1, CB-1), is not in the first
+   paragraph of "When to use it" (the index's `excerpt`, §3.3), and names the approval
+   (`memory.approve`, one approval), not a command (§2.3).
+4. **`pack-methodology-scrum`:** an Execution Note: open point 2 resolved in part by `base` 2.0.0
+   (bug-006's trailing `/` fixed; the weak evidence, `explore` complete for every later Sprint once
+   a file is there, stays a known limit of `base`), open point 3's Sprint state names fixed by
+   1.0.0; the body as approved.
 5. **No other file under `packs/` changes** but the two READMEs' hand-written parts; the generated
    sections stay byte-identical (`npm run index -- --check`).
 6. **Checks:** as task-061's 5, and the steps of 1 and 3 applied by hand on projects initialised
    by `wingfoil init --template Scrum` and `--template Kanban` on 0.3.0 and 0.3.1, with `base`,
    `software` and `methodology/scrum` composed from the README example `scrum/defaults`:
    `workflow list` and `workflow next` exit 0, no diagnostic, recorded.
-7. **After the merge:** bug-007's and bug-008's Execution Notes record the fix ("fixed on `main` by
-   the merges of task-061 and task-062; released in `base` 2.0.1, `software` 1.0.0,
-   `methodology/scrum` 1.0.0", completed at publication).
+7. **After the later of task-061's and task-062's merges:** bug-007's and bug-008's Execution Notes
+   record the fix ("fixed on `main` by the merges of task-061 and task-062; released in `base`
+   2.0.1, `software` 1.0.0, `methodology/scrum` 1.0.0", completed at publication).
 
 ## Design
 
