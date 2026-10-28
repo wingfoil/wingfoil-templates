@@ -306,3 +306,27 @@ as a `check:runs` scenario.
   Pages (40697576861): `success`. CB-6's live check passed for the three, the slash tag included.
   `pack-foundation-software` and `pack-methodology-scrum` `accepted → active`; `base`'s charter
   records 2.0.1; dl-006's note. Notices next (step 12).
+- 2026-10-28, step 12: the notices sent to WingFoil UI's session and to the coordinating session:
+  the three tags, the date, the range `>=0.3.0 <=0.3.1`, the adoption by hand from the READMEs at
+  the tags, bug-007's removal list and the update from `base` 2.0.0, bug-008's note, the
+  `tech-lead` holder; to WingFoil, through the coordinating session, `end-of-life.approve` and
+  `software`'s step-key mapping (`pack-foundation-software`'s table).
+- 2026-10-28, step 13, per tech-spec (dl-020): this plan amended neither spec-001 nor spec-002 and
+  recorded no erratum of theirs; the vision's `07_sequencer.md` 1.5 and `08_mvp-canvas.md` 1.4 were
+  amended in place (step 2, the approver's merge OK). Nothing to fold back.
+- 2026-10-28, close. Done: the sequencer (step 2); the rehearsal (step 3, no tooling task needed);
+  task-061, task-062 (bug-007 and bug-008 fixed) and task-060 (`check:runs`' adoption run); prel-003,
+  prel-004, prel-005 released and published; both charters `active`; the notices sent. The
+  Handoff's "Done when" met; `main`'s CI on `bd388bf` `success`. Owed after this plan:
+  - `pack-cycle`'s `retrospective` for the three cycles (`base`, `software`, `methodology/scrum`),
+    its own plan next (ruling 6, dl-006's note);
+  - bug-008's feedback note to WingFoil (option (iii)), after F-038, once F-035 and F-036 exist;
+    task-052 (F-037) and F-038 wait for the same;
+  - a `check:runs` scenario of the full scrum run (`memory park`, a field rewritten, `set_state`);
+  - `wingfoil-release-intake` › `recheck`'s wording, at its next version; a `pack-semver` rule for
+    fixes and changed defaults;
+  - the README's step 3 "own entries" for Memory types and roles a project `init` scaffolded
+    (task-061's review note), at the next README pass;
+  - the sequencer: W8's four features (its next review); dl-012's F4.9 placement (the approver's);
+  - W10: `methodology/kanban`, presets, `governance/wingfoil-dogfood`, this repository's adoption,
+    its WingFoil pin and the first inbox sync (ruling 7); dl-024, dl-025 and plan-022's close.
