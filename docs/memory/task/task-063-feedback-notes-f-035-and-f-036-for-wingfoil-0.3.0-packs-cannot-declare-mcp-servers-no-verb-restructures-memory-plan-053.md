@@ -120,3 +120,11 @@ re-checking it on 0.3.1 (plan-053 step 4).
   `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check`,
   `check:runs` and `workflow list` exit 0. Files changed: the two notes, the ledger, the
   directive, this file. CI run 40719699764 on `e9297c4`: `success`.
+- 2026-10-28: independent build review: approve; every Acceptance criterion checked, the notes'
+  commands re-run on fresh 0.3.0 and 0.3.1 installs, W-14 checked against 0.2.2's code, F-035's
+  requests matched to dl-024 D3. Applied (wording only, no behaviour, test or Acceptance command
+  changed, so no re-review, dl-017): W-14 says a number after a gap is not the next one and is
+  usually in use (with files 1 and 5 it gives a free 3), and the row is shorter. Two points for
+  dl-024's review note, outside this task: D3 5 to say "install or update", as F-035 and D4 do;
+  F-035's "only by" sentence stays accurate (a custom copy under its own name), the received
+  text unchanged. The inbox tests 13 of 13, `lint` and `workflow list` exit 0 after the change.
