@@ -147,6 +147,115 @@
       ],
       "excerpt": "Every project governed by WingFoil, software or not, starts from `base`: it holds the decision-log, task and plan types, the workflows that capture a decision, run a retrospective and change the project's own governance, the generic directives and the DNA every project shares (one approver, one agent without approval authority). Other packs only add to it or tighten it. It serves every adoption profile (solo developer, code reviewer, team developer, tech lead, non-technical manager,…",
       "profiles": []
+    },
+    {
+      "id": "software",
+      "catalog": "official",
+      "status": "active",
+      "axis": null,
+      "slot": null,
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "software@1.0.0",
+          "wingfoil": ">=0.3.0 <=0.3.1",
+          "formats": {
+            "directive": 1,
+            "dna": 1,
+            "memory": 1,
+            "memory-template": 1,
+            "roles": 1,
+            "workflow": 1
+          },
+          "requires_capabilities": [
+            "workflow-engine"
+          ],
+          "requires": [
+            "base@^2"
+          ],
+          "conflicts": [],
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/software@1.0.0/packs/software/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/software@1.0.0/packs/software/pack.yaml"
+        }
+      ],
+      "title": "Software",
+      "description": "The software foundation layer: the Memory types, workflows and directive that software projects share and other governed projects do not use, above all the life cycle sw-life-cycle with its slots and their defaults.",
+      "workflows": [
+        "adr-ingest",
+        "bug-ingest",
+        "end-of-life",
+        "inception",
+        "release",
+        "release-publishing",
+        "release-submit",
+        "specification",
+        "sw-life-cycle"
+      ],
+      "conditional_workflows": [],
+      "memory_types": [
+        "adr",
+        "bug",
+        "release",
+        "release-line",
+        "tech-spec"
+      ],
+      "directives": [
+        "determinism"
+      ],
+      "conditional_directives": [],
+      "parameters": [
+        {
+          "name": "adr_path",
+          "type": "path",
+          "default": "docs/memory/adr/{id}.md",
+          "description": "The adr type's path; only letters, digits and . _ / { } -"
+        },
+        {
+          "name": "bug_path",
+          "type": "path",
+          "default": "docs/memory/bug/{id}.md",
+          "description": "The bug type's path; only letters, digits and . _ / { } -"
+        },
+        {
+          "name": "inception_path",
+          "type": "path",
+          "default": "docs/inception.md",
+          "description": "The document the default inception produces: the project's purpose and scope; only letters, digits and . _ / { } -"
+        },
+        {
+          "name": "release_id",
+          "type": "pattern",
+          "default": "rel-{version}",
+          "description": "The release type's id pattern, {version} being the element's version"
+        },
+        {
+          "name": "release_line_id",
+          "type": "pattern",
+          "default": "rl-{version}",
+          "description": "The release-line type's id pattern, {version} being the element's version"
+        },
+        {
+          "name": "release_line_path",
+          "type": "path",
+          "default": "docs/memory/release-line/{id}.md",
+          "description": "The release-line type's path; only letters, digits and . _ / { } -"
+        },
+        {
+          "name": "release_path",
+          "type": "path",
+          "default": "docs/memory/release/{release-line}/{id}.md",
+          "description": "The release type's path, {release-line} being the release's field of that name; only letters, digits and . _ / { } -"
+        },
+        {
+          "name": "tech_spec_path",
+          "type": "path",
+          "default": "docs/memory/tech-spec/{id}.md",
+          "description": "The tech-spec type's path; only letters, digits and . _ / { } -"
+        }
+      ],
+      "excerpt": "Every software project governed by WingFoil composes `software` right after `base`, with one methodology: it holds the adr, tech-spec, bug, release and release-line types, the life cycle `sw-life-cycle` with its slots and their defaults (`inception`, `specification`, `release`, `end-of-life`), the release workflows `release-submit` and `release-publishing`, the workflows that capture an architecture decision (`adr-ingest`) and a bug (`bug-ingest`), the `determinism` directive and the software…",
+      "profiles": []
     }
   ],
   "presets": [],

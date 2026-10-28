@@ -68,5 +68,26 @@ packs:
         requires: []
         conflicts: []
         wingfoil: ">=0.3.0 <=0.3.1"
+  - id: software
+    path: packs/software
+    catalog: official
+    status: active
+    versions:
+      - version: 1.0.0
+        commit: 8d4adb3038c48922713e9b6b777687c10234abae
+        digest: sha256:364a8ac72c7060b9af27a33a5135251e6aac202a38f350f6bf269c9d9c8c6f4f
+        formats:
+          dna: 1
+          roles: 1
+          memory: 1
+          workflow: 1
+          directive: 1
+          memory-template: 1
+        requires_capabilities:
+          - workflow-engine
+        requires:
+          - base@^2
+        conflicts: []
+        wingfoil: ">=0.3.0 <=0.3.1"
 transitions: []
 presets: []
