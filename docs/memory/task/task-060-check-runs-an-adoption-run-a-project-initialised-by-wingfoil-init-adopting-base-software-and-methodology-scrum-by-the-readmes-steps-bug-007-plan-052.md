@@ -146,3 +146,7 @@ runs, each a `main` started and its steps; the step kinds are `start`, `end`, `n
   `list`; lint exit 0. Deviation from the Design (dl-019 not needed: no Acceptance changes):
   `runs-cli.ts`' usage is not changed, its header pointing to `runs.ts`, whose header names the
   adoption run. Re-review requested.
+- 2026-10-28: re-review: approve; it reproduced the red (48, 3 failed) and the fix (48 of 48,
+  `check:runs` 34 runs, 0 failed, the red variant 8 of 8 at `list`). Noted: the directive check is
+  defensive, unreachable by a run (listed directives are removed after the copy); `include:` with
+  no value takes the `null` branch, not tested apart from the absent key.
