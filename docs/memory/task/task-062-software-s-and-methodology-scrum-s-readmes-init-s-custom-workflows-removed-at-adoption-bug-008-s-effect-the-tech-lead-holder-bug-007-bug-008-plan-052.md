@@ -119,3 +119,4 @@ A project's own `custom/` workflows, in this task, are those the project wrote i
   matrix folders (0 vulnerabilities): every command exit 0 on both. Branch CI: run 40660532833 on
   `a5a1186`, conclusion `success`. task-061 is on `main` (`66b783f`), so the three READMEs agree
   there once this task merges. In review.
+- 2026-10-28: approved by the approver (`f20376f`); merged into `main` (`eebfe21`). Delivered.
