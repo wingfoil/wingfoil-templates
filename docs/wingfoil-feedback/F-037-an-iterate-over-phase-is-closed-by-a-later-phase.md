@@ -10,7 +10,8 @@ answered_by: []
 New note (task-052). From this repository's dl-026 D5 (plan-047): a methodology with two repeating
 streams, Sprints and releases, cannot run both as phases of one workflow. Distinct from F-018 (a
 `where:` on `iterate_over` that 0.2.2 did not evaluate), F-032 (suspending an instance) and F-033
-(closing a plan that is not an instance): here one open instance's phases close each other.
+(closing a plan that is not an instance): here a later phase of one open instance closes its
+earlier `iterate_over` phase.
 
 ## Observed
 
@@ -55,30 +56,34 @@ phases:
 ```
 $ wingfoil memory add --type task --title "First"
 { "id": "task-001-first", ... }                                                  # exit 0
-$ wingfoil workflow start stream
+$ wingfoil workflow start stream                                                 # excerpt
 started stream as stream-1-plan (active)
 next step: item.submit@task:task-001-first                                       # exit 0
 $ wingfoil memory submit task-001-first                                          # exit 0
 $ wingfoil workflow next
+workflow: stream (stream-1-plan)
 next step: stream.report
   evidence missing: produces                                                     # exit 0
-$ git add docs/report.md && git commit -m report               # docs/report.md written first
+$ git add docs/report.md && git commit -m report     # docs/report.md written first; exit 0
 $ wingfoil workflow next
+workflow: stream (stream-1-plan)
 no next step: workflow 'stream' is complete                                      # exit 0
 $ wingfoil memory add --type task --title "Second"
 { "id": "task-002-second", ... }                                                 # exit 0
 $ wingfoil workflow next
+workflow: stream (stream-1-plan)
 no next step: workflow 'stream' is complete                                      # exit 0
-$ wingfoil workflow status
+$ wingfoil workflow status                                                       # excerpt
 * stream-1-plan (stream) — active, complete
     phases: items complete (complete 1, late 1), report complete
     late: task:task-002-second (draft)                                           # exit 0
 ```
 
 Once `report` completed, `items` is closed: the task added afterwards is reported `late`, no step
-is offered for it, and the workflow is complete. In a methodology this is the normal case: a new
-Sprint, or a release completing inside a Sprint, closes the earlier repeating phase, and the next
-Sprint or release is `late` and never runs.
+is offered for it, and the workflow is complete. In a methodology this is the normal case: once a
+Sprint's retrospective, or a release, completes, the earlier Sprint phase is closed and the next
+Sprint is `late`; a release completing inside a Sprint closes the Sprint's task phase and leaves
+its open items `late`.
 
 ## Expected
 
