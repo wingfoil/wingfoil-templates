@@ -3,18 +3,53 @@ id: task-062-software-s-and-methodology-scrum-s-readmes-init-s-custom-workflows-
 type: task
 title: "software's and methodology/scrum's READMEs: init's custom/ workflows removed at adoption, bug-008's effect, the tech-lead holder (bug-007, bug-008, plan-052)"
 status: draft
-pack: ""            # the pack element id this task works on; empty for tooling tasks
+pack: "pack-methodology-scrum"
 depends_on: []
 tags: ["packs","software","scrum","readme"]
 ---
 
 ## Context
 
-<!-- Why this task exists, and the element it comes from (pack charter, spec, DL, bug). -->
+plan-052's step 5 (rulings 2 and 5): the part of bug-007 and bug-008 in `software` and
+`methodology/scrum`, both unpublished: fixed before their 1.0.0, with no release of their own
+(plan-050's task-055 touched both packs under `pack-methodology-scrum`, the precedent for one
+task). `wingfoil init` (0.3.0, 0.3.1) writes under `workflows/custom/` the workflows
+`sw-life-cycle`, `adr-ingest` and `bug-ingest`, named as `software`'s, and a delivery workflow
+(`scrum-delivery` or `kanban-delivery`) that the methodology's `delivery` replaces; both READMEs'
+step 3 keeps and re-includes them: `E_WORKFLOW_DUPLICATE_NAME` (bug-007). `software`'s step 4
+names "WingFoil 0.3.0's `init`", which 0.3.1 also is. `methodology/scrum` iterates `base`'s
+`retrospective` per Sprint (bug-008, option (ii)). The composed DNA gives `tech-lead` to no one,
+and `software`'s agent keeps `executes_as: [developer, reviewer, qa, architect]` (ruling 5).
 
 ## Acceptance
 
-<!-- Verifiable criteria: the command to run and the expected result. -->
+1. **`packs/software/README.md`, "Install and update":** step 3 keeps and re-includes only the
+   project's own `custom/` workflows; step 4 removes, besides the `determinism` stub, the
+   workflows `init` wrote under `workflows/custom/` with the names of `software`'s (`sw-life-cycle`,
+   `adr-ingest`, `bug-ingest`), with their `include` entries, and names WingFoil's `init` with no
+   release.
+2. **`software`'s `tech-lead` holder** (ruling 5), in a hand-written part of its README: the
+   `tech-lead` phases (`release-submit` › `enter-releasing`; `release-publishing` ›
+   `release-commit`, `tag`, `publish`, `mark-released`; `end-of-life` › `deprecate`, `archive`;
+   `bug-ingest` › `triage`) need a holder: the project gives `tech-lead` to a member in its
+   `dna.yaml`, or adds it to its agent's `executes_as`. No DNA change.
+3. **`packs/methodology/scrum/README.md`, "Install and update":** step 3 keeps and re-includes
+   only the project's own `custom/` workflows; a step removes `init`'s delivery workflow
+   (`scrum-delivery` or `kanban-delivery`) with its `include` entry, the methodology's `delivery`
+   replacing it; and bug-008's effect, in a hand-written part: a closed Sprint's
+   `retrospective.approve` step is listed again while a later Sprint's retrospective decision-log
+   is `in-discussion`, one `memory approve` clearing both.
+4. **`pack-methodology-scrum`:** an Execution Note: open point 2 resolved by `base` 2.0.0 (bug-006
+   fixed), open point 3's Sprint state names fixed by 1.0.0; the body as approved.
+5. **No other file under `packs/` changes** but the two READMEs' hand-written parts; the generated
+   sections stay byte-identical (`npm run index -- --check`).
+6. **Checks:** as task-061's 5, and the steps of 1 and 3 applied by hand on projects initialised
+   by `wingfoil init --template Scrum` and `--template Kanban` on 0.3.0 and 0.3.1, with `base`,
+   `software` and `methodology/scrum` composed from the README example `scrum/defaults`:
+   `workflow list` and `workflow next` exit 0, no diagnostic, recorded.
+7. **After the merge:** bug-007's and bug-008's Execution Notes record the fix ("fixed on `main` by
+   the merges of task-061 and task-062; released in `base` 2.0.1, `software` 1.0.0,
+   `methodology/scrum` 1.0.0", completed at publication).
 
 ## Design
 
