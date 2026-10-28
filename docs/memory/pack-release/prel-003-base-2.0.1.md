@@ -2,7 +2,7 @@
 id: prel-003-base-2.0.1
 type: pack-release
 title: "base 2.0.1"
-status: draft
+status: validating
 pack: "pack-foundation-base"            # the pack element id (pack-<axis>-<name>)
 version: "2.0.1"         # the semver being published
 bump: "patch"            # major | minor | patch (pack-semver directive)
