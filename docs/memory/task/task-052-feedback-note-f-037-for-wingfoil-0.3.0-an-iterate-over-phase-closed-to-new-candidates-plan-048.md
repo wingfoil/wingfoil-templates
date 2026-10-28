@@ -85,3 +85,22 @@ request).
 - 2026-10-26: written under plan-048 (step 1).
 - 2026-10-26: reviewed with plan-048 (approve after amendments, then approve); accepted under
   plan-048, its build taken over as plan-048 ruling 2 says.
+- 2026-10-28, design and build (plan-053 step 5; `backlog → in-progress`): Design written; F-035
+  and F-036 on plan-053's branch, so the numbering has no gap. Scratch project on 0.3.0
+  (`cc31d7a8`, `npm ci` from `src/matrix/wingfoil-0.3.0/`, `init --template Kanban
+  --no-interactive`), the two workflows of the note committed: the run gives the note's output,
+  every exit code 0; the second task `late` and the workflow complete. The same run on 0.3.1
+  (`870bd440`): the same result. The note and its ledger row (`71aab05`).
+- Mutations (dl-018 R2), the two inbox test files, 13 of 13 unmutated: the note's `id` F-038 → 3
+  fail; the ledger row's `kind` → 2 fail; the opening `New note task-052.` → 2 fail. Privacy grep:
+  no match.
+- Independent build review: approve after amendments, nothing blocking, the run reproduced on 0.3.0
+  and 0.3.1. Applied (`f7781d8`, wording only): the methodology sentence now says what dl-026 and
+  plan-047 found (a Sprint's retrospective or a release completing closes the Sprint phase, the
+  next Sprint `late`; a release inside a Sprint leaves its open items `late`); trimmed outputs
+  marked `# excerpt` or given their first line; "one open instance's phases close each other"
+  narrowed; the commit step's exit code.
+- Clean clones: Node.js 22.21.0 on `71aab05`, 22.12.0 on `f7781d8`: `npm ci`, `npm test` 1027 of
+  1027, `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check`,
+  `check:runs` and `workflow list` exit 0. CI run 40732702383 on `71aab05`: `success`. Files
+  changed: the note, the ledger, this file.
