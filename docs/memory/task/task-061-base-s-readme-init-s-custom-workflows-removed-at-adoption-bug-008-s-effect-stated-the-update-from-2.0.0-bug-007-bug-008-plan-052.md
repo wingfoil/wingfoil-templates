@@ -122,3 +122,11 @@ accepts it.
   entry for every workflow. Noted, not changed (outside bug-007): step 3's "own entries" draws the
   "wrote itself" line only for workflows, so a literal reader might re-add `init`'s Memory types or
   roles; for a later README pass. The clean-clone checks rerun on the final commit.
+- 2026-10-28, checks from clean clones (`2121749` on Node.js 22.21.0, `8ac7ff0` on 22.12.0, which
+  adds only these notes): `npm ci` (0 vulnerabilities), `npm test` 1010 of 1010, `lint`,
+  `check:pins`, `check:schemas`, `check:packs` (61 files, 0 problems), `index -- --check` (6 files,
+  0 not up to date), `validate` (14 runs, 0 failed), the golden step (26 runs, 0 failed), the
+  overlays `software-exit` and `scrum-exit` (22 runs each, 0 failed), `workflow list`,
+  `check:runs` (26 runs, 0 failed), `npm audit` in the root and in the three matrix folders (0
+  vulnerabilities): every command exit 0 on both. Branch CI: run 40660549898 on `8ac7ff0`,
+  conclusion `success` (the two runs before it cancelled by the next push). In review.
