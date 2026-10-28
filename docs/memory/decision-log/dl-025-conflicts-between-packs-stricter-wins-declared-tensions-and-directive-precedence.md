@@ -2,7 +2,7 @@
 id: dl-025-conflicts-between-packs-stricter-wins-declared-tensions-and-directive-precedence
 type: decision-log
 title: "Conflicts between packs: stricter wins, declared tensions and directive precedence"
-status: draft
+status: pending
 tags: ["packs","composition","directives","format"]
 ---
 
