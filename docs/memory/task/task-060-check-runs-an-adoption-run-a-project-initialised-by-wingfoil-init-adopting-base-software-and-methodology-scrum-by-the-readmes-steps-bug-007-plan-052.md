@@ -84,5 +84,6 @@ runs, each a `main` started and its steps; the step kinds are `start`, `end`, `n
      approved (dl-019). -->
 
 - 2026-10-28: independent review (with task-060, task-061 and task-062): approve after amendments
-  (its own check of the removal list, the identity before `init`, the red variant, the counts). Applied.
+  (its own check of the removal list, the identity before `init`, the red variant, the counts).
+  Applied.
 - 2026-10-28: re-review: approve. Submitted.

@@ -72,5 +72,6 @@ A project's own `custom/` workflows, in this task, are those the project wrote i
      approved (dl-019). -->
 
 - 2026-10-28: independent review (with task-060, task-061 and task-062): approve after amendments
-  (open point 2 resolved in part; the bug notes after the later merge; the README constraints). Applied.
+  (open point 2 resolved in part; the bug notes after the later merge; the README constraints).
+  Applied.
 - 2026-10-28: re-review: approve. Submitted.
