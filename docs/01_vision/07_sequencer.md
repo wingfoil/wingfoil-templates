@@ -1,7 +1,7 @@
 # Sequencer — WingFoil-Templates
 
-**Version:** 1.4
-**Date:** 2026-10-15
+**Version:** 1.5
+**Date:** 2026-10-28
 **Status:** Approved
 **Traces to:** [06_features.md](06_features.md), [05_journeys.md](05_journeys.md), [04_personas.md](04_personas.md)
 
@@ -27,8 +27,8 @@ Wave ids (`W1`…) belong to this repository and are unrelated to WingFoil's own
 |---|---|---|---|---|
 | **M0 — Contract** | spec-001 and its schemas approved: the format, the catalog, compatibility. `wingfoil-release-intake` back in the configuration. | the pack-model rulings | Pack author, WingFoil maintainer | 12 |
 | **M1 — Tooling** | one command composes and validates any pack against every compatible WingFoil release; the release process records its evidence; the catalog is browsable by people and agents. | M0 | Pack author, Agent | 11 |
-| **M2 — Foundation** | the foundation packs `base` and `software`, and `governance/wingfoil-dogfood`, published (dl-022). Templates adopts them first; Benchmark and UI follow between their own releases. | the WingFoil v0.3 formats, M1 | Governed-repository maintainer (primary), WingFoil maintainer (primary) | 5 |
-| **M3 — First catalog (MVP)** | the first official catalog, published and validated, ready when WingFoil v0.4 installs packs. | M2, WingFoil v0.4 for J6–J7 | Adopter (primary from v0.4) | 6 |
+| **M2 — Foundation** | the foundation packs `base` and `software` published with a first methodology, `methodology/scrum` (dl-022, plan-052). WingFoil UI, Benchmark and WingFoil adopt them when each is ready, Benchmark and UI between their own releases; Templates adopts at W10, with `methodology/kanban` (plan-052 ruling 7). | the WingFoil v0.3 formats, M1 | Governed-repository maintainer (primary), WingFoil maintainer (primary) | 5 |
+| **M3 — First catalog (MVP)** | the first official catalog, published and validated, ready when WingFoil v0.4 installs packs; `governance/wingfoil-dogfood` published and this repository's adoption of the packs. | M2, WingFoil v0.4 for J6–J7 | Adopter (primary from v0.4) | 7 |
 | **M4 — Community** | community catalog, contributions, download traffic. | M3, WingFoil dl-138 Q4 | Community contributor | 3 |
 
 Every feature of `06_features.md` is assigned to exactly one wave. F2.7 was dropped in the features
@@ -63,13 +63,13 @@ Starts when the approver confirms that the v0.3 formats are final.
 | Wave | Features | High unc. | Ends with |
 |---|---|---|---|
 | W8 — Foundation packs | F4.1 `base` · F4.8 `software` · F6.2 parameters for every governed project · F1.6 AGENTS.md section | F1.6 | `base` validates with the parameters of every governed project, software or not; `software` with those of the four governed software repositories. The non-software projects are private: the tests use a generic non-software fixture, and the check against the real projects runs outside this repository and records only its outcome (dl-022 S6) |
-| W9 — Dogfood and adoption | F4.2 `governance/wingfoil-dogfood` · F6.1 hand-adoption steps | — | **`base` and `software` published; this repository adopts both first** (dl-003 D10, as amended by dl-022) |
+| W9 — First publication | F4.3 `scrum` (`kanban` in W10) · F6.1 hand-adoption steps | — | **`base`, `software` and `methodology/scrum` published**, their hand-adoption steps checked on a project initialised by WingFoil's `init` (plan-052) |
 
 ## M3 — First catalog (MVP)
 
 | Wave | Features | High unc. | Ends with |
 |---|---|---|---|
-| W10 — Methodologies | F4.3 `scrum`, `kanban` · F2.6 presets | — | the first methodologies published, with a first preset each |
+| W10 — Kanban, presets, dogfood and adoption | F4.3 `kanban` · F2.6 presets · F4.2 `governance/wingfoil-dogfood` | — | `methodology/kanban` published, a first preset for each methodology; this repository adopts `base`, `software` and `methodology/kanban`, its WingFoil pin raised and its feedback inbox synced (`wingfoil-cli` rule 7; dl-003 D10 as plan-052 ruling 7 reorders it) |
 | W11 — Phases and blueprints | F4.5 `lean-inception`, `bdd-sbe` · F4.6 `web-service`, `cli-library` | — | every slot and blueprint of the first scope published |
 | W12 — Stages and agent mode | F4.7 `prototype`, `production`, transition (run by the target stage's workflow, dl-021 R2) · F4.4 `agent-first` | F4.4 | **first catalog complete** |
 
@@ -83,8 +83,10 @@ Starts when the approver confirms that the v0.3 formats are final.
 
 ## Notes
 
-- **The first publication is `base`, then `software`.** Every pack requires `base` (pack-model),
-  `software` included (dl-022), so nothing is published before W9.
+- **The first publication is `base`, then `software` with `methodology/scrum`.** Every pack requires
+  `base` (pack-model), `software` included (dl-022), so nothing is published before W9. `software`
+  composes only with a methodology, so it is published with `methodology/scrum` (plan-046 ruling 6):
+  F4.3 is the one feature split across two waves, `scrum` in W9 and `kanban` in W10 (plan-052).
 - **The foundation packs also need a released WingFoil.** The `pack-compatibility` directive forbids
   publishing against an unreleased build. `base` and `software`, written in the v0.3 formats, can
   therefore be published only after WingFoil v0.3 is **released**, not merely when its formats are
