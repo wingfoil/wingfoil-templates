@@ -51,8 +51,9 @@ them `major`.
   "known defects" marker is wanted is open.
 - `+` **Publication mechanics held every time:** dry run in a temporary clone, atomic push of tag
   and `main`, CI on both, Pages, the live CB-6 check (prel-001 … prel-003 › Publication); for 2.0.1,
-  tag and published content shown byte-identical (prel-003 › Validation). The cascade of the major
-  held: every `base@^1` moved to `base@^2` in the `prepare` commit (plan-049 ruling 3, `975399e`).
+  its composition shown byte-identical to 2.0.0's, as a patch requires (prel-003 › Validation). The
+  cascade of the major held: every `base@^1` moved to `base@^2` in the `prepare` commit (plan-049
+  ruling 3, `975399e`).
 - `−` **`pack-semver` has gaps.** No rule for a first version until plan-044 ruling F (`86c01cc`);
   still none for a fix that changes a default, so the defaults fix became `major` by "take the
   higher class" (plan-049 ruling 2: "a `minor` could be argued"). `DEBT`.
@@ -68,9 +69,9 @@ them `major`.
 
 ## 2. The `software` cycle
 
-Charter accepted 2026-10-20 (plan-041 step 10, `386e3c5`) → author (plan-046, task-046 … task-050,
-2026-10-24 … 26) → lint follow-up (plan-048, task-051) → 1.0.0 with `methodology/scrum`
-(plan-052, prel-004, tag at `8d4adb3`, 2026-10-28).
+Charter accepted 2026-10-20 (plan-041 steps 10–11, merge `386e3c5`) → author (plan-046,
+task-046 … task-050, 2026-10-24 … 26) → lint follow-up (plan-048, task-051) → 1.0.0 with
+`methodology/scrum` (plan-052, prel-004, tag at `8d4adb3`, 2026-10-28).
 
 - `+` **Fast and in order:** one task at a time, every close with "Done when" met and `main`'s CI
   `success` (40216101348, 40288258413, 40300623927, 40323263272, 40352496784). plan-046 ruling 6
@@ -80,8 +81,8 @@ Charter accepted 2026-10-20 (plan-041 step 10, `386e3c5`) → author (plan-046, 
   overlay, a fixture methodology, README examples deferred under CB-2, publication held for W9.
 - `+`/`−` **The overlay** (task-046, `2edc17d`) gave a local and CI check of a pack that cannot
   compose alone, reused for `scrum`'s exit (two CI overlay steps, 22 runs each by plan-052). It was
-  also the cycle's most reviewed task: four blocking findings in the body review, tests added after
-  the code at the review's request (dl-018 R2), 19 commits.
+  also the cycle's task with the most blocking findings (four, in the body review), with tests added
+  after the code at the review's request (dl-018 R2).
 - `−` `GOV` **The exit criterion was static and was met against a broken contract.** task-049
   (`babf1e9`) validated four compositions (7 runs, 0 failed), but with `where: [in-development]` a
   release stops after `enter-releasing` at run time (dl-027 › Context), found by the parallel scrum
@@ -90,10 +91,10 @@ Charter accepted 2026-10-20 (plan-041 step 10, `386e3c5`) → author (plan-046, 
 - `−` **The README's adoption steps were never run on a project made by `wingfoil init`.** bug-007
   (major, `E_WORKFLOW_DUPLICATE_NAME`) was found by plan-051's `recheck` on 2026-10-27; it was in
   `base@1.0.0`'s README already and was published again in 2.0.0 (tagged at `6d04472` the same
-  afternoon). `+` Fixed by task-061/task-062 with hand reproductions on both releases and both
+  day). `+` Fixed by task-061/task-062 with hand reproductions on both releases and both
   templates; guarded since by task-060's adoption run (`d542f30`, red 8 of 8 first).
 - `−` `WF` **A phase role nobody holds is accepted.** The composed DNA gives `tech-lead` to no one
-  while nine phases need it; WingFoil does not refuse it (plan-051 › recheck); settled by README
+  while eight phases need it; WingFoil does not refuse it (plan-051 › recheck); settled by README
   text only (plan-052 ruling 5, a blocking finding of plan-052's review).
 - `−` `GOV` **The accepted charter differs from the pack and is reconciled only by notes:**
   `requires: [base@^1]` read as `^2` (plan-049's note), the `end-of-life` row and step-key table
@@ -113,23 +114,26 @@ Charter (plan-047, 2026-10-26, rulings 1–16, dl-026, dl-027) → author (plan-
 task-057, 2026-10-27) → 1.0.0 (plan-052, prel-005, 2026-10-28; first tag with a slash).
 
 - `+` **One day per phase**, each plan reviewed, re-reviewed and closed with "Done when" met;
-  rulings given up front as outlines and none rejected (plan-047 1–16, plan-050 1–4, plan-052 1–8).
+  none rejected; plan-047 1–12 up front and 13–16 during the plan under dl-019, plan-050 1–4 and
+  plan-052 1–8 up front.
   plan-050 ruling 1 ("`base@^1` now, `^2` by whoever comes second") absorbed the parallel major
   (`2d13c49`).
-- `+` **Running the method by hand on the real engine before authoring paid off.** Three scripted
-  runs on 0.3.0 (plan-047 › steps 2–3) broke ruling 2's shape, found the nested Sprint shape (ruling
-  13, dl-026), the release filter defect that held for any methodology (ruling 14, dl-027), the
-  scope key (15) and the release order (16), and bug-005/006 as a by-product. task-057's full run
-  (two Sprints, two releases, one spanning) still found two charter-text errors after its reviews,
-  fixed in-task under dl-019 (`b6dc551`).
+- `+` **Running the method by hand on the real engine before authoring paid off.** Three runs on
+  0.3.0, by hand (plan-047 › Execution Notes: steps 2–3, the second run, the charter's review),
+  broke ruling 2's shape, found the nested Sprint shape (ruling 13, dl-026), the release filter
+  defect that held for any methodology (ruling 14, dl-027), the scope key (15) and the release order
+  (16), and bug-005/006 as a by-product. task-057's full run (two Sprints, two releases, one
+  spanning) still found two charter-text errors after its reviews, fixed in-task under dl-019
+  (`b6dc551`).
 - `−` **Its cost:** a ruling superseded inside an active plan; plan-047 runs to about 3,950 words;
   `--overlay` accepts only a directory under `tests/fixtures/`, so the draft sat untracked inside
-  the repository; a session restart wiped the scratch draft (plan-047 › charter review); the run is
-  recorded in prose only, not scripted (plan-050 ruling 3, `DEBT`).
+  the repository; a session restart wiped the scratch run directory (plan-047 › charter review); the
+  run is recorded in prose only, not scripted (plan-050 ruling 3, `DEBT`).
 - `GOV` **A scripted run on the real engine before a charter is accepted**, for packs that carry
   workflows: today it is plan-047's own choice, not a `pack-cycle` step.
 - `+` **The publication rehearsal** (plan-052 step 3): three `publish:pack` runs in order, 1010 of
-  1010 tests, every check exit 0; contrast plan-044's 91 failing tests on a simulated catalog
+  1010 tests, every check exit 0 on the redone run (the first failed on the rehearsal script's own
+  CHANGELOG line); contrast plan-044's 91 failing tests on a simulated catalog
   commit.
 - `−` **bug-008** (minor): `base`'s `retrospective` `approve` re-lists a closed Sprint's step once
   the next Sprint's decision-log is `in-discussion` (bug-008 › Observed; identical on 0.3.0 and
@@ -151,11 +155,12 @@ task-057, 2026-10-27) → 1.0.0 (plan-052, prel-005, 2026-10-28; first tag with 
   a slot through without `software` (task-032's build, fixed red first in `3940021`/`00eafa5`); a
   reflow merged J2 of `05_journeys.md` into one paragraph (plan-038's branch re-review).
 - `−` plan-031 and plan-034 went `active` without a plan-level review (add, body and submit within
-  minutes: `de01551` → `b79d6d6`; `aa1bf89` → `dd8bc48`), and neither records the departure.
+  minutes: `de01551` → `b79d6d6`; `b3b30af` → `dd8bc48`), and neither records the departure.
 - `−` `GOV` dl-017 R2 ("behaviour, a test or an Acceptance command") gives no criterion for a fix to
   a document or configuration: plan-034 applied six should-fix changes to the vision unreviewed,
   "the fixes follow the review's own wording".
-- `−` Line-wrap commits continue: 51 of the period's 1153 commits are wraps or rewraps, and one
+- `−` Line-wrap commits continue: about 50 of the period's 1151 commits (`6110a13..58e5d34`) are
+  wraps or rewraps, and one
   reflow damaged content (plan-038).
 
 ### 4.2 Red-first (dl-018)
@@ -164,8 +169,8 @@ task-057, 2026-10-27) → 1.0.0 (plan-052, prel-005, 2026-10-28; first tag with 
   pack cycles (e.g. task-046 11 of 12, task-053 7 of 9); characterizations checked by mutation.
 - `−` task-027, task-028 and task-030 record a red run with the test and the change in one commit
   (`00bb6f9`, `d0b873b`, `405c9af`), the "unverifiable" pattern of the previous inventory's §2.
-- `−` task-041 (feedback-note tooling) lists no red step in its Design and records neither red run
-  nor mutation; its review did not report it (dl-018 R2–R4).
+- `−` task-041 (feedback notes F-032 … F-034) lists no red step in its Design and records neither
+  red run nor mutation; its review did not report it (dl-018 R2–R4).
 - `−` task-051's first red count was wrong (one test red on `main` for another reason); targeted
   runs missed four count expectations that only the clean-clone suite found.
 
@@ -177,8 +182,9 @@ task-057, 2026-10-27) → 1.0.0 (plan-052, prel-005, 2026-10-28; first tag with 
   correctly without them. dl-006 R2 and dl-020 make such a change a decision-log of its own.
 - `−` `GOV` **Amending an approved specification in place became the rule without a decision-log.**
   plan-031 chose it "for this amendment" and said a general rule "would be a decision-log of its
-  own"; since then spec-001 carries ten such notes and spec-002 three, each approved by a merge OK.
-  WingFoil 0.3.x has `memory amend` (adoption item, W10).
+  own"; spec-001 now carries ten such notes and spec-002 three (plan-031's included), each approved
+  by a merge OK (or a decision-log's approval). WingFoil 0.3.x has `memory amend` (adoption item,
+  W10).
 - `−` The same for charters (§2) and for about 40 rulings taken in chat across the `base` plans and
   held only in plan texts (plan-041 1–17, plan-043 N–S, plan-044 A–F, plan-045 G–I, plan-049 1–6;
   plan-041: "no element holds them yet").
@@ -191,8 +197,8 @@ task-057, 2026-10-27) → 1.0.0 (plan-052, prel-005, 2026-10-28; first tag with 
 - `−` **Number reservations live only in plan prose:** dl-024/dl-025 held for a request written
   outside the repository (plan-047); plan-048 ruling 1 (plan-049, dl-028, bug-007, F-038);
   plan-049 › Handoff (plan-050, task-055 … task-059, dl-029); plan-050 (task-058, task-059, dl-029
-  "for a split"); task-063 reserved by plan-052 step 3 and used by plan-053; dl-028 still reserved
-  and unused; task-052 titled "(plan-048)" but built under plan-053.
+  "for a split"); task-063 reserved by plan-052 step 3 and used by plan-053; dl-028 reserved and
+  unused (taken by plan-054); task-052 titled "(plan-048)" but built under plan-053.
 - `−` **W-14** (`memory add` numbers by count, WingFoil 0.2.2) was hit on 2026-10-26 (plan-049: an
   untracked placeholder) and 2026-10-28 (plan-053: dl-026/dl-027 moved aside); its entry was written
   only on 2026-10-28 (task-063, `e9297c4`), two days after the first hit (rule 3).
@@ -208,7 +214,7 @@ task-057, 2026-10-27) → 1.0.0 (plan-052, prel-005, 2026-10-28; first tag with 
   plan-054 each host a task just to write notes. `GOV`.
 - `−` **Clashes between parallel lines:** a concurrent build rebuilt `dist/` in the same worktree
   (task-056's first run printed `compositions: 10`); CI runs on branches and on merge commits were
-  cancelled by the other line's pushes (task-055, task-056; plan-048 steps 1–2; plan-052 steps 4–5);
+  cancelled by the other line's pushes (plan-050, task-058; plan-048 steps 1–2; plan-052 steps 4–5);
   `main` was held on request while waiting for a tag.
 - `+` Merge order agreed and kept (task-056/057 waited for `base@2.0.0`); fixture ownership
   respected (plan-048 › Context); plan-034's separate worktree had "no file in common" with
@@ -225,12 +231,12 @@ task-057, 2026-10-27) → 1.0.0 (plan-052, prel-005, 2026-10-28; first tag with 
   record corrected (`bab09ff`). `−` A CI policy for transitive advisories "may come later" (bug-004
   › note 2026-10-24): `DEBT`.
 - `−` `GOV` **The suite's duration is not tracked:** branch runs went from 8.6 min (plan-041) to
-  13–16 (task-046 … task-050) to 17–20 (plan-052, e.g. 40671477070), against `timeout-minutes: 30`;
+  10–16 (task-046 … task-050) to 17–20 (plan-052, e.g. 40671477070), against `timeout-minutes: 30`;
   no element records a duration.
 - `−` `?` **K6 and work on `main`:** 438 non-merge first-parent commits landed on `main` in the
-  period against 50 merges (Memory transitions, bodies, release steps); consistent with
-  `tooling-delivery` v2 (a branch opens at `in-progress`) and plan-044's "on `main`", but no
-  decision records it.
+  period against 51 first-parent merges (`6110a13..58e5d34`) (Memory transitions, bodies, release
+  steps); consistent with `tooling-delivery` v2 (a branch opens at `in-progress`) and plan-044's "on
+  `main`", but no decision records it.
 
 ### 4.6 Intake and R3
 
@@ -242,13 +248,15 @@ task-057, 2026-10-27) → 1.0.0 (plan-052, prel-005, 2026-10-28; first tag with 
 - `−` Both intake plans are filed under `record` and also carry `recheck` and `plan-migrations`
   (plan-042, plan-051 › Context); `recheck`'s text says a pack gains a release "at its next
   publication" while `record` recomputes ranges at intake (plan-051): `DEBT`.
-- `−` `GOV` **R3 was missed twice.** No periodic retrospective followed plan-042 (closed 2026-10-21)
-  or plan-051 (2026-10-27); neither close mentions it. `wingfoil-release-intake.yaml` v4 has no
+- `−` `GOV` **R3 was missed once, and nothing would have caught it.** No periodic retrospective ran
+  between 0.3.0 and 0.3.1 (2026-10-19 … 27), which R3 asks for; the window after 0.3.1 is the one
+  this retrospective fills. Neither intake close (plan-042, 2026-10-21; plan-051, 2026-10-27)
+  mentions it. `wingfoil-release-intake.yaml` v4 has no
   phase pointing to it, and `retrospective-periodic.yaml` v1 carries the cadence in a comment only.
   → dl-029 (plan-054 decision 5).
 - `−` 0.3.1 refuses `init`'s software workflows with `base` alone (`E_PHASE_ROLE_UNKNOWN`) while
   0.3.0 accepts them; found by task-061's body review in plan-052, not by the intake's `recheck`.
-  `?` whether 0.3.1's changelog states it.
+  plan-051 › Context quotes 0.3.1's CHANGELOG as "nothing breaks" (§6).
 
 ### 4.7 The inbox and the feedback loop
 
@@ -263,7 +271,8 @@ task-057, 2026-10-27) → 1.0.0 (plan-052, prel-005, 2026-10-28; first tag with 
   the intake.
 - `−` **The inbox lags reality:** 0.3.0 accepts the `format:` key (`compat.yaml`, `format_key:
   true`), what F-012 and F-017 asked for, yet both are `open` and W-01 is listed; dl-021's note of
-  2026-10-13 records F-003 and F-005 superseded, yet both read `open`; the directive still says
+  2026-10-13 records parts of F-003 (`advance-bundled-packs`) and F-005 (`--offline`) superseded,
+  and by rule 6 their status changes only at the first sync; the directive still says
   "Checked against: `wingfoil@0.2.2`". Rule 5 rechecks only at a pin bump.
 - `−` 0.3.1 ships an inbox text in WingFoil's `COLLABORATION.md` (WingFoil bug-408); plan-051 ruling
   4 left it out of scope and no element owns the check (`DEBT`).
@@ -271,15 +280,16 @@ task-057, 2026-10-27) → 1.0.0 (plan-052, prel-005, 2026-10-28; first tag with 
 ### 4.8 Process overhead
 
 - `+` dl actions were quick: dl-021 captured to fully applied in two days through seven plans
-  (plan-029 … plan-036), dl-022 in three days through four (plan-037 … plan-040).
-- `−` 8 of the 15 governance plans are "dl actions" plans hosted on `decision-log-ingest` › `rule`
-  with no phase of their own (plan-026 › Context); `base`'s `governance-evolution` covers this at
-  W10.
+  (plan-029, plan-030, plan-032 … plan-036), dl-022 in three days through four (plan-037 …
+  plan-040).
+- `−` 8 of plan-026 … plan-040 are dl or config actions plans (plan-026, plan-027, plan-028,
+  plan-030, plan-033, plan-034, plan-036, plan-038) hosted on `decision-log-ingest` › `rule` with no
+  phase of their own (plan-026 › Context); `base`'s `governance-evolution` covers this at W10.
 - `−` dl-016 and dl-017 … dl-020 have empty Execution Notes: nothing records that plan-026/plan-027
   applied A1, A2 and C1–C4 (dl-021 and dl-022 do record theirs).
-- `−` `workflow` and `phase` filled by hand (W-02) in 24 plans of the period; this repository still
-  governs itself on WingFoil 0.2.2 while publishing packs for 0.3.x (dl-003 D10's "adopts first"
-  moved to W10).
+- `−` `workflow` and `phase` filled by hand in every plan of the period (28; 22 record it as W-02);
+  this repository still governs itself on WingFoil 0.2.2 while publishing packs for 0.3.x (dl-003
+  D10's "adopts first" moved to W10).
 - `−` bug-003 … bug-008 stay `approved` after their fix: the `bug` type has no terminal state, so a
   fixed bug reads like an open one. `?` `GOV`.
 
@@ -290,14 +300,14 @@ task-057, 2026-10-27) → 1.0.0 (plan-052, prel-005, 2026-10-28; first tag with 
 | K1 reviews before every gate | partly | all elements reviewed, no rejection; plan-031 and plan-034 submitted without a plan review (§4.1) |
 | K2 red counts, mutation | partly | held in most tasks; red not on a commit in task-027/028/030; task-041 has neither (§4.2) |
 | K3 deviations written into the element | held | rulings, errata and dates recorded everywhere; but rulings now live in plan prose (§4.3) |
-| K4 CI read before a gate | partly | held on branches; `main` red unread 2026-10-22 … 23 (§4.5) |
+| K4 CI read before a gate | held | `main`'s runs were outside K4's scope: red unread 2026-10-22 … 23 (§4.5, G5) |
 | K5 clean clones on both Node.js versions | held | every task; documentation plans rely on CI's two jobs |
 | K6 merge discipline | held, `?` | `--no-ff`, OK, branch removed every time; much work directly on `main` (§4.5) |
-| K7 feedback loop | partly | notes reproduced with WingFoil alone; the inbox never synced (§4.7) |
-| C1 dl-017 | partly | 17 re-reviews in the governance strand alone; R2 unclear for documents (§4.1) |
+| K7 feedback loop | held | F-027 … F-037 reproduced with WingFoil alone, in its format; the sync is A1's (§4.7) |
+| C1 dl-017 | partly | re-reviews after fixes throughout; R2 unclear for documents (§4.1) |
 | C2 dl-018 | partly | see K2; departures not reported by reviews |
 | C3 dl-019 | held, mostly | task-029 raised when found; task-031 only at the gate; later Acceptances build it in |
-| C4 dl-020 | held | plan-031, plan-039/040, plan-041, plan-046, plan-048, plan-052 account per tech-spec |
+| C4 dl-020 | held | plan-031, plan-039/040, plan-041, plan-046, plan-048, plan-050, plan-052 account per tech-spec |
 | A1 rule 7 renamed (`4d1819a`) | held in letter, broke in effect | "Last sync: none" (§4.7) |
 | A2 configuration of dl-017 … dl-020 | held | plan-027: `tooling-delivery` v2, `kanban-delivery` v4, templates, `traceability` |
 | W1 … W3 notes F-022 … F-026 before 2026-10-20 | held | task-026 merged `274dd76` on 2026-10-12 |
@@ -312,6 +322,7 @@ task-057, 2026-10-27) → 1.0.0 (plan-052, prel-005, 2026-10-28; first tag with 
 | new | a directory in `produces` without a trailing `/` is read as a file and never satisfied, with no diagnostic at load; `finalize --step` and `workflow end` refuse | gap | none | bug-006 › Observed |
 | new | a phase role that no member or agent holds is accepted at load and at run | gap | none | plan-051 › recheck; plan-052 ruling 5 |
 | ? | a candidate that leaves the `where` before any of its phases completes is skipped | ? | none (maybe by design; evidence for F-037?) | dl-027 › Context |
+| ? | a patch release (0.3.1) refuses `init`'s software workflows with `base` alone (`E_PHASE_ROLE_UNKNOWN`) that 0.3.0 accepts, while 0.3.1's CHANGELOG says "nothing breaks": intended? | ? | none | plan-052 › step 2 (task-061's body review); plan-051 › Context |
 | ? | a `{sprint.id}` token warns `W_PHASE_TOKEN_OUT_OF_SCOPE` unless the template declares `id` | ? | none | plan-047 › notes |
 | — | `init` writes `custom/` workflows under the packs' names (`E_WORKFLOW_DUPLICATE_NAME`) | — | F-007 (precedence over workflows); bug-007 is new evidence | bug-007 |
 | — | W-14 | — | none needed: fixed in 0.3.0 and 0.3.1 (§4.4) | this inventory's check |
@@ -366,7 +377,7 @@ Open owed items found in closing notes and Execution Notes, with their status at
 | The private projects' check scripted | prel-001 … prel-003 | none | none |
 | The note on 0.3.0's `finalize --dry-run` | plan-045, plan-046 › close | none | moot: fixed in 0.3.1 (plan-051 › Context); to close |
 
-Two items (`pack-delivery`'s selection, `--param`) appear in no later closing list: they were lost.
+Two items (`pack-delivery`'s selection, `--param`) fell out of every later closing list.
 That is the evidence for G2.
 
 ## 9. What went well, in short
@@ -374,11 +385,11 @@ That is the evidence for G2.
 - Reviews, re-reviews and amendment while `pending` everywhere; no rejection, no revert.
 - Three pack cycles from charter to published 1.0.0 in nine days, every release gate passed,
   publication mechanics byte-exact.
-- Running the method on the real engine before authoring (plan-047, task-057), and the guards that
-  followed (`check:runs`, the adoption run).
+- Running the method on the real engine before and during authoring (plan-047, task-057), and the
+  guards that followed (`check:runs`, the adoption run).
 - Rulings given up front with the outline; every deviation recorded in its plan.
 - Intakes closed within two days of each WingFoil release; advisories fixed within a day.
-- dl-020's fold-back ran as designed through five plans.
+- dl-020's fold-back ran as designed through every plan that owed it (§5).
 
 ## Points to analyse (additional-points)
 
