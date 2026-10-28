@@ -116,3 +116,9 @@ accepts it.
   `workflow next --format json` exit 0, no diagnostic, empty stderr, on all four. With the steps
   before this task (no workflow removed), on 0.3.0 and 0.3.1 (Scrum): both exit 1,
   `E_WORKFLOW_DUPLICATE_NAME` for `decision-log-ingest`.
+- 2026-10-28: independent review: approve, nothing blocking; it reproduced Acceptance 5 on 0.3.0
+  and 0.3.1 with both templates, and each `init` workflow re-added alone fails as step 4 says on
+  0.3.1 (`decision-log-ingest` also on 0.3.0). Applied (`2121749`): step 4's wording, the `include`
+  entry for every workflow. Noted, not changed (outside bug-007): step 3's "own entries" draws the
+  "wrote itself" line only for workflows, so a literal reader might re-add `init`'s Memory types or
+  roles; for a later README pass. The clean-clone checks rerun on the final commit.
