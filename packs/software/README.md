@@ -53,8 +53,8 @@ methodology, with a WingFoil release in the pack's range (see its catalog entry)
 7. Record the adopted version of `software` in the project's own Memory.
 
 **Who holds `tech-lead`.** The composed DNA gives `tech-lead` to no one: its only member is the
-approver, and the agent's `executes_as` lists `developer`, `reviewer`, `qa` and `architect`. Its
-phases are `release-submit` › `enter-releasing`; `release-publishing` › `release-commit`, `tag`,
+approver, and the agent's `executes_as` lists `base`'s `facilitator` and `product-owner` and
+`software`'s `developer`, `reviewer`, `qa` and `architect`. Its phases are `release-submit` › `enter-releasing`; `release-publishing` › `release-commit`, `tag`,
 `publish` and `mark-released`; `end-of-life` › `deprecate` and `archive`; and `bug-ingest` ›
 `triage`. A project gives `tech-lead` to a member in its `dna.yaml`, or adds it to its agent's
 `executes_as`.
