@@ -98,3 +98,11 @@ A project's own `custom/` workflows, in this task, are those the project wrote i
   (open point 2 resolved in part; the bug notes after the later merge; the README constraints).
   Applied.
 - 2026-10-28: re-review: approve. Submitted.
+- 2026-10-28: built (`5266070` the READMEs, `f9cf245` the charter's note, `ae9ae3b` the agent's
+  whole `executes_as` named, read from a composed DNA). `npm run index -- --check` 6 files, 0 not
+  up to date; `check:packs` 61 files, 0 problems. Acceptance 6, by hand outside the repository:
+  `base`, `software` and `methodology/scrum` composed from `scrum/defaults`, copied into four
+  projects initialised by `wingfoil init --template Scrum` and `--template Kanban` on WingFoil
+  0.3.0 and 0.3.1, the three READMEs' steps applied together (the five scaffolded workflows and
+  the four directive stubs removed), committed: `workflow list --format json` and
+  `workflow next --format json` exit 0, no diagnostic, empty stderr, on all four.
