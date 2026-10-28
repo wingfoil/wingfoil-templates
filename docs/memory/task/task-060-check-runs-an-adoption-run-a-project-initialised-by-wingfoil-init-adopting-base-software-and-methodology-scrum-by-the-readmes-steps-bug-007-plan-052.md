@@ -150,3 +150,12 @@ runs, each a `main` started and its steps; the step kinds are `start`, `end`, `n
   `check:runs` 34 runs, 0 failed, the red variant 8 of 8 at `list`). Noted: the directive check is
   defensive, unreachable by a run (listed directives are removed after the copy); `include:` with
   no value takes the `null` branch, not tested apart from the absent key.
+- 2026-10-28, checks from clean clones of `f557583` on Node.js 22.21.0 and 22.12.0: `npm ci` (0
+  vulnerabilities), `npm test` 1027 of 1027, `lint`, `check:pins`, `check:schemas`, `check:packs`
+  (61 files, 0 problems), `index -- --check` (6 files, 0 not up to date), `validate` (14 runs, 0
+  failed), the golden step, the overlays `software-exit` and `scrum-exit` (22 runs each, 0
+  failed), `workflow list`, `check:runs` (34 runs, 0 failed), `npm audit` in the root and in the
+  three matrix folders (0 vulnerabilities): every command exit 0 on both. Then `main` merged in
+  (`4eaad55`: task-061's and task-062's READMEs, whose removal list equals this scenario's; no
+  file of this task changed): `runs.test.js` 48 of 48, `check:runs --
+  tests/fixtures/runs/adoption.yaml` 8 runs, 0 failed; branch CI run 40669291839 on `4eaad55`, conclusion `success`. In review.
