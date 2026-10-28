@@ -7,7 +7,7 @@
 name: retrospective
 kind: sub
 description: "Learn from the Execution Notes of the period and turn the learnings into decisions"
-version: 3
+version: 4
 phases:
   - name: explore
     description: >-
@@ -28,7 +28,7 @@ phases:
     description: >-
       Record what to keep and what to change as a decision-log. A change of governance is listed
       as a point, not ruled here: it is ruled by governance-evolution; until this repository adopts
-      base (W9), by a decision-log under decision-log-ingest, applied by a dl actions plan (dl-006
+      base (W10), by a decision-log under decision-log-ingest, applied by a dl actions plan (dl-006
       R2 as amended by dl-022). A WingFoil defect is a feedback note (wingfoil-cli), not a decision.
     role: facilitator
     actions:

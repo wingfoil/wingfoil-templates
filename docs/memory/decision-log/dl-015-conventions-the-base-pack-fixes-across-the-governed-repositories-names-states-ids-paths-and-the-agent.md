@@ -126,3 +126,6 @@ Consequences:
   so on the old default every start failed (bug-005). Ids already given never change; a project
   that keeps `plan-{n}-{slug}`, as this repository and Benchmark do, states it and fills those
   two fields by hand. In `base` 2.0.0.
+- 2026-10-28, plan-052 (ruling 7): this repository's adoption plan, which maps the two charters'
+  Adoption sections (the Consequences of plan-041's note above), belongs to W10, not W9, with
+  `methodology/kanban` (dl-003's Execution Note of the same date).

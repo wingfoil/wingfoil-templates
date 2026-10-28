@@ -138,8 +138,9 @@ as a `check:runs` scenario.
    A failure caused by the new catalog entries (as the 91 tests of plan-044) becomes a tooling task,
    task-063, through `tooling-delivery`, before `prepare`.
 4. **task-061 — `base`'s README** (`kanban-delivery`, pack-author, `pack-foundation-base`):
-   step 3 keeps only the project's own `custom/` workflows; step 4 also removes the
-   `decision-log-ingest` workflow `init` wrote under `workflows/custom/`, with its `include` entry;
+   step 3 keeps only the project's own `custom/` workflows; step 4 also removes every workflow
+   `init` scaffolded under `workflows/custom/` (`decision-log-ingest` and the software ones), with
+   their `include` entries;
    the sentence of ruling 2; an "Updating from 2.0.0" paragraph (nothing to recompose; a project
    that re-included `init`'s `custom/` workflows removes them with their `include` entries); the
    charter's `retrospective` row corrected, with an Execution Note. Ships in 2.0.1.
@@ -238,3 +239,30 @@ as a `check:runs` scenario.
   task-062; red first for the tooling task only; the `software@^1` order stated as this plan's.
   Re-review requested.
 - 2026-10-28: re-review: approve; every finding resolved, its wrapping nits applied. Submitted.
+- 2026-10-28, step 2 on branch `plan/plan-052-sequencer`: `07_sequencer.md` 1.5 (W9 the first
+  publication with `methodology/scrum`; W10 `kanban`, presets, `governance/wingfoil-dogfood` and
+  this repository's adoption; F4.3 split between W9 and W10, counted once in M3, stated by the
+  one-wave rule and in Notes); `08_mvp-canvas.md` 1.4 (35 features, a stale count since 1.4);
+  Execution Notes on dl-003 (D10's order), dl-006 and dl-015 (W9 → W10); beyond the step's text,
+  `retrospective.yaml` v3 → v4, whose `capture` said "until this repository adopts base (W9)".
+  Independent review: approve after amendments, nothing blocking, applied. Found and not changed:
+  W8 holds four features, over the three-feature rule, since 1.4 (owed to the sequencer's next
+  review); dl-012 (`pending`) places F4.9 in W9 "before F4.2", now in W10 at its three-feature
+  limit, F4.9 high-uncertainty: dl-012 needs amending while pending or re-placing at its ruling
+  (the approver's).
+- 2026-10-28, step 2's re-review: approve. task-060, task-061 and task-062 written on the same
+  branch; independent review: approve after amendments, one blocking finding on task-061: with
+  `base` alone, keeping the workflows `init` scaffolds for software (`sw-life-cycle`, `adr-ingest`,
+  `bug-ingest`, the delivery workflow) fails on WingFoil 0.3.1 (`E_PHASE_ROLE_UNKNOWN`,
+  `E_WORKFLOW_ELEMENT_TYPE_UNKNOWN`; 0.3.0 accepts it). `base`'s step 4 now removes every workflow
+  `init` scaffolded, as bug-007's Expected keeps only the project's own `custom/` workflows (step 4
+  above amended); no ruling changes. Applied with the non-blocking ones: "the project's own
+  `custom/` workflows" defined alike in the three tasks; the README constraints on bug-008's text
+  (spec-002 §2.1, §2.3, §3.3); scrum's open point 2 resolved in part; the bug notes after the later
+  merge; task-060's own check of the removal list, its identity before `init`, its red variant and
+  counts (`check:runs` 26 → 34 runs). Re-review requested.
+- 2026-10-28: task-060, task-061 and task-062 re-reviewed (approve) and submitted (`pending`).
+  Branch `plan/plan-052-sequencer` pushed; CI run 40654868428 on `ef035dc`, conclusion `success`.
+  `main`'s CI on `26a22f5` (this plan's submit), run 40653789258, `success`. Privacy: no local
+  path, private repository or private project in the branch's diff. Waiting for the merge OK (step
+  2's texts, the plan's notes, the three task bodies) and the three tasks' backlog acceptance.

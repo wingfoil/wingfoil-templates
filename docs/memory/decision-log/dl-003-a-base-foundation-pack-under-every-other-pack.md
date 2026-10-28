@@ -174,3 +174,11 @@ Configuration changes this decision implies. Each is applied after approval and 
   - **D1** stands, and also applies to `software` for the packs that require it.
 
   The body stays as approved.
+- 2026-10-28, plan-052 (ruling 7, the approver's in chat): **D10**'s order (this repository,
+  Benchmark, UI) no longer binds. WingFoil UI, Benchmark and WingFoil adopt `base`, `software` and a
+  methodology when each is ready, Benchmark and UI between two of their own releases (D10's other
+  points stand); this repository adopts at W10, with `methodology/kanban`, since its delivery is
+  Kanban and `software` composes only with a methodology; its WingFoil pin and the first sync of the
+  feedback inbox (`wingfoil-cli` rule 7) move with it. The sequencer (1.5) records it.
+
+  The body stays as approved.
