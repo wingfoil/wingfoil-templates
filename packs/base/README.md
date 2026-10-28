@@ -37,10 +37,16 @@ pack's range (see its catalog entry):
 3. Copy the composed `.wingfoil/` files into the project's `.wingfoil/`, keeping its `custom/`
    folders, then re-add to `dna.yaml`, `memory.yaml`, `roles.yaml` and `workflows.yaml` the
    project's own entries (its members, modules, stacks, Memory types and the `include` entries of
-   its `custom/` workflows); copy the generated AGENTS.md region into its `AGENTS.md`.
-4. Remove the directives WingFoil's `init` wrote under `directives/custom/` with the ids of
-   `base`'s directives (`traceability`, `doc-versioning`, `security-secrets`): a `custom/` file
-   wins over the pack's.
+   the `custom/` workflows the project wrote itself); copy the generated AGENTS.md region into its
+   `AGENTS.md`.
+4. Remove what WingFoil's `init` scaffolded under `custom/` and a composition replaces:
+   - the directives with the ids of `base`'s directives (`traceability`, `doc-versioning`,
+     `security-secrets`), since a `custom/` file wins over the pack's;
+   - the workflows `decision-log-ingest`, which `base` ships, and `sw-life-cycle`, `adr-ingest`,
+     `bug-ingest` and `scrum-delivery` or `kanban-delivery`, which need `software` and a
+     methodology, whose packs ship or replace them, each with its `include` entry in
+     `workflows.yaml`: a workflow named as a pack's makes every `workflow` command fail, and the
+     others need roles and Memory types `base` alone does not define.
 5. Migrate by explicit commits the elements whose state has another name in `base` (for example a
    `decision-log` on the default machine: `pending` → `in-discussion`, `approved` → `ready`), and
    record an old → new key mapping for the workflows and phases the project renames.
@@ -56,6 +62,9 @@ trailing `/`, which WingFoil needs to read it as one. A project that keeps a `pl
 and the instance number, e.g. `1`) and submits it, or uses the new pattern for its new plans: ids
 already given never change. Then it recomposes
 `base` and copies the `.wingfoil/` files as in steps 2 and 3.
+
+**Updating from 2.0.0.** Nothing to recompose. A project that kept and re-included the workflows
+`init` scaffolded removes them with their `include` entries, as step 4 says.
 
 <!-- generated:begin composition -->
 ## Composition
@@ -171,7 +180,12 @@ rules.
   0.3.0 drives the edge for every project, so `task` moves with `submit` and `approve`.
 - WingFoil's `retrospective`: its phases, without `collect-feedback`, which reads registered
   consumer inboxes, and without its `release` element; the approval selects the retrospective's
-  decision-log by a tag.
+  decision-log by a tag. The selection is not bound to an iteration: under a methodology that
+  includes `retrospective` in an iterated sub (a Sprint), a closed iteration's `approve` step is
+  listed again while a later iteration's retrospective decision-log is `in-discussion`, and
+  `pending approvals` counts that one decision-log once per step; one approval clears both, and
+  nothing is reported `late`. A `retrospective-periodic` decision-log `in-discussion` has the same
+  effect.
 - wingfoil-templates' own `retrospective-periodic`: a thin main that starts the retrospective in a
   composition without a delivery workflow.
 
