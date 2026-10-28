@@ -2,7 +2,7 @@
 id: task-060-check-runs-an-adoption-run-a-project-initialised-by-wingfoil-init-adopting-base-software-and-methodology-scrum-by-the-readmes-steps-bug-007-plan-052
 type: task
 title: "check:runs: an adoption run, a project initialised by wingfoil init adopting base, software and methodology/scrum by the READMEs' steps (bug-007, plan-052)"
-status: pending
+status: backlog
 pack: ""            # tooling task (pack-cycle › first-release, plan-052 step 6, ruling 4)
 depends_on: ["task-061", "task-062"]
 tags: ["tooling","runs","adoption","W9"]
