@@ -9,7 +9,7 @@ tags: [custom, wingfoil, cli, governance]
 
 # Directive — Using the pinned WingFoil CLI
 
-**Version:** 1.4 · **Date:** 2026-10-14 · **Checked against:** `wingfoil@0.2.2`
+**Version:** 1.5 · **Date:** 2026-10-28 · **Checked against:** `wingfoil@0.2.2`
 
 Global. Applies to every role, human or agent, that runs the WingFoil CLI in this repository.
 
@@ -51,3 +51,4 @@ Global. Applies to every role, human or agent, that runs the WingFoil CLI in thi
 | W-11 | WingFoil's built-in directive ids are readable only from a project `wingfoil init` scaffolded. | `src/wingfoil-builtins.ts` keeps a copy; re-check it at every pin bump. | F-019 | |
 | W-12 | The validation rules of the files WingFoil reads live only in its loaders. | Run the real WingFoil on every composed configuration: the compatibility matrix installs each release it selects from its committed lockfile under `src/matrix/wingfoil-<version>/` (task-011), never the governance pin. | F-020 | |
 | W-13 | A phase has one `role` (a string); a list is refused with `E_VALIDATION`. | A loop whose role depends on the element exists once per role: `tooling-delivery` beside `kanban-delivery` (bug-001), checked against each other at every change. | F-026 | |
+| W-14 | `memory add` numbers a `{n}` id as 1 + the count of the type's files in the working tree: with a gap the number is not the next one and is usually already in use (a second id, another slug; only an identical path is refused); a number taken only on another branch is given again. | Check the printed id. With no gap below the wanted number, move the higher-numbered files out of the repository for the command; for a number held elsewhere, add `<prefix>-<n>-placeholder.md` to the type's directory for the command, then remove it, never committed. | | |
