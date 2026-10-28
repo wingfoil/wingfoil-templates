@@ -10,6 +10,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 
+import { parse as parseYaml } from 'yaml';
+
 import { FIXTURES } from './support/paths';
 
 import { MatrixIoError } from '../src/matrix';
@@ -602,8 +604,9 @@ class FakeAdoption extends FakeWingfoil {
       for (const entry of included.filter((e) => e.startsWith('workflows/custom/'))) {
         const name = entry.slice('workflows/custom/'.length, -'.yaml'.length);
         if (included.includes(`workflows/built-in/${name}.yaml`)) {
-          return { status: 1, stdout: '', stderr: `{"error":"E_WORKFLOW_DUPLICATE_NAME name (${entry}): `
-            + `duplicate workflow name '${name}'"}\n` };
+          return { status: 1, stdout: '', stderr: `${JSON.stringify({
+            error: `E_WORKFLOW_DUPLICATE_NAME name (${entry}): duplicate workflow name '${name}'`,
+            details: [{ detail: 'E_WORKFLOW_DUPLICATE_NAME another' }] })}\n` };
         }
       }
       return ok({ manifest: {}, workflows: [], diagnostics: this.listDiagnostics });
@@ -617,15 +620,17 @@ class FakeAdoption extends FakeWingfoil {
 }
 
 /** The composer's output for an adoption: two pack workflows, included as built-in. */
-const adoptionCompose = (extraInclude: string[] = []): Compose => (_tree, _entries, params, out) => {
+const adoptionCompose = (extraInclude: string[] = [], includeBlock?: string[]): Compose =>
+  (_tree, _entries, params, out) => {
   const workflows = join(out, '.wingfoil', 'workflows', 'built-in');
   mkdirSync(workflows, { recursive: true });
   for (const name of ['sw-life-cycle', 'decision-log-ingest']) {
     writeFileSync(join(workflows, `${name}.yaml`), `name: ${name}\n`);
   }
-  writeFileSync(join(out, '.wingfoil', 'workflows.yaml'), ['version: 1', 'include:',
-    '  - workflows/built-in/sw-life-cycle.yaml', '  - workflows/built-in/decision-log-ingest.yaml',
-    ...extraInclude.map((entry) => `  - ${entry}`), ''].join('\n'));
+  writeFileSync(join(out, '.wingfoil', 'workflows.yaml'), ['version: 1', ...(includeBlock ?? [
+    'include:', '  - workflows/built-in/sw-life-cycle.yaml',
+    '  - workflows/built-in/decision-log-ingest.yaml',
+    ...extraInclude.map((entry) => `  - ${entry}`)]), ''].join('\n'));
   writeFileSync(join(out, '.wingfoil', 'dna.yaml'), 'project: {}\n');
   return { params: { ...params }, releases: ['0.3.0'] };
 };
@@ -700,12 +705,13 @@ describe('check:runs: an adoption run (task-060)', () => {
         '  - adopt:',
         '      template: Kanban',
         '      remove:',
-        '        workflows: [decision-log-ingest, sw-life-cycle, adr-ingest, kanban-delivery]',
+        '        workflows: [decision-log-ingest, sw-life-cycle]',
         '        directives: []',
       ]);
       assert.equal(result.code, 0, result.lines.join('\n'));
       assert.deepEqual(includesOf(kept[0] ?? ''), ['workflows/built-in/sw-life-cycle.yaml',
-        'workflows/built-in/decision-log-ingest.yaml', 'workflows/custom/bug-ingest.yaml']);
+        'workflows/built-in/decision-log-ingest.yaml', 'workflows/custom/adr-ingest.yaml',
+        'workflows/custom/bug-ingest.yaml', 'workflows/custom/kanban-delivery.yaml']);
     });
 
   it('fails at list when init\'s workflows are kept and re-included (the steps before bug-007)',
@@ -718,7 +724,10 @@ describe('check:runs: an adoption run (task-060)', () => {
         '        directives: [traceability, doc-versioning, security-secrets, determinism]',
       ]);
       assert.equal(result.code, 1);
-      assert.match(result.lines[0] ?? '', /^runs compositions\/defaults\/example\.yaml adopt:Scrum wingfoil@0\.3\.0: fail at list: wingfoil workflow list --format json exit 1: .*E_WORKFLOW_DUPLICATE_NAME/);
+      assert.equal(result.lines[0], 'runs compositions/defaults/example.yaml adopt:Scrum '
+        + 'wingfoil@0.3.0: fail at list: wingfoil workflow list --format json exit 1: '
+        + 'E_WORKFLOW_DUPLICATE_NAME name (workflows/custom/sw-life-cycle.yaml): duplicate '
+        + "workflow name 'sw-life-cycle' (+1 more)");
       assert.equal(result.lines.at(-1), 'runs: 1 run, 1 failed');
     });
 
@@ -741,39 +750,64 @@ describe('check:runs: an adoption run (task-060)', () => {
       /fail at check: workflows\.yaml still includes workflows\/custom\/scrum-delivery\.yaml/);
   });
 
+  it('writes an include list when the composed workflows.yaml has none', () => {
+    const result = run([
+      '  - adopt:',
+      '      template: Scrum',
+      '      remove:',
+      '        workflows: [decision-log-ingest, sw-life-cycle, adr-ingest, scrum-delivery]',
+      '        directives: []',
+    ], adoptionCompose([], []));
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    assert.deepEqual(includesOf(kept[0] ?? ''), ['workflows/custom/bug-ingest.yaml']);
+  });
+
+  it('fails at include when the composed include is not a list', () => {
+    const result = run(FULL_REMOVAL, adoptionCompose([], ['include: workflows/built-in/x.yaml']));
+    assert.equal(result.code, 1);
+    assert.match(result.lines[0] ?? '', /fail at include: workflows\.yaml: include is not a list$/);
+  });
+
   it('leaves no scratch repository behind', () => {
     const before = readdirTmp().filter((name) => name.startsWith('runs-scratch-'));
-    run(FULL_REMOVAL);
+    const result = run(FULL_REMOVAL);
+    assert.equal(result.code, 0, result.lines.join('\n'));
     const after = readdirTmp().filter((name) => name.startsWith('runs-scratch-'));
     assert.deepEqual(after, before);
   });
 
-  for (const [what, adopt] of [
-    ['both main and adopt', ['  - main: x', '    adopt: { template: Scrum, remove: { workflows: [], directives: [] } }']],
-    ['an unknown key', ['  - adopt: { template: Scrum, remove: { workflows: [], directives: [] }, extra: 1 }']],
-    ['an empty template', ['  - adopt: { template: "", remove: { workflows: [], directives: [] } }']],
-    ['a missing remove', ['  - adopt: { template: Scrum }']],
-    ['an id with a slash', ['  - adopt: { template: Scrum, remove: { workflows: [a/b], directives: [] } }']],
-    ['a list that is not one', ['  - adopt: { template: Scrum, remove: { workflows: x, directives: [] } }']],
-    ['a missing directives list', ['  - adopt: { template: Scrum, remove: { workflows: [] } }']],
+  for (const [what, adopt, problem] of [
+    ['both main and adopt', ['  - main: x', '    adopt: { template: Scrum, remove: { workflows: [], '
+      + 'directives: [] } }'], 'runs[0].main: unknown key'],
+    ['an unknown key', ['  - adopt: { template: Scrum, remove: { workflows: [], directives: [] }, '
+      + 'extra: 1 }'], 'runs[0].adopt.extra: unknown key'],
+    ['an empty template', ['  - adopt: { template: "", remove: { workflows: [], directives: [] } }'],
+      'runs[0].adopt.template: a non-empty string is required'],
+    ['a missing remove', ['  - adopt: { template: Scrum }'],
+      'runs[0].adopt.remove: a mapping is required'],
+    ['an id with a slash', ['  - adopt: { template: Scrum, remove: { workflows: [a/b], directives: '
+      + '[] } }'], 'runs[0].adopt.remove.workflows[0]: a plain id is required'],
+    ['a list that is not one', ['  - adopt: { template: Scrum, remove: { workflows: x, directives: '
+      + '[] } }'], 'runs[0].adopt.remove.workflows: a list is required'],
+    ['a missing directives list', ['  - adopt: { template: Scrum, remove: { workflows: [] } }'],
+      'runs[0].adopt.remove.directives: a list is required'],
   ] as const) {
     it(`exits 3 on ${what}`, () => {
       const result = run([...adopt]);
       assert.equal(result.code, 3, result.lines.join('\n'));
-      assert.match(result.lines[0] ?? '', /adoption\.yaml: runs\[0\]/);
+      assert.equal(result.lines[0], `tests/fixtures/runs/adoption.yaml: ${problem}`);
     });
   }
 });
 
 describe('tests/fixtures/runs/adoption.yaml (task-060)', () => {
   it('adopts the README examples of methodology/scrum with bug-007\'s removal list', () => {
-    const text = readFileSync(join(FIXTURES, 'runs', 'adoption.yaml'), 'utf8');
-    assert.match(text, /^compositions: tests\/fixtures\/examples\/scrum$/m);
-    for (const template of ['Scrum', 'Kanban']) {
-      assert.match(text, new RegExp(`template: ${template}$`, 'm'));
-    }
-    for (const id of [...INIT_WORKFLOWS, 'scrum-delivery', 'kanban-delivery', ...INIT_STUBS]) {
-      assert.ok(text.includes(id), `${id} in the removal list`);
-    }
+    const data = parseYaml(readFileSync(join(FIXTURES, 'runs', 'adoption.yaml'), 'utf8')) as {
+      compositions: string; runs: { adopt: unknown }[] };
+    assert.equal(data.compositions, 'tests/fixtures/examples/scrum');
+    const remove = { workflows: ['decision-log-ingest', 'sw-life-cycle', 'adr-ingest', 'bug-ingest',
+      'scrum-delivery', 'kanban-delivery'], directives: INIT_STUBS };
+    assert.deepEqual(data.runs, [{ adopt: { template: 'Scrum', remove } },
+      { adopt: { template: 'Kanban', remove } }]);
   });
 });
