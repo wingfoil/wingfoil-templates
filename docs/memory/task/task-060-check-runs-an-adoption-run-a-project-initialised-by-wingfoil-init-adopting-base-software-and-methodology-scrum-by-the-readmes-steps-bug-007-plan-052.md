@@ -159,3 +159,4 @@ runs, each a `main` started and its steps; the step kinds are `start`, `end`, `n
   (`4eaad55`: task-061's and task-062's READMEs, whose removal list equals this scenario's; no
   file of this task changed): `runs.test.js` 48 of 48, `check:runs --
   tests/fixtures/runs/adoption.yaml` 8 runs, 0 failed; branch CI run 40669291839 on `4eaad55`, conclusion `success`. In review.
+- 2026-10-28: approved by the approver (`420856e`); merged into `main` (`d542f30`). Delivered.
