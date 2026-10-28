@@ -56,7 +56,29 @@ request).
 
 ## Design
 
-<!-- The scratch project, the note's text, the checks, the commits. -->
+- **Red steps:** none of code. The note is content, dl-018 R2's named exception; the inbox test
+  covers it, checked by mutation: the note numbered F-038, its ledger row with a wrong `kind`, its
+  opening not in the form (`New note task-052.`), each making the inbox tests fail.
+- **The scratch project**, in the session's scratchpad and never committed: `git init`, WingFoil
+  0.3.0 installed with `npm ci` from `src/matrix/wingfoil-0.3.0/`, `wingfoil init --template Kanban
+  --no-interactive`; two custom workflows included in `workflows.yaml` and committed: `stream`
+  (`main`), a phase `items` with `iterate_over: task` and `include: item`, then a phase `report`
+  with `produces: ["docs/report.md"]`; `item` (`sub`, `element: task`), one phase whose action is
+  `memory.submit`. Then: a task added, `workflow start stream`, the task submitted, `workflow
+  next` (the report is next), the report committed, `workflow next` (complete), a second task
+  added, `workflow next` and `workflow status` (the second task `late`, the workflow complete),
+  output and exit codes copied into `## Observed`. The same run on `src/matrix/wingfoil-0.3.1/`,
+  its result in the Execution Notes (not an Acceptance criterion: plan-053 step 5).
+- **The note**, by hand in F-034's layout, its `## Expected` the request of dl-026 D5: a phase not
+  closed by later ones, or a `late` candidate that can still run, so that a methodology runs two
+  repeating streams (Sprints and releases) in one workflow; told apart from F-018, F-032 and
+  F-033. Its ledger row appended.
+- **Checks:** the privacy grep (`/home/`, `/tmp/`, the maintainer's names); from clean clones on
+  Node.js 22.21.0 and 22.12.0, `npm ci`, `npm test`, `lint`, `check:pins`, `check:schemas`,
+  `check:packs`, `validate`, `index -- --check`, `check:runs` and `workflow list`; no file changed
+  outside `docs/wingfoil-feedback/` and this task's file.
+- **Commits** on `task/task-052-feedback-note-f-037`, from plan-053's branch: the note and its
+  ledger row (one commit), then this task's notes.
 
 ## Execution Notes
 
