@@ -286,3 +286,7 @@ as a `check:runs` scenario.
   clones on both Node.js versions, 1010 of 1010, every check exit 0; branch CI `success`. bug-007's
   and bug-008's notes record the fix. `main`'s CI after task-061's merge: run 40669019831 (read
   next).
+- 2026-10-28, step 6: task-060 `done` (merged `d542f30`): `check:runs`' adoption run and
+  `tests/fixtures/runs/adoption.yaml`, red (8 of 8 at `list`, `E_WORKFLOW_DUPLICATE_NAME`) then
+  green on 0.3.0 and 0.3.1; `check:runs` 34 runs; clean clones 1027 of 1027 on both Node.js
+  versions; branch CI `success`. Steps 4–6 done; `prepare` next.
