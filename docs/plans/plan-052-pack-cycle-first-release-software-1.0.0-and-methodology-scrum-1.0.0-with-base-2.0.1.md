@@ -71,16 +71,15 @@ WingFoil waits for `software` to adopt the foundation packs.
    `check:runs`' scenario format has no such run today (a `main` and its steps, `src/runs.ts`): the
    task extends it with an adoption run (`init --template`, the composition copied, the named
    `custom/` files and their `include` entries removed, then `workflow list` and `workflow next`),
-   tests first. A
-   scenario of the full scrum run (`memory park`, a field rewritten, `set_state`) is not in this
-   plan: a later tooling task.
+   tests first. A scenario of the full scrum run (`memory park`, a field rewritten, `set_state`) is
+   not in this plan: a later tooling task.
 5. **`software`'s agent keeps `executes_as: [developer, reviewer, qa, architect]` (E).** WingFoil,
    Benchmark and UI all leave `tech-lead` to a person, and the charter lists those four on purpose.
    The composed DNA gives `tech-lead` to no one (its only member is the approver), so `software`'s
    README says that the `tech-lead` phases (`release-submit` › `enter-releasing`;
    `release-publishing` › `release-commit`, `tag`, `publish`, `mark-released`; `end-of-life` ›
-   `deprecate`, `archive`; `bug-ingest` › `triage`) need a holder: the project gives `tech-lead` to a
-   member in its `dna.yaml`, or adds it to its agent's `executes_as`. plan-051's annotation is
+   `deprecate`, `archive`; `bug-ingest` › `triage`) need a holder: the project gives `tech-lead` to
+   a member in its `dna.yaml`, or adds it to its agent's `executes_as`. plan-051's annotation is
    closed by it.
 6. **The retrospective after this plan (F).** `software`'s and `methodology/scrum`'s charters go
    `accepted → active` right after their tags (as plan-044 ruling B); `pack-cycle`'s
@@ -92,8 +91,9 @@ WingFoil waits for `software` to adopt the foundation packs.
    (`wingfoil-cli` rule 7), ruled earlier for W9 with the pin's raise, move with it. dl-003 D10 (as
    amended by dl-022) orders the adopters: this repository, Benchmark, UI. That order no longer
    binds: WingFoil UI, Benchmark and WingFoil adopt when each is ready (Benchmark and UI between two
-   of their own releases, as D10 keeps), this repository at W10. Recorded by an Execution Note on dl-003, as plan-049 ruling 6
-   recorded dl-015 C7's change; no new decision-log. The sequencer is amended (step 2).
+   of their own releases, as D10 keeps), this repository at W10. Recorded by an Execution Note on
+   dl-003, as plan-049 ruling 6 recorded dl-015 C7's change; no new decision-log. The sequencer is
+   amended (step 2).
 8. **No decision-log (H).** `pack-semver` classifies the releases; rulings 2 and 7 are recorded by
    Execution Notes.
 
@@ -129,16 +129,14 @@ as a `check:runs` scenario.
    W10 holds F4.3 `kanban`, F2.6 presets, F4.2 `governance/wingfoil-dogfood` (three features, the
    rule's limit) and this repository's adoption with its pin and inbox sync (ruling 7); its "Ends
    with" says so. The Notes paragraph "The first publication is `base`, then `software`" names
-   `methodology/scrum` beside `software`. dl-003's Execution Note for ruling 7, with the new order of
-   all the adopters. An independent review;
-   the merge OK approves the text (as plan-034).
-3. **Rehearsal of the publication** (tech-lead), before any `prepare`: on a scratch clone, the
-   three `publish:pack` runs simulated in order after a simulated `prepare` commit (`base`'s
-   `version: 2.0.1` and its CHANGELOG line; `publish:pack` refuses a version already tagged), tags
-   and catalog commits, nothing pushed, then
-   the whole suite and `check:packs`, `index -- --check`, `validate`. A failure caused by the new
-   catalog entries (as the 91 tests of plan-044) becomes a tooling task, task-063, through
-   `tooling-delivery`, before `prepare`.
+   `methodology/scrum` beside `software`. dl-003's Execution Note for ruling 7, with the new order
+   of all the adopters. An independent review; the merge OK approves the text (as plan-034).
+3. **Rehearsal of the publication** (tech-lead), before any `prepare`: on a scratch clone, the three
+   `publish:pack` runs simulated in order after a simulated `prepare` commit (`base`'s `version:
+   2.0.1` and its CHANGELOG line; `publish:pack` refuses a version already tagged), tags and catalog
+   commits, nothing pushed, then the whole suite and `check:packs`, `index -- --check`, `validate`.
+   A failure caused by the new catalog entries (as the 91 tests of plan-044) becomes a tooling task,
+   task-063, through `tooling-delivery`, before `prepare`.
 4. **task-061 — `base`'s README** (`kanban-delivery`, pack-author, `pack-foundation-base`):
    step 3 keeps only the project's own `custom/` workflows; step 4 also removes the
    `decision-log-ingest` workflow `init` wrote under `workflows/custom/`, with its `include` entry;
@@ -167,9 +165,8 @@ as a `check:runs` scenario.
    checks from clean clones on Node.js 22.21 and 22.12.0 (`npm ci`, `npm test`, `lint`,
    `check:pins`, `check:schemas`, `check:packs`, `index -- --check`, `validate`, the overlays
    `software-exit` and `scrum-exit`, the golden step, `workflow list`, `check:runs`, `npm audit` in
-   the root and in every matrix folder),
-   the branch CI's conclusion in its Execution Notes, `in-review`, the approver's acceptance and
-   merge OK, a `--no-ff` merge, `main`'s CI read, `done`.
+   the root and in every matrix folder), the branch CI's conclusion in its Execution Notes,
+   `in-review`, the approver's acceptance and merge OK, a `--no-ff` merge, `main`'s CI read, `done`.
 7. **`prepare`** (tech-lead, on `main`), `prel-003`, `prel-004`, `prel-005` in order (the gap
    rule's placeholder if needed), each with `pack`, `version`, `bump`, `wingfoil` and `line` filled
    (W-02); Changes: for `base` the two README fixes and the class, for `software` and
@@ -240,3 +237,4 @@ as a `check:runs` scenario.
   rule 7; `software`'s charter notes at `activate`; bug-007's and bug-008's fix noted after
   task-062; red first for the tooling task only; the `software@^1` order stated as this plan's.
   Re-review requested.
+- 2026-10-28: re-review: approve; every finding resolved, its wrapping nits applied. Submitted.
