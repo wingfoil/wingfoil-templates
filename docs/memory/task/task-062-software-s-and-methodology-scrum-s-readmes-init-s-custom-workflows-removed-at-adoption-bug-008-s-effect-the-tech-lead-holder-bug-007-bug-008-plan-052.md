@@ -2,7 +2,7 @@
 id: task-062-software-s-and-methodology-scrum-s-readmes-init-s-custom-workflows-removed-at-adoption-bug-008-s-effect-the-tech-lead-holder-bug-007-bug-008-plan-052
 type: task
 title: "software's and methodology/scrum's READMEs: init's custom/ workflows removed at adoption, bug-008's effect, the tech-lead holder (bug-007, bug-008, plan-052)"
-status: backlog
+status: approved
 pack: "pack-methodology-scrum"
 depends_on: []
 tags: ["packs","software","scrum","readme"]
@@ -98,3 +98,24 @@ A project's own `custom/` workflows, in this task, are those the project wrote i
   (open point 2 resolved in part; the bug notes after the later merge; the README constraints).
   Applied.
 - 2026-10-28: re-review: approve. Submitted.
+- 2026-10-28: built (`5266070` the READMEs, `f9cf245` the charter's note, `ae9ae3b` the agent's
+  whole `executes_as` named, read from a composed DNA). `npm run index -- --check` 6 files, 0 not
+  up to date; `check:packs` 61 files, 0 problems. Acceptance 6, by hand outside the repository:
+  `base`, `software` and `methodology/scrum` composed from `scrum/defaults`, copied into four
+  projects initialised by `wingfoil init --template Scrum` and `--template Kanban` on WingFoil
+  0.3.0 and 0.3.1, the three READMEs' steps applied together (the five scaffolded workflows and
+  the four directive stubs removed), committed: `workflow list --format json` and
+  `workflow next --format json` exit 0, no diagnostic, empty stderr, on all four.
+- 2026-10-28: independent review: approve, nothing blocking; it reproduced Acceptance 6 on 0.3.0
+  and 0.3.1 with both templates and checked the union of the three READMEs' removals is bug-007's
+  list. Nits applied (`6f72b99`): "`tech-lead`'s phases", the paragraph rewrapped, the keys
+  named (`team.members` › `roles`, `team.agents` › `executes_as`). Its merge-order note stands:
+  task-061 merges first (step 4 of `base` removes `decision-log-ingest`), no publication between.
+- 2026-10-28, checks from clean clones of `a5a1186` on Node.js 22.21.0 and 22.12.0: `npm ci` (0
+  vulnerabilities), `npm test` 1010 of 1010, `lint`, `check:pins`, `check:schemas`, `check:packs`
+  (61 files, 0 problems), `index -- --check` (6 files, 0 not up to date), `validate` (14 runs, 0
+  failed), the golden step, the overlays `software-exit` and `scrum-exit` (22 runs each, 0 failed),
+  `workflow list`, `check:runs` (26 runs, 0 failed), `npm audit` in the root and in the three
+  matrix folders (0 vulnerabilities): every command exit 0 on both. Branch CI: run 40660532833 on
+  `a5a1186`, conclusion `success`. task-061 is on `main` (`66b783f`), so the three READMEs agree
+  there once this task merges. In review.

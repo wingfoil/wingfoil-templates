@@ -285,3 +285,9 @@ For the approver's acceptance:
   `tests/fixtures/scrum-exit` (task-056: 11 runs, 0 failed, tolerance none); the run of
   `sw-life-cycle` on 0.3.0 through two Sprints and two releases, recorded in task-057 (composed
   from `main` at `2987234`). Publication: W9, with `software`.
+- 2026-10-28, plan-052, task-062: open point 2 resolved in part by `base` 2.0.0: bug-006's trailing
+  `/` is fixed (`retrospective_path`'s default `docs/retrospectives/`); the weak evidence, `explore`
+  complete for every later Sprint once a file is there, stays a known limit of `base`. Open point 3:
+  the Sprint machine's names (`planned`, `active`, `done`) are fixed with 1.0.0. bug-008's effect
+  (a closed Sprint's `retrospective` › `approve` listed again) is stated in the README, not changed
+  (plan-052 ruling 2). The body stays as approved.
