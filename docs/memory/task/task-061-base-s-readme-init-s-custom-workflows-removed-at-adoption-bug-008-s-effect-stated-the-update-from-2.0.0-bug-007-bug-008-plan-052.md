@@ -2,7 +2,7 @@
 id: task-061-base-s-readme-init-s-custom-workflows-removed-at-adoption-bug-008-s-effect-stated-the-update-from-2.0.0-bug-007-bug-008-plan-052
 type: task
 title: "base's README: init's custom/ workflows removed at adoption, bug-008's effect stated, the update from 2.0.0 (bug-007, bug-008, plan-052)"
-status: pending
+status: backlog
 pack: "pack-foundation-base"
 depends_on: []
 tags: ["packs","base","readme"]
