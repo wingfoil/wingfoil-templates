@@ -94,8 +94,9 @@ runs, each a `main` started and its steps; the step kinds are `start`, `end`, `n
   failure ends the run, reported as the other runs are: `runs <file> adopt:<template>
   wingfoil@<release>: pass` or `fail at <stage>: <why>`.
 - **The scenario** `tests/fixtures/runs/adoption.yaml`: `compositions:
-  tests/fixtures/examples/scrum` (2), runs `adopt` with `Scrum` and with `Kanban`, the removal list bug-007's (five workflows,
-  both delivery names, four stubs): 2 × 2 × 2 releases = 8 runs; `check:runs` 26 → 34.
+  tests/fixtures/examples/scrum` (2), runs `adopt` with `Scrum` and with `Kanban`, the removal list
+  bug-007's (five workflows, both delivery names, four stubs): 2 × 2 × 2 releases = 8 runs;
+  `check:runs` 26 → 34.
 - **Tests first** in `tests/runs.test.ts`, the fake WingFoil gaining `init` (writes the five
   `custom/` workflows, the four stubs and an `include` list) and a `list` that reports
   `E_WORKFLOW_DUPLICATE_NAME` when a `custom/` workflow has a composed workflow's name and is
