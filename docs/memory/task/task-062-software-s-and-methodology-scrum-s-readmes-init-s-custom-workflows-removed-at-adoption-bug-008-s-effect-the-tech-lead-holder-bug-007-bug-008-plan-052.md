@@ -2,7 +2,7 @@
 id: task-062-software-s-and-methodology-scrum-s-readmes-init-s-custom-workflows-removed-at-adoption-bug-008-s-effect-the-tech-lead-holder-bug-007-bug-008-plan-052
 type: task
 title: "software's and methodology/scrum's READMEs: init's custom/ workflows removed at adoption, bug-008's effect, the tech-lead holder (bug-007, bug-008, plan-052)"
-status: in-progress
+status: in-review
 pack: "pack-methodology-scrum"
 depends_on: []
 tags: ["packs","software","scrum","readme"]
