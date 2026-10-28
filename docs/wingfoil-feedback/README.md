@@ -66,6 +66,7 @@ sha of the commit it read (WingFoil `COLLABORATION.md` › Credit, task-271), fo
 | [F-034](F-034-a-memory-add-action-s-arguments-are-dropped.md) | The command offered for a memory.add action drops every argument but type | gap | open | |
 | [F-035](F-035-packs-cannot-declare-mcp-servers.md) | Packs cannot declare MCP servers for the agents WingFoil launches | request | open | |
 | [F-036](F-036-no-verb-restructures-memory.md) | No verb moves, renames or supersedes an element, and nothing lists the elements that cite one | request | open | |
+| [F-037](F-037-an-iterate-over-phase-is-closed-by-a-later-phase.md) | An iterate_over phase is closed by a later phase, so a candidate added afterwards never runs | request | open | |
 
 ## Context
 
