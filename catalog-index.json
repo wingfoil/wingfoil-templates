@@ -149,6 +149,78 @@
       "profiles": []
     },
     {
+      "id": "methodology/scrum",
+      "catalog": "official",
+      "status": "active",
+      "axis": "methodology",
+      "slot": null,
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "methodology/scrum@1.0.0",
+          "wingfoil": ">=0.3.0 <=0.3.1",
+          "formats": {
+            "directive": 1,
+            "memory": 1,
+            "memory-template": 1,
+            "roles": 1,
+            "workflow": 1
+          },
+          "requires_capabilities": [
+            "workflow-engine"
+          ],
+          "requires": [
+            "base@^2",
+            "software@^1"
+          ],
+          "conflicts": [],
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/scrum@1.0.0/packs/methodology/scrum/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/scrum@1.0.0/packs/methodology/scrum/pack.yaml"
+        }
+      ],
+      "title": "Scrum",
+      "description": "Scrum after the Scrum Guide, November 2020: repeated fixed-length Sprints, each with its planning, its Sprint Backlog, its review and its retrospective, and releases decided by the Product Owner inside the Sprints, as the delivery of software's life cycle.",
+      "workflows": [
+        "backlog-item",
+        "delivery",
+        "sprint"
+      ],
+      "conditional_workflows": [],
+      "memory_types": [
+        "release",
+        "sprint",
+        "task"
+      ],
+      "directives": [
+        "definition-of-done",
+        "scrum"
+      ],
+      "conditional_directives": [],
+      "parameters": [
+        {
+          "name": "sprint_id",
+          "type": "pattern",
+          "default": "sprint-{n}",
+          "description": "The sprint type's id pattern"
+        },
+        {
+          "name": "sprint_length",
+          "type": "string",
+          "default": "2 weeks",
+          "description": "The Sprints' fixed length, at most one month"
+        },
+        {
+          "name": "sprint_path",
+          "type": "path",
+          "default": "docs/memory/sprint/{id}.md",
+          "description": "The sprint type's path; only letters, digits and . _ / { } -"
+        }
+      ],
+      "excerpt": "A software project governed by WingFoil that works in Sprints composes `methodology/scrum` with `base` and `software`: it fills the life cycle's `delivery` with repeated, fixed-length Sprints, one at a time, each with its planning, its Sprint Backlog, its review and its retrospective, and lets the Product Owner release an Increment inside a Sprint. It holds the `sprint` type, the workflows `delivery`, `sprint` and `backlog-item`, and the `scrum` and `definition-of-done` directives, and it adds…",
+      "profiles": []
+    },
+    {
       "id": "software",
       "catalog": "official",
       "status": "active",

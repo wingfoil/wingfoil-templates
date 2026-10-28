@@ -89,5 +89,26 @@ packs:
           - base@^2
         conflicts: []
         wingfoil: ">=0.3.0 <=0.3.1"
+  - id: methodology/scrum
+    path: packs/methodology/scrum
+    catalog: official
+    status: active
+    versions:
+      - version: 1.0.0
+        commit: 63732824a6893fbc666eb2e7484b5004c7f6d384
+        digest: sha256:532f103ba59ce39afb2db8b7d6a98d57ee92581d012d78eacd18f8341838534f
+        formats:
+          roles: 1
+          memory: 1
+          workflow: 1
+          directive: 1
+          memory-template: 1
+        requires_capabilities:
+          - workflow-engine
+        requires:
+          - base@^2
+          - software@^1
+        conflicts: []
+        wingfoil: ">=0.3.0 <=0.3.1"
 transitions: []
 presets: []
