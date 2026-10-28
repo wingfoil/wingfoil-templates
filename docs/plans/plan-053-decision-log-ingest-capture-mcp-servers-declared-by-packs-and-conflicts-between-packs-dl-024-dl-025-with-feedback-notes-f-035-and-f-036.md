@@ -161,3 +161,6 @@ On the branch `dl/dl-024-dl-025-mcp-and-conflicts`, from `main` at `8242f52`.
   Node.js versions, 1027 of 1027; branch CI `success` (run 40737119884). Step 6: dl-024 and dl-025
   are `pending` with their review findings recorded; their ruling is the approver's, not a
   condition of this plan's close.
+- 2026-10-28, step 7: CI run 40757575636 on `c7665aa`, conclusion `success`. Privacy: no local
+  path, private repository or private project in the branch's diff. The approver gave the merge
+  OK in chat; `--no-ff` merge into `main`.
