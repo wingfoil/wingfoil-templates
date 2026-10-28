@@ -2,7 +2,7 @@
 id: prel-005-methodology-scrum-1.0.0
 type: pack-release
 title: "methodology/scrum 1.0.0"
-status: draft
+status: validating
 pack: "pack-methodology-scrum"            # the pack element id (pack-<axis>-<name>)
 version: "1.0.0"         # the semver being published
 bump: "major"            # major | minor | patch (pack-semver directive)
