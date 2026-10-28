@@ -84,4 +84,7 @@ Configuration changes this decision implies, applied after approval:
   deviated from for `base`, by the approver's ruling B: the pack was activated at its first tag,
   and the retrospective runs once for both foundation packs after `software`'s `first-release`, as
   their charters ran in one plan (plan-041). The body stays as approved.
-
+- 2026-10-28, plan-052 (ruling 7): this repository adopts `base` at W10, not W9, with
+  `methodology/kanban` (dl-003's Execution Note of the same date); until then `capture`'s points of
+  governance are ruled as R2's note of 2026-10-15 says. `retrospective.yaml` v4 says W10. The body
+  stays as approved.

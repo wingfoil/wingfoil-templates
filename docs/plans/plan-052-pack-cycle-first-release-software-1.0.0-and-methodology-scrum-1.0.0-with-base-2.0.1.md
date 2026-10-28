@@ -238,3 +238,14 @@ as a `check:runs` scenario.
   task-062; red first for the tooling task only; the `software@^1` order stated as this plan's.
   Re-review requested.
 - 2026-10-28: re-review: approve; every finding resolved, its wrapping nits applied. Submitted.
+- 2026-10-28, step 2 on branch `plan/plan-052-sequencer`: `07_sequencer.md` 1.5 (W9 the first
+  publication with `methodology/scrum`; W10 `kanban`, presets, `governance/wingfoil-dogfood` and
+  this repository's adoption; F4.3 split between W9 and W10, counted once in M3, stated by the
+  one-wave rule and in Notes); `08_mvp-canvas.md` 1.4 (35 features, a stale count since 1.4);
+  Execution Notes on dl-003 (D10's order), dl-006 and dl-015 (W9 → W10); beyond the step's text,
+  `retrospective.yaml` v3 → v4, whose `capture` said "until this repository adopts base (W9)".
+  Independent review: approve after amendments, nothing blocking, applied. Found and not changed:
+  W8 holds four features, over the three-feature rule, since 1.4 (owed to the sequencer's next
+  review); dl-012 (`pending`) places F4.9 in W9 "before F4.2", now in W10 at its three-feature
+  limit, F4.9 high-uncertainty: dl-012 needs amending while pending or re-placing at its ruling
+  (the approver's).

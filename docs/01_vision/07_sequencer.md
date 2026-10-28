@@ -28,10 +28,11 @@ Wave ids (`W1`…) belong to this repository and are unrelated to WingFoil's own
 | **M0 — Contract** | spec-001 and its schemas approved: the format, the catalog, compatibility. `wingfoil-release-intake` back in the configuration. | the pack-model rulings | Pack author, WingFoil maintainer | 12 |
 | **M1 — Tooling** | one command composes and validates any pack against every compatible WingFoil release; the release process records its evidence; the catalog is browsable by people and agents. | M0 | Pack author, Agent | 11 |
 | **M2 — Foundation** | the foundation packs `base` and `software` published with a first methodology, `methodology/scrum` (dl-022, plan-052). WingFoil UI, Benchmark and WingFoil adopt them when each is ready, Benchmark and UI between their own releases; Templates adopts at W10, with `methodology/kanban` (plan-052 ruling 7). | the WingFoil v0.3 formats, M1 | Governed-repository maintainer (primary), WingFoil maintainer (primary) | 5 |
-| **M3 — First catalog (MVP)** | the first official catalog, published and validated, ready when WingFoil v0.4 installs packs; `governance/wingfoil-dogfood` published and this repository's adoption of the packs. | M2, WingFoil v0.4 for J6–J7 | Adopter (primary from v0.4) | 7 |
+| **M3 — First catalog (MVP)** | the first official catalog, published and validated, ready when WingFoil v0.4 installs packs, with `governance/wingfoil-dogfood` published and this repository adopting `base`, `software` and `methodology/kanban` (W10). | M2, WingFoil v0.4 for J6–J7 | Adopter (primary from v0.4) | 7 |
 | **M4 — Community** | community catalog, contributions, download traffic. | M3, WingFoil dl-138 Q4 | Community contributor | 3 |
 
-Every feature of `06_features.md` is assigned to exactly one wave. F2.7 was dropped in the features
+Every feature of `06_features.md` is assigned to exactly one wave, except F4.3, split between W9
+(`scrum`) and W10 (`kanban`) and counted once, in M3 (see Notes). F2.7 was dropped in the features
 review and is not sequenced.
 
 ---
