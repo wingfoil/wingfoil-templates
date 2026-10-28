@@ -24,8 +24,9 @@ The first version of `software` (plan-046's `author`, plan-052's `first-release`
   `methodology/scrum`;
 - task-062 (plan-052): the README's adoption steps for bug-007 and who holds `tech-lead` (ruling 5).
 
-Requires `base@^2`. Its `delivery` contract (dl-026, dl-027) is filled by a methodology; it is
-published with `methodology/scrum`, the first one (plan-046 ruling 6).
+Requires `base@^2` (plan-049's cascade, `975399e`). Its `delivery` contract (dl-026, dl-027) is
+filled by a methodology; it is published with `methodology/scrum`, the first one (plan-046 ruling
+6).
 
 **Class: `major`**: a first version (`pack-semver`, plan-044 ruling F). `CHANGELOG.md` reads
 `1.0.0: first version.`, `pack.yaml` `version: 1.0.0`, both unchanged.
@@ -35,6 +36,11 @@ computed from `compat.yaml`: `>=0.3.0 <=0.3.1`, the releases that read every for
 `workflow-engine` (confirmed by `publish:pack`'s dry run at `validate`). The README's "Install and
 update" keeps spec-002 §2.3's temporary mark: no release in `compat.yaml` provides `pack-install`
 (CB-3).
+
+At `publish`, `publish:pack` adds `software` with its first version in `catalog.yaml` and
+regenerates `CATALOG.md` and `catalog-index.json`; CB-6's live check then reads `latest: 1.0.0` and
+the pack's README and `pack.yaml` at `refs/tags/software@1.0.0` (plan-052 step 10). The notices to
+WingFoil UI's session and to the coordinating session follow the tags (step 12).
 
 Owed at the tag: WingFoil is told of the new step `end-of-life.approve` with the key mapping
 (`pack-foundation-software`'s notes, plan-052 step 12).

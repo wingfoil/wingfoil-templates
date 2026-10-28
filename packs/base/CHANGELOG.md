@@ -1,11 +1,10 @@
-- 2.0.1 (patch): the adoption steps remove the workflows WingFoil's `init` scaffolds (bug-007).
-  A note on the retrospective's approval under an iterated sub (bug-008). "Install and update" step
-  3 re-includes only the `custom/` workflows the project wrote itself, and step 4 removes, with
-  their `include` entries, the workflows `init` writes under `workflows/custom/` (bug-007); "Sources
-  and adaptations" says that a closed iteration's `approve` step is listed again while a later one's
-  retrospective decision-log is `in-discussion`, one approval clearing both (bug-008). Updating from
-  2.0.0: nothing to recompose; a project that kept and re-included `init`'s `custom/` workflows
-  removes them with their `include` entries.
+- 2.0.1 (patch): README: adoption steps and a note on iterated retrospectives (bug-007, bug-008).
+  "Install and update" step 3 re-includes only the `custom/` workflows the project wrote itself, and
+  step 4 removes, with their `include` entries, the workflows `init` writes under
+  `workflows/custom/` (bug-007); "Sources and adaptations" says that a closed iteration's `approve`
+  step is listed again while a later one's retrospective decision-log is `in-discussion`, one
+  approval clearing both (bug-008). Updating from 2.0.0: nothing to recompose; a project that kept
+  and re-included `init`'s `custom/` workflows removes them with their `include` entries.
 - 2.0.0 (major): new defaults for `plan_id` and `retrospective_path`; `apply` produces `.wingfoil/`.
   `plan_id` defaults to `{workflow}-{phase}-plan`, so that WingFoil's `workflow start` fills a
   started plan's `workflow` and `phase`, which `plan` requires (bug-005); `retrospective_path`

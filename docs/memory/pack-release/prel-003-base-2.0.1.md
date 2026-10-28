@@ -19,7 +19,7 @@ The third version of `base`, fixing its README for bug-007 and bug-008 (plan-052
   every workflow `wingfoil init` (0.3.0, 0.3.1) scaffolds under `workflows/custom/`:
   `decision-log-ingest`, which `base` ships, and `sw-life-cycle`, `adr-ingest`, `bug-ingest` and
   `scrum-delivery` or `kanban-delivery`, which need `software` and a methodology. Before, a project
-  `init` wrote that followed the steps failed every `workflow` command with
+  scaffolded by `init` that followed the steps failed every `workflow` command with
   `E_WORKFLOW_DUPLICATE_NAME` (and, adopting `base` alone on 0.3.1, with `E_PHASE_ROLE_UNKNOWN`).
   "Updating from 2.0.0" says what an adopter does.
 - **bug-008** (patch, the pack's own README): "Sources and adaptations" says that `retrospective`'s
@@ -37,7 +37,7 @@ push.
 kept and re-included the workflows `init` scaffolded removes them with their `include` entries.
 2.0.0 and 1.0.0 stay tagged and listed, frozen (`pack-semver`: one living line before WingFoil 1.0).
 
-`CHANGELOG.md`: the 2.0.1 entry, whose first line, the tag's annotation, is a complete summary.
+`CHANGELOG.md`: the 2.0.1 entry, whose first line, the tag's annotation, names both changes.
 `pack.yaml`: `version: 2.0.1`.
 
 `pack.yaml`'s `formats`, `requires` and `requires_capabilities: [workflow-engine]` give the range
@@ -45,6 +45,12 @@ computed from `compat.yaml`: `>=0.3.0 <=0.3.1`, the releases that read every for
 `workflow-engine` (confirmed by `publish:pack`'s dry run at `validate`). The README's "Install and
 update" keeps spec-002 §2.3's temporary mark: no release in `compat.yaml` provides `pack-install`
 (CB-3).
+
+At `publish`, `publish:pack` adds 2.0.1 beside 1.0.0 and 2.0.0 under `base`'s `versions` in
+`catalog.yaml` and regenerates `CATALOG.md` and `catalog-index.json`; CB-6's live check then reads
+`latest: 2.0.1` with the three versions listed, and the pack's README and `pack.yaml` at
+`refs/tags/base@2.0.1` (plan-052 step 10). The notices to WingFoil UI's session and to the
+coordinating session follow the tags (step 12).
 
 ## Validation
 

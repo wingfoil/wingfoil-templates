@@ -20,12 +20,13 @@ shipping:
   `release-folders-lean`;
 - task-056: the exit criterion, `tests/fixtures/scrum-exit`;
 - task-057: the run of `sw-life-cycle` through two Sprints and two releases on WingFoil 0.3.0, rerun
-  identical on 0.3.1 (plan-051), and its two text findings;
+  identical on 0.3.1 (plan-051), and the fixes of its two findings (`sprint.yaml`'s
+  descriptions, the `scrum` directive, the README; `b6dc551`);
 - task-062 (plan-052): the README's adoption step for bug-007 and bug-008's effect per Sprint.
 
-Requires `base@^2` and `software@^1`, so it is published after `software` (plan-052 step 10). The
-Sprint machine's names (`planned`, `active`, `done`) are fixed with this version (charter open
-point 3).
+Requires `base@^2` (`2d13c49`, plan-050 ruling 1) and `software@^1`, so it is published after
+`software` (plan-052 step 10). The Sprint machine's names (`planned`, `active`, `done`) are fixed
+with this version (charter open point 3).
 
 **Class: `major`**: a first version (`pack-semver`, plan-044 ruling F). `CHANGELOG.md` reads
 `1.0.0: first version.`, `pack.yaml` `version: 1.0.0`, both unchanged.
@@ -35,6 +36,11 @@ computed from `compat.yaml`: `>=0.3.0 <=0.3.1`, the releases that read every for
 `workflow-engine` (confirmed by `publish:pack`'s dry run at `validate`). The README's "Install and
 update" keeps spec-002 §2.3's temporary mark: no release in `compat.yaml` provides `pack-install`
 (CB-3).
+
+At `publish`, `publish:pack` adds `methodology/scrum` with its first version in `catalog.yaml` and
+regenerates `CATALOG.md` and `catalog-index.json`; CB-6's live check then reads `latest: 1.0.0` and
+the pack's README and `pack.yaml` at `refs/tags/methodology/scrum@1.0.0` (plan-052 step 10). The
+notices to WingFoil UI's session and to the coordinating session follow the tags (step 12).
 
 ## Validation
 
