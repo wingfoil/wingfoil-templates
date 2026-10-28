@@ -156,3 +156,7 @@ On the branch `dl/dl-024-dl-025-mcp-and-conflicts`, from `main` at `8242f52`.
   naming task-063; their commands re-run on 0.3.0 and 0.3.1, identical; W-14 in `wingfoil-cli` 1.5;
   mutations and clean clones on both Node.js versions, 1027 of 1027; branch CI `success` (run
   40726615137). Its build review added to dl-024's review note: D3 5 to say "install or update".
+- 2026-10-28, step 5: task-052 `done` (merged into this branch): F-037, reproduced on 0.3.0 and,
+  identically, on 0.3.1; build review approve after amendments (wording); clean clones on both
+  Node.js versions, 1027 of 1027; branch CI `success` (run 40737119884). Step 6: the approver
+  ruled dl-024 and dl-025 to stay `pending`, their review findings recorded on each.
