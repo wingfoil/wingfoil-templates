@@ -111,3 +111,11 @@ A project's own `custom/` workflows, in this task, are those the project wrote i
   list. Nits applied (`6f72b99`): "`tech-lead`'s phases", the paragraph rewrapped, the keys
   named (`team.members` › `roles`, `team.agents` › `executes_as`). Its merge-order note stands:
   task-061 merges first (step 4 of `base` removes `decision-log-ingest`), no publication between.
+- 2026-10-28, checks from clean clones of `a5a1186` on Node.js 22.21.0 and 22.12.0: `npm ci` (0
+  vulnerabilities), `npm test` 1010 of 1010, `lint`, `check:pins`, `check:schemas`, `check:packs`
+  (61 files, 0 problems), `index -- --check` (6 files, 0 not up to date), `validate` (14 runs, 0
+  failed), the golden step, the overlays `software-exit` and `scrum-exit` (22 runs each, 0 failed),
+  `workflow list`, `check:runs` (26 runs, 0 failed), `npm audit` in the root and in the three
+  matrix folders (0 vulnerabilities): every command exit 0 on both. Branch CI: run 40660532833 on
+  `a5a1186`, conclusion `success`. task-061 is on `main` (`66b783f`), so the three READMEs agree
+  there once this task merges. In review.
