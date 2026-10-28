@@ -39,13 +39,12 @@ re-checking it on 0.3.1 (plan-053 step 4).
    (F-035's 114-character code line and F-036's 102-character title kept); `wingfoil_version:
    0.3.0` is the received value, written by hand: the governance pin is 0.2.2. F-035's "(proposed,
    not yet ruled)" stays even if dl-024 is ruled first.
-2. **Reproduced with WingFoil alone**: each `## Observed` command re-run in a scratch project
-   (`git init`, WingFoil installed with `npm ci` from `src/matrix/wingfoil-0.3.0/`, then
-   `wingfoil init --template Kanban --no-interactive`); its output, and the exit codes the note
-   shows, match the note's, where a
-   difference beyond hashes or paths goes to the approver before the note is changed (dl-019). The
-   same commands on `src/matrix/wingfoil-0.3.1/`: the result recorded in the Execution Notes; a
-   difference goes to the approver.
+2. **Reproduced with WingFoil alone**: each `## Observed` command re-run in a scratch project (`git
+   init`, WingFoil installed with `npm ci` from `src/matrix/wingfoil-0.3.0/`, then `wingfoil init
+   --template Kanban --no-interactive`); its output, and the exit codes the note shows, match the
+   note's, where a difference beyond hashes or paths goes to the approver before the note is changed
+   (dl-019). The same commands on `src/matrix/wingfoil-0.3.1/`: the result recorded in the Execution
+   Notes; a difference goes to the approver.
 3. **No private content:** no note names or describes a private project, a local path or a
    non-public repository; WingFoil references are public ids, tags or commits.
 4. **The ledger** in `docs/wingfoil-feedback/README.md` gains one row per note, in order (5 cells
@@ -56,11 +55,12 @@ re-checking it on 0.3.1 (plan-053 step 4).
    does not refuse since it refuses only an identical path; and a number taken only on another
    branch is given again) and how to work with it (when the numbers below the wanted one have no
    gap, move the higher-numbered files out of the repository for the command and back; for a number
-   held on another branch, a placeholder file in the type's directory, which raises the count by
-   one, removed after the command and never committed; check the id before going on); `Note` and
-   `WingFoil element` empty. The directive's Version 1.4 → 1.5 and its Date 2026-10-28; *Checked
-   against* `wingfoil@0.2.2` unchanged (no pin move, rule 5). No W-entry for the notes' 0.3.0 and
-   0.3.1 behaviours: they are recorded when the governance pin moves (rule 5), as task-041.
+   held on another branch, a placeholder file in the type's directory named by the id pattern
+   (`<prefix>-<n>-placeholder.md`), which raises the count by one, removed after the command and
+   never committed; check the id before going on); `Note` and `WingFoil element` empty. The
+   directive's Version 1.4 → 1.5 and its Date 2026-10-28; *Checked against* `wingfoil@0.2.2`
+   unchanged (no pin move, rule 5). No W-entry for the notes' 0.3.0 and 0.3.1 behaviours: they are
+   recorded when the governance pin moves (rule 5), as task-041.
 6. **Tests and checks:** from clean clones on Node.js 22.21.0 and 22.12.0, `npm ci`, `npm test`
    (the inbox checks included, numbering contiguous from F-001), `npm run lint`,
    `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check` and
@@ -100,3 +100,4 @@ re-checking it on 0.3.1 (plan-053 step 4).
   others: `wingfoil_version` written by hand; the placeholder workaround spelled out and the
   move-aside's no-gap condition; the Date and *Checked against*; the text kept byte for byte (no
   prose line of the notes is over 100 characters); the privacy grep; the exit codes compared.
+- 2026-10-28: re-review: approve; two nits applied (the placeholder's name, a ragged wrap).
