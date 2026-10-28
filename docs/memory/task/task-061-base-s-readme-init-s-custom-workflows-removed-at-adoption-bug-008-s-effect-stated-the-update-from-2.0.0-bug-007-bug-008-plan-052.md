@@ -73,7 +73,28 @@ accepts it.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+- **Steps 3 and 4** of "Install and update" rewritten in place, no new step and no renumbering
+  (step 5 onward unchanged). Step 3 keeps the `custom/` folders, then re-adds the project's own
+  entries, the `include` entries of its own `custom/` workflows among them (the workflows the
+  project wrote itself). Step 4 removes what `init` scaffolded and a composition replaces: the
+  directive stubs with `base`'s ids, as now, and the five `init` workflows by name
+  (`decision-log-ingest`, which `base` ships; `sw-life-cycle`, `adr-ingest`, `bug-ingest` and
+  `scrum-delivery` or `kanban-delivery`, which need `software` and a methodology, whose packs ship
+  or replace them), each with its `include` entry. The reason in one clause: a workflow named as a
+  pack's makes every `workflow` command fail; the others need roles and types `base` alone lacks.
+- **"Updating from 2.0.0"**: a paragraph after "Updating from 1.0.0", same form: nothing to
+  recompose; a project that kept and re-included `init`'s `custom/` workflows removes them with
+  their `include` entries, as step 4 says.
+- **bug-008's sentence** goes in "Sources and adaptations", in the bullet on WingFoil's
+  `retrospective` that already says the approval selects the decision-log by a tag: an existing
+  hand-written H2 section, not the excerpt, no new heading; it names the approval, no command.
+- **No other file under `packs/`**: the generated sections are untouched, `npm run index -- --check`
+  proves it. The charter's Execution Note (Acceptance 3) on this branch.
+- **The by-hand check (Acceptance 5)**: four scratch projects outside the repository (`init
+  --template Scrum` and `--template Kanban`, WingFoil 0.3.0 and 0.3.1 from the matrix cache),
+  `base` composed alone from the README example `core-records`, steps 3 and 4 applied as written,
+  committed; `workflow list --format json` and `workflow next --format json`, exit codes and
+  diagnostics recorded.
 
 ## Execution Notes
 
