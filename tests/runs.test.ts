@@ -726,8 +726,8 @@ describe('check:runs: an adoption run (task-060)', () => {
       assert.equal(result.code, 1);
       assert.equal(result.lines[0], 'runs compositions/defaults/example.yaml adopt:Scrum '
         + 'wingfoil@0.3.0: fail at list: wingfoil workflow list --format json exit 1: '
-        + 'E_WORKFLOW_DUPLICATE_NAME name (workflows/custom/sw-life-cycle.yaml): duplicate '
-        + "workflow name 'sw-life-cycle' (+1 more)");
+        + 'E_WORKFLOW_DUPLICATE_NAME name (workflows/custom/decision-log-ingest.yaml): duplicate '
+        + "workflow name 'decision-log-ingest' (+1 more)");
       assert.equal(result.lines.at(-1), 'runs: 1 run, 1 failed');
     });
 

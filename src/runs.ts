@@ -23,7 +23,8 @@ import { tmpdir } from 'node:os';
 import { dirname, isAbsolute, join, relative, resolve as resolvePath } from 'node:path';
 import { parseArgs } from 'node:util';
 
-import { isScalar, isSeq, parseDocument } from 'yaml';
+import { YAMLSeq, isScalar, isSeq, parseDocument } from 'yaml';
+import type { Document } from 'yaml';
 
 import { loadCatalog } from './catalog';
 import { readFrontmatter } from './frontmatter';
@@ -410,7 +411,8 @@ function runOne(run: Run, composed: string, params: Record<string, string>, agen
     const output = execute(cli, args, repo, env);
     if (output.status !== 0) {
       const text = output.stderr.trim() !== '' ? output.stderr : output.stdout;
-      const why = text.split(/\r?\n/).find((line) => line.startsWith('error:')) ?? lastLine(text);
+      const why = text.split(/\r?\n/).find((line) => line.startsWith('error:'))
+        ?? errorLine(lastLine(text));
       throw new StepFailure(`wingfoil ${args.join(' ')} exit ${output.status ?? 'none'}: ${why}`);
     }
     return output;
@@ -520,11 +522,35 @@ function runOne(run: Run, composed: string, params: Record<string, string>, agen
 const WORKFLOWS_FILE = join('.wingfoil', 'workflows.yaml');
 const CUSTOM_WORKFLOWS = 'workflows/custom/';
 
-/** The `include` entries of a `workflows.yaml`, as written. */
-function includesOf(file: string): string[] {
-  const include = parseDocument(readFileSync(file, 'utf8')).get('include');
-  if (!isSeq(include)) return [];
+/** The `include` list of a parsed `workflows.yaml`: a new empty one when absent or null. */
+function includeList(document: Document): YAMLSeq {
+  const include = document.get('include');
+  if (isSeq(include)) return include;
+  if (include === undefined || include === null) {
+    const created = new YAMLSeq();
+    document.set('include', created);
+    return created;
+  }
+  throw new StepFailure('workflows.yaml: include is not a list');
+}
+
+/** The entries of an `include` list, as written. */
+function entriesOf(include: YAMLSeq): string[] {
   return include.items.map((item) => (isScalar(item) ? String(item.value) : String(item)));
+}
+
+/** WingFoil's error line: a JSON `error` when it printed one, with how many details follow. */
+function errorLine(text: string): string {
+  try {
+    const data = JSON.parse(text.trim()) as unknown;
+    if (isRecord(data) && typeof data['error'] === 'string') {
+      const more = Array.isArray(data['details']) ? data['details'].length : 0;
+      return more > 0 ? `${data['error']} (+${more} more)` : data['error'];
+    }
+  } catch {
+    // not JSON: the caller's line stands
+  }
+  return text;
 }
 
 /**
@@ -552,13 +578,14 @@ function adopt(run: AdoptRun, composed: string, repo: string, git: (args: string
   stage('include');
   const file = join(repo, WORKFLOWS_FILE);
   const document = parseDocument(readFileSync(file, 'utf8'));
-  const present = new Set(includesOf(file));
+  const include = includeList(document);
+  const present = new Set(entriesOf(include));
   const customDir = join(repo, '.wingfoil', 'workflows', 'custom');
   const own = existsSync(customDir) ? readdirSync(customDir)
     .filter((name) => name.endsWith('.yaml')).sort(byBytes)
     .map((name) => `${CUSTOM_WORKFLOWS}${name}`) : [];
   for (const entry of own) {
-    if (!present.has(entry)) document.addIn(['include'], entry);
+    if (!present.has(entry)) include.add(document.createNode(entry));
   }
   writeFileSync(file, document.toString());
   stage('commit');
@@ -577,10 +604,14 @@ function adopt(run: AdoptRun, composed: string, repo: string, git: (args: string
   stage('next');
   quiet(wingfoil(['workflow', 'next', '--format', 'json']), 'workflow next --format json');
   stage('check');
-  const included = includesOf(file);
+  const included = entriesOf(includeList(parseDocument(readFileSync(file, 'utf8'))));
   for (const id of run.workflows) {
     const entry = `${CUSTOM_WORKFLOWS}${id}.yaml`;
     if (included.includes(entry)) throw new StepFailure(`workflows.yaml still includes ${entry}`);
+    if (existsSync(join(repo, '.wingfoil', entry))) throw new StepFailure(`${entry} remains`);
+  }
+  for (const id of run.directives) {
+    const entry = `directives/custom/${id}.md`;
     if (existsSync(join(repo, '.wingfoil', entry))) throw new StepFailure(`${entry} remains`);
   }
 }
