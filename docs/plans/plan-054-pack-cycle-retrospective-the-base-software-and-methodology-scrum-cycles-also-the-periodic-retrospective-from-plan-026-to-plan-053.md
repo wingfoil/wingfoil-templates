@@ -239,3 +239,13 @@ or intermediary session); after every commit under `docs/memory/`, `docs/plans/`
   blocking; applied: claude's step-5 work in the Handoff, task-065's `directives list` check and
   directive header, its red-first in Design, wording nits.
 - 2026-10-28: the approver gave the OK in chat; submitted.
+- 2026-10-28, `explore`: plan submitted `active` (`5423caa`), branch pushed. Five read-only
+  subagents mined the strands; W-14 re-run on 0.3.0 and 0.3.1 in a scratch project outside the
+  repository: both number after the highest id and do not reuse a number taken on another branch,
+  so W-14 is 0.2.2's alone and needs no note (decision 3). The inventory was committed alone
+  (`de025fa`), checked by two independent reviews (header and §1–§3; §4–§8; about 215 citations,
+  approve after amendments, 28 findings, none blocking) and amended (`bfd8a9c`). One finding
+  corrects this plan's Context: R3 asks for a run between two WingFoil releases, so it was missed
+  once (between 0.3.0 and 0.3.1), not twice; neither intake close had a hook to it. The Context
+  stays as written; the inventory (§4.6) and dl-029 carry the corrected reading. Next: the
+  approver's checkpoint (`additional-points`).
