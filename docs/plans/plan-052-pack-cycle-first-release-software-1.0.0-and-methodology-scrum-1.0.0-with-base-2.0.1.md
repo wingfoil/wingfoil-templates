@@ -297,3 +297,12 @@ as a `check:runs` scenario.
   there; re-review approve. Clean clones of `ba1e46a` on both Node.js versions, every check exit 0
   (1027 of 1027; `check:runs` 34 runs); `main`'s CI run 40673992563 `success`; `base`'s private
   check 3 of 3. Waiting for the approver's approvals (step 9).
+- 2026-10-28, steps 9–11: the approver approved prel-003, prel-004 and prel-005 (`faa697c`,
+  `b7cc69b`, `abc36c0`); `main`'s CI on `abc36c0`, run 40694233245, `success`. `publish:pack` for
+  `base`, `software`, `methodology/scrum`: tags `base@2.0.1` at `abc36c0`, `software@1.0.0` at
+  `8d4adb3`, `methodology/scrum@1.0.0` at `6373282`, catalog commits `8d4adb3`, `6373282`,
+  `bd388bf`, each range `>=0.3.0 <=0.3.1`, digests as the dry runs; pushed atomically with `main`.
+  CI on the three tags (runs 40697576894, 40697576858, 40697577767), on `main` (40697576737) and
+  Pages (40697576861): `success`. CB-6's live check passed for the three, the slash tag included.
+  `pack-foundation-software` and `pack-methodology-scrum` `accepted → active`; `base`'s charter
+  records 2.0.1; dl-006's note. Notices next (step 12).
