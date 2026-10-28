@@ -266,3 +266,6 @@ as a `check:runs` scenario.
   `main`'s CI on `26a22f5` (this plan's submit), run 40653789258, `success`. Privacy: no local
   path, private repository or private project in the branch's diff. Waiting for the merge OK (step
   2's texts, the plan's notes, the three task bodies) and the three tasks' backlog acceptance.
+- 2026-10-28, step 2 closed: the approver's merge OK; `plan/plan-052-sequencer` merged into `main`
+  (`c10de8c`), the branch removed. The approver accepted task-060, task-061 and task-062 into the
+  backlog (`b6d82e3`, `eb6363a`, `d5087af`, on the branch before the merge).
