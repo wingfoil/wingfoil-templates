@@ -2,7 +2,7 @@
 id: plan-053-decision-log-ingest-capture-mcp-servers-declared-by-packs-and-conflicts-between-packs-dl-024-dl-025-with-feedback-notes-f-035-and-f-036
 type: plan
 title: "decision-log-ingest capture: MCP servers declared by packs and conflicts between packs (dl-024, dl-025), with feedback notes F-035 and F-036"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "capture"
 tags: ["decision-log","packs","feedback"]
