@@ -93,8 +93,8 @@ runs, each a `main` started and its steps; the step kinds are `start`, `end`, `n
   `include` entry names a workflow of the removal list, and none of its files remains. The first
   failure ends the run, reported as the other runs are: `runs <file> adopt:<template>
   wingfoil@<release>: pass` or `fail at <stage>: <why>`.
-- **The scenario** `tests/fixtures/runs/adoption.yaml`: `compositions: tests/fixtures/examples/scrum`
-  (2), runs `adopt` with `Scrum` and with `Kanban`, the removal list bug-007's (five workflows,
+- **The scenario** `tests/fixtures/runs/adoption.yaml`: `compositions:
+  tests/fixtures/examples/scrum` (2), runs `adopt` with `Scrum` and with `Kanban`, the removal list bug-007's (five workflows,
   both delivery names, four stubs): 2 × 2 × 2 releases = 8 runs; `check:runs` 26 → 34.
 - **Tests first** in `tests/runs.test.ts`, the fake WingFoil gaining `init` (writes the five
   `custom/` workflows, the four stubs and an `include` list) and a `list` that reports
@@ -117,3 +117,17 @@ runs, each a `main` started and its steps; the step kinds are `start`, `end`, `n
   (its own check of the removal list, the identity before `init`, the red variant, the counts).
   Applied.
 - 2026-10-28: re-review: approve. Submitted.
+- 2026-10-28, red first (dl-018): the tests written before the code (`6b7e4d1`), `node --test
+  dist/tests/runs.test.js`: 46 tests, 7 failed (the six adoption runs and the fixture's test). The
+  seven refusal tests passed already, since the reader before this task refused any `adopt` key as
+  unknown; each asserts the refusal names `runs[0]`, and they hold the shapes once `adopt` is read.
+- 2026-10-28: built (`df94a8a`): `src/runs.ts` (the run kinds `main` and `adopt`, the reader,
+  `adopt()` and its stages `init`, `copy`, `remove`, `include`, `commit`, `list`, `next`, `check`;
+  the header), `tests/fixtures/runs/adoption.yaml`. `runs.test.js` 46 of 46. On the real WingFoil:
+  the red variant, a scratch scenario file outside the repository with `workflows: []` and the four
+  stubs removed, `npm run check:runs -- <it>`: 8 runs, 8 failed, each at `list` with
+  `E_WORKFLOW_DUPLICATE_NAME` for `adr-ingest`, `bug-ingest`, `decision-log-ingest` and
+  `sw-life-cycle`, on 0.3.0 and 0.3.1; `npm run check:runs -- tests/fixtures/runs/adoption.yaml`:
+  8 runs, 0 failed; `npm run check:runs`: 34 runs, 0 failed; `npm run lint` exit 0. The CI step
+  and `tests/ci-workflow.test.ts` unchanged (the step runs every scenario file); `runs-cli.ts`'s
+  header points to `runs.ts`, unchanged.
