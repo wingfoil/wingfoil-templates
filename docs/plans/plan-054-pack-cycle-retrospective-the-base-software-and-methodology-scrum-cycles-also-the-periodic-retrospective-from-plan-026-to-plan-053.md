@@ -249,3 +249,26 @@ or intermediary session); after every commit under `docs/memory/`, `docs/plans/`
   once (between 0.3.0 and 0.3.1), not twice; neither intake close had a hook to it. The Context
   stays as written; the inventory (§4.6) and dl-029 carry the corrected reading. Next: the
   approver's checkpoint (`additional-points`).
+- 2026-10-29, `additional-points`: the approver asked to read the candidates against this
+  repository's adoption of the packs and its WingFoil pin at 0.3.1 (W10) and to keep as
+  decision-logs only those the adoption would not fix; recorded as P1–P3 in the inventory
+  (`e1f54c8`).
+- 2026-10-29, `capture`: `memory add` gave dl-028 … dl-033 in order (`0956450` … `3492d68`), each id
+  checked; bodies `c1a0757`: dl-028 the retrospective, dl-029 R3's trigger (G1), dl-030 a request's
+  origin, the privacy check and `main`'s CI (G3 with G5), dl-031 a register of owed items (G2),
+  dl-032 runs on the real engine (G4 with G10), dl-033 `pack-cycle`'s order (G6). The directive of
+  dl-030 is named `repository-practice`, not `repository-texts` as the Context proposed, because it
+  also holds `main`'s CI (G5); dl-031 puts its rules there too, so that they survive the adoption.
+  Each reviewed independently: approve after amendments, one blocking finding (dl-029's skip
+  condition); amended (`939e1a5`); re-reviews running. task-064's body written on
+  `task/task-064-feedback-notes` (`2a86e01`, `0682032`), its review running.
+- 2026-10-29, `capture` (continued): the re-reviews of dl-028 … dl-033 (approve after amendments;
+  dl-032 approve) and a final re-review of dl-031 and dl-033, whose decisions changed (the register
+  moved to `docs/owed-items.md`, out of the directory `base`'s `explore` reads at W10; `pack-cycle`'s
+  `retrospective` kept required, a covered pack completing it by reference), all applied
+  (`593a41f`, `112b99c`, `9ebfbd5`); dl-033's last fixes were applied while `pending` after its
+  submit. All six submitted `pending` (`de921c2` … `fc34104`). dl-030's first reply sent outside
+  the repository, naming it and `63b1e16`. task-064's body reviewed (approve after amendments, one
+  blocking finding: the `?` rows' timing), re-reviewed (approve after amendments) and amended; it
+  no longer waits for the `?` rulings for F-038 … F-041; submitted `pending` (`23bd07b`) on its
+  branch. Next: the approver's rulings (step 5) and task-064's backlog acceptance.
