@@ -1,13 +1,14 @@
-# Retrospective (sub-workflow, dl-006). Included by pack-cycle after a pack's first release, and by
-# retrospective-periodic for the work between packs. Same phases as WingFoil2's retrospective and
-# the base pack's; adopting base (dl-003 D10) replaces this file, with the capture phase of dl-006
-# R2 as amended by dl-022: a change of governance is a point, ruled by governance-evolution.
+# Retrospective (sub-workflow, dl-006). Included by pack-cycle after a pack's activation (dl-033),
+# and by retrospective-periodic for the work between packs. Same phases as WingFoil2's
+# retrospective and the base pack's; adopting base (dl-003 D10) replaces this file, with the
+# capture phase of dl-006 R2 as amended by dl-022: a change of governance is a point, ruled by
+# governance-evolution.
 # Method: Derby & Larsen's retrospective (gather data, generate insights, decide what to do),
 # adapted to Execution Notes as the data (dl-006 R5).
 name: retrospective
 kind: sub
 description: "Learn from the Execution Notes of the period and turn the learnings into decisions"
-version: 4
+version: 5
 phases:
   - name: explore
     description: >-
