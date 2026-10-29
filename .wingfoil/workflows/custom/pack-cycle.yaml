@@ -14,12 +14,13 @@ phases:
       approver accepts it (proposed → accepted) or sends it back. A charter of a pack that ships
       workflows, or fills a slot of a required pack's workflow, records in its plan a run on the
       newest WingFoil release that compat.yaml lists before it is accepted: the pack's draft
-      composed with the packs it requires and, for a slot they leave open, a fixture pack, driven
-      with WingFoil's workflow and memory commands through every phase it adds, at least once around
-      each loop (an iterate_over with two candidates, each through every state it takes, in its
-      where or out of it, and a candidate spanning two iterations of an enclosing loop, where the
-      pack has one). By hand or with check:runs, recorded with commands and exit codes; its findings
-      go to the charter while it is proposed (dl-032 E2).
+      composed with the packs it requires and, for a slot they leave open, a fixture pack (as
+      task-046's overlay), driven with WingFoil's workflow and memory commands through every phase
+      it adds, at least once around each loop (an iterate_over with two candidates, each driven to
+      the end of the iterated sub through every state it takes, in its where or out of it, and a
+      candidate spanning two iterations of an enclosing loop, where the pack has one). By hand or
+      with check:runs, recorded with commands and exit codes (pack-compatibility's evidence rule);
+      its findings go to the charter while it is proposed (dl-032 E2).
     role: product-owner
     actions:
       - 'memory.add(type: pack)'

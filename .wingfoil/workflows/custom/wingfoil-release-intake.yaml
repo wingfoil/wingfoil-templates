@@ -32,7 +32,8 @@ phases:
     description: >-
       Run the compatibility matrix of every active pack against the new release. The computed
       range of every published version was already recomputed at intake by record (spec-001 §12);
-      this phase checks the active packs on the release that range now includes.
+      this phase checks every active pack on the new release, which that range now includes where
+      the pack's formats and capabilities allow.
     role: reviewer
   - name: plan-migrations
     description: >-

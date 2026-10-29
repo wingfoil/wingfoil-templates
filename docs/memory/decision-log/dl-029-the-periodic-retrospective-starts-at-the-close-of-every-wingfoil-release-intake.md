@@ -86,4 +86,5 @@ The points below are **proposed**; they become rulings when the approver approve
 - 2026-10-29, plan-055: actions applied (T3): `wingfoil-release-intake` v5, the phase
   `retrospective-start` and `recheck`'s wording (`08ceb72`); `retrospective-periodic` v2, its
   header (`28a27c6`); dl-006's note. T5's interim rule (the intake plan's close says whether a
-  periodic retrospective is due) ends when plan-055 is merged into `main`.
+  periodic retrospective is due) ends when `wingfoil-release-intake` v5 is on `main` (plan-055's
+  merge).

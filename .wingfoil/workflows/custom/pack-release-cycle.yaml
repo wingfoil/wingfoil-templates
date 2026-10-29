@@ -29,8 +29,9 @@ phases:
       combination that includes the pack, with the oldest and the newest released WingFoil that
       compat.yaml lists as compatible; each must validate with zero errors, and two compositions
       must be byte-identical. npm run check:runs exits 0 on the same two releases, with a scenario
-      that starts every main the pack ships; for a pack whose README carries install steps, the
-      adoption run once per init template (dl-032 E3).
+      that starts every main the pack ships (or one reaching its workflows); for a pack whose README
+      carries install steps, the adoption run on a composition that holds the pack, once per init
+      template, as pack-compatibility requires (dl-032 E3).
       Record commands and exit codes in the Validation section. An independent review of the
       pack-release before the approver's gate (dl-017).
     role: reviewer

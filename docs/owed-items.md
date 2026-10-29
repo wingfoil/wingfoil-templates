@@ -8,10 +8,12 @@ element. Outside every Memory path. Its rules are rule 4 of the directive `repos
   trigger. An item without an owner names the approver; an item without a trigger takes "the next
   retrospective" (dl-031 R1). Rows are sorted by the first element id in Source; rows without one
   come last.
-- **Who writes a row:** the element that leaves the item, in the same commit as its note (dl-031
-  R2). The element that settles an item moves its row to Closed, with its own id.
-- **Who reads it:** every retrospective, in `explore`; it proposes keep, assign or drop for each row,
-  and its decision-log rules them (dl-031 R3).
+- **Who writes a row:** a plan or a task, in the same commit as the note that leaves the item; a
+  pack, a pack-release, a bug or a decision-log, at the latest by the close of the plan that hosts
+  it. The note, or for a row added later the hosting plan's note, cites the row (dl-031 R2). The
+  element that settles an item moves its row to Closed, with its own id.
+- **Who reads it:** every retrospective, in `explore`; it proposes keep, assign or drop for each
+  row, and its decision-log rules them (dl-031 R3).
 
 First content: the debts of the inventory of 2026-10-28
 (`docs/retrospectives/2026-10-28-periodic-friction-inventory.md` §8), with the rows of dl-028 D1
@@ -49,6 +51,7 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | W10: `methodology/kanban`, presets, `governance/wingfoil-dogfood`, this repository's adoption, its pin, the first inbox sync | plan-052 ruling 7 | W10 | W10 |
 | dl-024 and dl-025 ruled; plan-022 closed | plan-052, plan-053 › close | approver | the next retrospective |
 | The private projects' check scripted | prel-001 … prel-003 | approver | the next retrospective |
+| dl-026's stale Consequences ("reported late until it completes", no longer true after ruling 15) | task-057 › notes | approver | the next retrospective |
 
 ## Closed
 
