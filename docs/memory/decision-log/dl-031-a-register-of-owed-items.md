@@ -2,7 +2,7 @@
 id: dl-031-a-register-of-owed-items
 type: decision-log
 title: "A register of owed items"
-status: pending
+status: approved
 tags: ["process","backlog"]
 ---
 
