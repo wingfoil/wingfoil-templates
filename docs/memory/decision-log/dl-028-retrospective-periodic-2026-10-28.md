@@ -133,3 +133,6 @@ Each change of governance takes effect only when its own decision-log is approve
   D1's owner and D2's holder.
 - 2026-10-29: re-review: approve after amendments, nothing blocking; wording and citations fixed
   (D1's rows, N3's citation, K2, K4); dl-031 R4 now lists every row D1 and D2 add.
+- 2026-10-29, plan-055: **D1** and **D2** applied: the table of the inventory's §8, with the rows
+  D1 and D2 add, is the first content of `docs/owed-items.md` (dl-031 R4, `383d79a`); D2's two
+  risks are rows there until the adoption's plan exists.

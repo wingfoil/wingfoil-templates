@@ -100,3 +100,11 @@ Configuration changes this decision implies, applied after approval:
   later by a dl actions plan: dl-029 ties R3 to the close of every `wingfoil-release-intake`, and
   dl-033 activates a pack at its first tag with its `retrospective` after. The body stays as
   approved.
+- 2026-10-29, plan-055: **R3**'s trigger is dl-029 T1: the close of every
+  `wingfoil-release-intake` starts the periodic retrospective, in the phase `retrospective-start`
+  of `wingfoil-release-intake` v5 (`08ceb72`), and `retrospective-periodic` v2 names it
+  (`28a27c6`). **R1**'s order reads with dl-033 O1 and O2: `pack-cycle` v6 activates a pack at its
+  first tag and runs `retrospective` after, and one retrospective may cover several packs whose
+  cycles ran together (`f3fb891`; `retrospective` v5, `9ec6f48`). This note supersedes the notes of
+  plan-044 (ruling B) and plan-052 (ruling 6) as the reading of R1's order (dl-033 O3); those notes
+  stay. The body stays as approved.

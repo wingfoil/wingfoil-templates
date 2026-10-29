@@ -82,3 +82,7 @@ The points below are **proposed**; they become rulings when the approver approve
   wording.
 - 2026-10-29: re-review: approve; nits applied: E2's loop crosses out of its `where`, the spanning
   candidate, task-053's scope, the shared bump.
+- 2026-10-29, plan-055: actions applied (E5): `pack-cycle` v6, `charter`'s and `author`'s
+  descriptions (`7610860`, one bump with dl-033 O4); `pack-release-cycle` v8, `validate`'s
+  description and its `checks.post` line (`503a77c`); `pack-compatibility`, its load-commands
+  bullet (`e2c4d31`). The scripted full scrum run stays a row of `docs/owed-items.md`.

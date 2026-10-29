@@ -29,4 +29,5 @@ phase: ""
 <!-- Filled while the plan runs: deviations, blockers, decisions taken, WingFoil friction
      (also recorded in docs/wingfoil-feedback/). At wave close: per tech-spec, the errata and
      rulings recorded in the wave, and the element the approver names to fold them back, or the
-     ruling that none is needed (dl-020). -->
+     ruling that none is needed (dl-020).
+     An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->

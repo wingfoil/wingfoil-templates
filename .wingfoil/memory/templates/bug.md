@@ -18,3 +18,5 @@ pack: ""            # the pack element id, or empty for tooling
 <!-- Minimal steps on a clean checkout. -->
 
 ## Execution Notes
+
+<!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->

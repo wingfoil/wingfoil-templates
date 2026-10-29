@@ -84,3 +84,7 @@ The points below are **proposed**; they become rulings when the approver approve
   row dl-028 D1 and D2 add.
 - 2026-10-29: final re-review: approve after amendments, nothing blocking; applied: R5's rule after
   the pin bump also in the directive, who cites a row added later.
+- 2026-10-29, plan-055: actions applied (R4, R6): `docs/owed-items.md` with its first content
+  (`383d79a`); `repository-practice` 1.1, rule 4 (`aba967d`); `dna.yaml` 11, the file in
+  `paths.governance` (`b30989d`); a line in the Execution Notes comment of the templates plan,
+  task, pack, pack-release, bug and decision-log (`0effabd`).

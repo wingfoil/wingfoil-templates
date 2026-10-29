@@ -16,3 +16,5 @@ status: draft
 <!-- What was decided, by whom (the approver's ruling), and the consequences. -->
 
 ## Execution Notes
+
+<!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->

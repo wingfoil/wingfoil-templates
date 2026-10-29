@@ -80,3 +80,7 @@ The points below are **proposed**; they become rulings when the approver approve
 - 2026-10-29: final re-review: approve after amendments, nothing blocking; applied while `pending`:
   one charter note per pack, the engine check covers completion by reference, the description cites
   O2.
+- 2026-10-29, plan-055: actions applied (O4): `pack-cycle` v6, the phase order and
+  `retrospective`'s description (`f3fb891`); `retrospective` v5, its header comment (`9ec6f48`);
+  dl-006's note (O3); the engine check of v6 at the pin bump, a row of `docs/owed-items.md`
+  (`383d79a`).

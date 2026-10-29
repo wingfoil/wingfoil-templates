@@ -24,4 +24,5 @@ depends_on: []
 <!-- Deviations, blockers, decisions taken, WingFoil friction. In a tooling task, each red run: the
      command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
-     approved (dl-019). -->
+     approved (dl-019).
+     An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->

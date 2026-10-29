@@ -23,7 +23,11 @@ tooling's self-tests, run in the matrix's self-test mode (dl-009).
   `wingfoil dna show` and `wingfoil directives list`, each run with `--format json`, with exit code
   0 and no warning: no stderr line, no stdout line starting `Warning:`, no `workflow list`
   diagnostic of severity warning or error, no `directives list` warning (plan-042, rulings L and
-  M).
+  M). With them, on the same two releases (the releases the matrix selects), `npm run check:runs`
+  exits 0 with a scenario that starts every `main` the pack ships (for a pack that ships none, a
+  `main` of the composition that reaches its workflows, where the tooling can); and, for a pack
+  whose README carries install steps, the adoption run on a composition that holds the pack, once
+  per `init` template (Scrum and Kanban today), exits 0 (dl-032 E3).
 - A pack with a conditional part (spec-001 §6.5) is validated in compositions with and without
   `software`. `npm run validate` derives the other leg of each composition that holds one; the
   leg with `software` needs a methodology, so for a pack that is not one it comes from a
