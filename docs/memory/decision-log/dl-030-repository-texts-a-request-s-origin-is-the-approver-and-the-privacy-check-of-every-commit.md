@@ -54,12 +54,14 @@ The points below are **proposed**; they become rulings when the approver approve
   or a task's close records the check of its branch's diff.
 - **P3 — `main`'s CI.** After every push of `main`, the conclusion of the CI run that includes the
   push is read (a later push cancels an earlier run); a red conclusion is reported to the approver
-  when found; the response follows the precedent of bug-003 and bug-004. P3 applies from 2026-10-28,
-  as plan-045's "From now on".
+  when found; the response follows the precedent of bug-003 and bug-004. P3 writes down a practice
+  in use since plan-045's "From now on" (2026-10-23); as a rule it applies once this element is
+  approved.
 - **P4 — Where (option 3).** A new directive `.wingfoil/directives/custom/repository-practice.md`
   (id `repository-practice`), with the frontmatter of `wingfoil-cli` (id, name, type, `kind:
   custom`, title, tags), Version 1.0, dated, "Checked against" the pin, listed under `global:` in
-  `.wingfoil/roles.yaml`, holding P1 … P3.
+  `.wingfoil/roles.yaml`, holding P1 … P3; dl-031 R6, if approved, adds its rules in a later
+  version.
 - **P5 — Applied by task-065**, hosted by plan-054 once this element is approved
   (`tooling-delivery`, `pack: ""`), as plan-054 step 5 sets. P1 and P2 apply from 2026-10-28, before
   the directive exists.
@@ -74,3 +76,5 @@ The points below are **proposed**; they become rulings when the approver approve
   practice, P3 without a new advisory policy and with its start date, the directive's frontmatter,
   task-065 as plan-054 step 5 sets, P6 (P3 separable). The title predates G5: P3 is the reading of
   `main`'s CI, which the title does not name.
+- 2026-10-29: re-review: approve after amendments, nothing blocking; applied: P3's start (a
+  practice since 2026-10-23, a rule at approval), P4 notes dl-031 R6's later addition.

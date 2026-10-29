@@ -41,13 +41,13 @@ Each change of governance takes effect only when its own decision-log is approve
 - **K1 — Independent reviews, re-reviews after a fix, amendment while `pending`** (§4.1): no
   rejection and no revert in the period; reviews caught design defects before code and before
   publication.
-- **K2 — Running a method on the real engine before and during authoring** (§3): plan-047's runs and
-  task-057's full run found dl-026, dl-027, bug-005, bug-006 and two charter errors after its
-  reviews.
+- **K2 — Running a method on the real engine before and during authoring** (§3): plan-047's runs led
+  to dl-026 and dl-027 and found bug-005 and bug-006, and task-057's full run found two charter
+  errors after its reviews.
 - **K3 — The guards that followed each escape:** `check:runs` (task-053, task-058), the adoption run
   of `init` (task-060), the publication rehearsal in a scratch clone (plan-052 step 3) (§1 … §3).
 - **K4 — The publication mechanics:** dry run, atomic push of tag and `main`, CI on both, the live
-  CB-6 check, evidence redone after each review (prel-002 … prel-005) (§1).
+  CB-6 check, evidence redone after each review (prel-002 … prel-005) (§1 … §3).
 - **K5 — Rulings given with the outline, and every deviation recorded in its plan** (§3, §9).
 - **K6 — Intakes closed within two days of a WingFoil release; advisories fixed within a day**
   (§4.5, §4.6).
@@ -102,9 +102,9 @@ Each change of governance takes effect only when its own decision-log is approve
   plans, a rule on amend versus note), G8 (dl-017 R2 for documents and configuration), G9 (the
   inbox's first line and reserved gaps), G12 (the suite's duration), and G11 (a fixed bug's terminal
   state), fixed by `software`'s `bug` type at the adoption. Two more rows, owner none (the approver,
-  dl-031 R1): a check of the CHANGELOG's first line, the tag annotation, caught by review twice (§1;
-  trigger: the next `publish:pack` change); and whether a version known to fail its runs needs a
-  \"known defects\" marker in `catalog.yaml` (§1, open; trigger: the next retrospective).
+  dl-031 R1): a check of the CHANGELOG's first line (it becomes the tag annotation; review caught it
+  twice) (§1; trigger: the next `publish:pack` change); and whether a version known to fail its runs
+  needs a "known defects" marker in `catalog.yaml` (§1, open; trigger: the next retrospective).
 - **D2 —** P3's two risks go to the adoption's plan: this repository's custom `sw-life-cycle` shares
   its name with `software`'s, and `software`'s `tech-lead` needs a holder in this repository's DNA.
   Until that plan exists, they are rows of D1 (owner W10, trigger the adoption).
@@ -118,7 +118,7 @@ Each change of governance takes effect only when its own decision-log is approve
   is not rewritten.
 - **N3 —** Parallel lines clashing on one worktree's `dist/` (§4.4): a worktree per line of work, as
   plan-034 did. CI runs cancelled by the other line's pushes: observed, no remedy beyond reading the
-  run that includes the push (dl-030 P3).
+  run that includes the push (dl-016 K4 for branches; dl-030 P3 for `main`, if kept).
 - **N4 —** Fixed by the adoption (P1): W-14, G11, W-02 for plans if the repository takes
   `{workflow}-{phase}-plan`, the dl actions plans (`governance-evolution`); G7 partly (D1).
 - **N5 —** Smaller points with no change: work landing directly on `main` with no decision recording
@@ -131,3 +131,5 @@ Each change of governance takes effect only when its own decision-log is approve
   inbox sync in K7 and C1, N3 limited to `dist/`, the tag-annotation check and the "known defects"
   question as D1 rows, the adoption's fixes as N4, the minor points as N5, citations of K2, K4, K5,
   D1's owner and D2's holder.
+- 2026-10-29: re-review: approve after amendments, nothing blocking; wording and citations fixed
+  (D1's rows, N3's citation, K2, K4); dl-031 R4 now lists every row D1 and D2 add.

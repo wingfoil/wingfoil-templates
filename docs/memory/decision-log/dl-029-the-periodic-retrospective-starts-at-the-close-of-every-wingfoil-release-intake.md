@@ -47,14 +47,15 @@ The points below are **proposed**; they become rulings when the approver approve
 - **T1 — Option 3.** At the close of every `wingfoil-release-intake` run, the intake's plan records
   WingFoil's next release planning date as announced, or "not known", and starts a periodic
   retrospective, unless a periodic retrospective, or one that counts as periodic (Option 3), has
-  closed since the release this intake takes in. On the 0.2.2 pin, which has no workflow engine,
-  "starts" means that the facilitator adds the retrospective's plan (`workflow:
-  retrospective-periodic`, filled by hand, W-02).
+  closed since the release this intake takes in, or the approver rules T2's patch case in the
+  intake's plan. On the 0.2.2 pin, which has no workflow engine, "starts" means that the facilitator
+  adds the retrospective's plan (`workflow: retrospective-periodic`, filled by hand, W-02).
 - **T2 — Its deadline.** The retrospective closes before WingFoil's next release planning. When the
-  date is not known, it closes within seven days of the intake's close: weaker than R3, which the
-  approver may tighten in the intake's plan. For a release that WingFoil plans no retrospective or
-  planning of its own for (a patch such as 0.3.2), the approver may rule in the intake's plan that
-  the next retrospective, before the next planning, covers the window.
+  date is not known, it closes within seven days of the intake's close, a bound weaker than R3; the
+  approver may tighten it in the intake's plan. For a release that WingFoil holds no planning of its
+  own for (a patch such as 0.3.2), the approver may rule in the intake's plan that no retrospective
+  starts there: the retrospective started at the previous intake, or the next one, covers both
+  windows and closes before WingFoil's next release planning.
 - **T3 — Where it is written:**
   - `wingfoil-release-intake.yaml` v4 → v5: a last phase `retrospective-start` (role facilitator,
     no actions, as `recheck`) that applies T1 and T2, and records in the intake's plan the
@@ -80,3 +81,5 @@ The points below are **proposed**; they become rulings when the approver approve
   known, a `pack-cycle` retrospective counting only with a `periodic` inventory, "starts" on the
   0.2.2 pin and no `agent.execute`, the version bump of `retrospective-periodic`, what survives W10,
   Option 4's reason, the patch-release case.
+- 2026-10-29: re-review: approve after amendments, nothing blocking; applied: T2's patch case
+  named in T1 and stated as no retrospective starting, the seven-day bound's wording.

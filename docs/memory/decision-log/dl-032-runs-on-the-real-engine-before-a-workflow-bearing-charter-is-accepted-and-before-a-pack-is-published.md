@@ -18,12 +18,12 @@ check ran the engine on the pack (inventory of 2026-10-28, §1 … §3):
 - The README's adoption steps were never run on a project made by `wingfoil init`: bug-007 (major)
   was in `base@1.0.0` and `base@2.0.0`, found by plan-051's `recheck`.
 
-The guards that followed exist but no rule requires them: `npm run check:runs` (task-053, task-058:
-starts of `sw-life-cycle` on every selected release) and the adoption run of `init` (task-060) run
-in CI and are cited in each pack-release's evidence since prel-002, the adoption run since prel-003.
-Where a run came first, it paid off: plan-047 ran the method by hand on WingFoil 0.3.0 before the
-scrum charter was accepted, which led to dl-026 and dl-027 and found bug-005 and bug-006; task-057's
-full run found two charter errors after its reviews (§3).
+The guards that followed exist but no rule requires them: `npm run check:runs` (task-053: `base`'s
+mains; task-058: the `software` and `scrum` starts, on every selected release) and the adoption run
+of `init` (task-060) run in CI and are cited in each pack-release's evidence since prel-002, the
+adoption run since prel-003. Where a run came first, it paid off: plan-047 ran the method by hand on
+WingFoil 0.3.0 before the scrum charter was accepted, which led to dl-026 and dl-027 and found
+bug-005 and bug-006; task-057's full run found two charter errors after its reviews (§3).
 
 Candidates G4 and G10 of the retrospective dl-028 (C4).
 
@@ -48,8 +48,9 @@ The points below are **proposed**; they become rulings when the approver approve
   `compat.yaml` lists: the pack's draft composed with the packs it requires and, for a slot they
   leave open, a fixture pack (as task-046's overlay), driven with WingFoil's `workflow` and `memory`
   commands through every phase it adds, at least once around each loop: an `iterate_over` with two
-  candidates, each driven through every state its `where` selects, and one that spans two
-  iterations of the enclosing loop where the pack has one. By hand or with `check:runs`, recorded
+  candidates, each driven to the end of the iterated sub, through every state it takes, in its
+  `where` or out of it, and a candidate whose iterations span two of the enclosing loop's
+  iterations, where the pack has one (as scrum's Sprints). By hand or with `check:runs`, recorded
   with commands and exit codes (`pack-compatibility`'s evidence rule); a script is not required,
   because the scripted full run is itself owed (plan-050 ruling 3). The run's findings go to the
   charter while it is `proposed`.
@@ -66,10 +67,10 @@ The points below are **proposed**; they become rulings when the approver approve
   methodology; by hand where `check:runs` cannot drive it.
 - **E5 — Applied after approval** by the dl actions plan after plan-054: `pack-compatibility` (its
   load-commands bullet extended; the directive carries no version line); `pack-cycle.yaml` v5 → v6
-  (`charter`'s and `author`'s descriptions), one bump together with dl-033 O4 if both land in the
-  same plan; `pack-release-cycle.yaml` v7 → v8 (`validate`'s description and its `checks.post`
-  line). The scripted full scrum run (task-057's; plan-050 ruling 3, owed in dl-031's register) is
-  a tooling task of its own, not a condition of this element.
+  (`charter`'s and `author`'s descriptions), one bump with dl-033 O4; `pack-release-cycle.yaml` v7 →
+  v8 (`validate`'s description and its `checks.post` line). The scripted full scrum run (task-057's;
+  plan-050 ruling 3, owed in dl-031's register) is a tooling task of its own, not a condition of
+  this element.
 
 ## Execution Notes
 - 2026-10-29: written under plan-054 (`capture`, `decision-log-ingest` hosted there), cited by
@@ -79,3 +80,5 @@ The points below are **proposed**; they become rulings when the approver approve
   tooling has them, E5's concrete bumps (the directive has no version), E2's loop that crosses its
   `where` states and a fixture for an open slot, by hand allowed, E4 in the options and precise,
   wording.
+- 2026-10-29: re-review: approve; nits applied: E2's loop crosses out of its `where`, the spanning
+  candidate, task-053's scope, the shared bump.
