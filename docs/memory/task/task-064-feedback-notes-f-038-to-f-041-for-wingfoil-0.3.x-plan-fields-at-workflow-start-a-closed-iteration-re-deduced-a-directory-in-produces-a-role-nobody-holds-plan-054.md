@@ -137,3 +137,27 @@ the approver rules on each before any note for it. dl-028 W3: no note for W-14 (
   longer wait for the `?` rulings, which gate only F-042 onward, with a cut-off at 2026-11-03;
   dl-028 W2's test stated, a deferral recorded as a deviation, the third row's `## Observed` records
   the difference; the first row's outcome; F-040 has no earlier note.
+- 2026-10-29, `build` (`backlog → in-progress`, `fe824dc`; plan-054's branch merged in, `c438172`):
+  every note reproduced in its own scratch project outside the repository, WingFoil installed from
+  `src/matrix/wingfoil-0.3.1/` and `src/matrix/wingfoil-0.3.0/` (`870bd440`, `cc31d7a8`); the two
+  releases give the same result for each (they differ only in how `workflow next` prints a scaffold
+  step and in the DNA `init` writes). Departures from the Design, none changing a note's claim:
+  F-038's `--set phase=…` is refused too when the type declares no `{phase}` token (exit 1), not
+  accepted as the Design said; F-039 needed a member holding `approver` in the scratch DNA before
+  `memory approve` was accepted; F-041's scenario keeps the scaffold's empty `team.agents` and a
+  member holding `[approver, developer]`. F-039 and F-040 cite spec-017 §4.7 and §4.3, which
+  describe the behaviour each note asks to change.
+- 2026-10-29, the `?` rows (dl-028 W2's test), each reproduced on both releases, all three found
+  documented, so no note is proposed: (1) a candidate that leaves the entry filter before any phase
+  of its sub completes is ignored and the phase is vacuously complete, as spec-017 §4.6 defines
+  ("eligible", "entered", "otherwise ignored"); (2) `W_PHASE_TOKEN_OUT_OF_SCOPE` for a
+  `{task.sprint}` token whose template declares no `sprint` field, a warning spec-003 lists; (3)
+  `E_PHASE_ROLE_UNKNOWN` for a phase role `dna.yaml` does not declare: both 0.3.0 and 0.3.1 refuse
+  it; the difference plan-052 met comes from 0.3.1's `init` scaffold, whose phases now name their
+  roles (0.3.1's CHANGELOG, task-296). Put to the approver for the ruling (Acceptance 3).
+- 2026-10-29: F-038 … F-041 and their ledger rows committed (`b5229e3`); the opening grep counts
+  `New note (task-064).` once in each; privacy grep clean (the notes say "scratch project" as F-036
+  does); the inbox tests pass 13 of 13 (`dist/tests/feedback-note.test.js`,
+  `dist/tests/wingfoil-feedback.test.js`). Mutations, each reverted: F-040 numbered F-039 (3 fail),
+  F-040's ledger kind changed (2), `New note task-064.` (2), F-038's `kind` and `status` swapped
+  (2), F-039's `## Expected` renamed (2).
