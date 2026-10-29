@@ -1,9 +1,10 @@
 # From a pack charter to the pack's first published version (sub-workflow, one iteration per pack).
-# Pack machine (memory.yaml): draft → proposed (gate) → accepted → active.
+# Pack machine (memory.yaml): draft → proposed (gate) → accepted → active. The pack is activated at
+# its first tag, and its retrospective runs after (dl-033).
 name: pack-cycle
 kind: sub
 description: "Charter, author and first-release one pack"
-version: 5
+version: 6
 element: pack
 phases:
   - name: charter
@@ -39,9 +40,6 @@ phases:
   - name: first-release
     description: "Publish the pack's first version, `1.0.0` or later (spec-001 §4)."
     include: pack-release-cycle
-  - name: retrospective
-    description: "Learn from the pack's whole charter-to-release cycle (dl-006 R1)."
-    include: retrospective
   - name: activate
     description: >-
       First version published: the pack becomes active (accepted → active) once its tag
@@ -54,3 +52,12 @@ phases:
       pre:
         - "the tag <catalog pack id>@<version> of this pack's first version is on origin"
         - "catalog.yaml on origin/main lists that version of this pack"
+  - name: retrospective
+    description: >-
+      Learn from the pack's whole cycle, after its activation (dl-006 R1, read with dl-033 O1). One
+      retrospective may cover several packs whose cycles ran together: the approver rules it in the
+      plan that closes the last of them, and the plan that runs it names them. The phase stays
+      required: a pack covered by a shared retrospective completes it with one Execution Note on its
+      charter, added when that retrospective's decision-log is approved and citing it (dl-033 O2).
+      The shared retrospective may also be the periodic one (dl-029).
+    include: retrospective
