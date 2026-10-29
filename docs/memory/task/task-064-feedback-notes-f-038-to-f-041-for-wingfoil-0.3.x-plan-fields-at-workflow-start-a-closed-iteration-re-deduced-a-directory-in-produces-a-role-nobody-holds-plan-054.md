@@ -2,7 +2,7 @@
 id: task-064-feedback-notes-f-038-to-f-041-for-wingfoil-0.3.x-plan-fields-at-workflow-start-a-closed-iteration-re-deduced-a-directory-in-produces-a-role-nobody-holds-plan-054
 type: task
 title: "Feedback notes F-038 to F-041 for WingFoil 0.3.x: plan fields at workflow start, a closed iteration re-deduced, a directory in produces, a role nobody holds (plan-054)"
-status: approved
+status: done
 pack: ""            # tooling task (pack-cycle › retrospective, plan-054 step 4)
 depends_on: []
 tags: ["tooling","feedback"]
