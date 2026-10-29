@@ -131,3 +131,10 @@ Then:
 - 2026-10-29: privacy check of the branch's diff and messages (`main...dl/dl-029-dl-033-actions`):
   no local or scratch path, no private repository or project, no intermediary session. Branch CI
   on `8944bc7`: run 40896323377 `success` (both Node jobs).
+- 2026-10-29: the approver gave the merge OK in chat; `--no-ff` merge into `main`.
+- 2026-10-29, close: merged into `main` (`5631052`), pushed, the branch removed; the branch's CI on
+  `bea8779` (run 40919410096) `success`; `main`'s CI on `5631052` (run 40928296206) `success`.
+  Done: rows 1 … 12 on `main`, the review applied, dl-006's note written, and dl-028, dl-029,
+  dl-031, dl-032 and dl-033 record their actions applied. Owed: the two leftovers (F3.3, F5.2),
+  a row of `docs/owed-items.md` added with this note (dl-031 R2), owner the approver.
+  `active → done`.
