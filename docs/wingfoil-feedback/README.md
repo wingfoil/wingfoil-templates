@@ -67,6 +67,10 @@ sha of the commit it read (WingFoil `COLLABORATION.md` › Credit, task-271), fo
 | [F-035](F-035-packs-cannot-declare-mcp-servers.md) | Packs cannot declare MCP servers for the agents WingFoil launches | request | open | |
 | [F-036](F-036-no-verb-restructures-memory.md) | No verb moves, renames or supersedes an element, and nothing lists the elements that cite one | request | open | |
 | [F-037](F-037-an-iterate-over-phase-is-closed-by-a-later-phase.md) | An iterate_over phase is closed by a later phase, so a candidate added afterwards never runs | request | open | |
+| [F-038](F-038-workflow-start-fills-workflow-and-phase-only-from-declared-tokens.md) | workflow start fills a plan's workflow and phase only from the tokens its type's id_pattern or path declares | request | open | |
+| [F-039](F-039-a-completed-iteration-s-step-returns-when-another-element-matches-its-where.md) | A completed iteration's step returns to the frontier when another element matches its where | request | open | |
+| [F-040](F-040-a-produces-entry-naming-a-directory-without-a-trailing-slash-is-never-satisfied.md) | A produces entry naming a directory without a trailing slash is never satisfied, and nothing says so | gap | open | |
+| [F-041](F-041-a-phase-role-that-no-member-holds-and-no-agent-executes-is-accepted-silently.md) | A phase role that no member holds and no agent executes is accepted, and nothing says so | gap | open | |
 
 ## Context
 
