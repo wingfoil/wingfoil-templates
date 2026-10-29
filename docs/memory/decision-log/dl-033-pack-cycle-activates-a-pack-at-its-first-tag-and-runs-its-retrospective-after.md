@@ -2,7 +2,7 @@
 id: dl-033-pack-cycle-activates-a-pack-at-its-first-tag-and-runs-its-retrospective-after
 type: decision-log
 title: "pack-cycle activates a pack at its first tag and runs its retrospective after"
-status: draft
+status: pending
 tags: ["process","packs","retrospective"]
 ---
 
