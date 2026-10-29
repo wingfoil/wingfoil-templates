@@ -161,3 +161,5 @@ the approver rules on each before any note for it. dl-028 W3: no note for W-14 (
   `dist/tests/wingfoil-feedback.test.js`). Mutations, each reverted: F-040 numbered F-039 (3 fail),
   F-040's ledger kind changed (2), `New note task-064.` (2), F-038's `kind` and `status` swapped
   (2), F-039's `## Expected` renamed (2).
+- 2026-10-29: the approver ruled no note for each of the three `?` rows (documented behaviours, as
+  above); Acceptance 3 met with F-038 … F-041 alone.
