@@ -1,10 +1,10 @@
 # Startable when WingFoil publishes a release.
 # Keeps compat.yaml true and tells which packs a new format or capability affects (dl-002; brought
-# back by the journeys review, dl-005 G8).
+# back by the journeys review, dl-005 G8). Its close starts the periodic retrospective (dl-029).
 name: wingfoil-release-intake
 kind: main
-description: "Record a new WingFoil release in compat.yaml and re-check the active packs"
-version: 4
+description: "Record a new WingFoil release in compat.yaml, re-check the active packs and start the periodic retrospective (dl-029)"
+version: 5
 phases:
   - name: record
     description: >-
@@ -30,8 +30,9 @@ phases:
     approval: { by_role: approver }
   - name: recheck
     description: >-
-      Run the compatibility matrix of every active pack against the new release. A pack the release
-      can still read only gains the release in its computed range at its next publication.
+      Run the compatibility matrix of every active pack against the new release. The computed
+      range of every published version was already recomputed at intake by record (spec-001 §12);
+      this phase checks the active packs on the release that range now includes.
     role: reviewer
   - name: plan-migrations
     description: >-
@@ -42,3 +43,17 @@ phases:
     optional: true
     actions:
       - 'memory.add(type: task)'
+  - name: retrospective-start
+    description: >-
+      At the intake's close (dl-029 T1, T2). The intake's plan records WingFoil's next release
+      planning date as announced, or "not known". It then starts a periodic retrospective, unless a
+      periodic retrospective, or a pack-cycle retrospective whose inventory has the scope
+      "periodic", has closed since the release this intake takes in, or the approver rules in the
+      intake's plan that a release WingFoil holds no planning of its own for (a patch) starts none.
+      On the 0.2.2 pin "starts" means the facilitator adds the retrospective's plan
+      (workflow: retrospective-periodic, workflow and phase filled by editing the draft, W-02). The
+      intake's plan records the retrospective that covers the window and its deadline: before
+      WingFoil's next release planning, or, when the date is not known, within seven days of the
+      intake's close, which the approver may tighten in the intake's plan; a retrospective that
+      covers a patch's window too closes before WingFoil's next release planning.
+    role: facilitator
