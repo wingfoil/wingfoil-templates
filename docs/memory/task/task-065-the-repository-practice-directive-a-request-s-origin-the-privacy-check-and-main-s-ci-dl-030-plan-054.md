@@ -2,7 +2,7 @@
 id: task-065-the-repository-practice-directive-a-request-s-origin-the-privacy-check-and-main-s-ci-dl-030-plan-054
 type: task
 title: "The repository-practice directive: a request's origin, the privacy check and main's CI (dl-030, plan-054)"
-status: in-progress
+status: in-review
 pack: ""            # tooling task (pack-cycle › retrospective, plan-054 step 5)
 depends_on: []
 tags: ["tooling","governance"]
