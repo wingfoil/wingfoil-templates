@@ -292,3 +292,5 @@ or intermediary session); after every commit under `docs/memory/`, `docs/plans/`
   name is the CLI's `Approver:` trailer on the approval commits, as on `main`. Owed after this plan:
   the dl actions plan for dl-029, dl-031 (with dl-028 D1's backlog as the register's first content),
   dl-032 and dl-033; the second reply on dl-030, naming the directive's commit on `main`.
+- 2026-10-29, branch close: CI run 40872819701 on `9a44390`, conclusion `success` (`validate (22.21.0)`,
+  `validate (22.12.0)`). Waiting for the approver's merge OK.
