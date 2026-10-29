@@ -48,8 +48,8 @@ The points below are **proposed**; they become rulings when the approver approve
   trigger takes "the next retrospective".
 - **R2 — Who writes it.** A plan or a task adds the row in the same commit as the note that leaves
   the item; for a pack, a pack-release, a bug or a decision-log, at the latest by the close of the
-  plan that hosts it. The note cites the row. The element that settles an item moves its row to the
-  closed section, with its own id.
+  plan that hosts it. The note, or for a row added later the hosting plan's note, cites the row. The
+  element that settles an item moves its row to the closed section, with its own id.
 - **R3 — Who reads it.** Every retrospective reads the register in `explore` and proposes, for each
   row, keep, assign or drop; the retrospective's decision-log rules them.
 - **R4 — First content.** The table of §8 of the inventory of 2026-10-28, with the rows dl-028 D1
@@ -62,14 +62,14 @@ The points below are **proposed**; they become rulings when the approver approve
   is reserved in prose: a plan names a future element by its purpose, and its number is the one
   `memory add` gives. The inbox's contiguous numbering is this repository's own test (G9, trigger
   W10), not a WingFoil behaviour.
-- **R6 — Where the rules live, so that they survive the adoption.** R1 … R3 are written in the
-  directive `repository-practice` (dl-030), read by every role, the directive's version raised (1.0
-  → 1.1) and its date: `base`'s `retrospective` and templates replace this repository's at W10, its
-  directives do not. With them: the file, `docs/owed-items.md` added to `dna.yaml` ›
-  `paths.governance`, and a line in the templates' Execution Notes comment (plan, task, pack,
-  pack-release, bug, decision-log) while they are this repository's. Applied after approval by the
-  dl actions plan after plan-054, once task-065 has created the directive. Whether the register
-  becomes a Memory type is reconsidered at the adoption (W10).
+- **R6 — Where the rules live, so that they survive the adoption.** R1 … R3 and R5's rule after the
+  pin bump are written in the directive `repository-practice` (dl-030), read by every role, the
+  directive's version raised (1.0 → 1.1) and its date: `base`'s `retrospective` and templates
+  replace this repository's at W10, its directives do not. With them: the file, `docs/owed-items.md`
+  added to `dna.yaml` › `paths.governance`, and a line in the templates' Execution Notes comment
+  (plan, task, pack, pack-release, bug, decision-log) while they are this repository's. Applied
+  after approval by the dl actions plan after plan-054, once task-065 has created the directive.
+  Whether the register becomes a Memory type is reconsidered at the adoption (W10).
 
 ## Execution Notes
 - 2026-10-29: written under plan-054 (`capture`, `decision-log-ingest` hosted there), cited by
@@ -82,3 +82,5 @@ The points below are **proposed**; they become rulings when the approver approve
   `docs/owed-items.md` (at W10 any file in `docs/retrospectives/` satisfies `explore`) and added to
   `paths.governance`, R2's two clauses made one rule, the directive's version raised, R4 lists every
   row dl-028 D1 and D2 add.
+- 2026-10-29: final re-review: approve after amendments, nothing blocking; applied: R5's rule after
+  the pin bump also in the directive, who cites a row added later.
