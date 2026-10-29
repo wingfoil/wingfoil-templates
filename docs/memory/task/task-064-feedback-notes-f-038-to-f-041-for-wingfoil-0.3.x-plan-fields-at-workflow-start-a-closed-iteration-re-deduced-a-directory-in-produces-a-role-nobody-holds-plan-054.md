@@ -171,3 +171,5 @@ the approver rules on each before any note for it. dl-028 W3: no note for W-14 (
   reproduced again by the reviewer on both releases, matching. Applied: F-038's reading of spec-017
   §7.1 and of `phase`'s value, F-039's §4.7 wording, F-041's Expected (the JSON already reports
   `members: []`) and two excerpt marks. Inbox tests 13 of 13.
+- 2026-10-29: CI run 40852678262 on `d0fb51b`, conclusion `success` (`validate (22.21.0)`, `validate
+  (22.12.0)`); the earlier run on `d069122` was cancelled by that push. `in-progress → in-review`.
