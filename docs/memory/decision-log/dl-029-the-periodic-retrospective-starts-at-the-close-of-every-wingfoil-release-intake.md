@@ -2,7 +2,7 @@
 id: dl-029-the-periodic-retrospective-starts-at-the-close-of-every-wingfoil-release-intake
 type: decision-log
 title: "The periodic retrospective starts at the close of every WingFoil release intake"
-status: pending
+status: approved
 tags: ["process","retrospective","wingfoil"]
 ---
 
