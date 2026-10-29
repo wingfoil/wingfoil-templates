@@ -393,4 +393,24 @@ That is the evidence for G2.
 
 ## Points to analyse (additional-points)
 
-Filled at the approver's checkpoint.
+Asked by the approver on 2026-10-29, at the checkpoint:
+
+- **P1 — Read the candidates against the adoption.** Consider this repository's adoption of the
+  packs and its WingFoil pin at 0.3.1 (W10), and keep as changes only the candidates that adoption
+  would not fix. Reading (`base` and `software` replace `retrospective`, `retrospective-periodic`,
+  `decision-log-ingest` and `bug-ingest`, and add `governance-evolution`; the other workflows and
+  the inbox test stay this repository's own):
+  - fixed by the adoption: G11 (`software`'s `bug` type has `resolved` and `closed`); W-14 (§4.4);
+    W-02 for plans if the repository takes `{workflow}-{phase}-plan`; the dl actions plans
+    (`governance-evolution`);
+  - partly fixed: G7 (0.3.x has `memory amend`, and `decision-log` and `tech-spec` are
+    `amendable` in `base` and `software`; the `pack` type, the rulings held in plans and a rule on
+    amend versus note remain);
+  - not fixed: G1, G2 (debts only: 0.3.x does not reuse a number taken on another branch), G3,
+    G4, G5, G6, G8, G9, G10, G12.
+- **P2 — What becomes a decision-log now:** G1 (dl-029), G3 with G5 (dl-030), G2 for debts only,
+  G4 with G10, G6. G7, G8, G9 and G12 go to the debts table with the trigger "W10", as G11, fixed
+  there.
+- **P3 — Two risks for the adoption's plan**, the same defects as the period's: this repository's
+  custom `sw-life-cycle` shares its name with `software`'s (bug-007's pattern), and `software`'s
+  `tech-lead` needs a holder in this repository's DNA (§2).
