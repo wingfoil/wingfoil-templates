@@ -295,3 +295,9 @@ or intermediary session); after every commit under `docs/memory/`, `docs/plans/`
 - 2026-10-29, branch close: CI run 40872819701 on `9a44390`, conclusion `success` (`validate (22.21.0)`,
   `validate (22.12.0)`). Waiting for the approver's merge OK.
 - 2026-10-29: the approver gave the merge OK in chat; `--no-ff` merge into `main`.
+- 2026-10-29, close: merged into `main` (`d51a71a`), pushed, the branch removed; `main`'s CI on
+  `d51a71a` (run 40877027457) `success`. The second reply on dl-030 sent outside the repository,
+  naming the directive's commit `3b7aa96` and the merge. Done: the inventory committed; dl-028 and
+  every governance decision-log (dl-029 … dl-033) approved; task-064 `done`, its notes on `main`
+  before 2026-11-06; task-065 `done`; the notes on dl-006 and the three charters written; the
+  notices sent. Owed: the dl actions plan for dl-029, dl-031, dl-032 and dl-033. `active → done`.
