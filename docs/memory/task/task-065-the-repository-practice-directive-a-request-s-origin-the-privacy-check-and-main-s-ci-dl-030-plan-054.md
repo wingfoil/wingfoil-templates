@@ -101,3 +101,5 @@ already sit on plan-054's branch, which then merges to `main` on its own (plan-0
 - 2026-10-29: clean clones on Node.js 22.21.0 and 22.12.0, both at `3b7aa96`: `npm ci`, `npm test`
   (1027 of 1027), `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`, `index --
   --check`, `check:runs` and `workflow list` exit 0.
+- 2026-10-29: CI run 40866324823 on `9932d70`, conclusion `success` (`validate (22.21.0)`, `validate
+  (22.12.0)`). `in-progress → in-review`.
