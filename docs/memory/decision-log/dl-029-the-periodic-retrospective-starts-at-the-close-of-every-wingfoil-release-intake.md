@@ -83,3 +83,7 @@ The points below are **proposed**; they become rulings when the approver approve
   Option 4's reason, the patch-release case.
 - 2026-10-29: re-review: approve after amendments, nothing blocking; applied: T2's patch case
   named in T1 and stated as no retrospective starting, the seven-day bound's wording.
+- 2026-10-29, plan-055: actions applied (T3): `wingfoil-release-intake` v5, the phase
+  `retrospective-start` and `recheck`'s wording (`08ceb72`); `retrospective-periodic` v2, its
+  header (`28a27c6`); dl-006's note. T5's interim rule (the intake plan's close says whether a
+  periodic retrospective is due) ends when plan-055 is merged into `main`.
