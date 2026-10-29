@@ -25,3 +25,5 @@ line: ""            # the maintained line: current, or <major>.x for an N-1 main
 <!-- The tag (<catalog pack id>@<version>, dl-004), the commit, the catalog.yaml digest. -->
 
 ## Execution Notes
+
+<!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->

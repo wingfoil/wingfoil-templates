@@ -30,3 +30,5 @@ conflicts: []       # pack ids that cannot be composed with this one
      its WingFoil range is computed from compat.yaml, never written here. -->
 
 ## Execution Notes
+
+<!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
