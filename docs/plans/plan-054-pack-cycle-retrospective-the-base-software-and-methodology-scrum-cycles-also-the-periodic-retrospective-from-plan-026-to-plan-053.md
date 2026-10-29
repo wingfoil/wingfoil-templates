@@ -262,3 +262,13 @@ or intermediary session); after every commit under `docs/memory/`, `docs/plans/`
   Each reviewed independently: approve after amendments, one blocking finding (dl-029's skip
   condition); amended (`939e1a5`); re-reviews running. task-064's body written on
   `task/task-064-feedback-notes` (`2a86e01`, `0682032`), its review running.
+- 2026-10-29, `capture` (continued): the re-reviews of dl-028 … dl-033 (approve after amendments;
+  dl-032 approve) and a final re-review of dl-031 and dl-033, whose decisions changed (the register
+  moved to `docs/owed-items.md`, out of the directory `base`'s `explore` reads at W10; `pack-cycle`'s
+  `retrospective` kept required, a covered pack completing it by reference), all applied
+  (`593a41f`, `112b99c`, `9ebfbd5`); dl-033's last fixes were applied while `pending` after its
+  submit. All six submitted `pending` (`de921c2` … `fc34104`). dl-030's first reply sent outside
+  the repository, naming it and `63b1e16`. task-064's body reviewed (approve after amendments, one
+  blocking finding: the `?` rows' timing), re-reviewed (approve after amendments) and amended; it
+  no longer waits for the `?` rulings for F-038 … F-041; submitted `pending` (`23bd07b`) on its
+  branch. Next: the approver's rulings (step 5) and task-064's backlog acceptance.
