@@ -264,11 +264,31 @@ or intermediary session); after every commit under `docs/memory/`, `docs/plans/`
   `task/task-064-feedback-notes` (`2a86e01`, `0682032`), its review running.
 - 2026-10-29, `capture` (continued): the re-reviews of dl-028 … dl-033 (approve after amendments;
   dl-032 approve) and a final re-review of dl-031 and dl-033, whose decisions changed (the register
-  moved to `docs/owed-items.md`, out of the directory `base`'s `explore` reads at W10; `pack-cycle`'s
-  `retrospective` kept required, a covered pack completing it by reference), all applied
-  (`593a41f`, `112b99c`, `9ebfbd5`); dl-033's last fixes were applied while `pending` after its
-  submit. All six submitted `pending` (`de921c2` … `fc34104`). dl-030's first reply sent outside
+  moved to `docs/owed-items.md`, out of the directory `base`'s `explore` reads at W10;
+  `pack-cycle`'s `retrospective` kept required, a covered pack completing it by reference), all
+  applied (`593a41f`, `112b99c`, `9ebfbd5`); dl-033's last fixes were applied while `pending` after
+  its submit. All six submitted `pending` (`de921c2` … `fc34104`). dl-030's first reply sent outside
   the repository, naming it and `63b1e16`. task-064's body reviewed (approve after amendments, one
-  blocking finding: the `?` rows' timing), re-reviewed (approve after amendments) and amended; it
-  no longer waits for the `?` rulings for F-038 … F-041; submitted `pending` (`23bd07b`) on its
-  branch. Next: the approver's rulings (step 5) and task-064's backlog acceptance.
+  blocking finding: the `?` rows' timing), re-reviewed (approve after amendments) and amended; it no
+  longer waits for the `?` rulings for F-038 … F-041; submitted `pending` (`23bd07b`) on its branch.
+  Next: the approver's rulings (step 5) and task-064's backlog acceptance.
+- 2026-10-29, `approve`: the approver approved dl-028 … dl-033. The first reply outside the
+  repository on dl-030 was sent at its submit.
+- 2026-10-29, task-064 (hosted): F-038 … F-041 written, each reproduced with WingFoil alone on 0.3.0
+  and 0.3.1 with the same result; the three `?` rows of dl-028 W2 reproduced and found documented
+  (spec-017 §4.6, spec-003's `W_PHASE_TOKEN_OUT_OF_SCOPE`, 0.3.1's `init` scaffold), and the
+  approver ruled no note for each. Body reviewed (one blocking finding, fixed) and re-reviewed;
+  build reviewed (approve after amendments, the reviewer reproducing every note); clean clones on
+  both Node.js versions, 1027 of 1027; branch CI `success` (run 40852678262); approved, merged
+  (`26fe4d6`), `done`.
+- 2026-10-29, task-065 (hosted, added after task-064's merge, W-14): the directive
+  `repository-practice` 1.0, global in `.wingfoil/roles.yaml` (version 3), holding dl-030 P1 … P3;
+  body reviewed (approve after amendments), build reviewed (approve); clean clones 1027 of 1027;
+  branch CI `success` (run 40866324823); approved, merged (`a5fc7bc`), `done`.
+- 2026-10-29, step 6: the Execution Note on dl-006 (R1 met for the three packs, R3 for the period)
+  and one on each charter (`pack-foundation-base`, `pack-foundation-software`,
+  `pack-methodology-scrum`). Privacy check of the branch's diff against `main` and of its commit
+  messages: no local path, private repository, private project or intermediary session; the only
+  name is the CLI's `Approver:` trailer on the approval commits, as on `main`. Owed after this plan:
+  the dl actions plan for dl-029, dl-031 (with dl-028 D1's backlog as the register's first content),
+  dl-032 and dl-033; the second reply on dl-030, naming the directive's commit on `main`.

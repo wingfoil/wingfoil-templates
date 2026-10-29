@@ -273,3 +273,7 @@ For the approver's acceptance:
 - 2026-10-28, plan-052: **`base` 2.0.1 published** (patch, the README: bug-007 and bug-008): tag
   `base@2.0.1` at `abc36c0`, catalog commit `8d4adb3`, range `>=0.3.0 <=0.3.1`, CI on the tag and
   on `main` `success`, CB-6's live check passed (prel-003). 1.0.0 and 2.0.0 stay listed, frozen.
+- 2026-10-29, plan-054: `pack-cycle`'s `retrospective` phase ran for this pack, shared with the other
+  two first-release cycles (dl-006's notes of plan-044 and plan-052): inventory
+  `docs/retrospectives/2026-10-28-periodic-friction-inventory.md`, decision-log dl-028 (approved
+  2026-10-29). The body stays as approved.

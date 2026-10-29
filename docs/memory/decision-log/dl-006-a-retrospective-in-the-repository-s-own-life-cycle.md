@@ -92,3 +92,11 @@ Configuration changes this decision implies, applied after approval:
   `methodology/scrum`: both charters activated at their first tag, and `pack-cycle`'s
   `retrospective` runs once for the three cycles (`base`, `software`, `methodology/scrum`) in its
   own plan after plan-052. The body stays as approved.
+- 2026-10-29, plan-054: **R1** met for `base`, `software` and `methodology/scrum`: `pack-cycle`'s
+  `retrospective` ran once for the three cycles, its inventory
+  `docs/retrospectives/2026-10-28-periodic-friction-inventory.md` and its decision-log dl-028
+  (approved 2026-10-29). **R3** met for the period 2026-10-12 … 2026-10-28: the same retrospective
+  counts as the periodic one (scope `periodic`). Two related rulings of the same date, applied
+  later by a dl actions plan: dl-029 ties R3 to the close of every `wingfoil-release-intake`, and
+  dl-033 activates a pack at its first tag with its `retrospective` after. The body stays as
+  approved.

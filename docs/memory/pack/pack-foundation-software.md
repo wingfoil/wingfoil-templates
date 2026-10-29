@@ -282,3 +282,7 @@ For the approver's acceptance:
   active` (plan-052 step 11, as plan-044 ruling B); the `retrospective` of `pack-cycle` runs after
   this plan, for the three cycles. The owed notice is sent: `end-of-life.approve` and the step-key
   mapping to WingFoil, through the coordinating session (plan-052 step 12).
+- 2026-10-29, plan-054: `pack-cycle`'s `retrospective` phase ran for this pack, shared with the other
+  two first-release cycles (dl-006's notes of plan-044 and plan-052): inventory
+  `docs/retrospectives/2026-10-28-periodic-friction-inventory.md`, decision-log dl-028 (approved
+  2026-10-29). The body stays as approved.
