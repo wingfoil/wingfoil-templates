@@ -50,20 +50,21 @@ The points below are **proposed**; they become rulings when the approver approve
   `draft` pack) stays out of scope, in dl-031's register.
 - **O2 — A shared retrospective.** One `retrospective` may cover several packs whose cycles ran
   together: the approver rules it in the plan that closes the last of them, and the plan that runs
-  it names them; each pack's charter records it in an Execution Note. In `pack-cycle` v6 the
-  `retrospective` phase stays required; a pack covered by a shared retrospective completes it with
-  an Execution Note on its charter citing that retrospective's approved decision-log. It may also be
-  the periodic retrospective (dl-029).
+  it names them; each pack's charter records it in one Execution Note, added when that
+  retrospective's decision-log is approved. In `pack-cycle` v6 the `retrospective` phase stays
+  required; a pack covered by a shared retrospective completes it with that note, which cites the
+  approved decision-log. It may also be the periodic retrospective (dl-029).
 - **O3 — dl-006 R1** reads with O1 and O2: an Execution Note on dl-006 says so, and supersedes the
   notes of plan-044 (ruling B) and plan-052 (ruling 6) as the reading of R1's order; those notes
   stay, and the body stays as approved.
 - **O4 — Applied after approval** by the dl actions plan after plan-054: `pack-cycle.yaml` v5 → v6,
-  one bump with dl-032 E5 (the phase order, `retrospective`'s description naming the shared case);
-  `retrospective.yaml`'s header comment ("after a pack's first release" → "after its activation");
-  the note on dl-006. Unchanged: `sw-life-cycle.yaml` (its `pack-delivery` selection and its header
-  stay true) and the three charters (their notes already record the order the packs followed). No
-  run on 0.3.x is owed for v6 now: it is this repository's own workflow, followed by hand on the
-  0.2.2 pin; its reordered phases are checked on the engine at the pin bump (a row in dl-031's
+  one bump with dl-032 E5 (the phase order, `retrospective`'s description naming the shared case and
+  citing dl-033 O2); `retrospective.yaml`'s header comment ("after a pack's first release" → "after
+  its activation"); the note on dl-006. Unchanged: `sw-life-cycle.yaml` (its `pack-delivery`
+  selection and its header stay true) and the three charters (their notes already record the order
+  the packs followed). No run on 0.3.x is owed for v6 now: it is this repository's own workflow,
+  followed by hand on the 0.2.2 pin; its reordered phases, and whether a covered pack can complete
+  `retrospective` by reference (O2), are checked on the engine at the pin bump (a row in dl-031's
   register, trigger W10).
 
 ## Execution Notes
@@ -76,3 +77,6 @@ The points below are **proposed**; they become rulings when the approver approve
 - 2026-10-29: re-review: approve after amendments, nothing blocking; applied: `retrospective` stays
   required and a covered pack completes it by reference (not `optional`, which would weaken dl-006
   R1 for every pack), the engine check at the pin bump, O3's rulings named, the shared bump.
+- 2026-10-29: final re-review: approve after amendments, nothing blocking; applied while `pending`:
+  one charter note per pack, the engine check covers completion by reference, the description cites
+  O2.
