@@ -34,18 +34,19 @@ Four notes, numbered contiguously after F-037 (`assertNumbering`):
   from F-018, F-034 and F-037.
 - **F-040 (`gap`): a directory in `produces` without a trailing `/` is read as a file and never
   satisfied**, with no diagnostic at load; `workflow finalize --step` and `workflow end` refuse
-  (bug-006).
+  (bug-006). No earlier note covers it.
 - **F-041 (`gap`): a phase role declared in the DNA but held by no member and named in no agent's
   `executes_as` is accepted** at load and at run time (`software`'s `tech-lead`; plan-051 ›
   recheck, plan-052 ruling 5). Distinct from F-020 (`executes_as` must name declared roles) and
   F-026 (one role per phase).
 
 dl-028 W2: the inventory's three `?` rows (a candidate that leaves the `where` before any of its
-phases completes; a token warning `W_PHASE_TOKEN_OUT_OF_SCOPE` when the template declares no such
-field; 0.3.1 refusing a phase role that the DNA does not declare, `E_PHASE_ROLE_UNKNOWN`, which
-0.3.0 accepts, while 0.3.1's CHANGELOG says "nothing breaks") are reproduced first; the approver
-rules on each before the notes' commit. dl-028 W3: no note for W-14 (fixed in 0.3.0 and 0.3.1) or
-for `init`'s `custom/` workflows (F-007).
+phases completes is skipped; a token warning `W_PHASE_TOKEN_OUT_OF_SCOPE` when the template declares
+no such field; 0.3.1 refusing a phase role that the DNA does not declare, `E_PHASE_ROLE_UNKNOWN`,
+which 0.3.0 accepts, while 0.3.1's CHANGELOG says "nothing breaks") are reproduced; dl-028 W2's test
+decides each (a defect, not a behaviour that WingFoil's specification or CHANGELOG documents), and
+the approver rules on each before any note for it. dl-028 W3: no note for W-14 (fixed in 0.3.0 and
+0.3.1) or for `init`'s `custom/` workflows (F-007).
 
 ## Acceptance
 
@@ -65,11 +66,15 @@ for `init`'s `custom/` workflows (F-007).
    configuration, never this repository's packs); the same commands on
    `src/matrix/wingfoil-0.3.0/` give the same result, recorded in the Execution Notes; a difference
    goes to the approver (dl-019) before the note says anything about it.
-3. **The `?` rows** (dl-028 W2): each reproduced the same way, in reduced form, before the notes'
-   commit, and put to the approver at once. A note the approver rules is written as F-042 onward,
-   in its own commit after F-041, with its own ledger row, recorded as a dl-019 Execution Note. If
-   no ruling has come by 2026-11-05, F-038 … F-041 land alone and the `?` rows go to a later task;
-   the Execution Notes record, for each row, note or no note and why.
+3. **The `?` rows** (dl-028 W2): each reproduced the same way, in reduced form, and checked against
+   W2's test: a defect, not a behaviour that WingFoil's specification or CHANGELOG documents; the
+   reproduction and the reading go to the approver, who rules on each. F-038 … F-041 do not wait for
+   these rulings: they are committed once reproduced. A note the approver rules is written as F-042
+   onward, in its own commit after F-041, with its own ledger row, following Acceptance 1, except
+   that the third row's `## Observed` records the difference between 0.3.0 and 0.3.1 instead of the
+   same result. A row with no ruling by 2026-11-03 goes to a later task, a deviation from dl-028 W2
+   recorded under dl-019, so that the review, approval and merge fit before 2026-11-05; the
+   Execution Notes record, for each row, note or no note and why.
 4. **No private content:** no note names or describes a private project, a local path, a non-public
    repository, the maintainer's names or an intermediary session (dl-030 P1, P2, applied since
    2026-10-28); WingFoil references are public ids, tags or commits.
@@ -128,3 +133,7 @@ for `init`'s `custom/` workflows (F-007).
   design, the opening's task number checked by grep, the notes each name what they are distinct
   from, version and commit in `## Observed`, F-040's and F-038's runs completed, mutations for every
   inbox assertion, privacy and ledger details, the Context's wording.
+- 2026-10-29: re-review: approve after amendments, nothing blocking; applied: F-038 … F-041 no
+  longer wait for the `?` rulings, which gate only F-042 onward, with a cut-off at 2026-11-03;
+  dl-028 W2's test stated, a deferral recorded as a deviation, the third row's `## Observed` records
+  the difference; the first row's outcome; F-040 has no earlier note.
