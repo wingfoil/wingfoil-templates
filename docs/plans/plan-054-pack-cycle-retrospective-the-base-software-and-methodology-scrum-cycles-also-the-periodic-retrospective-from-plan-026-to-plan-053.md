@@ -294,3 +294,4 @@ or intermediary session); after every commit under `docs/memory/`, `docs/plans/`
   dl-032 and dl-033; the second reply on dl-030, naming the directive's commit on `main`.
 - 2026-10-29, branch close: CI run 40872819701 on `9a44390`, conclusion `success` (`validate (22.21.0)`,
   `validate (22.12.0)`). Waiting for the approver's merge OK.
+- 2026-10-29: the approver gave the merge OK in chat; `--no-ff` merge into `main`.
