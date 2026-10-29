@@ -50,9 +50,9 @@ $ wingfoil workflow status                                 # excerpt
     frontier:
       - tag.tag (tech-lead; missing: produces)                                   # exit 0
 $ git add docs/tag.md && git commit -m tag                 # docs/tag.md written first
-$ wingfoil workflow next
+$ wingfoil workflow next                                   # excerpt
 no next step: workflow 'tag' is complete                                         # exit 0
-$ wingfoil workflow end tag-1-plan
+$ wingfoil workflow end tag-1-plan                         # excerpt
 ended tag (tag-1-plan)                                                           # exit 0
 ```
 
@@ -62,7 +62,7 @@ For a role a member holds, `workflow next` prints `role: approver — held by Te
 ## Expected
 
 The step says that nobody holds its role, as an approval's routing error does: `workflow next` and
-`workflow status` print `held by nobody` (and `--format json` carries it) for a role that no member
-holds and no agent executes as; or `workflow list` warns once per such role used by a phase. A fresh
-`init` declares roles before anyone holds them, so a warning at the step is less noisy than one at
-load.
+`workflow status` print `held by nobody` for a role that no member holds and no agent executes as,
+as their `--format json` already implies (`"members": []`, `"agentRole": false`); or `workflow list`
+warns once per such role used by a phase. A fresh `init` declares roles before anyone holds them, so
+a warning at the step is less noisy than one at load.

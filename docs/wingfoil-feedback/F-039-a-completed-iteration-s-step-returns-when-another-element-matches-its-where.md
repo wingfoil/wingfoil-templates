@@ -96,6 +96,6 @@ scope (a periodic retrospective) leaves the token unresolved (`W_UNRESOLVED_TOKE
 
 Request, for WingFoil's release planning and not a commitment, either of:
 1. a completed iteration's steps are not deduced again: an element that matches later is reported as
-   `late`, as §4.7 does for an `iterate_over` phase closed by a later phase; or
+   `late`, as §4.7 does for a live-query phase closed by a later phase; or
 2. a `where` key that applies only when an element is in scope and is skipped otherwise, so that one
    sub can bind its selection to its iteration and still run where nothing is in scope.

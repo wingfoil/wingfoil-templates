@@ -9,7 +9,9 @@ answered_by: []
 
 New note (task-064). From this repository's bug-005 (plan-049, plan-054's retrospective): a project
 whose plan type keeps a numbered id (`plan-{n}-{slug}`) and requires `workflow` and `phase` cannot
-start a workflow without editing the plan by hand. WingFoil behaves as its spec-017 §7.1 says; this
+start a workflow without editing the plan by hand. WingFoil's spec-017 §7.1 derives `workflow` and
+`phase` as tokens of the plan type's `id_pattern` or `path` (the scaffold's
+`{workflow}-{phase}-plan`) and does not say what `start` does for a type that declares neither; this
 is a request. Distinct from F-011 (`memory add --set` fills only id tokens): here the verb is
 `workflow start`.
 
@@ -37,8 +39,9 @@ error: --set phase: memory type 'plan' has no token {phase} in its id_pattern or
 
 The plan is committed (`wf(plan): add plan-001-decision-log-ingest`) and left `draft`. With the
 scaffold's own `plan` type (`{workflow}-{phase}-plan`, path `docs/memory/plan/{scope}/{id}.md`),
-`wingfoil workflow start bug-ingest` exits 0 and the plan reads `workflow: "bug-ingest"`,
-`phase: "1"`: `phase` takes the instance number when the token is declared.
+`wingfoil workflow start bug-ingest` exits 0 and the plan reads `workflow: "bug-ingest"`, `phase:
+"1"`: `phase` is filled when the token is declared (here `1`, §7.1's value when no element is bound
+or in context).
 
 ## Expected
 
