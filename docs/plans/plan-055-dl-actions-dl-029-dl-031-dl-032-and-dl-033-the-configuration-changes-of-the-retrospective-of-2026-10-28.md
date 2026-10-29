@@ -103,3 +103,31 @@ Then:
   closed, no duplicate row, sort order), row 1's missing parts of dl-029 T1 … T3, the leftovers grep
   runnable and covering spec-001, "Why now" as dl-029 T5, dl-028's note, the directive's title and
   scope, the reading list.
+- 2026-10-29: submitted (`362006e`, `main`'s CI on it run 40893792498 `success`); branch
+  `dl/dl-029-dl-033-actions` from it. Rows 1 … 12: `08ceb72`, `28a27c6`, `f3fb891`, `7610860`,
+  `503a77c`, `e2c4d31`, `9ec6f48`, `383d79a`, `aba967d`, `b30989d`, `0effabd`, `1c1722b`; after
+  each, `workflow list` and `npm run lint` exit 0, and the privacy check of the staged lines and
+  the message found nothing. Deviation in row 8: §8's `scrum` charter row is two rows, as its two
+  open points have different owners and triggers.
+- 2026-10-29: independent review of the branch: approve after amendments, one blocking finding
+  (§8's row on dl-026's stale Consequences missing from the register); applied with the others in
+  `03cb4bc`: dl-031 R2 stated in full in the register, all of dl-032 E2 in `charter`, the case of a
+  pack with no `main` in `validate`, `recheck`'s range wording, dl-029's note on T5. Re-review:
+  approve, one nit applied (`8944bc7`). No fix changed a rule.
+- 2026-10-29: checks from clean clones of `8944bc7` on Node.js 22.21.0 and 22.12.0: `npm ci`,
+  `npm run lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`, `index -- --check`,
+  `check:runs` and `workflow list` exit 0; `directives list --format json` exits 0 with
+  `"warnings": []`, `repository-practice` global; `npm test` exits 0, 1027 passed, 0 failed, on
+  each. Run in parallel, the two suites failed one to two tests each (the `check:runs` tests that
+  no scratch repository is left in the system temporary directory, which saw the other clone's);
+  run one after the other, both pass.
+- 2026-10-29: leftovers grep (`.wingfoil/`, `docs/` outside `docs/memory/` but with
+  `docs/memory/tech-spec/`, outside `docs/plans/` and `docs/retrospectives/`, the READMEs): one
+  hit contradicts dl-032 E3, `docs/01_vision/06_features.md` F3.3 (validation is only `workflow
+  list`, `dna show` and `directives list`); F5.2 describes `wingfoil-release-intake` without
+  `retrospective-start` (incomplete, not contradictory). Both go to the approver, not edited here.
+  The other hits (spec-001 §12 and its notes, `wingfoil-cli` W-01, F-017) are records of checks
+  run, not rules.
+- 2026-10-29: privacy check of the branch's diff and messages (`main...dl/dl-029-dl-033-actions`):
+  no local or scratch path, no private repository or project, no intermediary session. Branch CI
+  on `8944bc7`: run 40896323377 `success` (both Node jobs).
