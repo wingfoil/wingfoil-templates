@@ -2,7 +2,7 @@
 id: plan-055-dl-actions-dl-029-dl-031-dl-032-and-dl-033-the-configuration-changes-of-the-retrospective-of-2026-10-28
 type: plan
 title: "dl actions: dl-029, dl-031, dl-032 and dl-033, the configuration changes of the retrospective of 2026-10-28"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "rule"
 tags: ["process","dl-actions","retrospective"]
