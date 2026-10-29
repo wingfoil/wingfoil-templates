@@ -2,7 +2,7 @@
 id: plan-054-pack-cycle-retrospective-the-base-software-and-methodology-scrum-cycles-also-the-periodic-retrospective-from-plan-026-to-plan-053
 type: plan
 title: "pack-cycle retrospective: the base, software and methodology/scrum cycles, also the periodic retrospective from plan-026 to plan-053"
-status: active
+status: done
 workflow: "pack-cycle"
 phase: "retrospective"
 tags: ["process","retrospective","M2"]
