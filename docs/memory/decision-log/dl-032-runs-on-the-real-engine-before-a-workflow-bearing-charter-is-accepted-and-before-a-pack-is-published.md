@@ -2,7 +2,7 @@
 id: dl-032-runs-on-the-real-engine-before-a-workflow-bearing-charter-is-accepted-and-before-a-pack-is-published
 type: decision-log
 title: "Runs on the real engine before a workflow-bearing charter is accepted and before a pack is published"
-status: draft
+status: pending
 tags: ["process","packs","validation"]
 ---
 
