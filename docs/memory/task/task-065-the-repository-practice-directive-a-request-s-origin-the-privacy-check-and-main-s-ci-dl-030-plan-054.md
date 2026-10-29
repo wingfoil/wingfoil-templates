@@ -83,3 +83,21 @@ already sit on plan-054's branch, which then merges to `main` on its own (plan-0
   the files are written by hand, the privacy check of the branch's diff and commit messages, the
   rules without dl-030's provenance remarks, the layout pinned, the build step, P3 kept and the
   name.
+- 2026-10-29, `build` (`backlog → in-progress`): the directive and the `roles.yaml` entry written by
+  hand in one commit (`3b7aa96`), as the Design says (`wingfoil-cli` rules 2 and 4): `directive
+  create` would commit a placeholder scaffold on its own, and `directive assign` cannot add to
+  `global:`. Rule 2 also checks the commit message: dl-030 P1 counts it among the texts, and P2's
+  "Texts cite only public elements" covers it. `directives list --format json` exits 0 with
+  `"warnings": []` and lists `directives/custom/repository-practice.md` with `"global": true`,
+  `"assignment": "global (all roles)"`; `workflow list` and `lint` exit 0. Mutation, reverted: with
+  the `roles.yaml` entry removed, the command still exits 0 with `"warnings": []`, and the entry
+  reads `"global": false`, `"assignment": "unassigned"`. Privacy grep of the commit: the only hit is
+  the word "scratch" in rule 2's own text.
+- 2026-10-29: independent build review: approve, three nits; applied the two on these notes: rule
+  2's commit-message check explained by P1 and P2, and the CLI's `Approver:` trailer on the
+  `wf(task): approve` commits (WingFoil writes it, established on `main`) as the only name in the
+  branch's commit messages, outside Acceptance 4's scope. Rule 3's passive "is read" kept: the role
+  that pushes reads it, as plan-045 and every close since.
+- 2026-10-29: clean clones on Node.js 22.21.0 and 22.12.0, both at `3b7aa96`: `npm ci`, `npm test`
+  (1027 of 1027), `lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`, `index --
+  --check`, `check:runs` and `workflow list` exit 0.
