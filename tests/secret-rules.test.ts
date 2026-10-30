@@ -81,3 +81,29 @@ describe('looksLikeSecret and entropy', () => {
     assert.equal(entropy('abcd'), 2);
   });
 });
+
+describe('a pack\'s raw YAML, before substitution (task-066, plan-057)', () => {
+  it('emits no Node.js warning for an unquoted parameter used as a value', async () => {
+    const warnings: string[] = [];
+    const listener = (warning: Error): void => { warnings.push(warning.message); };
+    process.on('warning', listener);
+    try {
+      const text = 'format: 1\ntypes:\n  task:\n    states:\n      limits:\n'
+        + '        in-progress: {{wip_in_progress}}\n        in-review: {{wip_in_review}}\n';
+      assert.deepEqual(secretProblems('packs/x/fragments/memory.yaml', text), []);
+      // Node.js emits the 'warning' event on the next tick.
+      await new Promise((resolve) => setImmediate(resolve));
+      assert.deepEqual(warnings, []);
+    } finally {
+      process.off('warning', listener);
+    }
+  });
+
+  it('scans the whitespace tokens of a file holding an alias, as before', () => {
+    // As tokens, `[<value>,x]` reads `<value>,x`, which is no secret; its scalar would be one.
+    const value = join(ALNUM, 'AbC123');
+    assert.equal(looksLikeSecret(value), true);
+    assert.deepEqual(secretProblems('packs/x/fragments/dna.yaml',
+      `format: 1\na: &x 1\nb: *x\nc: [${value},x]\n`), []);
+  });
+});

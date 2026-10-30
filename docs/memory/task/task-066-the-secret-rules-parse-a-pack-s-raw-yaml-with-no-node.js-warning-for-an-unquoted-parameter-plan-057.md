@@ -2,7 +2,7 @@
 id: task-066-the-secret-rules-parse-a-pack-s-raw-yaml-with-no-node.js-warning-for-an-unquoted-parameter-plan-057
 type: task
 title: "The secret rules parse a pack's raw YAML with no Node.js warning for an unquoted parameter (plan-057)"
-status: backlog
+status: approved
 pack: ""            # tooling task (tooling-delivery, plan-057 point 2)
 depends_on: []
 tags: ["tooling","lint","kanban"]
@@ -68,7 +68,27 @@ criterion's "no warning" needs no exception.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-066-secret-rules-warning` from `main` (`c3cd768`). A tooling task (dl-018 R1–R3).
+
+**`src/secret-rules.ts`:** `yamlStrings` stops calling the shared `parseYaml`. It parses with the
+`yaml` package's `parseAllDocuments` and the same options (`uniqueKeys: true`,
+`prettyErrors: false`), and returns `undefined`, so that the whitespace tokens are scanned as
+today, when the text holds no document or more than one, when the document has an error, or when
+it holds an alias (today refused by `toJS({ maxAliasCount: 0 })`). Otherwise it walks the
+document's scalars as today; it never calls `toJS`, which is what stringifies a collection key and
+warns. `src/yaml-load.ts` is unchanged.
+
+**Tests, red first** (one commit, on `main`'s `src/secret-rules.ts`):
+- `tests/secret-rules.test.ts`: the async no-warning case (Acceptance 3) on a `memory.yaml`
+  fragment whose `limits` hold `in-progress: {{wip_in_progress}}`; the alias case of Acceptance 2
+  (a file with `a: &x 1`, `b: *x` and the line `c: [<value>,x]`, `<value>` built at run time as
+  the suite's other values: no finding, the tokens path), green on `main` and after, pinning the
+  fallback.
+- `tests/check-packs.test.ts`: a tree from `tests/support/pack-tree.ts` (the clean foundation and
+  `kanban`) whose `base` declares an integer parameter and uses it unquoted as a limit in its
+  `memory.yaml` fragment; the lint's CLI spawned with `spawnSync` on it: exit 0, stderr empty.
+
+Then the fix; green; the owed row moved to Closed.
 
 ## Execution Notes
 
@@ -78,3 +98,25 @@ criterion's "no warning" needs no exception.
   (aliases, several documents), the scratch copy's expected lint lines, the wording of the flow map,
   `spawnSync`.
 - 2026-10-30: focused re-review: approve; its nits applied. Submitted.
+- 2026-10-30, red first (dl-018 R1), the tests only (`3ac0b7e`), on `main`'s
+  `src/secret-rules.ts`: `node --test --test-name-pattern=task-066 dist/tests/secret-rules.test.js
+  dist/tests/check-packs.test.js`: 3 tests, 1 pass, 2 fail, for behaviour (the warning, in process
+  and three times on the lint's stderr); the alias case passes, pinning the fallback.
+- 2026-10-30, the fix (`324dcd8`): `yamlStrings` walks the scalars of the one document, never
+  calling `toJS`; no document or several, an error or an alias fall back to the tokens, as before.
+  Green: `secret-rules` and `check-packs` 118 of 118; `npm run lint` clean. The owed row moved to
+  Closed (`3ae6c6e`). The untracked draft of `kanban`: `validate --overlay` exit 0 with nothing on
+  stderr; on a scratch copy of the tree with it in `packs/`, `check:packs` prints no warning and
+  exits 1 with the two expected lines (`example-section`, `catalog-tag`).
+- 2026-10-30: independent review of the build: approve after amendments, nothing blocking; it ran
+  the old and the new `secretProblems` on 28 inputs (empty text, comments only, several documents,
+  a duplicate key, aliases, tags, a collection key, `{{p}}` as key and value …): no difference but
+  the warning. Applied: these notes; `documents.length` alone; a comment on the CLI case.
+- 2026-10-30, checks at `57506db` (Acceptance 5), from clean clones on Node.js 22.21.0 then
+  22.12.0, one after the other: `npm ci`, `npm test` (1030 of 1030), `lint`, `check:packs` (61
+  files, 0 problems), `validate` (14 runs, 0 failed, tolerance none), the overlays `software-exit`
+  and `scrum-exit` (22 runs each, 0 failed), `index -- --check` (6 files), `check:runs` (34 runs,
+  0 failed) and `workflow list`, each exit 0, no Node.js warning in either log. `packs/`,
+  `.wingfoil/` and the fixtures' expected outputs unchanged. Branch CI run 41111485611 on
+  `57506db`: `success`. Privacy check of the branch's diff against `main`: no local or scratch
+  path, no private repository or project, no intermediary session. `in-progress → in-review`.
