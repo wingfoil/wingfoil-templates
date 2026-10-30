@@ -172,6 +172,30 @@ reads below, which settle points 1, 7 and 8; every other point stands as written
    not name; a project overrides it in `custom/` with the same id. "Replenishment" is not used.
 7. **Point 8:** the parameters are the two WIP limits and the Service Level Expectation.
 
+Given on 2026-10-30, in chat, after step 2's run (dl-019), as recommended:
+
+8. **Point 4, the shape:** the run's. `delivery` = `plan-release` → `releases` (`iterate_over:
+   release`, `include: release-flow`); `release-flow` (`element: release`) = `work` (over the tasks
+   carrying the release, `include: work-item`) → `release` (the slot, over this release) →
+   `retrospective`. A release is added outside a step after the first; with no release open,
+   `delivery` completes, and a new release reopens it.
+9. **Point 2, the task's link to its release:** `task` gains a required `release`
+   (`not_applicable_allowed`), holding the release's `version`; the scope token is
+   `{release.version}`, since `software`'s `release` template declares no `id`. Two releases of one
+   version on two release lines are not told apart: an adaptation the charter states.
+10. **Point 3, the limits:** they count every `task` of the repository, on every branch WingFoil
+    sees; the defaults are `wip_in_progress: 2` and `wip_in_review: 1`. How this repository maps its
+    rule per pack is its Adoption's.
+11. **Point 7, a rule of the `kanban` directive:** a release moves to `releasing` only once its own
+    tasks are done or moved to the next release (as `scrum`'s ruling 16): an empty `work` lets the
+    release start at once, and a release that completes closes `work`, leaving its open tasks
+    `late` (F-037).
+12. **The retrospective, one per release;** a calendar cadence is `retrospective-periodic`'s. The
+    README states bug-008's effect and `explore`'s weak evidence in one bullet of "Sources and
+    adaptations" (the text given to the approver on 2026-10-30).
+13. **Tooling:** the composer's Node.js warning on an unquoted integer parameter, from a parse
+    before substitution, is a row of `docs/owed-items.md`, not this plan's.
+
 ## Steps
 
 On branch `pack/methodology-kanban-charter`; one commit per step that writes. Before every commit,
@@ -249,3 +273,126 @@ on the 0.2.2 pin), the W-01 … W-14 recheck, the W10 row.
   40941233845 `success`. The reads of step 1 that the rulings needed (the Guide's edition, `init`'s
   names, Benchmark) done and recorded in "The approver's rulings"; the outline ruled by the approver
   on 2026-10-30. Submitted (`draft → active`).
+- 2026-10-30, step 2 (dl-032 E2). **The draft:** `kanban` written as an overlay under
+  `tests/fixtures/`, untracked, never committed: `task` tightened with a required `release`
+  (`not_applicable_allowed: [release]`) and `limits: { in-progress: {{wip_in_progress}},
+  in-review: {{wip_in_review}} }`; `delivery` = `plan-release` (`memory.add(type: release)`, two
+  `memory.submit`, `produces` the release) → `releases` (`iterate_over: release`, `where: { status:
+  [in-development, releasing, released] }`, `include: release-flow`); `release-flow`
+  (`element: release`) = `work` (`iterate_over: task`, `where: { status: [backlog, in-progress,
+  in-review, approved], release: "{release.version}" }`, `include: work-item`) → `release`
+  (`iterate_over: release`, `where: { status: [in-development, releasing], version:
+  "{release.version}" }`, `include: release`) → `retrospective`; `work-item` (`element: task`) =
+  `start` (`memory.submit`) → `build` → `review` → `approve` (gate, fallback `build`) → `done`; the
+  directives `kanban` and `definition-of-workflow`; parameters `wip_in_progress` 2,
+  `wip_in_review` 1, `service_level_expectation`. `npm run validate -- --overlay <draft>`: 16 runs,
+  0 failed, tolerance none (WingFoil 0.3.0 and 0.3.1, no diagnostic).
+  - **Scope token:** a first draft with `{release.id}` failed both releases with
+    `W_PHASE_TOKEN_OUT_OF_SCOPE` (`software`'s `release` template declares no `id`, and a later
+    pack cannot change it); `{release.version}` passes. A task's `release` field therefore holds the
+    release's version, as Benchmark and UI already write it (`release: v0.1`).
+  - **The integer parameters** in `limits`, unquoted, compose to YAML integers (`in-progress: 2`,
+    `in-review: 1`); the composer prints a Node.js warning ("Keys with collection values will be
+    stringified") from a parse of the fragment before substitution, with no failure.
+- 2026-10-30, step 2, **the run** on WingFoil 0.3.1 (`870bd440`, the matrix's install), in a
+  scratch repository outside this one: `base`, `software` and the draft composed (`npm run compose`,
+  `main` at `96f791b`, fictional project Plover Board, `.example` addresses), `.wingfoil/`
+  committed; `workflow list` exit 0, `"diagnostics": []`. 163 commands; each exits 0 except those
+  named. `workflow start sw-life-cycle` exit 0 (`sw-life-cycle-1-plan (active)`); `inception` and
+  `specification` passed (a document committed, `finalize --reason` on the gates, a tech-spec
+  added, submitted, approved).
+  - **The first release, `work` empty.** `rel-1.0.0` added at `delivery.plan-release` (`--set
+    version=1.0.0 --set release-line=v1`), two `memory submit` → `in-development`. With no task
+    carrying it, `work` completed at once and `release-submit.pre-release-checks@release:rel-1.0.0`
+    became the next step. Four tasks added and approved to `backlog`, three with `release:
+    "1.0.0"`, one with `release: "n/a — not planned yet"`: the three joined `work`
+    (`work-item.start@task:…` on the frontier), the `n/a` one stayed out, and the release step left
+    the frontier until `work` completed again.
+  - **The limits hold, at the verb.** `memory submit` of a third task to `in-progress` exit 1:
+    `WIP limit reached for 'in-progress' on type 'task' (limit 2): held by task-001-alpha,
+    task-002-beta`; of a second to `in-review` exit 1, `(limit 1)`. WingFoil counts the holders at
+    HEAD and on every local and remote-tracking branch that changed them since it forked from HEAD:
+    a limit counts the whole repository, every branch included.
+  - **A task spanning two releases.** `task-003-gamma`, started under `1.0.0`, had its `release`
+    rewritten to `1.1.0` (a commit) after `rel-1.1.0` was added outside a step and moved to
+    `in-development`; `rel-1.0.0`'s `release` phase then became current, and gamma stayed on the
+    frontier under `rel-1.1.0`. `rel-1.0.0` went through `release-submit` and `release-publishing`
+    (records by `finalize`, the moves by the commit forms `workflow next` prints) to `released`
+    while gamma was `in-progress`: two releases live in one pass, nothing `late`. Gamma was
+    reviewed, rejected (`memory reject` → `in-progress`, `build` re-entered), reviewed again,
+    approved and done in `rel-1.1.0`.
+  - **Out of the `where` and back.** `task-005-epsilon`, added during `rel-1.1.0`'s flow, joined
+    `work`; started, then `memory park` → `backlog` (the step `start` offered again), restarted and
+    done.
+  - **Retrospectives.** `rel-1.0.0`'s: `explore` on `docs/retrospectives/rel-1.0.0.md`,
+    `additional-points` finalized, `dl-001` tagged `retrospective` added at `capture`, submitted,
+    approved. `rel-1.1.0`'s `explore` completed with no new file (`base`'s known weak evidence);
+    its `capture` was finalized with a record and no decision-log, a slip of the driving script,
+    and its `approve`, selecting nothing, completed: so the check of bug-008 ran on a third release.
+    With no release open, `delivery` completed and `end-of-life.announce` became current;
+    `rel-1.2.0` and a task added outside a step reopened `delivery` (`delivery current`), and the
+    pair ran to `released`. When `rel-1.2.0`'s retrospective decision-log was `in-discussion`, the
+    `retrospective.approve` steps of `rel-1.0.0` and `rel-1.1.0` returned to the frontier with
+    `rel-1.2.0`'s (`pending approvals: 3`, one decision-log): bug-008 and F-039, as under `scrum`;
+    its one approval cleared the three, and `delivery` completed.
+  - No element reported `late` in the whole run. Not exercised: a release completing while a task
+    of its own is still open (on 0.3.x it closes `work` and the task is `late`, F-037; a rule of the
+    `kanban` directive, as `scrum`'s ruling 16). The approver's rulings on these findings follow.
+- 2026-10-30: the approver ruled 8 … 13 on step 2's findings. Ruling 13's item is a new row of
+  `docs/owed-items.md` (the composer's warning on an unquoted integer parameter).
+- 2026-10-30, step 3: `npm run -s wingfoil -- memory add --type pack --title Kanban --set
+  axis=methodology --set name=kanban` exit 0, id `pack-methodology-kanban` (`4454438`); the body
+  written from rulings 1 … 13 and step 2 (`0db80bf`).
+- 2026-10-30, step 4: independent review of the charter: approve after amendments; no blocker, ten
+  should-fix, six nits. Two findings were checked on the engine before amending, in the same scratch
+  repository (WingFoil 0.3.1), and in a second one composed with the change:
+  - **A reject past the limit:** with `wip_in_progress: 2`, two tasks `in-progress` and a third
+    `in-review`, `memory reject` of the third exit 0 (`in-review → in-progress`), leaving three
+    tasks `in-progress`: a reject is not checked against the limit. The `kanban` directive adds a
+    rule for it (worded at the re-review, below).
+  - **A release already `released`:** a release moved to `released` by four `memory submit` outside
+    the flow, with `delivery`'s `where` holding `released`, started a `release-flow` at once
+    (`retrospective.additional-points@release:rel-0.5.0` on the frontier). With `where: { status:
+    [in-development, releasing] }`, in a second scratch repository (46 commands, each exit 0), the
+    same release added before `workflow start sw-life-cycle` stayed out, and `rel-1.0.0` driven
+    with one task to `released` stayed in the iteration through its retrospective (`explore` on a
+    committed file, `additional-points` finalized, a decision-log captured, submitted, approved);
+    then `delivery` completed and `end-of-life.announce` was current. `delivery`'s filter is
+    therefore `[in-development, releasing]`, the detail of ruling 8 this changes.
+  - **Names:** `release-flow` and `work-item` equal no workflow of WingFoil 0.3.1's built-in
+    directory (empty) or of `init --template Kanban`, of this repository's `custom/`, or of
+    Benchmark's at `d2975efe`. Found while checking: this repository's `custom/` `retrospective`,
+    `decision-log-ingest`, `bug-ingest` and `adr-ingest` share `base`'s and `software`'s names, a
+    row of `docs/owed-items.md` for its adoption.
+  - Amended: the limits' unexercised ref counting and the reject (S3 … S5); `delivery`'s filter and
+    adoption with releases already `released` (S6); "replenishment" removed (S7); the names check
+    (S8); claims carried from `scrum` or F-037 marked as not exercised, the heading "0.3.1" (S9);
+    the flow stopping with no open release, an adaptation (S10); "no WingFoil diagnostic" and the
+    composer's warning (S2); the four Adoption rows of this repository added to `docs/owed-items.md`
+    (S1, N5); nits N1, N3, N4, N6. N2 (Product Owner or approver) kept as "Product Owner", the
+    `product-owner` role; the draft's `pack.yaml` description is `author`'s. A re-review follows,
+    since the `delivery` filter changes ruling 8's detail.
+- 2026-10-30, step 4: focused re-review: approve after amendments; no blocker, two should-fix,
+  three nits. The multi-release claims rested on step 2's run with the old filter, so the second
+  scratch repository went on with `[in-development, releasing]`: `rel-1.1.0` and `rel-1.2.0` added
+  outside a step and moved to `in-development`; `task-003-gamma` started under `1.1.0` and its
+  `release` rewritten to `1.2.0`; `rel-1.1.0` driven to `released` while gamma was `in-progress`
+  under `rel-1.2.0`; `rel-1.1.0`'s retrospective decision-log `in-discussion` brought back
+  `retrospective.approve@release:rel-1.0.0` (`pending approvals: 2`), and `rel-1.2.0`'s brought back
+  both earlier ones (`pending approvals: 3`); each approval cleared them; `delivery` completed and
+  `end-of-life.announce` was current. That repository: 115 commands, each exit 0, nothing `late`.
+  Amended: the steps cited (step 4, also in three rows of `docs/owed-items.md`); the coverage of
+  the narrower filter stated; the reject rule worded as what the engine does not do (a state a
+  reject pushed over its limit is brought back within it before anything else moves into it);
+  wrapping. The filter's change of ruling 8's detail goes to the approver with the submit.
+- 2026-10-30, step 4: `memory submit pack-methodology-kanban` (`draft → proposed`, `8abdd0e`);
+  branch pushed; CI run 41048572300 on `8abdd0e`, conclusion `success`.
+- 2026-10-30, step 5: the approver accepted `pack-methodology-kanban` (`proposed → accepted`,
+  `f3fce0d`) and, in chat, `delivery`'s filter `[in-development, releasing]`.
+- 2026-10-30, step 6: clean clones of the branch at `8abdd0e`, Node.js 22.21.0 then 22.12.0, one
+  after the other: `npm ci`, `npm test` (1027 tests, 1027 pass, 0 fail), `npm run lint`,
+  `check:packs`, `validate`, `index -- --check`, `check:runs` and `workflow list` exit 0 on both
+  (`f3fce0d` changes only the charter's `status`). Privacy check of the branch's diff against
+  `main`: no local or scratch path, no private repository or project, no intermediary session.
+  Owed rows added by this plan: ruling 13's and the four of the charter's Adoption (step 4). The
+  untracked draft of step 2 stays out of the repository.
