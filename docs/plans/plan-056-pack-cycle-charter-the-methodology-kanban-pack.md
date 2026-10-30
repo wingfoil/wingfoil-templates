@@ -131,6 +131,47 @@ adoption run (task-060) exist.
     of the matrix, the range computed from `compat.yaml`, never written; the provisional format-1
     install mapping (plan-041 ruling 9).
 
+## The approver's rulings
+
+Given on 2026-10-30, in chat: the outline is approved with the recommendations made after the
+reads below, which settle points 1, 7 and 8; every other point stands as written.
+
+**Reads before the rulings** (part of step 1):
+- The Kanban Guide's current edition is v2025.5, May 2025 (kanbanguides.org). Its Definition of
+  Workflow has six elements: the units of value (work items), their started and finished points,
+  the defined states between them, how WIP is controlled, the explicit policies of each state, and a
+  Service Level Expectation (a time and a probability). The four flow measures are required. WIP is
+  controlled in any way the team chooses. The Guide defines no role, event or timebox, does not use
+  the word "replenishment" and names no Definition of Done.
+- WingFoil 0.3.1's `init --template Kanban` writes `custom/sw-life-cycle.yaml`,
+  `custom/bug-ingest.yaml`, `custom/decision-log-ingest.yaml`, `custom/adr-ingest.yaml` and
+  `custom/kanban-delivery.yaml`, and the custom directives `determinism`, `doc-versioning`,
+  `security-secrets` and `traceability`; its built-in directives are `architecture`,
+  `code-quality`, `code-review`, `documentation`, `security` and `testing`. None of them, and none
+  of this repository's or Benchmark's `custom/` files, is named `kanban`, `work-item` or
+  `definition-of-workflow`.
+- WingFoil Benchmark, read at `wingfoil/wingfoil-benchmark@d2975efe`: its `kanban-delivery` (v6)
+  allows one task `in-progress` and one `in-review` in the whole repository (one approver), checked
+  by hand; this repository allows one of each per pack.
+
+**Rulings:**
+1. **Point 1:** the source is the Kanban Guide v2025.5. The Service Level Expectation is a
+   parameter (a string; its default is the convention for new projects, as `scrum`'s
+   `sprint_length`). The four flow measures are text of the `kanban` directive: WingFoil computes
+   none of them.
+2. **Point 2:** as written; the Guide's started and finished points are `task`'s `in-progress` and
+   `done`.
+3. **Point 3:** as written; the defaults are proposed after step 2.
+4. **Point 4:** as written; step 2 tries first the shape nested by release, with one release always
+   `in-development` as the open container of the flow, then the alternatives.
+5. **Points 5, 6, 9 … 12:** as written; the AGENTS.md section also states the Service Level
+   Expectation.
+6. **Point 7:** the directives are `kanban` and **`definition-of-workflow`** (the project's
+   Definition of Workflow: units of value, started and finished points, states, WIP limits,
+   policies, Service Level Expectation), in place of a `definition-of-done`, which the Guide does
+   not name; a project overrides it in `custom/` with the same id. "Replenishment" is not used.
+7. **Point 8:** the parameters are the two WIP limits and the Service Level Expectation.
+
 ## Steps
 
 On branch `pack/methodology-kanban-charter`; one commit per step that writes. Before every commit,
@@ -204,3 +245,7 @@ on the 0.2.2 pin), the W-01 … W-14 recheck, the W10 row.
   `custom/` names, the pack's identity, the exit criterion, the overlay's place, the owed rows left
   open, the close. Not applied: a hand-written `finalize` commit; a plan closes with `memory
   submit` (`active → done`), as plan-047 and plan-055 did.
+- 2026-10-30: started as asked by the approver on 2026-10-29. `main` at `b76e6d9`, its CI run
+  40941233845 `success`. The reads of step 1 that the rulings needed (the Guide's edition, `init`'s
+  names, Benchmark) done and recorded in "The approver's rulings"; the outline ruled by the approver
+  on 2026-10-30. Submitted (`draft → active`).
