@@ -172,6 +172,30 @@ reads below, which settle points 1, 7 and 8; every other point stands as written
    not name; a project overrides it in `custom/` with the same id. "Replenishment" is not used.
 7. **Point 8:** the parameters are the two WIP limits and the Service Level Expectation.
 
+Given on 2026-10-30, in chat, after step 2's run (dl-019), as recommended:
+
+8. **Point 4, the shape:** the run's. `delivery` = `plan-release` → `releases` (`iterate_over:
+   release`, `include: release-flow`); `release-flow` (`element: release`) = `work` (over the tasks
+   carrying the release, `include: work-item`) → `release` (the slot, over this release) →
+   `retrospective`. A release is added outside a step after the first; with no release open,
+   `delivery` completes, and a new release reopens it.
+9. **Point 2, the task's link to its release:** `task` gains a required `release`
+   (`not_applicable_allowed`), holding the release's `version`; the scope token is
+   `{release.version}`, since `software`'s `release` template declares no `id`. Two releases of one
+   version on two release lines are not told apart: an adaptation the charter states.
+10. **Point 3, the limits:** they count every `task` of the repository, on every branch WingFoil
+    sees; the defaults are `wip_in_progress: 2` and `wip_in_review: 1`. How this repository maps its
+    rule per pack is its Adoption's.
+11. **Point 7, a rule of the `kanban` directive:** a release moves to `releasing` only once its own
+    tasks are done or moved to the next release (as `scrum`'s ruling 16): an empty `work` lets the
+    release start at once, and a release that completes closes `work`, leaving its open tasks
+    `late` (F-037).
+12. **The retrospective, one per release;** a calendar cadence is `retrospective-periodic`'s. The
+    README states bug-008's effect and `explore`'s weak evidence in one bullet of "Sources and
+    adaptations" (the text given to the approver on 2026-10-30).
+13. **Tooling:** the composer's Node.js warning on an unquoted integer parameter, from a parse
+    before substitution, is a row of `docs/owed-items.md`, not this plan's.
+
 ## Steps
 
 On branch `pack/methodology-kanban-charter`; one commit per step that writes. Before every commit,
@@ -314,3 +338,5 @@ on the 0.2.2 pin), the W-01 … W-14 recheck, the W10 row.
   - No element reported `late` in the whole run. Not exercised: a release completing while a task
     of its own is still open (on 0.3.x it closes `work` and the task is `late`, F-037; a rule of the
     `kanban` directive, as `scrum`'s ruling 16). The approver's rulings on these findings follow.
+- 2026-10-30: the approver ruled 8 … 13 on step 2's findings. Ruling 13's item is a new row of
+  `docs/owed-items.md` (the composer's warning on an unquoted integer parameter).

@@ -51,6 +51,7 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | W10: `methodology/kanban`, presets, `governance/wingfoil-dogfood`, this repository's adoption, its pin, the first inbox sync | plan-052 ruling 7 | W10 | W10 |
 | dl-024 and dl-025 ruled; plan-022 closed | plan-052, plan-053 › close | approver | the next retrospective |
 | `docs/01_vision/06_features.md`: F3.3 validates with `workflow list`, `dna show` and `directives list` only, against dl-032 E3; F5.2 describes `wingfoil-release-intake` without `retrospective-start` (dl-029) | plan-055 › Execution Notes (leftovers) | approver | the next retrospective |
+| The composer prints a Node.js warning ("Keys with collection values will be stringified") for an unquoted integer parameter, `{{name}}`, parsed before substitution (`methodology/kanban`'s `limits`) | plan-056 ruling 13 | approver | the next tooling task on the composer |
 | The private projects' check scripted | prel-001 … prel-003 | approver | the next retrospective |
 | dl-026's stale Consequences ("reported late until it completes", no longer true after plan-047 ruling 15 and task-057; the WingFoil side is F-036) | task-057 › notes | approver | the next retrospective |
 
