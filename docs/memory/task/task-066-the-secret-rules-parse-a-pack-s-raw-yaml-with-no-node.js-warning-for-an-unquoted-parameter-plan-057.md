@@ -98,3 +98,17 @@ Then the fix; green; the owed row moved to Closed.
   (aliases, several documents), the scratch copy's expected lint lines, the wording of the flow map,
   `spawnSync`.
 - 2026-10-30: focused re-review: approve; its nits applied. Submitted.
+- 2026-10-30, red first (dl-018 R1), the tests only (`3ac0b7e`), on `main`'s
+  `src/secret-rules.ts`: `node --test --test-name-pattern=task-066 dist/tests/secret-rules.test.js
+  dist/tests/check-packs.test.js`: 3 tests, 1 pass, 2 fail, for behaviour (the warning, in process
+  and three times on the lint's stderr); the alias case passes, pinning the fallback.
+- 2026-10-30, the fix (`324dcd8`): `yamlStrings` walks the scalars of the one document, never
+  calling `toJS`; no document or several, an error or an alias fall back to the tokens, as before.
+  Green: `secret-rules` and `check-packs` 118 of 118; `npm run lint` clean. The owed row moved to
+  Closed (`3ae6c6e`). The untracked draft of `kanban`: `validate --overlay` exit 0 with nothing on
+  stderr; on a scratch copy of the tree with it in `packs/`, `check:packs` prints no warning and
+  exits 1 with the two expected lines (`example-section`, `catalog-tag`).
+- 2026-10-30: independent review of the build: approve after amendments, nothing blocking; it ran
+  the old and the new `secretProblems` on 28 inputs (empty text, comments only, several documents,
+  a duplicate key, aliases, tags, a collection key, `{{p}}` as key and value …): no difference but
+  the warning. Applied: these notes; `documents.length` alone; a comment on the CLI case.
