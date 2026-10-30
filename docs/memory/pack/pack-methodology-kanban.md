@@ -2,7 +2,7 @@
 id: pack-methodology-kanban
 type: pack
 title: "Kanban"
-status: draft
+status: proposed
 axis: "methodology"
 name: "kanban"
 slot: ""
