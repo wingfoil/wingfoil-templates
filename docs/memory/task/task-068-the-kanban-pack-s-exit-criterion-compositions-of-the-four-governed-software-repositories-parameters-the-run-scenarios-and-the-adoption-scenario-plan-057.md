@@ -2,7 +2,7 @@
 id: task-068-the-kanban-pack-s-exit-criterion-compositions-of-the-four-governed-software-repositories-parameters-the-run-scenarios-and-the-adoption-scenario-plan-057
 type: task
 title: "The kanban pack's exit criterion: compositions of the four governed software repositories' parameters, the run scenarios and the adoption scenario (plan-057)"
-status: pending
+status: backlog
 pack: "pack-methodology-kanban"
 depends_on: ["task-067"]
 tags: ["packs","kanban","methodology"]
