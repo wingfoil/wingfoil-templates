@@ -2,7 +2,7 @@
 id: plan-056-pack-cycle-charter-the-methodology-kanban-pack
 type: plan
 title: "pack-cycle charter: the methodology/kanban pack"
-status: draft
+status: active
 workflow: "pack-cycle"
 phase: "charter"
 tags: ["packs","kanban","methodology","W10"]
