@@ -15,10 +15,11 @@ plan-057 point 2 (decided under the approver's allowance of 2026-10-30): the row
 with collection values will be stringified due to JS Object restrictions: `"{ wip_in_progress }"`")
 for an unquoted integer parameter, `{{name}}`, as `methodology/kanban`'s `limits` use it. plan-057's
 reads found the cause elsewhere: `secretProblems` (`src/secret-rules.ts`), which the lint
-(`src/check-packs.ts`), the overlay check (`src/validate.ts`) and the composer
-(`src/compose-documents.ts`) all run on a pack's files as written, before substitution, parses a
-YAML file with the shared `parseYaml` (`src/yaml-load.ts`), whose `document.toJS()` turns the
-flow map `{{wip_in_progress}}` used as a key into a JavaScript object and warns. The secret rules
+(`src/check-packs.ts`) and the composer (`src/compose-documents.ts`) run on a pack's files as
+written, before substitution (the overlay check, `src/validate.ts`, runs it on the overlay's own
+files), parses a YAML file with the shared `parseYaml` (`src/yaml-load.ts`). Unquoted,
+`{{wip_in_progress}}` parses as a flow map whose key is the flow map `{wip_in_progress}`, and
+`document.toJS()` stringifies that collection key and warns. The secret rules
 read only the document's scalars, never its JavaScript value. Once `packs/methodology/kanban` is on
 `main` (task-067), every `check:packs`, `validate`, `compose`, `check:runs` and publication run, and
 every CI log, would print the warning. This task removes it before the pack lands, so that the exit
@@ -28,20 +29,25 @@ criterion's "no warning" needs no exception.
 
 `npm run build` precedes the commands; tests run by `npm test` unless named.
 
-1. **No warning:** `secretProblems` on a YAML pack file holding an unquoted parameter used as a
-   plain scalar (`in-progress: {{wip_in_progress}}`, as `kanban`'s `fragments/memory.yaml`) emits
-   no Node.js warning and returns the same findings as before for every other input: every
-   existing case of `tests/secret-rules.test.ts` passes unchanged.
+1. **No warning:** `secretProblems` on a YAML pack file holding an unquoted parameter as a value
+   (`in-progress: {{wip_in_progress}}`, as `kanban`'s `fragments/memory.yaml`) emits no Node.js
+   warning and returns the same findings as before for every other input: every existing case of
+   `tests/secret-rules.test.ts` passes unchanged.
 2. **Limited to the secret rules:** the change is in `src/secret-rules.ts` alone; `src/yaml-load.ts`'s
    `parseYaml`, which loads `catalog.yaml`, `pack.yaml`, fragments after substitution and
    compositions, is unchanged, so a real collection-valued key there is still seen as today. A YAML
-   file that does not parse still falls back to the whitespace tokens, as today.
+   file that falls back to the whitespace tokens today still does: one that does not parse, one
+   with more than one document, and one holding an alias (today refused by `toJS`'s
+   `maxAliasCount: 0`); a case of `tests/secret-rules.test.ts` pins the alias fallback.
 3. **Red first** (dl-018 R1–R3), each red run recorded in the Execution Notes with its command and
    failing count:
-   - in `tests/secret-rules.test.ts`, a case calling `secretProblems` on such a file with a
-     `process.on('warning')` listener, asserting that no warning is emitted (the listener removed
-     after the case), and that no finding is returned;
+   - in `tests/secret-rules.test.ts`, an async case calling `secretProblems` on such a file with a
+     `process.on('warning')` listener, then awaiting `new Promise((r) => setImmediate(r))` before
+     asserting that no warning was emitted (Node.js emits the `'warning'` event on the next tick,
+     so a synchronous check passes on `main`) and that no finding is returned; the listener
+     removed at the end;
    - in `tests/check-packs.test.ts`, a case spawning the lint's CLI (`dist/src/check-packs-cli.js`)
+     with `spawnSync`
      on a temporary tree holding a pack with an unquoted integer parameter in a `limits` fragment,
      asserting its exit code 0 and an empty stderr; the tree is built from the test's own fixture
      files in the system's temporary directory and removed after the case.
@@ -55,7 +61,8 @@ criterion's "no warning" needs no exception.
    `.wingfoil/` and the fixtures' expected outputs unchanged; the branch CI `success`, recorded;
    after the merge, `main`'s CI read. On a scratch copy of the tree with the untracked draft of
    `kanban` copied into `packs/`, `check:packs` prints no warning (the case of plan-057's reads),
-   recorded.
+   recorded; it still exits 1 there, with the draft README's `example-section` problem and, outside
+   a git repository, `catalog-tag`, which are expected.
 
 ## Design
 
@@ -64,3 +71,7 @@ criterion's "no warning" needs no exception.
 ## Execution Notes
 
 - 2026-10-30: written under plan-057 (step 2).
+- 2026-10-30: independent review: approve after amendments, one blocking finding (the in-process red
+  test must wait a tick: Node.js emits `warning` on the next one); applied with the fallbacks kept
+  (aliases, several documents), the scratch copy's expected lint lines, the wording of the flow map,
+  `spawnSync`.

@@ -4,7 +4,7 @@ type: task
 title: "The methodology/kanban pack and its README examples (plan-057)"
 status: draft
 pack: "pack-methodology-kanban"
-depends_on: [task-066]
+depends_on: ["task-066"]
 tags: ["packs","kanban","methodology"]
 ---
 
@@ -31,8 +31,10 @@ the same change. It follows task-066, so that the pack's checks print no warning
    days"`), each with a description; `contents` lists every file below and nothing else.
 2. **`fragments/memory.yaml`** (`format: 1`): `task` tightened with
    `template.frontmatter.required: [release]`, `template.frontmatter.not_applicable_allowed:
-   [release]` and `states.limits: { in-progress: {{wip_in_progress}}, in-review: {{wip_in_review}} }`,
-   the parameters unquoted (spec-001 §7.5, §8.2); nothing else.
+   [release]` and `states.limits` with `in-progress: {{wip_in_progress}}` and
+   `in-review: {{wip_in_review}}`, a block mapping as the draft writes it, the parameters unquoted:
+   a limit is a positive integer (spec-001 §7.5), and any allowed value of an integer parameter
+   keeps the file valid (§8.2's rule; its advice to quote holds for strings); nothing else.
 3. **`fragments/roles.yaml`** (`format: 1`): `assignments`: `product-owner: [kanban]`,
    `facilitator: [kanban]`, `developer: [kanban, definition-of-workflow]`,
    `reviewer: [definition-of-workflow]`, `qa: [definition-of-workflow]`. No `dna.yaml` fragment.
@@ -70,13 +72,19 @@ the same change. It follows task-066, so that the pack's checks print no warning
    Service Level Expectation; overridden by a project in `custom/` with the same id). No word
    "replenishment", no Definition of Done, no estimation technique. Neither id equals a WingFoil
    0.3.0 or 0.3.1 built-in directive id (`directives list` with no warning, `pack-compatibility`).
+   No workflow name the pack ships (`release-flow`, `work-item`) equals a WingFoil 0.3.1 built-in
+   or a `custom/` file `init --template Kanban` or `--template Scrum` writes: checked by listing
+   them in this task and, from task-068 on, by its adoption run (`E_WORKFLOW_DUPLICATE_NAME`).
 6. **`agents/section.md`**: a level-2 section `## Kanban`, no level-1 heading, no markers, as the
    charter's paragraph states it (the limits, one item's flow through `work-item`, the Service
    Level Expectation, a task's `release` field, releases decided by the Product Owner and moved to
    `releasing` only once their tasks are done or moved, `{{agent_name}}` never approving); it names
    `delivery`.
 7. **`CHANGELOG.md`** with `- 1.0.0: …` naming what the first version holds, and **`README.md`**
-   per spec-002 §2: generated sections by `npm run index`; section 3 opening with §2.3's temporary
+   per spec-002 §2: generated sections by `npm run index`; section 2 ("When to use it") with the
+   problem, the profiles it serves and when not to use it (a timeboxed team takes `scrum`; limits
+   per team or per column are not expressible, a limit counting the whole repository); section 3
+   opening with §2.3's temporary
    mark, linking `https://github.com/wingfoil/wingfoil-templates/blob/main/CATALOG.md#install`,
    with the charter's Adoption for any project (the first open release, a `release` on every open
    task, releases already `released` left out, a project over a limit moving tasks out first, the
@@ -86,8 +94,10 @@ the same change. It follows task-066, so that the pack's checks print no warning
    answered for `kanban`); "Sources and adaptations" citing the Kanban Guide, May 2025 edition
    (v2025.5, kanbanguides.org), and the charter's eight adaptations, the retrospective's bullet
    being the charter's (bug-008's effect and `explore`'s weak evidence, plan-056 ruling 12); the
-   limits' count over every branch WingFoil sees (the charter's open point 2) stated; section 7
-   linking its examples. The README names no real adopter.
+   limits' count over every branch WingFoil sees (the charter's open point 2) stated; the Service
+   Level Expectation's default stated as a convention for new projects, not the Guide's (the
+   charter's Parameters, open point 1); section 7 linking its examples; section 9 linking the
+   CHANGELOG and the catalog entry, as `scrum`'s. The README names no real adopter.
 8. **The examples** (spec-002 §2.4, fictional projects only, `.example` addresses, `packs`
    naming `software@^1` and `methodology/kanban@^1`): `tests/fixtures/examples/kanban/defaults/`
    (every parameter on its default) and `tests/fixtures/examples/kanban/team-limits/`
@@ -118,3 +128,6 @@ the same change. It follows task-066, so that the pack's checks print no warning
 ## Execution Notes
 
 - 2026-10-30: written under plan-057 (step 2).
+- 2026-10-30: independent review: approve after amendments, nothing blocking; applied: section 2 and
+  section 9 of the README, the workflow names checked, the citation of spec-001 §8.2, the limits as
+  a block mapping, the Service Level Expectation as a convention.

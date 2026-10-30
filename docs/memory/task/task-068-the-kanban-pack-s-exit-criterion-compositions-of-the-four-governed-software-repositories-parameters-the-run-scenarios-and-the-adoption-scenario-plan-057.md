@@ -4,7 +4,7 @@ type: task
 title: "The kanban pack's exit criterion: compositions of the four governed software repositories' parameters, the run scenarios and the adoption scenario (plan-057)"
 status: draft
 pack: "pack-methodology-kanban"
-depends_on: [task-067]
+depends_on: ["task-067"]
 tags: ["packs","kanban","methodology"]
 ---
 
@@ -42,17 +42,22 @@ task-056's. The run by hand is task-069's.
    `tests/runs.test.ts` (task-058's for `software.yaml` and `scrum.yaml`) extended to it.
 5. **The adoption scenario:** `tests/fixtures/runs/adoption-kanban.yaml`
    (`compositions: tests/fixtures/examples/kanban`), one `adopt` run per `init` template (`Scrum`,
-   `Kanban`), with `adoption.yaml`'s removal list (bug-007) and a header as its own, naming dl-032
-   E3 and `first-release`'s citation; a guard in `tests/runs.test.ts` as `adoption.yaml`'s (its
-   compositions folder, both templates, the removal list).
+   `Kanban`), with `adoption.yaml`'s removal list (bug-007), which is what the "Install and update"
+   steps of `base`'s, `software`'s and `kanban`'s READMEs remove (task-067's section 3), and a
+   header as `adoption.yaml`'s saying so, naming dl-032 E3 and `first-release`'s citation; a guard
+   in `tests/runs.test.ts` as `adoption.yaml`'s (its compositions folder, both templates, the same
+   removal list as `adoption.yaml`'s).
 6. **Red first** (dl-018), the red runs recorded with their command and failing count: the
-   `ci-workflow` case, the `validate` case and the two guards are written first and red (no step,
-   no overlay, no scenario files), then the files.
-7. **`check:runs`:** `npm run check:runs` exits 0 with 46 runs, 0 failed (34 today, plus per
+   `ci-workflow` case, the `validate` case and the two guards are written first and red (no step;
+   `validate` exiting non-zero on the missing overlay, as task-056's red run; no scenario files),
+   then the files.
+7. **`check:runs`:** `npm run check:runs` exits 0, its summary `runs: 46 runs, 0 failed` (34 today, plus per
    release 2 starts and 4 adoptions on 0.3.0 and 0.3.1); the lines of the 12 new runs recorded.
-8. **Durations:** the full `npm test` and the branch CI job's durations recorded against the job's
-   `timeout-minutes: 30` (the owed row G12); a job within 5 minutes of it goes to the approver
-   (dl-019) before `in-review`.
+8. **Durations:** before the push, the full `npm test`, the three overlays and `check:runs` timed
+   locally; then the branch CI job's duration, both recorded against the job's
+   `timeout-minutes: 30` (the owed row G12). A local estimate or a CI job within 5 minutes of it
+   goes to the approver (dl-019), before the push for the local one, before `in-review` for the
+   CI's.
 9. **Green:** from clean clones on Node.js 22.21.0 and 22.12.0, one after the other: `npm ci`,
    `npm test`, `lint`, `check:packs`, `validate`, the overlays `software-exit`, `scrum-exit` and
    `kanban-exit`, `index -- --check`, `check:runs` and `workflow list` exit 0; the branch CI
@@ -66,3 +71,6 @@ task-056's. The run by hand is task-069's.
 ## Execution Notes
 
 - 2026-10-30: written under plan-057 (step 2).
+- 2026-10-30: independent review: approve after amendments, nothing blocking; applied: the removal
+  list tied to the READMEs, a local timing before the push, the red `validate` case, the summary
+  line quoted.
