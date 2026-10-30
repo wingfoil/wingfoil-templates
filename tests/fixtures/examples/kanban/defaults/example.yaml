@@ -1,0 +1,13 @@
+format: 1
+id: defaults
+title: "Defaults"
+description: >-
+  Plover Board, a fictional accounting tool, keeps every software parameter on its default.
+packs:
+  - software@^1
+  - methodology/kanban@^1
+parameters:
+  project_name: "Plover Board"
+  approver_name: "Plover Lead"
+  approver_email: "lead@plover-board.example"
+  agent_name: "Plover Agent"

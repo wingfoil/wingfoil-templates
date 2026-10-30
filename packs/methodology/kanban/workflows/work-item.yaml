@@ -1,0 +1,43 @@
+format: 1
+# One work item of methodology/kanban. Each move is a memory verb, never element.set_state, so that
+# WingFoil checks the WIP limits. Not named kanban-delivery: a project's own keeps its name.
+name: work-item
+kind: sub
+element: task
+description: "One work item, from its started point to its finished point"
+version: 1
+phases:
+  - name: start
+    description: >-
+      A developer pulls the item within the limit on in-progress (backlog to in-progress); refused
+      when the limit is reached. A task carries its release in its release field, written in the
+      draft.
+    role: developer
+    actions:
+      - memory.submit
+  - name: build
+    description: "Do the work to the Definition of Workflow's finished point."
+    role: developer
+    actions:
+      - agent.execute
+  - name: review
+    description: >-
+      Ask for a review within the limit on in-review (in-progress to in-review), by someone other
+      than the author.
+    role: reviewer
+    actions:
+      - memory.submit
+  - name: approve
+    description: >-
+      The approver approves the item; a reject sends it back to build (in-progress), past the limit
+      if it is full, and the state is brought back within it before anything else moves in.
+    role: approver
+    actions:
+      - memory.approve
+    approval: { by_role: approver }
+    fallback: { step: build }
+  - name: done
+    description: "The item is finished (approved to done)."
+    role: developer
+    actions:
+      - memory.submit

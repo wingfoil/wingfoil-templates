@@ -1,0 +1,17 @@
+format: 1
+id: team-limits
+title: "Team limits"
+description: >-
+  Gannet Routes, a fictional delivery-routing service run by a team of four, flows its work with
+  wider WIP limits and a shorter Service Level Expectation.
+packs:
+  - software@^1
+  - methodology/kanban@^1
+parameters:
+  project_name: "Gannet Routes"
+  approver_name: "Gannet Lead"
+  approver_email: "lead@gannet-routes.example"
+  agent_name: "Gannet Agent"
+  wip_in_progress: 4
+  wip_in_review: 2
+  service_level_expectation: "85% of work items finish within 7 days"
