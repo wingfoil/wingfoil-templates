@@ -385,3 +385,14 @@ on the 0.2.2 pin), the W-01 … W-14 recheck, the W10 row.
   the narrower filter stated; the reject rule worded as what the engine does not do (a state a
   reject pushed over its limit is brought back within it before anything else moves into it);
   wrapping. The filter's change of ruling 8's detail goes to the approver with the submit.
+- 2026-10-30, step 4: `memory submit pack-methodology-kanban` (`draft → proposed`, `8abdd0e`);
+  branch pushed; CI run 41048572300 on `8abdd0e`, conclusion `success`.
+- 2026-10-30, step 5: the approver accepted `pack-methodology-kanban` (`proposed → accepted`,
+  `f3fce0d`) and, in chat, `delivery`'s filter `[in-development, releasing]`.
+- 2026-10-30, step 6: clean clones of the branch at `8abdd0e`, Node.js 22.21.0 then 22.12.0, one
+  after the other: `npm ci`, `npm test` (1027 tests, 1027 pass, 0 fail), `npm run lint`,
+  `check:packs`, `validate`, `index -- --check`, `check:runs` and `workflow list` exit 0 on both
+  (`f3fce0d` changes only the charter's `status`). Privacy check of the branch's diff against
+  `main`: no local or scratch path, no private repository or project, no intermediary session.
+  Owed rows added by this plan: ruling 13's and the four of the charter's Adoption (step 4). The
+  untracked draft of step 2 stays out of the repository.
