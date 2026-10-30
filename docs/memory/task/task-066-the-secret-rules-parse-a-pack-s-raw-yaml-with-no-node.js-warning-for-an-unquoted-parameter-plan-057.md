@@ -2,7 +2,7 @@
 id: task-066-the-secret-rules-parse-a-pack-s-raw-yaml-with-no-node.js-warning-for-an-unquoted-parameter-plan-057
 type: task
 title: "The secret rules parse a pack's raw YAML with no Node.js warning for an unquoted parameter (plan-057)"
-status: draft
+status: pending
 pack: ""            # tooling task (tooling-delivery, plan-057 point 2)
 depends_on: []
 tags: ["tooling","lint","kanban"]
