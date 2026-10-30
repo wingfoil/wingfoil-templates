@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import {
   copyFileSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync,
 } from 'node:fs';
@@ -122,6 +122,28 @@ describe('npm run check:packs', () => {
       status = (error as { status: number }).status;
     }
     assert.equal(status, 3);
+  });
+});
+
+describe('an unquoted parameter in a pack\'s YAML (task-066, plan-057)', () => {
+  it('the lint\'s command prints nothing on stderr for an integer parameter used as a limit', () => {
+    const base: PackSpec = {
+      ...BASE,
+      manifest: { parameters: { wip: { type: 'integer', default: 2, description: 'A limit' } } },
+      extraFiles: {
+        ...BASE.extraFiles,
+        'fragments/memory.yaml': 'format: 1\ndefaults:\n  states:\n    sequence: [draft, done]\n'
+          + '    limits:\n      draft: {{wip}}\n',
+      },
+    };
+    withPackTree([base, SOFTWARE_COMPOSABLE, KANBAN], (root) => {
+      copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
+      writeFileSync(join(root, 'compat.yaml'), FROZEN_COMPAT);
+      const result = spawnSync(process.execPath,
+        [join(REPO_ROOT, 'dist', 'src', 'check-packs-cli.js'), '--tree', root], { encoding: 'utf8' });
+      assert.equal(result.stderr, '');
+      assert.equal(result.status, 0, result.stdout);
+    });
   });
 });
 
