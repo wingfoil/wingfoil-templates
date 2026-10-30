@@ -112,3 +112,11 @@ Then the fix; green; the owed row moved to Closed.
   the old and the new `secretProblems` on 28 inputs (empty text, comments only, several documents,
   a duplicate key, aliases, tags, a collection key, `{{p}}` as key and value …): no difference but
   the warning. Applied: these notes; `documents.length` alone; a comment on the CLI case.
+- 2026-10-30, checks at `57506db` (Acceptance 5), from clean clones on Node.js 22.21.0 then
+  22.12.0, one after the other: `npm ci`, `npm test` (1030 of 1030), `lint`, `check:packs` (61
+  files, 0 problems), `validate` (14 runs, 0 failed, tolerance none), the overlays `software-exit`
+  and `scrum-exit` (22 runs each, 0 failed), `index -- --check` (6 files), `check:runs` (34 runs,
+  0 failed) and `workflow list`, each exit 0, no Node.js warning in either log. `packs/`,
+  `.wingfoil/` and the fixtures' expected outputs unchanged. Branch CI run 41111485611 on
+  `57506db`: `success`. Privacy check of the branch's diff against `main`: no local or scratch
+  path, no private repository or project, no intermediary session. `in-progress → in-review`.
