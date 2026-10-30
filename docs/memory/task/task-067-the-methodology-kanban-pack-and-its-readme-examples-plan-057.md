@@ -124,7 +124,28 @@ the same change. It follows task-066, so that the pack's checks print no warning
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-067-kanban-pack` from `main` (`074fa07`, with task-066).
+
+**The pack** (`packs/methodology/kanban/`), from the charter: `pack.yaml`, the two fragments and
+the three workflows taken from the untracked draft of plan-056 (the files run on the engine), their
+descriptions rewritten as Acceptance 4 asks; `directives/{kanban,definition-of-workflow}.md`,
+`agents/section.md`, `CHANGELOG.md` and `README.md` written from the charter, as `scrum`'s are
+built (hand-written sections; the generated ones by `npm run index`).
+
+**The examples**, fictional, `.example` addresses: `tests/fixtures/examples/kanban/defaults/`
+(Plover Board, the draft's fictional project) and `tests/fixtures/examples/kanban/team-limits/`
+(another fictional project, the limits 4 and 2 and its Service Level Expectation).
+
+**Names:** the WingFoil 0.3.1 built-in workflows and directives and the `custom/` files of
+`init --template Kanban` and `--template Scrum`, listed in a scratch project, against `kanban`,
+`definition-of-workflow`, `delivery`, `release-flow` and `work-item`.
+
+**Checks**, in order: `npm run index`, then `index -- --check`; `check:packs`; `validate`; the
+overlays and the golden tree; `check:runs`; then the tests that take the counts, run first to see
+which move, each moved count stated; the full suite in clean clones on both Node.js versions.
+
+**Commits:** the pack; the examples; the moved counts; the notes. The untracked draft stays out of
+every commit and is deleted after the merge (plan-057's close).
 
 ## Execution Notes
 
