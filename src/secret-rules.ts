@@ -1,10 +1,10 @@
 // F3.5, no secrets (task-012, acceptance 11; `security-secrets`): a PEM private key block, a token
 // with a known prefix and its full body, or a long high-entropy string, in a file under packs/,
 // presets/ or transitions/. A finding names the file, the line and the kind, never the value.
-import { isScalar, visit } from 'yaml';
+import { isScalar, parseAllDocuments, visit } from 'yaml';
+import type { Document } from 'yaml';
 
 import type { Problem } from './problems';
-import { YamlError, parseYaml } from './yaml-load';
 
 const PRIVATE_KEY = /-----BEGIN [A-Z ]*PRIVATE KEY-----/g;
 
@@ -70,23 +70,40 @@ function finding(file: string, line: number, kind: string): Problem {
     + 'credentials or secrets (security-secrets)' };
 }
 
-/** The high-entropy scalars of a YAML text, or undefined when it does not parse. */
-function yamlStrings(text: string, file: string): { value: string; offset: number }[] | undefined {
-  try {
-    const yaml = parseYaml(text, file);
-    const found: { value: string; offset: number }[] = [];
-    visit(yaml.document, {
-      Scalar(_key, node) {
-        if (isScalar(node) && typeof node.value === 'string') {
-          found.push({ value: node.value, offset: node.range?.[0] ?? 0 });
-        }
-      },
-    });
-    return found;
-  } catch (error) {
-    if (error instanceof YamlError) return undefined;
-    throw error;
-  }
+/**
+ * The one document of a YAML text, or undefined when the text holds none or several, has an error
+ * or holds an alias: those are scanned as whitespace tokens. Never turned into JavaScript values,
+ * so a pack's unquoted `{{name}}`, a flow map used as a key before substitution, gives no Node.js
+ * warning (task-066).
+ */
+function yamlDocument(text: string): Document.Parsed | undefined {
+  const documents = parseAllDocuments(text, { uniqueKeys: true, prettyErrors: false });
+  if (!Array.isArray(documents) || documents.length !== 1) return undefined;
+  const [document] = documents;
+  if (document === undefined || document.errors.length > 0) return undefined;
+  let alias = false;
+  visit(document, {
+    Alias() {
+      alias = true;
+      return visit.BREAK;
+    },
+  });
+  return alias ? undefined : document;
+}
+
+/** The scalars of a YAML text, or undefined when it is scanned as whitespace tokens. */
+function yamlStrings(text: string): { value: string; offset: number }[] | undefined {
+  const document = yamlDocument(text);
+  if (document === undefined) return undefined;
+  const found: { value: string; offset: number }[] = [];
+  visit(document, {
+    Scalar(_key, node) {
+      if (isScalar(node) && typeof node.value === 'string') {
+        found.push({ value: node.value, offset: node.range?.[0] ?? 0 });
+      }
+    },
+  });
+  return found;
 }
 
 /** Each whitespace-separated token, without the quotes and punctuation around it. */
@@ -109,7 +126,7 @@ export function secretProblems(file: string, text: string): Problem[] {
   }
   // A line already reported for a key or a token is not reported again for its entropy.
   const reported = new Set(problems.map((problem) => problem.line));
-  const strings = (file.endsWith('.yaml') ? yamlStrings(text, file) : undefined) ?? tokens(text);
+  const strings = (file.endsWith('.yaml') ? yamlStrings(text) : undefined) ?? tokens(text);
   for (const { value, offset } of strings) {
     if (looksLikeSecret(value, lineTextAt(text, offset)) && !reported.has(lineAt(text, offset))) {
       problems.push(finding(file, lineAt(text, offset), `a high-entropy string of ${value.length} `
