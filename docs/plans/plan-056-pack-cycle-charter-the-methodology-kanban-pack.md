@@ -396,3 +396,9 @@ on the 0.2.2 pin), the W-01 … W-14 recheck, the W10 row.
   `main`: no local or scratch path, no private repository or project, no intermediary session.
   Owed rows added by this plan: ruling 13's and the four of the charter's Adoption (step 4). The
   untracked draft of step 2 stays out of the repository.
+- 2026-10-30, step 6: branch CI run 41053863479 on `881fa60`, conclusion `success` (`validate
+  (22.12.0)` and `validate (22.21.0)` both `success`). On the approver's OK, `--no-ff` merge into
+  `main` (`c6ed1a0`), pushed; `main`'s CI run 41075254260 on `c6ed1a0`, conclusion `success` (both
+  jobs `success`), Pages run 41075253855 `success`; the branch removed locally and remotely.
+  `pack-methodology-kanban` is `accepted` on `main`. Next, outside this plan: `kanban`'s `author`
+  (the next plan), then its first release; the rest of W10. This plan goes `active → done`.
