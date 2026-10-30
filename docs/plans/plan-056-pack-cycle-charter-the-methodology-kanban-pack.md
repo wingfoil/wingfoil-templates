@@ -249,3 +249,68 @@ on the 0.2.2 pin), the W-01 … W-14 recheck, the W10 row.
   40941233845 `success`. The reads of step 1 that the rulings needed (the Guide's edition, `init`'s
   names, Benchmark) done and recorded in "The approver's rulings"; the outline ruled by the approver
   on 2026-10-30. Submitted (`draft → active`).
+- 2026-10-30, step 2 (dl-032 E2). **The draft:** `kanban` written as an overlay under
+  `tests/fixtures/`, untracked, never committed: `task` tightened with a required `release`
+  (`not_applicable_allowed: [release]`) and `limits: { in-progress: {{wip_in_progress}},
+  in-review: {{wip_in_review}} }`; `delivery` = `plan-release` (`memory.add(type: release)`, two
+  `memory.submit`, `produces` the release) → `releases` (`iterate_over: release`, `where: { status:
+  [in-development, releasing, released] }`, `include: release-flow`); `release-flow`
+  (`element: release`) = `work` (`iterate_over: task`, `where: { status: [backlog, in-progress,
+  in-review, approved], release: "{release.version}" }`, `include: work-item`) → `release`
+  (`iterate_over: release`, `where: { status: [in-development, releasing], version:
+  "{release.version}" }`, `include: release`) → `retrospective`; `work-item` (`element: task`) =
+  `start` (`memory.submit`) → `build` → `review` → `approve` (gate, fallback `build`) → `done`; the
+  directives `kanban` and `definition-of-workflow`; parameters `wip_in_progress` 2,
+  `wip_in_review` 1, `service_level_expectation`. `npm run validate -- --overlay <draft>`: 16 runs,
+  0 failed, tolerance none (WingFoil 0.3.0 and 0.3.1, no diagnostic).
+  - **Scope token:** a first draft with `{release.id}` failed both releases with
+    `W_PHASE_TOKEN_OUT_OF_SCOPE` (`software`'s `release` template declares no `id`, and a later
+    pack cannot change it); `{release.version}` passes. A task's `release` field therefore holds the
+    release's version, as Benchmark and UI already write it (`release: v0.1`).
+  - **The integer parameters** in `limits`, unquoted, compose to YAML integers (`in-progress: 2`,
+    `in-review: 1`); the composer prints a Node.js warning ("Keys with collection values will be
+    stringified") from a parse of the fragment before substitution, with no failure.
+- 2026-10-30, step 2, **the run** on WingFoil 0.3.1 (`870bd440`, the matrix's install), in a
+  scratch repository outside this one: `base`, `software` and the draft composed (`npm run compose`,
+  `main` at `96f791b`, fictional project Plover Board, `.example` addresses), `.wingfoil/`
+  committed; `workflow list` exit 0, `"diagnostics": []`. 163 commands; each exits 0 except those
+  named. `workflow start sw-life-cycle` exit 0 (`sw-life-cycle-1-plan (active)`); `inception` and
+  `specification` passed (a document committed, `finalize --reason` on the gates, a tech-spec
+  added, submitted, approved).
+  - **The first release, `work` empty.** `rel-1.0.0` added at `delivery.plan-release` (`--set
+    version=1.0.0 --set release-line=v1`), two `memory submit` → `in-development`. With no task
+    carrying it, `work` completed at once and `release-submit.pre-release-checks@release:rel-1.0.0`
+    became the next step. Four tasks added and approved to `backlog`, three with `release:
+    "1.0.0"`, one with `release: "n/a — not planned yet"`: the three joined `work`
+    (`work-item.start@task:…` on the frontier), the `n/a` one stayed out, and the release step left
+    the frontier until `work` completed again.
+  - **The limits hold, at the verb.** `memory submit` of a third task to `in-progress` exit 1:
+    `WIP limit reached for 'in-progress' on type 'task' (limit 2): held by task-001-alpha,
+    task-002-beta`; of a second to `in-review` exit 1, `(limit 1)`. WingFoil counts the holders at
+    HEAD and on every local and remote-tracking branch that changed them since it forked from HEAD:
+    a limit counts the whole repository, every branch included.
+  - **A task spanning two releases.** `task-003-gamma`, started under `1.0.0`, had its `release`
+    rewritten to `1.1.0` (a commit) after `rel-1.1.0` was added outside a step and moved to
+    `in-development`; `rel-1.0.0`'s `release` phase then became current, and gamma stayed on the
+    frontier under `rel-1.1.0`. `rel-1.0.0` went through `release-submit` and `release-publishing`
+    (records by `finalize`, the moves by the commit forms `workflow next` prints) to `released`
+    while gamma was `in-progress`: two releases live in one pass, nothing `late`. Gamma was
+    reviewed, rejected (`memory reject` → `in-progress`, `build` re-entered), reviewed again,
+    approved and done in `rel-1.1.0`.
+  - **Out of the `where` and back.** `task-005-epsilon`, added during `rel-1.1.0`'s flow, joined
+    `work`; started, then `memory park` → `backlog` (the step `start` offered again), restarted and
+    done.
+  - **Retrospectives.** `rel-1.0.0`'s: `explore` on `docs/retrospectives/rel-1.0.0.md`,
+    `additional-points` finalized, `dl-001` tagged `retrospective` added at `capture`, submitted,
+    approved. `rel-1.1.0`'s `explore` completed with no new file (`base`'s known weak evidence);
+    its `capture` was finalized with a record and no decision-log, a slip of the driving script,
+    and its `approve`, selecting nothing, completed: so the check of bug-008 ran on a third release.
+    With no release open, `delivery` completed and `end-of-life.announce` became current;
+    `rel-1.2.0` and a task added outside a step reopened `delivery` (`delivery current`), and the
+    pair ran to `released`. When `rel-1.2.0`'s retrospective decision-log was `in-discussion`, the
+    `retrospective.approve` steps of `rel-1.0.0` and `rel-1.1.0` returned to the frontier with
+    `rel-1.2.0`'s (`pending approvals: 3`, one decision-log): bug-008 and F-039, as under `scrum`;
+    its one approval cleared the three, and `delivery` completed.
+  - No element reported `late` in the whole run. Not exercised: a release completing while a task
+    of its own is still open (on 0.3.x it closes `work` and the task is `late`, F-037; a rule of the
+    `kanban` directive, as `scrum`'s ruling 16). The approver's rulings on these findings follow.
