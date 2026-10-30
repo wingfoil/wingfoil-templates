@@ -340,3 +340,35 @@ on the 0.2.2 pin), the W-01 … W-14 recheck, the W10 row.
     `kanban` directive, as `scrum`'s ruling 16). The approver's rulings on these findings follow.
 - 2026-10-30: the approver ruled 8 … 13 on step 2's findings. Ruling 13's item is a new row of
   `docs/owed-items.md` (the composer's warning on an unquoted integer parameter).
+- 2026-10-30, step 3: `npm run -s wingfoil -- memory add --type pack --title Kanban --set
+  axis=methodology --set name=kanban` exit 0, id `pack-methodology-kanban` (`4454438`); the body
+  written from rulings 1 … 13 and step 2 (`0db80bf`).
+- 2026-10-30, step 4: independent review of the charter: approve after amendments; no blocker, ten
+  should-fix, six nits. Two findings were checked on the engine before amending, in the same scratch
+  repository (WingFoil 0.3.1), and in a second one composed with the change:
+  - **A reject past the limit:** with `wip_in_progress: 2`, two tasks `in-progress` and a third
+    `in-review`, `memory reject` of the third exit 0 (`in-review → in-progress`), leaving three tasks
+    `in-progress`: a reject is not checked against the limit. The `kanban` directive adds the rule
+    that nothing new starts while a state is over its limit.
+  - **A release already `released`:** a release moved to `released` by four `memory submit` outside
+    the flow, with `delivery`'s `where` holding `released`, started a `release-flow` at once
+    (`retrospective.additional-points@release:rel-0.5.0` on the frontier). With `where: { status:
+    [in-development, releasing] }`, in a second scratch repository (46 commands, each exit 0), the
+    same release added before `workflow start sw-life-cycle` stayed out, and `rel-1.0.0` driven
+    with one task to `released` stayed in the iteration through its retrospective (`explore` on a
+    committed file, `additional-points` finalized, a decision-log captured, submitted, approved);
+    then `delivery` completed and `end-of-life.announce` was current. `delivery`'s filter is
+    therefore `[in-development, releasing]`, the detail of ruling 8 this changes.
+  - **Names:** `release-flow` and `work-item` equal no workflow of WingFoil 0.3.1's built-in
+    directory (empty) or of `init --template Kanban`, of this repository's `custom/`, or of
+    Benchmark's at `d2975efe`. Found while checking: this repository's `custom/` `retrospective`,
+    `decision-log-ingest`, `bug-ingest` and `adr-ingest` share `base`'s and `software`'s names, a row
+    of `docs/owed-items.md` for its adoption.
+  - Amended: the limits' unexercised ref counting and the reject (S3 … S5); `delivery`'s filter and
+    adoption with releases already `released` (S6); "replenishment" removed (S7); the names check
+    (S8); claims carried from `scrum` or F-037 marked as not exercised, the heading "0.3.1" (S9);
+    the flow stopping with no open release, an adaptation (S10); "no WingFoil diagnostic" and the
+    composer's warning (S2); the four Adoption rows of this repository added to `docs/owed-items.md`
+    (S1, N5); nits N1, N3, N4, N6. N2 (Product Owner or approver) kept as "Product Owner", the
+    `product-owner` role; the draft's `pack.yaml` description is `author`'s. A re-review follows,
+    since the `delivery` filter changes ruling 8's detail.
