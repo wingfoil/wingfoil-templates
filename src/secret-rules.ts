@@ -78,7 +78,7 @@ function finding(file: string, line: number, kind: string): Problem {
  */
 function yamlDocument(text: string): Document.Parsed | undefined {
   const documents = parseAllDocuments(text, { uniqueKeys: true, prettyErrors: false });
-  if (!Array.isArray(documents) || documents.length !== 1) return undefined;
+  if (documents.length !== 1) return undefined;
   const [document] = documents;
   if (document === undefined || document.errors.length > 0) return undefined;
   let alias = false;

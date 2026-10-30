@@ -136,6 +136,7 @@ describe('an unquoted parameter in a pack\'s YAML (task-066, plan-057)', () => {
           + '    limits:\n      draft: {{wip}}\n',
       },
     };
+    // Not lint(): the case needs the spawned command's stderr.
     withPackTree([base, SOFTWARE_COMPOSABLE, KANBAN], (root) => {
       copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
       writeFileSync(join(root, 'compat.yaml'), FROZEN_COMPAT);
