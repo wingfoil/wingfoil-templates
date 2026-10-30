@@ -226,3 +226,6 @@ dl-025 (`pending`).
   coverage; where the bodies are committed and how the two delivery loops are sequenced.
 - 2026-10-30: the approver ruled the outline (every point as recommended); submitted
   (`draft → active`).
+- 2026-10-30, step 2: task-066 … task-069 written, reviewed (approve after amendments; one blocking
+  finding in task-066, its in-process test), amended, re-reviewed (approve), submitted
+  (`draft → pending`); the approver accepted the four into the backlog.
