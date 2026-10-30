@@ -2,7 +2,7 @@
 id: task-069-a-run-of-sw-life-cycle-with-methodology-kanban-on-wingfoil-0.3.1-two-releases-a-task-spanning-both-the-limits-plan-057
 type: task
 title: "A run of sw-life-cycle with methodology/kanban on WingFoil 0.3.1: two releases, a task spanning both, the limits (plan-057)"
-status: draft
+status: pending
 pack: "pack-methodology-kanban"
 depends_on: ["task-067", "task-068"]
 tags: ["packs","kanban","methodology"]
