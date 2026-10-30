@@ -51,7 +51,6 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | W10: `methodology/kanban`, presets, `governance/wingfoil-dogfood`, this repository's adoption, its pin, the first inbox sync | plan-052 ruling 7 | W10 | W10 |
 | dl-024 and dl-025 ruled; plan-022 closed | plan-052, plan-053 › close | approver | the next retrospective |
 | `docs/01_vision/06_features.md`: F3.3 validates with `workflow list`, `dna show` and `directives list` only, against dl-032 E3; F5.2 describes `wingfoil-release-intake` without `retrospective-start` (dl-029) | plan-055 › Execution Notes (leftovers) | approver | the next retrospective |
-| The composer prints a Node.js warning ("Keys with collection values will be stringified") for an unquoted integer parameter, `{{name}}`, parsed before substitution (`methodology/kanban`'s `limits`) | plan-056 ruling 13 | approver | the next tooling task on the composer |
 | This repository's per-pack WIP rule under `methodology/kanban`, whose `limits` count the whole repository (a total limit, or the rule kept by hand over a looser one) | plan-056 ruling 10; pack-methodology-kanban › Adoption | W10 | the adoption |
 | How this repository's tasks carry a `release` under `methodology/kanban`, its packs being released per pack, not through `software`'s `release` | plan-056 › step 4; pack-methodology-kanban › Adoption | W10 | the adoption |
 | This repository's custom `retrospective`, `decision-log-ingest`, `bug-ingest` and `adr-ingest` share `base`'s and `software`'s workflow names (bug-007's pattern) | plan-056 › step 4; pack-methodology-kanban › Adoption | W10 | the adoption |
@@ -67,3 +66,4 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | F-039 bug-008 option (iii) | plan-052 ruling 2, close | task-064 (plan-054) |
 | The note on 0.3.0's `finalize --dry-run`: moot, fixed in 0.3.1 (plan-051 › Context) | plan-045, plan-046 › close | plan-054 (dl-031 R4) |
 | `recheck`'s wording in `wingfoil-release-intake` | plan-051, plan-052 › close | plan-055 (`wingfoil-release-intake` v5) |
+| The Node.js warning on an unquoted integer parameter, `{{name}}` (`methodology/kanban`'s `limits`): from the secret rules' parse of a pack's raw YAML, run by the lint and the composer alike, not from the composition | plan-056 ruling 13 | task-066 (plan-057) |
