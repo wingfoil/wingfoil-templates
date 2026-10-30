@@ -347,9 +347,9 @@ on the 0.2.2 pin), the W-01 … W-14 recheck, the W10 row.
   should-fix, six nits. Two findings were checked on the engine before amending, in the same scratch
   repository (WingFoil 0.3.1), and in a second one composed with the change:
   - **A reject past the limit:** with `wip_in_progress: 2`, two tasks `in-progress` and a third
-    `in-review`, `memory reject` of the third exit 0 (`in-review → in-progress`), leaving three tasks
-    `in-progress`: a reject is not checked against the limit. The `kanban` directive adds the rule
-    that nothing new starts while a state is over its limit.
+    `in-review`, `memory reject` of the third exit 0 (`in-review → in-progress`), leaving three
+    tasks `in-progress`: a reject is not checked against the limit. The `kanban` directive adds a
+    rule for it (worded at the re-review, below).
   - **A release already `released`:** a release moved to `released` by four `memory submit` outside
     the flow, with `delivery`'s `where` holding `released`, started a `release-flow` at once
     (`retrospective.additional-points@release:rel-0.5.0` on the frontier). With `where: { status:
@@ -362,8 +362,8 @@ on the 0.2.2 pin), the W-01 … W-14 recheck, the W10 row.
   - **Names:** `release-flow` and `work-item` equal no workflow of WingFoil 0.3.1's built-in
     directory (empty) or of `init --template Kanban`, of this repository's `custom/`, or of
     Benchmark's at `d2975efe`. Found while checking: this repository's `custom/` `retrospective`,
-    `decision-log-ingest`, `bug-ingest` and `adr-ingest` share `base`'s and `software`'s names, a row
-    of `docs/owed-items.md` for its adoption.
+    `decision-log-ingest`, `bug-ingest` and `adr-ingest` share `base`'s and `software`'s names, a
+    row of `docs/owed-items.md` for its adoption.
   - Amended: the limits' unexercised ref counting and the reject (S3 … S5); `delivery`'s filter and
     adoption with releases already `released` (S6); "replenishment" removed (S7); the names check
     (S8); claims carried from `scrum` or F-037 marked as not exercised, the heading "0.3.1" (S9);
@@ -372,3 +372,16 @@ on the 0.2.2 pin), the W-01 … W-14 recheck, the W10 row.
     (S1, N5); nits N1, N3, N4, N6. N2 (Product Owner or approver) kept as "Product Owner", the
     `product-owner` role; the draft's `pack.yaml` description is `author`'s. A re-review follows,
     since the `delivery` filter changes ruling 8's detail.
+- 2026-10-30, step 4: focused re-review: approve after amendments; no blocker, two should-fix,
+  three nits. The multi-release claims rested on step 2's run with the old filter, so the second
+  scratch repository went on with `[in-development, releasing]`: `rel-1.1.0` and `rel-1.2.0` added
+  outside a step and moved to `in-development`; `task-003-gamma` started under `1.1.0` and its
+  `release` rewritten to `1.2.0`; `rel-1.1.0` driven to `released` while gamma was `in-progress`
+  under `rel-1.2.0`; `rel-1.1.0`'s retrospective decision-log `in-discussion` brought back
+  `retrospective.approve@release:rel-1.0.0` (`pending approvals: 2`), and `rel-1.2.0`'s brought back
+  both earlier ones (`pending approvals: 3`); each approval cleared them; `delivery` completed and
+  `end-of-life.announce` was current. That repository: 115 commands, each exit 0, nothing `late`.
+  Amended: the steps cited (step 4, also in three rows of `docs/owed-items.md`); the coverage of
+  the narrower filter stated; the reject rule worded as what the engine does not do (a state a
+  reject pushed over its limit is brought back within it before anything else moves into it);
+  wrapping. The filter's change of ruling 8's detail goes to the approver with the submit.

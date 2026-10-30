@@ -54,10 +54,11 @@ work item is `base`'s `task`, and the board's columns are its states.
   every local and remote-tracking branch that changed them since it forked from HEAD, so a task
   started on an unmerged branch holds its place and the count follows the refs last fetched (not
   exercised by step 2, which ran on one branch). `memory reject` is not checked against the limit: a
-  task sent back from `in-review` returns to `in-progress` past it (plan-056, step 2: three tasks
-  `in-progress` under a limit of 2), so the `kanban` directive adds the rule that nothing new is
-  started while a state is over its limit. Merged limits only go down (spec-001 §7.5); a project
-  sets its own values through the parameters.
+  task sent back from `in-review` returns to `in-progress` past it (plan-056, step 4: three tasks
+  `in-progress` under a limit of 2), so the `kanban` directive adds the rule that a state pushed
+  over its limit by a reject is brought back within it (the item finished, or another parked) before
+  anything else moves into it. Merged limits only go down (spec-001 §7.5); a project sets its own
+  values through the parameters.
 - **`release`**, `software`'s, is unchanged: its `version` is the value tasks carry.
 
 **Workflows** (`workflows/`; each phase whose artefact is a file declares it in `produces`, R4;
@@ -69,18 +70,20 @@ work item is `base`'s `task`, and the board's columns are its states.
 | `release-flow` | sub, `element: release` | `work` (`iterate_over: task`, `where: { status: [backlog, in-progress, in-review, approved], release: "{release.version}" }`, `include: work-item`) → `release` (`iterate_over: release`, `where: { status: [in-development, releasing], version: "{release.version}" }`, `include: release`, dl-027) → `retrospective` (`include: retrospective`, `base`'s) |
 | `work-item` | sub, `element: task` | `start` (developer: `memory.submit` `backlog → in-progress`, within the limit) → `build` (developer: `agent.execute`, to the Definition of Workflow's finished point) → `review` (reviewer: `memory.submit` `in-progress → in-review`, within the limit) → `approve` (approver: `memory.approve` `in-review → approved`, approval by the approver, fallback `build`) → `done` (developer: `memory.submit` `approved → done`) |
 
-- **How it runs on WingFoil 0.3.1** (plan-056 rulings 8 and 11, step 2: driven on 0.3.1, validated
-  on 0.3.0 and 0.3.1). WingFoil evaluates a workflow's phases in order, and a phase that completes
-  closes every earlier live phase, whose new candidates are reported `late` (F-037, found under
-  `scrum` by plan-047). So the releases are the one stream of `delivery`, and the flow of work items
-  nests in each release: `release-flow` runs the release's tasks, then the release slot over that
-  release alone, then its retrospective, which dl-026 allows. The first release is added by
-  `plan-release`; each later one by `memory add` outside a step (the completed `plan-release` takes
-  no more evidence), moved to `in-development` by two `memory submit`, and it joins the live
-  iteration. Several releases are live at once: one may be `releasing` while the next is
-  `in-development` and its tasks flow. With no release open, `delivery` completes and `end-of-life`
-  becomes current; a new release reopens `delivery` (step 2; that `end-of-life` progressed closes it
-  for good is plan-047's finding under `scrum`, not exercised here).
+- **How it runs on WingFoil 0.3.1** (plan-056 rulings 8 and 11; driven on 0.3.1 at steps 2 and 4,
+  validated on 0.3.0 and 0.3.1; with the filter `[in-development, releasing]`, step 4 ran three
+  releases, two of them live at once, a task spanning two releases and three retrospectives).
+  WingFoil evaluates a workflow's phases in order, and a phase that completes closes every earlier
+  live phase, whose new candidates are reported `late` (F-037, found under `scrum` by plan-047). So
+  the releases are the one stream of `delivery`, and the flow of work items nests in each release:
+  `release-flow` runs the release's tasks, then the release slot over that release alone, then its
+  retrospective, which dl-026 allows. The first release is added by `plan-release`; each later one
+  by `memory add` outside a step (the completed `plan-release` takes no more evidence), moved to
+  `in-development` by two `memory submit`, and it joins the live iteration. Several releases are
+  live at once: one may be `releasing` while the next is `in-development` and its tasks flow. With
+  no release open, `delivery` completes and `end-of-life` becomes current; a new release reopens
+  `delivery` (step 2; that `end-of-life` progressed closes it for good is plan-047's finding under
+  `scrum`, not exercised here).
 - **The open release.** The flow needs a release `in-development` to carry its tasks: a project
   keeps one open, the next release, and adds it before the current one leaves `in-development`.
   A task joins `work` when its `release` names an open release and it reaches `backlog`; it leaves
@@ -100,27 +103,27 @@ work item is `base`'s `task`, and the board's columns are its states.
   released release's step returns to the frontier while a later release's decision-log waits, and
   one approval clears them all (bug-008, F-039; plan-056 step 2); once a file is under
   `retrospective_path`, `explore` completes for every later release.
-- **Not a phase:** pulling new work into the backlog, the flow measures and the daily management
-  of the board: the
-  Guide prescribes no event, and they leave no artefact of their own. They are rules of the
-  `kanban` directive.
+- **Not a phase:** pulling new work into the backlog, the flow measures and the daily management of
+  the board: the Guide prescribes no event, and they leave no artefact of their own. They are rules
+  of the `kanban` directive.
 - `delivery`'s name, `kind: sub` and no `element` are `software`'s contract; `release-flow` and
   `work-item` are owned by this pack only (spec-001 §7.6). Neither is named `kanban-delivery`:
   WingFoil 0.3.x refuses two workflows of one name (`E_WORKFLOW_DUPLICATE_NAME`), and WingFoil
   0.3.1's `init --template Kanban`, this repository and Benchmark each have a `custom/` workflow of
   that name (plan-056 ruling 5, bug-007). No workflow or directive name the pack ships equals a
   WingFoil 0.3.1 built-in, a `custom/` file of `init --template Kanban`, or a `custom/` file of
-  this repository or of Benchmark at `d2975efe` (plan-056, the checks after step 3's review).
+  this repository or of Benchmark at `d2975efe` (plan-056, step 4).
 
 **Directives** (`directives/`; their ids equal no WingFoil built-in id and no `custom/` directive
 `init` writes):
-- `kanban`: the Guide's three practices; pull within the WIP limits, never past them, and nothing
-  new started while a state is over its limit (a reject is not checked); the four flow measures
-  (WIP, throughput, work item age, cycle time), read from the tasks' history in Memory, since
-  WingFoil computes none of them; the Service Level Expectation, `{{service_level_expectation}}`,
-  and an item older than it handled first; one release kept open to carry the flow, and a release
-  moved to `releasing` only once its tasks are done or moved (ruling 11); the workflow improved at
-  each release's retrospective; releases decided by the Product Owner; the agent never approving;
+- `kanban`: the Guide's three practices; pull within the WIP limits, never past them, and a state a
+  reject pushed over its limit brought back within it before anything else moves into it; the four
+  flow measures (WIP, throughput, work item age, cycle time), read from the tasks' history in
+  Memory, since WingFoil computes none of them; the Service Level Expectation,
+  `{{service_level_expectation}}`, and an item older than it handled first; one release kept open to
+  carry the flow, and a release moved to `releasing` only once its tasks are done or moved (ruling
+  11); the workflow improved at each release's retrospective; releases decided by the Product Owner;
+  the agent never approving;
 - `definition-of-workflow`: a generic Definition of Workflow (plan-056 ruling 6): the units of value
   are tasks; the started point is `in-progress` and the finished point `done`; the states are the
   task machine's; WIP is controlled by the limits `{{wip_in_progress}}` in progress and
@@ -164,12 +167,12 @@ Listed in the README's "Sources and adaptations" (spec-002 §2):
   they are WingFoil's governance;
 - WIP is controlled by WingFoil's `limits` on two states of `task`, counted over the whole
   repository and every branch WingFoil sees, not per column of a team's board; a reject is not
-  checked against the limit, so the `kanban` directive stops new starts while a state is over it;
-- the flow runs inside releases: a work item carries the release it is delivered in, by its
-  version, and two releases of one version on two release lines would not be told apart (inferred
-  from the filter, not exercised); a release
-  moves to `releasing` only once its tasks are done or moved to the next release (WingFoil 0.3.x,
-  ruling 11);
+  checked against the limit, so the `kanban` directive brings a state a reject pushed over its limit
+  back within it first;
+- the flow runs inside releases: a work item carries the release it is delivered in, by its version,
+  and two releases of one version on two release lines would not be told apart (inferred from the
+  filter, not exercised); a release moves to `releasing` only once its tasks are done or moved to
+  the next release (WingFoil 0.3.x, ruling 11);
 - the flow needs one release `in-development`: with none, `delivery` completes and `end-of-life`
   becomes current until a new release is added (WingFoil 0.3.x);
 - releases after the first are added outside a step (`memory add`), WingFoil 0.3.x taking a
@@ -198,14 +201,14 @@ parameters' defaults, or on its own limits: it adds its first open release with 
 writes that release's version in the `release` field of the tasks it carries. Its existing open
 tasks get a `release` (or `release: "n/a — <reason>"`) before they are next submitted or amended.
 Its releases already `released` stay out of `delivery`, whose filter selects only releases
-`in-development` or `releasing` (plan-056, the checks after step 3's review: a `released` release in
-the filter started a `release-flow` and its retrospective for a release that never ran it); its open
-releases join it, with their tasks. A project already over a limit moves tasks out of the state
-before it adopts, since `memory submit` refuses the next move into it. A project with a delivery of
-its own compares its workflows and phases with the pack's, removes the `kanban-delivery` written
-under `workflows/custom/` by `init --template Kanban` (bug-007), migrates by explicit commits the
-elements whose state has another name, and records an old → new key mapping for its renamed
-workflows and phases. The README gives the procedure (F6.1, spec-002 §2.3).
+`in-development` or `releasing` (plan-056, step 4: a `released` release in the filter started a
+`release-flow` and its retrospective for a release that never ran it); its open releases join it,
+with their tasks. A project already over a limit moves tasks out of the state before it adopts,
+since `memory submit` refuses the next move into it. A project with a delivery of its own compares
+its workflows and phases with the pack's, removes the `kanban-delivery` written under
+`workflows/custom/` by `init --template Kanban` (bug-007), migrates by explicit commits the elements
+whose state has another name, and records an old → new key mapping for its renamed workflows and
+phases. The README gives the procedure (F6.1, spec-002 §2.3).
 
 **This repository** (W10, its adoption plan; not this charter's). It runs Kanban by hand today, on
 the WingFoil 0.2.2 pin: `kanban-delivery` (one iteration per pack task, included by `pack-cycle` ›
@@ -284,10 +287,9 @@ For the approver's acceptance:
 2. **A limit counts the refs WingFoil sees**, by its refusal message (not exercised): a holder
    recorded on an unmerged branch is counted until it is moved out on that branch, and a holder on
    a branch not fetched is not counted. The README states it; nothing in the pack can change it.
-3. **Two releases of one version** on two release lines would carry their tasks indistinctly
-   (ruling 9; inferred from the filter, not exercised);
-   a project with parallel release lines gives its releases distinct versions, or waits for a
-   `software` whose `release` template declares `id`.
+3. **Two releases of one version** on two release lines would carry their tasks indistinctly (ruling
+   9; inferred from the filter, not exercised); a project with parallel release lines gives its
+   releases distinct versions, or waits for a `software` whose `release` template declares `id`.
 4. **The retrospective per release** shares `scrum`'s open point 2 (`explore`'s weak evidence) and
    bug-008's effect; `kanban` adds nothing until `base` changes.
 
