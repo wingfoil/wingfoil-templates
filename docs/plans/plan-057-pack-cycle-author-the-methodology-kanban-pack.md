@@ -145,6 +145,18 @@ Each point with a recommendation.
    Recommended: not in this plan. Alternative: a tooling task here extending `runs.ts` (new step
    kinds), which would make task-069 scripted.
 
+## The approver's rulings
+
+Given on 2026-10-30, in chat: every point of the outline as recommended.
+1. **Point 1:** `base@^2` and `software@^1` as they are.
+2. **Point 3:** task-067 as written, with the examples `defaults` and `team-limits`.
+3. **Point 4:** task-068 as written; `flat-releases` carries `wip_in_progress: 1` and
+   `wip_in_review: 1`; `adoption-kanban.yaml` written in this task.
+4. **Point 5:** task-069 on WingFoil 0.3.1 only.
+5. **Point 6:** the scripted full run stays owed, its row widened to `kanban`.
+
+Point 2 (task-066 first) was decided by claude under the approver's allowance and stands.
+
 **Ids** (agreed before this plan): plan-057; task-066 … task-069; dl-034, bug-009 and F-042
 reserved for a ruling, a defect or a note this plan finds; prel-006 is `first-release`'s.
 
@@ -212,3 +224,5 @@ dl-025 (`pending`).
   the CI timeout budget; the "own entries" row; the privacy checks at close; the charter's note on
   the warning's cause; "Not in this plan"; the reads made precise; the draft's deletion; the 0.3.0
   coverage; where the bodies are committed and how the two delivery loops are sequenced.
+- 2026-10-30: the approver ruled the outline (every point as recommended); submitted
+  (`draft → active`).
