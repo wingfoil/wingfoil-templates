@@ -120,3 +120,6 @@ Then the fix; green; the owed row moved to Closed.
   `.wingfoil/` and the fixtures' expected outputs unchanged. Branch CI run 41111485611 on
   `57506db`: `success`. Privacy check of the branch's diff against `main`: no local or scratch
   path, no private repository or project, no intermediary session. `in-progress → in-review`.
+- 2026-10-30: approved by the approver (`in-review → approved`, `ad0c84c`) with the merge OK;
+  merged into `main` with `--no-ff` (`77d74e0`); the `secret-rules` and `check-packs` tests (118 of
+  118) on the merged tree. `approved → done`.
