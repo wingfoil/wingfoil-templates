@@ -2,7 +2,7 @@
 id: bug-009-npm-audit-fails-on-the-minimatch-advisory-ghsa-g3hv-75wg-m249-in-the-root-lockfile-through-eslint
 type: bug
 title: "npm audit fails on the minimatch advisory GHSA-g3hv-75wg-m249 in the root lockfile, through eslint"
-status: pending
+status: approved
 severity: "major"        # critical | major | minor
 pack: ""            # tooling
 tags: ["tooling","ci","dependencies"]
