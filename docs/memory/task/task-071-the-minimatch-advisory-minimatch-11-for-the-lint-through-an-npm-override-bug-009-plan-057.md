@@ -2,7 +2,7 @@
 id: task-071-the-minimatch-advisory-minimatch-11-for-the-lint-through-an-npm-override-bug-009-plan-057
 type: task
 title: "The minimatch advisory: minimatch 11 for the lint through an npm override (bug-009, plan-057)"
-status: backlog
+status: in-progress
 pack: ""            # tooling task (tooling-delivery, bug-009)
 depends_on: []
 tags: ["tooling","ci","dependencies"]
