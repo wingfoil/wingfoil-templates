@@ -55,18 +55,24 @@ function refusal(source: TreeSource, path: string, problem: string): IndexInputE
     ? '; the lint reports it' : ''}`);
 }
 
-/** A YAML mapping of a view; undefined when the file is missing. */
-export function yamlIn(source: TreeSource, path: string): Doc | undefined {
+/** A YAML mapping of a view, parsed with `options`; undefined when the file is missing. */
+function readYaml(source: TreeSource, path: string, options: { logLevel?: 'error' }):
+Doc | undefined {
   const content = source.read(path);
   if (content === undefined) return undefined;
   let data: unknown;
   try {
-    data = parseYaml(content);
+    data = parseYaml(content, options);
   } catch {
     throw refusal(source, path, 'does not parse');
   }
   if (!isDoc(data)) throw refusal(source, path, 'is not a mapping');
   return data;
+}
+
+/** A YAML mapping of a view; undefined when the file is missing. */
+export function yamlIn(source: TreeSource, path: string): Doc | undefined {
+  return readYaml(source, path, {});
 }
 
 /** Like yamlIn, a missing file being an input error too. */
@@ -76,12 +82,20 @@ export function yamlAt(source: TreeSource, path: string): Doc {
   return data;
 }
 
-/** A pack file read as written, before substitution: a fragment or a workflow (task-070). */
+/**
+ * A pack file read as written, before substitution: a fragment or a workflow (task-070). An
+ * unquoted `{{name}}` parses as a flow map whose key is a flow map, which the `yaml` package
+ * stringifies with a Node.js warning; the index reads only names from these files, never such a
+ * value, so the package's warnings are off here (`logLevel: 'error'`), its other parse-time
+ * warnings for these files included. Errors still throw: the same refusals as yamlIn's.
+ */
 export function packYamlIn(source: TreeSource, path: string): Doc | undefined {
-  return yamlIn(source, path);
+  return readYaml(source, path, { logLevel: 'error' });
 }
 
 /** Like packYamlIn, a missing file being an input error too. */
 export function packYamlAt(source: TreeSource, path: string): Doc {
-  return yamlAt(source, path);
+  const data = packYamlIn(source, path);
+  if (data === undefined) throw refusal(source, path, 'is missing');
+  return data;
 }

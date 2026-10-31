@@ -1,7 +1,9 @@
 // The generated sections of a pack README (spec-002 §2.1, §2.2; task-019 acceptance 10): written
 // from the pack's own files in the working tree only, and put between the markers that
 // `readmeOutline` finds, every other byte of the README unchanged.
-import { byBytes, code, isDoc, list, sorted, strings, text, yamlIn } from './index-data';
+import {
+  byBytes, code, isDoc, list, packYamlIn, sorted, strings, text, yamlIn,
+} from './index-data';
 import type { Doc } from './index-data';
 import { conditionalPart } from './index-model';
 import { cell } from './index-render';
@@ -24,6 +26,11 @@ function yamlOrEmpty(source: TreeSource, path: string): Doc {
   return yamlIn(source, path) ?? {};
 }
 
+/** A fragment or a workflow, read before substitution (task-070). */
+function packYamlOrEmpty(source: TreeSource, path: string): Doc {
+  return packYamlIn(source, path) ?? {};
+}
+
 interface PackFiles {
   id: string;
   manifest: Doc;
@@ -41,7 +48,7 @@ function partOf(source: TreeSource, dir: string, manifest: Doc): PackFiles['part
   if (part === undefined) return undefined;
   return {
     workflows: sorted(strings(part.contents['workflows']))
-      .map((name) => ({ name, ...yamlOrEmpty(source, `${dir}/workflows/${name}.yaml`) })),
+      .map((name) => ({ name, ...packYamlOrEmpty(source, `${dir}/workflows/${name}.yaml`) })),
     directives: sorted(strings(part.contents['directives'])),
     layer: part.layer,
   };
@@ -53,12 +60,12 @@ function readPack(source: TreeSource, id: string): PackFiles {
   const contents = isDoc(manifest['contents']) ? manifest['contents'] : {};
   const fragments = strings(contents['fragments']);
   const fragment = (kind: string): Doc => fragments.includes(kind)
-    ? yamlOrEmpty(source, `${dir}/fragments/${kind}.yaml`) : {};
+    ? packYamlOrEmpty(source, `${dir}/fragments/${kind}.yaml`) : {};
   return {
     id, manifest, contents,
     dna: fragment('dna'), roles: fragment('roles'), memory: fragment('memory'),
     workflows: sorted(strings(contents['workflows']))
-      .map((name) => ({ name, ...yamlOrEmpty(source, `${dir}/workflows/${name}.yaml`) })),
+      .map((name) => ({ name, ...packYamlOrEmpty(source, `${dir}/workflows/${name}.yaml`) })),
     part: partOf(source, dir, manifest),
   };
 }

@@ -5,7 +5,9 @@
 import { compare as semverCompare, rcompare } from 'semver';
 
 import { CompatError, compatFrom } from './compat';
-import { byBytes, IndexInputError, isDoc, list, sorted, strings, yamlAt, yamlIn } from './index-data';
+import {
+  byBytes, IndexInputError, isDoc, list, packYamlAt, sorted, strings, yamlAt, yamlIn,
+} from './index-data';
 import type { Doc } from './index-data';
 import { atTag, checkRepositoryTop, IndexError, workingTree } from './index-source';
 import type { TreeSource } from './index-source';
@@ -157,7 +159,7 @@ function parametersOf(manifest: Doc): IndexParameter[] {
 function memoryTypes(source: TreeSource, packId: string, manifest: Doc): string[] {
   const contents = isDoc(manifest['contents']) ? manifest['contents'] : {};
   if (!strings(contents['fragments']).includes('memory')) return [];
-  const fragment = yamlAt(source, `packs/${packId}/fragments/memory.yaml`);
+  const fragment = packYamlAt(source, `packs/${packId}/fragments/memory.yaml`);
   return sorted(Object.keys(isDoc(fragment['types']) ? fragment['types'] : {}));
 }
 
