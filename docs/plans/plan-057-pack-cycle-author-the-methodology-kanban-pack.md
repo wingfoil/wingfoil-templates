@@ -157,6 +157,14 @@ Given on 2026-10-30, in chat: every point of the outline as recommended.
 
 Point 2 (task-066 first) was decided by claude under the approver's allowance and stands.
 
+Given on 2026-10-31, in chat, on a finding of task-067 (dl-019):
+
+6. **The README generator's warning:** a tooling task of its own, task-070 (`tooling-delivery`),
+   before task-067 merges: `npm run index`, also run inside `validate`, reads a pack's fragments
+   before substitution (`src/readme-generate.ts`, through `yamlIn` of `src/index-data.ts`) and
+   prints the same Node.js warning for `kanban`'s unquoted limits, a second site that task-066's
+   reads and review missed. task-067 waits on its branch and resumes from `main` after it.
+
 **Ids** (agreed before this plan): plan-057; task-066 … task-069; dl-034, bug-009 and F-042
 reserved for a ruling, a defect or a note this plan finds; prel-006 is `first-release`'s.
 
@@ -229,3 +237,5 @@ dl-025 (`pending`).
 - 2026-10-30, step 2: task-066 … task-069 written, reviewed (approve after amendments; one blocking
   finding in task-066, its in-process test), amended, re-reviewed (approve), submitted
   (`draft → pending`); the approver accepted the four into the backlog.
+- 2026-10-31: task-067's checks found the warning printed by `npm run index` and every `validate`,
+  from the README generator's parse of a pack's raw fragments (dl-019); the approver ruled 6.
