@@ -2,7 +2,7 @@
 id: task-070-the-readme-generator-reads-a-pack-s-raw-fragments-with-no-node.js-warning-for-an-unquoted-parameter-plan-057
 type: task
 title: "The README generator reads a pack's raw fragments with no Node.js warning for an unquoted parameter (plan-057)"
-status: backlog
+status: in-progress
 pack: ""            # tooling task (tooling-delivery, plan-057 ruling 6)
 depends_on: ["task-066"]
 tags: ["tooling","index","kanban"]
