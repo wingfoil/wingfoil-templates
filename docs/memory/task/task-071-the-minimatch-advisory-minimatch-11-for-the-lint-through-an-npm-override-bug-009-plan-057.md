@@ -62,7 +62,12 @@ and green are `npm audit`'s exit codes, recorded with the command and its output
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-071-minimatch-override` from `main`. A dependency-only change (task-043's kind):
+the red `npm audit` on `main`; `"overrides": { "minimatch": "11.0.3" }` added to `package.json` by
+hand, then `npm install --package-lock-only --ignore-scripts`; `npm ci`; the checks of
+Acceptance 3, the lint probes in a scratch clone (the linted file list with 10.2.6 and with 11.0.3,
+the two `Date.now()` probes); the clean clones; the branch CI. Commits: the fix (the two files);
+the notes; the owed rows (Acceptance 5) with the delivery.
 
 ## Execution Notes
 
