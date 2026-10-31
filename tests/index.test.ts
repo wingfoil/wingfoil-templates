@@ -228,9 +228,9 @@ describe('the fixture catalog with tagged versions (acceptance 12, 13)', () => {
 describe('a pack\'s raw fragments (task-070, plan-057)', () => {
   it('the index\'s command prints nothing on stderr for an unquoted {{name}} limit', () => {
     withCopy((tree) => {
-      appendFileSync(join(tree, 'packs', 'software', 'fragments', 'memory.yaml'),
-        // On release, the last type: no new type, so the generated sections do not move.
-        '    states:\n      limits:\n        draft: {{x}}\n');
+      // On base's task, whose states end the file: a limit, which no generated section reads.
+      appendFileSync(join(tree, 'packs', 'base', 'fragments', 'memory.yaml'),
+        '      limits:\n        in-progress: {{x}}\n');
       const result = spawnSync(process.execPath, [CLI, '--tree', tree, '--check'],
         { encoding: 'utf8' });
       assert.equal(result.stderr, '');
