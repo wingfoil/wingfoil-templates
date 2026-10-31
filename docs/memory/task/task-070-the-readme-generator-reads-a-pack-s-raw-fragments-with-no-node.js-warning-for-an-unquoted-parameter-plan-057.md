@@ -96,9 +96,9 @@ workflows) move to a `packYamlOrEmpty` on `packYamlIn`; `pack.yaml` stays on `ya
   composition's "Declares" line.
 - `tests/index-model.test.ts`: `withRepo`, `base` with such a fragment, committed and published by
   hand (`publishByHand`): `buildIndex`'s `memory_types` for `base` is the type, no warning.
-- `tests/index.test.ts`: on a `withCopy` of the fixture tree, `software`'s memory fragment gains
-  `states: { limits: { draft: {{x}} } }` on `adr` (block form), the CLI spawned with `--tree
-  <copy> --check`: exit 0, stderr empty.
+- `tests/index.test.ts`: on a `withCopy` of the fixture tree, `base`'s memory fragment gains a
+  `limits` entry, `in-progress: {{x}}`, on `task`'s states (block form; no generated section reads a
+  limit), the CLI spawned with `--tree <copy> --check`: exit 0, stderr empty.
 
 ## Execution Notes
 
@@ -116,7 +116,8 @@ workflows) move to a `packYamlOrEmpty` on `packYamlIn`; `pack.yaml` stays on `ya
   dist/tests/readme-generate.test.js dist/tests/index-model.test.js dist/tests/index.test.js`: 5
   tests, 1 pass, 4 fail, each for the warning; the kept refusals pass. The CLI case first put its
   limit on the golden `software`'s `release`, which gave the type `states` and moved its generated
-  README; moved to `base`'s `task` (`fa19ac4`), where only a limit is added, still red on the stubs.
+  README; moved to `base`'s `task` (`fa19ac4`), where only a limit is added; rerun on the stubs: 5 tests,
+  1 pass, 4 fail, each for the warning. The Design's bullet amended to it.
 - 2026-10-31, the fix (`4c6e427`): `packYamlIn` and `packYamlAt` parse with `logLevel: 'error'`
   through one reader shared with `yamlIn` and `yamlAt`; `readPack`'s fragments and workflows,
   `partOf`'s workflows and `memoryTypes` use them; `pack.yaml` stays on `yamlIn`. Green: the four
@@ -124,3 +125,7 @@ workflows) move to a `packYamlOrEmpty` on `packYamlIn`; `pack.yaml` stays on `ya
 - 2026-10-31, Acceptance 1: in a clone of task-067's branch head (`9508437`) with this branch
   merged: `index -- --check` (7 files), `validate` (18 runs, 0 failed) and `validate:publication`
   (18 runs, 0 failed) each exit 0 with nothing on stderr.
+- 2026-10-31: independent review of the build: approve after amendments, nothing blocking; it
+  reran the red cases on `3b1bd06` and `fa19ac4` (5 tests, 1 pass, 4 fail, each for the warning)
+  and the full suite on the head (1035 of 1035). Applied: the second red run's count and the
+  Design's CLI bullet; the `node:fs` import folded; the support imports in order.
