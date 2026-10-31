@@ -32,8 +32,8 @@ the DNA's names and `kanban`'s limits, none of which the index reads.
 1. **No warning:** the README generator and the index read a pack's raw fragments and workflows
    with no Node.js warning for an unquoted `{{name}}`. In a clone of the repository at task-067's
    branch head with this task's change merged (the index needs the tags), `npm run index --
-   --check`, `npm run validate` and `npm run validate:publication` exit as on that branch and print
-   nothing on stderr; recorded.
+   --check`, `npm run validate` and `npm run validate:publication` exit 0 and print nothing on
+   stderr; recorded.
 2. **Scope:** one helper of `src/index-data.ts` reads a pack file parsed before substitution (a
    pack's `fragments/*.yaml` and `workflows/*.yaml`) with the `yaml` package's warnings off
    (`logLevel: 'error'`); its comment says why, that it also silences the package's other
@@ -48,8 +48,8 @@ the DNA's names and `kanban`'s limits, none of which the index reads.
    `process.on('warning')` listener removed in a `finally`, and await
    `new Promise((r) => setImmediate(r))` before asserting no warning:
    - in a new `tests/index-data.test.ts`, the helper on an unquoted `{{name}}` limit: its value as
-     today and no warning (red on `main`, where the helper's callers use `yamlIn`: the case is
-     written against `yamlIn` until the helper exists, as task-058's minimal type change); and the
+     today and no warning (red on `main` plus a stub of the helper that delegates to `yamlIn`, the
+     minimal change of task-058's kind, so that the case calls the helper from the start); and the
      helper refusing a file that does not parse and one that is not a mapping (green on `main`'s
      `yamlIn` and after, pinning the kept behaviour);
    - in `tests/readme-generate.test.ts`, `generatedSections` on a temporary tree whose pack's
@@ -69,8 +69,7 @@ the DNA's names and `kanban`'s limits, none of which the index reads.
    ruling 6, and its "Settled by" names task-066 and task-070 (plan-057).
 5. **Green:** from clean clones on Node.js 22.21.0 and 22.12.0, one after the other: `npm ci`,
    `npm test`, `lint`, `check:packs`, `validate`, `validate:publication`, the overlays
-   `software-exit` and `scrum-exit`, `index -- --check`, `check:runs` and `workflow list` exit as
-   on `main` (`validate:publication` included); `packs/`, `.wingfoil/` and the fixtures' expected
+   `software-exit` and `scrum-exit`, `index -- --check`, `check:runs` and `workflow list` exit 0; `packs/`, `.wingfoil/` and the fixtures' expected
    outputs unchanged; the branch CI `success`, recorded; the privacy check of the branch's diff
    recorded; after the merge, `main`'s CI read.
 
@@ -83,6 +82,8 @@ the DNA's names and `kanban`'s limits, none of which the index reads.
 - 2026-10-31: written under plan-057 (ruling 6).
 - 2026-10-31: independent review: approve after amendments, nothing blocking; it checked every YAML
   parse in `src/` (two sites only) and the fix on a scratch build. Applied: `validate:publication`
-  and `publish:pack` named and checked; a test of `memoryTypes`; the tests placed in existing or
+  checked and `publish:pack` named, covered by the `memoryTypes` test; a test of `memoryTypes`; the tests placed in existing or
   new files that fit, the kept refusals pinned green, the CLI case on the fixture tree; the clone
   with tags; the helper's comment; the owed row's Source.
+- 2026-10-31: focused re-review: approve; its should-fix (the helper stubbed for the red run) and
+  nits applied. Submitted.
