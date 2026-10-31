@@ -110,3 +110,17 @@ workflows) move to a `packYamlOrEmpty` on `packYamlIn`; `pack.yaml` stays on `ya
   with tags; the helper's comment; the owed row's Source.
 - 2026-10-31: focused re-review: approve; its should-fix (the helper stubbed for the red run) and
   nits applied. Submitted.
+- 2026-10-31: Design written; `backlog → in-progress`.
+- 2026-10-31, red first (dl-018 R1), the tests and the helper's stubs delegating to `yamlIn` and
+  `yamlAt` (`3b1bd06`): `node --test --test-name-pattern=task-070 dist/tests/index-data.test.js
+  dist/tests/readme-generate.test.js dist/tests/index-model.test.js dist/tests/index.test.js`: 5
+  tests, 1 pass, 4 fail, each for the warning; the kept refusals pass. The CLI case first put its
+  limit on the golden `software`'s `release`, which gave the type `states` and moved its generated
+  README; moved to `base`'s `task` (`fa19ac4`), where only a limit is added, still red on the stubs.
+- 2026-10-31, the fix (`4c6e427`): `packYamlIn` and `packYamlAt` parse with `logLevel: 'error'`
+  through one reader shared with `yamlIn` and `yamlAt`; `readPack`'s fragments and workflows,
+  `partOf`'s workflows and `memoryTypes` use them; `pack.yaml` stays on `yamlIn`. Green: the four
+  test files, 54 of 54; ESLint clean. The owed row completed (`docs/owed-items.md`).
+- 2026-10-31, Acceptance 1: in a clone of task-067's branch head (`9508437`) with this branch
+  merged: `index -- --check` (7 files), `validate` (18 runs, 0 failed) and `validate:publication`
+  (18 runs, 0 failed) each exit 0 with nothing on stderr.
