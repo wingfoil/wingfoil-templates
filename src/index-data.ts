@@ -75,3 +75,13 @@ export function yamlAt(source: TreeSource, path: string): Doc {
   if (data === undefined) throw refusal(source, path, 'is missing');
   return data;
 }
+
+/** A pack file read as written, before substitution: a fragment or a workflow (task-070). */
+export function packYamlIn(source: TreeSource, path: string): Doc | undefined {
+  return yamlIn(source, path);
+}
+
+/** Like packYamlIn, a missing file being an input error too. */
+export function packYamlAt(source: TreeSource, path: string): Doc {
+  return yamlAt(source, path);
+}

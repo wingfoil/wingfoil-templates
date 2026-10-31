@@ -8,6 +8,7 @@ import { indexOutputs } from '../src/index';
 import { generatedSections, rewriteReadme } from '../src/readme-generate';
 import { withPackTree } from './support/pack-tree';
 import { FIXTURES, REPO_ROOT } from './support/paths';
+import { warningsOf } from './support/warnings';
 
 const TREE = join(FIXTURES, 'compose', 'tree');
 
@@ -158,4 +159,21 @@ describe('the fixture methodology of software\'s exit criterion (task-047)', () 
     const text = readFileSync(readme, 'utf8');
     assert.equal(rewriteReadme(text, generatedSections(tree, 'methodology/fixture')), text);
   });
+});
+
+describe('a pack\'s raw fragments (task-070, plan-057)', () => {
+  it('writes the sections of a fragment with an unquoted {{name}} limit, with no warning',
+    async () => {
+      const memory = 'format: 1\ntypes:\n  task:\n    states:\n      limits:\n'
+        + '        in-progress: {{x}}\n';
+      let sections: ReturnType<typeof generatedSections> | undefined;
+      const warnings = await warningsOf(() => withPackTree([{ id: 'governance/notes',
+        fragments: ['memory'], requires: ['base@^1'],
+        extraFiles: { 'fragments/memory.yaml': memory } }], (tree) => {
+        sections = generatedSections(tree, 'governance/notes');
+      }));
+      assert.deepEqual(warnings, []);
+      assert.ok(sections?.composition.includes('  - Memory types: `task`'),
+        sections?.composition.join('\n'));
+    });
 });

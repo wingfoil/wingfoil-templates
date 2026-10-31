@@ -16,6 +16,7 @@ import { indexCatalog } from './support/index-catalog';
 import { BASE_COMPOSABLE, writePack } from './support/pack-tree';
 import { fixtureCompat, publishByHand } from './support/published-repo';
 import { FIXTURES, FIXTURE_CATALOG, REPO_ROOT } from './support/paths';
+import { appendFileSync } from 'node:fs';
 
 const CLI = join(REPO_ROOT, 'dist', 'src', 'index-cli.js');
 const TREE = join(FIXTURES, 'compose', 'tree');
@@ -221,5 +222,19 @@ describe('the fixture catalog with tagged versions (acceptance 12, 13)', () => {
     assert.ok(readme.includes('# Kanban (unreleased)'), readme);
     const index = indexOutputs(repo.dir).get('catalog-index.json') ?? '';
     assert.ok(!index.includes('unreleased'));
+  });
+});
+
+describe('a pack\'s raw fragments (task-070, plan-057)', () => {
+  it('the index\'s command prints nothing on stderr for an unquoted {{name}} limit', () => {
+    withCopy((tree) => {
+      appendFileSync(join(tree, 'packs', 'software', 'fragments', 'memory.yaml'),
+        // On release, the last type: no new type, so the generated sections do not move.
+        '    states:\n      limits:\n        draft: {{x}}\n');
+      const result = spawnSync(process.execPath, [CLI, '--tree', tree, '--check'],
+        { encoding: 'utf8' });
+      assert.equal(result.stderr, '');
+      assert.equal(result.status, 0, result.stdout);
+    });
   });
 });

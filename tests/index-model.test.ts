@@ -9,7 +9,12 @@ import { axisAndSlot, buildIndex, excerptOf } from '../src/index-model';
 import { renderCatalog } from '../src/index-render';
 import type { CatalogIndex, IndexPack } from '../src/index-model';
 import { IndexError } from '../src/index-source';
+import { withRepo } from './support/git-repo';
 import type { TestRepo } from './support/git-repo';
+import { BASE_COMPOSABLE, writePack } from './support/pack-tree';
+import { fixtureCompat, publishByHand } from './support/published-repo';
+import { FIXTURE_CATALOG } from './support/paths';
+import { warningsOf } from './support/warnings';
 import { indexCatalog } from './support/index-catalog';
 import { conformingReadme } from './support/readme';
 
@@ -267,5 +272,23 @@ describe('buildIndex on the fixture catalog (CB-4)', () => {
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
+  });
+});
+
+describe('memory_types of a published version (task-070, plan-057)', () => {
+  it('reads a tagged fragment with an unquoted {{name}} limit with no warning', async () => {
+    let types: string[] | undefined;
+    const warnings = await warningsOf(() => withRepo((repo) => {
+      writePack(repo.dir, { ...BASE_COMPOSABLE, extraFiles: { ...BASE_COMPOSABLE.extraFiles,
+        'fragments/memory.yaml': 'format: 1\ndefaults:\n  states:\n    sequence: [draft, done]\n'
+          + 'types:\n  note:\n    states:\n      limits:\n        draft: {{x}}\n' } });
+      repo.write('catalog.yaml', readFileSync(FIXTURE_CATALOG, 'utf8'));
+      repo.write('compat.yaml', fixtureCompat());
+      repo.commitAll('base');
+      publishByHand(repo, 'base', { index: false });
+      types = buildIndex(repo.dir).packs.find((entry) => entry.id === 'base')?.memory_types;
+    }));
+    assert.deepEqual(warnings, []);
+    assert.deepEqual(types, ['note']);
   });
 });
