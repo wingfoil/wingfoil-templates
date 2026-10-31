@@ -75,7 +75,30 @@ the DNA's names and `kanban`'s limits, none of which the index reads.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-070-index-raw-fragments` from `main` (`e309390`). A tooling task (dl-018 R1–R3).
+
+**`src/index-data.ts`:** `packYamlIn(source, path)` and `packYamlAt(source, path)` beside `yamlIn`
+and `yamlAt`, the same refusals (`does not parse`, `is not a mapping`, `is missing`), parsing with
+`logLevel: 'error'`; one private reader shared by the four. The red commit adds the two as stubs
+delegating to `yamlIn` and `yamlAt`.
+
+**Callers:** `yamlOrEmpty` in `src/readme-generate.ts` is used for `pack.yaml` and for the
+fragments and workflows: the latter two (`readPack`'s `fragment` and workflows, `partOf`'s
+workflows) move to a `packYamlOrEmpty` on `packYamlIn`; `pack.yaml` stays on `yamlIn`.
+`memoryTypes` in `src/index-model.ts` moves to `packYamlAt`.
+
+**Tests** (the red commit, with the stubs):
+- `tests/index-data.test.ts` (new): `packYamlIn` on a `TreeSource` literal holding a fragment with
+  an unquoted `{{x}}` limit, its value `{ '{ x }': null }` at the limit, no warning; refusals of a
+  file that does not parse and one that is not a mapping (green before and after).
+- `tests/readme-generate.test.ts`: `generatedSections` on a `withPackTree` tree whose pack's
+  memory fragment holds a type with an unquoted `{{x}}` limit: no warning; the type named in the
+  composition's "Declares" line.
+- `tests/index-model.test.ts`: `withRepo`, `base` with such a fragment, committed and published by
+  hand (`publishByHand`): `buildIndex`'s `memory_types` for `base` is the type, no warning.
+- `tests/index.test.ts`: on a `withCopy` of the fixture tree, `software`'s memory fragment gains
+  `states: { limits: { draft: {{x}} } }` on `adr` (block form), the CLI spawned with `--tree
+  <copy> --check`: exit 0, stderr empty.
 
 ## Execution Notes
 
