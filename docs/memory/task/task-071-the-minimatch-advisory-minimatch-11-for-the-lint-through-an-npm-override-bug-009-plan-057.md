@@ -97,3 +97,14 @@ the notes; the owed rows (Acceptance 5) with the delivery.
   10.2.6 and with 11.0.3; a `Date.now()` in a scratch `src/*.ts` reported by
   `no-restricted-properties` (exit 1); the same under `tests/fixtures/` ignored ("File ignored
   because of a matching ignore pattern", exit 0); the scratch files removed.
+- 2026-10-31: independent review of the build: approve, nothing blocking; it reproduced every
+  figure above in a clean clone, and the lockfile from the branch's `package.json`.
+- 2026-10-31, checks at `aefca68` (Acceptance 4), from clean clones on Node.js 22.21.0 then
+  22.12.0, one after the other: `npm ci`, `npm audit` ("found 0 vulnerabilities"), `npm test` (1030
+  of 1030), `lint`, `check:pins`, `check:schemas`, `check:packs` (61 files, 0 problems), `validate`
+  and `validate:publication` (14 runs each, 0 failed), the overlays `software-exit` and
+  `scrum-exit` (22 runs each, 0 failed), `index -- --check` (6 files), `check:runs` (34 runs, 0
+  failed) and `workflow list`, each exit 0. Branch CI run 41220906494 on `aefca68`: `success`, both
+  jobs, the audit steps passed. Privacy check of the branch's diff against `main`: no local or
+  scratch path, no private repository or project, no intermediary session. `in-progress →
+  in-review`.
