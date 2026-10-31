@@ -11,12 +11,12 @@ import type { CatalogIndex, IndexPack } from '../src/index-model';
 import { IndexError } from '../src/index-source';
 import { withRepo } from './support/git-repo';
 import type { TestRepo } from './support/git-repo';
-import { BASE_COMPOSABLE, writePack } from './support/pack-tree';
-import { fixtureCompat, publishByHand } from './support/published-repo';
-import { FIXTURE_CATALOG } from './support/paths';
-import { warningsOf } from './support/warnings';
 import { indexCatalog } from './support/index-catalog';
+import { BASE_COMPOSABLE, writePack } from './support/pack-tree';
+import { FIXTURE_CATALOG } from './support/paths';
+import { fixtureCompat, publishByHand } from './support/published-repo';
 import { conformingReadme } from './support/readme';
+import { warningsOf } from './support/warnings';
 
 type Doc = Record<string, unknown>;
 

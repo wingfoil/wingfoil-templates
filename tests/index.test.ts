@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { spawnSync } from 'node:child_process';
 import {
-  chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
+  appendFileSync, chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync,
+  writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -16,7 +17,6 @@ import { indexCatalog } from './support/index-catalog';
 import { BASE_COMPOSABLE, writePack } from './support/pack-tree';
 import { fixtureCompat, publishByHand } from './support/published-repo';
 import { FIXTURES, FIXTURE_CATALOG, REPO_ROOT } from './support/paths';
-import { appendFileSync } from 'node:fs';
 
 const CLI = join(REPO_ROOT, 'dist', 'src', 'index-cli.js');
 const TREE = join(FIXTURES, 'compose', 'tree');
