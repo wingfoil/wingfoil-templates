@@ -66,4 +66,4 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | F-039 bug-008 option (iii) | plan-052 ruling 2, close | task-064 (plan-054) |
 | The note on 0.3.0's `finalize --dry-run`: moot, fixed in 0.3.1 (plan-051 › Context) | plan-045, plan-046 › close | plan-054 (dl-031 R4) |
 | `recheck`'s wording in `wingfoil-release-intake` | plan-051, plan-052 › close | plan-055 (`wingfoil-release-intake` v5) |
-| The Node.js warning on an unquoted integer parameter, `{{name}}` (`methodology/kanban`'s `limits`): from the secret rules' parse of a pack's raw YAML, run by the lint and the composer alike, not from the composition | plan-056 ruling 13 | task-066 (plan-057) |
+| The Node.js warning on an unquoted integer parameter, `{{name}}` (`methodology/kanban`'s `limits`): from the parse of a pack's raw YAML, before substitution, at two sites: the secret rules (run by the lint and the composer) and the index's reads of a pack's fragments and workflows (`npm run index`, `validate`, `validate:publication`, `publish:pack`) | plan-056 ruling 13; plan-057 ruling 6 | task-066, task-070 (plan-057) |
