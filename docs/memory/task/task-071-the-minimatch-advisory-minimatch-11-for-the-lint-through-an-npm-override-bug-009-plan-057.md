@@ -13,11 +13,10 @@ tags: ["tooling","ci","dependencies"]
 bug-009 (major): the minimatch advisory GHSA-g3hv-75wg-m249 (`<11.0.1`, moderate) fails the CI's
 root audit on every branch and on `main`. `minimatch` is a development dependency only, through
 `eslint`, `@eslint/config-array` and `typescript-eslint`, which all require `^10.2.x`: no lockfile
-move within their ranges fixes it (bug-003's and bug-004's way). The approver ruled on 2026-10-31
-an npm `overrides` entry pinning `minimatch` to 11 for the whole tree, before task-070's gate,
-pinned exact as adr-002 requires; if
-it fails a check, this task stops and the approver rules a CI policy instead. A probe on a scratch
-clone of `main` found `npm audit` 0 and `npm run lint` 0 with it.
+move within their ranges fixes it (bug-003's and bug-004's way). The approver ruled on 2026-10-31 an
+npm `overrides` entry pinning `minimatch` to 11 for the whole tree, before task-070's gate, pinned
+exact as adr-002 requires; if it fails a check, this task stops and the approver rules a CI policy
+instead. A probe on a scratch clone of `main` found `npm audit` 0 and `npm run lint` 0 with it.
 
 ## Acceptance
 
@@ -73,3 +72,5 @@ and green are `npm audit`'s exit codes, recorded with the command and its output
   other changes, the lint probes that go through `minimatch`, the licences and signature counts,
   the first red run, the owed rows (the override's removal and its global reach; `check:pins` and
   `overrides`).
+- 2026-10-31: focused re-review: approve (the exact pin reproduced: the same diff, audit 0,
+  190 and 43 signatures); its nits applied. Submitted.

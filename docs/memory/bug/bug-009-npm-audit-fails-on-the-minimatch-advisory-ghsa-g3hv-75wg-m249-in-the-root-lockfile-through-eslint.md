@@ -12,7 +12,8 @@ tags: ["tooling","ci","dependencies"]
 
 The CI's "Audit the root lockfile" step fails on every branch and on `main`: `main`'s first red CI
 run is 41196364111 on `77510f3`, both jobs, then 41198090730 on `e309390`, and task-070's branch
-runs 41198500589 and 41200156986; the last green run on `main` is 41136522706 (`074fa07`). One advisory, published in between:
+runs 41198500589 and 41200156986; the last green run on `main` is 41136522706 (`074fa07`). One
+advisory, published in between:
 
 | Package | Locked | Advisory | Severity | Path |
 |---|---|---|---|---|
@@ -31,20 +32,20 @@ major downgrade, not an option.
 ## Expected
 
 `npm audit` exits 0 on the root lockfile and on every matrix release's lockfile (the gate of the
-CI's audit steps), `npm audit signatures` still verifying; `npm run lint`, `npm run check:pins` and the
-whole suite unchanged; the runtime dependencies (adr-003) and `.wingfoil/dna.yaml` unchanged.
+CI's audit steps), `npm audit signatures` still verifying; `npm run lint`, `npm run check:pins` and
+the whole suite unchanged; the runtime dependencies (adr-003) and `.wingfoil/dna.yaml` unchanged.
 
 ## Reproduction
 
 On a clean checkout of `main` at `77510f3` or later (any commit, once the advisory is in the
-registry), Node.js 22.21.0: `npm ci`, then `npm audit` (exit 1, 11 moderate). With
-`"overrides": { "minimatch": "11.0.3" }` (an exact pin, adr-002) added to `package.json` and
-`npm install --package-lock-only --ignore-scripts`, only `package.json` (3 lines) and
-`package-lock.json` (16 lines) change: `minimatch` 10.2.6 → 11.0.3, `@isaacs/nonrecursive-glob-match`
-1.0.3 added (development, BlueOak-1.0.0), and `minimatch`'s declared `brace-expansion` range raised
-to `^5.0.12` (the locked 5.0.12 unchanged). After `npm ci`, `npm ls minimatch` shows 11.0.3 on the
-three paths, `npm audit` exits 0 ("found 0 vulnerabilities") and `npm run lint` exits 0, on Node.js
-22.21.0 and 22.12.0.
+registry), Node.js 22.21.0: `npm ci`, then `npm audit` (exit 1, 11 moderate). With `"overrides": {
+"minimatch": "11.0.3" }` (an exact pin, adr-002) added to `package.json` and `npm install
+--package-lock-only --ignore-scripts`, only `package.json` (3 lines) and `package-lock.json` (16
+lines) change: `minimatch` 10.2.6 → 11.0.3, `@isaacs/nonrecursive-glob-match` 1.0.3 added
+(development, BlueOak-1.0.0), and `minimatch`'s declared `brace-expansion` range raised to `^5.0.12`
+(the locked 5.0.12 unchanged). After `npm ci`, `npm ls minimatch` shows 11.0.3 on the three paths,
+`npm audit` exits 0 ("found 0 vulnerabilities") and `npm run lint` exits 0, on Node.js 22.21.0 and
+22.12.0.
 
 ## Execution Notes
 
@@ -57,3 +58,4 @@ three paths, `npm audit` exits 0 ("found 0 vulnerabilities") and `npm run lint` 
   and the override (an identical linted file set, a determinism probe still reported). Applied: the
   first red run on `main`; the exact pin; the lockfile's other changes; `check:pins` in Expected;
   `audit fix --force`'s downgrade.
+- 2026-10-31: focused re-review: approve; its nits applied. Submitted.
