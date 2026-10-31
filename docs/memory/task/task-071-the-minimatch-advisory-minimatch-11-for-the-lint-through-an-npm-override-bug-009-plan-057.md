@@ -79,3 +79,21 @@ the notes; the owed rows (Acceptance 5) with the delivery.
   `overrides`).
 - 2026-10-31: focused re-review: approve (the exact pin reproduced: the same diff, audit 0,
   190 and 43 signatures); its nits applied. Submitted.
+- 2026-10-31: Design written; `backlog → in-progress`.
+- 2026-10-31, red (Acceptance 1), on `main`: `npm audit` in the root exit 1, "11 moderate severity
+  vulnerabilities", GHSA-g3hv-75wg-m249 (`minimatch`); in `src/matrix/wingfoil-0.2.2`, `0.3.0` and
+  `0.3.1` exit 0. The CI's first red run on `main`: 41196364111 (`77510f3`).
+- 2026-10-31, the fix (Acceptance 2): `"overrides": { "minimatch": "11.0.3" }` in `package.json`,
+  `npm install --package-lock-only --ignore-scripts`; the diff is `package.json` (3 lines) and
+  `package-lock.json` (16 lines): `minimatch` 10.2.6 → 11.0.3, `@isaacs/nonrecursive-glob-match`
+  1.0.3 added (development), `minimatch`'s `brace-expansion` range `^5.0.8` → `^5.0.12` (5.0.12
+  locked as before).
+- 2026-10-31, the checks (Acceptance 3), after `npm ci`: `npm ls minimatch` 11.0.3 on the three
+  paths (one `overridden`, two `deduped`), no `invalid` or `ERR`; `npm audit` "found 0
+  vulnerabilities" in the root, exit 0 in the three matrix folders; `npm audit signatures`: 190
+  packages with verified registry signatures, 43 with verified attestations; the licences
+  BlueOak-1.0.0 (`minimatch` 11.0.3, `@isaacs/nonrecursive-glob-match` 1.0.3); `check:pins` exit
+  0; `npm run lint` exit 0. The patterns: `eslint --format json .` lints the same 132 files with
+  10.2.6 and with 11.0.3; a `Date.now()` in a scratch `src/*.ts` reported by
+  `no-restricted-properties` (exit 1); the same under `tests/fixtures/` ignored ("File ignored
+  because of a matching ignore pattern", exit 0); the scratch files removed.
