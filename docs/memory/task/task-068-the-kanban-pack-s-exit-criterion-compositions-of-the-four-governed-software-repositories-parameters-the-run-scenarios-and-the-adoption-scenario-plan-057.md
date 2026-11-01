@@ -135,3 +135,6 @@ release-folders-lean}/example.yaml` (`scrum-exit`'s with `methodology/kanban@^1`
   under `packs/`, `src/` or `.wingfoil/` changed. Privacy check of the branch's diff against
   `main`: no local or scratch path, no private repository or project, no intermediary session.
   `in-progress → in-review`.
+- 2026-11-01: approved by the approver (`in-review → approved`, `e505ffe`) with the merge OK;
+  merged into `main` with `--no-ff` (`3e614b4`); the CI, run and adoption guards (23 of 23) on the
+  merged tree. `approved → done`.
