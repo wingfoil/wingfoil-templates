@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { spawnSync } from 'node:child_process';
 import {
-  chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
+  appendFileSync, chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync,
+  writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -221,5 +222,19 @@ describe('the fixture catalog with tagged versions (acceptance 12, 13)', () => {
     assert.ok(readme.includes('# Kanban (unreleased)'), readme);
     const index = indexOutputs(repo.dir).get('catalog-index.json') ?? '';
     assert.ok(!index.includes('unreleased'));
+  });
+});
+
+describe('a pack\'s raw fragments (task-070, plan-057)', () => {
+  it('the index\'s command prints nothing on stderr for an unquoted {{name}} limit', () => {
+    withCopy((tree) => {
+      // On base's task, whose states end the file: a limit, which no generated section reads.
+      appendFileSync(join(tree, 'packs', 'base', 'fragments', 'memory.yaml'),
+        '      limits:\n        in-progress: {{x}}\n');
+      const result = spawnSync(process.execPath, [CLI, '--tree', tree, '--check'],
+        { encoding: 'utf8' });
+      assert.equal(result.stderr, '');
+      assert.equal(result.status, 0, result.stdout);
+    });
   });
 });
