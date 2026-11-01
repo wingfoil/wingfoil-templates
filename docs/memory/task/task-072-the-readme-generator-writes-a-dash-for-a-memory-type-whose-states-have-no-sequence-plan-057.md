@@ -40,13 +40,13 @@ same pack does not change it. A dash for the missing sequence matches the existi
    `` - `<type>`: defaults, — ``; a type with a `sequence` and a type with no `states` are written
    as today. Section 4's `states:` line (`declaredStates`, `sequence` entries only) is unchanged.
 2. **Red first** (dl-018 R1–R3), the red run recorded with its command and failing count: in
-   `tests/readme-generate.test.ts`, `generatedSections` on `withPackTree` trees whose pack's
-   memory fragment holds (a) a type with `states` holding only `limits`: its "What it adds" line
-   exactly `` - `task`: — `` (red on `main`: `` - `task`: `` with a trailing space); (b) a type
-   with `gates` and no `sequence`: `` - `task`: —; gates … `` (red: `` - `task`: ; gates … ``);
-   (c) an empty `sequence: []`, as (a); (d) a `defaults` with only `gates`, and a type deriving
-   from it: `` - `<type>`: defaults, —; gates … `` (red: `` defaults, ; gates … ``); each with section 4's `states:` line as on
-   `main`. Red for behaviour.
+   `tests/readme-generate.test.ts`, `generatedSections` on `withPackTree` trees whose pack's memory
+   fragment holds (a) a type with `states` holding only `limits`: its "What it adds" line exactly ``
+   - `task`: — `` (red on `main`: `` - `task`: `` with a trailing space); (b) a type with `gates`
+   and no `sequence`: `` - `task`: —; gates … `` (red: `` - `task`: ; gates … ``); (c) an empty
+   `sequence: []`, as (a); (d) a `defaults` with only `gates`, and a type deriving from it: `` -
+   `<type>`: defaults, —; gates … `` (red: `` defaults, ; gates … ``); each with section 4's
+   `states:` line as on `main`. Red for behaviour.
 3. **The READMEs:** on this branch, from `main` with task-067 merged, `npm run index` rewrites only
    `packs/methodology/kanban/README.md`, and only its line `` - `task`: `` to `` - `task`: — ``;
    `CATALOG.md`, `catalog-index.json` and `llms.txt` unchanged, the golden tree's expected outputs
