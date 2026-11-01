@@ -1,0 +1,7 @@
+format: 1
+assignments:
+  product-owner: [kanban]
+  facilitator: [kanban]
+  developer: [kanban, definition-of-workflow]
+  reviewer: [definition-of-workflow]
+  qa: [definition-of-workflow]

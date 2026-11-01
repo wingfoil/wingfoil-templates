@@ -1,0 +1,37 @@
+format: 1
+id: methodology/kanban
+axis: methodology
+name: kanban
+title: "Kanban"
+description: >-
+  Kanban after the Kanban Guide, May 2025: a continuous flow of work items pulled within WIP limits,
+  carried by releases the Product Owner decides, each release ending with its retrospective, as the
+  delivery of software's life cycle.
+version: 1.0.0
+formats:
+  roles: 1
+  memory: 1
+  workflow: 1
+  directive: 1
+requires:
+  - base@^2
+  - software@^1
+requires_capabilities: [workflow-engine]
+parameters:
+  wip_in_progress:
+    type: integer
+    default: 2
+    description: "The most tasks in-progress at once, in the whole repository (a positive integer)"
+  wip_in_review:
+    type: integer
+    default: 1
+    description: "The most tasks in-review at once, in the whole repository (a positive integer)"
+  service_level_expectation:
+    type: string
+    default: "85% of work items finish within 10 days"
+    description: "The Service Level Expectation: how long a work item should take, with its probability"
+contents:
+  fragments: [roles, memory]
+  directives: [kanban, definition-of-workflow]
+  workflows: [delivery, release-flow, work-item]
+  agents_section: true

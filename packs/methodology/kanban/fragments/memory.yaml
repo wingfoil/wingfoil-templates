@@ -1,0 +1,11 @@
+format: 1
+types:
+  task:
+    template:
+      frontmatter:
+        required: [release]
+        not_applicable_allowed: [release]
+    states:
+      limits:
+        in-progress: {{wip_in_progress}}
+        in-review: {{wip_in_review}}

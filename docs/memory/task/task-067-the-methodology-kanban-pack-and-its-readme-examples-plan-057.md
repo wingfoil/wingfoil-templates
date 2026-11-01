@@ -2,7 +2,7 @@
 id: task-067-the-methodology-kanban-pack-and-its-readme-examples-plan-057
 type: task
 title: "The methodology/kanban pack and its README examples (plan-057)"
-status: backlog
+status: approved
 pack: "pack-methodology-kanban"
 depends_on: ["task-066"]
 tags: ["packs","kanban","methodology"]
@@ -124,7 +124,28 @@ the same change. It follows task-066, so that the pack's checks print no warning
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-067-kanban-pack` from `main` (`074fa07`, with task-066).
+
+**The pack** (`packs/methodology/kanban/`), from the charter: `pack.yaml`, the two fragments and
+the three workflows taken from the untracked draft of plan-056 (the files run on the engine), their
+descriptions rewritten as Acceptance 4 asks; `directives/{kanban,definition-of-workflow}.md`,
+`agents/section.md`, `CHANGELOG.md` and `README.md` written from the charter, as `scrum`'s are
+built (hand-written sections; the generated ones by `npm run index`).
+
+**The examples**, fictional, `.example` addresses: `tests/fixtures/examples/kanban/defaults/`
+(Plover Board, the draft's fictional project) and `tests/fixtures/examples/kanban/team-limits/`
+(another fictional project, the limits 4 and 2 and its Service Level Expectation).
+
+**Names:** the WingFoil 0.3.1 built-in workflows and directives and the `custom/` files of
+`init --template Kanban` and `--template Scrum`, listed in a scratch project, against `kanban`,
+`definition-of-workflow`, `delivery`, `release-flow` and `work-item`.
+
+**Checks**, in order: `npm run index`, then `index -- --check`; `check:packs`; `validate`; the
+overlays and the golden tree; `check:runs`; then the tests that take the counts, run first to see
+which move, each moved count stated; the full suite in clean clones on both Node.js versions.
+
+**Commits:** the pack; the examples; the moved counts; the notes. The untracked draft stays out of
+every commit and is deleted after the merge (plan-057's close).
 
 ## Execution Notes
 
@@ -133,3 +154,49 @@ the same change. It follows task-066, so that the pack's checks print no warning
   section 9 of the README, the workflow names checked, the citation of spec-001 §8.2, the limits as
   a block mapping, the Service Level Expectation as a convention.
 - 2026-10-30: focused re-review: approve; its nits applied. Submitted.
+- 2026-10-31: Design written; `backlog → in-progress`.
+- 2026-10-31: the names (Acceptance 5): in scratch projects made by WingFoil 0.3.1's `init
+  --template Kanban` and `--template Scrum`, `workflows/built-in/` is empty, `workflows/custom/`
+  holds `adr-ingest`, `bug-ingest`, `decision-log-ingest`, `sw-life-cycle` and `kanban-delivery`
+  or `scrum-delivery`, `directives/built-in/` holds `architecture`, `code-quality`, `code-review`,
+  `documentation`, `security` and `testing`, and `directives/custom/` holds `determinism`,
+  `doc-versioning`, `security-secrets` and `traceability`: none is `delivery`, `release-flow`,
+  `work-item`, `kanban` or `definition-of-workflow`.
+- 2026-10-31: the pack and the examples (`9508437`): `pack.yaml`, the two fragments and the three
+  workflows from the untracked draft of plan-056 (the workflows' descriptions rewritten), the
+  directives, the AGENTS.md section, the CHANGELOG and the README written from the charter; the
+  generated sections by `npm run index`. Its checks found the Node.js warning still printed by
+  `npm run index` and every `validate` (the README generator's parse of a pack's raw fragments), a
+  finding taken to the approver (dl-019): plan-057 ruling 6, task-070; and the CI's root audit red
+  (bug-009, ruling 7, task-071). The task waited on its branch for both.
+- 2026-11-01: `main` merged into the branch after task-070 and task-071 (`499395a`). Checks, with
+  nothing on stderr: `index -- --check` (7 files), `check:packs` (74 files, 0 problems),
+  `validate` (schemas 6, lint 74, 9 compositions, 18 runs, 0 failed, tolerance none),
+  `validate:publication` (18 runs, 0 failed), the overlays `software-exit` and `scrum-exit` (13
+  compositions, 26 runs each, 0 failed), the golden tree (26 runs, 0 failed) and `check:runs` (34
+  runs, 0 failed). `CATALOG.md`, `catalog-index.json`, `llms.txt` and `catalog.yaml` unchanged.
+- 2026-11-01, the counts moved (Acceptance 10, one commit): `tests/check-packs.test.ts` lint
+  61 → 74 files; `tests/index.test.ts` 6 → 7 files; `tests/validate.test.ts` schemas 5 → 6, lint
+  61 → 74, `validate` 7 → 9 compositions and 14 → 18 runs, the overlays `software-exit` and
+  `scrum-exit` 11 → 13 compositions and 22 → 26 runs each, the publication run 14 → 18; their
+  titles say so. No other count moved (the three test files 178 of 178).
+- 2026-11-01: independent review of the build: approve after amendments, nothing blocking; it
+  found the shipped workflows and fragments structurally identical to the draft run on the engine,
+  and composed `base`, `software` and `kanban` on WingFoil 0.3.1 with no warning. Applied: the
+  CHANGELOG's first line a whole sentence (it becomes the tag annotation); open points 2 and 3
+  stated with the charter's hedges and remedy; `review`'s description the reviewer's act; the
+  README's adoption steps in the charter's order and the own `kanban-delivery` wording; the
+  `in-progress` policy; "reported late"; the defaults example's description. Owed: the README
+  generator writes an empty `Memory types` line for `task`, whose `states` hold only `limits`, a
+  change under `src/`, outside this task: a row of `docs/owed-items.md` (trigger: before
+  `kanban`'s first tag).
+- 2026-11-01, checks at `8cab3f6` (Acceptance 9, 10), from clean clones on Node.js 22.21.0 then
+  22.12.0, one after the other: `npm ci`, `npm audit` (0), `npm test` (1035 of 1035), `lint`,
+  `check:pins`, `check:schemas`, `check:packs` (74 files, 0 problems), `validate` (18 runs, 0
+  failed, tolerance none), `validate:publication` (18 runs, 0 failed), the overlays
+  `software-exit` and `scrum-exit` (26 runs each, 0 failed), `index -- --check` (7 files),
+  `check:runs` (34 runs, 0 failed) and `workflow list`, each exit 0, no Node.js warning in either
+  log. Branch CI run 41325925866 on `8cab3f6`: `success`. No file under `src/` or `.wingfoil/`
+  changed. Privacy check of the branch's diff against `main`: no local or scratch path, no private
+  repository or project, no real adopter in the README or the examples, no intermediary session.
+  `in-progress → in-review`.
