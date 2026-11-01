@@ -154,3 +154,29 @@ every commit and is deleted after the merge (plan-057's close).
   section 9 of the README, the workflow names checked, the citation of spec-001 §8.2, the limits as
   a block mapping, the Service Level Expectation as a convention.
 - 2026-10-30: focused re-review: approve; its nits applied. Submitted.
+- 2026-10-31: Design written; `backlog → in-progress`.
+- 2026-10-31: the names (Acceptance 5): in scratch projects made by WingFoil 0.3.1's `init
+  --template Kanban` and `--template Scrum`, `workflows/built-in/` is empty, `workflows/custom/`
+  holds `adr-ingest`, `bug-ingest`, `decision-log-ingest`, `sw-life-cycle` and `kanban-delivery`
+  or `scrum-delivery`, `directives/built-in/` holds `architecture`, `code-quality`, `code-review`,
+  `documentation`, `security` and `testing`, and `directives/custom/` holds `determinism`,
+  `doc-versioning`, `security-secrets` and `traceability`: none is `delivery`, `release-flow`,
+  `work-item`, `kanban` or `definition-of-workflow`.
+- 2026-10-31: the pack and the examples (`9508437`): `pack.yaml`, the two fragments and the three
+  workflows from the untracked draft of plan-056 (the workflows' descriptions rewritten), the
+  directives, the AGENTS.md section, the CHANGELOG and the README written from the charter; the
+  generated sections by `npm run index`. Its checks found the Node.js warning still printed by
+  `npm run index` and every `validate` (the README generator's parse of a pack's raw fragments), a
+  finding taken to the approver (dl-019): plan-057 ruling 6, task-070; and the CI's root audit red
+  (bug-009, ruling 7, task-071). The task waited on its branch for both.
+- 2026-11-01: `main` merged into the branch after task-070 and task-071 (`499395a`). Checks, with
+  nothing on stderr: `index -- --check` (7 files), `check:packs` (74 files, 0 problems),
+  `validate` (schemas 6, lint 74, 9 compositions, 18 runs, 0 failed, tolerance none),
+  `validate:publication` (18 runs, 0 failed), the overlays `software-exit` and `scrum-exit` (13
+  compositions, 26 runs each, 0 failed), the golden tree (26 runs, 0 failed) and `check:runs` (34
+  runs, 0 failed). `CATALOG.md`, `catalog-index.json`, `llms.txt` and `catalog.yaml` unchanged.
+- 2026-11-01, the counts moved (Acceptance 10, one commit): `tests/check-packs.test.ts` lint
+  61 → 74 files; `tests/index.test.ts` 6 → 7 files; `tests/validate.test.ts` schemas 5 → 6, lint
+  61 → 74, `validate` 7 → 9 compositions and 14 → 18 runs, the overlays `software-exit` and
+  `scrum-exit` 11 → 13 compositions and 22 → 26 runs each, the publication run 14 → 18; their
+  titles say so. No other count moved (the three test files 178 of 178).
