@@ -62,7 +62,16 @@ same pack does not change it. A dash for the missing sequence matches the existi
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-072-memory-type-dash` from `main` (`a06f032`, with task-067 … task-069).
+
+**`src/readme-generate.ts`:** `sequenceOf` returns `—` when `states.sequence` is missing or empty;
+`memoryLines` unchanged otherwise, so its three forms become `<sequence or —><gates>`,
+`defaults, <sequence or —><gates>` and `—`.
+
+**Tests, red first** (one commit, on `main`'s code): in `tests/readme-generate.test.ts`, the four
+cases of Acceptance 2 on `withPackTree` trees, each asserting the exact "What it adds" line and
+section 4's `states:` line. Then the fix; `npm run index` rewrites `kanban`'s README line; the owed
+row moved to Closed.
 
 ## Execution Notes
 
