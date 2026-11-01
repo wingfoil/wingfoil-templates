@@ -160,3 +160,6 @@ Acceptance 2, with no local or scratch path. **Commits**: the notes only.
   an exit code; the script's writer replaced; the frontier before the rewrite; where `workflow
   status` ran. No finding for the approver (dl-019): the weak `explore` evidence and bug-008's
   re-listing are the charter's open point 4.
+- 2026-11-01, Acceptance 4: the branch's diff against `main` is this file only; privacy check: no
+  local or scratch path, no private repository or project, no intermediary session. Branch CI run
+  41351653544 on `3e6c46b`: `success`. `in-progress → in-review`.
