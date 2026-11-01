@@ -92,3 +92,60 @@ Acceptance 2, with no local or scratch path. **Commits**: the notes only.
   and the order of the limit and reject moves, the checks after a fix of the pack, task-068 as a
   dependency, the 0.3.1 CLI, R0's fields, the park.
 - 2026-10-30: focused re-review: approve; its nits applied. Submitted.
+- 2026-11-01: Design written; `backlog → in-progress`.
+- 2026-11-01, the run (Acceptance 1 … 3), in a scratch repository outside this one: `base`,
+  `software` and `methodology/kanban` composed from `main` at `6d260b9` (`npm run compose`,
+  `kanban`'s defaults, fictional project Plover Board, `.example` addresses), `.wingfoil/` and an
+  `AGENTS.md` committed; the composed `task` with `limits: { in-progress: 2, in-review: 1 }`.
+  WingFoil from the matrix's install, `--version`
+  `0.3.1 (870bd4406f3b9bba5ecde7a5f8198b80c2a98583)`; `workflow list` exit 0, `"diagnostics": []`. 118 logged steps (WingFoil commands, the commits of
+  a `release` field or of a release's state, the files committed); each exits 0 except the five
+  named below.
+  - **R0 left out:** `rel-0.5.0` (`--set version=0.5.0 --set release-line=v0`) moved to `released`
+    by four `memory submit` before `workflow start sw-life-cycle`; no step was ever bound to it
+    (`@release:rel-0.5.0` appears in no output).
+  - `workflow start sw-life-cycle` exit 0 (`sw-life-cycle-1-plan (active)`); `inception`
+    (`docs/inception.md` committed, `inception.approve` finalized) and `specification` (`spec-001`
+    added at its step, submitted, approved).
+  - **R1 and its tasks:** `rel-1.0.0` added at `delivery.plan-release`
+    (`--set version=1.0.0 --set release-line=v1`), two `memory submit` → `in-development`. Five
+    tasks added, their `release` written by editing the draft and committing it: A, B, C, D with
+    `release: "1.0.0"`, E with `release: "n/a — not planned yet"`; each submitted and approved to
+    `backlog`. A, B, C, D joined `work` (`work-item.start@task:…` on the frontier); E stayed out.
+    Two of the five non-zero exits are a slip of the driving script, recorded: E's first edit
+    failed (a `sed` on the `/` of `n/a`, nothing committed, exit 1), so `memory submit` of E
+    exited 1 (`missing required field on submit: release`) and its `memory approve` exited 1
+    (`illegal transition draft -> (none)`); with the field written, E went to `backlog`.
+  - **A limit refusing:** A and C started (`memory submit`, `→ in-progress`), C's `build`
+    finalized and C submitted to `in-review`, B started. D's `memory submit` exit 1: `WIP limit
+    reached for 'in-progress' on type 'task' (limit 2): held by task-001-alpha, task-002-beta`;
+    after A's `build`, A's `memory submit` to `in-review` exit 1: `WIP limit reached for
+    'in-review' on type 'task' (limit 1): held by task-003-gamma`.
+  - **A reject past a full limit:** `memory reject task-003-gamma` exit 0 (`in-review →
+    in-progress`), leaving A, B and C `in-progress` under a limit of 2; the `kanban` directive's
+    rule applied: `memory park task-002-beta` exit 0 (`in-progress → backlog`), back to two;
+    `work-item.start@task:task-002-beta` offered again and C's `build` re-entered (the fallback).
+    A, then B (restarted), then D driven through `review`, `approve` and `done`.
+  - **A task spanning both releases:** `rel-1.1.0` added outside a step
+    (`--set version=1.1.0 --set release-line=v1`) and moved to `in-development` by two
+    `memory submit`; C's `release` rewritten to `1.1.0` (a commit) while C was `in-progress`. The
+    frontier then held `release-submit.pre-release-checks@release:rel-1.0.0` beside
+    `work-item.build@task:task-003-gamma`. `rel-1.0.0` driven through `release-submit` and
+    `release-publishing` (records by `workflow finalize`, the moves by the commit forms `workflow
+    next` printed: `wf(release): start rel-1.0.0 [in-development → releasing]`, `wf(release):
+    finalize rel-1.0.0 [releasing → released]`) to `released` while C was `in-progress` under
+    `rel-1.1.0`. C then built again, reviewed, approved and done; `rel-1.1.0` to `released` the
+    same way.
+  - **Two retrospectives:** `rel-1.0.0`'s: `docs/retrospectives/rel-1.0.0.md` committed,
+    `explore` complete, `additional-points` finalized, `dl-001` tagged `retrospective` added at
+    `capture`, submitted (`in-discussion`, `pending approvals: 1`), approved. `rel-1.1.0`'s:
+    `explore` was already complete after `mark-released`, before its own file was committed
+    (`base`'s known weak evidence, the charter's open point 4); `additional-points` finalized,
+    `dl-002` added at `capture` and submitted: `retrospective.approve@release:rel-1.0.0` returned to
+    the frontier beside `rel-1.1.0`'s, `pending approvals: 2`, one decision-log (bug-008, F-039);
+    its one approval cleared both.
+  - With no release open, `workflow status`: `delivery complete, end-of-life current`;
+    `workflow next`: `end-of-life.announce`. Final states: three releases `released`, A … D
+    `done`, E in `backlog`. No element was reported `late` at any point (the word appears in no
+    output).
+- 2026-11-01: nothing in the pack had to change: no finding for the approver (dl-019).
