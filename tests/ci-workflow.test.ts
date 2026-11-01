@@ -102,7 +102,8 @@ describe('the CI workflow (task-013)', () => {
     for (const command of ['npm run validate',
       'npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden',
       'npm run validate -- --overlay tests/fixtures/software-exit',
-      'npm run validate -- --overlay tests/fixtures/scrum-exit', 'npm run check:runs']) {
+      'npm run validate -- --overlay tests/fixtures/scrum-exit',
+      'npm run validate -- --overlay tests/fixtures/kanban-exit', 'npm run check:runs']) {
       assert.equal(stepRunning(command)?.if, branch, command);
     }
     assert.equal(stepRunning('npm run validate:publication')?.if, tag);

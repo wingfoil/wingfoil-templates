@@ -315,6 +315,20 @@ describe('npm run validate', () => {
         'matrix: self-test, 26 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
     });
 
+  it('validates methodology/kanban with the four governed repositories\' parameter sets (task-068)',
+    () => {
+      const result = validate(['--tree', REPO_ROOT, '--overlay', 'tests/fixtures/kanban-exit']);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      for (const id of ['defaults', 'flat-releases', 'release-folders', 'release-folders-lean']) {
+        assert.ok(result.lines.some((line) => line.startsWith('composition '
+          + `tests/fixtures/kanban-exit/compositions/${id}/example.yaml: composed twice, `)),
+        `${id}\n${result.lines.join('\n')}`);
+      }
+      assert.ok(result.lines.includes('compositions: 13'), result.lines.join('\n'));
+      assert.ok(result.lines.includes(
+        'matrix: self-test, 26 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
+    });
+
   it('passes a publication run of this repository: the nine examples on 0.3.0 and 0.3.1 '
     + '(task-039, task-055, task-059, task-067)',
     () => {
