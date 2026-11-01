@@ -163,3 +163,5 @@ Acceptance 2, with no local or scratch path. **Commits**: the notes only.
 - 2026-11-01, Acceptance 4: the branch's diff against `main` is this file only; privacy check: no
   local or scratch path, no private repository or project, no intermediary session. Branch CI run
   41351653544 on `3e6c46b`: `success`. `in-progress → in-review`.
+- 2026-11-01: approved by the approver (`in-review → approved`) with the merge OK; merged into
+  `main` with `--no-ff` (`eef6672`), this file only. `approved → done`.
