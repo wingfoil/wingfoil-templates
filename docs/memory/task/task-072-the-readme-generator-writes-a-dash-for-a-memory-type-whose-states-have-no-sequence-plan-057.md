@@ -45,7 +45,7 @@ same pack does not change it. A dash for the missing sequence matches the existi
    exactly `` - `task`: — `` (red on `main`: `` - `task`: `` with a trailing space); (b) a type
    with `gates` and no `sequence`: `` - `task`: —; gates … `` (red: `` - `task`: ; gates … ``);
    (c) an empty `sequence: []`, as (a); (d) a `defaults` with only `gates`, and a type deriving
-   from it: `` - `<type>`: defaults, —; gates … ``; each with section 4's `states:` line as on
+   from it: `` - `<type>`: defaults, —; gates … `` (red: `` defaults, ; gates … ``); each with section 4's `states:` line as on
    `main`. Red for behaviour.
 3. **The READMEs:** on this branch, from `main` with task-067 merged, `npm run index` rewrites only
    `packs/methodology/kanban/README.md`, and only its line `` - `task`: `` to `` - `task`: — ``;
@@ -71,3 +71,4 @@ same pack does not change it. A dash for the missing sequence matches the existi
   5 followed task-070's order, not ruling 8's: this task runs with `kanban` on `main`). Applied:
   the order and `depends_on`; the same defect in the `defaults` branch, fixed in `sequenceOf`; the
   dash's rationale; section 4 pinned unchanged; both red outputs named, an empty sequence tested.
+- 2026-11-01: focused re-review: approve; its nit applied. Submitted.
