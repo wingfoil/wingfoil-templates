@@ -94,7 +94,8 @@ Each point with a recommendation.
      defaults). Each gives its `Fixture:` line, a situation, what the project gets and how one
      phase runs;
    - the counts the tooling tests take on this repository move, each stated (dl-018), as
-     task-055's: lint 61 → 74 files (11 pack files and 2 examples), index 6 → 7, schemas 5 → 6, `validate` 7 → 9 compositions
+     task-055's: lint 61 → 74 files (11 pack files and 2 examples), index 6 → 7, schemas 5 → 6,
+     `validate` 7 → 9 compositions
      (14 → 18 runs), the overlays `software-exit` and `scrum-exit` 11 → 13 compositions (22 → 26
      runs each), the publication run 14 → 18; the final numbers are those the task measures.
    No file under `src/` or `.wingfoil/` changes; `base`'s, `software`'s and `scrum`'s READMEs do
@@ -256,22 +257,25 @@ dl-025 (`pending`).
 - 2026-11-01: two triggers of `docs/owed-items.md` changed, asked by the approver on 2026-11-01
   (dl-024 and dl-025: WingFoil v0.4's planning; the features document's rows: the next plan that
   changes the documentation), in their own commit on `main` (`3be4f38`).
-- Step 3, the tasks, in the order run (each through its own branch, an independent review of its
+- Step 3, the tasks, in the order merged (each through its own branch, an independent review of its
   body and of its build, clean clones on Node.js 22.21.0 then 22.12.0, the branch CI read, the
   approver's `approve` and merge OK, `--no-ff` into `main`, `done`):
   - task-066 (the secret rules' parse with no warning; `77d74e0`);
-  - task-070 (the README index's parse of a pack's raw files with no warning, ruling 6; `50b9af9`);
   - task-071 (bug-009: `minimatch` 11.0.3 through an exact npm override, ruling 7; `89b341e`),
     before task-070's gate; bug-009 fixed;
+  - task-070 (the README index's parse of a pack's raw files with no warning, ruling 6; `50b9af9`);
   - task-067 (the pack and its README examples; `88468b2`); the untracked draft deleted after it;
   - task-068 (the `kanban-exit` overlay, its CI step, `kanban.yaml` and `adoption-kanban.yaml`;
     `3e614b4`): the CI job 19 min 26 s on 22.21.0 against its 30-minute timeout;
   - task-069 (the run by hand on WingFoil 0.3.1; `eef6672`): no finding for the approver;
   - task-072 (a dash for a Memory type's missing sequence, ruling 8; `35ebf97`).
-  `main`'s CI after each delivery: `success` (runs 41136522706, 41298773055, 41337671285,
-  41350941383, and the CI of the later deliveries), the last read at close below.
+  `main`'s CI after each delivery, `success`: task-066 41136522706 (`074fa07`), task-071
+  41298773055 (`a2e0555`), task-070 41323565997 (`9c736cd`), task-067 41337671285 (`b43f7e0`),
+  task-068 41350941383 (`6d260b9`), task-069 41354759900 (`a06f032`); task-072's and this close's
+  below.
 - Step 4, the close:
-  - **The account per tech-spec (dl-020):** none amended. spec-001 and spec-002 unchanged; task-072
+  - **The account per tech-spec (dl-020),** reported to W10's next plan, `first-release`: none
+    amended. spec-001 and spec-002 unchanged; task-072
     applies spec-002 §2.1 (states and gates; limits not shown) with no erratum; the charter's note
     corrects its own text on the warning's cause, with no amendment of its body.
   - **The charter's Execution Notes:** one note (2026-11-02): the pack written, the exit

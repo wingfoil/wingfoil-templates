@@ -304,8 +304,9 @@ For the approver's acceptance:
   with its limits 1 and 1, 13 compositions and 26 runs on WingFoil 0.3.0 and 0.3.1, 0 failed, no
   WingFoil diagnostic and no warning, and its CI step; `check:runs` starts `sw-life-cycle` on the
   README examples and runs the adoption once per `init` template (`adoption-kanban.yaml`, dl-032
-  E3, prepared for `first-release`), 46 runs in all (task-068, `3e614b4`); the run by hand on
-  WingFoil 0.3.1 (`870bd440`, task-069, `eef6672`): a release already `released` before the start
+  E3, prepared for `first-release`), 46 runs in all, 12 of them new (task-068, `3e614b4`); the run
+  by hand on WingFoil 0.3.1 (`870bd440`), `base`, `software` and `kanban` composed from `main` at
+  `6d260b9` (task-069, `eef6672`): a release already `released` before the start
   left out, two releases to `released`, a task spanning both, both limits refusing, a reject past a
   full limit brought back by a park, two retrospectives, nothing `late`; 0.3.0 is covered by the
   matrix and the `check:runs` runs only (plan-057 ruling 4). Nothing in the shape had to change.
