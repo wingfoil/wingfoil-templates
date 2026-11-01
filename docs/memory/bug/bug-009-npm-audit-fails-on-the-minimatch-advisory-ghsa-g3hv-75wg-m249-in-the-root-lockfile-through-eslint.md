@@ -61,3 +61,4 @@ lines) change: `minimatch` 10.2.6 → 11.0.3, `@isaacs/nonrecursive-glob-match` 
 - 2026-10-31: focused re-review: approve; its nits applied. Submitted.
 - 2026-11-01: fixed by task-071, merged into `main` (`89b341e`): `minimatch` 11.0.3 through an
   npm override; `npm audit` 0 in the root and every matrix folder.
+- 2026-11-01: `main`'s CI run 41298773055 on `a2e0555` (task-071's delivery): `success`.

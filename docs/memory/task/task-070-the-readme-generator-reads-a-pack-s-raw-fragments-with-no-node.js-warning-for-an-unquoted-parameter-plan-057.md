@@ -141,3 +141,6 @@ workflows) move to a `packYamlOrEmpty` on `packYamlIn`; `pack.yaml` stays on `ya
   `lint` clean. Branch CI run 41298805927 on `f613020`: `success`. Privacy check of the branch's
   diff against `main`: no local or scratch path, no private repository or project, no
   intermediary session. `in-progress → in-review`.
+- 2026-11-01: approved by the approver (`in-review → approved`, `4ed1d44`) with the merge OK;
+  merged into `main` with `--no-ff` (`50b9af9`); the four task-070 test files (54 of 54) on the
+  merged tree. `approved → done`.
