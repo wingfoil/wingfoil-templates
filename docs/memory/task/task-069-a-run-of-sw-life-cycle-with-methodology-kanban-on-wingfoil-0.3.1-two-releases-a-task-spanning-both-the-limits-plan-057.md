@@ -2,7 +2,7 @@
 id: task-069-a-run-of-sw-life-cycle-with-methodology-kanban-on-wingfoil-0.3.1-two-releases-a-task-spanning-both-the-limits-plan-057
 type: task
 title: "A run of sw-life-cycle with methodology/kanban on WingFoil 0.3.1: two releases, a task spanning both, the limits (plan-057)"
-status: backlog
+status: approved
 pack: "pack-methodology-kanban"
 depends_on: ["task-067", "task-068"]
 tags: ["packs","kanban","methodology"]
@@ -63,7 +63,27 @@ task-057 did for `scrum`.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-069-kanban-run` from `main` (`6d260b9`, with task-067 and task-068).
+
+**The scratch repository**, outside this one, never committed here: `git init`; `base`, `software`
+and `methodology/kanban` composed from `main` with `npm run compose` on `kanban`'s defaults and a
+fictional project (Plover Board, `.example` addresses: an approver member and an agent); the
+composed `.wingfoil/` and an `AGENTS.md` committed; the scratch repository's git identity is the
+fictional approver's (fixture data). WingFoil 0.3.1 from the matrix's install
+(`.cache/wingfoil-matrix/0.3.1`), on the `PATH` ahead of everything else.
+
+**The run**, a script of guarded steps (it stops if the scratch directory is missing), each command
+logged with its output and exit code: R0 (`version` and `release-line` by `--set`) to `released` by
+four `memory submit`; `workflow start sw-life-cycle`; `inception` and `specification` (a document
+committed, a tech-spec added at its step, submitted, approved); then `delivery` as Acceptance 2
+orders it, each state move by `memory submit`, `memory approve`, `memory reject`, `memory park`,
+a `release` field rewritten by editing the task and committing it, or the commit form `workflow
+next` prints for an `element.set_state`; each record by `workflow finalize --step <key>`;
+`workflow status` at each release boundary.
+
+**The record**: the Execution Notes carry the composed commit, WingFoil's `--version` line, the
+commands in condensed form with their exit codes and the outputs that show each item of
+Acceptance 2, with no local or scratch path. **Commits**: the notes only.
 
 ## Execution Notes
 
@@ -72,3 +92,74 @@ task-057 did for `scrum`.
   and the order of the limit and reject moves, the checks after a fix of the pack, task-068 as a
   dependency, the 0.3.1 CLI, R0's fields, the park.
 - 2026-10-30: focused re-review: approve; its nits applied. Submitted.
+- 2026-11-01: Design written; `backlog → in-progress`.
+- 2026-11-01, the run (Acceptance 1 … 3), in a scratch repository outside this one: `base`,
+  `software` and `methodology/kanban` composed from `main` at `6d260b9` (`npm run compose`,
+  `kanban`'s defaults, fictional project Plover Board, `.example` addresses), `.wingfoil/` and an
+  `AGENTS.md` committed; the composed `task` with `limits: { in-progress: 2, in-review: 1 }`.
+  WingFoil from the matrix's install, `--version`
+  `0.3.1 (870bd4406f3b9bba5ecde7a5f8198b80c2a98583)`; `workflow list` exit 0, `"diagnostics": []`.
+  118 logged steps (WingFoil commands, the commits of a `release` field or of a release's state,
+  and three file commits, `docs/inception.md` and the two retrospective files, logged without an
+  exit code): of the 115 with an exit code, each is 0 except the five named below. `workflow
+  status` ran before R1 entered `releasing`, during R1's retrospective and twice at R2's.
+  - **R0 left out:** `rel-0.5.0` (`--set version=0.5.0 --set release-line=v0`) moved to `released`
+    by four `memory submit` before `workflow start sw-life-cycle`; no step was ever bound to it
+    (`@release:rel-0.5.0` appears in no output).
+  - `workflow start sw-life-cycle` exit 0 (`sw-life-cycle-1-plan (active)`); `inception`
+    (`docs/inception.md` committed, `inception.approve` finalized) and `specification` (`spec-001`
+    added at its step, submitted, approved).
+  - **R1 and its tasks:** `rel-1.0.0` added at `delivery.plan-release`
+    (`--set version=1.0.0 --set release-line=v1`), two `memory submit` → `in-development`. Five
+    tasks added, their `release` written by editing the draft and committing it: A, B, C, D with
+    `release: "1.0.0"`, E with `release: "n/a — not planned yet"`; each submitted and approved to
+    `backlog`. A, B, C, D joined `work` (`work-item.start@task:…` on the frontier); E stayed out.
+    Three of the five non-zero exits are a slip of the driving script, recorded: E's first edit
+    failed (a `sed` on the `/` of `n/a`, nothing committed, exit 1), so `memory submit` of E
+    exited 1 (`missing required field on submit: release`) and its `memory approve` exited 1
+    (`illegal transition draft -> (none)`); the script's writer was replaced before E's second
+    edit, and with the field written E went to `backlog`. The other two are the limits' refusals
+    below.
+  - **A limit refusing:** A and C started (`memory submit`, `→ in-progress`), C's `build`
+    finalized and C submitted to `in-review`, B started. D's `memory submit` exit 1: `WIP limit
+    reached for 'in-progress' on type 'task' (limit 2): held by task-001-alpha, task-002-beta`;
+    after A's `build`, A's `memory submit` to `in-review` exit 1: `WIP limit reached for
+    'in-review' on type 'task' (limit 1): held by task-003-gamma`.
+  - **A reject past a full limit:** `memory reject task-003-gamma` exit 0 (`in-review →
+    in-progress`), leaving A, B and C `in-progress` under a limit of 2; the `kanban` directive's
+    rule applied: `memory park task-002-beta` exit 0 (`in-progress → backlog`), back to two;
+    `work-item.start@task:task-002-beta` offered again and C's `build` re-entered (the fallback).
+    A, then B (restarted), then D driven through `review`, `approve` and `done`.
+  - **A task spanning both releases:** `rel-1.1.0` added outside a step
+    (`--set version=1.1.0 --set release-line=v1`) and moved to `in-development` by two
+    `memory submit`; before the rewrite, the frontier held C's `build` and no step of
+    `rel-1.0.0`'s release. C's `release` rewritten to `1.1.0` (a commit) while C was `in-progress`.
+    The frontier then held `release-submit.pre-release-checks@release:rel-1.0.0` beside
+    `work-item.build@task:task-003-gamma`. `rel-1.0.0` driven through `release-submit` and
+    `release-publishing` (records by `workflow finalize`, the moves by the commit forms `workflow
+    next` printed: `wf(release): start rel-1.0.0 [in-development → releasing]`, `wf(release):
+    finalize rel-1.0.0 [releasing → released]`) to `released` while C was `in-progress` under
+    `rel-1.1.0`. C then built again, reviewed, approved and done; `rel-1.1.0` to `released` the
+    same way.
+  - **Two retrospectives:** `rel-1.0.0`'s: `docs/retrospectives/rel-1.0.0.md` committed,
+    `explore` complete, `additional-points` finalized, `dl-001` tagged `retrospective` added at
+    `capture`, submitted (`in-discussion`, `pending approvals: 1`), approved. `rel-1.1.0`'s:
+    `explore` was already complete after `mark-released`, before its own file was committed
+    (`base`'s known weak evidence, the charter's open point 4); `additional-points` finalized,
+    `dl-002` added at `capture` and submitted: `retrospective.approve@release:rel-1.0.0` returned to
+    the frontier beside `rel-1.1.0`'s, `pending approvals: 2`, one decision-log (bug-008, F-039);
+    its one approval cleared both.
+  - With no release open, `workflow status`: `delivery complete, end-of-life current`;
+    `workflow next`: `end-of-life.announce`. Final states: three releases `released`, A … D
+    `done`, E in `backlog`. No element was reported `late` at any point (the word appears in no
+    output).
+- 2026-11-01: nothing in the pack had to change: no finding for the approver (dl-019).
+- 2026-11-01: independent review of the record: approve after amendments, nothing blocking; it
+  checked every claim against the run's log and the scratch repository (91 commits, the final
+  files). Applied: three of the five non-zero exits are the slip, not two; the steps logged without
+  an exit code; the script's writer replaced; the frontier before the rewrite; where `workflow
+  status` ran. No finding for the approver (dl-019): the weak `explore` evidence and bug-008's
+  re-listing are the charter's open point 4.
+- 2026-11-01, Acceptance 4: the branch's diff against `main` is this file only; privacy check: no
+  local or scratch path, no private repository or project, no intermediary session. Branch CI run
+  41351653544 on `3e6c46b`: `success`. `in-progress → in-review`.
