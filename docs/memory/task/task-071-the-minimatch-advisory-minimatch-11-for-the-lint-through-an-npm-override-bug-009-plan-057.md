@@ -108,3 +108,6 @@ the notes; the owed rows (Acceptance 5) with the delivery.
   jobs, the audit steps passed. Privacy check of the branch's diff against `main`: no local or
   scratch path, no private repository or project, no intermediary session. `in-progress →
   in-review`.
+- 2026-11-01: approved by the approver (`in-review → approved`, `126dd22`) with the merge OK;
+  merged into `main` with `--no-ff` (`89b341e`); `npm ci` and `npm audit` (0) on the merged tree.
+  The owed rows of Acceptance 5 written (`docs/owed-items.md`). `approved → done`.

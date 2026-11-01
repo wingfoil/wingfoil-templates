@@ -59,3 +59,5 @@ lines) change: `minimatch` 10.2.6 → 11.0.3, `@isaacs/nonrecursive-glob-match` 
   first red run on `main`; the exact pin; the lockfile's other changes; `check:pins` in Expected;
   `audit fix --force`'s downgrade.
 - 2026-10-31: focused re-review: approve; its nits applied. Submitted.
+- 2026-11-01: fixed by task-071, merged into `main` (`89b341e`): `minimatch` 11.0.3 through an
+  npm override; `npm audit` 0 in the root and every matrix folder.
