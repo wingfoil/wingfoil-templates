@@ -66,7 +66,23 @@ task-056's. The run by hand is task-069's.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-068-kanban-exit` from `main` (`b43f7e0`, with task-067).
+
+**Red first** (dl-018), one commit, the tests only:
+1. `tests/ci-workflow.test.ts`: the branch-only commands gain `npm run validate -- --overlay
+   tests/fixtures/kanban-exit`; red on `main`'s `ci.yml`.
+2. `tests/validate.test.ts`: a case as task-056's for `tests/fixtures/kanban-exit`, its four
+   `composed twice` lines, `compositions: 13` and `matrix: self-test, 26 runs, 0 failed, tolerance
+   applied: none`; red with no overlay.
+3. `tests/runs.test.ts`: task-058's guard extended to `kanban.yaml` (`tests/fixtures/examples/kanban`),
+   and a guard of `adoption-kanban.yaml` as `adoption.yaml`'s (its folder, both templates, the same
+   removal list); red with no scenario files.
+
+Then the files: `tests/fixtures/kanban-exit/compositions/{defaults,flat-releases,release-folders,
+release-folders-lean}/example.yaml` (`scrum-exit`'s with `methodology/kanban@^1`,
+`flat-releases` adding `wip_in_progress: 1` and `wip_in_review: 1`); the CI step after
+`scrum-exit`'s; `tests/fixtures/runs/kanban.yaml` and `adoption-kanban.yaml` (headers as
+`scrum.yaml`'s and `adoption.yaml`'s). Then the timings (Acceptance 8) before the push.
 
 ## Execution Notes
 
