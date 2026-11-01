@@ -91,3 +91,26 @@ release-folders-lean}/example.yaml` (`scrum-exit`'s with `methodology/kanban@^1`
   list tied to the READMEs, a local timing before the push, the red `validate` case, the summary
   line quoted.
 - 2026-10-30: focused re-review: approve; its nits applied. Submitted.
+- 2026-11-01: Design written; `backlog → in-progress`.
+- 2026-11-01, red first (dl-018), the tests only (`bb6727a`), on `main`'s `ci.yml` with no overlay
+  and no scenario files: `node --test --test-name-pattern='task-068|self-test mode on branches'
+  dist/tests/ci-workflow.test.js dist/tests/validate.test.js dist/tests/runs.test.js`: 6 tests,
+  2 pass, 4 fail (the CI's branch-only commands, `validate` exiting non-zero on the missing
+  overlay, the two scenario guards).
+- 2026-11-01, the files (`8fe7f5e`): each composition is `scrum-exit`'s with `methodology/kanban@^1`
+  in place of `methodology/scrum@^1`, one line apart, and `flat-releases` adds `wip_in_progress: 1`
+  and `wip_in_review: 1`. Which repository each matches, from task-049's notes: `defaults` this
+  repository's set, `flat-releases` WingFoil-Benchmark's, `release-folders` WingFoil's,
+  `release-folders-lean` WingFoil-UI's. The CI step after `scrum-exit`'s and before `check:runs`;
+  `kanban.yaml` and `adoption-kanban.yaml`. The seven test cases green.
+- 2026-11-01, Acceptance 2 and 7: `npm run validate -- --overlay tests/fixtures/kanban-exit`:
+  `overlay: checked 4 files, 0 problems`, the four `composed twice, 36 files, byte-identical`
+  lines, `compositions: 13`, `matrix: self-test, 26 runs, 0 failed, tolerance applied: none`,
+  nothing on stderr. `npm run check:runs`: `runs: 46 runs, 0 failed`; the 12 new runs (the start
+  and the two adoptions on `defaults` and `team-limits`, on 0.3.0 and 0.3.1) pass.
+- 2026-11-01, Acceptance 8, local timings before the push: `npm test` 1108 s (1038 of 1038), the
+  `kanban-exit` overlay 130 s, `check:runs` 87 s. task-067's branch CI (41325925866): job 19 min
+  32 s on 22.21.0, its `Test` step 910 s, the `scrum-exit` step 48 s (about 0.37 of the local
+  time), `check:runs` 55 s. Estimate with this task: about 21 to 22 minutes, more than 5 minutes
+  under `timeout-minutes: 30` (owed row G12): no ruling needed; the branch CI's own duration
+  follows.
