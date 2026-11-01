@@ -200,3 +200,7 @@ every commit and is deleted after the merge (plan-057's close).
   changed. Privacy check of the branch's diff against `main`: no local or scratch path, no private
   repository or project, no real adopter in the README or the examples, no intermediary session.
   `in-progress → in-review`.
+- 2026-11-01: approved by the approver (`in-review → approved`, `93dfdb9`) with the merge OK;
+  merged into `main` with `--no-ff` (`88468b2`); on the merged tree `index -- --check` (7 files),
+  `check:packs` (74 files, 0 problems) and the `validate`, `check-packs` and `index` tests (178 of
+  178). `approved → done`.
