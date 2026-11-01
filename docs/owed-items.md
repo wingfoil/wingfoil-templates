@@ -37,6 +37,7 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | This repository's custom `sw-life-cycle` shares its name with `software`'s (bug-007's pattern) | dl-028 D2 (inventory, P3) | W10 | the adoption |
 | `software`'s `tech-lead` needs a holder in this repository's DNA | dl-028 D2 (inventory, P3) | W10 | the adoption |
 | `pack-cycle` v6 checked on the engine: its reordered phases, and whether a pack covered by a shared retrospective can complete `retrospective` by reference | dl-033 O4 | W10 | the pin bump (W10) |
+| The README generator writes an empty `Memory types` line (``- `task`: `` with a trailing space) for a type whose fragment `states` holds only `limits`, as `methodology/kanban`'s `task` (`memoryLines`, `src/readme-generate.ts`: no `—` without a sequence) | task-067 › review | approver | before `methodology/kanban`'s first tag |
 | Charter text drift of `software` (`base@^1`, `end-of-life` row, step-key table, W9) | pack-foundation-software › Execution Notes | approver | the next retrospective |
 | `scrum` charter open point 1 (UI's test-first steps) | pack-methodology-scrum › Open points, note 2026-10-28 | UI's adoption | UI's adoption |
 | `scrum` charter open point 2 (`explore`'s weak evidence) | pack-methodology-scrum › Open points, note 2026-10-28 | approver | the next retrospective |

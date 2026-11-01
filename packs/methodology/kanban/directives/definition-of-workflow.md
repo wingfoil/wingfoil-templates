@@ -22,8 +22,8 @@ its own by a `custom/` directive of the same id.
 - **Policies of each state:**
   - `backlog`: a task is ordered by value and carries its release; it is pulled only within the
     limit on `in-progress`;
-  - `in-progress`: the work meets the project's quality measures (its tests and checks pass) and
-    is integrated with the rest of the product, with no step left for later;
+  - `in-progress`: an item leaves it for review only once the work meets the project's quality
+    measures (its tests and checks pass), with no step left for later;
   - `in-review`: someone other than the author has checked it;
   - `approved`: the approver has approved it;
   - `done`: it is integrated and verified as the project requires, and what a user or an operator

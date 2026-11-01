@@ -18,7 +18,8 @@ phases:
   - name: release
     description: >-
       The release slot over this release. Move the release to releasing only once its own tasks
-      are done or moved to the next release: a release that completes leaves its open tasks late.
+      are done or moved to the next release: when a release completes, its tasks still open are
+      reported late.
     iterate_over: release
     where: { status: [in-development, releasing], version: "{release.version}" }
     include: release

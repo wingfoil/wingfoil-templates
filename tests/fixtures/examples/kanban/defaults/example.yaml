@@ -2,7 +2,7 @@ format: 1
 id: defaults
 title: "Defaults"
 description: >-
-  Plover Board, a fictional accounting tool, keeps every software parameter on its default.
+  Plover Board, a fictional accounting tool, keeps every parameter on its default.
 packs:
   - software@^1
   - methodology/kanban@^1

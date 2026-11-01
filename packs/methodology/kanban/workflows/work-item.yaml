@@ -22,8 +22,8 @@ phases:
       - agent.execute
   - name: review
     description: >-
-      Ask for a review within the limit on in-review (in-progress to in-review), by someone other
-      than the author.
+      A reviewer other than the author checks the work against the Definition of Workflow and moves
+      it to in-review, within the limit on in-review.
     role: reviewer
     actions:
       - memory.submit

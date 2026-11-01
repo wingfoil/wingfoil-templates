@@ -46,13 +46,13 @@ and `software`, with a WingFoil release in the pack's range (see its catalog ent
    replaces it. `base`'s and `software`'s step 4 remove the other workflows `init` scaffolded.
 4. Bring every state within its limit before adopting: WingFoil refuses the next move into a state
    that is over it.
-5. Give every open task a `release`, the version of the release that carries it, or
-   `release: "n/a — <reason>"` until it is planned, before it is next submitted or amended.
-6. Releases already `released` stay out of `delivery`; open releases join it with their tasks. If
+5. Releases already `released` stay out of `delivery`; open releases join it with their tasks. If
    none is open, add the first with `delivery`'s `plan-release`.
+6. Give every open task a `release`, the version of an open release that carries it, or
+   `release: "n/a — <reason>"` until it is planned, before it is next submitted or amended.
 7. Migrate by explicit commits the elements whose state has another name, and record an old → new
-   key mapping for the workflows and phases the project renames; a project's own
-   `kanban-delivery`, if kept, keeps its name beside `work-item`.
+   key mapping for the workflows and phases the project renames; a `kanban-delivery` the project
+   wrote itself, not `init`'s, keeps its name beside `work-item`.
 8. Record the adopted version of `methodology/kanban` in the project's own Memory.
 
 <!-- generated:begin composition -->
@@ -146,13 +146,16 @@ publication, then the release's retrospective, while the tasks of the next relea
   - the approver's gates (`work-item` › `approve`, `base`'s and `software`'s gates) are
     WingFoil's governance, not Kanban's;
   - WIP is controlled by WingFoil's `limits` on two states of `task`, counted over the whole
-    repository and every branch WingFoil sees (a task started on an unmerged branch holds its
-    place, and a branch not fetched is not counted), not per column of a team's board; a reject is
-    not checked against the limit, so the `kanban` directive brings a state a reject pushed over
-    its limit back within it first;
+    repository, not per column of a team's board; by WingFoil's refusal message (not exercised),
+    the holders are counted on every branch WingFoil sees, so a task started on an unmerged branch
+    holds its place until it is moved out on that branch, and a branch not fetched is not counted;
+    a reject is not checked against the limit, so the `kanban` directive brings a state a reject
+    pushed over its limit back within it first;
   - the flow runs inside releases: a work item carries the release it is delivered in, by its
-    version, and two releases of one version on two release lines are not told apart; a release
-    moves to `releasing` only once its tasks are done or moved to the next release;
+    version, so two releases of one version on two release lines would not be told apart
+    (inferred from the filter, not exercised), and a project with parallel release lines gives
+    their releases distinct versions; a release moves to `releasing` only once its tasks are done
+    or moved to the next release;
   - the flow needs one release `in-development`: with none, `delivery` completes and `end-of-life`
     becomes current until a new release is added;
   - releases after the first are added outside a step (`memory add`), WingFoil 0.3.x taking a

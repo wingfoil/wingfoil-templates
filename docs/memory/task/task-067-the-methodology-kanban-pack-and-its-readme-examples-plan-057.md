@@ -180,3 +180,13 @@ every commit and is deleted after the merge (plan-057's close).
   61 → 74, `validate` 7 → 9 compositions and 14 → 18 runs, the overlays `software-exit` and
   `scrum-exit` 11 → 13 compositions and 22 → 26 runs each, the publication run 14 → 18; their
   titles say so. No other count moved (the three test files 178 of 178).
+- 2026-11-01: independent review of the build: approve after amendments, nothing blocking; it
+  found the shipped workflows and fragments structurally identical to the draft run on the engine,
+  and composed `base`, `software` and `kanban` on WingFoil 0.3.1 with no warning. Applied: the
+  CHANGELOG's first line a whole sentence (it becomes the tag annotation); open points 2 and 3
+  stated with the charter's hedges and remedy; `review`'s description the reviewer's act; the
+  README's adoption steps in the charter's order and the own `kanban-delivery` wording; the
+  `in-progress` policy; "reported late"; the defaults example's description. Owed: the README
+  generator writes an empty `Memory types` line for `task`, whose `states` hold only `limits`, a
+  change under `src/`, outside this task: a row of `docs/owed-items.md` (trigger: before
+  `kanban`'s first tag).
