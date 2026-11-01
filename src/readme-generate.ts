@@ -165,8 +165,10 @@ function gatesOf(states: Doc): string {
   }).join(', ')}`;
 }
 
+/** A machine's sequence; a dash when the fragment gives none, as a tightening may (task-072). */
 function sequenceOf(states: Doc): string {
-  return strings(states['sequence']).map(code).join(' → ');
+  const sequence = strings(states['sequence']);
+  return sequence.length === 0 ? '—' : sequence.map(code).join(' → ');
 }
 
 function memoryLines(pack: PackFiles): string[] {

@@ -90,7 +90,7 @@ and `software`, with a WingFoil release in the pack's range (see its catalog ent
 
 ### Memory types
 
-- `task`: 
+- `task`: —
 
 ### Directives
 

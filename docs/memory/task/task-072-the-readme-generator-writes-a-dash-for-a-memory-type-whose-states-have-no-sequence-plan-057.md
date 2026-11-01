@@ -2,7 +2,7 @@
 id: task-072-the-readme-generator-writes-a-dash-for-a-memory-type-whose-states-have-no-sequence-plan-057
 type: task
 title: "The README generator writes a dash for a Memory type whose states have no sequence (plan-057)"
-status: backlog
+status: approved
 pack: ""            # tooling task (tooling-delivery, plan-057 ruling 8)
 depends_on: ["task-067", "task-068", "task-069"]
 tags: ["tooling","index","kanban"]
@@ -62,7 +62,16 @@ same pack does not change it. A dash for the missing sequence matches the existi
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-072-memory-type-dash` from `main` (`a06f032`, with task-067 … task-069).
+
+**`src/readme-generate.ts`:** `sequenceOf` returns `—` when `states.sequence` is missing or empty;
+`memoryLines` unchanged otherwise, so its three forms become `<sequence or —><gates>`,
+`defaults, <sequence or —><gates>` and `—`.
+
+**Tests, red first** (one commit, on `main`'s code): in `tests/readme-generate.test.ts`, the four
+cases of Acceptance 2 on `withPackTree` trees, each asserting the exact "What it adds" line and
+section 4's `states:` line. Then the fix; `npm run index` rewrites `kanban`'s README line; the owed
+row moved to Closed.
 
 ## Execution Notes
 
@@ -72,3 +81,25 @@ same pack does not change it. A dash for the missing sequence matches the existi
   the order and `depends_on`; the same defect in the `defaults` branch, fixed in `sequenceOf`; the
   dash's rationale; section 4 pinned unchanged; both red outputs named, an empty sequence tested.
 - 2026-11-01: focused re-review: approve; its nit applied. Submitted.
+- 2026-11-01: Design written; `backlog → in-progress`.
+- 2026-11-01, red first (dl-018 R1), the tests only, on `main`'s `src/readme-generate.ts`:
+  `node --test --test-name-pattern=task-072 dist/tests/readme-generate.test.js`: 4 tests, 0 pass,
+  4 fail, for behaviour: `` - `task`: `` with a trailing space (only `limits`, and an empty
+  `sequence`), `` - `task`: ; gates … `` and `` - `note`: defaults, ; gates … ``.
+- 2026-11-01, the fix: `sequenceOf` writes `—` for a missing or empty `sequence`. Green:
+  `readme-generate` and `index` tests 31 of 31. `npm run index` rewrote one file,
+  `packs/methodology/kanban/README.md`, its line `` - `task`: `` to `` - `task`: — `` and nothing
+  else; `index -- --check` 7 files; the golden tree's `validate` (11 index files, 26 runs, 0
+  failed) unchanged. The owed row moved to Closed.
+- 2026-11-01: independent review of the build: approve, nothing blocking; it reran the red commit
+  (4 tests, 0 pass, 4 fail, the outputs above) and found no other fragment whose `states` lack a
+  `sequence`, in `packs/` or the golden tree.
+- 2026-11-02, checks at `be9e54d` (Acceptance 5), from clean clones on Node.js 22.21.0 then
+  22.12.0, one after the other: `npm ci`, `npm audit` (0), `npm test` (1043 of 1043), `lint`,
+  `check:pins`, `check:schemas`, `check:packs`, `validate`, `validate:publication`, the overlays
+  `software-exit`, `scrum-exit` and `kanban-exit`, `index -- --check` (7 files), `check:runs` (46
+  runs, 0 failed) and `workflow list`, each exit 0, no Node.js warning. Branch CI run 41354951330
+  on `be9e54d`: `success`. `.wingfoil/` and the fixtures' expected outputs unchanged; in `packs/`
+  only `kanban`'s README line. Privacy check of the branch's diff against `main`: no local or
+  scratch path, no private repository or project, no intermediary session.
+  `in-progress → in-review`.
