@@ -2,7 +2,7 @@
 id: task-071-the-minimatch-advisory-minimatch-11-for-the-lint-through-an-npm-override-bug-009-plan-057
 type: task
 title: "The minimatch advisory: minimatch 11 for the lint through an npm override (bug-009, plan-057)"
-status: backlog
+status: approved
 pack: ""            # tooling task (tooling-delivery, bug-009)
 depends_on: []
 tags: ["tooling","ci","dependencies"]
@@ -62,7 +62,12 @@ and green are `npm audit`'s exit codes, recorded with the command and its output
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-071-minimatch-override` from `main`. A dependency-only change (task-043's kind):
+the red `npm audit` on `main`; `"overrides": { "minimatch": "11.0.3" }` added to `package.json` by
+hand, then `npm install --package-lock-only --ignore-scripts`; `npm ci`; the checks of
+Acceptance 3, the lint probes in a scratch clone (the linted file list with 10.2.6 and with 11.0.3,
+the two `Date.now()` probes); the clean clones; the branch CI. Commits: the fix (the two files);
+the notes; the owed rows (Acceptance 5) with the delivery.
 
 ## Execution Notes
 
@@ -74,3 +79,32 @@ and green are `npm audit`'s exit codes, recorded with the command and its output
   `overrides`).
 - 2026-10-31: focused re-review: approve (the exact pin reproduced: the same diff, audit 0,
   190 and 43 signatures); its nits applied. Submitted.
+- 2026-10-31: Design written; `backlog → in-progress`.
+- 2026-10-31, red (Acceptance 1), on `main`: `npm audit` in the root exit 1, "11 moderate severity
+  vulnerabilities", GHSA-g3hv-75wg-m249 (`minimatch`); in `src/matrix/wingfoil-0.2.2`, `0.3.0` and
+  `0.3.1` exit 0. The CI's first red run on `main`: 41196364111 (`77510f3`).
+- 2026-10-31, the fix (Acceptance 2): `"overrides": { "minimatch": "11.0.3" }` in `package.json`,
+  `npm install --package-lock-only --ignore-scripts`; the diff is `package.json` (3 lines) and
+  `package-lock.json` (16 lines): `minimatch` 10.2.6 → 11.0.3, `@isaacs/nonrecursive-glob-match`
+  1.0.3 added (development), `minimatch`'s `brace-expansion` range `^5.0.8` → `^5.0.12` (5.0.12
+  locked as before).
+- 2026-10-31, the checks (Acceptance 3), after `npm ci`: `npm ls minimatch` 11.0.3 on the three
+  paths (one `overridden`, two `deduped`), no `invalid` or `ERR`; `npm audit` "found 0
+  vulnerabilities" in the root, exit 0 in the three matrix folders; `npm audit signatures`: 190
+  packages with verified registry signatures, 43 with verified attestations; the licences
+  BlueOak-1.0.0 (`minimatch` 11.0.3, `@isaacs/nonrecursive-glob-match` 1.0.3); `check:pins` exit
+  0; `npm run lint` exit 0. The patterns: `eslint --format json .` lints the same 132 files with
+  10.2.6 and with 11.0.3; a `Date.now()` in a scratch `src/*.ts` reported by
+  `no-restricted-properties` (exit 1); the same under `tests/fixtures/` ignored ("File ignored
+  because of a matching ignore pattern", exit 0); the scratch files removed.
+- 2026-10-31: independent review of the build: approve, nothing blocking; it reproduced every
+  figure above in a clean clone, and the lockfile from the branch's `package.json`.
+- 2026-10-31, checks at `aefca68` (Acceptance 4), from clean clones on Node.js 22.21.0 then
+  22.12.0, one after the other: `npm ci`, `npm audit` ("found 0 vulnerabilities"), `npm test` (1030
+  of 1030), `lint`, `check:pins`, `check:schemas`, `check:packs` (61 files, 0 problems), `validate`
+  and `validate:publication` (14 runs each, 0 failed), the overlays `software-exit` and
+  `scrum-exit` (22 runs each, 0 failed), `index -- --check` (6 files), `check:runs` (34 runs, 0
+  failed) and `workflow list`, each exit 0. Branch CI run 41220906494 on `aefca68`: `success`, both
+  jobs, the audit steps passed. Privacy check of the branch's diff against `main`: no local or
+  scratch path, no private repository or project, no intermediary session. `in-progress →
+  in-review`.
