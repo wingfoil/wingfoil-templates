@@ -91,3 +91,15 @@ row moved to Closed.
   `packs/methodology/kanban/README.md`, its line `` - `task`: `` to `` - `task`: — `` and nothing
   else; `index -- --check` 7 files; the golden tree's `validate` (11 index files, 26 runs, 0
   failed) unchanged. The owed row moved to Closed.
+- 2026-11-01: independent review of the build: approve, nothing blocking; it reran the red commit
+  (4 tests, 0 pass, 4 fail, the outputs above) and found no other fragment whose `states` lack a
+  `sequence`, in `packs/` or the golden tree.
+- 2026-11-02, checks at `be9e54d` (Acceptance 5), from clean clones on Node.js 22.21.0 then
+  22.12.0, one after the other: `npm ci`, `npm audit` (0), `npm test` (1043 of 1043), `lint`,
+  `check:pins`, `check:schemas`, `check:packs`, `validate`, `validate:publication`, the overlays
+  `software-exit`, `scrum-exit` and `kanban-exit`, `index -- --check` (7 files), `check:runs` (46
+  runs, 0 failed) and `workflow list`, each exit 0, no Node.js warning. Branch CI run 41354951330
+  on `be9e54d`: `success`. `.wingfoil/` and the fixtures' expected outputs unchanged; in `packs/`
+  only `kanban`'s README line. Privacy check of the branch's diff against `main`: no local or
+  scratch path, no private repository or project, no intermediary session.
+  `in-progress → in-review`.
