@@ -74,9 +74,9 @@ Branch `task/task-068-kanban-exit` from `main` (`b43f7e0`, with task-067).
 2. `tests/validate.test.ts`: a case as task-056's for `tests/fixtures/kanban-exit`, its four
    `composed twice` lines, `compositions: 13` and `matrix: self-test, 26 runs, 0 failed, tolerance
    applied: none`; red with no overlay.
-3. `tests/runs.test.ts`: task-058's guard extended to `kanban.yaml` (`tests/fixtures/examples/kanban`),
-   and a guard of `adoption-kanban.yaml` as `adoption.yaml`'s (its folder, both templates, the same
-   removal list); red with no scenario files.
+3. `tests/runs.test.ts`: task-058's guard extended to `kanban.yaml`
+   (`tests/fixtures/examples/kanban`), and a guard of `adoption-kanban.yaml` as `adoption.yaml`'s
+   (its folder, both templates, the same removal list); red with no scenario files.
 
 Then the files: `tests/fixtures/kanban-exit/compositions/{defaults,flat-releases,release-folders,
 release-folders-lean}/example.yaml` (`scrum-exit`'s with `methodology/kanban@^1`,
@@ -102,7 +102,7 @@ release-folders-lean}/example.yaml` (`scrum-exit`'s with `methodology/kanban@^1`
   and `wip_in_review: 1`. Which repository each matches, from task-049's notes: `defaults` this
   repository's set, `flat-releases` WingFoil-Benchmark's, `release-folders` WingFoil's,
   `release-folders-lean` WingFoil-UI's. The CI step after `scrum-exit`'s and before `check:runs`;
-  `kanban.yaml` and `adoption-kanban.yaml`. The seven test cases green.
+  `kanban.yaml` and `adoption-kanban.yaml`. The six test cases green.
 - 2026-11-01, Acceptance 2 and 7: `npm run validate -- --overlay tests/fixtures/kanban-exit`:
   `overlay: checked 4 files, 0 problems`, the four `composed twice, 36 files, byte-identical`
   lines, `compositions: 13`, `matrix: self-test, 26 runs, 0 failed, tolerance applied: none`,
@@ -114,3 +114,24 @@ release-folders-lean}/example.yaml` (`scrum-exit`'s with `methodology/kanban@^1`
   time), `check:runs` 55 s. Estimate with this task: about 21 to 22 minutes, more than 5 minutes
   under `timeout-minutes: 30` (owed row G12): no ruling needed; the branch CI's own duration
   follows.
+- 2026-11-01: independent review of the build: approve after amendments, nothing blocking; it
+  reproduced the red run at `bb6727a` (6 tests, 2 pass, 4 fail) and, at the head, the overlay's
+  lines and `check:runs` (46 runs, 0 failed). Applied (`7ca446f`): one removal list shared by both
+  adoption guards; the CI steps' order pinned (`scrum-exit`, `kanban-exit`, `check:runs`);
+  bug-007 in `adoption-kanban.yaml`'s header; these notes (six test cases, not seven; the timings
+  below). Acceptance 7's lines of the 12 new runs: the summary above stands for them (each
+  `runs tests/fixtures/examples/kanban/<example>/example.yaml <main or adoption>
+  wingfoil@<0.3.0 or 0.3.1>: pass`).
+- 2026-11-01, Acceptance 8, the timings again with the machine idle (the first ones ran beside a
+  clean-clone suite): the overlays `software-exit` 41 s, `scrum-exit` 45 s, `kanban-exit` 54 s,
+  `check:runs` 74 s. Branch CI run 41340400993 on `7ca446f`: `success`, the job 19 min 26 s on
+  22.21.0 (`Test` 873 s, the `kanban-exit` step 43 s, `check:runs` 61 s) and 13 min 10 s on
+  22.12.0, against `timeout-minutes: 30`: no ruling needed.
+- 2026-11-01, checks at `7ca446f` (Acceptance 9), from clean clones on Node.js 22.21.0 then
+  22.12.0, one after the other: `npm ci`, `npm audit` (0), `npm test` (1039 of 1039), `lint`,
+  `check:pins`, `check:schemas`, `check:packs`, `validate`, `validate:publication`, the overlays
+  `software-exit`, `scrum-exit` and `kanban-exit` (26 runs each, 0 failed), `index -- --check`,
+  `check:runs` (46 runs, 0 failed) and `workflow list`, each exit 0, no Node.js warning. No file
+  under `packs/`, `src/` or `.wingfoil/` changed. Privacy check of the branch's diff against
+  `main`: no local or scratch path, no private repository or project, no intermediary session.
+  `in-progress → in-review`.
