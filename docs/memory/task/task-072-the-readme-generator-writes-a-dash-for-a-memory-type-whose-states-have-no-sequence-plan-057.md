@@ -81,3 +81,13 @@ row moved to Closed.
   the order and `depends_on`; the same defect in the `defaults` branch, fixed in `sequenceOf`; the
   dash's rationale; section 4 pinned unchanged; both red outputs named, an empty sequence tested.
 - 2026-11-01: focused re-review: approve; its nit applied. Submitted.
+- 2026-11-01: Design written; `backlog → in-progress`.
+- 2026-11-01, red first (dl-018 R1), the tests only, on `main`'s `src/readme-generate.ts`:
+  `node --test --test-name-pattern=task-072 dist/tests/readme-generate.test.js`: 4 tests, 0 pass,
+  4 fail, for behaviour: `` - `task`: `` with a trailing space (only `limits`, and an empty
+  `sequence`), `` - `task`: ; gates … `` and `` - `note`: defaults, ; gates … ``.
+- 2026-11-01, the fix: `sequenceOf` writes `—` for a missing or empty `sequence`. Green:
+  `readme-generate` and `index` tests 31 of 31. `npm run index` rewrote one file,
+  `packs/methodology/kanban/README.md`, its line `` - `task`: `` to `` - `task`: — `` and nothing
+  else; `index -- --check` 7 files; the golden tree's `validate` (11 index files, 26 runs, 0
+  failed) unchanged. The owed row moved to Closed.
