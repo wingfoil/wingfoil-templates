@@ -2,7 +2,7 @@
 id: task-072-the-readme-generator-writes-a-dash-for-a-memory-type-whose-states-have-no-sequence-plan-057
 type: task
 title: "The README generator writes a dash for a Memory type whose states have no sequence (plan-057)"
-status: pending
+status: backlog
 pack: ""            # tooling task (tooling-delivery, plan-057 ruling 8)
 depends_on: ["task-067", "task-068", "task-069"]
 tags: ["tooling","index","kanban"]
