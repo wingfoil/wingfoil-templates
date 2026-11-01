@@ -169,6 +169,10 @@ Given on 2026-10-31, in chat, on a finding of task-067 (dl-019):
    task, task-071, pin `minimatch` 11 for the lint through an npm `overrides` entry, before
    task-070's gate; if a check fails, a CI policy for advisories on development dependencies
    instead.
+8. **The README generator's empty `Memory types` line** (given on 2026-11-01, in chat, on
+   task-067's review): a tooling task of its own, task-072 (`tooling-delivery`), after task-068
+   and task-069 and before `kanban`'s first release: a type whose fragment `states` holds no
+   `sequence` (`kanban`'s `task`, `limits` only) is written `—`, as a type with no `states`.
 
 **Ids** (agreed before this plan): plan-057; task-066 … task-069; dl-034, bug-009 and F-042
 reserved for a ruling, a defect or a note this plan finds; prel-006 is `first-release`'s.
@@ -247,3 +251,5 @@ dl-025 (`pending`).
 - 2026-10-31: task-070's branch CI and `main`'s (41198090730 on `e309390`) failed on the root
   audit (GHSA-g3hv-75wg-m249, `minimatch`, a development dependency of the lint); the approver
   ruled 7. task-070 waits for it at `in-progress`, its checks done.
+- 2026-11-01: task-067's review found the generated `Memory types` line of `task` empty (a row of
+  `docs/owed-items.md`); the approver ruled 8.
