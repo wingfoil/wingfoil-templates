@@ -98,9 +98,11 @@ Acceptance 2, with no local or scratch path. **Commits**: the notes only.
   `kanban`'s defaults, fictional project Plover Board, `.example` addresses), `.wingfoil/` and an
   `AGENTS.md` committed; the composed `task` with `limits: { in-progress: 2, in-review: 1 }`.
   WingFoil from the matrix's install, `--version`
-  `0.3.1 (870bd4406f3b9bba5ecde7a5f8198b80c2a98583)`; `workflow list` exit 0, `"diagnostics": []`. 118 logged steps (WingFoil commands, the commits of
-  a `release` field or of a release's state, the files committed); each exits 0 except the five
-  named below.
+  `0.3.1 (870bd4406f3b9bba5ecde7a5f8198b80c2a98583)`; `workflow list` exit 0, `"diagnostics": []`.
+  118 logged steps (WingFoil commands, the commits of a `release` field or of a release's state,
+  and three file commits, `docs/inception.md` and the two retrospective files, logged without an
+  exit code): of the 115 with an exit code, each is 0 except the five named below. `workflow
+  status` ran before R1 entered `releasing`, during R1's retrospective and twice at R2's.
   - **R0 left out:** `rel-0.5.0` (`--set version=0.5.0 --set release-line=v0`) moved to `released`
     by four `memory submit` before `workflow start sw-life-cycle`; no step was ever bound to it
     (`@release:rel-0.5.0` appears in no output).
@@ -112,10 +114,12 @@ Acceptance 2, with no local or scratch path. **Commits**: the notes only.
     tasks added, their `release` written by editing the draft and committing it: A, B, C, D with
     `release: "1.0.0"`, E with `release: "n/a — not planned yet"`; each submitted and approved to
     `backlog`. A, B, C, D joined `work` (`work-item.start@task:…` on the frontier); E stayed out.
-    Two of the five non-zero exits are a slip of the driving script, recorded: E's first edit
+    Three of the five non-zero exits are a slip of the driving script, recorded: E's first edit
     failed (a `sed` on the `/` of `n/a`, nothing committed, exit 1), so `memory submit` of E
     exited 1 (`missing required field on submit: release`) and its `memory approve` exited 1
-    (`illegal transition draft -> (none)`); with the field written, E went to `backlog`.
+    (`illegal transition draft -> (none)`); the script's writer was replaced before E's second
+    edit, and with the field written E went to `backlog`. The other two are the limits' refusals
+    below.
   - **A limit refusing:** A and C started (`memory submit`, `→ in-progress`), C's `build`
     finalized and C submitted to `in-review`, B started. D's `memory submit` exit 1: `WIP limit
     reached for 'in-progress' on type 'task' (limit 2): held by task-001-alpha, task-002-beta`;
@@ -128,8 +132,9 @@ Acceptance 2, with no local or scratch path. **Commits**: the notes only.
     A, then B (restarted), then D driven through `review`, `approve` and `done`.
   - **A task spanning both releases:** `rel-1.1.0` added outside a step
     (`--set version=1.1.0 --set release-line=v1`) and moved to `in-development` by two
-    `memory submit`; C's `release` rewritten to `1.1.0` (a commit) while C was `in-progress`. The
-    frontier then held `release-submit.pre-release-checks@release:rel-1.0.0` beside
+    `memory submit`; before the rewrite, the frontier held C's `build` and no step of
+    `rel-1.0.0`'s release. C's `release` rewritten to `1.1.0` (a commit) while C was `in-progress`.
+    The frontier then held `release-submit.pre-release-checks@release:rel-1.0.0` beside
     `work-item.build@task:task-003-gamma`. `rel-1.0.0` driven through `release-submit` and
     `release-publishing` (records by `workflow finalize`, the moves by the commit forms `workflow
     next` printed: `wf(release): start rel-1.0.0 [in-development → releasing]`, `wf(release):
@@ -149,3 +154,9 @@ Acceptance 2, with no local or scratch path. **Commits**: the notes only.
     `done`, E in `backlog`. No element was reported `late` at any point (the word appears in no
     output).
 - 2026-11-01: nothing in the pack had to change: no finding for the approver (dl-019).
+- 2026-11-01: independent review of the record: approve after amendments, nothing blocking; it
+  checked every claim against the run's log and the scratch repository (91 commits, the final
+  files). Applied: three of the five non-zero exits are the slip, not two; the steps logged without
+  an exit code; the script's writer replaced; the frontier before the rewrite; where `workflow
+  status` ran. No finding for the approver (dl-019): the weak `explore` evidence and bug-008's
+  re-listing are the charter's open point 4.
