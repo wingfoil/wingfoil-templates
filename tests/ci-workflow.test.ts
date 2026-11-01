@@ -102,7 +102,8 @@ describe('the CI workflow (task-013)', () => {
     for (const command of ['npm run validate',
       'npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden',
       'npm run validate -- --overlay tests/fixtures/software-exit',
-      'npm run validate -- --overlay tests/fixtures/scrum-exit', 'npm run check:runs']) {
+      'npm run validate -- --overlay tests/fixtures/scrum-exit',
+      'npm run validate -- --overlay tests/fixtures/kanban-exit', 'npm run check:runs']) {
       assert.equal(stepRunning(command)?.if, branch, command);
     }
     assert.equal(stepRunning('npm run validate:publication')?.if, tag);
@@ -116,5 +117,17 @@ describe('the CI workflow (task-013)', () => {
     const overlay = stepRunning('npm run validate -- --overlay tests/fixtures/software-exit');
     assert.ok(runs !== undefined && overlay !== undefined);
     assert.ok(steps.indexOf(runs) > steps.indexOf(overlay), 'after the overlay step');
+  });
+
+  it('validates kanban-exit after scrum-exit and before the runs (task-068)', () => {
+    const [scrum, kanban, runs] = ['npm run validate -- --overlay tests/fixtures/scrum-exit',
+      'npm run validate -- --overlay tests/fixtures/kanban-exit', 'npm run check:runs']
+      .map((command) => {
+        const step = stepRunning(command);
+        assert.ok(step !== undefined, command);
+        return steps.indexOf(step);
+      });
+    assert.ok(scrum !== undefined && kanban !== undefined && runs !== undefined);
+    assert.ok(scrum < kanban && kanban < runs, `${scrum} < ${kanban} < ${runs}`);
   });
 });

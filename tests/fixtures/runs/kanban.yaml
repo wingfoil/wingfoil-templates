@@ -1,0 +1,11 @@
+# The start of sw-life-cycle on the README examples of methodology/kanban (task-068, plan-057), run
+# by `npm run check:runs` and the CI on every branch push, on each selected release. Each run
+# starts sw-life-cycle in its own scratch repository holding a README example's composition,
+# committed; the agent below runs it (fixture data, no governance act).
+format: 1
+compositions: tests/fixtures/examples/kanban
+identities:
+  agent: { name: "Runs Agent", email: "agent@runs.invalid" }
+runs:
+  - main: sw-life-cycle
+    steps: [start]

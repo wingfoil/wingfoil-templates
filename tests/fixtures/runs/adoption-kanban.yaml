@@ -1,0 +1,25 @@
+# The adoption of base, software and methodology/kanban by a project that `wingfoil init` wrote
+# (task-068, plan-057; dl-032 E3, prepared for kanban's first release, which cites its result), run
+# by `npm run check:runs` and the CI on every branch push, on each selected release: one run per
+# `init` template on each README example of methodology/kanban. The removal list is what the
+# "Install and update" steps of base's, software's and kanban's READMEs remove (bug-007): the
+# workflows `init` scaffolds under workflows/custom/ (a template writes scrum-delivery or
+# kanban-delivery) and its directive stubs under directives/custom/. The agent below runs it
+# (fixture data, no governance act).
+format: 1
+compositions: tests/fixtures/examples/kanban
+identities:
+  agent: { name: "Runs Agent", email: "agent@runs.invalid" }
+runs:
+  - adopt:
+      template: Scrum
+      remove:
+        workflows: [decision-log-ingest, sw-life-cycle, adr-ingest, bug-ingest, scrum-delivery,
+          kanban-delivery]
+        directives: [traceability, doc-versioning, security-secrets, determinism]
+  - adopt:
+      template: Kanban
+      remove:
+        workflows: [decision-log-ingest, sw-life-cycle, adr-ingest, bug-ingest, scrum-delivery,
+          kanban-delivery]
+        directives: [traceability, doc-versioning, security-secrets, determinism]
