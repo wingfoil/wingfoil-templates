@@ -103,3 +103,6 @@ row moved to Closed.
   only `kanban`'s README line. Privacy check of the branch's diff against `main`: no local or
   scratch path, no private repository or project, no intermediary session.
   `in-progress → in-review`.
+- 2026-11-02: approved by the approver (`in-review → approved`) with the merge OK; merged into
+  `main` with `--no-ff` (`35ebf97`); `index -- --check` (7 files) and the `readme-generate` tests on the
+  merged tree. `approved → done`.
