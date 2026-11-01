@@ -63,7 +63,27 @@ task-057 did for `scrum`.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-069-kanban-run` from `main` (`6d260b9`, with task-067 and task-068).
+
+**The scratch repository**, outside this one, never committed here: `git init`; `base`, `software`
+and `methodology/kanban` composed from `main` with `npm run compose` on `kanban`'s defaults and a
+fictional project (Plover Board, `.example` addresses: an approver member and an agent); the
+composed `.wingfoil/` and an `AGENTS.md` committed; the scratch repository's git identity is the
+fictional approver's (fixture data). WingFoil 0.3.1 from the matrix's install
+(`.cache/wingfoil-matrix/0.3.1`), on the `PATH` ahead of everything else.
+
+**The run**, a script of guarded steps (it stops if the scratch directory is missing), each command
+logged with its output and exit code: R0 (`version` and `release-line` by `--set`) to `released` by
+four `memory submit`; `workflow start sw-life-cycle`; `inception` and `specification` (a document
+committed, a tech-spec added at its step, submitted, approved); then `delivery` as Acceptance 2
+orders it, each state move by `memory submit`, `memory approve`, `memory reject`, `memory park`,
+a `release` field rewritten by editing the task and committing it, or the commit form `workflow
+next` prints for an `element.set_state`; each record by `workflow finalize --step <key>`;
+`workflow status` at each release boundary.
+
+**The record**: the Execution Notes carry the composed commit, WingFoil's `--version` line, the
+commands in condensed form with their exit codes and the outputs that show each item of
+Acceptance 2, with no local or scratch path. **Commits**: the notes only.
 
 ## Execution Notes
 
