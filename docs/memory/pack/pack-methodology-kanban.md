@@ -297,3 +297,18 @@ For the approver's acceptance:
 
 - 2026-10-30: written under plan-056 (step 3), from its rulings 1 … 13, step 2's run on WingFoil
   0.3.1, dl-026, dl-027 and the Kanban Guide v2025.5.
+- 2026-11-02, plan-057 (`author`): `packs/methodology/kanban` written from this charter (task-067,
+  `88468b2`), its README examples `defaults` and `team-limits` (fictional projects); the generated
+  `Memory types` line of `task` reads `—` (task-072). The exit criterion met: the overlay
+  `tests/fixtures/kanban-exit/` with the four governed repositories' parameter sets, Benchmark's
+  with its limits 1 and 1, 13 compositions and 26 runs on WingFoil 0.3.0 and 0.3.1, 0 failed, no
+  WingFoil diagnostic and no warning, and its CI step; `check:runs` starts `sw-life-cycle` on the
+  README examples and runs the adoption once per `init` template (`adoption-kanban.yaml`, dl-032
+  E3, prepared for `first-release`), 46 runs in all (task-068, `3e614b4`); the run by hand on
+  WingFoil 0.3.1 (`870bd440`, task-069, `eef6672`): a release already `released` before the start
+  left out, two releases to `released`, a task spanning both, both limits refusing, a reject past a
+  full limit brought back by a park, two retrospectives, nothing `late`; 0.3.0 is covered by the
+  matrix and the `check:runs` runs only (plan-057 ruling 4). Nothing in the shape had to change.
+  The composer's warning on the unquoted limits (Ships, Acceptance) was not the composer's: it came
+  from the secret rules' and the README index's parse of a pack's raw YAML, both fixed (task-066,
+  task-070); the exit criterion reads "no warning" with no exception. Next: `first-release`.

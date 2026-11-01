@@ -45,9 +45,9 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | `--param` applies to an `entries` composition only (hit again at prel-003) | plan-043 › note (task-039's review) | approver | the next retrospective |
 | `pack-semver` rule for fixes and changed defaults | plan-049, plan-052 › close | approver | the next retrospective |
 | This repository keeps `plan-{n}-{slug}` or takes `{workflow}-{phase}-plan` | plan-049 › close; pack-foundation-base › Adoption | W10 | the adoption |
-| `check:runs` scenario of the full scrum run (`memory park`, a field rewritten, `set_state`) and the `include:` null branch test; a tooling task of its own | plan-050 ruling 3; plan-052 › close; dl-032 E5 | approver | the next tooling task on `runs.ts` |
+| `check:runs` scenarios of the full scrum and kanban runs (`memory park`, `memory reject`, a field rewritten, `set_state`, a refusal expected) and the `include:` null branch test; a tooling task of its own | plan-050 ruling 3; plan-052 › close; plan-057 ruling 5; dl-032 E5 | approver | the next tooling task on `runs.ts` |
 | Check 0.3.1's `COLLABORATION.md` inbox text | plan-051 ruling 4; inbox README › Rules | approver | the first sync |
-| README step 3 "own entries" for Memory types and roles `init` scaffolded | plan-052 › close (task-061's review) | approver | the next README pass |
+| README step 3 "own entries" for Memory types and roles `init` scaffolded, in `base`'s, `software`'s and `scrum`'s READMEs (`kanban`'s answers it, task-067) | plan-052 › close (task-061's review); task-067 | approver | the next README pass |
 | Sequencer: W8 has four features | plan-052 › step 2, close | approver | the sequencer's next review |
 | dl-012's F4.9 placement | plan-052 › step 2, close | approver | dl-012's ruling |
 | W10: `methodology/kanban`, presets, `governance/wingfoil-dogfood`, this repository's adoption, its pin, the first inbox sync | plan-052 ruling 7 | W10 | W10 |

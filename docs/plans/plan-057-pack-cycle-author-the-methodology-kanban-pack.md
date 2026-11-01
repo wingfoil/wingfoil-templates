@@ -253,3 +253,37 @@ dl-025 (`pending`).
   ruled 7. task-070 waits for it at `in-progress`, its checks done.
 - 2026-11-01: task-067's review found the generated `Memory types` line of `task` empty (a row of
   `docs/owed-items.md`); the approver ruled 8.
+- 2026-11-01: two triggers of `docs/owed-items.md` changed, asked by the approver on 2026-11-01
+  (dl-024 and dl-025: WingFoil v0.4's planning; the features document's rows: the next plan that
+  changes the documentation), in their own commit on `main` (`3be4f38`).
+- Step 3, the tasks, in the order run (each through its own branch, an independent review of its
+  body and of its build, clean clones on Node.js 22.21.0 then 22.12.0, the branch CI read, the
+  approver's `approve` and merge OK, `--no-ff` into `main`, `done`):
+  - task-066 (the secret rules' parse with no warning; `77d74e0`);
+  - task-070 (the README index's parse of a pack's raw files with no warning, ruling 6; `50b9af9`);
+  - task-071 (bug-009: `minimatch` 11.0.3 through an exact npm override, ruling 7; `89b341e`),
+    before task-070's gate; bug-009 fixed;
+  - task-067 (the pack and its README examples; `88468b2`); the untracked draft deleted after it;
+  - task-068 (the `kanban-exit` overlay, its CI step, `kanban.yaml` and `adoption-kanban.yaml`;
+    `3e614b4`): the CI job 19 min 26 s on 22.21.0 against its 30-minute timeout;
+  - task-069 (the run by hand on WingFoil 0.3.1; `eef6672`): no finding for the approver;
+  - task-072 (a dash for a Memory type's missing sequence, ruling 8; `35ebf97`).
+  `main`'s CI after each delivery: `success` (runs 41136522706, 41298773055, 41337671285,
+  41350941383, and the CI of the later deliveries), the last read at close below.
+- Step 4, the close:
+  - **The account per tech-spec (dl-020):** none amended. spec-001 and spec-002 unchanged; task-072
+    applies spec-002 §2.1 (states and gates; limits not shown) with no erratum; the charter's note
+    corrects its own text on the warning's cause, with no amendment of its body.
+  - **The charter's Execution Notes:** one note (2026-11-02): the pack written, the exit
+    criterion's results, task-069's run and composed commit (`6d260b9`), the 0.3.0 coverage, the
+    warning's cause.
+  - **The owed rows:** ruling 13's row closed by task-066 and task-070; bug-009's two new rows (the
+    override's removal, `check:pins` and `overrides`) and its note on the CI-policy row; task-072's
+    row closed; the scripted-run row widened to `kanban` (ruling 5); the "own entries" row
+    answered for `kanban` and left open for the other three READMEs.
+  - **Privacy:** every commit of this plan and of its tasks checked before it was made (no local or
+    scratch path, no private repository or project, no intermediary session); the request origins
+    written "asked by the approver on <date>".
+  - Not in this plan, unchanged: `first-release` (the publication, CB-6's live part, prel-006, the
+    citation of `adoption-kanban.yaml`'s result); the presets, `governance/wingfoil-dogfood`, this
+    repository's adoption, pin and inbox sync. This plan goes `active → done`.
