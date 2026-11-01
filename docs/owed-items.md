@@ -23,7 +23,9 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 
 | Item | Source | Owner | Trigger |
 |---|---|---|---|
-| CI policy for advisories in transitive dependencies | bug-004 › note 2026-10-24 | approver | the next retrospective |
+| CI policy for advisories in transitive dependencies (met again by bug-009, answered by an override) | bug-004 › note 2026-10-24; bug-009 | approver | the next retrospective |
+| `check:pins` covering `overrides` in `package.json`, which it does not read today (`src/check-pins.ts`, its dependency fields) | bug-009; task-071 | approver | the next dependency update |
+| The `minimatch` override removed once `eslint`, `@eslint/config-array` and `typescript-eslint` accept `minimatch` 11; until then it forces every `minimatch` of the tree onto 11.0.3, a later dependency needing another major included, with no warning | bug-009; task-071 | approver | the next dependency update |
 | Recheck W-01 … W-14 and the open notes against 0.3.x (F-003, F-005, F-012, F-017) | dl-021's note; `wingfoil-cli` rule 5 | W10 | the pin bump |
 | G7: in-place amendment (the `pack` type `amendable`, the rulings held in plans, a rule on amend versus note); see also plan-031's row | dl-028 D1 (inventory §7) | W10 | W10 |
 | G8: dl-017 R2 for documents and configuration | dl-028 D1 (inventory §7) | W10 | W10 |
