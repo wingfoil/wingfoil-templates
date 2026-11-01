@@ -190,3 +190,13 @@ every commit and is deleted after the merge (plan-057's close).
   generator writes an empty `Memory types` line for `task`, whose `states` hold only `limits`, a
   change under `src/`, outside this task: a row of `docs/owed-items.md` (trigger: before
   `kanban`'s first tag).
+- 2026-11-01, checks at `8cab3f6` (Acceptance 9, 10), from clean clones on Node.js 22.21.0 then
+  22.12.0, one after the other: `npm ci`, `npm audit` (0), `npm test` (1035 of 1035), `lint`,
+  `check:pins`, `check:schemas`, `check:packs` (74 files, 0 problems), `validate` (18 runs, 0
+  failed, tolerance none), `validate:publication` (18 runs, 0 failed), the overlays
+  `software-exit` and `scrum-exit` (26 runs each, 0 failed), `index -- --check` (7 files),
+  `check:runs` (34 runs, 0 failed) and `workflow list`, each exit 0, no Node.js warning in either
+  log. Branch CI run 41325925866 on `8cab3f6`: `success`. No file under `src/` or `.wingfoil/`
+  changed. Privacy check of the branch's diff against `main`: no local or scratch path, no private
+  repository or project, no real adopter in the README or the examples, no intermediary session.
+  `in-progress → in-review`.
