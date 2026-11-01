@@ -129,3 +129,15 @@ workflows) move to a `packYamlOrEmpty` on `packYamlIn`; `pack.yaml` stays on `ya
   reran the red cases on `3b1bd06` and `fa19ac4` (5 tests, 1 pass, 4 fail, each for the warning)
   and the full suite on the head (1035 of 1035). Applied: the second red run's count and the
   Design's CLI bullet; the `node:fs` import folded; the support imports in order.
+- 2026-10-31, checks at `a1f3a24` (Acceptance 5), from clean clones on Node.js 22.21.0 then
+  22.12.0, one after the other: `npm ci`, `npm test` (1035 of 1035), `lint`, `check:packs` (61
+  files, 0 problems), `validate` and `validate:publication` (14 runs each, 0 failed), the overlays
+  `software-exit` and `scrum-exit` (22 runs each, 0 failed), `index -- --check` (6 files),
+  `check:runs` (34 runs, 0 failed) and `workflow list`, each exit 0, no Node.js warning in either
+  log. The branch CI failed on the root audit (runs 41198500589, 41200156986), bug-009, outside
+  this task (plan-057 ruling 7).
+- 2026-11-01: `main` merged into the branch after task-071 (`f613020`: `package.json`,
+  `package-lock.json` and documents only); `npm audit` 0, the four task-070 test files 54 of 54,
+  `lint` clean. Branch CI run 41298805927 on `f613020`: `success`. Privacy check of the branch's
+  diff against `main`: no local or scratch path, no private repository or project, no
+  intermediary session. `in-progress → in-review`.
