@@ -544,6 +544,9 @@ describe('tests/fixtures/runs/base.yaml', () => {
 // the composed `.wingfoil/` as the READMEs' "Install and update" steps say (bug-007).
 const INIT_WORKFLOWS = ['sw-life-cycle', 'bug-ingest', 'decision-log-ingest', 'adr-ingest'];
 const INIT_STUBS = ['traceability', 'doc-versioning', 'security-secrets', 'determinism'];
+/** What the READMEs' "Install and update" steps remove, in both adoption scenarios (bug-007). */
+const ADOPTION_REMOVE = { workflows: ['decision-log-ingest', 'sw-life-cycle', 'adr-ingest',
+  'bug-ingest', 'scrum-delivery', 'kanban-delivery'], directives: INIT_STUBS };
 
 function adoptionScenario(adopt: string[]): string {
   return [
@@ -807,8 +810,7 @@ describe('tests/fixtures/runs/adoption.yaml (task-060)', () => {
     const data = parseYaml(readFileSync(join(FIXTURES, 'runs', 'adoption.yaml'), 'utf8')) as {
       compositions: string; runs: { adopt: unknown }[] };
     assert.equal(data.compositions, 'tests/fixtures/examples/scrum');
-    const remove = { workflows: ['decision-log-ingest', 'sw-life-cycle', 'adr-ingest', 'bug-ingest',
-      'scrum-delivery', 'kanban-delivery'], directives: INIT_STUBS };
+    const remove = ADOPTION_REMOVE;
     assert.deepEqual(data.runs, [{ adopt: { template: 'Scrum', remove } },
       { adopt: { template: 'Kanban', remove } }]);
   });
@@ -819,8 +821,7 @@ describe('tests/fixtures/runs/adoption-kanban.yaml (task-068)', () => {
     const data = parseYaml(readFileSync(join(FIXTURES, 'runs', 'adoption-kanban.yaml'), 'utf8')) as
       { compositions: string; runs: { adopt: unknown }[] };
     assert.equal(data.compositions, 'tests/fixtures/examples/kanban');
-    const remove = { workflows: ['decision-log-ingest', 'sw-life-cycle', 'adr-ingest', 'bug-ingest',
-      'scrum-delivery', 'kanban-delivery'], directives: INIT_STUBS };
+    const remove = ADOPTION_REMOVE;
     assert.deepEqual(data.runs, [{ adopt: { template: 'Scrum', remove } },
       { adopt: { template: 'Kanban', remove } }]);
   });
