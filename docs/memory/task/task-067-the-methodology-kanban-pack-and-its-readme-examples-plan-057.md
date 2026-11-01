@@ -2,7 +2,7 @@
 id: task-067-the-methodology-kanban-pack-and-its-readme-examples-plan-057
 type: task
 title: "The methodology/kanban pack and its README examples (plan-057)"
-status: in-review
+status: approved
 pack: "pack-methodology-kanban"
 depends_on: ["task-066"]
 tags: ["packs","kanban","methodology"]
