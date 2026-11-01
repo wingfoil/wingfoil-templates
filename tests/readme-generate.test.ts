@@ -177,3 +177,33 @@ describe('a pack\'s raw fragments (task-070, plan-057)', () => {
         sections?.composition.join('\n'));
     });
 });
+
+describe('a Memory type whose states have no sequence (task-072, plan-057)', () => {
+  const cases: [string, string, string][] = [
+    ['states holding only limits',
+      'format: 1\ntypes:\n  task:\n    states:\n      limits:\n        in-progress: 2\n',
+      '- `task`: —'],
+    ['gates and no sequence',
+      'format: 1\ntypes:\n  task:\n    states:\n      gates:\n'
+        + '        in-review: { reject: in-progress }\n',
+      '- `task`: —; gates `in-review` (reject → `in-progress`)'],
+    ['an empty sequence',
+      'format: 1\ntypes:\n  task:\n    states:\n      sequence: []\n',
+      '- `task`: —'],
+    ['a defaults with only gates, a type deriving from it',
+      'format: 1\ndefaults:\n  states:\n    gates:\n      pending: { reject: draft }\n'
+        + 'types:\n  note: { path: "docs/{id}.md" }\n',
+      '- `note`: defaults, —; gates `pending` (reject → `draft`)'],
+  ];
+  for (const [what, memory, line] of cases) {
+    it(`writes a dash for the sequence: ${what}`, () => {
+      withPackTree([{ id: 'governance/notes', fragments: ['memory'], requires: ['base@^1'],
+        extraFiles: { 'fragments/memory.yaml': memory } }], (root) => {
+        const sections = generatedSections(root, 'governance/notes');
+        assert.ok(sections['what-it-adds'].includes(line), sections['what-it-adds'].join('\n'));
+        assert.ok(sections.composition.includes('  - states: none'),
+          sections.composition.join('\n'));
+      });
+    });
+  }
+});
