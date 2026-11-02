@@ -9,13 +9,13 @@ tags: ["process","backlog","privacy"]
 ## Context
 
 `repository-practice` 1.1 (dl-030, dl-031) ran its first full cycle with `methodology/kanban`
-(plan-056 … plan-058). The retrospective dl-034 found four gaps (the inventory of 2026-11-02, §4.3,
-§5, §8):
+(plan-056 … plan-058). The retrospective dl-034 found four gaps of rule 4 and one of rule 2 (the
+inventory of 2026-11-02, §4.3, §5, §8):
 
 1. **"The next retrospective."** dl-031 R1 makes it the default trigger of a row with none; ten
-   open rows carry it. Since plan-058 ruling 5 a pack may have a retrospective of its own, not the
-   periodic one, and the rule does not say which of the two the trigger names. plan-059 ruling 4 kept
-   the ten rows, their triggers unchanged, for this time only (GOV-2).
+   open rows carry it. plan-058 ruling 5 made `kanban`'s the first pack retrospective not held as
+   the periodic one, and the rule does not say which of the two the trigger names. plan-059 ruling 4
+   kept the ten rows, their triggers unchanged, until this candidate is ruled (GOV-2).
 2. **A row left by a ruling** is added "in the same commit as the note that leaves the item" (rule
    4), but rulings are recorded in a plan's rulings section, not always in a note: plan-058 ruling 5's
    row was added only at the close (`d319cb3`), asked by the close review, and plan-057 ruling 5's
@@ -50,25 +50,35 @@ The points below are **proposed**; they become rulings when the approver approve
 
 - **R1 — "The next retrospective" is the next periodic one** (option (b)): the default trigger
   (dl-031 R1) names the next run of `retrospective-periodic`, or a retrospective that counts as
-  periodic (dl-029 Option 3). A pack's own retrospective reads the whole register (dl-031 R3) and
+  periodic (dl-029 T1). A pack's own retrospective reads the whole register (dl-031 R3) and
   proposes keep, assign or drop for the rows its cycle touched; it lists every other row as "not
-  touched", which keeps it. The ten rows that carry the trigger keep it, now read this way.
+  touched", which keeps it. The rows that carry the trigger keep it, now read this way.
 - **R2 — A ruling's row.** A ruling that leaves an owed item adds its row in the commit that records
   the ruling in its plan, and the ruling cites the row.
 - **R3 — A reopened row.** When an item moved to Closed is found open again, its row returns to Open
-  in the commit that records the finding, its Source extended with the element that reopened it; the
-  element that settles it closes it again.
+  in the commit that records the finding, on `main` when the finding is a plan's ruling or note, its
+  Source extended with the element and section that reopened it (for example "plan-057 ruling 6");
+  the element that settles it closes it again.
 - **R4 — A row asked by the approver outside any element.** Its Source is "asked by the approver on
-  <date>" with what it concerns; the active plan, or the next plan if none is active, cites it in an
-  Execution Note.
-- **R5 — The recipients of an outgoing notice** are named by project or role ("WingFoil UI", "the
-  coordination of the WingFoil projects"), never as a session; a request the notice carries (to
-  pass it on) is written as the project's, under rule 2.
-- **R6 — Where:** `repository-practice` 1.1 → 1.2, its date: rule 4 with R1 … R4, rule 2 with R5;
-  an Execution Note on dl-031 (R1 reads with R1 here) and on dl-030 (rule 2 with R5). Applied after
-  approval by a dl actions plan. Text already on `main` is not rewritten (rule 1's clause).
+  <date>" with what it concerns; the plan active on `main`, or the next plan if none is active,
+  cites it in an Execution Note.
+- **R5 — The recipients of an outgoing notice**, in a repository text that describes the notice
+  (rule 2's scope), are named by project ("WingFoil UI", "WingFoil Benchmark"; "the coordination of
+  the WingFoil projects" if the approver keeps it), never as a session; a request the notice carries
+  (to pass it on) is written as "asked by the approver on <date>", addressed to the recipient
+  project (rule 1).
+- **R6 — Where:** `repository-practice` 1.1 → 1.2, its date, one bump with dl-035 A4: rule 4 with
+  R1 … R4, rule 2 with R5; the header of `docs/owed-items.md` (its bullets paraphrase rule 4) in the
+  same change; an Execution Note on dl-031 (its R1 reads with R1 here, its R2 with R2 … R4, its R3
+  with R1) and on dl-030 (rule 2 with R5). Applied after approval by a dl actions plan, whose row is
+  dl-034 D3's. Text already on `main` is not rewritten (rule 1's clause).
 
 ## Execution Notes
 <!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
 - 2026-11-02: written under plan-059 (`capture`, `decision-log-ingest` hosted there), cited by
   dl-034, as the approver chose at the checkpoint (inventory P3).
+- 2026-11-02: independent review: approve after amendments, nothing blocking; applied: R5 by
+  project with the onward request under rule 1 and rule 2's scope, R6's header of the register, the
+  note on dl-031 covering R1 … R3, the shared bump with dl-035, R3 on `main` and its source as
+  element and section, gap 1's wording, "the rows", dl-029 T1, "the plan active on `main`", the
+  count of gaps.

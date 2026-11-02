@@ -32,28 +32,38 @@ and GOV-6 of the retrospective dl-034 (C3).
 
 For gap 1: keep the wording, or "before it is accepted". For gap 2: (a) a summary with every
 non-zero exit and its command, the commit composed and the WingFoil release; (b) (a) with the full
-log kept outside the repository; (c) the log committed. (b) keeps what nobody else can read; (c)
-puts scratch logs, with their local paths, into the history (rule 2 forbids those paths).
+log kept outside the repository; (c) the log committed; (d) a charter's draft committed on the
+plan's branch, so the run can be repeated. (b) keeps what nobody else can read; (c) puts scratch
+logs, with their local paths, into the history (rule 2 forbids those paths); (d) commits a pack's
+content before its charter is accepted, outside the reviews its `author` tasks give it (plan-047's
+step 3: the draft is never committed), and once the pack is authored it is a second copy an overlay
+run would read beside it (plan-057 › step 4).
 
 ## Decision
 
 The points below are **proposed**; they become rulings when the approver approves this element.
 
-- **E1 — When:** a run's findings reach the charter **before it is accepted**: in the outline's
-  rulings, in its body while `draft`, or in an amendment while `proposed`.
-- **E2 — What a run by hand records** (option (a)), in its plan or task: the WingFoil release (and
-  the commit of its install), the packs composed and the commit they were composed from, the
-  parameters that differ from the defaults, the count of commands and how many exited 0, every
-  non-zero exit with its command and whether it was expected (a refusal the run seeks) or a slip of
-  the driving script, and the states and iterations the run reached. No local or scratch path. A
-  scripted run (`check:runs`) records its command, its exit code and its run count, as today.
+- **E1 — When:** a run's findings reach the charter **before it is accepted**: they settle the
+  plan's rulings, then the charter's body while `draft`, or an amendment while `proposed`.
+- **E2 — What a run by hand records** (option (a)), in the plan for a charter's run and in the task
+  for an exit criterion's (task-069's precedent): the WingFoil version and commit as `wingfoil
+  version` prints them, the packs composed and the commit they were composed from (for an untracked
+  draft, the base commit, and that the draft is untracked and cannot be repeated from the
+  repository), the parameters that differ from the defaults, the count of commands and how many
+  exited 0, every non-zero exit with its command and whether it was expected (a refusal the run
+  seeks) or a slip of the driving script, and the states and iterations the run reached. No local or
+  scratch path. A scripted run (`check:runs`) records its command, its exit code and its run count,
+  as today.
 - **E3 — Where:** `pack-cycle` v6 → v7, `charter`'s description (E1, and E2 by reference) and
-  `author`'s (E2 for E4's run by hand); `pack-compatibility`'s evidence bullet extended with E2 for a
-  run by hand; an Execution Note on dl-032 (E2 reads with E1 and E2 here; the body stays as approved).
-  Applied after approval by a dl actions plan. The scripted full runs stay a row of
+  `author`'s (E2 for E4's run by hand); `pack-compatibility`'s evidence bullet extended with E2 for
+  a run by hand; an Execution Note on dl-032 (E2 reads with E1 and E2 here; the body stays as
+  approved). Applied after approval by a dl actions plan. The scripted full runs stay a row of
   `docs/owed-items.md`.
 
 ## Execution Notes
 <!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
 - 2026-11-02: written under plan-059 (`capture`, `decision-log-ingest` hosted there), cited by
   dl-034, as the approver chose at the checkpoint (inventory P3).
+- 2026-11-02: independent review: approve after amendments, nothing blocking; applied: an untracked
+  draft's record and option (d) with its reason, E1's wording, the WingFoil version as printed, where
+  each run's record lives; the dl actions plan's row is dl-034 D3's.
