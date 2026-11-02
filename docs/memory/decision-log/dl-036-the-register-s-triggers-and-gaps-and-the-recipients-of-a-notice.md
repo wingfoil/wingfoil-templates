@@ -2,7 +2,7 @@
 id: dl-036-the-register-s-triggers-and-gaps-and-the-recipients-of-a-notice
 type: decision-log
 title: "The register's triggers and gaps and the recipients of a notice"
-status: draft
+status: pending
 tags: ["process","backlog","privacy"]
 ---
 
