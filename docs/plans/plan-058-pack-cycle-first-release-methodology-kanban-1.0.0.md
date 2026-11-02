@@ -159,6 +159,24 @@ Each point with a recommendation.
     of point 8 is ruled), no change to a tech-spec. Reserved for a finding of this plan only: task-073 (the rehearsal's tooling task,
     point 3), dl-034, bug-010, F-042; unused numbers are released at the close.
 
+## The approver's rulings
+
+Given on 2026-11-02, in chat: every point of the outline as recommended, except point 8.
+1. **Point 1:** 1.0.0, `major`, the range computed; if WingFoil 0.3.2 is published before
+   `publish`, the approver is asked, the recommendation being to publish and let its intake extend
+   the range.
+2. **Point 2:** `CHANGELOG.md` as it is; the owed row on its first line stays open.
+3. **Point 3:** the rehearsal before `prepare`.
+4. **Points 4 … 7:** the evidence, open point 1, `publish` with CB-6's live part and `activate` as
+   written.
+5. **Point 8, option (b):** `kanban`'s own `pack-cycle` retrospective, in its own plan right after
+   this one, not held as the periodic one; the periodic retrospective is left to dl-029's trigger,
+   the close of the WingFoil 0.3.2 intake.
+6. **Point 9:** the notices to WingFoil UI's session and to the coordinating session, the latter
+   asked to pass them on to Benchmark; nothing to WingFoil; the text shown to the approver before
+   it is sent.
+7. **Point 10:** nothing else ships; task-073, dl-034, bug-010, F-042 reserved for a finding.
+
 ## Steps
 
 Before every commit, the privacy check (`repository-practice` rule 2); after every push to `main`,
@@ -228,3 +246,5 @@ dl-013, dl-024 and dl-025 (`pending`).
   the W10 owed row updated at the close and prel-006 shipping no bug fix; the 0.3.2 question until
   `publish`; the presets line; the approval's commit pushed and its CI read; `check:schemas` in
   the rehearsal; who runs `validate` and `approve-publication`.
+- 2026-11-02: the approver ruled the outline (rulings 1 … 7; point 8 as option (b)); submitted
+  (`draft → active`).
