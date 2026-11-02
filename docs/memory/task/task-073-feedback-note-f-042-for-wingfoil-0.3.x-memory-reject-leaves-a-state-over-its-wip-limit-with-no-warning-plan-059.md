@@ -115,3 +115,36 @@ One note, numbered after F-041 (`assertNumbering`):
 - 2026-11-02: re-review: approve, three nits applied (the identity's `.example` domain, `--reason`
   on the reject, the machine checked by the first verbs, any `workflow list` warning kept out of the
   note).
+- 2026-11-02: accepted into the backlog by the approver (`9b5c745`); `backlog → in-progress`
+  (`848fcea`).
+- 2026-11-02, build: reproduced with WingFoil alone in a scratch project outside the repository, on
+  0.3.1 (`870bd440`) and on 0.3.0 (`cc31d7a8`), both from the matrix installs of
+  `src/matrix/wingfoil-0.3.1/` and `src/matrix/wingfoil-0.3.0/`: `init --template Kanban`, the
+  `states:` block and the approver member written by hand and committed; `workflow list` exit 0 with
+  no diagnostic (no warning on `init`'s `kanban-delivery`); three tasks to `backlog`; A to
+  `in-progress`; B refused (exit 1, `WIP limit reached … (limit 1): held by task-001-task-a`); A to
+  `in-review`; B to `in-progress`; `memory reject` of A exit 0, its output the move's JSON alone, no
+  warning on stdout or stderr; C refused naming both holders. The outputs of the two releases are
+  identical line for line. F-042 and its ledger row written (`95abe15`).
+- 2026-11-02, red-first (dl-018 R2's content exception, as task-064): the inbox tests
+  (`tests/wingfoil-feedback.test.ts`, `tests/feedback-note.test.ts`, 13 tests) pass with the note;
+  each mutation made them fail and was reverted: the note numbered F-041 (3 fail), a ledger cell
+  changed (2 fail), the opening `New note task-073.` (2 fail), `kind` and `status` swapped (2 fail),
+  `## Expected` renamed (2 fail). `New note (task-073).` counted once in the note.
+- 2026-11-02: independent build review, the reviewer reproducing the note on both releases from its
+  own script: approve after amendments, one should-fix (the example warning: two holders under a
+  limit of 1 accept a newcomer only once the state is back below its limit), four nits (the wrapped
+  refusals said so, `workflow list`'s exit code, "asks the move to say", the README's wording); all
+  applied (`0bbe924`), the inbox tests passing again.
+- 2026-11-02, checks from clean clones of the branch at `0bbe924`, Node.js 22.21.0, then 22.12.0,
+  one after the other: `npm ci`, `npm run build`, `npm test` (1043 tests, 1043 pass, 0 fail),
+  `npm run lint`, `check:pins`, `check:schemas`, `check:packs`, `validate`, the golden step, the
+  overlays `software-exit`, `scrum-exit` and `kanban-exit`, `index -- --check`, `check:runs` and
+  `npm run -s wingfoil -- workflow list`, each exit 0 on both. A first clean-clone run, started on
+  `95abe15`, was stopped when the review's amendment landed, so both Node.js versions ran on the same
+  head. Branch CI on `0bbe924`, run 41514272824, `success` (the runs on `9d6a1e1` and `95abe15`
+  cancelled by the next push).
+- 2026-11-02, privacy: the branch's diff against plan-059's branch and its commit messages checked:
+  no local or scratch path, no private repository or project, no maintainer's name or email beyond
+  the CLI's `Approver:` trailer on the approval commit, as on `main`, no intermediary session; the
+  scratch identity is fictional. No file changed outside `docs/wingfoil-feedback/` and this task.
