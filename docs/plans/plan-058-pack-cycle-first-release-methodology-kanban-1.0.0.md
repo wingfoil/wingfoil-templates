@@ -261,7 +261,8 @@ dl-013, dl-024 and dl-025 (`pending`).
   tooling task (task-073 not opened). `prepare` next.
 - 2026-11-02, step 3, `prepare`: prel-006 added (`73b9736`), its Changes written, the README's
   "Install and update" checked (CB-3), an independent review (approve, three nits applied),
-  submitted `draft → validating` (`9586f1c`); `main`'s CI on it, run 41410811662, `success`.
+  submitted `draft → validating` (`9586f1c`); `main`'s CI on it, run 41410811662, `success` (it
+  covers this plan's submit `9f040ce`, whose run 41408955746 was cancelled by the next push).
 - 2026-11-02, step 4, `validate`: the evidence of point 4 on `9586f1c`, recorded in prel-006 (9
   compositions, 18 runs; `check:runs` 46 runs with `kanban`'s 12; the three overlays; clean clones
   on Node.js 22.21.0 then 22.12.0, 1043 of 1043, every check exit 0; the dry run, its digest equal
@@ -278,3 +279,32 @@ dl-013, dl-024 and dl-025 (`pending`).
 - 2026-11-02, step 7, `activate`: `pack-methodology-kanban` `accepted → active` (`7fc293a`), the
   tag on origin and `catalog.yaml` on origin/main listing 1.0.0; its note records open point 1
   settled. Next: the notices (step 8), after the approver's OK on their text.
+- 2026-11-02, step 8: the notices sent, as the approver approved their text, to WingFoil UI's
+  session and to the coordinating session (asked to pass them on to Benchmark): prel-006, the tag
+  and its commit `31102df`, the catalog commit `3e5d773`, the range, the date, the adoption by hand
+  from the README at the tag with bug-007's removal list; the defaults fixed with 1.0.0. Nothing to
+  WingFoil (ruling 6).
+- Step 9, the close:
+  - **The account per tech-spec (dl-020):** this plan amended neither spec-001 nor spec-002 and
+    recorded no erratum of theirs; nothing to fold back.
+  - **The owed rows:** the W10 row's `methodology/kanban` part moved to Closed, settled by this
+    plan (prel-006), the rest of the row open; one new row, `kanban`'s own retrospective (ruling 5);
+    the row on the CHANGELOG's first line stays open (ruling 2).
+  - **Numbers:** task-073, dl-034, bug-010 and F-042, reserved for a finding, unused and released.
+  - **Privacy:** every commit of this plan checked before it was made (no local or scratch path,
+    no private repository or project, no intermediary session); the request origins written
+    "asked by the approver on <date>".
+  - **The retrospective** (ruling 5): `kanban`'s own `pack-cycle` retrospective, in a plan of its
+    own after this one, not held as the periodic one; the periodic stays at dl-029's trigger, the
+    close of the WingFoil 0.3.2 intake. Until it runs, `pack-cycle` › `retrospective` is open for
+    `pack-methodology-kanban`.
+  - Done: `methodology/kanban@1.0.0` tagged and pushed, listed in `catalog.yaml` on `main`, the CI
+    `success` on the tag, on `main` and on Pages, CB-6's live check recorded, prel-006 `released`
+    with its Validation and Publication, the charter `active`, the notices sent and the
+    retrospective's plan named.
+  - `main`'s CI on `7cd6a1f` (steps 3–7's notes, prel-006's Publication, the charter's activation),
+    run 41454364694, `success`; `main`'s CI on the closing head read before `active → done`.
+- 2026-11-02: independent review of the close: approve after amendments, nothing blocking. Applied:
+  `main`'s CI after the last push recorded; the W10 row's `kanban` part moved to Closed instead of
+  citing this plan in its Source; a row for `kanban`'s open retrospective; the cancelled run of the
+  submit.

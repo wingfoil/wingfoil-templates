@@ -50,13 +50,14 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | README step 3 "own entries" for Memory types and roles `init` scaffolded, in `base`'s, `software`'s and `scrum`'s READMEs (`kanban`'s answers it, task-067) | plan-052 › close (task-061's review); task-067 | approver | the next README pass |
 | Sequencer: W8 has four features | plan-052 › step 2, close | approver | the sequencer's next review |
 | dl-012's F4.9 placement | plan-052 › step 2, close | approver | dl-012's ruling |
-| W10: `methodology/kanban`, presets, `governance/wingfoil-dogfood`, this repository's adoption, its pin, the first inbox sync | plan-052 ruling 7 | W10 | W10 |
+| W10: presets, `governance/wingfoil-dogfood`, this repository's adoption, its pin, the first inbox sync | plan-052 ruling 7 | W10 | W10 |
 | dl-024 and dl-025 ruled (both `pending` until then); plan-022 closed | plan-052, plan-053 › close; trigger asked by the approver on 2026-11-01 | approver | WingFoil v0.4's planning |
 | `docs/01_vision/06_features.md` 1.5 → 1.6, with its date: F3.3 adds `check:runs`, with a scenario for every `main`, and the adoption run once per `init` template for a pack with install steps (dl-032 E3), beside `workflow list`, `dna show` and `directives list`; F5.2 adds that `wingfoil-release-intake` starts the periodic retrospective at its close (`retrospective-start`, dl-029) | plan-055 › Execution Notes (leftovers); trigger asked by the approver on 2026-11-01 | approver | the next plan that changes the documentation |
 | This repository's per-pack WIP rule under `methodology/kanban`, whose `limits` count the whole repository (a total limit, or the rule kept by hand over a looser one) | plan-056 ruling 10; pack-methodology-kanban › Adoption | W10 | the adoption |
 | How this repository's tasks carry a `release` under `methodology/kanban`, its packs being released per pack, not through `software`'s `release` | plan-056 › step 4; pack-methodology-kanban › Adoption | W10 | the adoption |
 | This repository's custom `retrospective`, `decision-log-ingest`, `bug-ingest` and `adr-ingest` share `base`'s and `software`'s workflow names (bug-007's pattern) | plan-056 › step 4; pack-methodology-kanban › Adoption | W10 | the adoption |
 | This repository's `pack-author` phases (`design`, `build`, `deliver`) map to `developer` under `methodology/kanban`'s `work-item` | plan-056 › step 4; pack-methodology-kanban › Adoption | W10 | the adoption |
+| `kanban`'s own `pack-cycle` retrospective (`retrospective` open for `pack-methodology-kanban`; not held as the periodic one) | plan-058 ruling 5; dl-033 O2 | approver | the plan right after plan-058's close |
 | The private projects' check scripted | prel-001 … prel-003 | approver | the next retrospective |
 | dl-026's stale Consequences ("reported late until it completes", no longer true after plan-047 ruling 15 and task-057; the WingFoil side is F-036) | task-057 › notes | approver | the next retrospective |
 
@@ -70,3 +71,4 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | `recheck`'s wording in `wingfoil-release-intake` | plan-051, plan-052 › close | plan-055 (`wingfoil-release-intake` v5) |
 | The Node.js warning on an unquoted integer parameter, `{{name}}` (`methodology/kanban`'s `limits`): from the parse of a pack's raw YAML, before substitution, at two sites: the secret rules (run by the lint and the composer) and the index's reads of a pack's fragments and workflows (`npm run index`, `validate`, `validate:publication`, `publish:pack`) | plan-056 ruling 13; plan-057 ruling 6 | task-066, task-070 (plan-057) |
 | The README generator writes an empty `Memory types` line (``- `task`: `` with a trailing space) for a type whose fragment `states` holds only `limits`, as `methodology/kanban`'s `task` (`memoryLines`, `src/readme-generate.ts`: no `—` without a sequence) | task-067 › review | task-072 (plan-057) |
+| W10: `methodology/kanban`, its first version | plan-052 ruling 7 | plan-058 (prel-006) |
