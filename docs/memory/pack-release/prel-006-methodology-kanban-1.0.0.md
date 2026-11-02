@@ -2,7 +2,7 @@
 id: prel-006-methodology-kanban-1.0.0
 type: pack-release
 title: "methodology/kanban 1.0.0"
-status: draft
+status: validating
 pack: "pack-methodology-kanban"            # the pack element id (pack-<axis>-<name>)
 version: "1.0.0"         # the semver being published
 bump: "major"            # major | minor | patch (pack-semver directive)
