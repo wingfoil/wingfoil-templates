@@ -356,3 +356,10 @@ private repository or project, no intermediary session); after every push to `ma
     CI read, the branch and task-073's branch removed locally and on origin; the notice outside the
     repository naming F-042 and its commit, recipients named by project (dl-036 R5), its text shown to
     the approver first.
+- 2026-11-02: independent review of the close: approve after amendments, nothing blocking; applied:
+  what remains before `done` listed, the next plans with `scrum`'s open point 1 and dl-024/dl-025's
+  row, dl-035 A4 in the CI-policy row's Source, open point 4 and point 7 in the charter's note; its
+  count of the register (37) not applied: 38 open rows at `0162c90`, 41 now.
+- 2026-11-02, branch close: CI run 41528505107 on `b20a317`, `success` (`validate (22.21.0)`,
+  `validate (22.12.0)`). The approver gave the merge OK and the notice's OK (text and recipient, the
+  coordination of the WingFoil projects) in chat; `--no-ff` merge into `main`.
