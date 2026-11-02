@@ -178,7 +178,34 @@ Also, at `validate` (plan-058 step 4, point 4):
 
 ## Publication
 
-Recorded at `publish` (plan-058 step 6).
+- Date: 2026-11-02. Line: current.
+- Tag: `methodology/kanban@1.0.0` (annotated), at `31102df00a37c8625cb45e82f47c5f4e083caa0a` (the
+  approval's commit; `main`'s CI on it, run 41449241609, `success`). Annotation: the tag's name,
+  then the CHANGELOG entry's first line `- 1.0.0: first version: a flow of work items under two WIP
+  limits, carried by releases.`
+- Catalog commit: `3e5d7735420e51f5f8ae36155db049bc9ea5bb94` (the new `methodology/kanban` entry,
+  `CATALOG.md`, `catalog-index.json`), by `npm run publish:pack -- --pack methodology/kanban`
+  (Node.js 22.21.0, after `npm run build`), exit 0; its publication matrix 9 compositions, 18 runs,
+  0 failed, tolerance none.
+- Digest: `sha256:44f5a854af4170ac61eb214f4efe47fdd777836f2a97c00ef89177a9f90979fa` (as the dry
+  run and the rehearsal).
+- WingFoil range: `>=0.3.0 <=0.3.1`.
+- Pushed together: `git push --atomic origin methodology/kanban@1.0.0 main` (`main` at `3e5d773`).
+- CI on the tag, run 41452326966 (publication mode): `success`. CI on `main` at `3e5d773`, run
+  41452325673: `success`. Pages, run 41452325745: `success`.
+- CB-6, live (spec-002 §6), anonymous, following `llms.txt`'s steps:
+  - `https://wingfoil.github.io/wingfoil-templates/llms.txt`: 200;
+  - `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/catalog-index.json`: 200;
+    filtered locally to `id: methodology/kanban`, `status: active`, `latest: 1.0.0`, versions
+    `1.0.0`, its `wingfoil` `>=0.3.0 <=0.3.1`;
+  - the version's `readme_url`,
+    `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/kanban@1.0.0/packs/methodology/kanban/README.md`:
+    200, the title `# Kanban`;
+  - the version's `manifest_url`,
+    `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/kanban@1.0.0/packs/methodology/kanban/pack.yaml`:
+    200, `id: methodology/kanban`, `version: 1.0.0`;
+  - `https://wingfoil.github.io/wingfoil-templates/catalog-index.json`: 200, `status: active`,
+    `latest: 1.0.0`.
 
 ## Execution Notes
 
@@ -194,3 +221,8 @@ Recorded at `publish` (plan-058 step 6).
 - 2026-11-02: independent review of the Validation: approve; three nits applied (the golden step's
   command, `npm run build`, the Node.js release of the evidence and of the dry run). `validating →
   releasing`.
+- 2026-11-02, `approve-publication`: approved by the approver (`releasing → released`, `31102df`),
+  which authorized the publication (plan-044 ruling C); the commit pushed, `main`'s CI on it
+  `success`.
+- 2026-11-02, `publish`: published as above; the tag and `main` pushed atomically, the CI and Pages
+  read, CB-6's live check passed (the second live fetch of a tag holding a slash).
