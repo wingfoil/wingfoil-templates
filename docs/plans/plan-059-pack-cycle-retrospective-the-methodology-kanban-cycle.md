@@ -347,5 +347,12 @@ private repository or project, no intermediary session); after every push to `ma
     on the approval commits, as on `main`. Request origins written "asked by the approver on
     <date>".
   - **Next plans,** in the approver's order: WingFoil 0.3.2's intake, with the periodic
-    retrospective its close starts (dl-029); then WingFoil UI's feedback; the dl actions of dl-035 …
-    dl-037 placed by the approver (their row).
+    retrospective its close starts (dl-029); then WingFoil UI's feedback, which also settles
+    `scrum`'s open point 1 (its trigger looks met, dl-034 D1); the dl actions of dl-035 … dl-037
+    placed by the approver (their row). The row of dl-024 and dl-025 falls due at WingFoil v0.4's
+    planning, not before 2026-11-06, possibly during the 0.3.2 intake (dl-034 D1).
+  - **Still to do before `active → done`:** the branch CI's conclusion; on the approver's OK, the
+    `--no-ff` merge into `main`, F-042 on `main` before 2026-11-06 (2026-11-05 the fallback), `main`'s
+    CI read, the branch and task-073's branch removed locally and on origin; the notice outside the
+    repository naming F-042 and its commit, recipients named by project (dl-036 R5), its text shown to
+    the approver first.

@@ -324,7 +324,8 @@ For the approver's acceptance:
   its own retrospective (plan-058 ruling 5; not the periodic one): the inventory
   `docs/retrospectives/2026-11-02-pack-methodology-kanban-friction-inventory.md` and its
   decision-log dl-034, approved on 2026-11-02, with the governance decision-logs dl-035 … dl-037 and
-  the feedback note F-042 (task-073, `memory reject` past a full limit). Open points 2 and 3 now have
-  rows of `docs/owed-items.md` (dl-034 D2); this charter's Ships and Acceptance still name the
+  the feedback note F-042 (task-073, `memory reject` past a full limit) (plan-059 point 7). Open
+  points 2 and 3 now have rows of `docs/owed-items.md`, and open point 4 is named in `scrum`'s open
+  point 2 row (dl-034 D2); this charter's Ships and Acceptance still name the
   composer as the warning's source, corrected by the note of plan-057 above and a row of the same
   register. The body stays as approved.
