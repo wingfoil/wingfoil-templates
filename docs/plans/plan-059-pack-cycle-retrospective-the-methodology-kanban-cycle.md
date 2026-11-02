@@ -297,3 +297,13 @@ private repository or project, no intermediary session); after every push to `ma
   `success`; Pages run 41483587206 `success`.
 - 2026-11-02: the approver ruled the outline (every point as recommended); submitted
   (`draft → active`).
+- 2026-11-02, `explore`: plan submitted `active` (`ba8f8fe`), pushed; the branch
+  `retro/2026-11-02-pack-methodology-kanban` from it. Three read-only subagents mined the strands
+  (the charter; `author`; `first-release`, `activate` and the rules with the register); WingFoil's
+  WIP check read in the 0.3.0 and 0.3.1 packages the matrix installs: `reject` and `park` exempt by
+  WingFoil's dl-156 Q2 (i), so no note is proposed for the reject past a limit and task-073 is not
+  opened unless the approver adds a note. The inventory committed alone (`46254d0`), checked by two
+  independent reviews (header and §1 … §3; §4 … §9; every commit and CI run cited, approve after
+  amendments, one blocking finding: WingFoil 0.3.2 was published on 2026-11-02 after the period, so
+  its intake is now due) and amended (`d10714a`). Next: the approver's checkpoint
+  (`additional-points`).
