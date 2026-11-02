@@ -35,9 +35,9 @@ non-zero exit and its command, the commit composed and the WingFoil release; (b)
 log kept outside the repository; (c) the log committed; (d) a charter's draft committed on the
 plan's branch, so the run can be repeated. (b) keeps what nobody else can read; (c) puts scratch
 logs, with their local paths, into the history (rule 2 forbids those paths); (d) commits a pack's
-content before its charter is accepted, outside the reviews its `author` tasks give it (plan-047's
-step 3: the draft is never committed), and once the pack is authored it is a second copy an overlay
-run would read beside it (plan-057 › step 4).
+content before its charter is accepted, outside the reviews its `author` tasks give it (plan-047 ›
+Execution Notes, steps 2–3: the draft is never committed), and once the pack is authored it is a
+second copy an overlay run would read beside it (plan-057 › step 4).
 
 ## Decision
 
@@ -67,3 +67,4 @@ The points below are **proposed**; they become rulings when the approver approve
 - 2026-11-02: independent review: approve after amendments, nothing blocking; applied: an untracked
   draft's record and option (d) with its reason, E1's wording, the WingFoil version as printed, where
   each run's record lives; the dl actions plan's row is dl-034 D3's.
+- 2026-11-02: re-review (with dl-034's): applied the citation of plan-047's Execution Notes.

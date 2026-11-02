@@ -70,10 +70,10 @@ Each change of governance takes effect only when its own decision-log is approve
 - **W1 —** F-042, a `request`: should `memory reject` warn when it leaves a state over its `limits`
   (WF-1, P1)? Written by task-073, hosted by plan-059 (the inbox test requires a note's first line to
   name a task or a pack-release), reproduced with WingFoil alone on 0.3.0 and 0.3.1, on `main`
-  before WingFoil's v0.4 release planning, not before 2026-11-06; if plan-059's branch cannot close
-  by 2026-11-05, task-073's merge goes to `main` on its own, on the approver's OK, `--no-ff`. Once
-  the note is on `main`, a notice outside the repository names it and its commit, its text shown to
-  the approver first (plan-059 point 6).
+  before WingFoil's v0.4 release planning (which starts not before 2026-11-06); if plan-059's branch
+  cannot close by 2026-11-05, task-073's merge goes to `main` on its own, on the approver's OK,
+  `--no-ff`. Once the note is on `main`, a notice outside the repository names it and its commit,
+  its text shown to the approver first (plan-059 point 6).
 - **W2 —** No note for WF-2 (the limits count holders on every ref WingFoil sees): WingFoil's refusal
   states where it counted (§6). No note for what was seen again and is already noted: F-024, F-039
   with bug-008, F-034 and the F-037 family (§6).
@@ -84,19 +84,20 @@ Each change of governance takes effect only when its own decision-log is approve
   retrospective" moves to Closed at plan-059's close; every other open row is kept with its owner and
   trigger (its item text amended only where D2 says), with the evidence §8 adds (G12, the per-pack
   WIP rule) and the flags it raises: dl-024 and dl-025, due at WingFoil v0.4's planning; `scrum`'s
-  open point 1, whose trigger looks met, settled by the plan of WingFoil UI's feedback. Two
+  open point 1, whose trigger looks met, to be settled by the plan of WingFoil UI's feedback. Two
   questions §8 leaves to the approver, ruled with this element: G12 keeps its trigger W10, unless
   the approver sets the earlier one (the next CI step that adds runs); and the order of the next two
   plans, WingFoil UI's feedback (its row's trigger, met at plan-059's close) and WingFoil 0.3.2's
-  intake (now due, with T2's deadline), is the approver's.
+  intake (now due; the periodic retrospective it starts closes under T2's deadline, unless the
+  patch case is ruled), is the approver's.
 - **D2 —** New rows (P2): `kanban`'s open point 2, a holder on a second branch (owner W10, trigger
   the adoption); `kanban`'s open point 3, two releases of one version on two release lines (owner
   approver, trigger a `software` whose `release` template declares `id`, or the first
   adopter with parallel release lines); `kanban`'s charter text drift, Ships and Acceptance naming
   the composer's warning (owner approver, trigger the next retrospective); open point 4 named in
   `scrum`'s open point 2 row.
-- **D3 —** One row added at plan-059's close: the dl actions of dl-035 … dl-037, those approved
-  (owner approver, trigger their approval; Source dl-034 D3), with the one bump of
+- **D3 —** One row added at plan-059's close: the dl actions of dl-035 … dl-037 (owner approver,
+  trigger the approval of each, a rejected one dropping out; Source dl-034 D3), with the one bump of
   `repository-practice` that dl-035 and dl-036 share. The rows that plan's own elements leave are
   theirs (rule 4).
 
@@ -127,3 +128,6 @@ Each change of governance takes effect only when its own decision-log is approve
   exception and deadline, W1's fallback and notice, D1's two questions for the approver, the
   inventory's "Not changes"), six nits (D1's wording, D2's glosses, W2's notes seen again, K5's
   dl-032, the timing's date, dl-036's count); all applied. A re-review follows (D1 and D3 changed).
+- 2026-11-02: re-review: approve after amendments, nothing blocking; applied: W1's date read the
+  right way, D3's row covering each of dl-035 … dl-037 until its approval, "to be settled", T2's
+  deadline on the periodic retrospective, not on the intake.
