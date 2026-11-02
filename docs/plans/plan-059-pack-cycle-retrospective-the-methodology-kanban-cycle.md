@@ -2,7 +2,7 @@
 id: plan-059-pack-cycle-retrospective-the-methodology-kanban-cycle
 type: plan
 title: "pack-cycle retrospective: the methodology/kanban cycle"
-status: draft
+status: active
 workflow: "pack-cycle"
 phase: "retrospective"
 tags: ["process","retrospective","kanban","W10"]
