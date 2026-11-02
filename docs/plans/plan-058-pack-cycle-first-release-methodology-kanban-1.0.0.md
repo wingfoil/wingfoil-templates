@@ -248,3 +248,14 @@ dl-013, dl-024 and dl-025 (`pending`).
   the rehearsal; who runs `validate` and `approve-publication`.
 - 2026-11-02: the approver ruled the outline (rulings 1 … 7; point 8 as option (b)); submitted
   (`draft → active`).
+- 2026-11-02, step 2, the rehearsal (ruling 3; Node.js 22.21.0, a scratch clone of `main` at
+  `9f040ce`, outside the repository, nothing pushed): `npm ci` and `npm run build` exit 0;
+  `npm run publish:pack -- --pack methodology/kanban` exit 0: its publication matrix 9
+  compositions, 18 runs, 0 failed, tolerance none; the tag `methodology/kanban@1.0.0` at `9f040ce`,
+  annotated with its name and `- 1.0.0: first version: a flow of work items under two WIP limits,
+  carried by releases.` (ruling 2); a catalog commit; the range `>=0.3.0 <=0.3.1`; the digest
+  `sha256:44f5a854af4170ac61eb214f4efe47fdd777836f2a97c00ef89177a9f90979fa`. On the result, each
+  exit 0: `npm test` 1043 of 1043; `check:schemas` 6 files; `check:packs` 74 files, 0 problems;
+  `index -- --check` 7 files, 0 not up to date; `validate` 9 compositions, 18 runs, 0 failed;
+  `check:runs` 46 runs, 0 failed. No test or check breaks with a fourth pack in the catalog: no
+  tooling task (task-073 not opened). `prepare` next.
