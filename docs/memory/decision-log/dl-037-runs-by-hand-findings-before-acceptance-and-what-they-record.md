@@ -2,7 +2,7 @@
 id: dl-037-runs-by-hand-findings-before-acceptance-and-what-they-record
 type: decision-log
 title: "Runs by hand: findings before acceptance and what they record"
-status: draft
+status: pending
 tags: ["process","packs","evidence"]
 ---
 
