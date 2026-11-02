@@ -307,3 +307,18 @@ private repository or project, no intermediary session); after every push to `ma
   amendments, one blocking finding: WingFoil 0.3.2 was published on 2026-11-02 after the period, so
   its intake is now due) and amended (`d10714a`). Next: the approver's checkpoint
   (`additional-points`).
+- 2026-11-02, `capture`: the approver's points P1 … P3 added to the inventory (`071e27c`). `memory
+  add` gave dl-034 … dl-037 in order (`8cb0f1c` … `3239549`), each id checked: dl-034 the
+  retrospective, dl-035 a CI policy for advisories in development dependencies (GOV-1), dl-036
+  `repository-practice` 1.2 (GOV-2, GOV-4, GOV-7), dl-037 runs by hand (GOV-5, GOV-6). Each
+  reviewed independently (dl-034: request changes, one blocking finding, its dl actions plan with
+  no row; dl-035 … dl-037: approve after amendments), amended, dl-034 re-reviewed (approve after
+  amendments), submitted `pending` (`f77eb01` … `5e0ac53`). `main`'s CI on `ba8f8fe` (the submit),
+  run 41488143638, `success`. task-073 (F-042, P1) on `task/task-073-feedback-note-f-042`: body
+  reviewed (one blocking finding: `init`'s `task` has no state to hold a limit, so the reproduction
+  writes a `states:` block by hand, with a fictional approver), re-reviewed (approve), submitted
+  `pending` (`9d6a1e1`).
+- 2026-11-02, `approve`: the approver approved dl-034 … dl-037 (`2ddb65c` … `d5bf821`) and accepted
+  task-073 into the backlog (`9b5c745`). On dl-034 D1's two questions, the approver ruled: G12 keeps
+  its trigger W10; WingFoil 0.3.2's intake comes first, with its periodic retrospective (dl-029),
+  and the plan of WingFoil UI's feedback after them (its row's trigger moved at this plan's close).
