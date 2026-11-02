@@ -177,7 +177,19 @@ Each point with a recommendation.
 
 ## The approver's rulings
 
-<!-- Recorded when given. -->
+Given on 2026-11-02, in chat: every point of the outline as recommended.
+1. **Point 1:** the scope `pack-methodology-kanban`; the inventory and dl-034 named as written; the
+   period 2026-10-29 … 2026-11-02 (`c316fe8`), `0162c90` read for point 4 only.
+2. **Point 2:** the sources as written; plan-055 and WingFoil UI's feedback not sources.
+3. **Point 3:** the candidates as the inventory's starting list, `explore` confirming, correcting
+   or dropping each.
+4. **Point 4:** one line per open row; rows of this cycle on their merits; the others kept, their
+   triggers unchanged; the row of `kanban`'s retrospective closed at this plan's close.
+5. **Point 5:** a governance decision-log only for a candidate the adoption (W10) would not fix.
+6. **Point 6:** notes only after reproduction on 0.3.0 and 0.3.1, by task-073, on `main` before
+   WingFoil's v0.4 release planning, with the 2026-11-05 fallback and the notice.
+7. **Point 7:** one note on the charter citing dl-034; none on dl-006 or dl-033.
+8. **Point 8:** this plan on `main`; the work on `retro/<YYYY-MM-DD>-pack-methodology-kanban`.
 
 ## Steps
 
@@ -281,3 +293,7 @@ private repository or project, no intermediary session); after every push to `ma
   nothing blocking; applied: the notice in the Handoff, the Checkpoints and "Done when"; point 4's
   reason no longer presumes the `GOV` candidate's answer; step 6's triggers changed only row by
   row; the lines re-wrapped.
+- 2026-11-02: `main`'s CI on `0162c90` (the last push before this plan), run 41483587039,
+  `success`; Pages run 41483587206 `success`.
+- 2026-11-02: the approver ruled the outline (every point as recommended); submitted
+  (`draft → active`).
