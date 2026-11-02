@@ -387,4 +387,28 @@ Candidate new rows (`DEBT`), for the approver:
 
 ## Points to analyse (additional-points)
 
-<!-- Added by the approver at the checkpoint. -->
+Asked by the approver on 2026-11-02, at the checkpoint:
+
+- **P1 — A feedback note for WF-1.** A `request` note: should `memory reject` warn when it leaves
+  a state over its `limits`? Written by task-073 (plan-059 point 6), reproduced on 0.3.0 and 0.3.1.
+- **P2 — The three candidate rows of §8 added:** `kanban`'s open point 2 (owner W10, trigger the
+  adoption); `kanban`'s open point 3 (owner approver, trigger a `software` whose `release` template
+  declares `id`, or the first adopter with parallel release lines); `kanban`'s charter text drift
+  (owner approver, trigger the next retrospective); and open point 4 named in `scrum`'s open
+  point 2 row.
+- **P3 — The governance candidates, as recommended to the approver:**
+  - GOV-1 a decision-log: an advisory in a development dependency only gives a visible warning and a
+    bug opened within a day; the gate stays blocking on the runtime dependencies and on the
+    matrix lockfiles;
+  - GOV-2, GOV-4 and GOV-7 one decision-log, `repository-practice` 1.2: "the next retrospective"
+    means the next periodic one, a pack's retrospective proposing only for the rows its cycle
+    touched; a row left by a ruling added with the ruling's note; a closed row reopened by the
+    commit that reopens its item; a row asked by the approver outside any element cited as "asked
+    by the approver on <date>" and by a note of the active or the next plan; the recipients of an
+    outgoing notice named by project, never as a session;
+  - GOV-5 and GOV-6 one decision-log, runs by hand: E2's findings reach the charter "before it is
+    accepted"; a run by hand records its counts, every non-zero exit with its command, the commit
+    composed and the WingFoil release, not the full log;
+  - GOV-3 and GOV-8 no decision-log: observed in the retrospective's decision-log (GOV-8 as a
+    lesson: a defect described by its command and output, a single site checked by a sweep of the
+    call sites).
