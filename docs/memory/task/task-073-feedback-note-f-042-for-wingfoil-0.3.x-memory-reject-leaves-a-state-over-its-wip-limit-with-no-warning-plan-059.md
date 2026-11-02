@@ -75,21 +75,22 @@ One note, numbered after F-041 (`assertNumbering`):
   opening's task number, which the test does not check, by a grep counting `New note (task-073).`
   once.
 - **The scratch projects**, outside the repository and never committed, one per WingFoil version:
-  `init --template Kanban`, whose `task` runs on `defaults.states` (`draft → pending → approved`,
-  no limit; the template only points to `limits:`, in its commented `bug` example); a git identity
-  `Tester <tester@example.org>` and a matching `team.members` entry with the role `approver` in
+  `init --template Kanban`, whose `task` runs on `defaults.states` (`draft → pending → approved`, no
+  limit; the template only points to `limits:`, in its commented `bug` example); a git identity
+  `Tester <tester@plover.example>` and a matching `team.members` entry with the role `approver` in
   `dna.yaml` (`reject` and `approve` require an approver; `init` writes `members: []`); on `task` a
   `states:` block written by hand, `sequence: [draft, backlog, in-progress, in-review, done]`,
   `gates: { in-review: { reject: in-progress } }`, `limits: { in-progress: 1 }`, committed and
-  checked by `workflow list` (or the verb's validation) before the moves. Tasks A and B added and
-  moved to `backlog` and A to `in-progress` by `memory submit`; B refused into `in-progress`
-  (`memory submit`, exit 1, `CONFLICT`); A to `in-review` (`memory submit`), then B to
-  `in-progress` (`memory submit`); A rejected back to `in-progress` (`memory reject`, exit 0, its
-  output showing no warning); then a third task C refused into `in-progress`, its message naming
-  both holders over the limit of 1: WingFoil's own output shows the state over its limit. The
-  verbs of each move follow the machine as written (a gate state is left forward by `approve`, also
-  checked against the limit); the `states:` block, the `dna.yaml` edit and every command recorded
-  in `## Observed`.
+  checked by the first `memory add` and `submit` that read it (a `workflow list` warning on `init`'s
+  `kanban-delivery`, whose `review` phase selects `status: pending`, is recorded in the Execution
+  Notes and kept out of the note) before the moves. Tasks A and B added and moved to `backlog` and A
+  to `in-progress` by `memory submit`; B refused into `in-progress` (`memory submit`, exit 1,
+  `CONFLICT`); A to `in-review` (`memory submit`), then B to `in-progress` (`memory submit`); A
+  rejected back to `in-progress` (`memory reject --reason "…"`, exit 0, its output showing no
+  warning); then a third task C refused into `in-progress`, its message naming both holders over the
+  limit of 1: WingFoil's own output shows the state over its limit. The verbs of each move follow
+  the machine as written (a gate state is left forward by `approve`, also checked against the
+  limit); the `states:` block, the `dna.yaml` edit and every command recorded in `## Observed`.
 - **The note** written from the outputs, with its ledger row, in one commit.
 - **Privacy:** a grep of the note for local paths (`/home/`, `/tmp/`), the maintainer's names and
   email, session names, and a read for private project or repository names; the scratch identity
@@ -111,3 +112,6 @@ One note, numbered after F-041 (`assertNumbering`):
   configuration), three nits (the schema's comment and the README cited; the 2026-11-05 fallback in
   Acceptance; a third submit's refusal naming both holders); all applied. A re-review follows (the
   reproduction changed).
+- 2026-11-02: re-review: approve, three nits applied (the identity's `.example` domain, `--reason`
+  on the reject, the machine checked by the first verbs, any `workflow list` warning kept out of the
+  note).
