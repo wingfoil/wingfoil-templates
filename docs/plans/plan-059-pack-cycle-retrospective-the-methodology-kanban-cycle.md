@@ -22,7 +22,8 @@ other pack shares it (dl-033 O2). It is **not** the periodic retrospective: plan
 It is the first cycle run wholly under the rules of the retrospective of 2026-10-28 (dl-028):
 dl-030's directive `repository-practice` (rules 1 … 3), dl-031's register (rule 4), dl-032's runs
 on the real engine (E2 at `charter`, E4 at `author`, E3 at `first-release`) and dl-033's order
-(`activate`, then `retrospective`). The inventory says how each held.
+(`activate`, then `retrospective`). The inventory says how each held. dl-029 (the periodic
+retrospective at an intake's close) did not run in this cycle: no WingFoil release was taken in.
 
 The workflow is `retrospective` v5 (`explore`, `additional-points`, `capture`, `approve`), included
 by `pack-cycle` v6. Until this repository adopts `base` (W10), a change of governance is a point,
@@ -38,7 +39,9 @@ its decision-log dl-028, for one pack and a period of four days.
   catalog commit `3e5d773`), the charter `active` (`7fc293a`).
 - plan-056, plan-057 and plan-058 `done`; their tasks (task-066 … task-072), bug-009 and prel-006
   closed as their plans record.
-- `main` at `3803673` (this plan's `memory add`) over `0162c90`.
+- `main` at `3803673` (this plan's `memory add`) over `0162c90`, the last push, whose Pages run
+  41483587206 is `success`; its CI run 41483587039 is recorded in the Execution Notes once
+  concluded.
 
 **After this plan, not in it:** the plan that captures WingFoil UI's feedback after adopting
 `base`, `software` and `methodology/scrum` by hand (the row of `docs/owed-items.md` whose trigger is
@@ -68,8 +71,10 @@ Each point with a recommendation.
    `docs/retrospectives/<YYYY-MM-DD>-pack-methodology-kanban-friction-inventory.md`, dated the day it
    is committed; the decision-log dl-034 "Retrospective pack-methodology-kanban <YYYY-MM-DD>"
    (`capture`'s title). The period runs from 2026-10-29 (plan-056 written, after plan-055's close)
-   to 2026-11-02 (plan-058 closed, `c316fe8`). Alternative: the catalog id `methodology/kanban`,
-   which holds a slash and cannot name a file.
+   to 2026-11-02 (plan-058 closed, `c316fe8`); `0162c90`, after it, is read for point 4 only.
+   Alternative: the catalog id `methodology/kanban` slugged (`methodology-kanban`); not
+   recommended, because `retrospective` v5's "pack id" reads as the Memory element id, the
+   charter's (dl-004 keeps the two apart).
 2. **The sources.** Recommended:
    - plan-056, plan-057 and plan-058, with their outlines, rulings, Execution Notes and closes;
    - task-066 … task-072 with their reviews, bug-009, prel-006, the charter
@@ -94,38 +99,54 @@ Each point with a recommendation.
      shape; the publication rehearsal on a scratch clone found no break with a fourth pack
      (plan-058 › step 2); reviews found blocking defects before code (plan-056: the release filter,
      the `memory add` command; plan-057: the lint count; task-066: its in-process test); charter
-     to published 1.0.0 in four days, every gate passed; the first `pack-cycle` v6 order kept as
-     written;
+     to published 1.0.0 in four days, every gate of `pack-cycle` and `pack-release-cycle` passed;
+     the first `pack-cycle` v6 order kept as written; a CI run cancelled by the next push handled
+     as `repository-practice` rule 3 foresees (plan-058 › step 3);
    - friction (`−`): the Node.js warning's cause named wrongly (the charter and the owed row said
      the composer; task-066 fixed one site and its review missed the second, so task-070 followed);
      three tooling tasks and one bug outside the outline (task-070, task-071, task-072, bug-009),
-     each needing a ruling (plan-057 rulings 6 … 8); `main` red for about two days on an advisory in
-     a development dependency (bug-009; the CI-policy row of `docs/owed-items.md`, met again); the
-     CI job at 19 min 26 s of its 30-minute timeout (G12's row); a run cancelled by the next push
-     (plan-058's submit); the dry run's first attempt failing on the checking script's own
-     `node_modules` link (plan-058 › step 4); open points 2 and 3 of the charter not exercised;
-     bug-008 still bringing back closed retrospectives' `approve` steps;
+     each needing a ruling (plan-057 rulings 6 … 8); `main` red for about one day on an advisory in
+     a development dependency (2026-10-31 → 2026-11-01, runs 41196364111 … 41298773055; bug-009;
+     the CI-policy row of `docs/owed-items.md`, met again); the CI job at 19 min 26 s of its
+     30-minute timeout (G12's row); the dry run's first attempt failing on the checking script's
+     own `node_modules` link (plan-058 › step 4); the driving scripts' slips in the runs by hand
+     (plan-056 › step 2's `capture`; task-069's non-zero exits), evidence for the scripted-run row;
+     open points 2 and 3 of the charter not exercised; bug-008 still bringing back closed
+     retrospectives' `approve` steps;
    - WingFoil-side (`WF`): `memory reject` moves a task into a state over its `limits` with no
-     refusal (plan-056 › step 4; task-069): a candidate note, if `explore` finds no WingFoil text
-     documenting it;
+     refusal (plan-056 › step 4; task-069; observed on 0.3.1 only). No note covers it; the pack
+     states it and works around it (the `kanban` directive, the charter), so a note would be a
+     `request` (should `reject` refuse, or warn, past a limit?), not an undocumented defect;
+     `explore` reads WingFoil's texts for it;
    - governance (`GOV`): whether a defect of the tooling found inside a pack plan may open a
-     tooling task with no ruling of its own (rulings 6 … 8 each asked the approver); others only as
-     `explore` finds them.
+     tooling task with no ruling of its own (rulings 6 … 8 each asked the approver); whether
+     dl-031 R1's default trigger "the next retrospective" means the next retrospective of any kind
+     or the next periodic one (point 4; `repository-practice` survives W10, so the adoption does
+     not settle it); others only as `explore` finds them.
    Alternative: no list here, `explore` starting from the sources alone.
 4. **The register** (dl-031 R3: every retrospective proposes keep, assign or drop for each row).
-   Recommended: the inventory holds a table of every open row with the proposal and its reason;
+   Recommended: the inventory holds a table with one line per open row, each with its proposal and
+   its own reason;
    - rows of this cycle (bug-009's two rows and the CI-policy row; the scripted full run; the
      "own entries" row; the charter's Adoption rows; G12) are proposed on their merits;
    - rows with the trigger "the next retrospective" that this cycle did not touch are proposed
-     **keep**, their trigger rewritten to "the periodic retrospective (dl-029)", so that a
-     retrospective of one pack does not rule the repository's whole backlog;
+     **keep**, row by row, their trigger unchanged, the reason being that nothing in the period
+     bears on them, so that a retrospective of one pack does not rule the repository's whole
+     backlog; the general reading of that trigger is a `GOV` candidate (point 3), not a rewrite in
+     this table;
    - rows with the trigger W10, the adoption or the pin bump: keep, unless a source of the period
      settles them;
+   - every other row: keep, its trigger unchanged, unless a source of the period settles it; among
+     them, WingFoil UI's feedback row (its trigger, "after the plan of `kanban`'s own
+     retrospective", is met at this plan's close: the next plan) and the dl-024/dl-025 row (its
+     trigger, WingFoil v0.4's planning, is close: about 2026-11-06), both named for the approver;
    - the row "`kanban`'s own `pack-cycle` retrospective" moves to Closed at this plan's close,
      settled by plan-059 (dl-034).
-   dl-034 rules the table (its Debts). Alternative: every row ruled on its merits here, the
-   periodic retrospective then re-reading only the rows added after it.
-5. **Changes of governance.** Recommended: plan-054's test (its P1): a `GOV` candidate becomes a
+   dl-034 rules the table (its Debts). Alternative: every row ruled on its merits here; the
+   periodic retrospective still proposes for every row (dl-031 R3), citing this ruling as its
+   reason where nothing changed.
+5. **Changes of governance.** Recommended: the test of the inventory of 2026-10-28, P1 (dl-028
+   N4): a `GOV` candidate becomes a
    decision-log only if this repository's adoption of the packs and its pin at 0.3.1 (W10) would
    not fix it; otherwise it is a row of the register with the trigger W10. Each kept candidate is
    one decision-log under `decision-log-ingest`, numbered after dl-034, captured and ruled in this
@@ -135,7 +156,11 @@ Each point with a recommendation.
    reproduced with WingFoil alone on 0.3.0 and 0.3.1 before it is written; written by task-073
    (`tooling-delivery`, `pack: ""`), hosted by this plan on a branch of its own from this plan's
    branch, numbered from F-042, first line `New note (task-073).`, one ledger row each,
-   `Last sync` unchanged; no task if no candidate survives `explore` and the approver's checkpoint.
+   `Last sync` unchanged; a `wingfoil-cli` entry only if a kept note needs one; no task if no
+   candidate survives `explore` and the approver's checkpoint. The inbox has never been synced
+   (`Last sync: none`), so once the notes are on `main` a short notice outside the repository,
+   carrying no WingFoil point, names their ids and the commit, as plan-054's step 6; its text is
+   shown to the approver before it is sent.
    WingFoil's v0.4 release planning starts not before 2026-11-06 (WingFoil's timing as of
    2026-10-28, read again at `explore`): task-073's notes are on `main` before it; if this plan's
    branch cannot close by 2026-11-05, task-073's merge goes to `main` on its own, on the
@@ -149,7 +174,8 @@ Each point with a recommendation.
    the inventory, the approver's points, dl-034, any governance decision-log and task-073's merge
    on the branch `retro/<YYYY-MM-DD>-pack-methodology-kanban` from `main` after `submit`; at the
    close, on the approver's OK, `--no-ff` into `main`. No WingFoil UI capture, no release of a pack,
-   no change of a tech-spec, no change under `src/`, `packs/` or `.wingfoil/`.
+   no change of a tech-spec, no change under `src/`, `packs/` or `.wingfoil/` (except a
+   `wingfoil-cli` entry a kept note needs, inside task-073).
 
 ## The approver's rulings
 
@@ -184,25 +210,30 @@ private repository or project, no intermediary session); after every push to `ma
 4. **`capture`** (facilitator):
    - the approver's points added to the inventory in their own commit (or a line saying none were
      added);
-   - dl-034 "Retrospective pack-methodology-kanban <YYYY-MM-DD>" (`memory add --type
-     decision-log`, body by hand, `submit`, `draft → pending`): Keep, Change (governance, each by
+   - dl-034 "Retrospective pack-methodology-kanban <YYYY-MM-DD>" (`npm run -s wingfoil -- memory
+     add --type decision-log --title "Retrospective pack-methodology-kanban <YYYY-MM-DD>"`, the
+     printed id checked, body by hand, `submit`, `draft → pending`): Keep, Change (governance, each by
      its own decision-log; WingFoil-side, as notes), Debts (the register's table, point 4),
      Observed; each point tied to the inventory;
    - each governance decision-log kept (point 5), under `decision-log-ingest`, cited by dl-034;
    - task-073 if a note is kept (point 6), through `tooling-delivery` as task-064: `plan` (its body
      reviewed and amended, `submit`, the approver's backlog acceptance), `build` (each note
-     reproduced with WingFoil alone on 0.3.0 and 0.3.1 from `src/matrix/`; the checks from clean
-     clones on Node.js 22.21.0, then 22.12.0, one after the other; the branch's CI read),
+     reproduced with WingFoil alone on 0.3.0 and 0.3.1 from `src/matrix/`; the privacy check,
+     intermediary sessions included; `npm ci`, `npm test`, `lint`, `check:pins`, `check:schemas`,
+     `check:packs`, `validate`, `index -- --check`, `check:runs` and `workflow list` exit 0 from
+     clean clones on Node.js 22.21.0, then 22.12.0, one after the other; the branch's CI read),
      `review` (an independent build review, `in-review`, the approver's approval), `deliver`
      (`--no-ff` into this plan's branch, `done`);
    - every element reviewed independently, amended while `pending`; a fix that changes a decision
      reviewed again (dl-017).
 5. **`approve`** (product-owner, held by the approver): claude hands the approver each command,
-   `cd /path/to/the/repository && npm run -s wingfoil -- memory approve <id> --reason "…"`, written
-   out in full; a rejection sends the element back to `capture`. dl-034 must be ruled for this plan
+   `npm run -s wingfoil -- memory approve <id> --reason "…"`, from the repository root, the `cd`
+   included in the command handed over in chat; a rejection sends the element back to `capture`. dl-034 must be ruled for this plan
    to close; a governance decision-log may stay `pending` (its `rule` has no deadline).
 6. **Close:**
+   - the account per tech-spec (dl-020): none amended, unless a step of this plan amends one;
    - the charter's note (point 7), once dl-034 is approved;
+   - the notice of point 6, if task-073 opened;
    - `docs/owed-items.md`: dl-034's Debts applied (rows kept, reassigned, dropped to Closed with
      dl-034's id, triggers rewritten), the row of `kanban`'s retrospective moved to Closed (plan-059,
      dl-034), every item this plan leaves owed given its row (rule 4);
@@ -234,3 +265,13 @@ private repository or project, no intermediary session); after every push to `ma
 
 - 2026-11-02: written as asked by the approver on 2026-11-02, after plan-058's close; `workflow`
   and `phase` filled by editing the draft (W-02). `main` at `3803673` over `0162c90`.
+- 2026-11-02: independent review: approve after amendments, nothing blocking; ten should-fix, seven
+  nits, all applied: `main` red about one day, not two; the register's table one line per row, a
+  bucket for every other trigger, the UI-feedback and dl-024/dl-025 rows named, the Alternative
+  consistent with dl-031 R3; the rewrite of "the next retrospective" dropped from the table and
+  listed as a `GOV` candidate; `main`'s CI in the Preconditions; the notice after task-073's notes;
+  a `wingfoil-cli` entry allowed inside task-073; task-073's checks listed; the `WF` candidate
+  observed on 0.3.1 only and already stated by the pack (a `request`); the cancelled run moved to
+  `+`; P1 cited from the inventory; the period's end and `0162c90`; the slugged-id alternative;
+  the approval command with no path; the full `memory add` command; the account per tech-spec;
+  dl-029 not exercised; "every gate" made precise; the driving-script slips.
