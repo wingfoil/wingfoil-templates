@@ -2,7 +2,7 @@
 id: task-073-feedback-note-f-042-for-wingfoil-0.3.x-memory-reject-leaves-a-state-over-its-wip-limit-with-no-warning-plan-059
 type: task
 title: "Feedback note F-042 for WingFoil 0.3.x: memory reject leaves a state over its WIP limit with no warning (plan-059)"
-status: in-progress
+status: in-review
 pack: ""            # tooling task (pack-cycle › retrospective, plan-059 step 4)
 depends_on: []
 tags: ["tooling","feedback"]
