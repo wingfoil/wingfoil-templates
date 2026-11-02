@@ -2,7 +2,7 @@
 id: plan-058-pack-cycle-first-release-methodology-kanban-1.0.0
 type: plan
 title: "pack-cycle first-release: methodology/kanban 1.0.0"
-status: active
+status: done
 workflow: "pack-cycle"
 phase: "first-release"
 tags: ["packs","kanban","methodology","W10"]
