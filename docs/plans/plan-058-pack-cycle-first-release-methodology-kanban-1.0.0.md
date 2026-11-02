@@ -308,3 +308,4 @@ dl-013, dl-024 and dl-025 (`pending`).
   `main`'s CI after the last push recorded; the W10 row's `kanban` part moved to Closed instead of
   citing this plan in its Source; a row for `kanban`'s open retrospective; the cancelled run of the
   submit.
+- 2026-11-02: `main`'s CI on the closing head `d319cb3`, run 41478783428, `success`. `active → done`.
