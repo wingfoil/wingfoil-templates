@@ -68,8 +68,8 @@ Each point with a recommendation.
 
 1. **Scope, period and names.** Recommended: the scope is the pack id, `pack-methodology-kanban`
    (`retrospective` v5 › `explore`: "the pack id or `periodic`"). The inventory is
-   `docs/retrospectives/<YYYY-MM-DD>-pack-methodology-kanban-friction-inventory.md`, dated the day it
-   is committed; the decision-log dl-034 "Retrospective pack-methodology-kanban <YYYY-MM-DD>"
+   `docs/retrospectives/<YYYY-MM-DD>-pack-methodology-kanban-friction-inventory.md`, dated the day
+   it is committed; the decision-log dl-034 "Retrospective pack-methodology-kanban <YYYY-MM-DD>"
    (`capture`'s title). The period runs from 2026-10-29 (plan-056 written, after plan-055's close)
    to 2026-11-02 (plan-058 closed, `c316fe8`); `0162c90`, after it, is read for point 4 only.
    Alternative: the catalog id `methodology/kanban` slugged (`methodology-kanban`); not
@@ -130,10 +130,9 @@ Each point with a recommendation.
    - rows of this cycle (bug-009's two rows and the CI-policy row; the scripted full run; the
      "own entries" row; the charter's Adoption rows; G12) are proposed on their merits;
    - rows with the trigger "the next retrospective" that this cycle did not touch are proposed
-     **keep**, row by row, their trigger unchanged, the reason being that nothing in the period
-     bears on them, so that a retrospective of one pack does not rule the repository's whole
-     backlog; the general reading of that trigger is a `GOV` candidate (point 3), not a rewrite in
-     this table;
+     **keep**, row by row, their trigger unchanged, nothing in the period bearing on them, until
+     the `GOV` candidate on dl-031 R1's default trigger (point 3) is ruled; no trigger is rewritten
+     in this table;
    - rows with the trigger W10, the adoption or the pin bump: keep, unless a source of the period
      settles them;
    - every other row: keep, its trigger unchanged, unless a source of the period settles it; among
@@ -146,12 +145,11 @@ Each point with a recommendation.
    periodic retrospective still proposes for every row (dl-031 R3), citing this ruling as its
    reason where nothing changed.
 5. **Changes of governance.** Recommended: the test of the inventory of 2026-10-28, P1 (dl-028
-   N4): a `GOV` candidate becomes a
-   decision-log only if this repository's adoption of the packs and its pin at 0.3.1 (W10) would
-   not fix it; otherwise it is a row of the register with the trigger W10. Each kept candidate is
-   one decision-log under `decision-log-ingest`, numbered after dl-034, captured and ruled in this
-   plan, applied later by a dl actions plan (none applied here). None is expected from the reads so
-   far; the approver decides at `additional-points`.
+   N4): a `GOV` candidate becomes a decision-log only if this repository's adoption of the packs
+   and its pin at 0.3.1 (W10) would not fix it; otherwise it is a row of the register with the
+   trigger W10. Each kept candidate is one decision-log under `decision-log-ingest`, numbered after
+   dl-034, captured and ruled in this plan, applied later by a dl actions plan (none applied here).
+   The approver decides at `additional-points` which candidates are kept.
 6. **WingFoil-side points.** Recommended: only as feedback notes in the inbox (`svc-018`), each
    reproduced with WingFoil alone on 0.3.0 and 0.3.1 before it is written; written by task-073
    (`tooling-delivery`, `pack: ""`), hosted by this plan on a branch of its own from this plan's
@@ -212,8 +210,8 @@ private repository or project, no intermediary session); after every push to `ma
      added);
    - dl-034 "Retrospective pack-methodology-kanban <YYYY-MM-DD>" (`npm run -s wingfoil -- memory
      add --type decision-log --title "Retrospective pack-methodology-kanban <YYYY-MM-DD>"`, the
-     printed id checked, body by hand, `submit`, `draft → pending`): Keep, Change (governance, each by
-     its own decision-log; WingFoil-side, as notes), Debts (the register's table, point 4),
+     printed id checked, body by hand, `submit`, `draft → pending`): Keep, Change (governance, each
+     by its own decision-log; WingFoil-side, as notes), Debts (the register's table, point 4),
      Observed; each point tied to the inventory;
    - each governance decision-log kept (point 5), under `decision-log-ingest`, cited by dl-034;
    - task-073 if a note is kept (point 6), through `tooling-delivery` as task-064: `plan` (its body
@@ -228,15 +226,17 @@ private repository or project, no intermediary session); after every push to `ma
      reviewed again (dl-017).
 5. **`approve`** (product-owner, held by the approver): claude hands the approver each command,
    `npm run -s wingfoil -- memory approve <id> --reason "…"`, from the repository root, the `cd`
-   included in the command handed over in chat; a rejection sends the element back to `capture`. dl-034 must be ruled for this plan
-   to close; a governance decision-log may stay `pending` (its `rule` has no deadline).
+   included in the command handed over in chat; a rejection sends the element back to `capture`.
+   dl-034 must be ruled for this plan to close; a governance decision-log may stay `pending` (its
+   `rule` has no deadline).
 6. **Close:**
    - the account per tech-spec (dl-020): none amended, unless a step of this plan amends one;
    - the charter's note (point 7), once dl-034 is approved;
    - the notice of point 6, if task-073 opened;
    - `docs/owed-items.md`: dl-034's Debts applied (rows kept, reassigned, dropped to Closed with
-     dl-034's id, triggers rewritten), the row of `kanban`'s retrospective moved to Closed (plan-059,
-     dl-034), every item this plan leaves owed given its row (rule 4);
+     dl-034's id, a trigger changed only where dl-034 rules it for that row), the row of `kanban`'s
+     retrospective moved to Closed (plan-059, dl-034), every item this plan leaves owed given its
+     row (rule 4);
    - the reserved numbers left unused released; the privacy check of the branch's diff and of its
      commit messages recorded; the branch pushed, its CI conclusion recorded;
    - on the approver's OK, `--no-ff` merge into `main`, push, `main`'s CI read (the run that
@@ -253,13 +253,15 @@ private repository or project, no intermediary session); after every push to `ma
 - **Reviewer:** an independent subagent for this plan, for the inventory, for dl-034, for each
   governance decision-log, for task-073's body and build, and for the close (dl-017).
 - **Approver:** this outline before `submit`; the additional points (step 3); task-073's backlog
-  acceptance and approval; the ruling of dl-034 and of each governance decision-log; the merge OK.
-- Checkpoints: the plan, the inventory, dl-034 (and any governance decision-log), task-073, the
-  merge.
+  acceptance and approval; the ruling of dl-034 and of each governance decision-log; the notice's
+  text, if task-073 opens; the merge OK.
+- Checkpoints: the plan, the inventory, dl-034 (and any governance decision-log), task-073 and its
+  notice, the merge.
 - Done when the inventory is committed; dl-034 is `approved` and every governance decision-log is
   ruled or left `pending` by the approver; task-073, if opened, is `done` and its notes on `main`
   before WingFoil's v0.4 release planning; the charter's note and the register's changes are
-  written; the branch is merged and removed. The plan then goes `active → done`.
+  written; the notice sent, if task-073 opened; the branch is merged and removed. The plan then
+  goes `active → done`.
 
 ## Execution Notes
 
@@ -275,3 +277,7 @@ private repository or project, no intermediary session); after every push to `ma
   `+`; P1 cited from the inventory; the period's end and `0162c90`; the slugged-id alternative;
   the approval command with no path; the full `memory add` command; the account per tech-spec;
   dl-029 not exercised; "every gate" made precise; the driving-script slips.
+- 2026-11-02: re-review (dl-017, point 4's recommendation changed): approve after amendments,
+  nothing blocking; applied: the notice in the Handoff, the Checkpoints and "Done when"; point 4's
+  reason no longer presumes the `GOV` candidate's answer; step 6's triggers changed only row by
+  row; the lines re-wrapped.
