@@ -60,6 +60,7 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | `kanban`'s own `pack-cycle` retrospective (`retrospective` open for `pack-methodology-kanban`; not held as the periodic one) | plan-058 ruling 5; dl-033 O2 | approver | the plan right after plan-058's close |
 | The private projects' check scripted | prel-001 … prel-003 | approver | the next retrospective |
 | dl-026's stale Consequences ("reported late until it completes", no longer true after plan-047 ruling 15 and task-057; the WingFoil side is F-036) | task-057 › notes | approver | the next retrospective |
+| WingFoil UI's feedback after adopting `base` 2.0.1, `software` 1.0.0 and `methodology/scrum` 1.0.0 by hand on WingFoil 0.3.1: a gate on `software`'s `release` at `releasing` and on `release-line` at `active` (UI's local deviations), `bug`'s `planned` gate, gates offered out of phase, the AGENTS.md region's fixed agent roles and `bug` gates, `security-secrets` against the approver's email in `dna.yaml`, `governance-evolution` › `apply` asking for a generated region updated, a `sprint` field naming no Sprint accepted at `submit`; captured by a plan of its own (`bug-ingest` or `decision-log-ingest`) | WingFoil UI's adoption feedback, 2026-11-02; trigger asked by the approver on 2026-11-02 | approver | after the plan of `kanban`'s own retrospective |
 
 ## Closed
 
