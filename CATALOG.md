@@ -22,6 +22,7 @@ No released WingFoil installs packs yet: section "Install and update" of each pa
 
 | Pack | Summary | Status | Latest | WingFoil | README |
 | --- | --- | --- | --- | --- | --- |
+| <a id="pack-methodology-kanban"></a>`methodology/kanban` | Kanban after the Kanban Guide, May 2025: a continuous flow of work items pulled within WIP limits, carried by releases the Product Owner decides, each release ending with its retrospective, as the delivery of software's life cycle. | active | 1.0.0 | >=0.3.0 <=0.3.1 | [README](https://github.com/wingfoil/wingfoil-templates/blob/methodology/kanban@1.0.0/packs/methodology/kanban/README.md) |
 | <a id="pack-methodology-scrum"></a>`methodology/scrum` | Scrum after the Scrum Guide, November 2020: repeated fixed-length Sprints, each with its planning, its Sprint Backlog, its review and its retrospective, and releases decided by the Product Owner inside the Sprints, as the delivery of software's life cycle. | active | 1.0.0 | >=0.3.0 <=0.3.1 | [README](https://github.com/wingfoil/wingfoil-templates/blob/methodology/scrum@1.0.0/packs/methodology/scrum/README.md) |
 
 ## Phase

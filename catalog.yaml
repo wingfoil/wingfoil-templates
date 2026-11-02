@@ -110,5 +110,25 @@ packs:
           - software@^1
         conflicts: []
         wingfoil: ">=0.3.0 <=0.3.1"
+  - id: methodology/kanban
+    path: packs/methodology/kanban
+    catalog: official
+    status: active
+    versions:
+      - version: 1.0.0
+        commit: 31102df00a37c8625cb45e82f47c5f4e083caa0a
+        digest: sha256:44f5a854af4170ac61eb214f4efe47fdd777836f2a97c00ef89177a9f90979fa
+        formats:
+          roles: 1
+          memory: 1
+          workflow: 1
+          directive: 1
+        requires_capabilities:
+          - workflow-engine
+        requires:
+          - base@^2
+          - software@^1
+        conflicts: []
+        wingfoil: ">=0.3.0 <=0.3.1"
 transitions: []
 presets: []
