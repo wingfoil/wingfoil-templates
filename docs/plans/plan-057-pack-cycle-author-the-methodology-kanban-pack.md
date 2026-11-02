@@ -2,7 +2,7 @@
 id: plan-057-pack-cycle-author-the-methodology-kanban-pack
 type: plan
 title: "pack-cycle author: the methodology/kanban pack"
-status: active
+status: done
 workflow: "pack-cycle"
 phase: "author"
 tags: ["packs","kanban","methodology","W10"]
