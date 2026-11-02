@@ -2,7 +2,7 @@
 id: dl-034-retrospective-pack-methodology-kanban-2026-11-02
 type: decision-log
 title: "Retrospective pack-methodology-kanban 2026-11-02"
-status: pending
+status: approved
 tags: ["process","retrospective","kanban"]
 ---
 
