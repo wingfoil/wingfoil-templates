@@ -322,3 +322,30 @@ private repository or project, no intermediary session); after every push to `ma
   task-073 into the backlog (`9b5c745`). On dl-034 D1's two questions, the approver ruled: G12 keeps
   its trigger W10; WingFoil 0.3.2's intake comes first, with its periodic retrospective (dl-029),
   and the plan of WingFoil UI's feedback after them (its row's trigger moved at this plan's close).
+- 2026-11-02, task-073 (hosted): F-042 (`request`: `memory reject` leaves a state over its WIP limit
+  with no word) reproduced with WingFoil alone on 0.3.1 and 0.3.0, identical; body reviewed (one
+  blocking finding, fixed) and re-reviewed; build reviewed (approve after amendments, the reviewer
+  reproducing the note); clean clones on both Node.js versions at `0bbe924`, 1043 of 1043, every
+  check exit 0; branch CI `success` (run 41514272824); approved, merged into this branch
+  (`8a5b6c6`), `done` (`0b33bfa`).
+- Step 6, the close:
+  - **The account per tech-spec (dl-020):** this plan amended neither spec-001 nor spec-002 and
+    recorded no erratum of theirs; nothing to fold back.
+  - **The charter's note:** on `pack-methodology-kanban`, completing `retrospective` and citing
+    dl-034, approved (point 7); no note on dl-006 or dl-033.
+  - **The owed rows** (dl-034 D1 … D3, rule 4): the row of `kanban`'s own retrospective moved to
+    Closed, settled by this plan (dl-034); new rows for `kanban`'s open points 2 and 3, for
+    `kanban`'s charter text drift, and for the dl actions of dl-035 … dl-037; `scrum`'s open point 2
+    row naming `kanban`'s open point 4; WingFoil UI's feedback row's trigger moved after WingFoil
+    0.3.2's intake and its periodic retrospective (the approver's ruling of 2026-11-02, above); G12
+    kept at W10. Every other row kept as dl-034 D1 rules.
+  - **Numbers:** plan-059, dl-034 … dl-037, task-073 and F-042 used; bug-010 reserved for a finding,
+    unused and released.
+  - **Privacy:** every commit of this plan and of task-073 checked before it was made; the branch's
+    diff against `main` and its commit messages checked: no local or scratch path, no private
+    repository or project, no intermediary session; the only name is the CLI's `Approver:` trailer
+    on the approval commits, as on `main`. Request origins written "asked by the approver on
+    <date>".
+  - **Next plans,** in the approver's order: WingFoil 0.3.2's intake, with the periodic
+    retrospective its close starts (dl-029); then WingFoil UI's feedback; the dl actions of dl-035 …
+    dl-037 placed by the approver (their row).
