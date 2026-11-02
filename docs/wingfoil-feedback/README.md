@@ -71,6 +71,7 @@ sha of the commit it read (WingFoil `COLLABORATION.md` › Credit, task-271), fo
 | [F-039](F-039-a-completed-iteration-s-step-returns-when-another-element-matches-its-where.md) | A completed iteration's step returns to the frontier when another element matches its where | request | open | |
 | [F-040](F-040-a-produces-entry-naming-a-directory-without-a-trailing-slash-is-never-satisfied.md) | A produces entry naming a directory without a trailing slash is never satisfied, and nothing says so | gap | open | |
 | [F-041](F-041-a-phase-role-that-no-member-holds-and-no-agent-executes-is-accepted-silently.md) | A phase role that no member holds and no agent executes is accepted, and nothing says so | gap | open | |
+| [F-042](F-042-memory-reject-leaves-a-state-over-its-wip-limit-and-nothing-says-so.md) | memory reject leaves a state over its WIP limit, and nothing says so | request | open | |
 
 ## Context
 

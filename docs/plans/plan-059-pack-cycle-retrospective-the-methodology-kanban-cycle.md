@@ -297,3 +297,69 @@ private repository or project, no intermediary session); after every push to `ma
   `success`; Pages run 41483587206 `success`.
 - 2026-11-02: the approver ruled the outline (every point as recommended); submitted
   (`draft → active`).
+- 2026-11-02, `explore`: plan submitted `active` (`ba8f8fe`), pushed; the branch
+  `retro/2026-11-02-pack-methodology-kanban` from it. Three read-only subagents mined the strands
+  (the charter; `author`; `first-release`, `activate` and the rules with the register); WingFoil's
+  WIP check read in the 0.3.0 and 0.3.1 packages the matrix installs: `reject` and `park` exempt by
+  WingFoil's dl-156 Q2 (i), so no note is proposed for the reject past a limit and task-073 is not
+  opened unless the approver adds a note. The inventory committed alone (`46254d0`), checked by two
+  independent reviews (header and §1 … §3; §4 … §9; every commit and CI run cited, approve after
+  amendments, one blocking finding: WingFoil 0.3.2 was published on 2026-11-02 after the period, so
+  its intake is now due) and amended (`d10714a`). Next: the approver's checkpoint
+  (`additional-points`).
+- 2026-11-02, `capture`: the approver's points P1 … P3 added to the inventory (`071e27c`). `memory
+  add` gave dl-034 … dl-037 in order (`8cb0f1c` … `3239549`), each id checked: dl-034 the
+  retrospective, dl-035 a CI policy for advisories in development dependencies (GOV-1), dl-036
+  `repository-practice` 1.2 (GOV-2, GOV-4, GOV-7), dl-037 runs by hand (GOV-5, GOV-6). Each
+  reviewed independently (dl-034: request changes, one blocking finding, its dl actions plan with
+  no row; dl-035 … dl-037: approve after amendments), amended, dl-034 re-reviewed (approve after
+  amendments), submitted `pending` (`f77eb01` … `5e0ac53`). `main`'s CI on `ba8f8fe` (the submit),
+  run 41488143638, `success`. task-073 (F-042, P1) on `task/task-073-feedback-note-f-042`: body
+  reviewed (one blocking finding: `init`'s `task` has no state to hold a limit, so the reproduction
+  writes a `states:` block by hand, with a fictional approver), re-reviewed (approve), submitted
+  `pending` (`9d6a1e1`).
+- 2026-11-02, `approve`: the approver approved dl-034 … dl-037 (`2ddb65c` … `d5bf821`) and accepted
+  task-073 into the backlog (`9b5c745`). On dl-034 D1's two questions, the approver ruled: G12 keeps
+  its trigger W10; WingFoil 0.3.2's intake comes first, with its periodic retrospective (dl-029),
+  and the plan of WingFoil UI's feedback after them (its row's trigger moved at this plan's close).
+- 2026-11-02, task-073 (hosted): F-042 (`request`: `memory reject` leaves a state over its WIP limit
+  with no word) reproduced with WingFoil alone on 0.3.1 and 0.3.0, identical; body reviewed (one
+  blocking finding, fixed) and re-reviewed; build reviewed (approve after amendments, the reviewer
+  reproducing the note); clean clones on both Node.js versions at `0bbe924`, 1043 of 1043, every
+  check exit 0; branch CI `success` (run 41514272824); approved, merged into this branch
+  (`8a5b6c6`), `done` (`0b33bfa`).
+- Step 6, the close:
+  - **The account per tech-spec (dl-020):** this plan amended neither spec-001 nor spec-002 and
+    recorded no erratum of theirs; nothing to fold back.
+  - **The charter's note:** on `pack-methodology-kanban`, completing `retrospective` and citing
+    dl-034, approved (point 7); no note on dl-006 or dl-033.
+  - **The owed rows** (dl-034 D1 … D3, rule 4): the row of `kanban`'s own retrospective moved to
+    Closed, settled by this plan (dl-034); new rows for `kanban`'s open points 2 and 3, for
+    `kanban`'s charter text drift, and for the dl actions of dl-035 … dl-037; `scrum`'s open point 2
+    row naming `kanban`'s open point 4; WingFoil UI's feedback row's trigger moved after WingFoil
+    0.3.2's intake and its periodic retrospective (the approver's ruling of 2026-11-02, above); G12
+    kept at W10. Every other row kept as dl-034 D1 rules.
+  - **Numbers:** plan-059, dl-034 … dl-037, task-073 and F-042 used; bug-010 reserved for a finding,
+    unused and released.
+  - **Privacy:** every commit of this plan and of task-073 checked before it was made; the branch's
+    diff against `main` and its commit messages checked: no local or scratch path, no private
+    repository or project, no intermediary session; the only name is the CLI's `Approver:` trailer
+    on the approval commits, as on `main`. Request origins written "asked by the approver on
+    <date>".
+  - **Next plans,** in the approver's order: WingFoil 0.3.2's intake, with the periodic
+    retrospective its close starts (dl-029); then WingFoil UI's feedback, which also settles
+    `scrum`'s open point 1 (its trigger looks met, dl-034 D1); the dl actions of dl-035 … dl-037
+    placed by the approver (their row). The row of dl-024 and dl-025 falls due at WingFoil v0.4's
+    planning, not before 2026-11-06, possibly during the 0.3.2 intake (dl-034 D1).
+  - **Still to do before `active → done`:** the branch CI's conclusion; on the approver's OK, the
+    `--no-ff` merge into `main`, F-042 on `main` before 2026-11-06 (2026-11-05 the fallback), `main`'s
+    CI read, the branch and task-073's branch removed locally and on origin; the notice outside the
+    repository naming F-042 and its commit, recipients named by project (dl-036 R5), its text shown to
+    the approver first.
+- 2026-11-02: independent review of the close: approve after amendments, nothing blocking; applied:
+  what remains before `done` listed, the next plans with `scrum`'s open point 1 and dl-024/dl-025's
+  row, dl-035 A4 in the CI-policy row's Source, open point 4 and point 7 in the charter's note; its
+  count of the register (37) not applied: 38 open rows at `0162c90`, 41 now.
+- 2026-11-02, branch close: CI run 41528505107 on `b20a317`, `success` (`validate (22.21.0)`,
+  `validate (22.12.0)`). The approver gave the merge OK and the notice's OK (text and recipient, the
+  coordination of the WingFoil projects) in chat; `--no-ff` merge into `main`.

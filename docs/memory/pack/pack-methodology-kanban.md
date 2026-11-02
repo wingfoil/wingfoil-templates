@@ -320,3 +320,12 @@ For the approver's acceptance:
   defaults (2 and 1) are fixed with 1.0.0, the convention for new projects (Commitments to
   adopters); open points 2 … 4 stand as written. The retrospective is `kanban`'s own, in a plan of
   its own after plan-058 (plan-058 ruling 5).
+- 2026-11-02, plan-059 (`retrospective`): `pack-cycle` › `retrospective` completed for this pack by
+  its own retrospective (plan-058 ruling 5; not the periodic one): the inventory
+  `docs/retrospectives/2026-11-02-pack-methodology-kanban-friction-inventory.md` and its
+  decision-log dl-034, approved on 2026-11-02, with the governance decision-logs dl-035 … dl-037 and
+  the feedback note F-042 (task-073, `memory reject` past a full limit) (plan-059 point 7). Open
+  points 2 and 3 now have rows of `docs/owed-items.md`, and open point 4 is named in `scrum`'s open
+  point 2 row (dl-034 D2); this charter's Ships and Acceptance still name the
+  composer as the warning's source, corrected by the note of plan-057 above and a row of the same
+  register. The body stays as approved.
