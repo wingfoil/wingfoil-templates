@@ -291,3 +291,6 @@ dl-025 (`pending`).
   - Not in this plan, unchanged: `first-release` (the publication, CB-6's live part, prel-006, the
     citation of `adoption-kanban.yaml`'s result); the presets, `governance/wingfoil-dogfood`, this
     repository's adoption, pin and inbox sync. This plan goes `active → done`.
+- 2026-11-02, the close's CI: task-072's delivery, `main`'s run 41361998207 on `086b633`, `success`;
+  the close (`c801e5a`), run 41363647630, `success`. Done when met: task-066 … task-072 `done` on
+  `main`, pushed, the charter's note, the privacy checks and the owed rows recorded.
