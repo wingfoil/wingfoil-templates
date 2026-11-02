@@ -370,3 +370,4 @@ private repository or project, no intermediary session); after every push to `ma
   inventory committed; dl-034 … dl-037 approved; task-073 `done` and F-042 on `main` before
   2026-11-06; the charter's note and the register's changes written; the branch merged and removed;
   the notice sent. `main`'s CI on the closing head read before `active → done`.
+- 2026-11-02: `main`'s CI on the closing head `ad5ad12`, run 41536663693, `success`. `active → done`.
