@@ -2,7 +2,7 @@
 id: dl-035-an-advisory-in-a-development-dependency-warns-and-opens-a-bug-the-audit-gate-stays-on-runtime-and-matrix-lockfiles
 type: decision-log
 title: "An advisory in a development dependency warns and opens a bug, the audit gate stays on runtime and matrix lockfiles"
-status: pending
+status: approved
 tags: ["process","ci","dependencies"]
 ---
 
