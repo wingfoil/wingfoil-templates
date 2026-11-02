@@ -363,3 +363,10 @@ private repository or project, no intermediary session); after every push to `ma
 - 2026-11-02, branch close: CI run 41528505107 on `b20a317`, `success` (`validate (22.21.0)`,
   `validate (22.12.0)`). The approver gave the merge OK and the notice's OK (text and recipient, the
   coordination of the WingFoil projects) in chat; `--no-ff` merge into `main`.
+- 2026-11-02, close: merged into `main` (`51c74d7`), pushed; `main`'s CI on `51c74d7`, run
+  41533767432, `success`, Pages run 41533767385 `success`; the branch and task-073's branch removed
+  locally and on origin. The notice sent outside the repository to the coordination of the WingFoil
+  projects, as the approver approved its text: F-042, its title and the merge commit. Done: the
+  inventory committed; dl-034 … dl-037 approved; task-073 `done` and F-042 on `main` before
+  2026-11-06; the charter's note and the register's changes written; the branch merged and removed;
+  the notice sent. `main`'s CI on the closing head read before `active → done`.
