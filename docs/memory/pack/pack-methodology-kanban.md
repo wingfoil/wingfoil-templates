@@ -313,3 +313,10 @@ For the approver's acceptance:
   The composer's warning on the unquoted limits (Ships, Acceptance) was not the composer's: it came
   from the secret rules' and the README index's parse of a pack's raw YAML, both fixed (task-066,
   task-070); the exit criterion reads "no warning" with no exception. Next: `first-release`.
+- 2026-11-02, plan-058 (`first-release`, `activate`): `methodology/kanban` 1.0.0 published
+  (prel-006): tag `methodology/kanban@1.0.0` at `31102df`, catalog commit `3e5d773`, range
+  `>=0.3.0 <=0.3.1`, CB-6's live check passed; `accepted → active`. Open point 1 settled: the
+  Service Level Expectation's default (`85% of work items finish within 10 days`) and the limits'
+  defaults (2 and 1) are fixed with 1.0.0, the convention for new projects (Commitments to
+  adopters); open points 2 … 4 stand as written. The retrospective is `kanban`'s own, in a plan of
+  its own after plan-058 (plan-058 ruling 5).

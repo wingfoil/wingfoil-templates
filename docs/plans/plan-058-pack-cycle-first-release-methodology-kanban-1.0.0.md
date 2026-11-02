@@ -259,3 +259,22 @@ dl-013, dl-024 and dl-025 (`pending`).
   `index -- --check` 7 files, 0 not up to date; `validate` 9 compositions, 18 runs, 0 failed;
   `check:runs` 46 runs, 0 failed. No test or check breaks with a fourth pack in the catalog: no
   tooling task (task-073 not opened). `prepare` next.
+- 2026-11-02, step 3, `prepare`: prel-006 added (`73b9736`), its Changes written, the README's
+  "Install and update" checked (CB-3), an independent review (approve, three nits applied),
+  submitted `draft → validating` (`9586f1c`); `main`'s CI on it, run 41410811662, `success`.
+- 2026-11-02, step 4, `validate`: the evidence of point 4 on `9586f1c`, recorded in prel-006 (9
+  compositions, 18 runs; `check:runs` 46 runs with `kanban`'s 12; the three overlays; clean clones
+  on Node.js 22.21.0 then 22.12.0, 1043 of 1043, every check exit 0; the dry run, its digest equal
+  to the rehearsal's, a first attempt failing on the checking script's own `node_modules` link);
+  an independent review (approve, three nits applied); `validating → releasing` (`36ce882`);
+  `main`'s CI on it, run 41417454851, `success`.
+- 2026-11-02, step 5: the approver approved prel-006 (`31102df`); `main`'s CI on it, run
+  41449241609, `success`.
+- 2026-11-02, step 6, `publish`: `npm run publish:pack -- --pack methodology/kanban` exit 0: tag
+  `methodology/kanban@1.0.0` at `31102df`, catalog commit `3e5d773`, range `>=0.3.0 <=0.3.1`,
+  digest as the dry run; pushed atomically with `main`. CI on the tag (41452326966), on `main`
+  (41452325673) and Pages (41452325745): `success`. CB-6's live check passed (prel-006 ›
+  Publication).
+- 2026-11-02, step 7, `activate`: `pack-methodology-kanban` `accepted → active` (`7fc293a`), the
+  tag on origin and `catalog.yaml` on origin/main listing 1.0.0; its note records open point 1
+  settled. Next: the notices (step 8), after the approver's OK on their text.
