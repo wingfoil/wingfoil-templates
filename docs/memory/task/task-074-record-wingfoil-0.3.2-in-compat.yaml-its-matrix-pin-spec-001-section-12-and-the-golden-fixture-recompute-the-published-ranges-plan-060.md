@@ -43,8 +43,8 @@ met by no pack).
    between them): the `wingfoil` field of the six published versions (`base` 1.0.0, 2.0.0, 2.0.1;
    `software` 1.0.0; `methodology/scrum` 1.0.0; `methodology/kanban` 1.0.0) edited by hand to
    `wingfoil: ">=0.3.0 <=0.3.2"`, byte for byte as `toYaml` writes it; spec-001 §11 allows the
-   field's edit. `npm run index`: the root `CATALOG.md` (the range cells) and `catalog-index.json`
-   (the six ranges) change and nothing else; `llms.txt` and the fixture trees' outputs
+   field's edit. `npm run index`: the root `CATALOG.md` (its four range cells, one per pack) and
+   `catalog-index.json` (the six ranges) change and nothing else; `llms.txt` and the fixture trees' outputs
    byte-unchanged, `install` empty.
 4. **spec-001**, amended in place (the merge OK approves the text, as task-059): §12's example and
    `tests/fixtures/compose/tree/compat.yaml` equal to the real file (dl-010), no YAML block added
@@ -58,23 +58,29 @@ met by no pack).
 5. **The tests, red first** (dl-018 R1–R3): the changed tests are written first and fail against the
    old `compat.yaml`, the failing count recorded in the Execution Notes; then the record lands in
    one commit. Line numbers as at `main`'s `e354213`:
-   - `tests/validate.test.ts`: the stub of 57–64 becomes `stubbed032`, printing
-     `0.3.2 (6de2e13c)`, its comment naming this task; the `byRelease` parameter and map of 71–73
-     key `'0.3.2'`; the golden self-test (121–133): 0.3.2's lines in place of 0.3.1's, the total
-     unchanged, the title renamed; the warning test (142–149) on 0.3.2, its counts unchanged; the
-     golden publication (159–165): 0.3.0 and 0.3.2; this repository's `validate` (279) and
-     publication (332) titles naming 0.3.0 and 0.3.2, their counts unchanged; the overlay test on
-     the golden tree (708): `wingfoil@0.3.2 … (self-test)`;
+   - `tests/validate.test.ts`: beside the 0.3.1 stub of 57–64 (kept, so that the red run fails only
+     on the changed expectations), a `stubbed032` printing `0.3.2 (6de2e13c)`, its comment naming
+     this task, and a fourth `byRelease` parameter and map key `'0.3.2'` (71–73), as task-059 added
+     0.3.1's; the golden self-test (121–133): 0.3.2's lines in place of 0.3.1's, the total
+     unchanged; the warning test (141–149) on a warned 0.3.2 stub, its counts unchanged; the golden
+     publication (159–165): 0.3.0 and 0.3.2; the install-failure test (205–217):
+     `/wingfoil@0\.3\.2: npm ci failed/`, still `26 runs, 26 failed`; this repository's
+     `validate` (279) and publication (332) titles naming 0.3.0 and 0.3.2, their counts unchanged;
+     the overlay test on the golden tree (708): `wingfoil@0.3.2 … (self-test)`; the renamed titles
+     (121, 141, 159, 279, 332) cite task-074 beside the tasks they cite;
    - `tests/compat.test.ts`: the real releases (53–58: 0.2.2, 0.3.0, 0.3.1, 0.3.2 with
-     `workflow-engine`); the range (67–71: `>=0.3.0 <=0.3.2`); the ascending test (77:
+     `workflow-engine`; 59: the `reads` loop over `[1, 2, 3]`); the range (67–71: `>=0.3.0 <=0.3.2`); the ascending test (77:
      `['0.2.2', '0.3.0', '0.3.1', '0.3.2', '0.4.0']`); the repeated release (90: repeats 0.3.2,
      matching `/0\.3\.2/`);
    - unchanged, and said so: the tests on `FROZEN_COMPAT` and `fixtureCompat`, `range.test.ts`,
      `matrix.test.ts` and `runs.test.ts` (synthetic releases or a fake `Compose`),
-     `ci-workflow.test.ts`.
+     `ci-workflow.test.ts`, `check-pins.test.ts` (its "passes on this repository" covers the new
+     pin). `src/matrix/wingfoil-0.3.1/` stays: 0.3.1 stays listed in `compat.yaml`, its lockfile
+     audited by the CI and part of the cache key.
 6. **The 0.3.2 check**, before the record commit and recorded: with 0.3.2 from the matrix's cache,
    the golden tree and the nine README examples composed from the branch, each committed in a
-   scratch repository by the matrix in publication mode: `workflow list`, `dna show` and
+   scratch repository by the matrix's own `runRelease` in publication mode (the golden fixture's
+   `compat.yaml` lacks 0.3.2 before the record commit, so `validate` cannot run this check): `workflow list`, `dna show` and
    `directives list` with `--format json`, exit 0, no warning; the golden tree's `format:` keys
    accepted (`format_key: true`).
 7. **After it**, on the branch: `npm run validate` (18 runs), the overlays `software-exit`,
@@ -100,7 +106,9 @@ frozen until its pack's next version), this repository's own WingFoil (0.2.2, W1
 Branch `task/task-074-record-0.3.2` from `main`. A tooling task (dl-018 R1–R3).
 
 **Red commit** (`test(compat): red first, …`): the tests of Acceptance 5 changed, nothing else.
-Run against the unchanged `compat.yaml`; the failing count recorded.
+Run against the unchanged `compat.yaml`; the failing count recorded, each failure for the right
+reason (dl-018 R1): the `compat.test` cases (0.3.2 not listed) and the `validate.test` cases that
+name 0.3.2 (the matrix still selects 0.3.1); no other test fails.
 
 **Pin commit** (`build(matrix): pin WingFoil 0.3.2 …`): Acceptance 1. `check:pins` exits 0 (it checks every
 folder of `src/matrix/`, listed or not), and `npm test` fails as at the red commit (the pin alone
@@ -121,3 +129,8 @@ Note; dl-009's Execution Note superseding its 0.3.1 note (Acceptance 4).
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-03: independent review of the body: approve after amendments, one blocking finding (the
+  install-failure test, which names the newest release, was missing); applied with it: the 0.3.1
+  stub kept beside a new 0.3.2 one, so that the red run fails only on the changed expectations,
+  and the expected failures named; 0.3.2's `reads` checked (the loop over `[1, 2, 3]`); the titles
+  citing task-074; `CATALOG.md`'s four cells; the check's mechanism; the 0.3.1 pin kept.
