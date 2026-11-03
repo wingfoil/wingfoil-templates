@@ -868,8 +868,9 @@ releases:
   format, and its short element references need no new capability (plan-060 ruling 1, dl-021 R4).
   It refuses some inputs 0.3.1 accepted (a `memory.yaml` type path absolute or holding `.` or `..`,
   a malformed `id_pattern`, an extra `dna.yaml` `paths` category that is not a list of strings, a
-  directive missing a header field), which no pack ships, and warns on a directive binding with no
-  file without `--role` too, which the matrix's scratch repository meets with the built-in files.
+  directive missing a header field), which no pack ships, and, without `--role`, also warns on a
+  directive binding that has no file; the matrix's scratch repository holds the built-in files, so
+  no such warning arises.
 
   `wingfoil-release-intake` appends one entry per WingFoil release (dl-002).
 

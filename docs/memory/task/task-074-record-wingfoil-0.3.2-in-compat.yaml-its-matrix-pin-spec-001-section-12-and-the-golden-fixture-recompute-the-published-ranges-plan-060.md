@@ -157,3 +157,10 @@ Note; dl-009's Execution Note superseding its 0.3.1 note (Acceptance 4).
   The approver ruled on 2026-11-03: a defect of the matrix, bug-010, fixed by task-075 before this
   task records 0.3.2; this task waits for task-075's merge, then takes `main` and runs its checks
   again. The Acceptance text stays as approved.
+- 2026-11-03: `main` merged into this branch after task-075's merge (`c4717ef`); the texts
+  (`a67c2ae`): spec-001 §12's paragraph on 0.3.2 and its Execution Note, dl-009's note.
+- 2026-11-03: independent review of the build: approve, nothing blocking; it ran the two test files
+  (71 of 71, task-075 having added two), `check:packs`, `index -- --check`, the pin's audit and the
+  golden tree on the real releases (26 runs, 0 failed, 0.2.2 tolerated and 0.3.2). Applied: the
+  checks after the merge recorded (next note), §12's sentence on the binding warning reworded, the
+  record commit named (`0501be2`).
