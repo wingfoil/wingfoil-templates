@@ -109,3 +109,8 @@ bumped.
   note on 0.3.0: publication mode now selects 0.3.0 and 0.3.1 (the golden tree included, 26 runs);
   the self-tests run a composition requiring `workflow-engine` on 0.3.0 and 0.3.1, and the golden
   tree, whose packs require no capability, on 0.2.2 (tolerated) and 0.3.1.
+- 2026-11-03, task-074 (plan-060): WingFoil 0.3.2 recorded (`format_key: true`). It supersedes the
+  note on 0.3.1: publication mode now selects 0.3.0 and 0.3.2 (the golden tree included, 26 runs);
+  the self-tests run a composition requiring `workflow-engine` on 0.3.0 and 0.3.2, and the golden
+  tree, whose packs require no capability, on 0.2.2 (tolerated) and 0.3.2. 0.3.1 stays in
+  `compat.yaml` and in every range, outside the selection (the oldest and the newest).

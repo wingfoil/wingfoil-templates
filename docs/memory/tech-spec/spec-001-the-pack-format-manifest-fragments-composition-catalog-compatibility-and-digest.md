@@ -859,6 +859,18 @@ releases:
   names no new format, and its additions (`workflow adopt`, `workflow rekey`, manual checks) need
   no new capability (plan-051 ruling 2, dl-021 R4).
 
+  WingFoil 0.3.2 accepts the key too: on the composed golden tree and the nine README examples of
+  this repository, each committed in a scratch repository with the release's own built-in
+  directive files, as its `init` writes them (bug-010, task-075), `workflow list`, `dna show` and
+  `directives list` run with `--format json` exit 0 with no warning (checked on 2026-11-03,
+  task-074, with `0.3.2 (6de2e13c004bbf419acfa7dc4d98d5a7468cd693)`). Its `format_key` is `true`,
+  it reads format 1 for every kind, and it provides `workflow-engine`; its CHANGELOG names no new
+  format, and its short element references need no new capability (plan-060 ruling 1, dl-021 R4).
+  It refuses some inputs 0.3.1 accepted (a `memory.yaml` type path absolute or holding `.` or `..`,
+  a malformed `id_pattern`, an extra `dna.yaml` `paths` category that is not a list of strings, a
+  directive missing a header field), which no pack ships, and warns on a directive binding with no
+  file without `--role` too, which the matrix's scratch repository meets with the built-in files.
+
   `wingfoil-release-intake` appends one entry per WingFoil release (dl-002).
 
 `V.formats` counts the kinds of both parts of a pack with a conditional part (§6.5), so the check
@@ -1288,3 +1300,11 @@ check the rest, and the composer refuses what they reject.
   The intake applied the recomputed range of the published versions of `base` (1.0.0, 2.0.0:
   `>=0.3.0 <=0.3.1`) to `catalog.yaml`, copied by hand, and `check:packs`' `catalog-range` verifies it:
   the value is the computed one, not a chosen one (§12, dl-002); §11 allows the field's edit.
+- 2026-11-03, task-074 (plan-060), amended in place, approved by the task's merge OK: §12's
+  example lists WingFoil 0.3.2 (`format_key: true`, format 1 for every kind, `workflow-engine`),
+  equal to `compat.yaml` and to the golden fixture's (dl-010); §12's prose records 0.3.2's check,
+  made with the release's own built-in directive files in the scratch repository (bug-010,
+  task-075). The intake applied the recomputed range of the six published versions (`base` 1.0.0,
+  2.0.0, 2.0.1; `software` 1.0.0; `methodology/scrum` 1.0.0; `methodology/kanban` 1.0.0:
+  `>=0.3.0 <=0.3.2`) to `catalog.yaml`, copied by hand, and `check:packs`' `catalog-range` verifies
+  it: the value is the computed one, not a chosen one (§12, dl-002).
