@@ -19,7 +19,8 @@ tooling's self-tests, run in the matrix's self-test mode (dl-009).
 - Before a version is published, compose every preset and every documented combination that
   contains the pack, with **the oldest and the newest** WingFoil release that `compat.yaml` lists as
   compatible (it reads every format, it provides every capability). Each
-  composed `.wingfoil/`, committed in a scratch repository, must pass `wingfoil workflow list`,
+  composed `.wingfoil/`, committed in a scratch repository with the release's own built-in
+  directive files, as its `init` writes them (bug-010), must pass `wingfoil workflow list`,
   `wingfoil dna show` and `wingfoil directives list`, each run with `--format json`, with exit code
   0 and no warning: no stderr line, no stdout line starting `Warning:`, no `workflow list`
   diagnostic of severity warning or error, no `directives list` warning (plan-042, rulings L and
