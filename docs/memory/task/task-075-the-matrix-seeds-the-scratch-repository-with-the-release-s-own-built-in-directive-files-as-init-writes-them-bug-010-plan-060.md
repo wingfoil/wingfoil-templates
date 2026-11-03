@@ -145,3 +145,16 @@ Branch `task/task-075-matrix-builtin-directives` from `main`. A tooling task (dl
   directives cannot be read is that release's I/O failure (exit 2, 13 of 26 failed). Not applied:
   a more telling reason than the last stderr line (the pattern `installRelease` and `runRelease`
   share). `matrix.test`: 48 of 48; the two `validate` tests of bug-010: 2 of 2.
+- 2026-11-03, checks at `3c89e70` (Acceptance 5, 6): from clean clones on Node.js 22.21.0, then
+  22.12.0, one after the other: `npm ci`, `npm test` (1051 of 1051), `lint`, `check:pins`,
+  `check:schemas`, `check:packs`, `index -- --check`, `validate` (18 runs), the golden step (26
+  runs, 0.2.2 tolerated and 0.3.1) and its publication run (26), the overlays `software-exit`,
+  `scrum-exit` and `kanban-exit` (26 each), `workflow list`, `check:runs` (46 runs),
+  `validate:publication` (18), each exit 0 with 0 failed; `npm audit` 0 in the root and every matrix
+  folder; `packs/` unchanged. Nothing changes on the releases listed today. Branch CI run
+  41667034563 on `3c89e70`: `success`.
+- 2026-11-03, Acceptance 5's second half: task-074's branch merged with this one in scratch clones,
+  on both Node.js versions: the golden tree on 0.3.2, 26 runs, 0 failed in self-test (0.2.2
+  tolerated) and in publication; with it `validate` and `validate:publication` 18, the overlays 26
+  each, `check:runs` 46 (on 0.3.0 and 0.3.2), `npm test` 1051 of 1051, the 0.3.2 lockfile audited
+  0. bug-010 is fixed.
