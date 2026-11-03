@@ -60,7 +60,9 @@ they pass on 0.3.2 (46 runs, plan-060's Context).
    - without a seed, the scratch repository holds the composed `.wingfoil/` only (the W-10 test,
      its title extended, unchanged otherwise);
    - `builtinDirectives` with a stub CLI whose `init` writes two files, and exits 1 unless
-     `git config user.name` is set inside its repository: the files are copied and the directory
+     `git config user.name` is set inside its repository, the stub's check run under the matrix's
+     environment (global configuration closed, `GIT_CONFIG_GLOBAL` an empty file in the test), so
+     a developer's own identity cannot satisfy it: the files are copied and the directory
      returned; with an install stamp, two calls run `init` once (a counter file equal to 1 after
      both); a stub whose `init` exits 1, or writes no file, gives a `MatrixIoError` naming the
      release;
@@ -84,9 +86,10 @@ they pass on 0.3.2 (46 runs, plan-060's Context).
 7. **The texts:** `src/matrix.ts`'s header comment and the directive `pack-compatibility`
    (`.wingfoil/directives/custom/pack-compatibility.md`: "each composed `.wingfoil/`, committed in a
    scratch repository" gains "with the release's own built-in directive files, as its `init`
-   writes them"), its version and date raised; the `wingfoil-cli` directive's W-11 workaround
-   noting that the matrix reads the built-ins of each release from its `init`. task-074's §12
-   paragraph on 0.3.2 says the same (its own text).
+   writes them"; the directive carries no version line); the `wingfoil-cli` directive's W-11
+   workaround noting that the matrix reads the built-ins of each release from its `init`, its
+   version and date raised (1.5 → 1.6). task-074's §12 paragraph on 0.3.2 says the same, in
+   task-074's own text, not part of this Acceptance.
 
 Out of scope: `check:runs` (`src/runs.ts`); the golden fixture (unchanged); a feedback note (the
 behaviour is WingFoil's documented fix).
@@ -122,3 +125,6 @@ Branch `task/task-075-matrix-builtin-directives` from `main`. A tooling task (dl
   directive `pack-compatibility` and W-11 named; the cache stamp written last and its absence; the
   arguments' order; the composed-file case unreachable through `validate`. Not applied: comparing
   each release's ids with `BUILTIN_DIRECTIVE_IDS` (optional, out of this fix's scope).
+- 2026-11-03: re-review: approve after amendments, nothing blocking; applied: the version raise
+  moved to `wingfoil-cli` (1.5 → 1.6), `pack-compatibility` having no version line; task-074's §12
+  paragraph out of this Acceptance; the identity test under the matrix's environment. Submitted.
