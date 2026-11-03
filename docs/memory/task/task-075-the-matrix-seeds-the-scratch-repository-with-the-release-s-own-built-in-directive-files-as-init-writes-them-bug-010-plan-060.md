@@ -2,7 +2,7 @@
 id: task-075-the-matrix-seeds-the-scratch-repository-with-the-release-s-own-built-in-directive-files-as-init-writes-them-bug-010-plan-060
 type: task
 title: "The matrix seeds the scratch repository with the release's own built-in directive files, as init writes them (bug-010, plan-060)"
-status: approved
+status: done
 pack: ""            # tooling task (bug-010, plan-060)
 depends_on: []
 tags: ["tooling","matrix","wingfoil"]
