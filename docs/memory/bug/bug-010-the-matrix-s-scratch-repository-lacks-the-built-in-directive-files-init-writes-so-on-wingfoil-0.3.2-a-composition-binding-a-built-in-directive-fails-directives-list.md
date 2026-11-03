@@ -28,7 +28,8 @@ allows ("shipped by a pack of the composition or one of WingFoil's built-in dire
 matrix (`src/matrix.ts`, `runRelease`) commits the composed `.wingfoil/` alone in its scratch
 repository, so no built-in directive file is there; a project `init` created holds them
 (`directives/built-in/architecture.md`, `code-quality.md`, `code-review.md`, `documentation.md`,
-`security.md`, `testing.md`, written alike by 0.2.2, 0.3.0, 0.3.1 and 0.3.2). WingFoil 0.3.2
+`security.md`, `testing.md`: the same six ids on 0.2.2, 0.3.0, 0.3.1 and 0.3.2, each release
+its own content). WingFoil 0.3.2
 warns on a binding with no file without `--role` too (its CHANGELOG, `directives list`), which
 0.3.0 and 0.3.1 did only with `--role`. The published packs bind no built-in directive: this
 repository's nine README examples pass on 0.3.2 (18 runs, 0 failed).
@@ -55,3 +56,5 @@ tree passes on 0.3.2, in both modes, with no change to the fixture.
 - 2026-11-03: severity `major`: it blocks the record of 0.3.2 (task-074), whose CI would fail. The
   approver ruled (2026-11-03, plan-060): a defect of the matrix, fixed by task-075 before task-074
   records 0.3.2.
+- 2026-11-03: independent review: approve, one nit applied (the six ids alike, their content per
+  release); it reproduced Observed and step 3 (on 0.3.1 the removed file gives no warning).

@@ -19,46 +19,58 @@ task-074 (the record of 0.3.2) waits for this task's merge.
 The fix makes the scratch repository hold, beside the composed `.wingfoil/`, the release's own
 built-in directive files as its `init` writes them. They are taken from the release itself, not
 copied into this repository: `init` of every listed release (0.2.2 … 0.3.2) writes the same six
-ids, `src/wingfoil-builtins.ts`'s list. A composed file of the same path wins (a pack shipping a
-built-in id is already a format-1 error, spec-001 §7.6). `check:runs` is not touched: its
-scenarios start from the composition as the matrix does, and its adoption runs from `init`
-itself; they pass on 0.3.2 (46 runs, plan-060's Context).
+ids, `src/wingfoil-builtins.ts`'s list, each release its own content (0.3.x adds `format: 1`), so
+the files are taken per release. A composed file of the same path wins, a safeguard `validate`
+cannot reach (a pack shipping a built-in id is refused by the lint, spec-001 §7.6, O5).
+`check:runs` is not touched: it never runs `directives list`, its scenarios are the published
+examples (no published pack binds a built-in), and its adoption runs start from `init` itself;
+they pass on 0.3.2 (46 runs, plan-060's Context).
 
 ## Acceptance
 
 `npm run build` precedes the commands; tests run by `npm test` unless named. The branch is cut from
 `main` after this body's acceptance.
 
-1. **The built-in files of a release:** a function of `src/matrix.ts`, `builtinDirectives`, given a
-   release's CLI and its cache directory, runs `<cli> init --template Kanban` once in an empty
-   scratch git repository (the matrix's git environment and scratch identity, no network), copies
-   the `.md` files of its `.wingfoil/directives/built-in/` into
-   `<cache>/<version>/built-in-directives/`, removes the scratch repository, and returns that
-   directory; a later call reuses it while the release's install stamp is unchanged. A failing
-   `init`, or one that writes no built-in directive, is a `MatrixIoError` naming the release and
-   the reason, never a pass; no scratch path in a message.
+1. **The built-in files of a release:** a function of `src/matrix.ts`,
+   `builtinDirectives(version, cli, cache)`, runs `<cli> init --template Kanban` once in an empty
+   scratch git repository whose local configuration holds `SCRATCH_IDENTITY`'s name and email and
+   `commit.gpgSign false` (WingFoil's own `git commit` reads no `-c` argument; under the matrix's
+   git environment `init` otherwise exits 1, "git identity not configured", on every release), with
+   `cliEnvironment()` and `COMMAND_TIMEOUT_MS`, no network; it copies the `.md` files of the
+   scratch `.wingfoil/directives/built-in/` into `<cache>/<version>/built-in-directives/`, writes
+   the release's install stamp (`.lockfile-sha256`) there last, removes the scratch repository, and
+   returns that directory. A later call reuses it while that stamp equals the install's; with no
+   install stamp (a cache `installRelease` did not make), `init` runs every time and nothing is
+   reused. A reinstall removes the directory anyway (`installRelease` clears the version's
+   folder). A failing `init`, or one that writes no built-in directive, is a `MatrixIoError`
+   naming the release and the reason, never a pass; no scratch path in a message (`init`'s output
+   names it).
 2. **The scratch repository:** `runRelease` takes the directory of Acceptance 1 as an optional
    argument; when given, each of its files is copied to `.wingfoil/directives/built-in/<file>`
    unless the composed `.wingfoil/` already holds that path, before the commit, so HEAD holds the
    composed `.wingfoil/` and those files. Without it, `runRelease` behaves as today.
 3. **Its callers:** `validate` (every mode, the overlays included) passes the directory for every
    release it installs; when a test replaces the install (`ValidateOptions.install`), no seeding
-   happens unless the test gives the directory too (`ValidateOptions.builtins`), so the stubbed
-   tests of `validate.test.ts` keep their meaning.
+   happens unless the test gives the directory too (`ValidateOptions.builtins(version, cli)`), so
+   the stubbed tests of `validate.test.ts` keep their meaning.
 4. **The tests, red first** (dl-018 R1–R3), in `tests/matrix.test.ts`:
    - `runRelease` with a seed directory: a stub CLI that checks the files exits 0 only when
      `.wingfoil/directives/built-in/security.md` is committed at HEAD with the seed's content;
    - a composed file of the same path is kept, not overwritten;
    - without a seed, the scratch repository holds the composed `.wingfoil/` only (the W-10 test,
      its title extended, unchanged otherwise);
-   - `builtinDirectives` with a stub CLI whose `init` writes two files: they are copied and the
-     directory returned; a second call does not run `init` again; a stub whose `init` exits 1, or
-     writes no file, gives a `MatrixIoError` naming the release;
+   - `builtinDirectives` with a stub CLI whose `init` writes two files, and exits 1 unless
+     `git config user.name` is set inside its repository: the files are copied and the directory
+     returned; with an install stamp, two calls run `init` once (a counter file equal to 1 after
+     both); a stub whose `init` exits 1, or writes no file, gives a `MatrixIoError` naming the
+     release;
    and in `tests/validate.test.ts`, one test that a given `builtins` reaches `runRelease` (a stub
    CLI failing `directives list` unless the seeded file is present). The red commit adds the tests
-   and a `builtinDirectives` that returns an empty directory and a `runRelease` that ignores the
-   argument, so that the build passes and the new tests fail on behaviour; the failing count
-   recorded.
+   and a `builtinDirectives` that returns an empty directory, a `runRelease` that ignores the
+   argument and a `ValidateOptions.builtins` accepted and unused, so that the build passes and the
+   new tests fail on behaviour; the failing count recorded. Expected to pass at red, and said so:
+   the no-seed W-10 test and "a composed file is kept" (checked instead by a mutation, the copy
+   overwriting, which must make it fail, recorded).
 5. **The real engine:** on this branch, `npm run validate` (18 runs), the golden step (26 runs,
    0.2.2 tolerated and 0.3.1), the three overlays (26 each), `npm run validate:publication` (18),
    each 0 failed: nothing changes on the releases listed today. Then, on a scratch copy of
@@ -68,10 +80,13 @@ itself; they pass on 0.3.2 (46 runs, plan-060's Context).
    commit: `npm ci`, `npm test`, `lint`, `check:pins`, `check:schemas`, `check:packs`,
    `index -- --check`, `validate`, the golden step, the three overlays, `workflow list`,
    `check:runs`, `validate:publication` and `npm audit` in the root and in every matrix folder exit
-   0; the branch CI `success`, recorded; after the merge, `main`'s CI read. `src/matrix.ts`'s
-   header comment and spec-001 §12's account of the matrix, if it says the scratch repository
-   holds the composed `.wingfoil/` alone, updated (the text amended in place, the merge OK
-   approving it).
+   0; the branch CI `success`, recorded; after the merge, `main`'s CI read.
+7. **The texts:** `src/matrix.ts`'s header comment and the directive `pack-compatibility`
+   (`.wingfoil/directives/custom/pack-compatibility.md`: "each composed `.wingfoil/`, committed in a
+   scratch repository" gains "with the release's own built-in directive files, as its `init`
+   writes them"), its version and date raised; the `wingfoil-cli` directive's W-11 workaround
+   noting that the matrix reads the built-ins of each release from its `init`. task-074's §12
+   paragraph on 0.3.2 says the same (its own text).
 
 Out of scope: `check:runs` (`src/runs.ts`); the golden fixture (unchanged); a feedback note (the
 behaviour is WingFoil's documented fix).
@@ -80,8 +95,8 @@ behaviour is WingFoil's documented fix).
 
 Branch `task/task-075-matrix-builtin-directives` from `main`. A tooling task (dl-018 R1–R3).
 
-- `src/matrix.ts`: `builtinDirectives(cli: string, version: string, cache: string): string`, its
-  stamp the install's (`.lockfile-sha256`) copied beside the files; `runRelease(cli, composed,
+- `src/matrix.ts`: `builtinDirectives(version: string, cli: string, cache: string): string`, its
+  stamp the install's (`.lockfile-sha256`) written last beside the files; `runRelease(cli, composed,
   release, mode, builtins?)`, the copy after `cpSync` of the composed `.wingfoil/` and before
   `git add` (which adds `.wingfoil` as a whole).
 - `src/validate.ts`: `ValidateOptions.builtins?: (version: string, cli: string) => string |
@@ -98,3 +113,12 @@ Branch `task/task-075-matrix-builtin-directives` from `main`. A tooling task (dl
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-03: independent review of the body: approve after amendments, nothing blocking; it
+  reproduced the defect and ran the fix as a patch of the built `runRelease` on task-074's branch
+  (golden tree 26 runs, 0 failed in both modes; `validate` and `validate:publication` 18, the
+  overlays 26 each, 0 failed). Applied: `init`'s git identity in the scratch repository's own
+  configuration, with a test; the red commit declaring `ValidateOptions.builtins`; the tests
+  passing at red named, the reuse test counting `init`, the composed-file test by mutation; the
+  directive `pack-compatibility` and W-11 named; the cache stamp written last and its absence; the
+  arguments' order; the composed-file case unreachable through `validate`. Not applied: comparing
+  each release's ids with `BUILTIN_DIRECTIVE_IDS` (optional, out of this fix's scope).
