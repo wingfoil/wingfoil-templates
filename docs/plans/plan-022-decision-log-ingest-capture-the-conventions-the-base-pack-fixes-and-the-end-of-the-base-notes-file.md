@@ -63,3 +63,8 @@ What the note holds, and where it goes:
   as approved. `docs/notes/base-regeneration-inputs.md` removed (`1aa50c3`); it stays readable in
   the history (`8b7f782`), which `main`'s protection does not allow to rewrite. The plan stays
   `active` until dl-015 is ruled.
+- 2026-11-03: dl-015 was approved on 2026-10-20 (`4dbc9ef`), so this plan's condition ("`active`
+  until dl-015 is ruled") was met then and the close was left owed, in the row "dl-024 and dl-025
+  ruled …; plan-022 closed" of `docs/owed-items.md`. Closed on the approver's request of
+  2026-11-03, after dl-024 (`bf5ac27`) and dl-025 (`6900576`) were approved (plan-060 ruling 7);
+  this close moves that row to Closed. Nothing else owed. `active → done`.

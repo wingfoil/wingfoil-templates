@@ -56,7 +56,6 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | Sequencer: W8 has four features | plan-052 › step 2, close | approver | the sequencer's next review |
 | dl-012's F4.9 placement | plan-052 › step 2, close | approver | dl-012's ruling |
 | W10: presets, `governance/wingfoil-dogfood`, this repository's adoption, its pin, the first inbox sync | plan-052 ruling 7 | W10 | W10 |
-| dl-024 and dl-025 ruled (both `pending` until then); plan-022 closed | plan-052, plan-053 › close; trigger asked by the approver on 2026-11-01; plan-060 ruling 7 | approver | WingFoil v0.4's planning: met on 2026-11-03; ruled at once (plan-060 ruling 7) |
 | `docs/01_vision/06_features.md` 1.5 → 1.6, with its date: F3.3 adds `check:runs`, with a scenario for every `main`, and the adoption run once per `init` template for a pack with install steps (dl-032 E3), beside `workflow list`, `dna show` and `directives list`; F5.2 adds that `wingfoil-release-intake` starts the periodic retrospective at its close (`retrospective-start`, dl-029) | plan-055 › Execution Notes (leftovers); trigger asked by the approver on 2026-11-01 | approver | the next plan that changes the documentation |
 | This repository's per-pack WIP rule under `methodology/kanban`, whose `limits` count the whole repository (a total limit, or the rule kept by hand over a looser one) | plan-056 ruling 10; pack-methodology-kanban › Adoption | W10 | the adoption |
 | How this repository's tasks carry a `release` under `methodology/kanban`, its packs being released per pack, not through `software`'s `release` | plan-056 › step 4; pack-methodology-kanban › Adoption | W10 | the adoption |
@@ -79,3 +78,4 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | The README generator writes an empty `Memory types` line (``- `task`: `` with a trailing space) for a type whose fragment `states` holds only `limits`, as `methodology/kanban`'s `task` (`memoryLines`, `src/readme-generate.ts`: no `—` without a sequence) | task-067 › review | task-072 (plan-057) |
 | W10: `methodology/kanban`, its first version | plan-052 ruling 7 | plan-058 (prel-006) |
 | `kanban`'s own `pack-cycle` retrospective | plan-058 ruling 5; dl-033 O2 | plan-059 (dl-034) |
+| dl-024 and dl-025 ruled; plan-022 closed | plan-052, plan-053 › close; plan-060 ruling 7 | dl-024, dl-025 (approved 2026-11-03), plan-022 (done 2026-11-03) |
