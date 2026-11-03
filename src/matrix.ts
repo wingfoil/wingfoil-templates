@@ -280,12 +280,25 @@ function hideScratch(text: string, scratch: string, realScratch: string): string
  * composed `.wingfoil/` committed at the root of a fresh git repository (W-10, task-035), after
  * checking that the CLI is that release.
  */
+/**
+ * The built-in directive files the release's own `init` writes (bug-010, task-075). Red: an empty
+ * directory.
+ */
+export function builtinDirectives(version: string, cli: string, cache: string): string {
+  void version; void cli;
+  const target = join(resolvePath(cache), version, 'built-in-directives');
+  mkdirSync(target, { recursive: true });
+  return target;
+}
+
 export function runRelease(
   cli: string,
   composed: string,
   release: CompatRelease,
   mode: MatrixMode,
+  builtins?: string,
 ): ReleaseRun {
+  void builtins;
   const tolerate = mode === 'self-test' && !release.format_key;
   let scratch: string | undefined;
   let realScratch: string | undefined;

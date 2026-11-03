@@ -42,6 +42,11 @@ export interface ValidateOptions extends Omit<DeterminismOptions, 'use'> {
   mode: MatrixMode;
   /** Replaces the install of a release: tests give a stub CLI and never reach the network. */
   install?: (version: string) => string;
+  /**
+   * The directory of a release's own built-in directive files, seeded into the matrix's scratch
+   * repository (bug-010, task-075); when `install` is replaced, none unless given.
+   */
+  builtins?: (version: string, cli: string) => string | undefined;
 }
 
 export interface ValidateResult {

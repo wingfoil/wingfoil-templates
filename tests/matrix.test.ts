@@ -8,7 +8,7 @@ import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
 import {
-  MatrixIoError, installRelease, judge, runRelease, selectReleases,
+  MatrixIoError, builtinDirectives, installRelease, judge, runRelease, selectReleases,
 } from '../src/matrix';
 import type { MatrixMode, ReleaseRun } from '../src/matrix';
 import type { CompatRelease, VersionRequirements } from '../src/range';
@@ -111,7 +111,8 @@ describe('runRelease', () => {
       outcome.tolerated]), COMMANDS.map((command) => [command, true, 0]));
   });
 
-  it('runs at the root of a git repository holding the composed .wingfoil/ only (W-10)', () => {
+  it('runs at the root of a git repository holding the composed .wingfoil/ only, when no '
+    + 'built-in directives are given (W-10, task-075)', () => {
     const checker = new StubWingfoil({}, '0.2.2');
     const composed = composedOutput();
     try {
@@ -413,5 +414,150 @@ describe('installRelease', () => {
       assert.throws(() => installRelease('0.2.2', { pins, cache }),
         (error: unknown) => error instanceof MatrixIoError && /npm ci/.test(error.message));
     });
+  });
+});
+
+/** A stub CLI of `version` that exits 0 only when HEAD holds `file` with `content`. */
+function headChecker(version: string, file: string, content: string): StubWingfoil {
+  const checker = new StubWingfoil({}, version);
+  writeFileSync(checker.cli, [
+    "const { execFileSync } = require('node:child_process');",
+    `if (process.argv[2] === '--version') { process.stdout.write('${version}\\n'); return; }`,
+    'let shown = null;',
+    `try { shown = execFileSync('git', ['show', 'HEAD:${file}'], { encoding: 'utf8' }); }`,
+    'catch { shown = null; }',
+    `process.exitCode = shown === ${JSON.stringify(content)} ? 0 : 1;`,
+    '',
+  ].join('\n'));
+  return checker;
+}
+
+describe('runRelease with the release\'s built-in directives (bug-010, task-075)', () => {
+  const SECURITY = '.wingfoil/directives/built-in/security.md';
+
+  function seed(): { dir: string; dispose: () => void } {
+    const dir = mkdtempSync(join(tmpdir(), 'seed-'));
+    writeFileSync(join(dir, 'security.md'), 'seeded security\n');
+    writeFileSync(join(dir, 'testing.md'), 'seeded testing\n');
+    return { dir, dispose: () => rmSync(dir, { recursive: true, force: true }) };
+  }
+
+  it('commits the given built-in directive files beside the composed .wingfoil/', () => {
+    const checker = headChecker('0.3.2', SECURITY, 'seeded security\n');
+    const composed = composedOutput();
+    const seeded = seed();
+    try {
+      const result = runRelease(checker.cli, composed.dir, release('0.3.2'), 'publication',
+        seeded.dir);
+      assert.equal(result.code, 0, JSON.stringify(result));
+    } finally {
+      checker.dispose();
+      composed.dispose();
+      seeded.dispose();
+    }
+  });
+
+  it('keeps a composed file of the same path', () => {
+    const checker = headChecker('0.3.2', SECURITY, 'composed\n');
+    const composed = composedOutput();
+    const seeded = seed();
+    try {
+      mkdirSync(join(composed.dir, '.wingfoil', 'directives', 'built-in'), { recursive: true });
+      writeFileSync(join(composed.dir, SECURITY), 'composed\n');
+      const result = runRelease(checker.cli, composed.dir, release('0.3.2'), 'publication',
+        seeded.dir);
+      assert.equal(result.code, 0, JSON.stringify(result));
+    } finally {
+      checker.dispose();
+      composed.dispose();
+      seeded.dispose();
+    }
+  });
+});
+
+describe('builtinDirectives (bug-010, task-075)', () => {
+  /**
+   * A stub CLI whose `init` counts its runs, needs a git identity in its repository's own
+   * configuration (the matrix's environment closes the global one), and writes `files`.
+   */
+  function initStub(files: string[], status = 0): StubWingfoil {
+    const stub = new StubWingfoil({}, '0.3.2');
+    writeFileSync(stub.cli, [
+      "const fs = require('node:fs');",
+      "const path = require('node:path');",
+      "const { execFileSync } = require('node:child_process');",
+      "if (process.argv[2] !== 'init') { process.exitCode = 2; return; }",
+      "const counter = path.join(__dirname, 'init-count');",
+      "fs.writeFileSync(counter, String(Number(fs.existsSync(counter)",
+      "  ? fs.readFileSync(counter, 'utf8') : '0') + 1));",
+      'let name = "";',
+      "try { name = execFileSync('git', ['config', 'user.name'], { encoding: 'utf8' }).trim(); }",
+      'catch { name = ""; }',
+      "if (name === '') { process.stderr.write('error: git identity not configured\\n');",
+      '  process.exitCode = 1; return; }',
+      "const dir = path.join('.wingfoil', 'directives', 'built-in');",
+      'fs.mkdirSync(dir, { recursive: true });',
+      `for (const file of ${JSON.stringify(files)}) fs.writeFileSync(path.join(dir, file), file);`,
+      `process.exitCode = ${status};`,
+      '',
+    ].join('\n'));
+    return stub;
+  }
+
+  function withCache(stamped: boolean, body: (cache: string) => void): void {
+    const cache = mkdtempSync(join(tmpdir(), 'cache-'));
+    try {
+      mkdirSync(join(cache, '0.3.2'));
+      if (stamped) writeFileSync(join(cache, '0.3.2', '.lockfile-sha256'), 'stamp');
+      body(cache);
+    } finally {
+      rmSync(cache, { recursive: true, force: true });
+    }
+  }
+
+  const count = (stub: StubWingfoil): number =>
+    Number(readFileSync(join(stub.dir, 'init-count'), 'utf8'));
+
+  it('copies the files the release\'s init writes, and runs init once while the install stamp '
+    + 'holds', () => {
+    const stub = initStub(['security.md', 'testing.md']);
+    try {
+      withCache(true, (cache) => {
+        const first = builtinDirectives('0.3.2', stub.cli, cache);
+        assert.equal(readFileSync(join(first, 'security.md'), 'utf8'), 'security.md');
+        assert.equal(readFileSync(join(first, 'testing.md'), 'utf8'), 'testing.md');
+        assert.equal(builtinDirectives('0.3.2', stub.cli, cache), first);
+        assert.equal(count(stub), 1);
+      });
+    } finally {
+      stub.dispose();
+    }
+  });
+
+  it('runs init every time when the release has no install stamp', () => {
+    const stub = initStub(['security.md']);
+    try {
+      withCache(false, (cache) => {
+        builtinDirectives('0.3.2', stub.cli, cache);
+        builtinDirectives('0.3.2', stub.cli, cache);
+        assert.equal(count(stub), 2);
+      });
+    } finally {
+      stub.dispose();
+    }
+  });
+
+  it('is an I/O error naming the release when init fails or writes no built-in directive', () => {
+    for (const stub of [initStub(['security.md'], 1), initStub([])]) {
+      try {
+        withCache(true, (cache) => {
+          assert.throws(() => builtinDirectives('0.3.2', stub.cli, cache),
+            (error: unknown) => error instanceof MatrixIoError && /0\.3\.2/.test(error.message)
+              && !/cache-/.test(error.message));
+        });
+      } finally {
+        stub.dispose();
+      }
+    }
   });
 });
