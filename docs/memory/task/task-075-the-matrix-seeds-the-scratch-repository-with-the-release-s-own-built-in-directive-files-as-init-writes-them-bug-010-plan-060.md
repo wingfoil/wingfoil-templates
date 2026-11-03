@@ -128,3 +128,12 @@ Branch `task/task-075-matrix-builtin-directives` from `main`. A tooling task (dl
 - 2026-11-03: re-review: approve after amendments, nothing blocking; applied: the version raise
   moved to `wingfoil-cli` (1.5 → 1.6), `pack-compatibility` having no version line; task-074's §12
   paragraph out of this Acceptance; the identity test under the matrix's environment. Submitted.
+- 2026-11-03, red first (dl-018 R1), at `8d93af4` (the tests, a `builtinDirectives` returning an
+  empty directory, `runRelease` ignoring its argument, `ValidateOptions.builtins` declared):
+  `node --test dist/tests/matrix.test.js`: 47 tests, 43 pass, 4 fail (the seeded commit and the
+  three `builtinDirectives` tests); the `validate.test` seed test: 1 of 1 fails. Passing at red, as
+  the Acceptance says: the W-10 test and "keeps a composed file of the same path".
+- 2026-11-03, green at `91c6007`: `node --test dist/tests/matrix.test.js
+  dist/tests/validate.test.js`: 107 of 107. Mutation (R2): the copy overwriting a composed file
+  makes "keeps a composed file of the same path" fail (0 of 1), restored. Texts at `f99bf89`:
+  `src/matrix.ts`'s header, `pack-compatibility`, `wingfoil-cli` 1.6 (W-11).
