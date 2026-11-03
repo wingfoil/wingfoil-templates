@@ -69,14 +69,16 @@ golden 26, `check:runs` 46, as the scratch run shows); the cost is one cache mis
 hashes every matrix lockfile, with no `restore-keys`, so the new lockfile reinstalls every
 selected release once per Node.js version), and the tests the task changes.
 
-**Next release planning of WingFoil** (for `retrospective-start`): not announced. On WingFoil's
+**Next release planning of WingFoil** (for `retrospective-start`): **2026-11-03**, as the approver
+reported on 2026-11-03 (ruling 6). Before that report it was not announced: on WingFoil's
 `main` (2026-11-02, the merge forward of 0.3.2), `minor-v0.4` is `planning` with no
 release-planning plan yet; WingFoil's dl-186 has v0.4's planning start after the `v0.3.2` tag. The
 estimate given on 2026-10-28 was "not before 2026-11-06".
 
 ## Proposed outline (ruled by the approver before `submit`)
 
-Each point with a recommendation.
+Each point with a recommendation. Where a ruling below differs (points 6 and 7), the ruling
+stands.
 
 1. **One task, task-074 "record WingFoil 0.3.2"** (`tooling-delivery`, `pack: ""`, as `developer`,
    red first, dl-018), as task-059 did for 0.3.1; plan-051's task-058 is not needed again, since
@@ -203,7 +205,7 @@ branch while another branch holds a new element of the same type.
 
 ## The approver's rulings
 
-Given on 2026-11-03, in chat: every point of the outline as recommended, with points 6 and 7
+Given by the approver on 2026-11-03: every point of the outline as recommended, with points 6 and 7
 changed by what the approver reported the same day: **WingFoil's v0.4 release planning starts on
 2026-11-03**, so T2's deadline ("before WingFoil's next release planning") can no longer be met.
 1. **Point 1:** one task, task-074, its content as listed.
@@ -213,18 +215,22 @@ changed by what the approver reported the same day: **WingFoil's v0.4 release pl
 4. **Point 4:** no CI change; the durations recorded as G12's evidence; G12 keeps W10.
 5. **Point 5:** `plan-migrations` empty unless `recheck` finds a format read differently.
 6. **Point 6, changed:** the periodic retrospective starts at this intake's close, with the period,
-   sources and register as written. Its deadline: its WingFoil-side notes on `main` as soon as
-   possible, while v0.4's release planning is still running, so that WingFoil can still read them
-   there; the retrospective closed within seven days of this intake's close (T2's bound). The
-   2026-11-05 date, its fallback and the 2026-11-04 clause are dropped. No work of this repository
+   sources and register as written. dl-029 T2 does not cover a planning that starts before the
+   intake's close, so the approver rules the deadline instead: its WingFoil-side notes on `main` as
+   soon as possible, while v0.4's release planning is still running, so that WingFoil can still
+   read them there; the retrospective closed within seven days of this intake's close. The
+   2026-11-05 date, its fallback and the 2026-11-04 clause are dropped. The gap in T2 has its row
+   in `docs/owed-items.md`, for that retrospective (dl-036 R2). No work of this repository
    waits for v0.4's planning to end.
 7. **Point 7, changed:** dl-024 and dl-025 are ruled now, at once, not at the periodic
    retrospective's `approve`, so that they can weigh on v0.4's planning; the row's trigger is
-   met. Their ruling is recorded in their own Execution Notes; the row moves to Closed when both are
-   ruled.
+   met. Outside this plan's steps: claude hands the approver the commands for dl-024 and dl-025,
+   their ruling recorded in their own Execution Notes; plan-022 closes after them; the last of these
+   moves the row "dl-024 and dl-025 ruled …; plan-022 closed" to Closed with its id.
 8. **Point 8:** one dl actions plan for dl-035 … dl-037, with the periodic retrospective's governance
-   decision-logs, right after that retrospective and before WingFoil UI's feedback; the two rows
-   are updated in this commit (dl-036 R2).
+   decision-logs, right after that retrospective and before WingFoil UI's feedback; the rows "The
+   dl actions of dl-035 … dl-037 …" and "WingFoil UI's feedback after adopting …" updated in the
+   commit that records this ruling (dl-036 R2).
 9. **Point 9:** as written.
 
 ## Steps
@@ -270,8 +276,7 @@ private repository or project, no intermediary session); after every push to `ma
 - **Reviewer:** an independent subagent for this plan, task-074's body and build, the recheck and
   the close (dl-017).
 - **Approver:** the outline before `submit`; task-074's backlog acceptance, its approval and merge
-  OK; the notices' text; WingFoil's v0.4 planning date, asked of the coordination of the WingFoil
-  projects.
+  OK; the notices' text; WingFoil's v0.4 planning date (reported on 2026-11-03).
 - Done when `compat.yaml` lists 0.3.2, the six published versions carry `">=0.3.0 <=0.3.2"`,
   `check:runs` runs on 0.3.0 and 0.3.2, the recheck is recorded and checked, plan-061 is added and
   this plan records it with its deadline, the charters' notes and the owed rows are written, the
@@ -297,3 +302,8 @@ private repository or project, no intermediary session); after every push to `ma
   v0.4 release planning starts on 2026-11-03: rulings 6 and 7 change point 6's deadline and move
   dl-024 and dl-025 to an immediate ruling. Ruling 8's rows of `docs/owed-items.md` (the dl actions
   of dl-035 … dl-037, WingFoil UI's feedback) updated in the same commit (dl-036 R2).
+- 2026-11-03: re-review (dl-017, rulings 6 and 7 changed decisions): approve after amendments,
+  nothing blocking; applied: the planning date in the Context; ruling 6 stated as the approver's
+  deadline where T2 has no case, with a row for the gap; the dl-024/dl-025 row's trigger marked met
+  and its Source citing ruling 7, who closes it; the outline yielding to the rulings; the rows
+  ruling 8 updated named; the Handoff's date item done; the rulings' carrier dropped.
