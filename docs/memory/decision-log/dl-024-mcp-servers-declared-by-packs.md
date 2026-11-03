@@ -178,3 +178,9 @@ the fragment, and the server entry is removed from section 3 (as F6.1's hand ste
   5. F-035's six requests to be checked against D3's items by task-063's review. Done there: they
      match one to one; D3 5 says "a pack update", where D4 and F-035 say install or update, so D3 5
      to read "a pack install or update".
+- 2026-11-03, plan-060 ruling 7: ruled at once, WingFoil's v0.4 release planning starting on
+  2026-11-03 (the trigger of its row in `docs/owed-items.md`). The approver ruled the review
+  findings of 2026-10-28: all five accepted as written, applied not in this text but by the dl
+  actions that implement this decision (D6), with D3 5 read as "a pack install or update"; the
+  decision (option (b), with (a) as the interim) unchanged. The dl actions have their row in
+  `docs/owed-items.md`.

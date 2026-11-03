@@ -241,3 +241,10 @@ F3.5 is extended: each pack is composed with every pack its `tensions` name and 
      axis); D3's `tensions` entry without a range syntax; dl-011 cited as if approved, and §10 has
      no content guidance yet; the precedence table reaches agents only once a project pastes the
      AGENTS.md region.
+- 2026-11-03, plan-060 ruling 7: ruled at once, WingFoil's v0.4 release planning starting on
+  2026-11-03 (the trigger of its row in `docs/owed-items.md`). The approver ruled the review
+  findings of 2026-10-28: all accepted as written, applied not in this text but by the dl actions
+  that implement this decision (D7); for finding 1 the approver chose (ii): the pre-swap step of
+  the target stage's transition workflow reads the exit-check directives that the conditional
+  entries ship, so D4's format change needs no conditional entry replacing a workflow. The
+  decision (option (c)) unchanged. The dl actions have their row in `docs/owed-items.md`.

@@ -307,3 +307,7 @@ private repository or project, no intermediary session); after every push to `ma
   deadline where T2 has no case, with a row for the gap; the dl-024/dl-025 row's trigger marked met
   and its Source citing ruling 7, who closes it; the outline yielding to the rulings; the rows
   ruling 8 updated named; the Handoff's date item done; the rulings' carrier dropped.
+- 2026-11-03, ruling 7: the approver ruled the review findings of dl-024 and dl-025 (all accepted,
+  applied by their dl actions; dl-025 finding 1, option (ii)), recorded in their Execution Notes,
+  then approves both; their dl actions get the row "The dl actions of dl-024 and dl-025 …" in
+  `docs/owed-items.md`.

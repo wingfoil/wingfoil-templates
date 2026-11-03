@@ -27,6 +27,7 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | `check:pins` covering `overrides` in `package.json`, which it does not read today (`src/check-pins.ts`, its dependency fields) | bug-009; task-071 | approver | the next dependency update |
 | The `minimatch` override removed once `eslint`, `@eslint/config-array` and `typescript-eslint` accept `minimatch` 11; until then it forces every `minimatch` of the tree onto 11.0.3, a later dependency needing another major included, with no warning | bug-009; task-071 | approver | the next dependency update |
 | Recheck W-01 … W-14 and the open notes against 0.3.x (F-003, F-005, F-012, F-017) | dl-021's note; `wingfoil-cli` rule 5 | W10 | the pin bump |
+| The dl actions of dl-024 and dl-025 (spec-001, spec-002, `schema/`, `pack-authoring`, the F3.5 lint, as their D6 and D7 list), with the review findings of 2026-10-28 the approver accepted (dl-025 finding 1: option (ii)), a dl actions plan | dl-024, dl-025 › Execution Notes 2026-11-03; plan-060 ruling 7 | approver | the approval of both; the approver places the plan |
 | G7: in-place amendment (the `pack` type `amendable`, the rulings held in plans, a rule on amend versus note); see also plan-031's row | dl-028 D1 (inventory §7) | W10 | W10 |
 | G8: dl-017 R2 for documents and configuration | dl-028 D1 (inventory §7) | W10 | W10 |
 | G9: the inbox's first line may name a plan or a decision-log; reserved gaps revisited (the inbox's contiguous numbering is this repository's own test, dl-031 R5) | dl-028 D1 (inventory §7) | W10 | W10 |
