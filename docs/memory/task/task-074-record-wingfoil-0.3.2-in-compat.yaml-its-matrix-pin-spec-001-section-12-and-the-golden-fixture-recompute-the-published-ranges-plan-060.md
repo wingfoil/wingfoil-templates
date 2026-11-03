@@ -31,8 +31,8 @@ met by no pack).
    description naming this task, as `wingfoil-0.3.1/`'s does, and its lockfile from
    `npm install --package-lock-only --ignore-scripts` in that folder; `npm audit` in it reports 0
    vulnerabilities; `npm run check:pins` exits 0.
-2. **`compat.yaml`:** release 0.3.2 after 0.3.1, with `format_key: true`, `reads` at format 1 for the
-   seven kinds, `capabilities: [workflow-engine]` and `notes`: "Accepts the format: key; format 1;
+2. **`compat.yaml`:** release 0.3.2 after 0.3.1, with `format_key: true`, `reads` at format 1 for
+   the seven kinds, `capabilities: [workflow-engine]` and `notes`: "Accepts the format: key; format 1;
    no new capability: short element references are needed by no pack (plan-060 ruling 1, dl-021
    R4). Refuses a memory.yaml type path absolute or holding . or .., a malformed id_pattern, an
    extra dna.yaml paths category that is not a list of strings and a directive missing a header
@@ -44,8 +44,8 @@ met by no pack).
    `software` 1.0.0; `methodology/scrum` 1.0.0; `methodology/kanban` 1.0.0) edited by hand to
    `wingfoil: ">=0.3.0 <=0.3.2"`, byte for byte as `toYaml` writes it; spec-001 §11 allows the
    field's edit. `npm run index`: the root `CATALOG.md` (its four range cells, one per pack) and
-   `catalog-index.json` (the six ranges) change and nothing else; `llms.txt` and the fixture trees' outputs
-   byte-unchanged, `install` empty.
+   `catalog-index.json` (the six ranges) change and nothing else; `llms.txt` and the fixture trees'
+   outputs byte-unchanged, `install` empty.
 4. **spec-001**, amended in place (the merge OK approves the text, as task-059): §12's example and
    `tests/fixtures/compose/tree/compat.yaml` equal to the real file (dl-010), no YAML block added
    before the example (`compat.test` reads the first fence); §12's prose gaining 0.3.2's check
@@ -62,15 +62,17 @@ met by no pack).
      on the changed expectations), a `stubbed032` printing `0.3.2 (6de2e13c)`, its comment naming
      this task, and a fourth `byRelease` parameter and map key `'0.3.2'` (71–73), as task-059 added
      0.3.1's; the golden self-test (121–133): 0.3.2's lines in place of 0.3.1's, the total
-     unchanged; the warning test (141–149) on a warned 0.3.2 stub, its counts unchanged; the golden
+     unchanged; the warning test (141–149) on a warned 0.3.2 stub (`stubbed032` takes
+     `diagnostics` as `stubbed031` does; the call at 146 becomes `byRelease(WINGFOIL,
+     WINGFOIL_030, WINGFOIL_031, warned)`), its counts unchanged; the golden
      publication (159–165): 0.3.0 and 0.3.2; the install-failure test (205–217):
      `/wingfoil@0\.3\.2: npm ci failed/`, still `26 runs, 26 failed`; this repository's
      `validate` (279) and publication (332) titles naming 0.3.0 and 0.3.2, their counts unchanged;
      the overlay test on the golden tree (708): `wingfoil@0.3.2 … (self-test)`; the renamed titles
      (121, 141, 159, 279, 332) cite task-074 beside the tasks they cite;
    - `tests/compat.test.ts`: the real releases (53–58: 0.2.2, 0.3.0, 0.3.1, 0.3.2 with
-     `workflow-engine`; 59: the `reads` loop over `[1, 2, 3]`); the range (67–71: `>=0.3.0 <=0.3.2`); the ascending test (77:
-     `['0.2.2', '0.3.0', '0.3.1', '0.3.2', '0.4.0']`); the repeated release (90: repeats 0.3.2,
+     `workflow-engine`; 59: the `reads` loop over `[1, 2, 3]`); the range (67–71:
+     `>=0.3.0 <=0.3.2`); the ascending test (77: `['0.2.2', '0.3.0', '0.3.1', '0.3.2', '0.4.0']`); the repeated release (90: repeats 0.3.2,
      matching `/0\.3\.2/`);
    - unchanged, and said so: the tests on `FROZEN_COMPAT` and `fixtureCompat`, `range.test.ts`,
      `matrix.test.ts` and `runs.test.ts` (synthetic releases or a fake `Compose`),
@@ -80,8 +82,8 @@ met by no pack).
 6. **The 0.3.2 check**, before the record commit and recorded: with 0.3.2 from the matrix's cache,
    the golden tree and the nine README examples composed from the branch, each committed in a
    scratch repository by the matrix's own `runRelease` in publication mode (the golden fixture's
-   `compat.yaml` lacks 0.3.2 before the record commit, so `validate` cannot run this check): `workflow list`, `dna show` and
-   `directives list` with `--format json`, exit 0, no warning; the golden tree's `format:` keys
+   `compat.yaml` lacks 0.3.2 before the record commit, so `validate` cannot run this check):
+   `workflow list`, `dna show` and `directives list` with `--format json`, exit 0, no warning; the golden tree's `format:` keys
    accepted (`format_key: true`).
 7. **After it**, on the branch: `npm run validate` (18 runs), the overlays `software-exit`,
    `scrum-exit` and `kanban-exit` (26 each), the golden step (26 runs, 0.2.2 tolerated and 0.3.2),
@@ -107,11 +109,12 @@ Branch `task/task-074-record-0.3.2` from `main`. A tooling task (dl-018 R1–R3)
 
 **Red commit** (`test(compat): red first, …`): the tests of Acceptance 5 changed, nothing else.
 Run against the unchanged `compat.yaml`; the failing count recorded, each failure for the right
-reason (dl-018 R1): the `compat.test` cases (0.3.2 not listed) and the `validate.test` cases that
-name 0.3.2 (the matrix still selects 0.3.1); no other test fails.
+reason (dl-018 R1): 9 failing, the 4 `compat.test` cases (53, 67, 77, 90: 0.3.2 not listed) and
+the 5 `validate.test` cases asserting a 0.3.2 line or stub (121, 141, 159, 205, 708: the matrix
+still selects 0.3.1); 279 and 332 change only their titles and stay green; no other test fails.
 
-**Pin commit** (`build(matrix): pin WingFoil 0.3.2 …`): Acceptance 1. `check:pins` exits 0 (it checks every
-folder of `src/matrix/`, listed or not), and `npm test` fails as at the red commit (the pin alone
+**Pin commit** (`build(matrix): pin WingFoil 0.3.2 …`): Acceptance 1. `check:pins` exits 0 (it checks
+every folder of `src/matrix/`, listed or not), and `npm test` fails as at the red commit (the pin alone
 selects nothing).
 
 **Record commit** (`feat(compat): record WingFoil 0.3.2 …`), one commit: `compat.yaml`
@@ -134,3 +137,6 @@ Note; dl-009's Execution Note superseding its 0.3.1 note (Acceptance 4).
   stub kept beside a new 0.3.2 one, so that the red run fails only on the changed expectations,
   and the expected failures named; 0.3.2's `reads` checked (the loop over `[1, 2, 3]`); the titles
   citing task-074; `CATALOG.md`'s four cells; the check's mechanism; the 0.3.1 pin kept.
+- 2026-11-03: re-review: approve; its should-fix (279 and 332 change only their titles, so the red
+  run expects 9 failures, named) and two nits (the warning test's fourth argument, line wrapping)
+  applied. Submitted.
