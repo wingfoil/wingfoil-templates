@@ -23,7 +23,8 @@ import { exampleFiles } from './examples';
 import { runIndex } from './index';
 import { packLayoutProblems, treeLayout } from './layout-rules';
 import {
-  DEFAULT_CACHE, MATRIX_PINS, MatrixIoError, installRelease, runRelease, selectReleases,
+  DEFAULT_CACHE, MATRIX_PINS, MatrixIoError, builtinDirectives, installRelease, runRelease,
+  selectReleases,
 } from './matrix';
 import type { MatrixMode } from './matrix';
 import { formatProblem, sortProblems } from './problems';
@@ -178,10 +179,12 @@ class Matrix {
   failed = 0;
   readonly tolerated = new Set<string>();
   private readonly installed = new Map<string, string | MatrixIoError>();
+  private readonly seeds = new Map<string, string | undefined>();
 
   constructor(
     readonly mode: MatrixMode,
     private readonly install: (version: string) => string,
+    private readonly builtins: (version: string, cli: string) => string | undefined,
     private readonly fail: (level: number, line: string) => void,
     private readonly report: (line: string) => void,
   ) {}
@@ -191,6 +194,7 @@ class Matrix {
     if (cli === undefined) {
       try {
         cli = this.install(version);
+        this.seeds.set(version, this.builtins(version, cli));
       } catch (error) {
         cli = error instanceof MatrixIoError ? error : new MatrixIoError(messageOf(error));
       }
@@ -215,7 +219,8 @@ class Matrix {
         this.fail(2, `${head}: ${cli.message}`);
         continue;
       }
-      const result = runRelease(cli, composed, release, this.mode);
+      const result = runRelease(cli, composed, release, this.mode,
+        this.seeds.get(release.wingfoil));
       if (result.message !== undefined) {
         this.failed += 1;
         this.fail(result.code, `${head}: ${result.message}`);
@@ -479,6 +484,10 @@ ValidateResult {
   const matrixLines: string[] = [];
   const matrix = new Matrix(mode,
     options.install ?? ((version) => installRelease(version, { pins: MATRIX_PINS, cache })),
+    // The release's own built-in directive files (bug-010); a replaced install seeds none unless
+    // the caller gives them too.
+    options.builtins ?? (options.install === undefined
+      ? (version, cli) => builtinDirectives(version, cli, cache) : () => undefined),
     (level, line) => {
       code = Math.max(code, level);
       matrixLines.push(line);

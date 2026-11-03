@@ -2,7 +2,9 @@
 // oldest and the newest compatible WingFoil release, each installed pinned (its own committed
 // lockfile) and in isolation (its own directory, never the repository's node_modules). The composed
 // .wingfoil/ is committed in a scratch repository, since WingFoil 0.3.0 reads what is committed at
-// HEAD (task-035). It passes when `workflow list`, `dna show` and `directives list`, run with
+// HEAD (task-035), with the release's own built-in directive files, as its `init` writes them in a
+// project, since a composition may bind them (spec-001 §7.4) and 0.3.2 warns on a binding with no
+// file (bug-010, task-075). It passes when `workflow list`, `dna show` and `directives list`, run with
 // `--format json`, exit 0 and report no warning: no stderr line, no stdout line starting
 // `Warning:`, no `workflow list` diagnostic of severity warning or error, no `directives list`
 // warning (the approver's rulings L and M, plan-042). Self-test mode only, and only for a release
@@ -10,8 +12,8 @@
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
-  copyFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync,
-  writeFileSync,
+  copyFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync,
+  realpathSync, rmSync, writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve as resolvePath, sep } from 'node:path';
@@ -29,8 +31,9 @@ export const COMMANDS: readonly { label: string; args: readonly string[] }[] = [
 ].map((words) => ({ label: words.join(' '), args: [...words, '--format', 'json'] }));
 
 /** The identity of the scratch commit: the matrix's git environment carries none (git.ts). */
-const SCRATCH_IDENTITY = ['-c', 'user.name=wingfoil-templates-matrix',
-  '-c', 'user.email=matrix@wingfoil-templates.invalid'];
+const SCRATCH_NAME = 'wingfoil-templates-matrix';
+const SCRATCH_EMAIL = 'matrix@wingfoil-templates.invalid';
+const SCRATCH_IDENTITY = ['-c', `user.name=${SCRATCH_NAME}`, '-c', `user.email=${SCRATCH_EMAIL}`];
 
 function escapeRegExp(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -280,15 +283,60 @@ function hideScratch(text: string, scratch: string, realScratch: string): string
  * composed `.wingfoil/` committed at the root of a fresh git repository (W-10, task-035), after
  * checking that the CLI is that release.
  */
+/** Where `init` writes WingFoil's own built-in directives, in a project and in the matrix. */
+const BUILTIN_DIRECTIVES = join('.wingfoil', 'directives', 'built-in');
+
 /**
- * The built-in directive files the release's own `init` writes (bug-010, task-075). Red: an empty
- * directory.
+ * The built-in directive files the release's own `init` writes (bug-010, task-075): a project
+ * `init` created holds them, and a composition may bind them (spec-001 §7.4). `init` runs once in
+ * an empty scratch repository whose own configuration holds the scratch identity (WingFoil's
+ * `git commit` reads no `-c`, and the matrix's environment closes the global configuration); its
+ * files are kept in `<cache>/<version>/built-in-directives/`, stamped last with the release's
+ * install stamp, and reused while that stamp holds. With no install stamp, nothing is reused.
  */
 export function builtinDirectives(version: string, cli: string, cache: string): string {
-  void version; void cli;
-  const target = join(resolvePath(cache), version, 'built-in-directives');
-  mkdirSync(target, { recursive: true });
-  return target;
+  const release = join(resolvePath(cache), version);
+  const target = join(release, 'built-in-directives');
+  const installStamp = join(release, STAMP);
+  const sha = existsSync(installStamp) ? readFileSync(installStamp, 'utf8') : undefined;
+  const ownStamp = join(target, STAMP);
+  if (sha !== undefined && existsSync(ownStamp) && readFileSync(ownStamp, 'utf8') === sha) {
+    return target;
+  }
+  let scratch: string | undefined;
+  let realScratch: string | undefined;
+  try {
+    scratch = mkdtempSync(join(tmpdir(), 'matrix-init-'));
+    realScratch = realpathSync(scratch);
+    runGit(scratch, ['init', '--quiet']);
+    runGit(scratch, ['config', 'user.name', SCRATCH_NAME]);
+    runGit(scratch, ['config', 'user.email', SCRATCH_EMAIL]);
+    runGit(scratch, ['config', 'commit.gpgSign', 'false']);
+    const init = execute(cli, ['init', '--template', 'Kanban'], scratch);
+    if (init.timedOut === true || init.status !== 0) {
+      const why = init.timedOut === true ? `timed out after ${COMMAND_TIMEOUT_MS / 1000} s`
+        : `exit ${init.status ?? 'none'}: ${lastLine(init.stderr)}`;
+      throw new MatrixIoError(`wingfoil@${version}: init ${hideScratch(why, scratch, realScratch)}`);
+    }
+    const written = join(scratch, BUILTIN_DIRECTIVES);
+    const files = existsSync(written)
+      ? readdirSync(written).filter((name) => name.endsWith('.md')).sort() : [];
+    if (files.length === 0) {
+      throw new MatrixIoError(`wingfoil@${version}: init wrote no built-in directive`);
+    }
+    rmSync(target, { recursive: true, force: true });
+    mkdirSync(target, { recursive: true });
+    for (const file of files) copyFileSync(join(written, file), join(target, file));
+    if (sha !== undefined) writeFileSync(ownStamp, sha);
+    return target;
+  } catch (error) {
+    if (error instanceof MatrixIoError) throw error;
+    const message = error instanceof Error ? error.message : String(error);
+    throw new MatrixIoError(`wingfoil@${version}: built-in directives: `
+      + (scratch === undefined ? message : hideScratch(message, scratch, realScratch ?? scratch)));
+  } finally {
+    if (scratch !== undefined) rmSync(scratch, { recursive: true, force: true });
+  }
 }
 
 export function runRelease(
@@ -298,7 +346,6 @@ export function runRelease(
   mode: MatrixMode,
   builtins?: string,
 ): ReleaseRun {
-  void builtins;
   const tolerate = mode === 'self-test' && !release.format_key;
   let scratch: string | undefined;
   let realScratch: string | undefined;
@@ -306,6 +353,14 @@ export function runRelease(
     scratch = mkdtempSync(join(tmpdir(), 'matrix-'));
     realScratch = realpathSync(scratch);
     cpSync(join(composed, '.wingfoil'), join(scratch, '.wingfoil'), { recursive: true });
+    if (builtins !== undefined) {
+      // As in a project init created; a composed file of the same path wins (bug-010).
+      const into = join(scratch, BUILTIN_DIRECTIVES);
+      mkdirSync(into, { recursive: true });
+      for (const file of readdirSync(builtins).filter((name) => name.endsWith('.md'))) {
+        if (!existsSync(join(into, file))) copyFileSync(join(builtins, file), join(into, file));
+      }
+    }
     runGit(scratch, ['init', '--quiet']);
     runGit(scratch, ['add', '--force', '--', '.wingfoil']);
     try {
