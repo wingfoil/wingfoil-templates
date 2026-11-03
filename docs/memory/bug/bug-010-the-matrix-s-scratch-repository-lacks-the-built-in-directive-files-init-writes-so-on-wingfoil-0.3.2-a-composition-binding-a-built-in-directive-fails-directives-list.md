@@ -2,7 +2,7 @@
 id: bug-010-the-matrix-s-scratch-repository-lacks-the-built-in-directive-files-init-writes-so-on-wingfoil-0.3.2-a-composition-binding-a-built-in-directive-fails-directives-list
 type: bug
 title: "The matrix's scratch repository lacks the built-in directive files init writes, so on WingFoil 0.3.2 a composition binding a built-in directive fails directives list"
-status: draft
+status: pending
 severity: "major"        # critical | major | minor
 pack: ""            # tooling
 tags: ["tooling","matrix","wingfoil"]
