@@ -495,6 +495,8 @@ describe('builtinDirectives (bug-010, task-075)', () => {
       'catch { name = ""; }',
       "if (name === '') { process.stderr.write('error: git identity not configured\\n');",
       '  process.exitCode = 1; return; }',
+      `if (${status} !== 0) { process.stderr.write(\`error: cannot init \${process.cwd()}\\n\`);`,
+      `  process.exitCode = ${status}; return; }`,
       "const dir = path.join('.wingfoil', 'directives', 'built-in');",
       'fs.mkdirSync(dir, { recursive: true });',
       `for (const file of ${JSON.stringify(files)}) fs.writeFileSync(path.join(dir, file), file);`,
@@ -547,13 +549,26 @@ describe('builtinDirectives (bug-010, task-075)', () => {
     }
   });
 
+  it('hides the scratch repository in the message of a failing init', () => {
+    const stub = initStub(['security.md'], 1);
+    try {
+      withCache(true, (cache) => {
+        assert.throws(() => builtinDirectives('0.3.2', stub.cli, cache),
+          (error: unknown) => error instanceof MatrixIoError
+            && /cannot init <scratch>/.test(error.message) && !/matrix-init-/.test(error.message));
+      });
+    } finally {
+      stub.dispose();
+    }
+  });
+
   it('is an I/O error naming the release when init fails or writes no built-in directive', () => {
     for (const stub of [initStub(['security.md'], 1), initStub([])]) {
       try {
         withCache(true, (cache) => {
           assert.throws(() => builtinDirectives('0.3.2', stub.cli, cache),
             (error: unknown) => error instanceof MatrixIoError && /0\.3\.2/.test(error.message)
-              && !/cache-/.test(error.message));
+              && !/matrix-init-/.test(error.message));
         });
       } finally {
         stub.dispose();

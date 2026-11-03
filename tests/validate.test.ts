@@ -252,6 +252,20 @@ describe('npm run validate', () => {
     }
   });
 
+  it('makes a release whose built-in directives cannot be read an I/O failure (bug-010, '
+    + 'task-075)', () => {
+    const result = validate(['--tree', TREE, ...NAME], { builtins: (version) => {
+      if (version === '0.2.2') throw new MatrixIoError('wingfoil@0.2.2: init exit 1: x');
+      return undefined;
+    } });
+    assert.equal(result.code, 2, result.lines.join('\n'));
+    assert.ok(result.lines.some((line) => /wingfoil@0\.2\.2: init exit 1: x/.test(line)),
+      result.lines.join('\n'));
+    assert.ok(result.lines.includes(
+      'matrix: self-test, 26 runs, 13 failed, tolerance applied: none'),
+    result.lines.join('\n'));
+  });
+
   it('exits 1 on a tree with compositions and no compat.yaml', () => {
     withTree((tree) => rmSync(join(tree, 'compat.yaml')), (tree) => {
       const result = validate(['--tree', tree, ...NAME]);

@@ -278,11 +278,6 @@ function hideScratch(text: string, scratch: string, realScratch: string): string
   return text.split(realScratch).join('<scratch>').split(scratch).join('<scratch>');
 }
 
-/**
- * Runs the three commands of `pack-compatibility` with one installed release, on a copy of the
- * composed `.wingfoil/` committed at the root of a fresh git repository (W-10, task-035), after
- * checking that the CLI is that release.
- */
 /** Where `init` writes WingFoil's own built-in directives, in a project and in the matrix. */
 const BUILTIN_DIRECTIVES = join('.wingfoil', 'directives', 'built-in');
 
@@ -339,6 +334,12 @@ export function builtinDirectives(version: string, cli: string, cache: string): 
   }
 }
 
+/**
+ * Runs the three commands of `pack-compatibility` with one installed release, on a copy of the
+ * composed `.wingfoil/` committed at the root of a fresh git repository (W-10, task-035), after
+ * checking that the CLI is that release; with `builtins`, the release's own built-in directive
+ * files beside it (bug-010).
+ */
 export function runRelease(
   cli: string,
   composed: string,

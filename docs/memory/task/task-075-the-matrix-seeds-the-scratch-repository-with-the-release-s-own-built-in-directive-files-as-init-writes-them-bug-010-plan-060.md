@@ -137,3 +137,11 @@ Branch `task/task-075-matrix-builtin-directives` from `main`. A tooling task (dl
   dist/tests/validate.test.js`: 107 of 107. Mutation (R2): the copy overwriting a composed file
   makes "keeps a composed file of the same path" fail (0 of 1), restored. Texts at `f99bf89`:
   `src/matrix.ts`'s header, `pack-compatibility`, `wingfoil-cli` 1.6 (W-11).
+- 2026-11-03: independent build review: approve after amendments, nothing blocking; it ran the
+  tests, the lint, `builtinDirectives` on the real 0.2.2 and 0.3.2 (six files each, the stamp
+  reused) and a mutation of the identity (the two success tests fail). Applied: `runRelease`'s
+  doc comment back above it; a test that the scratch path is hidden in a failing `init`'s message
+  (mutation: without `hideScratch` it fails); a `validate` test that a release whose built-in
+  directives cannot be read is that release's I/O failure (exit 2, 13 of 26 failed). Not applied:
+  a more telling reason than the last stderr line (the pattern `installRelease` and `runRelease`
+  share). `matrix.test`: 48 of 48; the two `validate` tests of bug-010: 2 of 2.
