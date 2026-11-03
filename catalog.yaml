@@ -37,7 +37,7 @@ packs:
           - workflow-engine
         requires: []
         conflicts: []
-        wingfoil: ">=0.3.0 <=0.3.1"
+        wingfoil: ">=0.3.0 <=0.3.2"
       - version: 2.0.0
         commit: 6d04472f0694e6238ca73fb65dd730245187d329
         digest: sha256:9cad63f17b1ffee435cf1a6d6b32a1a0ddb8b0ff746a51351f3a2147d33fc9ff
@@ -52,7 +52,7 @@ packs:
           - workflow-engine
         requires: []
         conflicts: []
-        wingfoil: ">=0.3.0 <=0.3.1"
+        wingfoil: ">=0.3.0 <=0.3.2"
       - version: 2.0.1
         commit: abc36c063de3d040cbe771f0fbd88035e45cecc4
         digest: sha256:8e3e91d4be754f686daa346311d53dd0e4dccb7bd916b8f868c852105ff3961c
@@ -67,7 +67,7 @@ packs:
           - workflow-engine
         requires: []
         conflicts: []
-        wingfoil: ">=0.3.0 <=0.3.1"
+        wingfoil: ">=0.3.0 <=0.3.2"
   - id: software
     path: packs/software
     catalog: official
@@ -88,7 +88,7 @@ packs:
         requires:
           - base@^2
         conflicts: []
-        wingfoil: ">=0.3.0 <=0.3.1"
+        wingfoil: ">=0.3.0 <=0.3.2"
   - id: methodology/scrum
     path: packs/methodology/scrum
     catalog: official
@@ -109,7 +109,7 @@ packs:
           - base@^2
           - software@^1
         conflicts: []
-        wingfoil: ">=0.3.0 <=0.3.1"
+        wingfoil: ">=0.3.0 <=0.3.2"
   - id: methodology/kanban
     path: packs/methodology/kanban
     catalog: official
@@ -129,6 +129,6 @@ packs:
           - base@^2
           - software@^1
         conflicts: []
-        wingfoil: ">=0.3.0 <=0.3.1"
+        wingfoil: ">=0.3.0 <=0.3.2"
 transitions: []
 presets: []
