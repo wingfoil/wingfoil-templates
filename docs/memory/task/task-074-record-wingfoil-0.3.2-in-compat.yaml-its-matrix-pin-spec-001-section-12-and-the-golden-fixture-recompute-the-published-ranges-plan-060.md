@@ -140,3 +140,20 @@ Note; dl-009's Execution Note superseding its 0.3.1 note (Acceptance 4).
 - 2026-11-03: re-review: approve; its should-fix (279 and 332 change only their titles, so the red
   run expects 9 failures, named) and two nits (the warning test's fourth argument, line wrapping)
   applied. Submitted.
+- 2026-11-03, red first (dl-018 R1), at `25b62f7` (the tests changed, `compat.yaml` unchanged):
+  `node --test dist/tests/compat.test.js dist/tests/validate.test.js`: 69 tests, 60 pass, 9 fail,
+  the nine the Design names. Pin at `c2744ba` (`npm audit` 0, `check:pins` exit 0). Record at the
+  next commit; the same two files: 69 of 69.
+- 2026-11-03, the 0.3.2 check (Acceptance 6), with `0.3.2 (6de2e13c004bbf419acfa7dc4d98d5a7468cd693)`
+  from the matrix's cache, `npm run validate:publication` on the record's working tree: this
+  repository's nine examples 18 runs, 0 failed; **the golden tree 26 runs, 13 failed**: every
+  composition's `directives list` on 0.3.2 warns "directive 'security' bound to every role
+  (roles.yaml 'global') has no directive file" and the same for `testing`. The golden fixture's
+  `base` binds WingFoil's built-in `security` and `testing`, which spec-001 §7.4 allows; a project
+  `init` created holds their files (`directives/built-in/`, checked on 0.3.2: removing
+  `security.md` gives the same warning), the matrix's scratch repository does not, and 0.3.2 now
+  warns on a binding with no file without `--role` (its CHANGELOG, `directives list`). Acceptance 6
+  and 7 cannot hold for the golden tree; found during the build, taken to the approver (dl-019).
+  The approver ruled on 2026-11-03: a defect of the matrix, bug-010, fixed by task-075 before this
+  task records 0.3.2; this task waits for task-075's merge, then takes `main` and runs its checks
+  again. The Acceptance text stays as approved.
