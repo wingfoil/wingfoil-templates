@@ -227,6 +227,55 @@ describe('npm run validate', () => {
     result.lines.join('\n'));
   });
 
+  it('seeds the built-in directive files it is given into every run (bug-010, task-075)', () => {
+    const seed = mkdtempSync(join(tmpdir(), 'seed-'));
+    writeFileSync(join(seed, 'security.md'), 'seeded\n');
+    const checkers = new Map<string, StubWingfoil>();
+    const checker = (version: string): StubWingfoil => {
+      let stub = checkers.get(version);
+      if (stub === undefined) {
+        stub = new StubWingfoil({}, version);
+        writeFileSync(stub.cli, [
+          "const { execFileSync } = require('node:child_process');",
+          `if (process.argv[2] === '--version') { process.stdout.write('${version}\\n'); return; }`,
+          'let shown = null;',
+          'try { shown = execFileSync(\'git\', [\'show\',',
+          "  'HEAD:.wingfoil/directives/built-in/security.md'], { encoding: 'utf8' }); }",
+          'catch { shown = null; }',
+          "process.exitCode = shown === 'seeded\\n' ? 0 : 1;",
+          '',
+        ].join('\n'));
+        checkers.set(version, stub);
+      }
+      return stub;
+    };
+    try {
+      const result = validate(['--tree', TREE, ...NAME], {
+        install: (version) => checker(version).cli, builtins: () => seed });
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      assert.ok(result.lines.includes(
+        'matrix: self-test, 26 runs, 0 failed, tolerance applied: none'),
+      result.lines.join('\n'));
+    } finally {
+      for (const stub of checkers.values()) stub.dispose();
+      rmSync(seed, { recursive: true, force: true });
+    }
+  });
+
+  it('makes a release whose built-in directives cannot be read an I/O failure (bug-010, '
+    + 'task-075)', () => {
+    const result = validate(['--tree', TREE, ...NAME], { builtins: (version) => {
+      if (version === '0.2.2') throw new MatrixIoError('wingfoil@0.2.2: init exit 1: x');
+      return undefined;
+    } });
+    assert.equal(result.code, 2, result.lines.join('\n'));
+    assert.ok(result.lines.some((line) => /wingfoil@0\.2\.2: init exit 1: x/.test(line)),
+      result.lines.join('\n'));
+    assert.ok(result.lines.includes(
+      'matrix: self-test, 26 runs, 13 failed, tolerance applied: none'),
+    result.lines.join('\n'));
+  });
+
   it('exits 1 on a tree with compositions and no compat.yaml', () => {
     withTree((tree) => rmSync(join(tree, 'compat.yaml')), (tree) => {
       const result = validate(['--tree', tree, ...NAME]);

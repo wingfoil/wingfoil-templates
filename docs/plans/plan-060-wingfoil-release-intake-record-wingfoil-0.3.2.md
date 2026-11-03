@@ -311,3 +311,16 @@ private repository or project, no intermediary session); after every push to `ma
   applied by their dl actions; dl-025 finding 1, option (ii)), recorded in their Execution Notes,
   then approves both; their dl actions get the row "The dl actions of dl-024 and dl-025 …" in
   `docs/owed-items.md`.
+- 2026-11-03, `record`: task-074 accepted into the backlog (`e6d913f`), built on
+  `task/task-074-record-0.3.2` (red `25b62f7`, 9 failing as its Design names; pin `c2744ba`; record
+  `0501be2`). Its 0.3.2 check found the golden tree failing `directives list` on 0.3.2 (13 of 26
+  runs): the matrix's scratch repository lacks the built-in directive files `init` writes, and 0.3.2
+  now warns on a binding with no file; the published packs pass (18 runs, 0 failed). Taken to the
+  approver (dl-019), who ruled on 2026-11-03: bug-010, fixed by task-075 before task-074 records
+  0.3.2 (option A; a change of the golden fixture rejected, it would hide the defect). The
+  periodic retrospective's notes task takes task-076.
+- 2026-11-03: bug-010 triaged `major` and task-075 accepted (`7f988b5`, `f29d7ce`); task-075 built
+  on its branch (red, fix, the directives `pack-compatibility` and `wingfoil-cli` 1.6), reviewed,
+  checked from clean clones on both Node.js versions (1051 of 1051, every matrix step 0 failed) and
+  with task-074 merged in (the golden tree on 0.3.2: 26 runs, 0 failed in both modes); branch CI
+  `success` (run 41667034563); approved with the merge OK, merged `--no-ff` (`04f96ff`), `done`.
