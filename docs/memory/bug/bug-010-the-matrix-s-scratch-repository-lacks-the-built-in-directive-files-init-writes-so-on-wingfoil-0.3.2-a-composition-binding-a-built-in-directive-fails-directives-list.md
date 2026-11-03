@@ -58,3 +58,7 @@ tree passes on 0.3.2, in both modes, with no change to the fixture.
   records 0.3.2.
 - 2026-11-03: independent review: approve, one nit applied (the six ids alike, their content per
   release); it reproduced Observed and step 3 (on 0.3.1 the removed file gives no warning).
+- 2026-11-03: fixed by task-075 (merged `04f96ff`): the matrix seeds each release's own built-in
+  directive files, as its `init` writes them; the golden tree passes on 0.3.2 in both modes with
+  task-074's record (task-075's notes). Status kept `approved`: this repository's `bug` type has no
+  fixed state (owed row G11).

@@ -319,3 +319,8 @@ private repository or project, no intermediary session); after every push to `ma
   approver (dl-019), who ruled on 2026-11-03: bug-010, fixed by task-075 before task-074 records
   0.3.2 (option A; a change of the golden fixture rejected, it would hide the defect). The
   periodic retrospective's notes task takes task-076.
+- 2026-11-03: bug-010 triaged `major` and task-075 accepted (`7f988b5`, `f29d7ce`); task-075 built
+  on its branch (red, fix, the directives `pack-compatibility` and `wingfoil-cli` 1.6), reviewed,
+  checked from clean clones on both Node.js versions (1051 of 1051, every matrix step 0 failed) and
+  with task-074 merged in (the golden tree on 0.3.2: 26 runs, 0 failed in both modes); branch CI
+  `success` (run 41667034563); approved with the merge OK, merged `--no-ff` (`04f96ff`), `done`.
