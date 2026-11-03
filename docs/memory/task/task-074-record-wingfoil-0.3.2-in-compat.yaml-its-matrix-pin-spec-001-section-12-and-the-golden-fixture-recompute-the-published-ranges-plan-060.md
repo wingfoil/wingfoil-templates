@@ -32,8 +32,8 @@ met by no pack).
    `npm install --package-lock-only --ignore-scripts` in that folder; `npm audit` in it reports 0
    vulnerabilities; `npm run check:pins` exits 0.
 2. **`compat.yaml`:** release 0.3.2 after 0.3.1, with `format_key: true`, `reads` at format 1 for
-   the seven kinds, `capabilities: [workflow-engine]` and `notes`: "Accepts the format: key; format 1;
-   no new capability: short element references are needed by no pack (plan-060 ruling 1, dl-021
+   the seven kinds, `capabilities: [workflow-engine]` and `notes`: "Accepts the format: key; format
+   1; no new capability: short element references are needed by no pack (plan-060 ruling 1, dl-021
    R4). Refuses a memory.yaml type path absolute or holding . or .., a malformed id_pattern, an
    extra dna.yaml paths category that is not a list of strings and a directive missing a header
    field: no pack ships one." Nothing else in the file changes; `FROZEN_COMPAT` stays its byte
@@ -72,8 +72,8 @@ met by no pack).
      (121, 141, 159, 279, 332) cite task-074 beside the tasks they cite;
    - `tests/compat.test.ts`: the real releases (53–58: 0.2.2, 0.3.0, 0.3.1, 0.3.2 with
      `workflow-engine`; 59: the `reads` loop over `[1, 2, 3]`); the range (67–71:
-     `>=0.3.0 <=0.3.2`); the ascending test (77: `['0.2.2', '0.3.0', '0.3.1', '0.3.2', '0.4.0']`); the repeated release (90: repeats 0.3.2,
-     matching `/0\.3\.2/`);
+     `>=0.3.0 <=0.3.2`); the ascending test (77: `['0.2.2', '0.3.0', '0.3.1', '0.3.2', '0.4.0']`);
+     the repeated release (90: repeats 0.3.2, matching `/0\.3\.2/`);
    - unchanged, and said so: the tests on `FROZEN_COMPAT` and `fixtureCompat`, `range.test.ts`,
      `matrix.test.ts` and `runs.test.ts` (synthetic releases or a fake `Compose`),
      `ci-workflow.test.ts`, `check-pins.test.ts` (its "passes on this repository" covers the new
@@ -83,8 +83,8 @@ met by no pack).
    the golden tree and the nine README examples composed from the branch, each committed in a
    scratch repository by the matrix's own `runRelease` in publication mode (the golden fixture's
    `compat.yaml` lacks 0.3.2 before the record commit, so `validate` cannot run this check):
-   `workflow list`, `dna show` and `directives list` with `--format json`, exit 0, no warning; the golden tree's `format:` keys
-   accepted (`format_key: true`).
+   `workflow list`, `dna show` and `directives list` with `--format json`, exit 0, no warning; the
+   golden tree's `format:` keys accepted (`format_key: true`).
 7. **After it**, on the branch: `npm run validate` (18 runs), the overlays `software-exit`,
    `scrum-exit` and `kanban-exit` (26 each), the golden step (26 runs, 0.2.2 tolerated and 0.3.2),
    `npm run validate:publication` (18 runs, 0.3.0 and 0.3.2), `npm run check:runs` (46 runs, 0
@@ -113,9 +113,9 @@ reason (dl-018 R1): 9 failing, the 4 `compat.test` cases (53, 67, 77, 90: 0.3.2 
 the 5 `validate.test` cases asserting a 0.3.2 line or stub (121, 141, 159, 205, 708: the matrix
 still selects 0.3.1); 279 and 332 change only their titles and stay green; no other test fails.
 
-**Pin commit** (`build(matrix): pin WingFoil 0.3.2 …`): Acceptance 1. `check:pins` exits 0 (it checks
-every folder of `src/matrix/`, listed or not), and `npm test` fails as at the red commit (the pin alone
-selects nothing).
+**Pin commit** (`build(matrix): pin WingFoil 0.3.2 …`): Acceptance 1. `check:pins` exits 0 (it
+checks every folder of `src/matrix/`, listed or not), and `npm test` fails as at the red commit (the
+pin alone selects nothing).
 
 **Record commit** (`feat(compat): record WingFoil 0.3.2 …`), one commit: `compat.yaml`
 (Acceptance 2), the golden fixture's `compat.yaml` and spec-001 §12's example byte-equal to it,
