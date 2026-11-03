@@ -63,14 +63,24 @@ function stubbed031(diagnostics: unknown[] = []): StubWingfoil {
 const WINGFOIL_031 = stubbed031();
 after(() => WINGFOIL_031.dispose());
 
+/** WingFoil 0.3.2 as the tests see it, as 0.3.1's (task-074). */
+function stubbed032(diagnostics: unknown[] = []): StubWingfoil {
+  return new StubWingfoil({ version: '0.3.2 (6de2e13c)', commands: {
+    'workflow list': { stdout: [JSON.stringify({ workflows: [], diagnostics })] },
+    'dna show': CLEAN_JSON, 'directives list': CLEAN_JSON } }, '0.3.2');
+}
+const WINGFOIL_032 = stubbed032();
+after(() => WINGFOIL_032.dispose());
+
 /**
  * The stub of each release `compat.yaml` lists: `wingfoil-<version>` is never installed in the
  * tests, and a release with no stub is an error.
  */
 function byRelease(release022: StubWingfoil = WINGFOIL, release030: StubWingfoil = WINGFOIL_030,
-  release031: StubWingfoil = WINGFOIL_031): (version: string) => string {
+  release031: StubWingfoil = WINGFOIL_031, release032: StubWingfoil = WINGFOIL_032,
+): (version: string) => string {
   const stubs: Record<string, StubWingfoil> = { '0.2.2': release022, '0.3.0': release030,
-    '0.3.1': release031 };
+    '0.3.1': release031, '0.3.2': release032 };
   return (version) => {
     const stub = stubs[version];
     if (stub === undefined) throw new Error(`no stub for wingfoil@${version}`);
@@ -118,8 +128,8 @@ describe('npm run validate', () => {
     assert.ok(result.lines.includes('compositions: 13'));
   });
 
-  it('runs the golden preset against wingfoil@0.2.2 and 0.3.1 in self-test mode, the oldest and '
-    + 'the newest (task-036, task-059)',
+  it('runs the golden preset against wingfoil@0.2.2 and 0.3.2 in self-test mode, the oldest and '
+    + 'the newest (task-036, task-059, task-074)',
     () => {
       const result = validate(['--tree', TREE, ...NAME]);
       assert.equal(result.code, 0, result.lines.join('\n'));
@@ -130,7 +140,7 @@ describe('npm run validate', () => {
           ...['workflow list', 'dna show', 'directives list'].map((command) =>
             `matrix ${label} wingfoil@0.2.2 ${command}: pass (self-test, tolerated 1)`),
           ...['workflow list', 'dna show', 'directives list'].map((command) =>
-            `matrix ${label} wingfoil@0.3.1 ${command}: pass (self-test)`)]),
+            `matrix ${label} wingfoil@0.3.2 ${command}: pass (self-test)`)]),
         'matrix: self-test, 26 runs, 0 failed, tolerance applied: 0.2.2',
       ]);
       assert.equal(result.mode, 'self-test');
@@ -138,15 +148,15 @@ describe('npm run validate', () => {
     });
 
   it('fails a warning diagnostic of the newest release on its runs only, 0.2.2 tolerated '
-    + '(task-036, task-059)', () => {
-      const warned = stubbed031([{ code: 'W_SAMPLE', severity: 'warning', file: 'f', path: 'p',
+    + '(task-036, task-059, task-074)', () => {
+      const warned = stubbed032([{ code: 'W_SAMPLE', severity: 'warning', file: 'f', path: 'p',
         message: 'sample' }]);
       try {
         const result = validate(['--tree', TREE, ...NAME],
-          { install: byRelease(WINGFOIL, WINGFOIL_030, warned) });
+          { install: byRelease(WINGFOIL, WINGFOIL_030, WINGFOIL_031, warned) });
         assert.equal(result.code, 1, result.lines.join('\n'));
         assert.ok(result.lines.some((line) => line.startsWith(
-          'matrix presets/golden.yaml wingfoil@0.3.1 workflow list: fail (self-test)')),
+          'matrix presets/golden.yaml wingfoil@0.3.2 workflow list: fail (self-test)')),
         result.lines.join('\n'));
         assert.ok(result.lines.includes(
           'matrix: self-test, 26 runs, 13 failed, tolerance applied: 0.2.2'),
@@ -156,13 +166,13 @@ describe('npm run validate', () => {
       }
     });
 
-  it('in publication mode, runs the golden preset against 0.3.0 and 0.3.1 (dl-009, task-036, '
-    + 'task-059)', () => {
+  it('in publication mode, runs the golden preset against 0.3.0 and 0.3.2 (dl-009, task-036, '
+    + 'task-059, task-074)', () => {
     const result = validate(['--tree', TREE, ...NAME], { mode: 'publication' });
     assert.equal(result.code, 0, result.lines.join('\n'));
     const matrix = result.lines.filter((line) => line.startsWith('matrix'));
     assert.ok(matrix.every((line) => !line.includes('wingfoil@0.2.2')), matrix.join('\n'));
-    for (const version of ['0.3.0', '0.3.1']) {
+    for (const version of ['0.3.0', '0.3.2']) {
       assert.ok(matrix.includes(
         `matrix presets/golden.yaml wingfoil@${version} workflow list: pass (publication)`),
       matrix.join('\n'));
@@ -210,7 +220,7 @@ describe('npm run validate', () => {
     assert.equal(result.code, 2);
     assert.ok(result.lines.some((line) => /wingfoil@0\.2\.2: npm ci failed/.test(line)),
       result.lines.join('\n'));
-    assert.ok(result.lines.some((line) => /wingfoil@0\.3\.1: npm ci failed/.test(line)),
+    assert.ok(result.lines.some((line) => /wingfoil@0\.3\.2: npm ci failed/.test(line)),
       result.lines.join('\n'));
     assert.ok(result.lines.includes(
       'matrix: self-test, 26 runs, 26 failed, tolerance applied: none'),
@@ -276,7 +286,8 @@ describe('npm run validate', () => {
   });
 
   it('validates this repository: base, software, methodology/scrum and methodology/kanban, their '
-    + 'nine examples, on 0.3.0 and 0.3.1 (task-039, task-047, task-055, task-059, task-067)', () => {
+    + 'nine examples, on 0.3.0 and 0.3.2 (task-039, task-047, task-055, task-059, task-067, '
+    + 'task-074)', () => {
       const result = validate(['--tree', REPO_ROOT]);
       assert.equal(result.code, 0, result.lines.join('\n'));
       assert.ok(result.lines.includes('schemas: checked 6 files, 0 problems'));
@@ -329,8 +340,8 @@ describe('npm run validate', () => {
         'matrix: self-test, 26 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
     });
 
-  it('passes a publication run of this repository: the nine examples on 0.3.0 and 0.3.1 '
-    + '(task-039, task-055, task-059, task-067)',
+  it('passes a publication run of this repository: the nine examples on 0.3.0 and 0.3.2 '
+    + '(task-039, task-055, task-059, task-067, task-074)',
     () => {
       const result = validate(['--tree', REPO_ROOT], { mode: 'publication' });
       assert.equal(result.code, 0, result.lines.join('\n'));
@@ -705,7 +716,7 @@ describe('npm run validate --overlay (task-046, plan-046 ruling 1)', () => {
       assert.ok(result.lines.includes('compositions: 13'), result.lines.join('\n'));
       for (const label of labels) {
         assert.ok(result.lines.includes(
-          `matrix ${label} wingfoil@0.3.1 workflow list: pass (self-test)`), label);
+          `matrix ${label} wingfoil@0.3.2 workflow list: pass (self-test)`), label);
       }
       const index = result.lines.findIndex((line) => line.startsWith('index:'));
       const overlay = result.lines.findIndex((line) => line.startsWith('overlay: '));
