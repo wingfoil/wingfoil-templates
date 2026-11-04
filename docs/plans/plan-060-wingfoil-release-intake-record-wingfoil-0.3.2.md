@@ -324,3 +324,17 @@ private repository or project, no intermediary session); after every push to `ma
   checked from clean clones on both Node.js versions (1051 of 1051, every matrix step 0 failed) and
   with task-074 merged in (the golden tree on 0.3.2: 26 runs, 0 failed in both modes); branch CI
   `success` (run 41667034563); approved with the merge OK, merged `--no-ff` (`04f96ff`), `done`.
+- 2026-11-03: `main`'s CI on `e86b988` (task-075's merge), run 41721858295, `success`; jobs 20 min
+  04 s and 13 min 32 s.
+- 2026-11-03, asked by the approver on 2026-11-03, the checks of a tooling task from now: the build
+  review and its amendments first, then the clean clones once, on the commit where the code is
+  frozen; documentation-only commits after them need no new run (said in the task's notes); no
+  heavy test run of a reviewer in parallel with the clones. And a candidate `GOV` for the periodic
+  retrospective (plan-061): the branch CI in place of the local clean clones, which run nearly the
+  same checks on both Node.js versions, keeping locally only `validate:publication`, the golden
+  tree in publication mode, `index -- --check` and `workflow list`; linked to G12.
+- 2026-11-04, `record` done: task-074 built (red `25b62f7`, pin `c2744ba`, record `0501be2`, texts
+  `a67c2ae`), reviewed (approve), checked once from clean clones at `5c5d047` on both Node.js
+  versions (1051 of 1051; every matrix step 0 failed on 0.3.0 and 0.3.2), branch CI `success` (run
+  41726970835; jobs 12 min 50 s and 16 min 38 s); approved with the merge OK, merged `--no-ff`,
+  `done`. `compat.yaml` lists 0.3.2; the six published versions carry `>=0.3.0 <=0.3.2`.
