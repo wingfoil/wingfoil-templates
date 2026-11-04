@@ -164,3 +164,17 @@ Note; dl-009's Execution Note superseding its 0.3.1 note (Acceptance 4).
   golden tree on the real releases (26 runs, 0 failed, 0.2.2 tolerated and 0.3.2). Applied: the
   checks after the merge recorded (next note), §12's sentence on the binding warning reworded, the
   record commit named (`0501be2`).
+- 2026-11-04, checks at `5c5d047` (Acceptance 6, 7, 9), after the build review and its amendments,
+  once, on the commit where the code is frozen (the approver's order of 2026-11-03): from clean
+  clones on Node.js 22.21.0, then 22.12.0, one after the other: `npm ci`, `npm test` (1051 of 1051),
+  `lint`, `check:pins`, `check:schemas`, `check:packs`, `index -- --check`, `validate` (18 runs, 0.3.0
+  and 0.3.2), the golden step (26 runs, 0.2.2 tolerated and 0.3.2) and its publication run (26, 0.3.0
+  and 0.3.2: the 0.3.2 check of Acceptance 6, with the release's built-in directive files, bug-010),
+  the overlays `software-exit`, `scrum-exit` and `kanban-exit` (26 each), `workflow list`,
+  `check:runs` (46 runs, 0.3.0 and 0.3.2), `validate:publication` (18), each exit 0 with 0 failed;
+  `npm audit` 0 in the root and in every matrix folder, 0.3.2's included; `packs/` unchanged. The two
+  test files of Acceptance 5 now count 71 (task-075 added two). Red `25b62f7`, record `0501be2`.
+- 2026-11-04, Acceptance 8: branch CI run 41726970835 on `5c5d047`, `success`; the jobs 12 min 50 s
+  (22.21.0: `npm test` 582 s, the six matrix steps 161 s) and 16 min 38 s (22.12.0: 743 s, 223 s) of
+  the 30-minute timeout. CI unchanged. This commit changes only `docs/memory`, after the clean
+  clones' head `5c5d047`: the clones are not run again (the approver's rule of 2026-11-03).
