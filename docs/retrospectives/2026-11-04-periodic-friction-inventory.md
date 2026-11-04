@@ -303,3 +303,17 @@ of 2026-11-02 were followed before they were applied.
 - GOV-1 with G12 (row 10), GOV-2, GOV-3 with row 39, GOV-4: which become decision-logs.
 - Rows 5, 12, 22 and 40, and the owner changes of rows 17, 20 and 24 (approver → W10).
 - No `WF` note proposed: task-076 opens only if the approver adds one.
+
+## 11. The approver's points (`additional-points`, 2026-11-04)
+
+The approver ruled the checkpoint as §10 recommends and added no point:
+- **P1 —** GOV-1 and GOV-2 become one decision-log (the branch CI in place of the local clean
+  clones, and the order of checks that remains), ruled with G12's row (row 10); GOV-3 becomes a
+  decision-log of its own (row 39); GOV-4 is a sentence in `repository-practice` 1.2, the bump of
+  dl-035 and dl-036's dl actions (row 16), with no decision-log.
+- **P2 —** Row 5: the dl actions of dl-024 and dl-025 after the dl actions plan of row 16 and
+  before WingFoil UI's feedback. Row 12: dropped (the ranges are computed from formats; known
+  defects live in the bugs). Row 22: assigned to the pin bump (W10). Row 40: assigned to the next
+  minor release of `base` and `software`. Rows 17, 20 and 24: owner W10. Every other row as §8
+  proposes.
+- **P3 —** No WingFoil-side note: task-076 is not opened.
