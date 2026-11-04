@@ -2,7 +2,7 @@
 id: task-074-record-wingfoil-0.3.2-in-compat.yaml-its-matrix-pin-spec-001-section-12-and-the-golden-fixture-recompute-the-published-ranges-plan-060
 type: task
 title: "Record WingFoil 0.3.2 in compat.yaml, its matrix pin, spec-001 section 12 and the golden fixture, recompute the published ranges (plan-060)"
-status: in-review
+status: approved
 pack: ""            # tooling task (wingfoil-release-intake › record, plan-060 ruling 1)
 depends_on: []
 tags: ["tooling","wingfoil","compat"]
