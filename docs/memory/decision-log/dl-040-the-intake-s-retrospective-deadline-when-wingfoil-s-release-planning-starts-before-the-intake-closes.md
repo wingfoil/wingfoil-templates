@@ -2,7 +2,7 @@
 id: dl-040-the-intake-s-retrospective-deadline-when-wingfoil-s-release-planning-starts-before-the-intake-closes
 type: decision-log
 title: "The intake's retrospective deadline when WingFoil's release planning starts before the intake closes"
-status: draft
+status: pending
 tags: ["process","retrospective","wingfoil"]
 ---
 
