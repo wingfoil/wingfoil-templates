@@ -262,3 +262,6 @@ clones once on the frozen code; no heavy reviewer run beside them).
   - Still to do before `active → done`: the branch CI's conclusion; on the approver's OK, the
     `--no-ff` merge into `main`, `main`'s CI read, the branch removed; within seven days of
     plan-060's close (by 2026-11-11).
+- 2026-11-04, branch close: CI run 41900866759 on `d16aa10`, `success` (`validate (22.21.0)`,
+  `validate (22.12.0)`, 15 min 49 s each). The approver gave the merge OK; `--no-ff` merge into
+  `main`.
