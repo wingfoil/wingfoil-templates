@@ -224,3 +224,18 @@ clones once on the frozen code; no heavy reviewer run beside them).
   bug-010's defect left to `explore`; dl-036 not yet applied; a note on dl-036 at the close.
 - 2026-11-04: the approver ruled the outline (every point as recommended); submitted
   (`draft → active`).
+- 2026-11-04, `explore`: plan submitted `active` (`ecd7e4d`); the branch `retro/2026-11-04-periodic`
+  from `main` at `f01e53f` (plan-060's close; `main`'s CI on it, run 41850628713, `success`). Three
+  read-only subagents mined the strands; the inventory committed alone (`e87fff0`), checked by an
+  independent review (every citation and CI figure; approve after amendments, nothing blocking) and
+  amended (`8b14afe`).
+- 2026-11-04, `additional-points`: the approver ruled the checkpoint as the inventory's §10
+  recommends, adding no point; recorded as P1 … P3 (`973af08`).
+- 2026-11-04, `capture`: `memory add` gave dl-038 … dl-040 in order (`ede7cfb` … `7d947a9`), each id
+  checked: dl-038 the retrospective, dl-039 the branch CI in place of the clean clones with the
+  order of checks and G12 (GOV-1, GOV-2), dl-040 dl-029 T2's missing case (GOV-3); GOV-4 a sentence
+  of `repository-practice` 1.2. Each reviewed independently (approve after amendments, nothing
+  blocking), amended, re-reviewed together (dl-039 approve; dl-038 and dl-040 approve after
+  amendments), amended; submitted `pending` (`3568d14` … `283a1c6`); dl-040's re-review amendments
+  landed after its submit, by a slip of the script, and were applied while `pending` (`6e5110a`).
+  No feedback note (P3): task-076 not opened.
