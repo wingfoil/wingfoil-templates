@@ -141,6 +141,21 @@ Each point with a recommendation.
    the approver's OK, `--no-ff` into `main`. No change under `src/`, `packs/` or `.wingfoil/` except
    a `wingfoil-cli` entry a kept note needs, inside task-076.
 
+## The approver's rulings
+
+Given by the approver on 2026-11-04: every point of the outline as recommended.
+1. **Point 1:** the scope `periodic`; the inventory and dl-038 named as written; the period from
+   2026-10-29 (`f478934`) to plan-060's close.
+2. **Point 2:** the sources as written; the `kanban` cycle cited from the inventory of 2026-11-02.
+3. **Point 3:** the candidates as the inventory's starting list, `explore` confirming, correcting
+   or dropping each.
+4. **Point 4:** one line per open row, each on its merits; G12 ruled with the branch-CI candidate.
+5. **Point 5:** a governance decision-log only for a candidate the adoption (W10) would not fix.
+6. **Point 6:** notes only after reproduction on 0.3.0, 0.3.1 and 0.3.2, by task-076 from `main`,
+   merged alone as soon as done, then the notice.
+7. **Point 7:** notes on dl-006, dl-029 and dl-036 at the close.
+8. **Point 8:** this plan on `main`; the work on `retro/<YYYY-MM-DD>-periodic`.
+
 ## Steps
 
 Before every commit, the privacy check (`repository-practice` rule 2: no local or scratch path, no
@@ -207,3 +222,5 @@ clones once on the frozen code; no heavy reviewer run beside them).
   line ruled with the branch-CI candidate, its new evidence; the clean clones' figures left to
   `explore`; the register's count as of `6e0c685`; plan-055's actions; F-019 to read; the origin of
   bug-010's defect left to `explore`; dl-036 not yet applied; a note on dl-036 at the close.
+- 2026-11-04: the approver ruled the outline (every point as recommended); submitted
+  (`draft → active`).

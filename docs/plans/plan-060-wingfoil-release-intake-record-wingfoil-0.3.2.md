@@ -368,3 +368,27 @@ private repository or project, no intermediary session); after every push to `ma
   `base@1.0.0` method is plan-051's, with the tag's examples (`main`'s ask for `base@^2`).
 - 2026-11-04, step 4, `plan-migrations` (product-owner): empty: 0.3.2 reads every format as 0.3.1
   does, and no pack can now use a new format or capability.
+- 2026-11-04, step 5, `retrospective-start` (facilitator): WingFoil's next release planning, v0.4's,
+  started on 2026-11-03 (ruling 6). The periodic retrospective that covers the window is plan-061
+  (`workflow: retrospective-periodic`, phase `retrospective`), added (`memory add`, W-02),
+  reviewed (approve after amendments), its outline ruled by the approver as recommended and
+  submitted; its deadline (ruling 6): its WingFoil-side notes on `main` as soon as possible while
+  v0.4's planning runs, the retrospective closed within seven days of this plan's close.
+- 2026-11-04, step 6, the close:
+  - **The charters:** `pack-foundation-base`, `pack-foundation-software`, `pack-methodology-scrum`
+    and `pack-methodology-kanban` record the range `>=0.3.0 <=0.3.2` (`0654384`).
+  - **The notices:** sent to WingFoil UI and to the coordination of the WingFoil projects, named by
+    project (dl-036 R5), their text approved by the approver: 0.3.2 recorded, the six ranges, the
+    recheck, bug-010 and its fix, the templates' fields for adopters, the periodic retrospective.
+  - **The owed rows** (rule 4): "dl-029 T2 has no case …" (ruling 6) and "The packs' Memory
+    templates … without the optional fields …" (the recheck); the rows of ruling 8 and of dl-024's
+    and dl-025's dl actions; the row of dl-024 and dl-025 moved to Closed (plan-022's close).
+  - **The account per tech-spec (dl-020):** spec-001 amended in place by task-074 (§12's example
+    and prose, its Execution Note), approved by its merge OK; nothing else to fold back.
+  - **Numbers:** plan-060, task-074, task-075 and bug-010 used; plan-061 added; prel-007 unused and
+    released; task-076, F-043 and dl-038 left to plan-061.
+  - **Privacy:** every commit checked before it was made; this plan's diff since `b5b8bff` and its
+    commit messages checked: no local or scratch path, no private repository or project, no
+    intermediary session; request origins written "asked by the approver on <date>".
+  - `main`'s CI on the closing head read before `active → done`.
+
