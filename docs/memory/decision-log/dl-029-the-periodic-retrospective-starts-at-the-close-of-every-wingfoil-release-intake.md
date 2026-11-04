@@ -88,3 +88,8 @@ The points below are **proposed**; they become rulings when the approver approve
   header (`28a27c6`); dl-006's note. T5's interim rule (the intake plan's close says whether a
   periodic retrospective is due) ends when `wingfoil-release-intake` v5 is on `main` (plan-055's
   merge).
+- 2026-11-04, plan-061: `retrospective-start` ran for the first time, at WingFoil 0.3.2's intake
+  (plan-060), as v5 writes it; it started plan-061. T2 met a case it does not cover (the planning
+  started before the intake closed); the approver ruled the deadline in plan-060 (ruling 6), and
+  dl-040 (approved) makes it general, to be written in `wingfoil-release-intake` v6 by the dl
+  actions plan of dl-035 … dl-040.
