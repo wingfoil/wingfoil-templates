@@ -2,7 +2,7 @@
 id: dl-039-a-tooling-task-s-checks-run-on-the-branch-ci-with-a-short-local-list-in-a-fixed-order
 type: decision-log
 title: "A tooling task's checks run on the branch CI, with a short local list, in a fixed order"
-status: pending
+status: approved
 tags: ["process","ci","tooling"]
 ---
 
