@@ -239,3 +239,26 @@ clones once on the frozen code; no heavy reviewer run beside them).
   amendments), amended; submitted `pending` (`3568d14` … `283a1c6`); dl-040's re-review amendments
   landed after its submit, by a slip of the script, and were applied while `pending` (`6e5110a`).
   No feedback note (P3): task-076 not opened.
+- 2026-11-04, `approve`: the approver approved dl-038, dl-039 (with its departure from the local
+  list: `index -- --check` left to the CI's `validate`) and dl-040 (`0dedcff`, `0130bde`,
+  `e3c7491`).
+- Step 6, the close:
+  - **The notes:** on dl-006 (R3 met for the period), dl-029 (`retrospective-start`'s first run and
+    T2's case, made general by dl-040) and dl-036 (R1's first periodic application).
+  - **The register** (`docs/owed-items.md`, dl-038 D1 … D3): rows reassigned as D1 rules (rows 1, 5,
+    10, 15, 17, 20, 21, 22, 24, 26, 39, 40, 41, 42, 43); three to Closed (the "known defects"
+    marker dropped; the general in-place amendment merged into G7; `--param` merged into the
+    private projects' check); three new (dl-030's note, the built-in ids compared, F-019's facts);
+    row 16 widened to dl-039, dl-040, rule 3's sentence and the notes (D3). 43 open rows.
+  - **The account per tech-spec (dl-020):** none amended or erratum recorded here.
+  - **Numbers:** plan-061, dl-038 … dl-040 used; task-076 and F-043 not used (P3), released, with
+    bug-011 and prel-007.
+  - **Privacy:** every commit checked before it was made; the branch's diff against `main` and its
+    commit messages checked: no local or scratch path, no private repository or project, no
+    intermediary session; the only name is the CLI's `Approver:` trailer on the approval commits,
+    as on `main`.
+  - **Next plans:** the dl actions plan of dl-035 … dl-040 (row 16), then that of dl-024 and dl-025
+    (row 5), then WingFoil UI's feedback (row 43).
+  - Still to do before `active → done`: the branch CI's conclusion; on the approver's OK, the
+    `--no-ff` merge into `main`, `main`'s CI read, the branch removed; within seven days of
+    plan-060's close (by 2026-11-11).
