@@ -816,6 +816,11 @@ releases:
     reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
     capabilities: [workflow-engine]
     notes: "Accepts the format: key; format 1; no new capability (plan-051 ruling 2, dl-021 R4). A fresh 0.3.0 install resolving zod 4.6 showed zod's bare message on a refused cadence; 0.3.1 names the key again (bug-415)."
+  - wingfoil: 0.3.2
+    format_key: true
+    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
+    capabilities: [workflow-engine]
+    notes: "Accepts the format: key; format 1; no new capability: short element references are needed by no pack (plan-060 ruling 1, dl-021 R4). Refuses a memory.yaml type path absolute or holding . or .., a malformed id_pattern, an extra dna.yaml paths category that is not a list of strings and a directive missing a header field: no pack ships one."
 ```
 
 - **`kinds`** are the seven dl-149 kinds a composition involves, all of them required. `workflows`
@@ -853,6 +858,19 @@ releases:
   `true`, it reads format 1 for every kind, and it provides `workflow-engine`; its CHANGELOG
   names no new format, and its additions (`workflow adopt`, `workflow rekey`, manual checks) need
   no new capability (plan-051 ruling 2, dl-021 R4).
+
+  WingFoil 0.3.2 accepts the key too: on the composed golden tree and the nine README examples of
+  this repository, each committed in a scratch repository with the release's own built-in
+  directive files, as its `init` writes them (bug-010, task-075), `workflow list`, `dna show` and
+  `directives list` run with `--format json` exit 0 with no warning (checked on 2026-11-03,
+  task-074, with `0.3.2 (6de2e13c004bbf419acfa7dc4d98d5a7468cd693)`). Its `format_key` is `true`,
+  it reads format 1 for every kind, and it provides `workflow-engine`; its CHANGELOG names no new
+  format, and its short element references need no new capability (plan-060 ruling 1, dl-021 R4).
+  It refuses some inputs 0.3.1 accepted (a `memory.yaml` type path absolute or holding `.` or `..`,
+  a malformed `id_pattern`, an extra `dna.yaml` `paths` category that is not a list of strings, a
+  directive missing a header field), which no pack ships, and, without `--role`, also warns on a
+  directive binding that has no file; the matrix's scratch repository holds the built-in files, so
+  no such warning arises.
 
   `wingfoil-release-intake` appends one entry per WingFoil release (dl-002).
 
@@ -1283,3 +1301,11 @@ check the rest, and the composer refuses what they reject.
   The intake applied the recomputed range of the published versions of `base` (1.0.0, 2.0.0:
   `>=0.3.0 <=0.3.1`) to `catalog.yaml`, copied by hand, and `check:packs`' `catalog-range` verifies it:
   the value is the computed one, not a chosen one (§12, dl-002); §11 allows the field's edit.
+- 2026-11-03, task-074 (plan-060), amended in place, approved by the task's merge OK: §12's
+  example lists WingFoil 0.3.2 (`format_key: true`, format 1 for every kind, `workflow-engine`),
+  equal to `compat.yaml` and to the golden fixture's (dl-010); §12's prose records 0.3.2's check,
+  made with the release's own built-in directive files in the scratch repository (bug-010,
+  task-075). The intake applied the recomputed range of the six published versions (`base` 1.0.0,
+  2.0.0, 2.0.1; `software` 1.0.0; `methodology/scrum` 1.0.0; `methodology/kanban` 1.0.0:
+  `>=0.3.0 <=0.3.2`) to `catalog.yaml`, copied by hand, and `check:packs`' `catalog-range` verifies
+  it: the value is the computed one, not a chosen one (§12, dl-002).

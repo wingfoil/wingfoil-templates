@@ -2,7 +2,7 @@
 id: task-074-record-wingfoil-0.3.2-in-compat.yaml-its-matrix-pin-spec-001-section-12-and-the-golden-fixture-recompute-the-published-ranges-plan-060
 type: task
 title: "Record WingFoil 0.3.2 in compat.yaml, its matrix pin, spec-001 section 12 and the golden fixture, recompute the published ranges (plan-060)"
-status: backlog
+status: approved
 pack: ""            # tooling task (wingfoil-release-intake › record, plan-060 ruling 1)
 depends_on: []
 tags: ["tooling","wingfoil","compat"]
@@ -140,3 +140,41 @@ Note; dl-009's Execution Note superseding its 0.3.1 note (Acceptance 4).
 - 2026-11-03: re-review: approve; its should-fix (279 and 332 change only their titles, so the red
   run expects 9 failures, named) and two nits (the warning test's fourth argument, line wrapping)
   applied. Submitted.
+- 2026-11-03, red first (dl-018 R1), at `25b62f7` (the tests changed, `compat.yaml` unchanged):
+  `node --test dist/tests/compat.test.js dist/tests/validate.test.js`: 69 tests, 60 pass, 9 fail,
+  the nine the Design names. Pin at `c2744ba` (`npm audit` 0, `check:pins` exit 0). Record at the
+  next commit; the same two files: 69 of 69.
+- 2026-11-03, the 0.3.2 check (Acceptance 6), with `0.3.2 (6de2e13c004bbf419acfa7dc4d98d5a7468cd693)`
+  from the matrix's cache, `npm run validate:publication` on the record's working tree: this
+  repository's nine examples 18 runs, 0 failed; **the golden tree 26 runs, 13 failed**: every
+  composition's `directives list` on 0.3.2 warns "directive 'security' bound to every role
+  (roles.yaml 'global') has no directive file" and the same for `testing`. The golden fixture's
+  `base` binds WingFoil's built-in `security` and `testing`, which spec-001 §7.4 allows; a project
+  `init` created holds their files (`directives/built-in/`, checked on 0.3.2: removing
+  `security.md` gives the same warning), the matrix's scratch repository does not, and 0.3.2 now
+  warns on a binding with no file without `--role` (its CHANGELOG, `directives list`). Acceptance 6
+  and 7 cannot hold for the golden tree; found during the build, taken to the approver (dl-019).
+  The approver ruled on 2026-11-03: a defect of the matrix, bug-010, fixed by task-075 before this
+  task records 0.3.2; this task waits for task-075's merge, then takes `main` and runs its checks
+  again. The Acceptance text stays as approved.
+- 2026-11-03: `main` merged into this branch after task-075's merge (`c4717ef`); the texts
+  (`a67c2ae`): spec-001 §12's paragraph on 0.3.2 and its Execution Note, dl-009's note.
+- 2026-11-03: independent review of the build: approve, nothing blocking; it ran the two test files
+  (71 of 71, task-075 having added two), `check:packs`, `index -- --check`, the pin's audit and the
+  golden tree on the real releases (26 runs, 0 failed, 0.2.2 tolerated and 0.3.2). Applied: the
+  checks after the merge recorded (next note), §12's sentence on the binding warning reworded, the
+  record commit named (`0501be2`).
+- 2026-11-04, checks at `5c5d047` (Acceptance 6, 7, 9), after the build review and its amendments,
+  once, on the commit where the code is frozen (the approver's order of 2026-11-03): from clean
+  clones on Node.js 22.21.0, then 22.12.0, one after the other: `npm ci`, `npm test` (1051 of 1051),
+  `lint`, `check:pins`, `check:schemas`, `check:packs`, `index -- --check`, `validate` (18 runs, 0.3.0
+  and 0.3.2), the golden step (26 runs, 0.2.2 tolerated and 0.3.2) and its publication run (26, 0.3.0
+  and 0.3.2: the 0.3.2 check of Acceptance 6, with the release's built-in directive files, bug-010),
+  the overlays `software-exit`, `scrum-exit` and `kanban-exit` (26 each), `workflow list`,
+  `check:runs` (46 runs, 0.3.0 and 0.3.2), `validate:publication` (18), each exit 0 with 0 failed;
+  `npm audit` 0 in the root and in every matrix folder, 0.3.2's included; `packs/` unchanged. The two
+  test files of Acceptance 5 now count 71 (task-075 added two). Red `25b62f7`, record `0501be2`.
+- 2026-11-04, Acceptance 8: branch CI run 41726970835 on `5c5d047`, `success`; the jobs 12 min 50 s
+  (22.21.0: `npm test` 582 s, the six matrix steps 161 s) and 16 min 38 s (22.12.0: 743 s, 223 s) of
+  the 30-minute timeout. CI unchanged. This commit changes only `docs/memory`, after the clean
+  clones' head `5c5d047`: the clones are not run again (the approver's rule of 2026-11-03).
