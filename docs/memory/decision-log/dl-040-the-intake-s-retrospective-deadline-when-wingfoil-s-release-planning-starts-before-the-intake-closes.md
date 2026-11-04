@@ -30,13 +30,16 @@ Candidate GOV-3 of the retrospective dl-038 (C2).
 
 The points below are **proposed**; they become rulings when the approver approves this element.
 
-- **D1 — Option 2.** When WingFoil's next release planning has started before the intake closes, or
-  starts before the retrospective closes, the intake's plan (or the retrospective's, from the day
-  the start is announced or reported) records its start date as announced or reported, and the
-  deadline is: the WingFoil-side notes on `main` as soon as possible while the planning runs, the
-  notes task, if any, merging into `main` alone, ahead of the retrospective's branch; the
-  retrospective closed within seven days of the intake's close. T2's patch case (a retrospective
-  that covers a patch's window too) follows D1 the same way.
+- **D1 — Option 2.** When WingFoil's next release planning has started and not ended before the
+  intake closes, or starts before the retrospective closes while its date was recorded at the
+  intake's close as "not known" (or announced later than it turned out), the intake's plan (or the
+  retrospective's, from the day the start is announced or reported) records its start date as
+  announced or reported, and the deadline is: the WingFoil-side notes on `main` as soon as possible
+  while the planning runs, the notes task, if any, merging into `main` alone, ahead of the
+  retrospective's branch; the retrospective closed within seven days of the intake's close. T2's
+  patch case (a retrospective that covers a patch's window too) follows D1 the same way, its seven
+  days counted from the close of the intake that started it. A date announced at the intake's close
+  and then missed is T2's case: the approver rules in the plan.
 - **D2 — The notes task merging alone** (plan-061's practice): it starts from `main`, on its own
   branch, added with `memory add` there and no other task added on any branch meanwhile (W-14); its
   body cites the inventory by path and date, since the inventory and the retrospective's
@@ -44,7 +47,7 @@ The points below are **proposed**; they become rulings when the approver approve
   merges on the approver's OK.
 - **D3 — When the planning has already ended** before the intake closes, the following planning is
   T2's "next": the retrospective closes before it, or within seven days when its date is not known,
-  and its notes reach `main` with it.
+  and its notes reach `main` with the retrospective's close (no notes task merging alone).
 - **D4 — Where:** `wingfoil-release-intake` v5 → v6, `retrospective-start`'s description; an
   Execution Note on dl-029 (T2 reads with D1 … D3, and T1's "as announced" also reads "or reported
   by the approver"). Applied after approval by the dl actions plan of dl-035 … dl-037 (dl-038 D3);
@@ -59,3 +62,8 @@ The points below are **proposed**; they become rulings when the approver approve
   starting before the retrospective closes, and T2's patch case (D1); plan-061's mechanics of a
   notes task merging alone (D2); "the notes task, if any"; T1's "or reported" in dl-029's note; P1
   cited; the place became D4 (dl-038 D1 cites it).
+- 2026-11-04: re-review (dl-017, decisions changed): approve after amendments, nothing blocking;
+  applied while `pending` (submitted before they were, by a slip of the script, `283a1c6`): D1
+  limited to a planning not yet ended (D3's case kept apart) and, for one starting before the
+  retrospective closes, to a date not known at the intake's close; the patch case's seven days;
+  D3's wording. The title kept (the narrower name); dl-038 C2 states both cases.
