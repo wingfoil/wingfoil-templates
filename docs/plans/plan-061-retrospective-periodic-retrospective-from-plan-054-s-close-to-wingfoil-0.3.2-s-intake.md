@@ -123,18 +123,18 @@ Each point with a recommendation.
    reproduced with WingFoil alone on 0.3.0, 0.3.1 and 0.3.2, its `wingfoil_version` the newest
    release it reproduces on, written by task-076 (`tooling-delivery`, `pack: ""`), hosted by this
    plan on `task/task-076-<slug>` from `main` (task-076 added with `memory add` on that branch, no
-   other task added on any branch meanwhile, W-14), numbered from F-043, first line
-   `New note (task-076).`, one ledger row each, `Last sync` unchanged; its body cites the
-   inventory by its path and date and the candidates' ids, since the inventory and dl-038 are not
-   on `main` when it merges, and this plan's close adds the cross-references; opened right after
-   the `additional-points` checkpoint, beside dl-038; merged into `main` alone, on the approver's
-   OK, as soon as it is done (ruling 6's "as soon as possible"), before this plan's branch closes; a notice to the coordination of the WingFoil projects,
-   recipients named by project (dl-036 R5), its text shown to the approver first. No task if no
-   note survives `explore` and the checkpoint.
+   other task added on any branch meanwhile, W-14), numbered from F-043, first line `New note
+   (task-076).`, one ledger row each, `Last sync` unchanged; its body cites the inventory by its
+   path and date and the candidates' ids, since the inventory and dl-038 are not on `main` when it
+   merges, and this plan's close adds the cross-references; opened right after the
+   `additional-points` checkpoint, beside dl-038; merged into `main` alone, on the approver's OK, as
+   soon as it is done (ruling 6's "as soon as possible"), before this plan's branch closes; a notice
+   to the coordination of the WingFoil projects, recipients named by project (dl-036 R5), its text
+   shown to the approver first. No task if no note survives `explore` and the checkpoint.
 7. **The close's notes.** Recommended: an Execution Note on dl-006 (R3 met for the period), one on
-   dl-029 (the first run of `retrospective-start`, and T2's gap with its row) and one on dl-036 (R1's
-   first periodic application, before its dl actions); none on the charters (no pack's cycle ran in
-   the period beyond `kanban`'s, closed by plan-059).
+   dl-029 (the first run of `retrospective-start`, and T2's gap with its row) and one on dl-036
+   (R1's first periodic application, before its dl actions); none on the charters (no pack's cycle
+   ran in the period beyond `kanban`'s, closed by plan-059).
 8. **Where the work runs.** Recommended: this plan on `main`; the inventory, the approver's points,
    dl-038 and any governance decision-log on the branch `retro/<YYYY-MM-DD>-periodic` from `main`
    after `submit`; task-076 on its own branch, merged into `main` alone (point 6); at the close, on
@@ -165,10 +165,10 @@ clones once on the frozen code; no heavy reviewer run beside them).
    governance decision-log (`memory add`, body, independent review, `submit`). In parallel, right
    after the checkpoint, task-076 if a note is kept (point 6), through `tooling-delivery` as
    plan-054's task-064: its body (Context, Acceptance, Design) reviewed and amended, `submit`, the
-   approver's backlog acceptance; the build (each note reproduced with WingFoil alone on 0.3.0, 0.3.1
-   and 0.3.2, a difference going to the approver); the build review and its amendments, then the
-   checks from clean clones once on the frozen commit, on Node.js 22.21.0 and 22.12.0 one after the
-   other (the approver's order of 2026-11-03); the branch CI's conclusion; `in-review`, the
+   approver's backlog acceptance; the build (each note reproduced with WingFoil alone on 0.3.0,
+   0.3.1 and 0.3.2, a difference going to the approver); the build review and its amendments, then
+   the checks from clean clones once on the frozen commit, on Node.js 22.21.0 and 22.12.0 one after
+   the other (the approver's order of 2026-11-03); the branch CI's conclusion; `in-review`, the
    approver's approval and merge OK, `--no-ff` into `main`, `main`'s CI read, `done`; the notice.
 5. **`approve`** (product-owner, held by the approver): claude hands each command
    (`npm run -s wingfoil -- memory approve <id> --reason "…"`, with the `cd` to the repository
