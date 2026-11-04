@@ -49,9 +49,10 @@ The points below are **proposed**; they become rulings when the approver approve
   `in-review` the checks are:
   - the branch CI's conclusion `success` on the task's frozen commit; or, when a later push
     cancelled that run (`ci.yml`'s `concurrency` cancels a branch's earlier run), the `success` of a
-    later head whose diff from the frozen commit is documentation-only; each run id and its two
-    jobs' durations recorded in the notes;
-  - from a clean working tree on the frozen commit, on Node.js 22.21.0, after `npm run build`:
+    later head whose diff from the frozen commit is documentation-only (as R2); each run id and its
+    two jobs' durations recorded in the notes;
+  - from a clean working tree on the frozen commit, on Node.js 22.21.0, after `npm ci` and
+    `npm run build`:
     `npm run validate:publication`, the golden tree in publication mode
     (`npm run validate:publication -- --tree tests/fixtures/compose/tree --param
     project_name=Golden`) and `npm run -s wingfoil -- workflow list`, each exit 0. The approver's
@@ -59,7 +60,8 @@ The points below are **proposed**; they become rulings when the approver approve
     `validate` (`src/validate.ts`), a departure the approver rules with this element.
   - A clean clone with an empty `.cache` remains for a change to how the matrix installs or
     initialises a release (`src/matrix.ts`) with unchanged lockfiles, since the CI's matrix cache
-    is keyed by the lockfiles only; or at the approver's request.
+    is keyed by the matrix lockfiles (and the runner's OS and Node.js version), not by
+    `src/matrix.ts`; or at the approver's request.
 - **R2 — The order** (asked by the approver on 2026-11-03): the build review and its amendments
   first; then R1's checks once, on the commit where the code is frozen; a documentation-only commit
   after them (`docs/memory`, `docs/plans`) needs no new run, said in the task's notes; a reviewer
@@ -85,3 +87,5 @@ The points below are **proposed**; they become rulings when the approver approve
   dl-017's rule; content-only tasks; pack tasks named in R1 (the title kept, its id fixed); the
   approver's `index -- --check` as a departure to rule; the local list's Node.js version and build;
   the request's origin; G12's row named.
+- 2026-11-04: re-review: approve; its three nits applied (R2's definition cited, `npm ci` before
+  the build, the cache key). Submitted.
