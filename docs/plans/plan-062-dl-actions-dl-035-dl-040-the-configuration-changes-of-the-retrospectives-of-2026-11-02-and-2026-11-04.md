@@ -64,21 +64,23 @@ Each point with a recommendation.
    describes a step that exists; then `pack-cycle`, `pack-compatibility`,
    `wingfoil-release-intake`, and the notes last, citing the commits.
 3. **The tooling task** (dl-035 A1, A4; `tooling-delivery`, `pack: ""`). Recommended: one task,
-   added with `memory add` on the branch of this plan after row 1, no other task added on any
-   branch meanwhile (W-14); on `task/<id>-<slug>` from this plan's branch and merged into it with
+   added with `memory add` on the branch of this plan after row 1, no other task added on any branch
+   meanwhile (W-14); on `task/<id>-<slug>` from this plan's branch and merged into it with
    `--no-ff`: a departure from `tooling-delivery` › `deliver` ("into main"), with task-064 under
    plan-054 as the precedent, recorded in the task's notes. Its Acceptance: "Audit the root
-   lockfile" runs `npm audit --omit=dev`, blocking; a second step after it, on branches and tags
-   (no `if`), no `continue-on-error`, runs `npm audit` on the whole root tree, writes a
-   `::warning::` annotation naming the advisories when it finds any, and exits 0; both Node.js jobs
-   run it, so a warning appears twice in a run (A1); an `npm audit` that fails without a report of
-   advisories (a registry or network error) fails the step, as today, rather than warn; the matrix
-   step unchanged.
-   `tests/ci-workflow.test.ts` asserts all of it red first (dl-018), and also runs the second step's
-   script against a stub `npm` on the `PATH` (exit 1 with an advisory; exit 0) to check that it
-   warns and exits 0 in both cases: the step's behaviour, not only its text. The task moves row 1
-   to Closed in its own commit (dl-035 A4). Today both `npm audit` and `npm audit --omit=dev` exit
-   0 in the root, so the first run of the new step is expected to write no warning.
+   lockfile" runs `npm audit --omit=dev`, blocking; a second step after it, on branches and tags (no
+   `if`), no `continue-on-error`, runs `npm audit` on the whole root tree, writes a `::warning::`
+   annotation naming the advisories when it finds any, and exits 0; both Node.js jobs run it, so a
+   warning appears twice in a run (A1); when the audit cannot produce a report (a registry or
+   network error), dl-035 A1's "never fails at the shell level" is read literally (b): a
+   `::warning::` that the audit could not run, and exit 0; the alternative (a), failing the step as
+   today, departs from A1 and is the approver's to rule (in practice the blocking step before it
+   already fails on a registry outage); the matrix step unchanged. `tests/ci-workflow.test.ts`
+   asserts all of it red first (dl-018), and also runs the second step's script against a stub `npm`
+   on the `PATH` (exit 1 with an advisory; exit 1 with no report; exit 0) to check that it warns or
+   stays silent and exits 0 in each case: the step's behaviour, not only its text. The task moves
+   row 1 to Closed in its own commit (dl-035 A4). Today both `npm audit` and `npm audit --omit=dev`
+   exit 0 in the root, so the first run of the new step is expected to write no warning.
 4. **dl-039 applied to itself.** dl-039 is approved; a change of governance takes effect only when
    its decision-log is approved (dl-038, Change), and approved rules have been followed before being
    applied (dl-038 K4; dl-036's note of 2026-11-04). Its text reaches the workflows with row 1.
@@ -195,5 +197,8 @@ Then, in dl-039 R2's order:
   as dl-038 D1 approved it; dl-039 R1's content-only task and the golden command in row 1; dl-035 A2
   in full in point 5; dl-040 D1's missing clauses in row 6; the Steps in dl-039 R2's order; the
   departure from `deliver` stated; dl-038 K4 cited for point 4; the CI's job durations; the
-  leftovers grep's scope as plan-055's; an audit that fails without advisories; dl-036 R2's ruling
+  leftovers grep's scope as plan-055's; an audit that fails without advisories (a departure from
+  A1 in the first amendment, put to the approver in point 3 after the re-review); dl-036 R2's ruling
   case; the Done criteria; the CI read after `submit`.
+- 2026-11-04: re-review: approve after one amendment (the audit that cannot report: dl-035 A1 read
+  literally as recommended, option (a) to the approver; a third stub case); applied.
