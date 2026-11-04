@@ -338,3 +338,33 @@ private repository or project, no intermediary session); after every push to `ma
   versions (1051 of 1051; every matrix step 0 failed on 0.3.0 and 0.3.2), branch CI `success` (run
   41726970835; jobs 12 min 50 s and 16 min 38 s); approved with the merge OK, merged `--no-ff`,
   `done`. `compat.yaml` lists 0.3.2; the six published versions carry `>=0.3.0 <=0.3.2`.
+- 2026-11-04, step 3, `recheck` (claude as reviewer), on `main` at `bf24c88`:
+  - every active pack: `main`'s `packs/` equals the tags `base@2.0.1`, `software@1.0.0`,
+    `methodology/scrum@1.0.0` and `methodology/kanban@1.0.0` (`git diff` empty);
+    `validate:publication` 18 runs, `check:runs` 46, `validate` 18, the golden tree 26 in self-test
+    (0.2.2 tolerated and 0.3.2) and 26 in publication, the overlays `software-exit`, `scrum-exit`
+    and `kanban-exit` 26 each, all 0 failed, on 0.3.0 and 0.3.2;
+  - `base@2.0.0`, on a scratch copy of `main` whose `packs/base` holds the tag's content:
+    `validate:publication` 18 runs and `check:runs` (`base.yaml`) 18 runs, 0 failed;
+  - `base@1.0.0`, on a scratch copy of `main` whose `packs/base` and `base`'s examples hold the tag's
+    content, without the packs that require `base@^2` (`software`, the methodologies) and their
+    examples and scenarios: the matrix passes for its three README examples (6 runs, 0 failed);
+    `check:runs` 18 runs, 14 failed, 7 on each release, as bug-005 and bug-006 say (a started plan
+    not submitted; a `produces` naming a directory, so `next` and `end` fail), as at 0.3.1;
+  - the install steps of the four READMEs on a project initialised by 0.3.2: its `init` scaffold
+    differs from 0.3.1's in the configuration files' comments (`dna.yaml` gains two commented
+    examples, a `team.members` entry and `paths.health`, which step 3 and the packs' path categories
+    do not meet), its commit subject (no `(P5.1.1)`, which nothing reads) and its Memory templates:
+    `adr`, `bug`, `decision-log` and `tech-spec` gain the optional `contributor`, `credit` and
+    `reported_by`, `release` gains `backlog_committed`, `waves` and a `## Scope changes` table. Step 3
+    has an adopter copy the composed files, so `base`'s `decision-log` template and `software`'s
+    `adr`, `bug`, `release` and `tech-spec` replace `init`'s and drop those fields; nothing fails
+    (`check:runs`' adoption runs pass on 0.3.2), no README text to fix. Whether the packs' templates
+    take the fields is a row of `docs/owed-items.md` (rule 4).
+- 2026-11-04: independent check of the recheck (dl-017): approve, three nits applied (the `dna.yaml`
+  examples and the commit subject named; the logs the note relies on). It reproduced
+  `validate:publication` on a fresh clone of `main` (18 runs, 0 failed), `base@1.0.0`'s
+  `check:runs` (18 runs, 14 failed, the same breakdown) and the two `init` scaffolds; the
+  `base@1.0.0` method is plan-051's, with the tag's examples (`main`'s ask for `base@^2`).
+- 2026-11-04, step 4, `plan-migrations` (product-owner): empty: 0.3.2 reads every format as 0.3.1
+  does, and no pack can now use a new format or capability.
