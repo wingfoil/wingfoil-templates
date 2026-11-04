@@ -2,7 +2,7 @@
 id: plan-061-retrospective-periodic-retrospective-from-plan-054-s-close-to-wingfoil-0.3.2-s-intake
 type: plan
 title: "retrospective-periodic retrospective: from plan-054's close to WingFoil 0.3.2's intake"
-status: active
+status: done
 workflow: "retrospective-periodic"
 phase: "retrospective"
 tags: ["process","retrospective","periodic"]
