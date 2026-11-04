@@ -36,6 +36,15 @@ here: the branch CI in place of the local clean clones of a tooling task, keepin
 `validate:publication`, the golden tree in publication mode, `index -- --check` and
 `workflow list`; linked to G12 (the suite's duration against the CI timeout).
 
+**Deviations from the workflows**, as plan-054 and plan-059 recorded theirs:
+- `retrospective` v5's `capture` produces decision-logs only; the feedback notes, if any, are
+  written by task-076, hosted by this plan (the inbox test requires a note's first line to name a
+  task or a pack-release);
+- the governance decision-logs run `decision-log-ingest`'s `capture` inside this plan, with no plan
+  of their own, and its `rule` alongside `approve` (step 5);
+- new here: task-076 starts from `main` and merges into `main` alone, not into this plan's branch,
+  so that its notes reach WingFoil as soon as possible (plan-060 ruling 6).
+
 **After this plan** (plan-060 ruling 8): one dl actions plan for dl-035 … dl-037 and the
 governance decision-logs this retrospective approves; then the plan of WingFoil UI's feedback.
 The dl actions of dl-024 and dl-025 have their own row, placed by the approver.
@@ -56,7 +65,8 @@ Each point with a recommendation.
    committed; dl-038 "Retrospective periodic <YYYY-MM-DD>". The period runs from 2026-10-29
    (plan-054's close, `f478934`) to plan-060's close.
 2. **The sources.** Recommended:
-   - mined here: plan-055 (the dl actions of dl-029 … dl-033), plan-059 (the `kanban`
+   - mined here: plan-055 (the dl actions of dl-029, dl-031, dl-032 and dl-033; dl-030 was applied
+     by task-065 under plan-054), plan-059 (the `kanban`
      retrospective as a run of the rules: its register, its candidates, task-073 and F-042),
      plan-060 with task-074, task-075 and bug-010, plan-022's close and the ruling of dl-024 and
      dl-025 (2026-11-03), the decision-logs dl-034 … dl-037 as written, the rows added to
@@ -75,40 +85,56 @@ Each point with a recommendation.
      approver the same day; the recheck matched plan-051's (`base@1.0.0`'s 14 of 18 failures);
      every element reviewed, the reviews finding a missed test (task-074's body) and the golden
      tree's untested release (plan-060's scratch run);
-   - `−`: the matrix modelled a project without `init`'s built-in directive files since task-035,
-     latent until 0.3.2 (bug-010); plan-060's scratch run edited the root `compat.yaml` only, so the
-     golden tree's run was not on 0.3.2; the local clean clones' cost (a full rerun after task-075's
-     review fixes, `npm test` from 20 min to hours on a loaded machine), the source of the
-     approver's rules of 2026-11-03; `main`'s CI runs cancelled by the next push, several on
+   - `−`: the matrix modelled a project without `init`'s built-in directive files, latent until
+     0.3.2 (bug-010; since when, `explore` establishes); plan-060's scratch run edited the root
+     `compat.yaml` only, so the golden tree's run was not on 0.3.2; the local clean clones' cost,
+     the source of the approver's rules of 2026-11-03 (its figures established by `explore` from
+     task-074's and task-075's notes); `main`'s CI runs cancelled by the next push, several on
      2026-11-03 (rule 3 foresees it); WingFoil's v0.4 planning date not announced, then started
      before the intake closed (dl-029 T2's gap, its row);
    - `WF`: none known; `explore` reads F-038 … F-042 against 0.3.2's CHANGELOG (a point 0.3.2
-     fixed is not sent again, its note's ledger row says so) and checks whether 0.3.2's warning on a
-     binding with no file deserves a note (it is a documented fix: probably not);
-   - `GOV`: the branch CI in place of the local clean clones (asked by the approver, G12);
-     dl-029 T2's case of a planning that starts before the intake's close; others only as
-     `explore` finds them.
-4. **The register** (dl-031 R3, dl-036 R1). Recommended: one line per open row (43 at plan-060's
-   close), each with keep, assign or drop and its reason; the rows whose trigger is "the next
-   retrospective" fall due here (dl-036 R1: this periodic one, so the "not touched" reading of a
-   pack's retrospective does not apply): each is proposed on its merits, not kept by default.
-   dl-038's Debts rule the table; `docs/owed-items.md` is changed at this plan's close.
+     fixed is not sent again, its note's ledger row says so), checks whether 0.3.2's warning on a
+     binding with no file deserves a note (it is a documented fix: probably not), and reads F-019
+     (built-in directive ids readable only from a project) against 0.3.2 and bug-010, for a fact to
+     add at the next sync rather than a new note;
+   - `GOV`: the branch CI in place of the local clean clones (asked by the approver, G12); the
+     approver's order of checks of 2026-11-03 (the review and its amendments first, the clean
+     clones once on the frozen code, documentation-only commits after them needing no new run, no
+     heavy reviewer run beside them), which lives only in plan-060's note: where it is written
+     (`repository-practice` or `tooling-delivery`), ruled with the branch-CI candidate, which would
+     supersede part of it; dl-029 T2's case of a planning that starts before the intake's close;
+     others only as `explore` finds them.
+4. **The register** (dl-031 R3, dl-036 R1). Recommended: one line per open row (43 on `main` at
+   `6e0c685`, recounted in `explore`), each with keep, assign or drop and its reason; the rows whose
+   trigger is "the next retrospective" fall due here (dl-036 R1: this periodic one, so the "not
+   touched" reading of a pack's retrospective does not apply): each is proposed on its merits, not
+   kept by default. dl-036 is approved but not yet applied (`repository-practice` is still 1.1), so
+   R1 and R5 are read from the decision-log. G12's line is ruled together with the branch-CI
+   candidate (G12 kept at W10 on 2026-11-02 and by plan-060 ruling 4; its evidence now includes
+   task-075's merge, a job of 20 min 04 s, run 41721858295); if that candidate is kept, its
+   decision-log is applied by ruling 8's plan beside dl-035 A4's change to `ci.yml`. dl-038's Debts
+   rule the table; `docs/owed-items.md` is changed at this plan's close.
 5. **Changes of governance.** Recommended: the test of plan-054's P1 (dl-028 N4): a `GOV`
    candidate becomes a decision-log only if this repository's adoption of the packs and its pin at
    0.3.1 or later (W10) would not fix it; otherwise a row with the trigger W10. Each kept candidate
    is one decision-log under `decision-log-ingest`, numbered after dl-038, captured and ruled here,
    applied by the dl actions plan of ruling 8 (none applied here).
 6. **WingFoil-side points.** Recommended: only as feedback notes in the inbox (`svc-018`), each
-   reproduced with WingFoil alone on 0.3.0, 0.3.1 and 0.3.2, written by task-076
-   (`tooling-delivery`, `pack: ""`), hosted by this plan on a branch of its own, numbered from
-   F-043, first line `New note (task-076).`, one ledger row each, `Last sync` unchanged; merged into
-   `main` alone, on the approver's OK, as soon as it is done (ruling 6's "as soon as possible"),
-   before this plan's branch closes; a notice to the coordination of the WingFoil projects,
+   reproduced with WingFoil alone on 0.3.0, 0.3.1 and 0.3.2, its `wingfoil_version` the newest
+   release it reproduces on, written by task-076 (`tooling-delivery`, `pack: ""`), hosted by this
+   plan on `task/task-076-<slug>` from `main` (task-076 added with `memory add` on that branch, no
+   other task added on any branch meanwhile, W-14), numbered from F-043, first line
+   `New note (task-076).`, one ledger row each, `Last sync` unchanged; its body cites the
+   inventory by its path and date and the candidates' ids, since the inventory and dl-038 are not
+   on `main` when it merges, and this plan's close adds the cross-references; opened right after
+   the `additional-points` checkpoint, beside dl-038; merged into `main` alone, on the approver's
+   OK, as soon as it is done (ruling 6's "as soon as possible"), before this plan's branch closes; a notice to the coordination of the WingFoil projects,
    recipients named by project (dl-036 R5), its text shown to the approver first. No task if no
    note survives `explore` and the checkpoint.
-7. **The close's notes.** Recommended: an Execution Note on dl-006 (R3 met for the period) and one
-   on dl-029 (the first run of `retrospective-start`, and T2's gap with its row); none on the
-   charters (no pack's cycle ran in the period beyond `kanban`'s, closed by plan-059).
+7. **The close's notes.** Recommended: an Execution Note on dl-006 (R3 met for the period), one on
+   dl-029 (the first run of `retrospective-start`, and T2's gap with its row) and one on dl-036 (R1's
+   first periodic application, before its dl actions); none on the charters (no pack's cycle ran in
+   the period beyond `kanban`'s, closed by plan-059).
 8. **Where the work runs.** Recommended: this plan on `main`; the inventory, the approver's points,
    dl-038 and any governance decision-log on the branch `retro/<YYYY-MM-DD>-periodic` from `main`
    after `submit`; task-076 on its own branch, merged into `main` alone (point 6); at the close, on
@@ -136,8 +162,14 @@ clones once on the frozen code; no heavy reviewer run beside them).
 3. **`additional-points`** (approver): the inventory shown in chat; the approver adds points. A
    checkpoint, no commit.
 4. **`capture`** (facilitator): the approver's points in their own commit; dl-038 and each kept
-   governance decision-log (`memory add`, body, independent review, `submit`); task-076 if a note
-   is kept (point 6).
+   governance decision-log (`memory add`, body, independent review, `submit`). In parallel, right
+   after the checkpoint, task-076 if a note is kept (point 6), through `tooling-delivery` as
+   plan-054's task-064: its body (Context, Acceptance, Design) reviewed and amended, `submit`, the
+   approver's backlog acceptance; the build (each note reproduced with WingFoil alone on 0.3.0, 0.3.1
+   and 0.3.2, a difference going to the approver); the build review and its amendments, then the
+   checks from clean clones once on the frozen commit, on Node.js 22.21.0 and 22.12.0 one after the
+   other (the approver's order of 2026-11-03); the branch CI's conclusion; `in-review`, the
+   approver's approval and merge OK, `--no-ff` into `main`, `main`'s CI read, `done`; the notice.
 5. **`approve`** (product-owner, held by the approver): claude hands each command
    (`npm run -s wingfoil -- memory approve <id> --reason "…"`, with the `cd` to the repository
    root); a rejection sends the element back to `capture`. dl-038 must be ruled for this plan to
@@ -168,3 +200,10 @@ clones once on the frozen code; no heavy reviewer run beside them).
 <!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
 - 2026-11-04: added by plan-060's `retrospective-start` (dl-029 T1); `workflow` and `phase` filled
   by editing the draft (W-02).
+- 2026-11-04: independent review: approve after amendments, nothing blocking; six should-fix and
+  six nits, all applied: the deviations from the workflows stated; task-076's branch from `main`,
+  its `memory add` there and its citations of the inventory; task-076 opened after the checkpoint,
+  beside dl-038, its loop and the approver's order of checks; that order as a `GOV` candidate; G12's
+  line ruled with the branch-CI candidate, its new evidence; the clean clones' figures left to
+  `explore`; the register's count as of `6e0c685`; plan-055's actions; F-019 to read; the origin of
+  bug-010's defect left to `explore`; dl-036 not yet applied; a note on dl-036 at the close.
