@@ -277,3 +277,8 @@ For the approver's acceptance:
   two first-release cycles (dl-006's notes of plan-044 and plan-052): inventory
   `docs/retrospectives/2026-10-28-periodic-friction-inventory.md`, decision-log dl-028 (approved
   2026-10-29). The body stays as approved.
+- 2026-11-04, plan-060: WingFoil 0.3.2 recorded (task-074, after bug-010's fix by task-075); the
+  published versions' computed range is `>=0.3.0 <=0.3.2` for 1.0.0, 2.0.0 and 2.0.1
+  (`catalog.yaml`). The recheck: 2.0.1 (`main`) and 2.0.0 pass the matrix and `check:runs` on 0.3.0
+  and 0.3.2; 1.0.0 still meets bug-005 and bug-006 on 0.3.2. `base`'s `decision-log` template lacks
+  the optional fields 0.3.2's `init` adds (a row of `docs/owed-items.md`).

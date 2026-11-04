@@ -329,3 +329,5 @@ For the approver's acceptance:
   point 2 row (dl-034 D2); this charter's Ships and Acceptance still name the
   composer as the warning's source, corrected by the note of plan-057 above and a row of the same
   register. The body stays as approved.
+- 2026-11-04, plan-060: WingFoil 0.3.2 recorded (task-074); the computed range of 1.0.0 is
+  `>=0.3.0 <=0.3.2` (`catalog.yaml`); the recheck passes on 0.3.0 and 0.3.2.

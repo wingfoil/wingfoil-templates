@@ -300,3 +300,5 @@ For the approver's acceptance:
   two first-release cycles (dl-006's notes of plan-044 and plan-052): inventory
   `docs/retrospectives/2026-10-28-periodic-friction-inventory.md`, decision-log dl-028 (approved
   2026-10-29). The body stays as approved.
+- 2026-11-04, plan-060: WingFoil 0.3.2 recorded (task-074); the computed range of 1.0.0 is
+  `>=0.3.0 <=0.3.2` (`catalog.yaml`); the recheck passes on 0.3.0 and 0.3.2.
