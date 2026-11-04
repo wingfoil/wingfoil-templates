@@ -224,3 +224,44 @@ clones once on the frozen code; no heavy reviewer run beside them).
   bug-010's defect left to `explore`; dl-036 not yet applied; a note on dl-036 at the close.
 - 2026-11-04: the approver ruled the outline (every point as recommended); submitted
   (`draft → active`).
+- 2026-11-04, `explore`: plan submitted `active` (`ecd7e4d`); the branch `retro/2026-11-04-periodic`
+  from `main` at `f01e53f` (plan-060's close; `main`'s CI on it, run 41850628713, `success`). Three
+  read-only subagents mined the strands; the inventory committed alone (`e87fff0`), checked by an
+  independent review (every citation and CI figure; approve after amendments, nothing blocking) and
+  amended (`8b14afe`).
+- 2026-11-04, `additional-points`: the approver ruled the checkpoint as the inventory's §10
+  recommends, adding no point; recorded as P1 … P3 (`973af08`).
+- 2026-11-04, `capture`: `memory add` gave dl-038 … dl-040 in order (`ede7cfb` … `7d947a9`), each id
+  checked: dl-038 the retrospective, dl-039 the branch CI in place of the clean clones with the
+  order of checks and G12 (GOV-1, GOV-2), dl-040 dl-029 T2's missing case (GOV-3); GOV-4 a sentence
+  of `repository-practice` 1.2. Each reviewed independently (approve after amendments, nothing
+  blocking), amended, re-reviewed together (dl-039 approve; dl-038 and dl-040 approve after
+  amendments), amended; submitted `pending` (`3568d14` … `283a1c6`); dl-040's re-review amendments
+  landed after its submit, by a slip of the script, and were applied while `pending` (`6e5110a`).
+  No feedback note (P3): task-076 not opened.
+- 2026-11-04, `approve`: the approver approved dl-038, dl-039 (with its departure from the local
+  list: `index -- --check` left to the CI's `validate`) and dl-040 (`0dedcff`, `0130bde`,
+  `e3c7491`).
+- Step 6, the close:
+  - **The notes:** on dl-006 (R3 met for the period), dl-029 (`retrospective-start`'s first run and
+    T2's case, made general by dl-040) and dl-036 (R1's first periodic application).
+  - **The register** (`docs/owed-items.md`, dl-038 D1 … D3): rows reassigned as D1 rules (rows 1, 5,
+    10, 15, 17, 20, 21, 22, 24, 26, 39, 40, 41, 42, 43); three to Closed (the "known defects"
+    marker dropped; the general in-place amendment merged into G7; `--param` merged into the
+    private projects' check); three new (dl-030's note, the built-in ids compared, F-019's facts);
+    row 16 widened to dl-039, dl-040, rule 3's sentence and the notes (D3). 43 open rows.
+  - **The account per tech-spec (dl-020):** none amended or erratum recorded here.
+  - **Numbers:** plan-061, dl-038 … dl-040 used; task-076 and F-043 not used (P3), released, with
+    bug-011 and prel-007.
+  - **Privacy:** every commit checked before it was made; the branch's diff against `main` and its
+    commit messages checked: no local or scratch path, no private repository or project, no
+    intermediary session; the only name is the CLI's `Approver:` trailer on the approval commits,
+    as on `main`.
+  - **Next plans:** the dl actions plan of dl-035 … dl-040 (row 16), then that of dl-024 and dl-025
+    (row 5), then WingFoil UI's feedback (row 43).
+  - Still to do before `active → done`: the branch CI's conclusion; on the approver's OK, the
+    `--no-ff` merge into `main`, `main`'s CI read, the branch removed; within seven days of
+    plan-060's close (by 2026-11-11).
+- 2026-11-04, branch close: CI run 41900866759 on `d16aa10`, `success` (`validate (22.21.0)`,
+  `validate (22.12.0)`, 15 min 49 s each). The approver gave the merge OK; `--no-ff` merge into
+  `main`.

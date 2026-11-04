@@ -108,3 +108,7 @@ Configuration changes this decision implies, applied after approval:
   cycles ran together (`f3fb891`; `retrospective` v5, `9ec6f48`). This note supersedes the notes of
   plan-044 (ruling B) and plan-052 (ruling 6) as the reading of R1's order (dl-033 O3); those notes
   stay. The body stays as approved.
+- 2026-11-04, plan-061: R3 met for the period from plan-054's close (2026-10-29) to WingFoil 0.3.2's
+  intake close (2026-11-04), by the first periodic retrospective an intake's close started (dl-029
+  T1): inventory `docs/retrospectives/2026-11-04-periodic-friction-inventory.md`, decision-log
+  dl-038.

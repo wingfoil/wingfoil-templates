@@ -82,3 +82,6 @@ The points below are **proposed**; they become rulings when the approver approve
   note on dl-031 covering R1 … R3, the shared bump with dl-035, R3 on `main` and its source as
   element and section, gap 1's wording, "the rows", dl-029 T1, "the plan active on `main`", the
   count of gaps.
+- 2026-11-04, plan-061: R1's first periodic application, before its dl actions: the thirteen rows
+  with the trigger "the next retrospective" each ruled on its merits by dl-038 D1, none kept by
+  default; R2 and R5 followed by plan-060 and plan-061 (inventory of 2026-11-04 §4).
