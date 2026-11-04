@@ -265,3 +265,9 @@ clones once on the frozen code; no heavy reviewer run beside them).
 - 2026-11-04, branch close: CI run 41900866759 on `d16aa10`, `success` (`validate (22.21.0)`,
   `validate (22.12.0)`, 15 min 49 s each). The approver gave the merge OK; `--no-ff` merge into
   `main`.
+- 2026-11-04, close: merged into `main` (`de61bed`), pushed, the branch removed locally and on
+  origin; `main`'s CI on `de61bed`, run 41903963273, `success`. Done: the inventory committed;
+  dl-038, dl-039 and dl-040 approved; no task-076 (no note kept); the notes on dl-006, dl-029 and
+  dl-036 and the register's changes written; the branch merged and removed; within seven days of
+  plan-060's close. The run of this note's push and of `active → done` is read by the next plan
+  (dl-038 C3). `active → done`.
