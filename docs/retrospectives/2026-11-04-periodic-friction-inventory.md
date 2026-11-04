@@ -29,16 +29,17 @@ are this inventory's; `G7` … `G12` are the inventory of 2026-10-28's, as the r
 ## 1. The intake of WingFoil 0.3.2 (plan-060) and bug-010
 
 - `+` **dl-029's `retrospective-start` ran as written, the first time** (`wingfoil-release-intake`
-  v5): the planning date recorded, the patch case of T2 offered and not taken, plan-061 added with
-  `workflow: retrospective-periodic` (W-02 by hand), its deadline recorded (plan-060 point 6,
-  ruling 6, note 2026-11-04 step 5). T5's interim rule had ended as foreseen: v5 was on `main`
-  (`5631052`, 2026-10-29) before 0.3.2 came out (2026-11-02).
-- `−` **The next release planning's date was never announced.** WingFoil's `main` of 2026-11-02 had
-  no release-planning plan for v0.4 (WingFoil's dl-186: after the `v0.3.2` tag); the estimate of
-  2026-10-28 was "not before 2026-11-06"; the approver reported on 2026-11-03 that it started that
-  day, before the intake closed. T2 has no case for it; the approver ruled the deadline (ruling 6),
-  and the gap has its row (plan-060 › Context; `8a174de`) (GOV-3). `?` T1 records the date "as
-  announced"; here it came from the approver's report.
+  v5): the planning date recorded, the patch case of T2 not taken (the approver's order of
+  2026-11-02), plan-061 added with `workflow: retrospective-periodic` (W-02 by hand), its deadline
+  recorded (plan-060 point 6, ruling 6, note 2026-11-04 step 5); the approver ruled plan-061's
+  outline as recommended on 2026-11-04 (plan-061 › rulings). T5's interim rule had ended as
+  foreseen: v5 was on `main` (`5631052`, 2026-10-29) before 0.3.2 came out (2026-11-02).
+- `−` **The next release planning started before the intake closed.** Its date was not announced:
+  WingFoil's `main` of 2026-11-02 had no release-planning plan for v0.4 (WingFoil's dl-186: after
+  the `v0.3.2` tag); the estimate of 2026-10-28 was "not before 2026-11-06"; the approver reported
+  on 2026-11-03 that it started that day, before the intake closed. T2 has no case for it; the
+  approver ruled the deadline (ruling 6), and the gap has its row (plan-060 › Context; `8a174de`)
+  (GOV-3). `?` T1 records the date "as announced"; here it came from the approver's report.
 - `+` **The real-engine check found bug-010 before the record merged.** task-074's Acceptance 6
   (`validate:publication` on the record's tree) gave the golden tree 26 runs, 13 failed: on 0.3.2,
   `directives list` warns on the bindings `security` and `testing` (task-074 › notes 2026-11-03,
@@ -48,12 +49,12 @@ are this inventory's; `G7` … `G12` are the inventory of 2026-10-28's, as the r
   the approver's option A (fix the matrix; a fixture change rejected, it would hide the defect),
   bug-010 triaged and task-075 accepted by 15:57 (`7f988b5`, `f29d7ce`), task-075 merged at 22:25
   (`04f96ff`) (plan-060 › note 2026-11-03).
-- `−` **The defect was latent from the matrix's first version.** `8f645c0` (2026-10-09, task-011)
-  copied the composed `.wingfoil/` alone; task-035 (`21f9905`, 2026-10-21) kept it when it
+- `−` **The defect was latent from the matrix's first version** (git log): `8f645c0` (2026-10-09,
+  task-011) copied the composed `.wingfoil/` alone; task-035 (`21f9905`, 2026-10-21) kept it when it
   committed the scratch repository; the golden fixture has bound `security` and `testing` since
-  `3b5a0e9` (2026-10-07). 0.2.2, 0.3.0 and 0.3.1 warned only with `--role`. The knowledge was on
-  record: F-019 (built-in directives exist only in a project `init` created) and spec-001 §7.4
-  (a composition may bind them) (bug-010 › Observed).
+  `3b5a0e9` (2026-10-07). 0.3.0 and 0.3.1 warned only with `--role`, and spec-001 §7.4 allows the
+  binding (bug-010 › Observed). The knowledge was on record in F-019 (built-in directives exist
+  only in a project `init` created).
 - `−` **plan-060's scratch run edited the root `compat.yaml` only**, so the golden tree, which
   reads its own, ran on 0.2.2 and 0.3.1; its "0 failed" would have hidden bug-010. The plan's
   independent review caught it (plan-060 › Context "Already run"; note 2026-11-03).
@@ -81,16 +82,20 @@ are this inventory's; `G7` … `G12` are the inventory of 2026-10-28's, as the r
 - `DEBT` **A review suggestion left out:** comparing each release's built-in ids with
   `src/wingfoil-builtins.ts` (W-11's hand copy), now that the matrix reads them per release
   (task-075 › notes, "Not applied"). No row.
-- `−` **The clean clones' cost.** Three rounds on both Node.js versions in about eighteen hours
+- `−` **The clean clones' cost.** Three rounds on both Node.js versions in about fifteen hours
   (task-075 at `3c89e70`; task-074 merged with task-075 in scratch; task-074 at `5c5d047`), 1051 of
-  1051 each; from commit times, about three hours for task-075 (`3c89e70` 16:44 → `26f7c04` 19:51)
-  and overnight for task-074 (`5c5d047` 23:00 → `1c8a8fe` 07:53). A first run of task-075 was
-  stopped when its build review's fixes landed. The notes record counts and order, not durations
+  1051 each; from commit times, about three hours for task-075's two rounds (`3c89e70` 16:44 →
+  `26f7c04` 19:51, both recorded there) and overnight for task-074 (`5c5d047` 23:00 → `1c8a8fe`
+  07:53). `?` A first run of task-075, on an earlier commit, stopped when its build review's fixes
+  landed (no source records it). In plan-059, task-073 ran full clones for a content-only note and
+  ran them again after its review's amendment (task-073 › notes 2026-11-02, `95abe15`, `0bbe924`).
+  The notes record counts and order, not durations
   (`DEBT`: no local figure to set against the CI's). Earlier, plan-055's two suites run in parallel
   failed on each other's scratch repositories (plan-055 › note 2026-10-29, checks).
 - `+` **The approver's order of checks of 2026-11-03:** the build review and its amendments first;
   the clean clones once, on the frozen commit; documentation-only commits after them need no new
-  run (said in the notes, as task-059); no heavy reviewer run beside the clones. task-074 applied
+  run, said in the task's notes (task-059's precedent, its notes of 2026-10-27); no heavy reviewer
+  run beside the clones. task-074 applied
   it (note 2026-11-04). It is written only in plan-060's note (`bf24c88`) (GOV-2).
 
 ## 3. The rules of 2026-10-28 in application
@@ -113,12 +118,12 @@ are this inventory's; `G7` … `G12` are the inventory of 2026-10-28's, as the r
   4 `failure`, 1 in progress at reading. On 2026-11-03, six cancelled by the next push (41644476861,
   41645928408, 41646728487, 41647576221, 41647679672, 41658704239), each superseded by a `success`
   (41648157457, 41658816665), as rule 3 foresees; none is cited by an element, nor are five
-  successes (41604549667, 41648157457, 41658816665, 41799359136, 41802814475) (`?` read but
-  uncited; dl-034 N4 again).
+  successes of plan-060's window (41604549667, 41648157457, 41658816665, 41799359136,
+  41802814475) (`?` read but uncited; dl-034 N4 again).
 - `−` **Rule 3 at a plan's close:** a close reads the CI of its "closing head", then pushes its last
   note and `active → done`; the run of that last push is read only by the next plan (plan-059:
-  `b5b8bff`'s run 41538621346 cited in plan-060's Context; plan-060: `f01e53f`'s run read here,
-  §5) (GOV-4).
+  `b5b8bff`'s run 41538621346 cited in plan-060 › note 2026-11-03; plan-060: `f01e53f`'s run
+  41850628713, in progress when this inventory was committed, read by plan-061's close) (GOV-4).
 - `+` **dl-031's register (rule 4):** plan-060's rows added in the commits that record them (ruling
   8's in `5cc430a`, the recheck's in `38a30d5`, dl-024/dl-025's dl actions in `46c1528`); the
   dl-024/dl-025 row moved to Closed by plan-022's close (`adad7a0`).
@@ -127,8 +132,13 @@ are this inventory's; `G7` … `G12` are the inventory of 2026-10-28's, as the r
 - `+` **dl-032 E3** (`check:runs`, the matrix) found bug-010 and reproduced `base@1.0.0`'s failures
   (§1); E2, E4 and dl-033 O1 held in the `kanban` cycle (K-inventory §5; dl-034 K1, K5).
 - `−` **plan-022 stayed `active` fourteen days after its condition was met** (dl-015 approved
-  2026-10-20, `4dbc9ef`; closed 2026-11-03, `adad7a0`): nothing tracks a plan waiting on a
-  condition once it is met. `?` an isolated case.
+  2026-10-20, `4dbc9ef`; closed 2026-11-03, `adad7a0`): a register row tracked its close, bundled
+  with dl-024's and dl-025's ruling, so it waited for them (plan-022 › note 2026-11-03).
+- **plan-059 as a run of the rules:** `+` its register read under dl-036 R1's "not touched" before
+  that rule was approved, every other row kept (plan-059 ruling 4); `+` its notice to the
+  coordination of the WingFoil projects, recipients named by project (plan-059 › close); `−` its
+  close review counted the register's open rows as 37 against 38 at `0162c90` and 41 then (plan-059
+  › note 2026-11-02, close review); `−` task-073's full clean clones for a content-only note (§2).
 
 ## 4. The rules of 2026-11-02 revisited (dl-034 … dl-037)
 
@@ -145,8 +155,8 @@ Approved on 2026-11-02 (`2ddb65c`, `bf39d5c`, `49acf67`, `d5bf821`), not yet app
 
 ## 5. CI and G12
 
-The CI job `validate`, timeout 30 minutes (`.github/workflows/ci.yml`), every successful run of the
-period's last three days that the elements or this inventory cite:
+The CI job `validate`, timeout 30 minutes (`.github/workflows/ci.yml`), the successful runs from
+plan-059's last push that the elements or this inventory cite (minutes:seconds):
 
 | Run | Commit | 22.21.0 | 22.12.0 | Note |
 |---|---|---|---|---|
@@ -160,10 +170,11 @@ period's last three days that the elements or this inventory cite:
 | 41721858295 | `e86b988` | 20:04 | 13:32 | task-075's merge |
 | 41726970835 | `5c5d047` | 12:50 | 16:38 | task-074, branch: `npm test` 582/743 s, matrix steps 161/223 s |
 | 41799359136 | `bf24c88` | 18:18 | 13:12 | task-074's merge and notes |
+| 41802814475 | `7748405` | 20:24 | 20:14 | plan-061's body |
 | 41846894761 | `ecd7e4d` | 12:51 | 21:04 | plan-060's closing head |
 
-- `−` **The maximum is 22 min 47 s, 76 % of the timeout**; the same commit's two jobs differ by
-  up to 8 min 8 s (`3c89e70`), the runner's spread; the run counts did not grow with 0.3.2 (plan-060 ›
+- `−` **The maximum is 22 min 47 s, 76 % of the timeout**; the same commit's two jobs differ by up
+  to 8 min 13 s (`ecd7e4d`), the runner's spread; the run counts did not grow with 0.3.2 (plan-060 ›
   Context), and task-075's seeding added no visible time (run 41721858295).
 - `+` **The branch CI runs the clean clones' checks but `validate:publication` (of this
   repository and of the golden tree: the CI's publication step runs on tags only) and `workflow
@@ -198,23 +209,26 @@ adoption of the packs and its pin at 0.3.1 or later (W10) would not fix it.
 
 - **GOV-1 — The branch CI in place of the local clean clones** (asked by the approver on
   2026-11-03; §2, §5). Locally only `validate:publication`, the golden tree in publication mode,
-  `index -- --check` and `workflow list`; the branch CI's conclusion as today. For: the CI runs the
+  `index -- --check` and `workflow list` (`index -- --check` already runs in the CI inside
+  `validate`, so the list could be three); the branch CI's conclusion as today. For: the CI runs the
   same checks on both Node.js versions and caught bug-010 alone; the clones cost hours. Against:
   the CI at 76 % of its timeout (G12), and a red branch CI found later than a local run. W10 does
   not fix it (`tooling-delivery` is this repository's own). Ruled with G12's row (§8).
 - **GOV-2 — The approver's order of checks of 2026-11-03 written down** (§2): in `tooling-delivery`
   or `repository-practice`; part of it superseded if GOV-1 is kept; it extends to content-only
-  tasks (task-073's full clones for a feedback note). W10 does not fix it.
-- **GOV-3 — dl-029 T2's missing case** (§1): a planning that starts before the intake's close, or
-  whose date is never announced; what the intake's plan records and which deadline applies.
+  tasks (task-073's full clones for a feedback note, §2). W10 does not fix it: both homes are this
+  repository's own (`tooling-delivery`, which `methodology/kanban`'s adoption maps but does not
+  replace, row 38; `repository-practice`, dl-031 R6).
+- **GOV-3 — dl-029 T2's missing case** (§1): a planning that starts before the intake's close
+  (a date never announced is T2's "not known" case); which deadline applies then.
   `wingfoil-release-intake` is this repository's own and survives W10 (dl-029 T3). W10 does not fix
   it. Register row 39.
 - **GOV-4 — Rule 3 at a plan's close** (§3): who reads the run of the last push (the note and
   `active → done`). `repository-practice` survives W10 (dl-031 R6). Small: possibly a sentence in
   the 1.2 bump of dl-035 and dl-036's dl actions rather than a decision-log of its own.
-- Observed, no change proposed: plan-022's fourteen days (§3, an isolated case); W-02 (`workflow`
-  and `phase` filled by hand) and a plan's `phase` frozen while it runs later phases on the 0.2.2
-  pin, both fixed by W10.
+- Observed, no change proposed: plan-022's fourteen days (§3, tracked by a bundled row); W-02
+  (`workflow` and `phase` filled by hand) and a plan's `phase` frozen while it runs later phases on
+  the 0.2.2 pin, both fixed by W10.
 
 ## 8. The register
 
@@ -226,7 +240,7 @@ order.
 | # | Item | Trigger | Proposal | Reason |
 |---|---|---|---|---|
 | 1 | CI policy for advisories (NR) | the next retrospective | assign: "the tooling task of dl-035 A4" | dl-035 approved; A4's task closes the row; not applied |
-| 2 | `check:pins` covering `overrides` | the next dependency update | keep | no dependency update since `e765b03` |
+| 2 | `check:pins` covering `overrides` | the next dependency update | keep | no change to `package.json`'s dependencies or `overrides` since `e765b03` (`c2744ba` adds a matrix lockfile only) |
 | 3 | The `minimatch` override removed | the next dependency update | keep | no upstream accepts `minimatch` 11 (`npm view`, 2026-11-04) |
 | 4 | Recheck W-01 … W-14 and F-003, F-005, F-012, F-017 | the pin bump | keep | the pin is 0.2.2; 0.3.2 joins the releases to recheck |
 | 5 | The dl actions of dl-024 and dl-025 | the approval of both; the approver places the plan | assign: placed by the approver (approvals met 2026-11-03) | the order of the next plans is the approver's |
@@ -240,7 +254,7 @@ order.
 | 13 | Custom `sw-life-cycle` name clash | the adoption | keep | W10 not started |
 | 14 | `software`'s `tech-lead` holder | the adoption | keep | W10 not started |
 | 15 | `pack-cycle` v6 checked on the engine | the pin bump (W10) | assign (text): "v6 or v7" | dl-037 E3 raises `pack-cycle` to v7 |
-| 16 | The dl actions of dl-035 … dl-037 | right after this retrospective (plan-060 ruling 8) | keep, the item extended with dl-038's approved governance decision-logs | trigger met at this plan's close |
+| 16 | The dl actions of dl-035 … dl-037 | right after this retrospective (plan-060 ruling 8) | keep | its trigger already names this retrospective's governance decision-logs; met at this plan's close |
 | 17 | `software`'s charter text drift (NR) | the next retrospective | assign: owner W10, trigger G7 | a correction needs an amendment; rule 1 keeps text on `main` |
 | 18 | `kanban` open point 2 | the adoption | keep | W10 not started |
 | 19 | `kanban` open point 3 | a `software` `release` with `id`, or parallel release lines | keep | neither happened |
@@ -249,7 +263,7 @@ order.
 | 22 | `scrum` open point 2 and `kanban` open point 4 (`explore`'s weak evidence) (NR) | the next retrospective | for the approver: assign to the pin bump (W10) or keep | it depends on `base` 1.0.0's bug-006 (the charter); not met again here |
 | 23 | A decision-log making in-place amendment general (NR) | the next retrospective | drop: merged into G7 (row 6) | the same item; W10 decides the model |
 | 24 | `pack-delivery`'s selection over `accepted` packs (NR) | the next retrospective | assign: owner W10, trigger the adoption | this repository's own workflow, read again at the adoption |
-| 25 | `--param` applies to an `entries` composition only (NR) | the next retrospective | assign: merged into row 41's trigger | met only in the private projects' check |
+| 25 | `--param` applies to an `entries` composition only (NR) | the next retrospective | drop: merged into row 41 | met only in the private projects' check |
 | 26 | `pack-semver` rule for fixes and changed defaults (NR) | the next retrospective | assign: "the next pack release that is a fix or changes a default" | no such release in the period |
 | 27 | `plan-{n}-{slug}` or `{workflow}-{phase}-plan` | the adoption | keep | W10 not started |
 | 28 | `check:runs` full-run scenarios | the next tooling task on `runs.ts` | keep | `runs.ts` untouched since 2026-10-28 |
@@ -273,11 +287,19 @@ New items this inventory finds (`DEBT`, rows to add at the close if dl-038 keeps
 missing "actions applied" note (§3); the built-in ids compared with W-11's copy (§2); the clean
 clones' durations recorded (§2, if GOV-1 is not kept).
 
-NR rows: 1, 12, 17, 20, 22, 23, 24, 25, 26, 39, 40, 41, 42 — assign 1, 17, 20, 24, 25, 26, 41, 42;
-drop 23; for the approver or ruled with a candidate 12, 22, 39, 40. None kept by default.
+NR rows: 1, 12, 17, 20, 22, 23, 24, 25, 26, 39, 40, 41, 42 — assign 1, 17, 20, 24, 26, 41, 42;
+drop 23, 25 (merged); for the approver or ruled with a candidate 12, 22, 39, 40. None kept by
+default.
 
-## 9. For the approver at `additional-points`
+## 9. What went well, in short (dl-006 R5)
+
+The intake's checks on the real engine found a latent defect of this repository's tooling before
+it reached `main`, and the approver ruled it within the hour; every element was reviewed and the
+reviews found what the builder missed; dl-029's new phase ran as written the first time; the rules
+of 2026-11-02 were followed before they were applied.
+
+## 10. For the approver at `additional-points`
 
 - GOV-1 with G12 (row 10), GOV-2, GOV-3 with row 39, GOV-4: which become decision-logs.
-- Rows 5, 12, 22 and 40, and the owner changes of rows 17 and 20 (approver → W10).
+- Rows 5, 12, 22 and 40, and the owner changes of rows 17, 20 and 24 (approver → W10).
 - No `WF` note proposed: task-076 opens only if the approver adds one.
