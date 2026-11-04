@@ -392,3 +392,7 @@ private repository or project, no intermediary session); after every push to `ma
     intermediary session; request origins written "asked by the approver on <date>".
   - `main`'s CI on the closing head read before `active → done`.
 
+- 2026-11-04: `main`'s CI on the closing head `ecd7e4d`, run 41846894761, `success`. Done:
+  `compat.yaml` lists 0.3.2; the six published versions carry `>=0.3.0 <=0.3.2`; `check:runs` runs
+  on 0.3.0 and 0.3.2; the recheck recorded and checked; plan-061 added with its deadline; the
+  charters' notes and the owed rows written; the notices sent. `active → done`.
