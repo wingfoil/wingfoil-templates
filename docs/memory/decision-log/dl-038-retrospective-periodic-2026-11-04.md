@@ -58,19 +58,29 @@ Each change of governance takes effect only when its own decision-log is approve
 
 ### Debts
 
-- **D1 —** The register's table (inventory §8) as P2 rules it is approved as a backlog: row 5 placed
-  after the dl actions plan of row 16 and before WingFoil UI's feedback; row 12 dropped; row 22
-  assigned to the pin bump (W10); row 40 to the next minor release of `base` and `software`; rows
-  17, 20 and 24 to the owner W10; row 23 merged into G7 and row 25 into row 41 (both to Closed);
-  rows 10 and 39 ruled with C1 and C2 (each moves to Closed when its decision-log is applied); every
-  other row as §8 proposes.
+- **D1 —** The register's table (inventory §8) as P2 rules it is approved as a backlog:
+  - row 5 placed after the dl actions plan of row 16 and before WingFoil UI's feedback, and row
+    43's trigger gains "and the dl actions plan of dl-024 and dl-025";
+  - row 12 dropped: the ranges are computed from formats, known defects live in the bugs;
+  - row 22 to the trigger the pin bump (W10), owner unchanged; row 40 to the next minor release of
+    `base` and `software`;
+  - rows 17 and 20 to owner W10, trigger G7; row 24 to owner W10, trigger the adoption;
+  - row 23 merged into G7 and row 25 into row 41, both to Closed;
+  - rows 10 and 39 to the trigger "the dl actions plan of row 16" (dl-039 R3, dl-040 D4), each
+    moving to Closed when that plan applies its decision-log; if dl-039 is rejected, row 10 keeps
+    owner and trigger W10; if dl-040 is rejected, row 39 keeps owner approver, trigger the next
+    intake;
+  - every other row as §8 proposes.
 - **D2 —** New rows: dl-030's missing "actions applied" note (owner approver, in the dl actions
   plan of row 16); the built-in ids each release's `init` writes compared with
   `src/wingfoil-builtins.ts` (W-11's copy) by the matrix (owner approver, trigger the next tooling
   task on `src/matrix.ts`); F-019's facts from bug-010 at the first sync (owner W10, trigger the
-  first sync). The clean clones' durations need no row: C1 records the branch CI's instead.
+  first sync). Their Source: dl-038 D2 (inventory §2, §3, §6). The clean clones' durations need no
+  row while dl-039 stands (it records the branch CI's); if it is rejected, a row (owner approver,
+  trigger the next tooling task).
 - **D3 —** Row 16's dl actions plan also applies dl-039 and dl-040 (if approved), C3's sentence,
-  dl-026's note (row 42) and dl-030's note (D2).
+  dl-026's note (row 42) and dl-030's note (D2): row 16's item gains them with the notes on dl-017
+  and dl-029, and its Source gains dl-038 D3.
 
 ### Observed, no change proposed
 
@@ -80,7 +90,18 @@ Each change of governance takes effect only when its own decision-log is approve
   reads (the golden tree reads its own), or runs the real commands on the committed change (§1).
 - **N3 —** `main`'s runs cancelled by a later push, each superseded by a `success`, as rule 3
   foresees; several runs read and cited by no element (§3; dl-034 N4 again).
+- **N4 —** Fixed by the adoption (W10): W-02 for plans (`workflow` and `phase` filled by hand),
+  and a plan's `phase` frozen while it runs later phases on the 0.2.2 pin (§1, §7).
+- **N5 —** Smaller points with no change: ruling 6's row one commit late (dl-036 R2 now covers it);
+  plan-059's close review counting 37 open rows against 38 and 41; the cost of rules approved and
+  not yet applied (row 16's plan settles it); dl-035, dl-036 R3 and R4, and dl-037 not exercised in
+  the period (§3, §4).
 
 ## Execution Notes
 <!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
-- 2026-11-04: written under plan-061 (`capture`), with the inventory's §11.
+- 2026-11-04: written under plan-061 (`capture`), with the inventory's §11. D1 and D2 are applied to
+  `docs/owed-items.md` at plan-061's close (rule 4).
+- 2026-11-04: independent review: approve after amendments, nothing blocking; six should-fix and
+  four nits, all applied: the triggers of rows 17, 20 and 24; rows 10 and 39 with a trigger and a
+  fallback; row 16's own row widened; row 43 after row 5's plan; D2's durations row conditional on
+  dl-039; N4 (fixed by W10) and N5; row 12's reason; row 22's owner; when D1 and D2 apply.
