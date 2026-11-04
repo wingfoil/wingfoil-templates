@@ -2,7 +2,7 @@
 id: dl-038-retrospective-periodic-2026-11-04
 type: decision-log
 title: "Retrospective periodic 2026-11-04"
-status: draft
+status: pending
 tags: ["process","retrospective","periodic"]
 ---
 
