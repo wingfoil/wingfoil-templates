@@ -2,7 +2,7 @@
 id: bug-014-base-s-governance-evolution-apply-asks-for-the-generated-agents.md-region-updated-by-hand
 type: bug
 title: "base's governance-evolution apply asks for the generated AGENTS.md region updated by hand"
-status: draft
+status: pending
 severity: "minor"        # critical | major | minor
 pack: "pack-foundation-base"
 tags: ["packs","feedback"]
