@@ -2,7 +2,7 @@
 id: dl-042-the-intake-of-a-verified-wingfoil-patch-wingfoil-release-intake-v7
 type: decision-log
 title: "The intake of a verified WingFoil patch: wingfoil-release-intake v7"
-status: draft
+status: pending
 tags: ["process","intake","wingfoil","ci"]
 ---
 
