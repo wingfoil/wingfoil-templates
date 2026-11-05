@@ -54,8 +54,8 @@ WingFoil UI does not send to WingFoil itself and that held when reproduced on Wi
 5. **Checks** (`tooling-delivery` v3 › `review`, dl-039): the build review and its amendments first;
    then once on the frozen commit the branch CI `success`, both jobs, run id and durations recorded,
    and dl-039's local list on Node.js 22.21.0 after `npm ci` and `npm run build`; `node --test
-   dist/tests/feedback-inbox.test.js` (or the inbox test's file) and `npm run lint` exit 0 locally.
-   No file changes outside `docs/wingfoil-feedback/` and this task's file.
+   dist/tests/wingfoil-feedback.test.js dist/tests/feedback-note.test.js` and `npm run lint` exit 0
+   locally. No file changes outside `docs/wingfoil-feedback/` and this task's file.
 6. **Delivery:** `--no-ff` merge into `bug/ui-feedback-2026-11-02`, plan-064's branch, not `main`
    (plan-064 ruling 1, task-064's precedent).
 
