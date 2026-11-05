@@ -2,7 +2,7 @@
 id: plan-063-dl-actions-dl-024-and-dl-025-the-pack-format-s-amendments-for-mcp-servers-and-for-conflicts-between-packs
 type: plan
 title: "dl actions: dl-024 and dl-025, the pack format's amendments for MCP servers and for conflicts between packs"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "rule"
 tags: ["process","dl-actions","format","packs"]
