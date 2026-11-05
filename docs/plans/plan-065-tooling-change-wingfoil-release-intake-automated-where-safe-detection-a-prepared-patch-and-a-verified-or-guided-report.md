@@ -157,13 +157,36 @@ Each point with a recommendation.
 
 ## The approver's rulings
 
-<!-- Filled when the approver rules the outline. -->
+Given by the approver on 2026-11-05: every point of the outline as recommended.
+1. **Point 1:** four tasks in the order (A), (D), (B), (C), each added after the one before is done.
+2. **Point 2:** the bar of "verified" as written, conservative; no format probe.
+3. **Point 3:** the registry and the tag's CHANGELOG the only new endpoints; tests offline; no
+   `--before`.
+4. **Point 4:** the decision-log for `wingfoil-release-intake` v7, option (b) proposed, captured and
+   ruled before (D).
+5. **Point 5:** a red run while a version is missing; a register row for the weekly reading.
+6. **Point 6:** dl-039's checks; (C) tried by dispatch with the approver's OK each time.
+7. **Point 7:** durations from the rehearsal.
+8. **Point 8:** the reply after `submit`, its text shown first; a row for its later part.
 
 ## Steps
 
-<!-- Written after the rulings: the four tasks in order (each added only after the one before is
-     done, W-14), the decision-log of point 4 and its row, the workflow change after its ruling,
-     the close. -->
+1. **This plan:** `submit` (`draft → active`), `main` pushed with plan-064's close; `main`'s CI
+   read.
+2. **The reply** (point 8): its text shown to the approver, then sent.
+3. **The decision-log** (point 4; `decision-log-ingest` › `capture`, hosted here): written on `main`
+   (its `memory add` there, W-14), reviewed and re-reviewed, `submit`, the approver's `rule`; its
+   rows (dl-036 R2).
+4. **Task (A)**, then **(D)**, then **(B)**, then **(C)**: each `memory add` on `main` when the one
+   before is done (W-14), its `tooling-delivery` v3 loop (body review, the approver's acceptance,
+   design with its red steps, build test first, build review, dl-039's checks on the frozen commit,
+   the approver's approval, `--no-ff` merge into `main`, `main`'s CI read), the register's rows
+   with their notes.
+5. **The dl actions row:** `wingfoil-release-intake` v7 as ruled, on a branch of its own, reviewed,
+   merged on the approver's OK.
+6. **Close:** the workflow's first runs on `main` (a rehearsal of 0.3.2, a scheduled run with no
+   missing version) and their durations; the rows (the weekly reading, the reply's later part); the
+   register's row of this request to Closed; `main`'s CI on the last merge read; `active → done`.
 
 ## Handoff
 
