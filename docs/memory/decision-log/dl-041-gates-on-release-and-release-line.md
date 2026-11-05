@@ -2,7 +2,7 @@
 id: dl-041-gates-on-release-and-release-line
 type: decision-log
 title: "Gates on release and release-line"
-status: pending
+status: approved
 tags: ["packs","software","gates","feedback"]
 ---
 
