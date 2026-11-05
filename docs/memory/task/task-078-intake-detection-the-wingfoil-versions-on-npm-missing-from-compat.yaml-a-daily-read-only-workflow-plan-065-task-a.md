@@ -63,8 +63,10 @@ new releases, and every intake is started by hand (plan-060, task-074).
    backport; two missing versions (the second classed against the first); a version below the floor
    (ignored, exit 0); 0.9.0 and 0.10.0 (semver order); a pre-release (ignored); an unpublished
    version (in `time` only, ignored); a bare-string `versions`; a malformed entry and an answer
-   without `versions` (exit 2, no raw string printed); a failing `npm` (a stub on `PATH`, exit 2).
-   Each stdout line, annotation and exit code asserted exactly.
+   without `versions` (exit 2, no raw string printed); a failing `npm` (a stub on `PATH`, exit 2,
+   its signal printed when it has no exit code), and a stub `npm` printing a fixture, which receives
+   exactly `view wingfoil versions time --json`. Each stdout line, annotation and exit code asserted
+   exactly.
 7. **The checks** (`tooling-delivery` v3 › `review`, dl-039): the build review and its amendments
    first; then once on the frozen commit the branch CI `success`, both jobs, run id and durations,
    and dl-039's local list on Node.js 22.21.0; `npm run lint` exits 0; the script against the real
@@ -74,19 +76,19 @@ new releases, and every intake is started by hand (plan-060, task-074).
 8. **After the merge into `main`:** `intake.yml` dispatched once by hand (`gh workflow run
    intake.yml`, with the approver's OK), `success` with `no missing version` expected as in 7 (or
    `failure` with a release's `::error`, the right signal); its run id, conclusion and duration
-   recorded; `main`'s CI read. In the merge's follow-up commit, a row of `docs/owed-items.md` for
-   the weekly reading of `intake.yml`'s runs (owner approver), noting that GitHub disables a
-   scheduled workflow after 60 days without repository activity (plan-065 ruling 5).
+   recorded. In the merge's follow-up commit, a row of `docs/owed-items.md` for the weekly reading
+   of `intake.yml`'s runs (owner approver), noting that GitHub disables a scheduled workflow after
+   60 days without repository activity (plan-065 ruling 5); `main`'s CI read on that last push.
 
 ## Design
 
 Branch `task/task-078-intake-detect` from `main` at this task's add. Red steps: (1)
 `tests/intake-detect.test.ts` (through the CLI's `--registry` fixtures and a stub `npm` on `PATH`,
 plus the pure function) and `tests/intake-workflow.test.ts`, with the throwing stub of
-`src/intake-detect.ts` (red by assertion); (2) `src/intake-detect.ts`, a pure function from the
-registry's answer and `compat.yaml`'s versions to the report, and its CLI (green); (3) `intake.yml`
-(green). `package.json` gains the script `intake:detect`; no new dependency (`semver` is a runtime
-dependency already, adr-003).
+`src/intake-detect.ts` and a two-line stub of its CLI (red by assertion); (2)
+`src/intake-detect.ts`, a pure function from the registry's answer and `compat.yaml`'s versions to
+the report, and its CLI (green); (3) `intake.yml` (green). `package.json` gains the script
+`intake:detect`; no new dependency (`semver` is a runtime dependency already, adr-003).
 
 ## Execution Notes
 
@@ -102,3 +104,5 @@ dependency already, adr-003).
   the predecessor, the classes and the exact lines, pre-release against malformed, the network
   failure's exit 2, the expected results of the real runs, the weekly reading's row at the merge,
   red by assertion with a throwing stub, the workflow's concurrency group and extra assertions.
+- 2026-11-05: re-review: approve; its optional nits applied (the spawn's success path, the CLI's
+  stub, a signal, `main`'s CI after the row's commit).
