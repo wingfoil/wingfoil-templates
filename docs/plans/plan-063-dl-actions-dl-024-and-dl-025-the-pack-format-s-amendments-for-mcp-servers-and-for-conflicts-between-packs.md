@@ -273,3 +273,7 @@ Then, in dl-039 R2's order:
   43's trigger (the rows of rulings 4, 6 and 9 added here,
   not with the rulings' commit `59b2166`, a slip against dl-036 R2; ruling 7's correction and its
   outcome in this same commit).
+- 2026-11-05: a row asked by the approver outside any element (dl-036 R4), cited here as the plan
+  active on `main`: the automation of `wingfoil-release-intake` where safe, asked by the approver on
+  2026-11-02, its own plan placed by the approver on 2026-11-05 after WingFoil UI's feedback plan
+  and before this plan's `tooling-change` plan, whose row's trigger moves after it.
