@@ -2,7 +2,7 @@
 id: bug-012-software-s-agents.md-section-hard-codes-the-agent-s-roles-and-the-bug-gates
 type: bug
 title: "software's AGENTS.md section hard-codes the agent's roles and the bug gates"
-status: pending
+status: approved
 severity: "minor"        # critical | major | minor
 pack: "pack-foundation-software"
 tags: ["packs","feedback"]
