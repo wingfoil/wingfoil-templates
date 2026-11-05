@@ -62,8 +62,9 @@ Applies to every role that writes or reviews pack content under `packs/`.
   ships everything in `contents`. In `pack.yaml` format 2 (spec-001 §5) a pack may carry several
   entries, each naming a pack composed earlier, one entry per pack id; each entry is isolated from
   what is always composed and from the other entries. A new pack is written at format 2 once the
-  tooling reads it (until then at format 1); a published pack stays at format 1 unless it needs a
-  key of format 2, and moving to format 2 is a major release (`pack-semver`).
+  reference composer reads it (until then at format 1, spec-001 §5); a published pack stays at
+  format 1 unless it needs a key of format 2, and moving to format 2 is a major release
+  (`pack-semver`).
 - Slots (dl-003 D4, D11). They exist only with `software`. `sw-life-cycle` and the slot defaults
   belong to `software`, `retrospective` and `governance-evolution` to `base` (dl-022).
   `sw-life-cycle` includes `inception`, `specification`, `delivery` and `end-of-life` by name; the

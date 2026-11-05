@@ -161,8 +161,9 @@ This specification applies it twice.
      at format 1 stay at format 1, the composer and the lint pick the schema by the file's `format`,
      and a format-1 file keeps format 1's rules. A pack moves to format 2 only when it needs a key
      of format 2, and that move is a major release (`pack-semver`): a reader of format 1 cannot read
-     the new version. A new pack is written at format 2; a pack published at format 1 stays there
-     until a version needs a key of format 2.
+     the new version. A new pack is written at format 2 once the reference composer reads it (until
+     then at format 1, a temporary exception, `docs/owed-items.md`); a pack published at format 1
+     stays there until a version needs a key of format 2.
    - The frozen schemas of format 1 are `schema/pack.v1.schema.json` and
      `schema/catalog.v1.schema.json`; `pack.schema.json` and `catalog.schema.json` validate
      format 2.
@@ -651,7 +652,7 @@ servers:
     args: ["-y", "@vendor/tracker-mcp@2.3.1"]   # a pinned package version
     env: [TRACKER_TOKEN]        # variable names only, never values
     access: read                # read by default; write tools listed explicitly
-        write_tools: []             # illustrative names; access: write requires a non-empty list
+    write_tools: []             # illustrative; access write needs a non-empty list
     vendor_hosted: true         # sends data to its vendor
     data_location: "EU"
     roles: [developer]
@@ -1166,9 +1167,10 @@ actions:
 - **The check before the swap** is a step of the transition workflow the target stage ships. It
   reads, in the target composition (the one the update produces, before it replaces the project's
   files), every directive tagged `exit-check`, which the target stage's conditional entries ship,
-  one per stricter pack (§6.5's bridges, dl-025 D4), and names none of them; the stage being left
-  ships, in its own entries, the rules that apply while it runs. A stricter pack added after a
-  stage's release gets its halves in a later minor release of each stage (dl-025 D7).
+  one per stricter pack (§6.5's bridges, dl-025 D4), and names none of them; when it may pass
+  without one is §6.5's rule; the stage being left ships, in its own entries, the rules that apply
+  while it runs. A stricter pack added after a stage's release gets its halves in a later minor
+  release of each stage (dl-025 D7).
 
 ## 15. Presets
 
@@ -1207,8 +1209,9 @@ parameters: {}
   with one entry's pack left out in turn (`pack-compatibility`).
 - A pack that declares `tensions` is validated in a composition with each pack they name, and every
   pack with each `stage/*` overlay: the declared and the known-risky pairs, not the Cartesian
-  product (dl-025 D6, `pack-compatibility`); before D6, each pack was validated with `base`, and
-  with the first methodology when it needs `software` (task-012, task-031).
+  product (dl-025 D6, `pack-compatibility`); before D6, each pack of the `phase`, `blueprint` and
+  `governance` axes was validated with `base`, and with the first methodology when it needs
+  `software` (task-012, task-031).
 
 ## 16. Open points
 

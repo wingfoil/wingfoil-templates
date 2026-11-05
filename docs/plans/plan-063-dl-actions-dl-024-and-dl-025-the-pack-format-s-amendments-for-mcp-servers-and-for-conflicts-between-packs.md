@@ -289,3 +289,9 @@ Then, in dl-039 R2's order:
   `tooling-change` plan's row with the code it describes, to be confirmed by the approver at the
   merge OK; the bridge exemption of §18 does not cover a bridge whose `with` is a common pack the
   stricter packs require (finding 6 as written), noted here.
+- 2026-11-05: re-review: approve after one fix (§7.8's example's indentation), applied with the
+  alignment of §5 and `pack-authoring` (a new pack at format 2 once the reference composer reads it,
+  until then at format 1) and the nits (§14's pointer to §6.5, gap 3's axes, row 43's order). Open,
+  for the `tooling-change` plan or the first stage charter: with several stricter packs, whether the
+  check before the swap fails when one of them has no `exit-check` directive, which a tag alone
+  cannot tell.
