@@ -219,3 +219,51 @@ other branch meanwhile (W-14).
 - 2026-11-05: re-review: approve after amendments, nothing blocking; applied: what the plan
   produces names the notes and their task, the task's workflow and branch, the Handoff's reviews and
   gates for it, one task for every note.
+- 2026-11-05, step 1, reproduction (a run by hand, `pack-compatibility`, dl-037 E2): WingFoil 0.3.2
+  (`6de2e13c004bbf419acfa7dc4d98d5a7468cd693`, from the matrix); `base` 2.0.1, `software` 1.0.0
+  and `methodology/scrum` 1.0.0 composed from the tree at the tag `methodology/scrum@1.0.0`
+  (`6373282`), parameters `project_name`, `approver_name`, `approver_email` (an `example.test`
+  address) and `agent_name` given, none other; a scratch repository with `git init`, `init
+  --template Scrum --no-interactive`, the composed `.wingfoil/` copied over and `init`'s custom
+  workflows and directives removed (the READMEs' steps); `workflow list` with no diagnostic. About
+  30 commands, every one exit 0 except the probes noted. Results:
+  - 3 (a) holds: the composed `security-secrets` forbids "a personal email" in a file, and
+    `dna.yaml` holds `team.members[].email`, through which `workflow status` routes approvals;
+  - 3 (b) holds: the composed region reads "acts as developer, reviewer, qa and architect" and
+    names the `bug` gates at `triaged` and `planned` (`software`'s section), and "the Developers
+    `developer` with `architect`, `reviewer`, `qa` and `tech-lead`" (`scrum`'s);
+  - 3 (c) holds: `governance-evolution` › `apply` says "with version bumps and AGENTS.md updated";
+  - 3 (d) holds: a task with `sprint: sprint-099-does-not-exist` and no Sprint in the repository
+    moves `draft → pending` with `memory submit`, exit 0;
+  - 4, "ungated" holds: `workflow status` heads elements waiting at a gate "ungated elements";
+  - 4, a non-member identity holds: an author not in `dna.yaml` runs `workflow start bug-ingest`
+    and `workflow finalize` of its `capture` step, both exit 0 and committed under its name;
+  - 4, a gate listed out of phase holds, with a local three-phase workflow (enter the gate, work,
+    decide) on a `bug`, as WingFoil UI's local gate on `release`: with the phase `decide` pending,
+    `workflow status` lists the bug's approval as carried by no open workflow, and `memory approve`
+    moves it `open → triaged`, exit 0, while the workflow stays at `work`. With `bug-ingest`'s own
+    shape (the gate entered in the phase before the approving one) the approval is listed in phase.
+  No point failed to reproduce.
+- 2026-11-05: the approver triaged bug-011 … bug-015 (`approved`, `minor`), ruled dl-041 (option
+  (d), G1 … G4) and accepted task-077 into the backlog; their rows of `docs/owed-items.md` added in
+  this commit (five fixes, dl-041 G1's later part and G3), each element's note citing its row
+  (dl-036 R2).
+- 2026-11-05: step 4, task-077 (F-043 … F-046, each a `request`, reproduced with WingFoil 0.3.2
+  alone; body reviewed and re-reviewed, build reviewed; branch CI 42101480186 `success`, its local
+  list exit 0) accepted and approved by the approver, merged into this branch (`82e70e2`) and done.
+  Step 5: `pack-methodology-scrum`'s note on open point 1 and its row moved to Closed (this commit).
+- 2026-11-05: independent review of the branch (`4d1670a`): approve after one should-fix, applied:
+  ruling 7's notice owed as a row of `docs/owed-items.md` (dl-036 R2); with the nits: bug-012's row
+  names the README, the bug rows' Source an Execution Note. Also recorded: the bug rows re-sorted
+  into Open at `299c065`; the fixes' rows added at `ea80fdf`, with the note that records the triages
+  in this plan (the triages themselves are the CLI's approval commits); task-077's branch removed at
+  its merge.
+- 2026-11-05: checks, once, on the frozen head `f564913`: the branch CI, run 42106440851, `success`,
+  jobs Node.js 22.12.0 17 min 2 s and 22.21.0 17 min 44 s (none over 25 minutes), no warning
+  annotation; from a clean working tree on Node.js 22.21.0 after `npm ci` and `npm run build`:
+  `npm run validate:publication`, the golden tree in publication mode and `npm run -s wingfoil --
+  workflow list` exit 0, `directives list --format json` with `"warnings": []`. This commit changes
+  only `docs/plans`: no new run (dl-039 R2). Privacy check of the branch's diff
+  (`99e58d7...f564913`) and messages: no local or scratch path, no maintainer name or email beyond
+  the CLI's approval trailer, only fictional `.example` identities, no private project, no
+  intermediary session.
