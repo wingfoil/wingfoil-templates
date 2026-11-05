@@ -25,7 +25,8 @@ reports **verified** or **guided** with the prepared diff as an artifact, never 
   retrospective, the one started at the previous intake, or the next one, covering both windows; a
   verified patch held for that ruling would wait on a hand-run phase;
 - each intake also writes spec-001 §12's example and prose and an Execution Note on dl-009
-  (task-059, task-074), which task (D) of plan-065 replaces by `compat.yaml`'s `notes`.
+  (task-059, task-074), which task (D) of plan-065 replaces: §12's prose by `compat.yaml`'s `notes`,
+  and dl-009's note per release by one last note (I5).
 
 The bar of "verified" (plan-065 point 2, and (B)'s `format_key`) is conservative: a red check or an
 advisory; a minor, a major or a backport; a CHANGELOG section missing or unreadable, or a tag not
@@ -63,7 +64,9 @@ The points below are **proposed**; they become rulings when the approver approve
   moved base, an expired artifact, a new advisory, a red branch CI or a rehearsal report makes the
   intake guided (or the report run again). For a **guided** report, v6's phases as today, the report
   (the CHANGELOG sections as a checklist, the checks, the packs and directives each item touches)
-  their input. A verified report is a proposal, never a record.
+  their input. Several missing versions: one intake per version, in ascending order, (C) preparing
+  only the lowest missing version, each prepared only after the one before is merged. A verified
+  report is a proposal, never a record.
 - **I2 — A carry-forward for a patch, an amendment in effect of dl-021 R4** (its body stays as
   approved): a verified patch's `capabilities` are its predecessor's unless the bar flags a change
   (a `Removed`, `Deprecated` or `Breaking` heading, a `Changed` or `Added` entry naming a command or
@@ -79,24 +82,24 @@ The points below are **proposed**; they become rulings when the approver approve
   task (D)); §12's prose per release for 0.3.0 … 0.3.2 (the check dates, commands and commits) is
   kept as history in spec-001's Execution Notes, moved there by task (D), and the recorded rows'
   `notes` are not rewritten; 0.2.2's row stays as it is. The intake no longer writes an Execution
-  Note on dl-009 per release from v7 on (I5).
+  Note on dl-009 per release from task (D) on (I5).
 - **I4 — `retrospective-start` for a verified patch:** T2's patch case applies by default, with no
   ruling in the intake's plan, only while a retrospective covering the patch's window is open
-  (started, not closed), for at most three verified patches after the intake that started it (that
-  intake's own release not counted) or 14 days after its close, whichever comes first, and never
-  extending that retrospective's own deadline (T2's seven days when the planning date is not known;
-  dl-040 D1 … D3). A guided patch counts toward the three; a new retrospective restarts the count.
-  Several missing versions: one intake per version, in ascending order, each prepared only after the
-  one before is merged, each verified patch counting. Even by default the intake's plan records T1's
-  planning date, the covering retrospective, its deadline and the count reached. Past either bound,
-  or for a guided report, the approver rules in the intake's plan (T2), as v6.
+  (started, not closed), for at most three patches (verified or guided) after the intake that
+  started it (that intake's own release not counted) or 14 days after its close, whichever comes
+  first, and never extending that retrospective's own deadline (T2's seven days when the planning
+  date is not known; dl-040 D1 … D3). A guided patch counts toward the three, unless its intake
+  starts a retrospective of its own, which restarts the count; a guided patch for which the approver
+  rules T2's patch case counts as one. Even by default the intake's plan records T1's planning date,
+  the covering retrospective, its deadline and the count reached. Past either bound, or for a guided
+  report, the approver rules in the intake's plan (T2), as v6.
 - **I5 — Where:** `wingfoil-release-intake` v6 → v7 (its header, `record`, `recheck`,
   `plan-migrations`, `retrospective-start`), applied by plan-065's dl actions row after its task (C)
   is done; until then a report from `intake.yml` feeds v6's hand-run `record` (option (a)'s
   behaviour). An Execution Note on dl-021 (R4 read with I2), on dl-029 (T2 read with I4) and a last
   one on dl-009 (the matrix's selection is the oldest and newest release of `compat.yaml`, so no
-  note per release from v7 on). A departure from a separate dl actions plan (plan-062's practice),
-  since the change belongs with the tooling it serves.
+  note per release from task (D) on). A departure from a separate dl actions plan (plan-062's
+  practice), since the change belongs with the tooling it serves.
 
 ## Execution Notes
 
@@ -109,3 +112,5 @@ The points below are **proposed**; they become rulings when the approver approve
   source and safe direction, I1's task branch, notes, approval and merge, I4's bounds (open, the
   count, a guided patch, several versions, what the plan records), §12's history and dl-009's last
   note, the options' For and Against, the Context's bar, I5's interim.
+- 2026-11-05: re-review: approve; its should-fix and nits applied (I4's count of patches
+  verified or guided, the several-versions rule moved to I1, dl-009's stop from task (D) on).
