@@ -32,16 +32,16 @@ one (dl-031).
    project (rule 1). In force since 2026-11-02 (dl-036 R5).
 3. **`main`'s CI.** After every push of `main`, the conclusion of the CI run that includes the push
    and its warning annotations are read (a later push cancels an earlier run). A red conclusion is
-   reported to the approver when found; the response follows the precedent of bug-003 and bug-004.
-   In force since 2026-10-29. A warning of the step that audits the whole root tree opens a bug
-   within a day: its severity from the advisory and the path, `minor` by default for a development
-   dependency only (the CI stays green); fixed by moving the lockfile within the ranges when a fix
-   exists (bug-003's and bug-004's precedent), otherwise by an exact override or by the approver's
-   ruling. A warning whose advisories are all covered by an open bug, or by an approver's ruling
-   recorded in that bug, opens no new bug. Detection is unchanged: the CI runs on every push. In
-   force since 2026-11-02 (dl-035 A2). At a plan's close, the run of its last push (the close note
-   and `active → done`) is read by the next plan, which cites it. In force since 2026-11-04 (dl-038
-   C3).
+   reported to the approver when found; the response to a red conclusion follows the precedent of
+   bug-003 and bug-004. In force since 2026-10-29. A warning of the step that audits the whole root
+   tree opens a bug within a day: its severity from the advisory and the path, `minor` by default
+   for a development dependency only (the CI stays green); fixed by moving the lockfile within the
+   ranges when a fix exists (bug-003's and bug-004's precedent), otherwise by an exact override or
+   by the approver's ruling. A warning whose advisories are all covered by an open bug, or by an
+   approver's ruling recorded in that bug, opens no new bug. Detection is unchanged: the CI runs on
+   every push. In force since 2026-11-02 (dl-035 A2). At a plan's close, the run of its last push
+   (the close note and `active → done`) is read by the next plan, which cites it. In force since
+   2026-11-04 (dl-038 C3).
 4. **The owed items.** `docs/owed-items.md` holds every open owed item, one row each: the item, its
    source (element and section), its owner and its trigger. An item without an owner names the
    approver; an item without a trigger takes "the next retrospective". A plan or a task adds the row

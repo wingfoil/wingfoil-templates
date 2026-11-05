@@ -226,3 +226,17 @@ Then, in dl-039 R2's order:
   (plan-052 ruling 7, the register's W10 row), although `wingfoil-cli` rule 7 also names every
   WingFoil release planning and v0.4's started on 2026-11-03; no sync for v0.4's planning, no new
   row.
+- 2026-11-05: the approver chose the optional note on dl-034 (ruling 6), asked by the approver on
+  2026-11-05. Rows 3 … 7: `5a1ed4d`, `603c650`, `b6a1f9c`, `7d73ca4`, `1214437`; after each,
+  `workflow list` and `npm run lint` exit 0, and the privacy check of the staged lines and the
+  message found nothing. Rows closed: 10 (G12) with row 1, 1 (CI policy) by task-076, 39 (T2's gap)
+  with row 6, 16 (dl-030's note) and 42 (dl-026) with row 7.
+- 2026-11-05: leftovers grep (`.wingfoil/`, `docs/` outside `docs/memory/` except
+  `docs/memory/tech-spec/`, outside `docs/plans/` and `docs/retrospectives/`, the READMEs and
+  `packs/`): no hit contradicts dl-035 … dl-040. The hits are the rows applied here,
+  `wingfoil-release-intake`'s `npm audit` of a new matrix lockfile (still blocking, dl-035 A1), and
+  pack content with another meaning (`kanban`'s "next retrospective", `software`'s reviewer role).
+- 2026-11-05: independent review of the branch (`1214437`): approve after amendments, nothing
+  blocking; applied: rule 3's precedent clause limited to a red conclusion (dl-035 A4), the dl-034
+  note's request origin, its rows and its tense, the register header's "on `main`" (dl-036 R3),
+  these notes on rows 3 … 7.

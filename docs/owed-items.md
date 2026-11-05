@@ -10,13 +10,13 @@ element. Outside every Memory path. Its rules are rule 4 of the directive `repos
   Rows are sorted by the first element id in Source; rows without one come last.
 - **Who writes a row:** a plan or a task, in the same commit as the note that leaves the item; a
   ruling, in the commit that records it in its plan, the ruling citing the row (dl-036 R2); a pack,
-  a pack-release, a bug or a decision-log, at the latest by the close of the plan that hosts it.
-  The note, or for a row added later the hosting plan's note, cites the row (dl-031 R2). A row
-  asked by the approver outside any element has the Source "asked by the approver on <date>", cited
-  by the plan active on `main`, or the next one (dl-036 R4). The element that settles an item moves
-  its row to Closed, with its own id; an item found open again returns to Open in the commit that
-  records the finding, its Source extended with the element and section that reopened it (dl-036
-  R3).
+  a pack-release, a bug or a decision-log, at the latest by the close of the plan that hosts it. The
+  note, or for a row added later the hosting plan's note, cites the row (dl-031 R2). A row asked by
+  the approver outside any element has the Source "asked by the approver on <date>", cited by the
+  plan active on `main`, or the next one (dl-036 R4). The element that settles an item moves its row
+  to Closed, with its own id; an item found open again returns to Open in the commit that records
+  the finding, on `main` when the finding is a plan's ruling or note, its Source extended with the
+  element and section that reopened it (dl-036 R3).
 - **Who reads it:** every retrospective, in `explore`; it proposes keep, assign or drop for each
   row, and its decision-log rules them (dl-031 R3); a pack's own retrospective proposes only for the
   rows its cycle touched and lists the others as "not touched", which keeps them (dl-036 R1).
