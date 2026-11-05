@@ -71,7 +71,8 @@ format rule from the first publication on; §6.2 allows "at most one entry in fo
 D2: no pack can ship it), and no pack or stage overlay declares a tension yet (`stage/*` are W12).
 
 **`main`'s CI before this plan** (dl-038 C3): plan-062's last push, `b3e7fcb` (its close and
-`active → done`), CI run 42059337106, read and recorded here before `submit`.
+`active → done`), CI run 42059337106
+`success` (jobs Node.js 22.21.0 13 min 17 s, 22.12.0 13 min 41 s), no warning annotation, read here.
 
 **Not in this plan:** WingFoil UI's feedback (row 43); the packs' own changes that the rules ask of
 published content (point 6); WingFoil's side (F-035, on `main`, which still reads "proposed, not yet
@@ -179,13 +180,52 @@ Each point with a recommendation; points 4, 7 and 9 are departures the approver 
 
 ## The approver's rulings
 
-<!-- Filled when the approver rules the outline. -->
+Given by the approver on 2026-11-05: every point of the outline as recommended, the departures of
+points 4, 7 and 9 included.
+1. **Point 1:** two plans; this one writes the texts only, no file under `schema/`, `index/` or
+   `src/`; a `tooling-change` plan implements them.
+2. **Point 2:** spec-001 and spec-002 amended in place, the merge OK approving the text.
+3. **Point 3:** `pack.yaml`, `catalog.yaml` and `catalog-index.json` at format 2, the published packs
+   at format 1, the catalog's new field absent in format 1; moving a pack to a new `pack.yaml` format
+   is major.
+4. **Point 4:** the `mcp` kind specified now, its tooling when a WingFoil release reads it.
+5. **Point 5:** each finding in the row of the file it touches.
+6. **Point 6:** one row per pack for the first-line class, at its next minor; the check in
+   `pack-authoring`.
+7. **Point 7:** one note by a content-only task on its own branch, merged into this plan's.
+8. **Point 8:** `dl/dl-024-dl-025-actions`; dl-039's checks once on the frozen head.
+9. **Point 9:** this plan, then WingFoil UI's feedback plan, then the `tooling-change` plan.
+10. **Point 10:** (i) … (iv) as written.
 
 ## Steps
 
-<!-- Written after the rulings: one row per file (spec-001 by section groups, spec-002,
-     pack-authoring, the note's task, the notes on dl-024 and dl-025, the register), as plan-062.
-     -->
+On the branch `dl/dl-024-dl-025-actions`, from `main` at the commit that submits this plan; one
+commit per row. Before every commit, the privacy check of `repository-practice` rule 2; after every
+commit under `.wingfoil/` or `docs/memory/`, `npm run -s wingfoil -- workflow list` and
+`npm run lint` exit 0.
+
+| # | File | Change | Source |
+|---|---|---|---|
+| 1 | spec-001, the conditional part and `tensions` | §5 (`pack.yaml` and `catalog.yaml` at format 2, their frozen schemas named, the published packs at format 1, a reader picking the schema by `format`); §6.2 (`tensions` with §6.3's syntax and an optional range; the table's `conditional` row for format 2); §6.3's last bullet, §6.4, §6.5 generalised (several entries, `with` naming any pack composed earlier, the "Who" rule, isolation per entry, dl-026's "same part" rule per entry); §7.7, §8.1, §9, §10's sentence on `delivery`, §11 (format 2; the version entry's `pack.yaml` format, absent in format 1 reading as 1; `tensions` not copied), §12, §14 (the pre-swap step reads the exit-check directives of the conditional entries), §15, §17 (the tensions' notice), §18 (the lint per entry, D1's waiver heuristic with bridges exempt, D6's coverage); §7.1 and §16 O14 checked; the Execution Notes record the amendment | dl-025 D3, D4, D6, D7; findings 1 (ii), 2, 4, 6; points 3, 10 (ii) |
+| 2 | spec-001, the `mcp` kind | §2, §5, §6.1, §6.2 (`formats`), §6.3 (a `phases` entry naming another pack's workflow extends the list of what a pack requires), §6.4 (`contents.fragments` admits `mcp` at format 2), a new §7.x (one owner per server, `restrictions`), §12 and `compat.yaml` (`mcp-servers` only when a release names the feature; `kinds` and `reads` with the deferred task), §17, §18 (the restriction notice not a refusal); the WingFoil side (D3, an adapter with `mcp.via: args`, D3 5 "a pack install or update"); the kind provisional and unshippable before a release reads it; the Execution Notes record the amendment and the deferral | dl-024 D1 … D6; findings 2 … 5; point 4 |
+| 3 | spec-001 §10, "Precedence" | a new subsection: D2's table, the tie-break rule, classes by subject (1 … 3) and by pack or axis, a bridge's class, project `custom/` directives (never classes 1 … 3, never a pack directive's id), the escalation through `governance-evolution`, and that the table reaches an agent only once the project pastes the AGENTS.md region | dl-025 D2, D5; findings 3, 5, 6; point 10 (i), (iv) |
+| 4 | spec-002 | §2.3 (the pasted server entry stays in section 3 until WingFoil reads the kind; a custom adapter under a name of its own, selected in `dna.yaml` › `team.agents` › `adapter`; CB-3); the "Combines with care" section and its index field (§2.1, §3.2, §3.3); the Composition section per conditional entry; `catalog-index.json` format 2 (§3.3); CB-8 unchanged; the Execution Notes record the amendment | dl-024 D5, D6, finding 1; dl-025 D3, D7, finding 2; points 3, 10 (iii) |
+| 5 | `.wingfoil/directives/custom/pack-authoring.md` | dl-024 D1's rules and D4's catalog rule; dl-025 D1 (a directive only adds or tightens), D2 (the first line `Precedence: <class>` or `Precedence: law (<act>)` after the `# ` title, a class-1 or class-2 directive naming its law or standard), finding 5, finding 6's wording; the review list: the first line checked for any pack version prepared after this amendment | dl-024 D1, D4, finding 1; dl-025 D1, D2, D5, findings 3, 5, 6; point 6 |
+| 6 | the feedback note | a content-only task, on its own branch from this one and merged into it: the note (the next free F number) on `pack.yaml` and `catalog.yaml` at format 2, the index's bump as information, naming the `tooling-change` plan's task, with its ledger row | `wingfoil-cli` rule 8; point 7 |
+| 7 | dl-024, dl-025, dl-011; `docs/owed-items.md` | Execution Notes: dl-024 and dl-025 their actions applied or owed, with the commits, and dl-024's deferral of the `mcp` tooling (point 4); dl-011 the question at initialization that dl-025 D3 asks (point 10 (iii)). Rows: the `mcp` tooling (trigger a WingFoil release whose CHANGELOG names the feature); the `tooling-change` plan (trigger the close of WingFoil UI's feedback plan); the first-line class for `base`, `software`, `methodology/scrum`, `methodology/kanban` (trigger the next minor of each); dl-025 D7's halves (trigger the charters of `stage/prototype` and `stage/production`, W12); row 43's trigger to this plan's close | points 4, 6, 9, 10 (iii); dl-025 D7 |
+
+Then, in dl-039 R2's order:
+- **Leftovers:** a grep of `.wingfoil/`, `docs/` (outside `docs/memory/` except
+  `docs/memory/tech-spec/`, outside `docs/plans/` and `docs/retrospectives/`), the READMEs and
+  `packs/` for "at most one entry", "`software@^`", "format 1" and "conditional": every hit that
+  contradicts the amended text goes to the approver, not edited here.
+- **Review:** an independent review of the branch (dl-017), each row checked against its
+  decision-log and findings; a re-review when a fix changes a rule.
+- **Checks**, once, on the frozen head: its CI `success` (both jobs, run id and durations) and
+  dl-039's local list on Node.js 22.21.0; `directives list --format json` with `"warnings": []`.
+- **Branch close:** push; the privacy check of the branch's diff recorded; on the approver's OK,
+  `--no-ff` merge into `main`, push, `main`'s CI on the merge read with its jobs' durations; the
+  branches removed; the register's row "The dl actions of dl-024 and dl-025" to Closed at the close.
 
 ## Handoff
 
