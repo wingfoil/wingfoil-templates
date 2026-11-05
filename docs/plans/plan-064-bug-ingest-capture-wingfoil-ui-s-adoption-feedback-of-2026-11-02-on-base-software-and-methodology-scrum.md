@@ -248,3 +248,7 @@ other branch meanwhile (W-14).
   (d), G1 … G4) and accepted task-077 into the backlog; their rows of `docs/owed-items.md` added in
   this commit (five fixes, dl-041 G1's later part and G3), each element's note citing its row
   (dl-036 R2).
+- 2026-11-05: step 4, task-077 (F-043 … F-046, each a `request`, reproduced with WingFoil 0.3.2
+  alone; body reviewed and re-reviewed, build reviewed; branch CI 42101480186 `success`, its local
+  list exit 0) accepted and approved by the approver, merged into this branch (`82e70e2`) and done.
+  Step 5: `pack-methodology-scrum`'s note on open point 1 and its row moved to Closed (this commit).

@@ -302,3 +302,8 @@ For the approver's acceptance:
   2026-10-29). The body stays as approved.
 - 2026-11-04, plan-060: WingFoil 0.3.2 recorded (task-074); the computed range of 1.0.0 is
   `>=0.3.0 <=0.3.2` (`catalog.yaml`); the recheck passes on 0.3.0 and 0.3.2.
+- 2026-11-05, plan-064 (ruling 5): open point 1 (UI's test-first steps under `scrum`) closed as
+  WingFoil UI's to decide outside the pack: its adoption feedback of 2026-11-02, after adopting
+  `methodology/scrum` 1.0.0 by hand, asks no change of `scrum` for it. The body stays as approved;
+  the register's row moves to Closed with this note. The feedback's other points are bug-013 and
+  bug-015 for this pack.
