@@ -107,3 +107,31 @@ row; then the frozen commit's checks; the notes (`docs/memory` only) after them.
   over 25 minutes; the warning's text asserted (dl-035).
 - 2026-11-05: re-review: approve; its nit applied (the register's commit is the frozen commit or
   precedes it).
+- 2026-11-05: started (backlog → in-progress, `66dd733`) on `task/task-076-ci-root-audit` from
+  `dl/dl-035-dl-040-actions` at `4ab96b5`. Red (dl-018), `7ed4687`, the test only:
+  `npm run build && node --test dist/tests/ci-workflow.test.js` gives 16 tests, 6 failing ("runs
+  every check, on every path", the gate and warning step's structure, the four behaviour cases),
+  each an assertion failure. Green, `abc8384`, `ci.yml` only: 16 tests, 16 passing; `npm run lint`
+  exits 0. The register's row "CI policy for advisories in transitive dependencies" to Closed,
+  `f538f6f` (Acceptance 7), the frozen commit.
+- 2026-11-05: independent build review of `f538f6f`: approve, nothing blocking. It re-ran the red
+  state (16 tests, 10 passing, 6 failing), ran the script under `bash -e` and under GitHub's
+  `bash --noprofile --norc -eo pipefail` (exit 0 in every case, the `%` escape applied, a missing
+  or read-only `$RUNNER_TEMP` giving the "could not run" warning), and mutations: the `if` guard
+  removed, `--omit=dev` added to the warning step, a `process.exit(2)` added, each caught; the
+  `|| true` and the last `exit 0` removed survive (redundant guards); `npm audit --json` on npm
+  11.6.2 prints the v2 shape of the fixtures. One should-fix, this note (the red run recorded here,
+  dl-018). Three nits not applied, by choice, to keep the frozen commit: no test of the message's
+  escaping (npm package names hold no `%` or newline), the two redundant guards kept (the Design's
+  `exit 0`; `|| true` keeps the step green if `node` is missing), an entry with no `severity`
+  printed as `undefined` (a v2 report always carries it).
+- 2026-11-05: checks (dl-039 R1, R2; plan-062 ruling 4), once, on `f538f6f`: the branch CI, run
+  42001788548, `success`, jobs Node.js 22.12.0 11 min 41 s and 22.21.0 20 min 47 s (none over 25
+  minutes); the new step ran in both jobs and wrote no `::warning::` (no advisory in the root).
+  From a clean working tree of `f538f6f` on Node.js 22.21.0: `npm ci`, `npm run build`,
+  `npm run validate:publication`, the golden tree in publication mode and
+  `npm run -s wingfoil -- workflow list` exit 0; `directives list --format json` exits 0 with
+  `"warnings": []`. No clean clones (no change to `src/matrix.ts`). This commit changes only
+  `docs/memory`, after the checks' head: no new run (dl-039 R2). Privacy check of the branch's diff
+  (`4ab96b5...f538f6f`) and messages: no local or scratch path, no private project, no
+  intermediary session.
