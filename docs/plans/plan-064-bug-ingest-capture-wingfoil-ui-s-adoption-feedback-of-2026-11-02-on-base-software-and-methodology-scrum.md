@@ -258,3 +258,12 @@ other branch meanwhile (W-14).
   into Open at `299c065`; the fixes' rows added at `ea80fdf`, with the note that records the triages
   in this plan (the triages themselves are the CLI's approval commits); task-077's branch removed at
   its merge.
+- 2026-11-05: checks, once, on the frozen head `f564913`: the branch CI, run 42106440851, `success`,
+  jobs Node.js 22.12.0 17 min 2 s and 22.21.0 17 min 44 s (none over 25 minutes), no warning
+  annotation; from a clean working tree on Node.js 22.21.0 after `npm ci` and `npm run build`:
+  `npm run validate:publication`, the golden tree in publication mode and `npm run -s wingfoil --
+  workflow list` exit 0, `directives list --format json` with `"warnings": []`. This commit changes
+  only `docs/plans`: no new run (dl-039 R2). Privacy check of the branch's diff
+  (`99e58d7...f564913`) and messages: no local or scratch path, no maintainer name or email beyond
+  the CLI's approval trailer, only fictional `.example` identities, no private project, no
+  intermediary session.
