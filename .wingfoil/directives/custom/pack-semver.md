@@ -16,7 +16,8 @@ Every pack has its own semver (dl-001). There is no repository-wide version.
   parameter; a new required parameter without a default; a requirement made stricter (a new gate, a
   required frontmatter field); moving content to a new format version (`formats`); adding a
   `requires_capabilities` entry. Both drop the WingFoil releases that cannot read or provide them
-  (dl-002).
+  (dl-002). Moving `pack.yaml` to a new format of its own is major too: a reader of the old format
+  cannot read the new version (spec-001 §5, plan-063 ruling 3).
 - **minor**: something added that an existing project can ignore. A new directive, workflow,
   optional phase, parameter with a default, Memory type; removing a `requires_capabilities` entry.
 - **patch**: no change in what a composed project contains, other than wording, comments, typos

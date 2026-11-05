@@ -193,6 +193,9 @@ points 4, 7 and 9 included.
 6. **Point 6:** one row per pack for the first-line class, at its next minor; the check in
    `pack-authoring`.
 7. **Point 7:** one note by a content-only task on its own branch, merged into this plan's.
+   Corrected by the approver on 2026-11-05: no note here; the `schema-note` lint (task-015) asks
+   for the note generated with the schema change, so the `tooling-change` plan's schema task writes
+   it (`npm run feedback:note -- --schema`); row 6 dropped.
 8. **Point 8:** `dl/dl-024-dl-025-actions`; dl-039's checks once on the frozen head.
 9. **Point 9:** this plan, then WingFoil UI's feedback plan, then the `tooling-change` plan.
 10. **Point 10:** (i) … (iv) as written.
@@ -260,3 +263,43 @@ Then, in dl-039 R2's order:
   "if WingFoil keeps the name", point 6's check in `pack-authoring` (no workflow change), the major
   class's cascade and the `stage/*` packs born at format 2, the index as information in the note,
   `tensions` not in the catalog, CB-8, D5's escalation in §10's subsection.
+- 2026-11-05: rulings recorded (`59b2166`); submitted (`a663618`), `main` pushed; `main`'s CI on
+  plan-062's close (`b3e7fcb`), run 42059337106, `success`, read in the Context; on the submit, read
+  before the close. Rows 1 … 5: `6df2e95`, `fa565ed`, `9b7162a`, `72f0e5c`, `196e21b`; after each,
+  `workflow list` and `npm run lint` exit 0 and the privacy check found nothing. Row 6 dropped
+  (ruling 7 as corrected by the approver on 2026-11-05: the `schema-note` lint ties the note to the
+  schema change). Row 7: the notes on dl-024, dl-025 and dl-011, seven rows of `docs/owed-items.md`
+  (the `mcp` tooling, the `tooling-change` plan, the four packs' first line, D7's halves) and row
+  43's trigger (the rows of rulings 4, 6 and 9 added here, not with the rulings' commit `59b2166`, a
+  slip against dl-036 R2; ruling 7's correction and its outcome in this same commit).
+- 2026-11-05: a row asked by the approver outside any element (dl-036 R4), cited here as the plan
+  active on `main`: the automation of `wingfoil-release-intake` where safe, asked by the approver on
+  2026-11-02, its own plan placed by the approver on 2026-11-05 after WingFoil UI's feedback plan
+  and before this plan's `tooling-change` plan, whose row's trigger moves after it.
+- 2026-11-05: independent review of the branch (`408d87e`): approve after amendments, nothing
+  blocking; applied: the check before the swap reads the target composition and passes without
+  `exit-check` directives only when no pack declares a tension with the stage being left (§6.5,
+  §14); §6.2's example at format 2; §3's and §9's single-part wording; finding 6's bridge class, gap
+  3's wording (§15) and the waiver heuristic in `pack-authoring`; a new pack written at format 2
+  (§5; in `pack-authoring`, once the tooling reads it); `pack-semver`'s major list gains the move of
+  `pack.yaml` to a new format (ruling 3, which spec-001 §5 cites); the nits (§18's fragment order,
+  §6.2's `formats` and §12's `mcp-servers`, §7.8's illustrative example and `access`, "left out in
+  turn", dl-024's note, spec-002's note on "Combines with care", row 43's Source). Leftovers:
+  `pack-compatibility`'s bullet on a conditional part ("with and without `software`") goes to the
+  `tooling-change` plan's row with the code it describes, to be confirmed by the approver at the
+  merge OK; the bridge exemption of §18 does not cover a bridge whose `with` is a common pack the
+  stricter packs require (finding 6 as written), noted here.
+- 2026-11-05: re-review: approve after one fix (§7.8's example's indentation), applied with the
+  alignment of §5 and `pack-authoring` (a new pack at format 2 once the reference composer reads it,
+  until then at format 1) and the nits (§14's pointer to §6.5, gap 3's axes, row 43's order). Open,
+  for the `tooling-change` plan or the first stage charter: with several stricter packs, whether the
+  check before the swap fails when one of them has no `exit-check` directive, which a tag alone
+  cannot tell.
+- 2026-11-05: checks (ruling 8, dl-039 R1 and R2), once, on the frozen head `c0b5067`: the branch
+  CI, run 42066442833, `success`, jobs Node.js 22.12.0 20 min 38 s and 22.21.0 15 min 52 s (none
+  over 25 minutes), no warning annotation; from a clean working tree of `c0b5067` on Node.js
+  22.21.0: `npm ci`, `npm run build`, `npm run validate:publication`, the golden tree in
+  publication mode and `npm run -s wingfoil -- workflow list` exit 0; `directives list --format
+  json` exits 0 with `"warnings": []`. This commit changes only `docs/plans`, after the checks'
+  head: no new run (dl-039 R2). Privacy check of the branch's diff (`a663618...c0b5067`) and
+  messages: no local or scratch path, no private project, no intermediary session.
