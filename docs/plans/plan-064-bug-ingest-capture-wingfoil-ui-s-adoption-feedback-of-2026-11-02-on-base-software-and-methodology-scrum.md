@@ -252,3 +252,9 @@ other branch meanwhile (W-14).
   alone; body reviewed and re-reviewed, build reviewed; branch CI 42101480186 `success`, its local
   list exit 0) accepted and approved by the approver, merged into this branch (`82e70e2`) and done.
   Step 5: `pack-methodology-scrum`'s note on open point 1 and its row moved to Closed (this commit).
+- 2026-11-05: independent review of the branch (`4d1670a`): approve after one should-fix, applied:
+  ruling 7's notice owed as a row of `docs/owed-items.md` (dl-036 R2); with the nits: bug-012's row
+  names the README, the bug rows' Source an Execution Note. Also recorded: the bug rows re-sorted
+  into Open at `299c065`; the fixes' rows added at `ea80fdf`, with the note that records the triages
+  in this plan (the triages themselves are the CLI's approval commits); task-077's branch removed at
+  its merge.
