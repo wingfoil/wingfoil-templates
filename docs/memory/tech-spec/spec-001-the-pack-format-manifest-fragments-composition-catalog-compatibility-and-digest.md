@@ -826,6 +826,47 @@ They are realigned to the tech-spec of WingFoil dl-137 part (b), or earlier to W
 `AGENTS.md` if that lands first. The realignment changes this section and the composer, not the
 packs.
 
+### 10.1 Precedence
+
+`base`'s section states the precedence of directives (dl-025 D2), so that an agent reads it with the
+directives it is given. Each directive states its class on its first line (`pack-authoring`).
+
+**The stricter rule always wins** (dl-025 D1): a pack never loosens what another ships, and a
+directive only adds or tightens obligations. Precedence decides only between two rules that are not
+comparable by strictness (they ask for different things and neither contains the other). Then, from
+the strongest:
+
+| Class | Directives |
+|---|---|
+| 1 `law` | directives that implement a law, whatever pack ships them |
+| 2 `standard` | directives that implement a safety or sector standard, whatever pack ships them |
+| 3 `security` | every directive whose subject is security, whatever ships it: `base`'s `security-secrets`, WingFoil's built-in `security`, a pack's security directives |
+| 4 `foundation` | the other directives of `base` and `software`, and WingFoil's other built-in directives |
+| 5 `governance` | `governance` and `blueprint` packs |
+| 6 `method` | the methodology and the phase packs |
+| 7 `overlay` | `team-mode` and `stage` |
+
+- Classes 1 … 3 follow the directive's subject; the others follow its pack or axis (`foundation`
+  has no axis). A class-1 or class-2 directive names the law or standard it implements, and review
+  checks the claim.
+- A bridge directive (§6.5) takes the highest class among the directives it reconciles, not the
+  class of the pack that ships it.
+- The project's `custom/` directives declare their class, only add or tighten, never claim classes
+  1 … 3 to override a pack's rule of those classes, and never reuse the id of a pack's directive (in
+  WingFoil a `custom/` directive with that id overrides it; dl-025 finding 5).
+- The precedence is not the composition order of §7.1: that order decides the structure, the
+  precedence decides ties between prose rules.
+- **Escalation** (dl-025 D5): an agent that still meets a contradiction stops, does not choose, and
+  opens a decision-log through `base`'s `decision-log-ingest`. The approver rules; a ruling that
+  becomes a project `custom/` directive changes governance, so it is applied through `base`'s
+  `governance-evolution` (finding 3).
+- The table reaches an agent only once the project pastes the generated region (R4 above), a known
+  limit until WingFoil exports `AGENTS.md`.
+
+WingFoil's built-in directives carry no first line of their own, so they rely on this table. A
+directive frontmatter key would be cleaner, but WingFoil warns on an unknown key; it is left to a
+later feedback note, once the classes have been used.
+
 ## 11. `catalog.yaml`
 
 `catalog.yaml`, at the repository root, is the index WingFoil reads to list, resolve and verify
@@ -1484,3 +1525,7 @@ check the rest, and the composer refuses what they reject.
   install or update" (finding 5); an adapter with `mcp.via: args` (finding 3). The kind is
   unshippable until a release reads it; its tooling and `compat.yaml`'s `kinds` and `reads` follow
   that release (plan-063 ruling 4).
+- 2026-11-05, **amended in place** (dl-025, plan-063 row 3; dl-025's approval and the merge OK
+  approve the text): §10.1, the precedence of directives that `base`'s section states (D1, D2, D5;
+  findings 3, 5 and 6's wording), with the AGENTS.md region's limit (plan-063 ruling 10 (i), (iv)).
+  `base`'s section itself changes with its next minor release (a row of `docs/owed-items.md`).
