@@ -75,6 +75,7 @@ sha of the commit it read (WingFoil `COLLABORATION.md` › Credit, task-271), fo
 | [F-043](F-043-a-frontmatter-field-cannot-be-declared-a-reference-to-an-element-of-a-type.md) | A frontmatter field cannot be declared a reference to an element of a type | request | open | |
 | [F-044](F-044-a-gate-s-approval-is-offered-and-taken-before-the-phase-that-owns-it.md) | A gate's approval is offered, and taken, before the phase that owns it | request | open | |
 | [F-045](F-045-workflow-status-heads-elements-waiting-at-a-gate-ungated-elements.md) | workflow status heads elements waiting at a gate "ungated elements" | request | open | |
+| [F-046](F-046-an-identity-outside-dna-yaml-team-starts-workflows-and-moves-elements.md) | An identity outside dna.yaml's team starts workflows and moves elements | request | open | |
 
 ## Context
 
