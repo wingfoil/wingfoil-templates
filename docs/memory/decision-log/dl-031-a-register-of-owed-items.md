@@ -88,3 +88,7 @@ The points below are **proposed**; they become rulings when the approver approve
   (`383d79a`); `repository-practice` 1.1, rule 4 (`aba967d`); `dna.yaml` 11, the file in
   `paths.governance` (`b30989d`); a line in the Execution Notes comment of the templates plan,
   task, pack, pack-release, bug and decision-log (`0effabd`).
+- 2026-11-05, plan-062: R1 reads with dl-036 R1 ("the next retrospective" is the next periodic one),
+  R2 with dl-036 R2 … R4 (a ruling's row, a reopened row, a row asked outside any element) and R3
+  with dl-036 R1 (a pack's own retrospective proposes only for the rows its cycle touched); in
+  `repository-practice` 1.2 and the register's header (`5a1ed4d`). The body stays as approved.

@@ -68,3 +68,6 @@ The points below are **proposed**; they become rulings when the approver approve
   draft's record and option (d) with its reason, E1's wording, the WingFoil version as printed, where
   each run's record lives; the dl actions plan's row is dl-034 D3's.
 - 2026-11-02: re-review (with dl-034's): applied the citation of plan-047's Execution Notes.
+- 2026-11-05, plan-062: actions applied (E3): E1 and E2 in `pack-cycle` v7 (`603c650`), E2 in
+  `pack-compatibility`'s evidence bullets (`b6a1f9c`); the note on dl-032 written. The row on
+  `pack-cycle` v6 or v7 on the engine stays open (W10).

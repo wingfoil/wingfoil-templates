@@ -86,3 +86,6 @@ The points below are **proposed**; they become rulings when the approver approve
   descriptions (`7610860`, one bump with dl-033 O4); `pack-release-cycle` v8, `validate`'s
   description and its `checks.post` line (`503a77c`); `pack-compatibility`, its load-commands
   bullet (`e2c4d31`). The scripted full scrum run stays a row of `docs/owed-items.md`.
+- 2026-11-05, plan-062: E2 reads with dl-037 E1 (a run's findings reach the charter before it is
+  accepted) and E2 (what a run by hand records), in `pack-cycle` v7 (`603c650`) and
+  `pack-compatibility` (`b6a1f9c`). The body stays as approved.

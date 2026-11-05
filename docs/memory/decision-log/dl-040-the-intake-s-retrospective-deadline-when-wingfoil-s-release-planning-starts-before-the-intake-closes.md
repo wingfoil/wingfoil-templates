@@ -67,3 +67,6 @@ The points below are **proposed**; they become rulings when the approver approve
   limited to a planning not yet ended (D3's case kept apart) and, for one starting before the
   retrospective closes, to a date not known at the intake's close; the patch case's seven days;
   D3's wording. The title kept (the narrower name); dl-038 C2 states both cases.
+- 2026-11-05, plan-062: actions applied (D4): D1 … D3 in `wingfoil-release-intake` v6 ›
+  `retrospective-start` (`7d73ca4`), the register's row on dl-029 T2's gap moved to Closed with it;
+  the note on dl-029 written.
