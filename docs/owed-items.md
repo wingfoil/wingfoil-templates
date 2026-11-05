@@ -6,14 +6,20 @@ element. Outside every Memory path. Its rules are rule 4 of the directive `repos
 
 - **Open:** one row per item: the item, its source (element and section), its owner and its
   trigger. An item without an owner names the approver; an item without a trigger takes "the next
-  retrospective" (dl-031 R1). Rows are sorted by the first element id in Source; rows without one
-  come last.
+  retrospective" (dl-031 R1), the next periodic one or one that counts as periodic (dl-036 R1).
+  Rows are sorted by the first element id in Source; rows without one come last.
 - **Who writes a row:** a plan or a task, in the same commit as the note that leaves the item; a
-  pack, a pack-release, a bug or a decision-log, at the latest by the close of the plan that hosts
-  it. The note, or for a row added later the hosting plan's note, cites the row (dl-031 R2). The
-  element that settles an item moves its row to Closed, with its own id.
+  ruling, in the commit that records it in its plan, the ruling citing the row (dl-036 R2); a pack,
+  a pack-release, a bug or a decision-log, at the latest by the close of the plan that hosts it.
+  The note, or for a row added later the hosting plan's note, cites the row (dl-031 R2). A row
+  asked by the approver outside any element has the Source "asked by the approver on <date>", cited
+  by the plan active on `main`, or the next one (dl-036 R4). The element that settles an item moves
+  its row to Closed, with its own id; an item found open again returns to Open in the commit that
+  records the finding, its Source extended with the element and section that reopened it (dl-036
+  R3).
 - **Who reads it:** every retrospective, in `explore`; it proposes keep, assign or drop for each
-  row, and its decision-log rules them (dl-031 R3).
+  row, and its decision-log rules them (dl-031 R3); a pack's own retrospective proposes only for the
+  rows its cycle touched and lists the others as "not touched", which keeps them (dl-036 R1).
 
 First content: the debts of the inventory of 2026-10-28
 (`docs/retrospectives/2026-10-28-periodic-friction-inventory.md` §8), with the rows of dl-028 D1
