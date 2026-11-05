@@ -219,3 +219,28 @@ other branch meanwhile (W-14).
 - 2026-11-05: re-review: approve after amendments, nothing blocking; applied: what the plan
   produces names the notes and their task, the task's workflow and branch, the Handoff's reviews and
   gates for it, one task for every note.
+- 2026-11-05, step 1, reproduction (a run by hand, `pack-compatibility`, dl-037 E2): WingFoil 0.3.2
+  (`6de2e13c004bbf419acfa7dc4d98d5a7468cd693`, from the matrix); `base` 2.0.1, `software` 1.0.0
+  and `methodology/scrum` 1.0.0 composed from the tree at the tag `methodology/scrum@1.0.0`
+  (`6373282`), parameters `project_name`, `approver_name`, `approver_email` (an `example.test`
+  address) and `agent_name` given, none other; a scratch repository with `git init`, `init
+  --template Scrum --no-interactive`, the composed `.wingfoil/` copied over and `init`'s custom
+  workflows and directives removed (the READMEs' steps); `workflow list` with no diagnostic. About
+  30 commands, every one exit 0 except the probes noted. Results:
+  - 3 (a) holds: the composed `security-secrets` forbids "a personal email" in a file, and
+    `dna.yaml` holds `team.members[].email`, through which `workflow status` routes approvals;
+  - 3 (b) holds: the composed region reads "acts as developer, reviewer, qa and architect" and
+    names the `bug` gates at `triaged` and `planned` (`software`'s section), and "the Developers
+    `developer` with `architect`, `reviewer`, `qa` and `tech-lead`" (`scrum`'s);
+  - 3 (c) holds: `governance-evolution` › `apply` says "with version bumps and AGENTS.md updated";
+  - 3 (d) holds: a task with `sprint: sprint-099-does-not-exist` and no Sprint in the repository
+    moves `draft → pending` with `memory submit`, exit 0;
+  - 4, "ungated" holds: `workflow status` heads elements waiting at a gate "ungated elements";
+  - 4, a non-member identity holds: an author not in `dna.yaml` runs `workflow start bug-ingest`
+    and `workflow finalize` of its `capture` step, both exit 0 and committed under its name;
+  - 4, a gate listed out of phase holds, with a local three-phase workflow (enter the gate, work,
+    decide) on a `bug`, as WingFoil UI's local gate on `release`: with the phase `decide` pending,
+    `workflow status` lists the bug's approval as carried by no open workflow, and `memory approve`
+    moves it `open → triaged`, exit 0, while the workflow stays at `work`. With `bug-ingest`'s own
+    shape (the gate entered in the phase before the approving one) the approval is listed in phase.
+  No point failed to reproduce.
