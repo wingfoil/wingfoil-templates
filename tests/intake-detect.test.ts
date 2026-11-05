@@ -171,7 +171,8 @@ describe('intake detection, the command\'s refusals (task-078 build review)', ()
     assert.equal(run.status, 2);
     assert.equal(run.stdout, `${FAILED}compat.yaml is not valid\n`);
     const missing = withFile(JSON.stringify(answer(['0.3.2'])),
-      (registry) => cli(['--registry', registry, '--compat', join(FIXTURES, 'intake', 'none.yaml')]));
+      (registry) => cli(['--registry', registry, '--compat',
+        join(FIXTURES, 'intake', 'none.yaml')]));
     assert.equal(missing.status, 2);
     assert.equal(missing.stdout, '');
   });

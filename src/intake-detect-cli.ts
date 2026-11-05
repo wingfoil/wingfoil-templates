@@ -11,6 +11,7 @@ import { loadCompat } from './compat';
 import { detectMissing } from './intake-detect';
 
 const USAGE = 'usage: intake:detect [--registry <file>] [--compat <file>] [--github]';
+const FAILED = '::error title=WingFoil release check failed::';
 
 interface Outcome { code: number; stdout: string[]; stderr: string[] }
 
@@ -18,6 +19,10 @@ function registryAnswer(file: string | undefined): unknown {
   if (file !== undefined) return JSON.parse(readFileSync(file, 'utf8')) as unknown;
   const result = spawnSync('npm', ['view', 'wingfoil', 'versions', 'time', '--json'],
     { encoding: 'utf8', shell: false });
+  if (result.error !== undefined) {
+    const code = (result.error as NodeJS.ErrnoException).code;
+    throw new NpmFailure(code ?? 'with an error');
+  }
   if (result.status !== 0) {
     throw new NpmFailure(result.status === null ? `signal ${result.signal ?? 'unknown'}`
       : String(result.status));
@@ -43,14 +48,26 @@ export function runIntakeDetect(argv: string[], cwd: string): Outcome {
   } catch (error) {
     if (error instanceof NpmFailure) {
       const why = `npm view exited ${error.message}`;
-      return { code: 2, stdout: github ? [`::error title=WingFoil release check failed::${why}`]
-        : [], stderr: [why] };
+      return { code: 2, stdout: github ? [`${FAILED}${why}`] : [], stderr: [why] };
     }
-    return { code: 2, stdout: [], stderr: ['the registry answer is not JSON'] };
+    const why = error instanceof SyntaxError ? 'the registry answer is not JSON'
+      : `cannot read the registry file: ${error instanceof Error ? error.message : String(error)}`;
+    return { code: 2, stdout: github ? [`${FAILED}the registry answer is refused`] : [],
+      stderr: [why] };
   }
-  const compat = loadCompat(values.compat ?? join(cwd, 'compat.yaml'));
-  const report = detectMissing(answer, compat.releases.map((release) => release.wingfoil));
-  if (report.code === 2) return { code: 2, stdout: [], stderr: report.errors };
+  let recorded: string[];
+  try {
+    recorded = loadCompat(values.compat ?? join(cwd, 'compat.yaml')).releases
+      .map((release) => release.wingfoil);
+  } catch (error) {
+    return { code: 2, stdout: github ? [`${FAILED}compat.yaml is not valid`] : [],
+      stderr: [error instanceof Error ? error.message : String(error)] };
+  }
+  const report = detectMissing(answer, recorded);
+  if (report.code === 2) {
+    return { code: 2, stdout: github ? [`${FAILED}the registry answer is refused`] : [],
+      stderr: report.errors };
+  }
   const stdout = [...report.lines];
   if (github && report.code === 1) {
     for (const line of report.lines) {

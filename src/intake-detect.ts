@@ -43,8 +43,8 @@ function published(registry: unknown): string[] | DetectReport {
     }
   }
   if (bad > 0) {
-    return refused(`the registry answer holds ${String(bad)} ${bad === 1 ? 'entry' : 'entries'} `
-      + 'that is not a version');
+    return refused(`the registry answer holds ${String(bad)} `
+      + `${bad === 1 ? 'entry that is not a version' : 'entries that are not versions'}`);
   }
   return stable;
 }
@@ -75,6 +75,7 @@ export function detectMissing(registry: unknown, recorded: readonly string[]): D
       lines.push(`${version} backport (below ${newest})`);
       continue;
     }
+    // Defensive: a version above the newest recorded always has a predecessor in `all`.
     const predecessor = all.filter((v) => semver.lt(v, version)).pop() ?? newest;
     lines.push(`${version} ${classOf(version, predecessor)} (against ${predecessor})`);
   }
