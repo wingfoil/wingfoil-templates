@@ -74,6 +74,7 @@ sha of the commit it read (WingFoil `COLLABORATION.md` › Credit, task-271), fo
 | [F-042](F-042-memory-reject-leaves-a-state-over-its-wip-limit-and-nothing-says-so.md) | memory reject leaves a state over its WIP limit, and nothing says so | request | open | |
 | [F-043](F-043-a-frontmatter-field-cannot-be-declared-a-reference-to-an-element-of-a-type.md) | A frontmatter field cannot be declared a reference to an element of a type | request | open | |
 | [F-044](F-044-a-gate-s-approval-is-offered-and-taken-before-the-phase-that-owns-it.md) | A gate's approval is offered, and taken, before the phase that owns it | request | open | |
+| [F-045](F-045-workflow-status-heads-elements-waiting-at-a-gate-ungated-elements.md) | workflow status heads elements waiting at a gate "ungated elements" | request | open | |
 
 ## Context
 
