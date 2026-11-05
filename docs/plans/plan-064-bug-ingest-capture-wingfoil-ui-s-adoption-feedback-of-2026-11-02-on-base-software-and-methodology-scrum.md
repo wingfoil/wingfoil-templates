@@ -46,7 +46,8 @@ only `planning: { reject: draft }` (`packs/software/fragments/memory.yaml`); `bu
 `apply` says "AGENTS.md updated".
 
 **`main`'s CI before this plan** (dl-038 C3): plan-063's last push, `4b9cfc3` (its close and
-`active → done`), CI run 42081846882, read and recorded here before `submit`.
+`active → done`), CI run 42081846882
+`success` (jobs Node.js 22.21.0 16 min 42 s, 22.12.0 17 min 5 s), no warning annotation, read here.
 
 **What it produces:** bugs (`bug-ingest`), each reviewed and ruled at `triage`, and the decision-log
 a design choice needs (point 2), and the feedback notes of points 3(d) and 4, written by one
@@ -135,12 +136,53 @@ Each point with a recommendation.
 
 ## The approver's rulings
 
-<!-- Filled when the approver rules the outline. -->
+Given by the approver on 2026-11-05: every point of the outline as recommended.
+1. **Point 1:** one `bug-ingest` plan, hosting the decision-log (its own `decision-log-ingest`
+   instance) and the notes task (`tooling-delivery`, its own branch, merged into this plan's).
+2. **Point 2:** the decision-log "Gates on `release` and `release-line`" with options (a) … (e) and
+   the `bug` `planned` gate; the approver chooses at its `rule`.
+3. **Point 3:** bugs (a), (b) for `software`, (b) for `scrum`, (c), (d), each reproduced on 0.3.2
+   first, `minor` proposed; (d)'s main outcome a feedback note.
+4. **Point 4:** each point reproduced on 0.3.2; a note for each that holds; `specification.approve`
+   as designed.
+5. **Point 5:** open point 1 closed as UI's to decide outside the pack.
+6. **Point 6:** each fix a row at its triage; the decision-log's dl actions a row at its ruling.
+7. **Point 7:** a notice to WingFoil UI at the first fix published, its text shown first.
+8. **Point 8:** `bug/ui-feedback-2026-11-02`; push at `submit`, merge and close.
 
 ## Steps
 
-<!-- Written after the rulings: reproduction, one row per bug and for the decision-log, each with
-     its review (dl-017) and the approver's triage or rule, the charter note, the register. -->
+On the branch `bug/ui-feedback-2026-11-02`, from `main` at the commit that submits this plan.
+Before every commit, the privacy check of `repository-practice` rule 2; after every commit under
+`.wingfoil/` or `docs/memory/`, `workflow list` and `npm run lint` exit 0. Elements are added one
+at a time with `memory add`, its printed id checked, no element of the same type added on any
+other branch meanwhile (W-14).
+
+1. **Reproduction** (claude): in a scratch repository, `base` 2.0.1, `software` 1.0.0 and
+   `methodology/scrum` 1.0.0 composed from their tags and run on WingFoil 0.3.2 as `compat.yaml`
+   pins it in the matrix: each of points 3 (a) … (d) and 4 driven with WingFoil's commands; the
+   record in these notes as `pack-compatibility` asks of a run by hand (dl-037 E2), no local or
+   scratch path. A point that does not reproduce goes to the approver before capture.
+2. **The bugs** (facilitator, `bug-ingest` › `capture`): one per point 3 (a), (b) `software`,
+   (b) `scrum`, (c), (d): observed, expected, reproduction, `severity` (`minor` proposed), `pack`;
+   an independent review each (dl-017), amended while `pending`; `submit`; the approver's triage
+   (`pending → approved`), each fix's row in `docs/owed-items.md` in the commit that records the
+   triage (dl-036 R2).
+3. **The decision-log** (`decision-log-ingest` › `capture`): "Gates on `release` and
+   `release-line`", options (a) … (e) of point 2 and the `bug` `planned` gate as a point of its
+   own, the `requires`-range class, the workflows it touches; an independent review, a re-review
+   when a fix changes a decision; `submit`; the approver's `rule`; its dl actions a row.
+4. **The notes task** (`tooling-delivery`, `pack: ""`, a content-only task, dl-039 R1): on
+   `task/<id>-<slug>` from this branch, merged into it (task-064's precedent): the notes of point
+   3 (d) and of each point 4 that held, first line naming the task, each with its ledger row;
+   body review, the approver's acceptance, build review, the branch CI and dl-039's local list on
+   the frozen commit, the approver's approval, the merge.
+5. **`scrum` charter open point 1:** an Execution Note on `pack-methodology-scrum` (point 5), its
+   row of `docs/owed-items.md` to Closed.
+6. **Branch close:** a review of the branch (dl-017); its CI and the local list once on the frozen
+   head; the privacy check of its diff; on the approver's OK, `--no-ff` merge into `main`, `main`'s
+   CI read with its jobs' durations; the row "WingFoil UI's adoption feedback" to Closed; the
+   branches removed; `active → done`.
 
 ## Handoff
 
