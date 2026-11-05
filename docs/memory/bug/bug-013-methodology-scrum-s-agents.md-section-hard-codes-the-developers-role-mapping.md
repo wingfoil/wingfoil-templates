@@ -2,7 +2,7 @@
 id: bug-013-methodology-scrum-s-agents.md-section-hard-codes-the-developers-role-mapping
 type: bug
 title: "methodology/scrum's AGENTS.md section hard-codes the Developers' role mapping"
-status: draft
+status: pending
 severity: "minor"        # critical | major | minor
 pack: "pack-methodology-scrum"
 tags: ["packs","feedback"]
