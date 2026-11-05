@@ -21,51 +21,72 @@ new releases, and every intake is started by hand (plan-060, task-074).
 
 `npm run build` precedes the commands.
 
-1. **Red first** (dl-018): the tests of Acceptance 2 … 5 committed before the code, the failing run
-   recorded with its command and count.
-2. **`npm run intake:detect`** (`src/intake-detect.ts`, `src/intake-detect-cli.ts`): reads the
-   registry's answer to `npm view wingfoil versions time --json` (run by the command, or read from a
-   file given with `--registry <file>` for the tests, offline) and `compat.yaml`; prints one line
-   per published version missing from `compat.yaml`, in ascending order, each with its class against
-   its predecessor (`patch`; `minor` or `major`, a `0.x` minor counted as breaking) and the version
-   it is classed against; ignores pre-releases and versions the registry's `time` lists without a
-   version entry (unpublished); reports a version below the newest recorded as `backport`, never to
-   be prepared; validates each version as strict `X.Y.Z`
-   (`^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$`) before it reaches an output line, and
-   refuses (exit 2) a registry answer it cannot parse.
-3. **Its exit codes and signal:** exit 0 and `no missing version` when none is missing; exit 1 when
-   one is, each missing version also written as a `::error title=WingFoil release not
-   recorded::<version> (<class>)` line when `--github` is given (the workflow's red run, plan-065
-   point 5); exit 2 for a usage or parse error. The command reads the network only through `npm
+1. **Red first** (dl-018): the tests of Acceptance 2 … 5 committed before the code, with a stub
+   `src/intake-detect.ts` whose export throws, so that the build passes and the tests fail by
+   assertion; the failing run recorded with its command and count.
+2. **`npm run intake:detect`** (`src/intake-detect.ts`, `src/intake-detect-cli.ts`) reads the
+   registry's answer to `npm view wingfoil versions time --json` (spawned with an argument array, no
+   shell; or read from a file given with `--registry <file>`, offline) and `compat.yaml`'s releases.
+   `versions` is the source (a bare string read as a one-element list); `time`'s other keys
+   (`created`, `modified`, an unpublished version's) are ignored. A version with a pre-release part
+   is ignored; any other entry not strict `X.Y.Z`
+   (`^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$`) makes the answer refused, as does an
+   answer with no `versions` (a whole-package unpublish). Versions below the oldest recorded release
+   (`compat.yaml`'s first row, the floor of dl-010 and task-011: 0.2.1 is on npm and not recorded by
+   choice) are out of scope and ignored; a recorded version absent from npm is ignored. Order is
+   semver order.
+3. **Its report**, one line per missing version in semver order, exactly: `<v> patch (against <p>)`,
+   `<v> minor (against <p>)`, `<v> minor, breaking in 0.x (against <p>)` (a `0.Y` change), `<v>
+   major (against <p>)` (an `X` change, `0.x` to `1.0.0` included), where `<p>` is the highest
+   stable version below `<v>` among the recorded and the published ones (with 0.3.3 and 0.3.4
+   missing, 0.3.4 is classed against 0.3.3, dl-042 I1); and `<v> backport (below <n>)` for a missing
+   version between the oldest and the newest recorded (`<n>` the newest), never to be prepared. With
+   none missing: `no missing version`.
+4. **Exit codes and signal:** exit 0 with none missing; exit 1 with one or more, each line also
+   written as `::error title=WingFoil release not recorded::<line>` when `--github` is given (the
+   red run, plan-065 point 5; the exit code turns the run red, the annotation names why); exit 2 for
+   a usage error, a refused answer (its message gives a count of bad entries, never the raw strings)
+   or `npm view` exiting non-zero (registry or network), with `::error title=WingFoil release check
+   failed::npm view exited <code>` under `--github`. The command reads the network only through `npm
    view`; with `--registry` it reads none.
-4. **`.github/workflows/intake.yml`:** `on: schedule` (daily) and `workflow_dispatch`; `permissions:
-   contents: read`; one job on `ubuntu-24.04` with `timeout-minutes`, `concurrency` grouped by
-   workflow with `cancel-in-progress: false`; checkout without persisted credentials, `setup-node`
-   on 22.21.0, `npm ci`, `npm run build`, `npm run -s intake:detect -- --github`; every action
-   pinned to a full commit SHA, as `ci.yml`'s; no `secrets.`, no `pull_request_target`, no
-   `actions/cache`. A test, as `tests/ci-workflow.test.ts`, asserts each of these.
-5. **The tests**, offline (`testing`): fixture registry answers for no missing version, one patch, a
-   minor, a major, a `0.x` minor, a backport, two missing versions, a pre-release, an unpublished
-   version, a malformed version string and an unparsable answer; each output and exit code asserted.
-6. **The checks** (`tooling-delivery` v3 › `review`, dl-039): the build review and its amendments
-   first; then once on the frozen commit the branch CI `success`, both jobs, run id and durations
-   recorded, and dl-039's local list on Node.js 22.21.0; `npm run lint` exits 0; the new script's
-   own run on the frozen commit against the real registry (`npm run -s intake:detect`), exit 0 with
-   `no missing version` expected while 0.3.2 is the newest. The privacy check of the branch's diff
-   recorded.
-7. **After the merge into `main`:** `intake.yml` dispatched once by hand (`gh workflow run
-   intake.yml`, with the approver's OK), its run id, conclusion and duration recorded; `main`'s CI
-   read.
+5. **`.github/workflows/intake.yml`:** `on: schedule` (daily) and `workflow_dispatch`; `permissions:
+   contents: read` at the top, none per job; one job on `ubuntu-24.04` with `timeout-minutes`;
+   `concurrency: { group: intake-${{ github.ref }}, cancel-in-progress: false }` (a comment says
+   GitHub keeps one running and one pending run, enough for a daily schedule); checkout with
+   `persist-credentials: false`, `setup-node` on 22.21.0 with `check-latest: false`, `npm ci`, `npm
+   run build`, and the `run` line exactly `npm run -s intake:detect -- --github`; every action
+   pinned to a full commit SHA; no `secrets.`, `github.token` or `GITHUB_TOKEN`, no
+   `pull_request_target`, no `actions/cache`. `tests/intake-workflow.test.ts` asserts each, failing
+   by assertion (not at load) when the file is absent.
+6. **The tests**, offline (`testing`), with fixture answers under `tests/fixtures/intake/`: no
+   missing version; one patch; a minor at 1.x; a `0.x` minor; a major and `0.x` to `1.0.0`; a
+   backport; two missing versions (the second classed against the first); a version below the floor
+   (ignored, exit 0); 0.9.0 and 0.10.0 (semver order); a pre-release (ignored); an unpublished
+   version (in `time` only, ignored); a bare-string `versions`; a malformed entry and an answer
+   without `versions` (exit 2, no raw string printed); a failing `npm` (a stub on `PATH`, exit 2).
+   Each stdout line, annotation and exit code asserted exactly.
+7. **The checks** (`tooling-delivery` v3 › `review`, dl-039): the build review and its amendments
+   first; then once on the frozen commit the branch CI `success`, both jobs, run id and durations,
+   and dl-039's local list on Node.js 22.21.0; `npm run lint` exits 0; the script against the real
+   registry, `npm run -s intake:detect`: `no missing version` and exit 0 expected while 0.3.2 is the
+   newest (a newer release published meanwhile gives exit 1 and its line, the right signal, recorded
+   as such). The privacy check of the branch's diff recorded.
+8. **After the merge into `main`:** `intake.yml` dispatched once by hand (`gh workflow run
+   intake.yml`, with the approver's OK), `success` with `no missing version` expected as in 7 (or
+   `failure` with a release's `::error`, the right signal); its run id, conclusion and duration
+   recorded; `main`'s CI read. In the merge's follow-up commit, a row of `docs/owed-items.md` for
+   the weekly reading of `intake.yml`'s runs (owner approver), noting that GitHub disables a
+   scheduled workflow after 60 days without repository activity (plan-065 ruling 5).
 
 ## Design
 
 Branch `task/task-078-intake-detect` from `main` at this task's add. Red steps: (1)
-`tests/intake-detect.test.ts` (the classes, the edge cases, the exit codes, through `--registry`
-fixtures under `tests/fixtures/intake/`) and `tests/intake-workflow.test.ts` (the workflow's shape)
-against no code (red); (2) `src/intake-detect.ts`, a pure function from the registry's answer and
-`compat.yaml`'s versions to the report, and its CLI (green); (3) `intake.yml` (green).
-`package.json` gains the script `intake:detect`; no new dependency (`semver` is already one,
-adr-003).
+`tests/intake-detect.test.ts` (through the CLI's `--registry` fixtures and a stub `npm` on `PATH`,
+plus the pure function) and `tests/intake-workflow.test.ts`, with the throwing stub of
+`src/intake-detect.ts` (red by assertion); (2) `src/intake-detect.ts`, a pure function from the
+registry's answer and `compat.yaml`'s versions to the report, and its CLI (green); (3) `intake.yml`
+(green). `package.json` gains the script `intake:detect`; no new dependency (`semver` is a runtime
+dependency already, adr-003).
 
 ## Execution Notes
 
@@ -76,3 +97,8 @@ adr-003).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
 - 2026-11-05: written under plan-065 (task (A)), added on `main`, no other task added on any branch
   meanwhile (W-14).
+- 2026-11-05: independent review of the body: approve after amendments, one blocking finding (0.2.1,
+  on npm and below the floor, would have kept every run red); applied with the others: the floor,
+  the predecessor, the classes and the exact lines, pre-release against malformed, the network
+  failure's exit 2, the expected results of the real runs, the weekly reading's row at the merge,
+  red by assertion with a throwing stub, the workflow's concurrency group and extra assertions.
