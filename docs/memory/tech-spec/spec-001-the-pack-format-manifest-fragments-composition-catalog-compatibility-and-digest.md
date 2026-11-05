@@ -54,7 +54,8 @@ The key words **must**, **must not**, **should** and **may** are normative.
 | **pack name** | The last segment of the catalog pack id. Unique across the whole catalog (dl-004 1(a)). |
 | **axis** | A concern a project chooses a pack for (§3). The foundation packs are outside the axes. |
 | **foundation pack** | `base`, the core of every project governed by WingFoil, or `software`, the software layer above it (§3, dl-022). |
-| **conditional part** | The part of a pack's content and requirements that counts only in a composition holding a given pack (§6.5). |
+| **conditional part** | The part of a pack's content and requirements that counts only in a composition holding a given pack: one or more conditional entries, each naming its pack in `with` (§6.5). |
+| **tension** | A pack a pack combines with only with care, declared with its resolution in `tensions` (§6.2); it never makes a composition fail. |
 | **slot** | A workflow name that `sw-life-cycle` or `delivery` (directly or through the methodology's sub-workflows) includes and that one pack fills (§9). Slots exist only in a composition with `software`. |
 | **overlay** | A pack that only adds to or tightens the packs composed before it (dl-001 D1). |
 | **fragment** | A partial `dna.yaml`, `roles.yaml` or `memory.yaml`, merged with the other packs' (§7). |
@@ -146,11 +147,24 @@ This specification applies it twice.
    - In `pack.yaml`, `version:` stays the pack's semver: its content revision, coherent with dl-149.
    - `catalog.yaml`, `compat.yaml`, presets and transitions have no `version:`. Their history is
      git's.
-   - Every file of this section is format 1 in this specification. `pack.yaml` and `catalog.yaml`
-     stayed at format 1 through the amendment of dl-022, which added `conditional` and gave
-     `foundation` two packs: nothing was published and no reader of them existed, and the
-     specification was amended in place before the first publication. This section's rule applies
-     from the first publication on.
+   - `pack.yaml` and `catalog.yaml` are format 2 in this specification; presets, transitions and
+     `compat.yaml` are format 1. `pack.yaml` and `catalog.yaml` stayed at format 1 through the
+     amendment of dl-022, which added `conditional` and gave `foundation` two packs: nothing was
+     published and no reader of them existed, and the specification was amended in place before
+     the first publication. This section's rule applies from the first publication on.
+   - **Format 2** (dl-024, dl-025): `pack.yaml` gains `tensions` (§6.2), a conditional part of
+     several entries whose `with` names any pack composed earlier (§6.5), and the `mcp` fragment
+     kind (§6.4); `catalog.yaml` copies the entries and records each version's `pack.yaml` format
+     (§11). The bump is made for readers: a composer, a resolver or a future `pack-install` must
+     tell a manifest it cannot read from one it can, and format 1's limit (one entry, `with`
+     `software` only) is what format 2 lifts. Format 1 stays valid and readable: the packs published
+     at format 1 stay at format 1, the composer and the lint pick the schema by the file's
+     `format`, and a format-1 file keeps format 1's rules. A pack moves to format 2 only when it
+     needs a key of format 2, and that move is a major release (`pack-semver`): a reader of format 1
+     cannot read the new version. A pack whose first version needs format 2 is born at format 2.
+   - The frozen schemas of format 1 are `schema/pack.v1.schema.json` and
+     `schema/catalog.v1.schema.json`; `pack.schema.json` and `catalog.schema.json` validate
+     format 2.
 
 A schema under `schema/` validates the current format of its file kind, and checks `format` as a
 constant. When a format is bumped, the previous schema is kept, frozen, as
@@ -213,15 +227,16 @@ contents:                       # §6.4
   workflows: [replenishment]
   memory_templates: []
   agents_section: false
-conditional:                    # §6.5: counts only in a composition with software
+conditional:                    # §6.5: each entry counts only in a composition with its pack
   - with: software@^1
     contents:
       workflows: [delivery, kanban-delivery]
+tensions: []                    # format 2: packs to combine with care (below)
 ```
 
 | Field | Required | Rule |
 |---|---|---|
-| `format` | yes | `1` |
+| `format` | yes | `2`; a pack published at `1` keeps format 1's rules (§5). |
 | `id` | yes | §4. Equals the directory path under `packs/`. |
 | `axis` | yes, except the foundation packs | One of the axes of §3. Absent for `base` and `software`. Equals the first segment of `id`. |
 | `name` | yes | §4. Equals the last segment of `id`. |
@@ -234,10 +249,31 @@ conditional:                    # §6.5: counts only in a composition with softw
 | `conflicts` | no | §6.3. |
 | `parameters` | no | §8. |
 | `contents` | yes | §6.4. |
-| `conditional` | no | §6.5. At most one entry in format 1, on a non-foundation pack only, its `contents` non-empty. |
+| `conditional` | no | §6.5. Format 1: at most one entry, `with` naming `software@^<major>`, on a non-foundation pack that does not require `software`. Format 2: one or more entries, each `with` naming a pack composed earlier (§7.1), at most one entry per pack id, on a non-foundation pack. Each entry's `contents` non-empty. |
+| `tensions` | no | Format 2 only. Below. |
 
 `schema/pack.schema.json` checks what JSON Schema can express. The lint rules (F3.5) check the
 rest; §18 lists them for every file kind.
+
+**`tensions`** (format 2, dl-025 D3) lists the packs this pack combines with only with care:
+
+```yaml
+tensions:
+  - pack: stage/prototype         # §6.3's syntax; @<range> optional, absent meaning every version
+    resolution: "Exploration only in the exploration scope; nothing in it is released before the
+      requirements are traced (a bridge in stage/prototype and stage/production)."
+```
+
+- The stricter pack declares the tension, since it knows its constraints. A `tensions` entry never
+  makes a composition fail and adds no requirement: it is neither `requires` nor `conflicts`.
+- Each entry names a catalog pack id other than the pack itself, at most once, and no pack of the
+  pack's `conflicts`; `resolution` is non-empty English text.
+- The composer prints each tension the composition holds (both packs present, the range satisfied),
+  with its resolution, as a notice (§17); the README and the index show them under "Combines with
+  care" (spec-002).
+- `conflicts` stays for real incompatibilities, where no resolution exists.
+- A resolution that needs content is a **bridge**, shipped as a conditional entry by a pack composed
+  later than the stricter one (§6.5).
 
 `pack.yaml` has no `status` and no `bundled` field:
 - the state of a pack is its Memory element's, and its published versions are in `catalog.yaml`;
@@ -263,7 +299,7 @@ rest; §18 lists them for every file kind.
 - The cardinalities of §3 are conflicts already, so packs **must not** restate them.
 - A pack that uses a parameter, a Memory type, a role, a directive or an included workflow that it
   does not ship itself **must** `require` the pack that ships it (`pack-authoring`). The one
-  exception is a conditional part, whose `with` requires `software` for what that part uses (§6.5).
+  exception is a conditional entry, whose `with` requires its pack for what that entry uses (§6.5).
 
 ### 6.4 `contents`
 
@@ -276,51 +312,72 @@ appear in the composed files:
 An absent list is empty, and an absent `agents_section` is `false`.
 
 Every listed file **must** exist, and every file present under those directories **must** be listed
-exactly once, in `contents` or in a conditional part's `contents` (§6.5). The composer reads only
+exactly once, in `contents` or in one conditional entry's `contents` (§6.5). The composer reads only
 what they list.
 
 ### 6.5 The conditional part
 
-A pack's `delivery` exists only in a composition with `software` (dl-022 S3). A pack declares such
-content in an optional `conditional` list, with at most one entry in format 1:
+A pack's `delivery` exists only in a composition with `software` (dl-022 S3), and a bridge between
+two packs exists only in a composition holding both (dl-025 D4). A pack declares such content in an
+optional `conditional` list of **entries**, each counting only when the composition holds the pack
+its `with` names:
 
 ```yaml
-conditional:
-  - with: software@^1           # format 1 allows only software@^<major>
+conditional:                    # illustrative: a stage pack, composed after both packs named
+  - with: software@^1           # format 1 allows this one entry only
     contents:
-      workflows: [delivery, kanban-delivery]
+      workflows: [stage-release-gate]
       directives: []
+  - with: governance/strict@^1  # format 2: any pack composed earlier, one entry per pack id
+    contents:
+      directives: [strict-exit-check]
 ```
 
-- **Who.** Only a non-foundation pack that does not require `software` may carry `conditional`. A
-  pack that requires `software` ships everything in `contents`, so a phase pack carries none.
-- **`with`** is an entry of §6.3's syntax, and names only `software@^<major>` in format 1. It is a
-  requirement that counts only when the composition holds `software`:
+- **Who.** Only a non-foundation pack carries `conditional`. In format 1, only one that does not
+  require `software`, with one entry naming `software`. In format 2, a pack that requires `software`
+  may carry entries whose `with` names another pack, and a pack that does not may also carry one
+  naming `software`; a phase pack requires `software` (§3), so it carries none naming it.
+- **`with`** is an entry of §6.3's syntax. Format 1 allows only `software@^<major>`; format 2 allows
+  any catalog pack id composed earlier than the pack (§7.1), other than itself, at most one entry
+  per pack id. It is a requirement that counts only when the composition holds that pack:
   - it never adds a pack, so resolution stays one pass;
-  - when the composition holds `software` at a version outside the range, the requirement is
-    unsatisfied, an error, never a reason to leave the part out;
+  - when the composition holds the pack at a version outside the range, the requirement is
+    unsatisfied, an error, never a reason to leave the entry out;
   - it names no pack of the pack's `requires`, and the pack does not `conflict` with it;
   - it counts as a requirement for §7.1's rule against requiring a later pack.
 - **`contents`** may list `workflows` and `directives` only, by file stem, as §6.4, and lists at
   least one of them: an entry that adds nothing is refused.
-  - In a composition with `software`, the entry's workflows and directives come after the pack's
-    own, each list in its written order (§7.7).
-  - In a composition without `software`, the composer leaves them out, and the generated `include`
-    with them.
-- **Isolation.** What is always composed uses nothing that exists only with `software`:
+  - In a composition with the entry's pack, its workflows and directives come after the pack's own
+    and after the earlier entries', each list in its written order (§7.7).
+  - In a composition without it, the composer leaves them out, and the generated `include` with
+    them.
+- **Isolation, per entry.** What is always composed uses nothing that exists only with an entry's
+  pack, and no entry uses what exists only in another entry:
   - no fragment, unconditional workflow or roles assignment references a workflow or a directive of
-    the entry;
-  - `software`'s parameters, Memory types, workflows and directives are used only inside the
-    entry's files, so the parameter scope of §8.1 is checked per part;
+    an entry, and no entry's file references one of another entry;
+  - the `with` pack's parameters, Memory types, workflows and directives are used only inside that
+    entry's files, so the parameter scope of §8.1 is checked per part (the unconditional part and
+    each entry);
   - the AGENTS.md section is always composed (§10).
-- **Fragments are never conditional.** A pack therefore cannot tighten `software`'s Memory types
-  through this part (O14).
-- **One owner, slots.** §7.6's one-owner rule and §9's slot rule are checked on the composition with
-  `software`.
-- A methodology that does not require `software` ships `delivery` in its entry, never in
-  `contents`; a methodology that requires `software` ships it in `contents` (dl-022 S3: a
+- **Fragments are never conditional.** A pack therefore cannot tighten another pack's Memory types
+  through this part (O14), and a bridge adds no Memory type and tightens none.
+- **One owner, slots.** §7.6's one-owner rule and §9's slot rule are checked on every composition
+  that holds the entries' packs, each entry with and without its pack.
+- A methodology that does not require `software` ships `delivery` in its entry with `software`,
+  never in `contents`; a methodology that requires `software` ships it in `contents` (dl-022 S3: a
   methodology does not always require `software`). A composition with `software` holds exactly
-  one methodology; one without it holds at most one, which contributes no `delivery` (§3).
+  one methodology; one without it holds at most one, which contributes no `delivery` (§3). The
+  workflows of its own that `delivery` reaches are shipped in the same entry as `delivery` (§9,
+  dl-026, read per entry).
+- **Bridges** (dl-025 D4). A resolution that needs content is shipped by a pack composed later than
+  the stricter one, as an entry whose `with` names the stricter pack (or a pack it requires that
+  carries the shared constraint, so that one entry covers several stricter packs), with directives
+  and workflows only. A move between stages, which replaces one `stage/*` overlay by another (§14),
+  has two halves: the stage being left ships the rules that apply while it runs, and the target
+  stage ships the check before the swap. The target stage's transition workflow is unconditional
+  and names no directive of an entry: its step before the swap reads every composed directive whose
+  `tags` include `exit-check`, which the target stage's entries ship (one per stricter pack), and
+  passes when the composition holds none (dl-025 finding 1, option (ii)).
 
 ## 7. Composition and the merge of fragments
 
@@ -343,7 +400,7 @@ algorithm): at each step, the next pack is the one with the smallest catalog pac
 order, among the packs whose requirements in that axis are already placed.
 
 A `requires` that points to a pack later in this order (for example a blueprint requiring a stage)
-is an error. A conditional part's `with` counts as a requirement for this rule (§6.5).
+is an error. A conditional entry's `with` counts as a requirement for this rule (§6.5).
 
 ### 7.2 General merge rules
 
@@ -559,8 +616,9 @@ Packs ship no `workflows.yaml` fragment (§1, deviation). The composer generates
   so no pack declares the `workflows` kind; the compatibility check includes it (§12). When WingFoil
   bumps that kind, this specification is revised;
 - `include`: one entry `workflows/built-in/<name>.yaml` per composed workflow (the folder follows
-  §7.6's mapping), in composition order, then in each pack's `contents.workflows` order, followed,
-  in a composition with `software`, by its conditional part's `contents.workflows` (§6.5).
+  §7.6's mapping), in composition order, then in each pack's `contents.workflows` order, followed by
+  the `contents.workflows` of each of its conditional entries whose pack the composition holds, in
+  the entries' written order (§6.5).
 
 A slot workflow appears once, at the position of the pack whose file is used.
 
@@ -602,7 +660,7 @@ parameters:
 - **Namespace:** the parameters of a composition share one flat namespace.
   - Each name is declared by exactly one pack of the composition.
   - A pack may use the parameters it declares and those of the packs it `requires`, directly or
-    transitively. A conditional part's files may also use those of its `with` pack and of the packs
+    transitively. A conditional entry's files may also use those of its `with` pack and of the packs
     that pack requires (§6.5).
 
 ### 8.2 Substitution
@@ -656,15 +714,15 @@ only in a composition with `software`:
 - `software` ships `sw-life-cycle` (`kind: main`). It includes `inception`, `specification`,
   `delivery` and `end-of-life` by name, and ships the defaults above.
 - `base` ships `retrospective` and `governance-evolution` (dl-022 S2, S4).
-- The methodology ships `delivery` (`kind: sub`): in its conditional part, with
-  `with: software@^<major>` (§6.5), when it does not require `software`; in its `contents` when it
-  does. `delivery` includes `release` and `retrospective` by name, at its own cadence (dl-003 D11,
+- The methodology ships `delivery` (`kind: sub`): in its conditional entry, with `with:
+  software@^<major>` (§6.5), when it does not require `software`; in its `contents` when it does.
+  `delivery` includes `release` and `retrospective` by name, at its own cadence (dl-003 D11,
   dl-006), directly or through sub-workflows the same methodology ships, at any depth, each shipped
-  in the same part as `delivery` (dl-026). The phase that includes `release` iterates over `release`
-  with a `where` whose `status` is `[in-development, releasing]`, and it may add scope keys, each a
-  frontmatter field the composed `release` type declares (dl-027). `retrospective` is not a slot, so
-  no pack replaces it. In a composition without `software`, what runs `retrospective` is fixed by
-  `base`'s charter.
+  in the same part as `delivery`, the same entry when it is conditional (dl-026). The phase that
+  includes `release` iterates over `release` with a `where` whose `status` is `[in-development,
+  releasing]`, and it may add scope keys, each a frontmatter field the composed `release` type
+  declares (dl-027). `retrospective` is not a slot, so no pack replaces it. In a composition without
+  `software`, what runs `retrospective` is fixed by `base`'s charter.
 - A phase pack of slot `<slot>` **must** ship `workflows/<slot>.yaml`, with `name: <slot>` and
   `kind: sub`. Its file replaces `software`'s default. This is the only case in which a pack's file
   replaces another's (§7.6). A phase pack requires `software` (§3), so it carries no conditional
@@ -680,8 +738,9 @@ contributes at most one section, `agents/section.md` (R2):
   (§12), so it carries no `format:` until WingFoil dl-137 defines one;
 - `base`'s section opens with the level-1 heading of the file; every other section, `software`'s
   included, opens with a level-2 heading and contains no level-1 heading;
-- it is composed whether or not the pack's conditional part is (§6.5): a methodology's section may
-  name `delivery` as present only with `software`;
+- it is composed whether or not any of the pack's conditional entries is (§6.5): a methodology's
+  section may name `delivery` as present only with `software`, and a pack's section may name what
+  an entry adds only with the entry's pack;
 - it contains no markers.
 
 The composer writes no `AGENTS.md`. It produces the **generated region** as a separate output:
@@ -709,7 +768,7 @@ packs.
 packs. A resolver decides from it alone which versions to fetch.
 
 ```yaml
-format: 1
+format: 2
 foundation: [base, software]
 axes:
   methodology: { cardinality: one, required_with: software }
@@ -770,8 +829,12 @@ presets:
   - `versions[]`: one entry per published version, in ascending semver order. An entry is never
     edited after publication, except its `wingfoil` field (§12).
 - **A version entry** copies from the published `pack.yaml`: `formats`, `requires_capabilities`,
-  `requires`, `conflicts` and, when present, `conditional` with its `with` only (§6.5). A resolver
-  can therefore check compatibility and dependencies without fetching the pack. It adds:
+  `requires`, `conflicts` and, when present, `conditional` with each entry's `with` only (§6.5);
+  `tensions` is not copied (the index reads it from the tag, spec-002). A resolver can therefore
+  check compatibility and dependencies without fetching the pack. It adds:
+  - `pack_format`: the format of the published `pack.yaml` (§5), from `catalog.yaml` format 2 on.
+    It is absent from the entries published before, and an absent `pack_format` reads as `1`, so
+    no published entry is edited;
   - `commit`: the full id of the commit the tag points at;
   - `digest` (§13);
   - `wingfoil`: the computed range (§12).
@@ -874,8 +937,8 @@ releases:
 
   `wingfoil-release-intake` appends one entry per WingFoil release (dl-002).
 
-`V.formats` counts the kinds of both parts of a pack with a conditional part (§6.5), so the check
-below holds for either composition.
+`V.formats` counts the kinds of every part of a pack with a conditional part (§6.5), so the check
+below holds for every composition, with or without each entry's pack.
 
 **Compatibility.** A pack version V is compatible with release R when all four hold:
 - `R.format_key` is `true`, because every file a pack ships declares `format:` (§5), and validation
@@ -987,6 +1050,11 @@ actions:
 - `pre_checks` and `actions` are descriptive in format 1: an `id` and a `description`. They get an
   executable form when WingFoil defines how a pack update runs a transition (WingFoil dl-178); that
   will be a format bump of the transition kind.
+- **The check before the swap** is a step of the transition workflow the target stage ships. It
+  reads every composed directive tagged `exit-check`, which the target stage's conditional entries
+  ship, one per stricter pack (§6.5's bridges, dl-025 D4), and names none of them; the stage being
+  left ships, in its own entries, the rules that apply while it runs. A stricter pack added after a
+  stage's release gets its halves in a later minor release of each stage (dl-025 D7).
 
 ## 15. Presets
 
@@ -1012,7 +1080,7 @@ parameters: {}
 - `packs` uses the entry syntax of §6.3. `base` may be omitted, because every pack requires it.
   `software` is in a preset's composition when the preset names it or a listed pack requires it
   unconditionally (a phase pack, for example); otherwise the preset is a composition without the
-  software layer. A conditional part never brings `software` in (§6.5).
+  software layer. A conditional entry never brings its pack in (§6.5).
 - Whether a preset holds `software` is judged on its resolved composition: with `software` it holds
   exactly one methodology, without it at most one, which contributes no `delivery` (§3, §6.5).
 - `parameters` may set only generic values. A project value, such as a name or a person, is never in
@@ -1021,8 +1089,11 @@ parameters: {}
 - A preset has no version. It is a curated pointer to version ranges, and its history is git's.
 - Every preset is part of the compatibility matrix of every pack it contains
   (`pack-compatibility`).
-- A pack with a conditional part is validated in compositions with and without `software`
+- A pack with a conditional part is validated in compositions with and without each entry's pack
   (`pack-compatibility`).
+- A pack that declares `tensions` is validated in a composition with each pack they name, and every
+  pack with each `stage/*` overlay: the declared and the known-risky pairs, not the Cartesian
+  product (dl-025 D6, `pack-compatibility`).
 
 ## 16. Open points
 
@@ -1052,15 +1123,18 @@ adr-001 makes the composer implement this specification and nothing more. Given 
 pack ids with ranges, or local paths), parameter values and an output directory, it:
 
 1. resolves the packs and their `requires`, and fails on a missing pack, an unsatisfied range or a
-   conflict (§6.3); a conditional part's `with` is checked when the composition holds `software`,
+   conflict (§6.3); a conditional entry's `with` is checked when the composition holds its pack,
    and never adds a pack (§6.5);
-2. validates every `pack.yaml`, and the files of this repository, against `schema/` (§5, §6);
+2. validates every `pack.yaml`, and the files of this repository, against `schema/`, choosing the
+   schema by the file's `format` (§5, §6);
 3. checks the cardinalities, the slots and the inventories (§3, §6.4, §6.5, §9);
 4. orders the packs (§7.1);
 5. substitutes parameters (§8), merges the fragments (§7.2–§7.5), copies the asset files (§7.6),
-   those of a conditional part only with `software` (§6.5), and generates `workflows.yaml` (§7.7);
+   those of a conditional entry only with its pack (§6.5), and generates `workflows.yaml` (§7.7);
 6. writes `.wingfoil/` with UTF-8, `LF` line endings and a final newline;
-7. produces the AGENTS.md generated region as a separate output (§10).
+7. produces the AGENTS.md generated region as a separate output (§10);
+8. prints, as notices, each tension the composition holds, with its resolution (§6.2); a notice
+   never fails the composition.
 
 It computes digests (§13) and computed ranges (§12) for the release process. It writes no lock,
 downloads nothing beyond reading git tags of this repository, and never touches `custom/` or the
@@ -1083,8 +1157,8 @@ check the rest, and the composer refuses what they reject.
 - `requires` has exactly one `base@^<major>` entry (§3) and at most one entry per pack id; no pack
   requires or conflicts with itself, or conflicts with a foundation pack (§6.3);
 - `software` requires `base` only; every phase pack requires `software`; a pack that uses a Memory
-  type, a workflow, a directive or a parameter of `software` outside a conditional part requires it
-  (§3, §6.3);
+  type, a workflow, a directive or a parameter of `software` outside a conditional entry with
+  `software` requires it (§3, §6.3);
 - no `memory.yaml` fragment holds `template.frontmatter.exempt`, and `not_applicable_allowed` and
   `lists` name only fields of the fragment's own `required`; the merge judges that a tightening
   adds them, a repeat changing nothing (§7.5);
@@ -1092,21 +1166,30 @@ check the rest, and the composer refuses what they reject.
   refuses it otherwise, and the lint reports it through the compositions it runs (§7.5);
 - `requires_capabilities` is sorted;
 - `contents.fragments` is in the order `dna`, `roles`, `memory`;
-- `contents` and the conditional part's `contents` together match the files present, both ways,
+- `contents` and the conditional entries' `contents` together match the files present, both ways,
   each file listed once (§6.4);
-- `conditional`: at most one entry, on a non-foundation pack that does not require `software`,
-  `with` naming `software@^<major>` and no pack of `requires` or `conflicts`; its `contents` holds
-  `workflows` and `directives` only, at least one of them; the isolation rules of §6.5; a
-  methodology's `delivery` in it when the methodology does not require `software`, in `contents`
-  when it does;
+- `conditional`, by the file's format (§6.5): in format 1, at most one entry, on a non-foundation
+  pack that does not require `software`, `with` naming `software@^<major>`; in format 2, entries on
+  a non-foundation pack, each `with` naming a catalog pack composed earlier (§7.1), at most one
+  entry per pack id; in both, no `with` names a pack of `requires` or `conflicts`, each entry's
+  `contents` holds `workflows` and `directives` only, at least one of them, and the isolation rules
+  of §6.5 hold per entry; a methodology's `delivery` in its entry with `software` when the
+  methodology does not require `software`, in `contents` when it does;
+- `tensions` (format 2): each entry names a catalog pack id other than the pack, at most once and
+  not in `conflicts`, with a non-empty `resolution` (§6.2); a format-1 `pack.yaml` has none;
+- a directive of an overlay or a `stage/*` pack that uses waiver wording ("skip", "not required",
+  "optional", "ignore") about something the pack does not ship is reported for review, a heuristic,
+  not a refusal; a directive of a conditional entry whose `with` pack declares a tension naming this
+  pack (a bridge) is exempt (dl-025 D1, finding 6);
 - `formats` lists exactly the kinds of the files shipped, with the value each file declares (§5);
 - the layout and path segments of §6.1, with no symbolic link or submodule;
 - asset identifiers equal their file stems (§6.1);
-- every `{{name}}` is in the pack's parameter scope (§8.1), checked per part (§6.5), and every
-  default passes its type (§8);
+- every `{{name}}` is in the pack's parameter scope (§8.1), checked per part, each entry its own
+  (§6.5), and every default passes its type (§8);
 - a phase pack ships its slot workflow, a methodology ships `delivery` (in its conditional part, or
   in `contents` when it requires `software`) and every workflow of its own that its `delivery`
-  reaches, in the same part, and no other pack ships a slot name (§9, dl-026);
+  reaches, in the same part, the same entry when conditional, and no other pack ships a slot name
+  (§9, dl-026);
 - no pack other than `software` ships `sw-life-cycle` or a slot default, and no pack other than
   `base` ships `retrospective` or `governance-evolution` (§9, dl-022).
 
@@ -1118,7 +1201,8 @@ check the rest, and the composer refuses what they reject.
   the transition file at the tag (§14);
 - every `transitions[]` and `presets[]` index entry matches its file: id and path, and for
   transitions `from`, `to`, `formats` and `requires_capabilities`;
-- every version entry matches the tagged `pack.yaml`, and its digest recomputes (§13);
+- every version entry matches the tagged `pack.yaml`, its `pack_format` (or its absence, read as
+  `1`) the tagged file's `format`, and its digest recomputes (§13);
 - every `wingfoil` range recomputes from `compat.yaml` (§12).
 
 **`compat.yaml`:**
@@ -1309,3 +1393,13 @@ check the rest, and the composer refuses what they reject.
   2.0.0, 2.0.1; `software` 1.0.0; `methodology/scrum` 1.0.0; `methodology/kanban` 1.0.0:
   `>=0.3.0 <=0.3.2`) to `catalog.yaml`, copied by hand, and `check:packs`' `catalog-range` verifies
   it: the value is the computed one, not a chosen one (§12, dl-002).
+- 2026-11-05, **amended in place** (dl-025, plan-063 row 1; dl-025's approval and the merge OK
+  approve the text, as for dl-022, dl-026 and dl-027): `pack.yaml` and `catalog.yaml` at format 2
+  (§5, §11), the format-1 files kept at format 1 and read by their frozen schemas; `tensions` (§2,
+  §6.2, §17, §18); the conditional part as entries, `with` naming any pack composed earlier, the
+  "Who" rule, isolation and the "same part" rule of dl-026 per entry, bridges and the check before
+  the swap reading the `exit-check` directives (dl-025 D4, finding 1 option (ii)), with §6.3, §6.4,
+  §7.1, §7.7, §8.1, §9, §10, §12, §14, §15, §17 and §18 reading the same; a version entry's
+  `pack_format`, absent before format 2 and read as `1` (§11); D6's coverage (§15). §16's O14 still
+  holds (fragments are never conditional). The tooling follows in the `tooling-change` plan
+  (plan-063 ruling 1).
