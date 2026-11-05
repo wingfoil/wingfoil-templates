@@ -61,52 +61,74 @@ plan of dl-024 and dl-025, which follow it (the register).
 Each point with a recommendation.
 
 1. **The plan's workflow.** Recommended: `bug-ingest` › `capture`, since most points are defects of
-   published packs, hosting one decision-log (point 2) as a stated deviation (`bug-ingest` produces
-   bugs only), as plan-053 hosted a task. Alternative: two plans, one per workflow.
+   published packs, hosting one decision-log (point 2) that runs its own `decision-log-ingest`
+   instance (`capture`, then `rule`), as plan-053 hosted task-063 and its `tooling-delivery` loop;
+   a stated deviation (`bug-ingest` produces bugs only). Alternative: two plans, one per workflow.
 2. **The gates (feedback 1): a decision-log, not a bug.** Adding a gate is "a requirement made
-   stricter (a new gate)", major in `pack-semver`: `software` 2.0.0, and `methodology/scrum` and
-   `methodology/kanban` (which require `software@^1`) each a release; and the workflows that run
-   `release` (`software`'s `release`, `kanban`'s `release-flow`) change with them. Recommended: one
-   decision-log, "Gates on `release` and `release-line`" (options: (a) UI's gates as proposed,
-   with `mark-released` approving; (b) the approval kept in the workflows' `approve-release` and
-   `publish` phases, as today, with a documented note for a project not running the engine; (c)
-   (a) for `release` only), with the `bug` `planned` gate as a point of its own (UI's consideration:
-   any team identity starts a planned fix; the cost, no `planned → closed` exit); the approver rules
-   it at `rule`, and its dl actions are a pack-cycle of `software` 2.0.0 with its dependants.
+   stricter (a new gate)", major in `pack-semver`: `software` 2.0.0. Its dependants,
+   `methodology/scrum` and `methodology/kanban` (`requires: software@^1`), moved to `^2`, give an
+   upgrading project the new gate, a behaviour change: major for each by `pack-semver`'s first line
+   ("in doubt, take the higher"); `pack-semver` has no rule for a `requires` range moved, which the
+   decision-log rules (beside the register's row on `pack-semver`'s rule for fixes and changed
+   defaults). What the gates touch: `software`'s `release-submit` › `approve-release` and
+   `release-publishing` › `publish` and `mark-released` (today `element.set_state(released)`); the
+   phases that include `release` (`software`'s `release`, `scrum`'s `sprint` › `release`,
+   `kanban`'s `release-flow`); `end-of-life` › `deprecate`, which selects releases in `releasing`;
+   no workflow moves a `release-line`, so its gate binds no step (feedback 2's "listed for its whole
+   life"). Recommended: one decision-log, "Gates on `release` and `release-line`", with the options
+   (a) UI's gates as proposed, `mark-released` approving, saying which of today's approvals
+   (`approve-release`, `publish`) it removes so a release is not approved three times; (b) the
+   approval kept in the workflows, as today, with a documented note for a project not running the
+   engine; (c) (a) for `release` only; (d) (b) until WingFoil binds a gate's approval to the phase
+   that owns it (feedback 2), then (a); (e) the `release-line` gate only; and the `bug` `planned`
+   gate as a point of its own (UI's consideration: any team identity starts a planned fix; the cost,
+   no `planned → closed` exit). The approver rules it at `rule`; its dl actions are a release of
+   `software` 2.0.0 with its dependants.
 3. **The defects: one bug each**, severity proposed per the `bug` type, each reproduced first on the
    newest release `compat.yaml` lists (0.3.2) in a scratch repository with the composed packs, and
-   only then captured (K1 of dl-038):
+   only then captured (the practice of dl-038 K1):
    - (a) `base` › `security-secrets` contradicts `dna.yaml`'s required approver email: the rule
      names the exception (`minor`);
-   - (b) the AGENTS.md region hard-codes the agent's roles and the `bug` gates (`base` and
-     `software` sections): the sections name the roles and gates by reference to `dna.yaml`,
-     `roles.yaml` and `memory.yaml`, not by value (`major` for an adopter whose configuration
-     differs, otherwise `minor`; the approver rules);
-   - (c) `governance-evolution` › `apply` asks for "AGENTS.md updated": it asks for the region
-     regenerated (pasted by hand until WingFoil exports it), and the rest of the file updated
-     (`minor`);
-   - (d) `scrum`: a `sprint` field naming no Sprint is accepted at `submit`: WingFoil checks no
-     reference; the pack's workflow step that sets the field checks it (a description and a
-     `checks.post` line), and a feedback note only if the pack cannot check it (`minor`).
-4. **The points that are WingFoil's** (feedback 2; `specification.approve` closed by adoption;
-   "ungated"; a non-approver starting workflows). Recommended: no note from this repository unless
-   its own reproduction on 0.3.2 shows a case WingFoil UI's inbox does not carry: WingFoil UI sends
-   the WingFoil-side points itself, and two notes on one defect would be duplicates. Recorded here
-   as observed; feedback 2 also feeds point 2's decision (a gate whose approval is listed before its
-   phase).
+   - (b) `software`'s AGENTS.md section hard-codes the agent's four roles (developer, reviewer, qa,
+     architect, copied from `executes_as`) and the `bug` gates, and `scrum`'s hard-codes the
+     Developers' role mapping: the sections name them by reference to `dna.yaml`, `roles.yaml` and
+     `memory.yaml`, as prose (spec-001 §10), or through a parameter with a default; one bug per pack
+     (the template's one `pack` field), `minor` each;
+   - (c) `base`'s `governance-evolution` › `apply` asks for "AGENTS.md updated": the generated
+     region changes only with a pack version or a parameter, not with a local governance change, so
+     `apply` updates AGENTS.md outside the region (`minor`);
+   - (d) `scrum`: a `sprint` field naming no Sprint is accepted at `submit`. WingFoil 0.3.2 checks
+     no reference, and a pack cannot add one: a `checks.post` token resolves only through a
+     project's `bindings.yaml`, which packs do not ship (spec-001 O4), and an unbound token is a
+     `workflow list` warning `pack-compatibility` refuses; the field is written by editing
+     (`sprint-planning`, `plan-release`), no action sets it. The risk: a task or a release with a
+     wrong `sprint` is never selected by `development` or `release`, silently. Recommended: a
+     feedback note to WingFoil (reference-typed frontmatter fields) as the main outcome, by a
+     content-only task hosted here (task-063's precedent), and `scrum`'s descriptions naming the
+     risk, a `minor` bug.
+4. **The points WingFoil UI does not send to WingFoil itself** (UI's list is hand-edited states,
+   forged history, `memory deprecate` without approval, author-only approvals). Feedback 2 (gates
+   listed out of phase), "ungated" in `workflow status`, and a non-approver identity starting
+   workflows and finalizing non-approval steps are not in it, and no note of this inbox covers them.
+   Recommended: each reproduced on 0.3.2; each that holds, a feedback note from this repository, by
+   the content-only task of 3(d); one that does not, recorded here. `specification.approve` closing
+   after an adopted tech-spec is as designed ("the step closes once none is pending"): no defect,
+   recorded here.
 5. **`scrum` charter open point 1** (UI's test-first steps; "UI's adoption plan decides"). WingFoil
-   UI adopted `scrum` by hand and its feedback does not name the point. Recommended: settled on UI's
-   side by its adoption, recorded by an Execution Note on `pack-methodology-scrum`, the row moved to
-   Closed; a question to WingFoil UI only if the approver wants the choice recorded here.
+   UI's feedback asks no pack change for it. Recommended: closed as "UI's to decide outside the
+   pack; its adoption feedback of 2026-11-02 asks no change of `scrum`", by an Execution Note on
+   `pack-methodology-scrum` and the row moved to Closed; what UI chose, a question in point 7's
+   notice if the approver wants it recorded.
 6. **The fixes owed.** Recommended: each bug's fix a row of `docs/owed-items.md` (owner approver,
    trigger the next release of its pack, or a `pack-release` plan of its own for a `major`), added
-   at `triage` with the bug's ruling (dl-036 R2); the decision-log's dl actions a row at its ruling.
+   in the commit that records its triage (dl-036 R2); the decision-log's dl actions a row at its
+   ruling.
 7. **A notice to WingFoil UI.** Recommended: none at capture (no reply asked); one when the first
-   fix is published, named by project (dl-036 R5).
+   fix is published, named by project (dl-036 R5), with point 5's question if wanted.
 8. **Branch, checks and pushes.** Recommended: this plan on `main`; the work on
-   `bug/ui-feedback-2026-11-02`; no tooling change, so per commit `workflow list` and `npm run lint`
-   exit 0, and the branch CI read on the frozen head; `main` pushed at `submit`, at the merge and
-   once at the close.
+   `bug/ui-feedback-2026-11-02`; per commit `workflow list` and `npm run lint` exit 0; the hosted
+   content-only task checked by dl-039 R1; the branch CI read on the frozen head; `main` pushed at
+   `submit`, at the merge and once at the close.
 
 ## The approver's rulings
 
@@ -127,9 +149,11 @@ Each point with a recommendation.
 - **Reviewers (subagents):** this plan; each bug and the decision-log (dl-017).
 - **Approver:** the outline (before `submit`); each bug's triage; the decision-log's ruling; the
   merge OK.
-- Done when the bugs and the decision-log are on `main` with their rulings, their fixes owed in
-  rows of their own, the charter note written, the branch CI and `main`'s run read `success`, and
-  the register's rows of WingFoil UI's feedback and of `scrum`'s open point 1 are Closed.
+- Done when the bugs, the decision-log and the feedback notes are on `main` with their rulings, the
+  fixes owed in rows of their own, the charter note written, the branch CI and `main`'s run read
+  `success`, the branch's privacy check recorded, the register's rows of WingFoil UI's feedback
+  and of `scrum`'s open point 1 Closed (which meets the trigger of the intake automation's row),
+  and the plan `active → done`.
 
 ## Execution Notes
 
@@ -138,3 +162,10 @@ Each point with a recommendation.
   and `phase` filled by editing the draft (W-02). The feedback's text read from the message
   WingFoil UI sent on 2026-11-02, which the register's row summarises. Next free numbers when
   written: plan-065, task-077, dl-041, bug-011, prel-007, F-043.
+- 2026-11-05: independent review: request changes, two blocking findings (3(d)'s fix by a pack
+  check, which WingFoil cannot run without a project's `bindings.yaml`; point 4's premise, since
+  UI's list does not carry those points); applied with the others: point 2's semver for the
+  dependants and the `requires` range, the workflows the gates touch, options (d) and (e), the
+  approvals (a) removes; 3(b) on `software` and `scrum`; 3(c) consistent with 3(b); point 5 without
+  inferring UI's choice; `specification.approve` as designed; the hosted decision-log's own
+  instance; the Done criteria.
