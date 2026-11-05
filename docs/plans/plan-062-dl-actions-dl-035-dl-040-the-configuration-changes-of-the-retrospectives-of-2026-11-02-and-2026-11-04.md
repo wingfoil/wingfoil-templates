@@ -248,3 +248,12 @@ Then, in dl-039 R2's order:
   `"warnings": []`, `repository-practice` global. This commit changes only `docs/plans`, after the
   checks' head: no new run (dl-039 R2). Privacy check of the branch's diff (`74ddfcc...ffc9e02`)
   and messages: no local or scratch path, no private project, no intermediary session.
+- 2026-11-05: the approver gave the merge OK in chat; `--no-ff` merge into `main`.
+- 2026-11-05, close: merged into `main` (`3cfc7fa`), pushed, the branch removed; `main`'s CI on
+  `3cfc7fa`, run 42055196047, `success`, jobs Node.js 22.12.0 21 min 48 s and 22.21.0 16 min 21 s
+  (none over 25 minutes, dl-039 R3), no warning annotation. Done: rows 1 … 7 on `main` with their
+  checks, the review applied, dl-017, dl-026 and dl-029 … dl-032 carry their notes, dl-034 its
+  optional one, dl-035 … dl-040 record their actions applied; rows 1, 10, 16, 39 and 42 Closed,
+  and this plan's own row (15) moved to Closed with this note. No item left owed. The run of this
+  close's push is read by the next plan, the dl actions of dl-024 and dl-025 (dl-038 C3).
+  `active → done`.
