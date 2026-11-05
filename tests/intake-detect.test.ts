@@ -172,9 +172,9 @@ describe('intake detection, the command\'s refusals (task-078 build review)', ()
     assert.equal(run.stdout, `${FAILED}compat.yaml is not valid\n`);
     const missing = withFile(JSON.stringify(answer(['0.3.2'])),
       (registry) => cli(['--registry', registry, '--compat',
-        join(FIXTURES, 'intake', 'none.yaml')]));
+        join(FIXTURES, 'intake', 'none.yaml'), '--github']));
     assert.equal(missing.status, 2);
-    assert.equal(missing.stdout, '');
+    assert.equal(missing.stdout, `${FAILED}compat.yaml is not valid\n`);
   });
 
   it('exits 2 for a refused or unparsable answer, never echoing its entries', () => {
@@ -186,6 +186,9 @@ describe('intake detection, the command\'s refusals (task-078 build review)', ()
       assert.equal(run.stdout, `${FAILED}the registry answer is refused\n`, content);
       assert.ok(!run.stderr.includes('::error::x'), run.stderr);
     }
+    const malformed = withFile(JSON.stringify(answer(['0.2.2', '0.3.3::error::x'])),
+      (file) => cli(['--registry', file, '--compat', COMPAT]));
+    assert.equal(malformed.stderr, 'the registry answer holds 1 entry that is not a version\n');
   });
 
   it('exits 2 for a bad usage, with the usage on stderr and nothing on stdout', () => {
