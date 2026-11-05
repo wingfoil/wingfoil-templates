@@ -2,7 +2,7 @@
 id: task-077-feedback-notes-f-043-to-f-046-for-wingfoil-0.3.2-reference-fields-gate-approvals-out-of-phase-ungated-non-member-identities-plan-064
 type: task
 title: "Feedback notes F-043 to F-046 for WingFoil 0.3.2: reference fields, gate approvals out of phase, ungated, non-member identities (plan-064)"
-status: backlog
+status: approved
 pack: ""            # content-only task (tooling-delivery v3, dl-039 R1), plan-064
 depends_on: []
 tags: ["feedback","wingfoil"]
@@ -109,3 +109,27 @@ One commit per note with its ledger row. Then the build review, the checks and t
   Expected's place, error and `deprecated` case, the second identity, the nits.
 - 2026-11-05: re-review: approve; its small findings applied (the ledger's escaped `|`, dl-039's
   local list named, F-043's rule).
+- 2026-11-05: started (backlog → in-progress, `0e601ba`) on `task/task-077-feedback-notes-ui` from
+  `bug/ui-feedback-2026-11-02` at `299c065`. Each note reproduced with WingFoil 0.3.2 alone in a
+  scratch project of its own (`init --template Kanban --no-interactive`, a fictional `.example`
+  approver added with `dna add team.members`), as Design lists; every point held. Deviation from
+  Design, F-046: `bug-ingest`'s `capture` completed from its evidence (the bug added and submitted
+  by the outside identity), so no `workflow finalize` was needed; the note records what ran. Notes:
+  F-043 `f5e69ed`, F-044 `628b8b2`, F-045 `c4861ba`, F-046 `eac4f47`, one commit each with its
+  ledger row. Red by mutation (dl-018 R2's exception, as task-064 and task-073), each mutation
+  reverted after its run: a gap in the numbering 3 failing, a ledger cell changed 2, the opening
+  line changed 2, two fields swapped 2, `## Expected` renamed 2; `New note (task-077).` once in each
+  of the four notes; unmutated, `node --test dist/tests/wingfoil-feedback.test.js
+  dist/tests/feedback-note.test.js` 13 passing, `npm run lint` and `check:packs` exit 0.
+- 2026-11-05: independent build review of `eac4f47`: approve after amendments, nothing blocking; it
+  reproduced the four notes on 0.3.2 and checked their WingFoil claims in the shipped `dist`;
+  applied in `97345d7`: excerpts marked (`…`, wrapped lines said), exit codes stated, F-046's
+  opening, F-043's lesser request marked as such; this note records the mutations and F-046's
+  deviation. No re-review: the amendments change wording, not a request.
+- 2026-11-05: checks (dl-039 R1, R2), once, on the frozen commit `97345d7`: the branch CI, run
+  42101480186, `success`, jobs Node.js 22.21.0 12 min 28 s and 22.12.0 20 min 27 s (none over 25
+  minutes); from a clean working tree on Node.js 22.21.0 after `npm ci` and `npm run build`:
+  `npm run validate:publication`, the golden tree in publication mode and `npm run -s wingfoil --
+  workflow list` exit 0, `directives list --format json` with `"warnings": []`. This commit
+  changes only `docs/memory`: no new run. Privacy check of the branch's diff and messages: no local
+  or scratch path, no maintainer name or email, no private project, no intermediary session.
