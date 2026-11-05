@@ -47,8 +47,8 @@ other level-1 or level-2 heading:
 | 1 | `# <title>` | generated | `pack.yaml` `title` as the heading; then `description`; then one line `Axis: <axis>` and, for a phase pack, ` · Slot: <slot>`; the foundation packs, `base` and `software`, write `Axis: foundation` |
 | 2 | `## When to use it` | written | the problem it solves; the adoption profiles it serves (`docs/01_vision/04_personas.md` §2), as the presets that contain it name them; when **not** to use it |
 | 3 | `## Install and update` | written | §2.3 |
-| 4 | `## Composition` | generated | `requires`, `conflicts`, `formats`, `requires_capabilities`; for every pack but `base`, the Memory types, roles and workflows it adds or tightens over the foundation (`base`, and `software` for a pack that requires it); for `software`, over `base`; for a pack with a conditional part (spec-001 §6.5), that part's workflows and its directives, one line each when non-empty, marked as present only with the layer its `with` names: `` workflows only with `software`: … `` and `` directives only with `software`: … `` |
-| 5 | `## What it adds` | generated | workflows (name, kind, phases with their roles and gates), Memory types (states, gates), directives (id, the roles fragment entries that assign them), fragments (`dna`, `roles`), Memory templates; a conditional part's workflows and directives too, each workflow's and directive's line ending `` , only with `software` `` (the layer its `with` names), a directive of the part with `—` for its roles, since nothing always composed assigns it (spec-001 §6.5) |
+| 4 | `## Composition` | generated | `requires`, `conflicts`, `formats`, `requires_capabilities`; for every pack but `base`, the Memory types, roles and workflows it adds or tightens over the foundation (`base`, and `software` for a pack that requires it); for `software`, over `base`; for a pack with a conditional part (spec-001 §6.5), each entry's workflows and directives, one line each when non-empty, in the entries' order, marked as present only with the pack its `with` names: `` workflows only with `software`: … `` and `` directives only with `software`: … ``; for a pack with `tensions` (spec-001 §6.2), a line `Combines with care:` followed by one item per entry, the pack (with its range when there is one) and its resolution |
+| 5 | `## What it adds` | generated | workflows (name, kind, phases with their roles and gates), Memory types (states, gates), directives (id, the roles fragment entries that assign them), fragments (`dna`, `roles`), Memory templates; a conditional entry's workflows and directives too, each workflow's and directive's line ending `` , only with `software` `` (the pack its entry's `with` names), a directive of an entry with `—` for its roles, since nothing always composed assigns it (spec-001 §6.5) |
 | 6 | `## Parameters` | generated | one row per parameter: name, type, default (or "required"), description; "None." when there is none |
 | 7 | `## Examples` | written | §2.4 |
 | 8 | `## Sources and adaptations` | written | the sources of the method, with their edition, and what the pack adapts from them (dl-007 M3); "None: written for this catalog." when there is none |
@@ -95,6 +95,16 @@ CLI supports. **No README contains a WingFoil CLI command**: no code-block line 
 span whose text, after leading whitespace and an optional `$ `, starts with `wingfoil `,
 `npx wingfoil`, `npm exec wingfoil`, `npm run wingfoil` or `npm run -s wingfoil`. The hand steps
 name files and keys, not commands.
+
+**MCP servers, the interim** (dl-024 D5). While no release listed in `compat.yaml` reads the `mcp`
+kind (spec-001 §7.8), a pack that serves an external resource through an MCP server ships the
+directive on how to use it and, in section 3, the server entry to paste into the project's custom
+adapters, one per agent tool. A project cannot override a built-in adapter by its name (an adapter
+name is unique across `built-in/` and `custom/`): it copies the built-in adapter under a name of its
+own, adds the entry to the copy's `mcp` template, and selects the copy in `dna.yaml` ›
+`team.agents` › `adapter` (dl-024 finding 1). The entry stays in section 3 when the section shrinks
+to a link (above), until a release reads the kind; then the same entry becomes the pack's
+`fragments/mcp.yaml`, and it leaves section 3, which stays.
 
 ### 2.4 Examples
 
@@ -165,10 +175,11 @@ The human index, in this order:
    `catalog.yaml` order: a table with the columns Pack, Summary, Slot (phase only), Status, Latest,
    WingFoil, README. Pack is the id, preceded by `<a id="pack-<id with / replaced by ->"></a>`, the
    anchor READMEs link (§2.5); Summary is `description`'s first sentence, followed, for a pack
-   with a conditional part (spec-001 §6.5), by the part's workflows, or its directives when it has
-   none, sorted and in code spans, and the layer its latest version's `with` names, for example
-   `` Continuous flow under explicit WIP limits. (`delivery`, `kanban-delivery` only with
-   `software`) ``; Latest and
+   with a conditional part (spec-001 §6.5), for each entry in order, by the entry's workflows, or
+   its directives when it has none, sorted and in code spans, and the pack its latest version's
+   `with` names, for example `` Continuous flow under explicit WIP limits. (`delivery`,
+   `kanban-delivery` only with `software`) ``, and, for a pack whose latest version declares
+   `tensions`, by `` Combines with care: `<pack>`, … `` with the packs sorted; Latest and
    WingFoil are the last published version and its computed range; README links the
    README rendered on github.com at the latest version's tag,
    `https://github.com/wingfoil/wingfoil-templates/blob/<tag>/packs/<catalog pack id>/README.md`;
@@ -180,7 +191,9 @@ The human index, in this order:
 ### 3.3 `catalog-index.json`
 
 The machine index. Top-level keys, in order:
-- `format`: `1`, the counter of this file's own format;
+- `format`: `2`, the counter of this file's own format (format 2 from spec-001's format 2: several
+  conditional entries and `tensions`; `index/catalog-index.v1.schema.json` keeps format 1's
+  schema, frozen);
 - `repository`: `"wingfoil/wingfoil-templates"`;
 - `install`: the versions of the `compat.yaml` releases that provide `pack-install`, ascending;
 - `packs`: one object per published pack;
@@ -196,12 +209,16 @@ A pack object holds, in order:
   range) from `catalog.yaml`, `tag` derived as `<catalog pack id>@<version>` (§3.1), and from the
   tag's `pack.yaml`: `formats`, `requires_capabilities`, `requires`, `conflicts` and, only for a
   version whose tagged `pack.yaml` carries a conditional part (spec-001 §6.5), `conditional`, a
-  list of one `{ with }` copied as the catalog version entry copies it; plus `readme_url` and
-  `manifest_url` pinned to the tag (§4);
+  list of `{ with }`, one per entry, copied as the catalog version entry copies it; `pack_format`,
+  the tagged `pack.yaml`'s format (`1` when the catalog entry has none, spec-001 §11); plus
+  `readme_url` and `manifest_url` pinned to the tag (§4);
 - from the latest version's tag: `title`, `description`, `workflows`, `conditional_workflows`,
   `memory_types`, `directives` and `conditional_directives` (each a sorted list of names;
   `workflows` and `directives` are what is always composed, the two `conditional_` lists the
-  conditional part's, empty without one), `parameters` (name, type, default when there is one,
+  union of the conditional entries', empty without one), `conditional_parts` (one object per entry,
+  in order: `with`, `workflows`, `directives`, each list sorted; empty without one), `tensions`
+  (one object per entry: `pack`, `resolution`; empty without one), `parameters` (name, type, default
+  when there is one,
   description), and `excerpt`, the first paragraph of the README's section 2 only, with no
   adoption-profile text, at most 500 characters, cut at a word;
 - `profiles`: the profiles of the presets whose `packs` name the pack.
@@ -288,9 +305,10 @@ command (F3.1):
   section 3 whose first line is not the temporary mark of §2.3 while no `compat.yaml` release
   provides `pack-install`. `CATALOG.md`'s Install block lists only those releases. At
   `pack-release-cycle` › `prepare` the hand steps are checked against the `compat.yaml` of that
-  commit; tagged READMEs are never checked again.
+  commit; tagged READMEs are never checked again. A server entry kept in section 3 while no release
+  reads `mcp` (§2.3) is checked at review, not by the lint.
 - **CB-4 Index content.** For a fixture catalog with tagged versions, `catalog-index.json`
-  validates against its schema, carries `format: 1`, lists every published pack, preset and
+  validates against its schema, carries `format: 2`, lists every published pack, preset and
   transition with the fields of §3.3, takes per-version fields from the tags, and pins its README
   and `pack.yaml` URLs with `refs/tags/<tag>`.
 - **CB-5 Freshness and determinism.** Changing a `pack.yaml`, a fragment, a workflow or
@@ -305,7 +323,8 @@ command (F3.1):
   vendored script's checksum is verified. On the deployed site, the page loads, and
   `catalog-index.json` and `llms.txt` are served with CORS.
 - **CB-8 No contract change.** `catalog.yaml`, `compat.yaml` and the files under `schema/` are
-  unchanged by this specification and by the tasks that implement it.
+  unchanged by this specification and by the tasks that implement it. `catalog.yaml`'s and
+  `pack.yaml`'s format 2 are spec-001's (§5, §11), not this specification's.
 
 ## 7. Open points
 
@@ -383,4 +402,10 @@ All closed in wave W14 (plan-024):
   (the search page's table marked as §3.2). The note above, dated 2026-10-15 by mistake when
   task-033 wrote it on 2026-10-16, is corrected. No code, test or generated file changes: the
   tooling already implements this text (task-033).
-
+- 2026-11-05, **amended in place** (dl-024, dl-025, plan-063 row 4; their approval and the merge OK
+  approve the text): §2.1's Composition and What it adds per conditional entry, with "Combines with
+  care" for `tensions` (dl-025 D3, D7); §2.3's MCP interim (dl-024 D5, finding 1); §3.2's Summary
+  per entry and its tensions; §3.3 at format 2 (the entries, `pack_format`, `conditional_parts`,
+  `tensions`; format 1's schema frozen); CB-3, CB-4 and CB-8 read the same. dl-025 D3's question at
+  initialization (dl-011, `pending`) is not added (plan-063 ruling 10 (iii)). The tooling follows in
+  the `tooling-change` plan.
