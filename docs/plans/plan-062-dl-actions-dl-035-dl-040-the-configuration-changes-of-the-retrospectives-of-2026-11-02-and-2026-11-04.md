@@ -240,3 +240,11 @@ Then, in dl-039 R2's order:
   blocking; applied: rule 3's precedent clause limited to a red conclusion (dl-035 A4), the dl-034
   note's request origin, its rows and its tense, the register header's "on `main`" (dl-036 R3),
   these notes on rows 3 … 7.
+- 2026-11-05: checks (point 4, dl-039 R1 and R2), once, on the frozen head `ffc9e02`: the branch CI,
+  run 42051295330, `success`, jobs Node.js 22.21.0 20 min 30 s and 22.12.0 20 min 40 s (none over
+  25 minutes), no warning annotation; from a clean working tree of `ffc9e02` on Node.js 22.21.0:
+  `npm ci`, `npm run build`, `npm run validate:publication`, the golden tree in publication mode and
+  `npm run -s wingfoil -- workflow list` exit 0; `directives list --format json` exits 0 with
+  `"warnings": []`, `repository-practice` global. This commit changes only `docs/plans`, after the
+  checks' head: no new run (dl-039 R2). Privacy check of the branch's diff (`74ddfcc...ffc9e02`)
+  and messages: no local or scratch path, no private project, no intermediary session.
