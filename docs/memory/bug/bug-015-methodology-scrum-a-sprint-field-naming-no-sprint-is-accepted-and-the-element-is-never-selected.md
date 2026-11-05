@@ -2,7 +2,7 @@
 id: bug-015-methodology-scrum-a-sprint-field-naming-no-sprint-is-accepted-and-the-element-is-never-selected
 type: bug
 title: "methodology/scrum: a sprint field naming no Sprint is accepted, and the element is never selected"
-status: pending
+status: approved
 severity: "minor"        # critical | major | minor
 pack: "pack-methodology-scrum"
 tags: ["packs","feedback"]
