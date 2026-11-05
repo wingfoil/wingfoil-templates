@@ -6,14 +6,20 @@ element. Outside every Memory path. Its rules are rule 4 of the directive `repos
 
 - **Open:** one row per item: the item, its source (element and section), its owner and its
   trigger. An item without an owner names the approver; an item without a trigger takes "the next
-  retrospective" (dl-031 R1). Rows are sorted by the first element id in Source; rows without one
-  come last.
+  retrospective" (dl-031 R1), the next periodic one or one that counts as periodic (dl-036 R1).
+  Rows are sorted by the first element id in Source; rows without one come last.
 - **Who writes a row:** a plan or a task, in the same commit as the note that leaves the item; a
-  pack, a pack-release, a bug or a decision-log, at the latest by the close of the plan that hosts
-  it. The note, or for a row added later the hosting plan's note, cites the row (dl-031 R2). The
-  element that settles an item moves its row to Closed, with its own id.
+  ruling, in the commit that records it in its plan, the ruling citing the row (dl-036 R2); a pack,
+  a pack-release, a bug or a decision-log, at the latest by the close of the plan that hosts it. The
+  note, or for a row added later the hosting plan's note, cites the row (dl-031 R2). A row asked by
+  the approver outside any element has the Source "asked by the approver on <date>", cited by the
+  plan active on `main`, or the next one (dl-036 R4). The element that settles an item moves its row
+  to Closed, with its own id; an item found open again returns to Open in the commit that records
+  the finding, on `main` when the finding is a plan's ruling or note, its Source extended with the
+  element and section that reopened it (dl-036 R3).
 - **Who reads it:** every retrospective, in `explore`; it proposes keep, assign or drop for each
-  row, and its decision-log rules them (dl-031 R3).
+  row, and its decision-log rules them (dl-031 R3); a pack's own retrospective proposes only for the
+  rows its cycle touched and lists the others as "not touched", which keeps them (dl-036 R1).
 
 First content: the debts of the inventory of 2026-10-28
 (`docs/retrospectives/2026-10-28-periodic-friction-inventory.md` §8), with the rows of dl-028 D1
@@ -23,7 +29,6 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 
 | Item | Source | Owner | Trigger |
 |---|---|---|---|
-| CI policy for advisories in transitive dependencies (met again by bug-009, answered by an override) | bug-004 › note 2026-10-24; bug-009; dl-035 A4 (closes it); dl-038 D1 | approver | the tooling task of dl-035 A4 |
 | `check:pins` covering `overrides` in `package.json`, which it does not read today (`src/check-pins.ts`, its dependency fields) | bug-009; task-071 | approver | the next dependency update |
 | The `minimatch` override removed once `eslint`, `@eslint/config-array` and `typescript-eslint` accept `minimatch` 11; until then it forces every `minimatch` of the tree onto 11.0.3, a later dependency needing another major included, with no warning | bug-009; task-071 | approver | the next dependency update |
 | Recheck W-01 … W-14 and the open notes against 0.3.x (F-003, F-005, F-012, F-017) | dl-021's note; `wingfoil-cli` rule 5 | W10 | the pin bump |
@@ -32,13 +37,11 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | G8: dl-017 R2 for documents and configuration | dl-028 D1 (inventory §7) | W10 | W10 |
 | G9: the inbox's first line may name a plan or a decision-log; reserved gaps revisited (the inbox's contiguous numbering is this repository's own test, dl-031 R5) | dl-028 D1 (inventory §7) | W10 | W10 |
 | G11: a terminal state for a fixed bug, fixed by `software`'s `bug` type at the adoption | dl-028 D1 (inventory §7) | W10 | W10 |
-| G12: the suite's duration tracked against the CI timeout | dl-028 D1 (inventory §7); dl-039 R3; dl-038 D1 | approver | the dl actions plan of dl-035 … dl-040, which closes it (dl-039 R3) |
 | A check of the CHANGELOG's first line, which becomes the tag annotation | dl-028 D1 (inventory §1) | approver | the next `publish:pack` change |
 | This repository's custom `sw-life-cycle` shares its name with `software`'s (bug-007's pattern) | dl-028 D2 (inventory, P3) | W10 | the adoption |
 | `software`'s `tech-lead` needs a holder in this repository's DNA | dl-028 D2 (inventory, P3) | W10 | the adoption |
 | `pack-cycle` v6 or v7 checked on the engine: its reordered phases, and whether a pack covered by a shared retrospective can complete `retrospective` by reference | dl-033 O4; dl-037 E3; dl-038 D1 | W10 | the pin bump (W10) |
 | The dl actions of dl-035 … dl-037 (`ci.yml` and its test, `repository-practice` 1.2 shared by dl-035 and dl-036, `docs/owed-items.md`'s header, `pack-cycle` v7, `pack-compatibility`, the notes on dl-030, dl-031 and dl-032), a dl actions plan; with dl-039 and dl-040, `repository-practice` rule 3's sentence on a plan's close (dl-038 C3), the notes on dl-017, dl-026 (its stale Consequences) and dl-029, and dl-030's "actions applied" note | dl-034 D3; dl-035 A4, dl-036 R6, dl-037 E3; plan-060 ruling 8; dl-038 D3 | approver | right after the periodic retrospective that WingFoil 0.3.2's intake starts, with that retrospective's governance decision-logs, before WingFoil UI's feedback (plan-060 ruling 8) |
-| dl-030's missing "actions applied" Execution Note (task-065 applied it under plan-054) | dl-038 D2 (inventory §3) | approver | the dl actions plan of dl-035 … dl-040 |
 | The built-in directive ids each release's `init` writes compared with `src/wingfoil-builtins.ts` (W-11's copy) by the matrix, which now reads the files per release | dl-038 D2 (inventory §2); task-075 › review | approver | the next tooling task on `src/matrix.ts` |
 | F-019's facts from bug-010 for WingFoil: a tool needs the built-in directive files, not only the ids, since 0.3.2 warns on a binding with no file; their content is per release; they come only from `init` in a scratch repository with a local identity | dl-038 D2 (inventory §6) | W10 | the first sync |
 | Charter text drift of `software` (`base@^1`, `end-of-life` row, step-key table, W9) | pack-foundation-software › Execution Notes; dl-038 D1 | W10 | G7 (in-place amendment) |
@@ -61,10 +64,8 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | How this repository's tasks carry a `release` under `methodology/kanban`, its packs being released per pack, not through `software`'s `release` | plan-056 › step 4; pack-methodology-kanban › Adoption | W10 | the adoption |
 | This repository's custom `retrospective`, `decision-log-ingest`, `bug-ingest` and `adr-ingest` share `base`'s and `software`'s workflow names (bug-007's pattern) | plan-056 › step 4; pack-methodology-kanban › Adoption | W10 | the adoption |
 | This repository's `pack-author` phases (`design`, `build`, `deliver`) map to `developer` under `methodology/kanban`'s `work-item` | plan-056 › step 4; pack-methodology-kanban › Adoption | W10 | the adoption |
-| dl-029 T2 has no case for a WingFoil release planning that starts before the intake's close (met by WingFoil 0.3.2's intake, whose deadline the approver ruled instead) | plan-060 ruling 6; dl-040; dl-038 D1 | approver | the dl actions plan of dl-035 … dl-040, which closes it (dl-040 D4) |
 | The packs' Memory templates (`base`'s `decision-log`; `software`'s `adr`, `bug`, `release`, `tech-spec`) without the optional fields WingFoil 0.3.2's `init` adds (`contributor`, `credit`, `reported_by`; `release`'s `backlog_committed`, `waves`, `## Scope changes`), which an adopter copying the composed files drops | plan-060 › recheck; dl-038 D1 | approver | the next minor release of `base` and `software` |
 | The private projects' check scripted, with `--param` applying to an `entries` composition only (hit at prel-003, plan-043's note) | prel-001 … prel-003; dl-038 D1 | approver | the next pack release that needs a private check |
-| dl-026's stale Consequences ("reported late until it completes", no longer true after plan-047 ruling 15 and task-057; the WingFoil side is F-036) | task-057 › notes; dl-038 D1 | approver | the dl actions plan of dl-035 … dl-040 (an Execution Note on dl-026) |
 | WingFoil UI's feedback after adopting `base` 2.0.1, `software` 1.0.0 and `methodology/scrum` 1.0.0 by hand on WingFoil 0.3.1: a gate on `software`'s `release` at `releasing` and on `release-line` at `active` (UI's local deviations), `bug`'s `planned` gate, gates offered out of phase, the AGENTS.md region's fixed agent roles and `bug` gates, `security-secrets` against the approver's email in `dna.yaml`, `governance-evolution` › `apply` asking for a generated region updated, a `sprint` field naming no Sprint accepted at `submit`; captured by a plan of its own (`bug-ingest` or `decision-log-ingest`) | WingFoil UI's adoption feedback, 2026-11-02; trigger asked by the approver on 2026-11-02; dl-038 D1 | approver | after WingFoil 0.3.2's intake, its periodic retrospective, the dl actions plan of dl-035 … dl-040 and that of dl-024 and dl-025 (asked by the approver on 2026-11-02, plan-059; plan-060 ruling 8) |
 
 ## Closed
@@ -83,3 +84,8 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | Whether a version known to fail its runs needs a "known defects" marker in `catalog.yaml` | dl-028 D1 (inventory §1) | dropped by dl-038 D1 (plan-061): the ranges are computed from formats; known defects live in the bugs |
 | A decision-log making in-place amendment general; see also G7 | plan-031 › Context | merged into G7 by dl-038 D1 (plan-061) |
 | `--param` applies to an `entries` composition only (hit again at prel-003) | plan-043 › note (task-039's review) | merged into "The private projects' check scripted" by dl-038 D1 (plan-061) |
+| G12: the suite's duration tracked against the CI timeout | dl-028 D1 (inventory §7); dl-039 R3; dl-038 D1 | plan-062 (dl-039 R3: `tooling-delivery` v3 and `kanban-delivery` v5 record every task's branch CI job durations, a job over 25 minutes to the approver) |
+| CI policy for advisories in transitive dependencies (met again by bug-009, answered by an override) | bug-004 › note 2026-10-24; bug-009; dl-035 A4 (closes it); dl-038 D1 | task-076 (plan-062): the root's audit gates the runtime tree, the whole tree only warns (dl-035 A1) |
+| dl-029 T2 has no case for a WingFoil release planning that starts before the intake's close (met by WingFoil 0.3.2's intake, whose deadline the approver ruled instead) | plan-060 ruling 6; dl-040; dl-038 D1 | plan-062 (`wingfoil-release-intake` v6, dl-040 D1 … D4) |
+| dl-030's missing "actions applied" Execution Note (task-065 applied it under plan-054) | dl-038 D2 (inventory §3) | plan-062 (the note on dl-030) |
+| dl-026's stale Consequences ("reported late until it completes", no longer true after plan-047 ruling 15 and task-057; the WingFoil side is F-036) | task-057 › notes; dl-038 D1 | plan-062 (the note on dl-026) |

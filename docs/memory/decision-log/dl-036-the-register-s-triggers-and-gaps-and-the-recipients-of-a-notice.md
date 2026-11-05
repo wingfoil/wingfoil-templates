@@ -85,3 +85,6 @@ The points below are **proposed**; they become rulings when the approver approve
 - 2026-11-04, plan-061: R1's first periodic application, before its dl actions: the thirteen rows
   with the trigger "the next retrospective" each ruled on its merits by dl-038 D1, none kept by
   default; R2 and R5 followed by plan-060 and plan-061 (inventory of 2026-11-04 §4).
+- 2026-11-05, plan-062: actions applied (R6): R1 … R4 in rule 4 and R5 in rule 2 of
+  `repository-practice` 1.2, with the register's header (`5a1ed4d`); the notes on dl-031 and dl-030
+  written.

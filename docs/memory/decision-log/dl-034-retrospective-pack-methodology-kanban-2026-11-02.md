@@ -131,3 +131,7 @@ Each change of governance takes effect only when its own decision-log is approve
 - 2026-11-02: re-review: approve after amendments, nothing blocking; applied: W1's date read the
   right way, D3's row covering each of dl-035 … dl-037 until its approval, "to be settled", T2's
   deadline on the periodic retrospective, not on the intake.
+- 2026-11-05, plan-062 (asked by the approver on 2026-11-05): D3's row settled: dl-035, dl-036 and
+  dl-037 applied (rows 2 … 5 of plan-062: task-076, merged at `a886d8c`, `5a1ed4d`, `603c650`,
+  `b6a1f9c`; rows 1 and 6 apply dl-039 and dl-040, by dl-038 D3's widening of the row); the row
+  moves to Closed at plan-062's close.

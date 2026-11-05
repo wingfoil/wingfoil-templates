@@ -76,3 +76,8 @@ The points below are **proposed**; they become rulings when the approver approve
   twice per run), rule 3 reading the warning annotations with one directive bump shared with dl-036,
   no new bug for an advisory already covered, `minor` by default, Option 3's reason, bug-004's
   packages and date; the dl actions plan's row is dl-034 D3's.
+- 2026-11-05, plan-062: actions applied (A4): A1 by task-076 (`ci.yml` and
+  `tests/ci-workflow.test.ts`, red first, merged at `a886d8c`; an audit that cannot report also
+  warns and exits 0, plan-062 ruling 3), the row "CI policy for advisories in transitive
+  dependencies" moved to Closed by it (`f538f6f`); A2 and rule 3's reading in `repository-practice`
+  1.2 (`5a1ed4d`); the note on dl-030 written. The override's rows stay.

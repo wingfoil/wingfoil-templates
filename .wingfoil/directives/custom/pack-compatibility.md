@@ -37,6 +37,14 @@ tooling's self-tests, run in the matrix's self-test mode (dl-009).
 - Compose twice from a clean state: the two outputs must be byte-identical.
 - Record the commands, the WingFoil versions and the exit codes in the `pack-release` element.
   A claim of "it validates" without the command and its result is not evidence.
+- A run by hand (a charter's run in its plan, an exit criterion's in its task) records: the
+  WingFoil version and commit as `wingfoil version` prints them; the packs composed and the commit
+  they were composed from (for an untracked draft, the base commit, and that the draft is untracked
+  and cannot be repeated from the repository); the parameters that differ from the defaults; the
+  count of commands and how many exited 0; every non-zero exit with its command and whether it was
+  expected (a refusal the run seeks) or a slip of the driving script; the states and iterations
+  the run reached. No local or scratch path. A scripted run (`check:runs`) records its command,
+  its exit code and its run count (dl-037 E2).
 - A pack that needs a WingFoil feature not yet published declares the capability; it is not
   published until `compat.yaml` lists a released WingFoil that provides it, and it is never
   published against an unreleased WingFoil build.

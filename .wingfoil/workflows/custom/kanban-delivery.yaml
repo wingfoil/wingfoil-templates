@@ -9,7 +9,7 @@
 name: kanban-delivery
 kind: sub
 description: "Kanban delivery loop"
-version: 4
+version: 5
 element: task
 phases:
   - name: plan
@@ -43,8 +43,21 @@ phases:
       Acceptance commands pass; an Acceptance deviation with no ruling is a blocking finding
       (dl-019). After its fixes, a re-review when a fix changes behaviour, a test or an Acceptance
       command; the notes record each verdict, its findings by severity and the fixing commit
-      (dl-017). Then in-progress → in-review; the approver accepts (→ approved) or sends it back
-      (→ in-progress).
+      (dl-017). Before in-review, dl-039's checks, in its order (R2): the build review and its
+      amendments first; then, once, on the commit where the code is frozen, the branch CI's
+      conclusion success (or, when a later push cancelled that run, the success of a later head
+      whose diff from the frozen commit is documentation-only), each run id and its two jobs'
+      durations recorded in the notes (a job over 25 minutes goes to the approver, dl-039 R3), and,
+      from a clean working tree on that commit, on Node.js 22.21.0 after npm ci and npm run build,
+      npm run validate:publication, the golden tree in publication mode (npm run
+      validate:publication -- --tree tests/fixtures/compose/tree --param project_name=Golden) and
+      npm run -s wingfoil -- workflow list, each exit 0 (R1); a content-only task (a feedback note)
+      included. A clean clone with an empty .cache only for a change to how the matrix installs or
+      initialises a release (src/matrix.ts) with unchanged lockfiles, or at the approver's request.
+      A documentation-only commit after the checks (docs/memory, docs/plans) needs no new run, said
+      in the notes; while the local checks run, a reviewer runs only targeted tests; a red branch CI
+      is a finding of the build, fixed and checked again. Then in-progress → in-review; the approver
+      accepts (→ approved) or sends it back (→ in-progress).
     role: reviewer
     actions:
       - memory.submit            # in-progress → in-review

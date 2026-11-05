@@ -63,7 +63,29 @@ jobs:
       - name: Build the search page (task-024), as pages.yml does
         run: npm run site -- --out "$RUNNER_TEMP/site"
       - name: Audit the root lockfile
-        run: npm audit
+        run: npm audit --omit=dev
+      - name: Audit the whole root tree, warning only (dl-035)
+        run: |
+          if npm audit --json > "$RUNNER_TEMP/root-audit.json"; then exit 0; fi
+          node -e '
+            const fs = require("node:fs");
+            const escape = (text) => text.replace(/%/g, "%25").replace(/\r/g, "%0D").replace(/\n/g, "%0A");
+            let entries = [];
+            try {
+              const report = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+              entries = Object.entries(report.vulnerabilities ?? {});
+            } catch {
+              entries = [];
+            }
+            const title = "title=npm audit of the whole root tree (dl-035)";
+            if (entries.length === 0) {
+              console.log(`::warning ${title}::the audit could not run: no report of advisories`);
+            } else {
+              const names = entries.map(([name, entry]) => `${name} (${entry.severity})`).join(", ");
+              console.log(`::warning ${title}::${escape(`advisories in the root tree: ${names}; dl-035`)}`);
+            }
+          ' "$RUNNER_TEMP/root-audit.json" || true
+          exit 0
       - name: Audit every matrix release's lockfile
         run: |
           for dir in src/matrix/wingfoil-*/; do

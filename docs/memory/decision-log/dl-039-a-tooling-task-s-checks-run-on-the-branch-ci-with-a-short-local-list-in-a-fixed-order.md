@@ -89,3 +89,6 @@ The points below are **proposed**; they become rulings when the approver approve
   the request's origin; G12's row named.
 - 2026-11-04: re-review: approve; its three nits applied (R2's definition cited, `npm ci` before
   the build, the cache key). Submitted.
+- 2026-11-05, plan-062: actions applied (R4): R1 and R2 in the `review` phase of `tooling-delivery`
+  v3 and `kanban-delivery` v5 (`ded156e`), G12's row moved to Closed with them (R3); the note on
+  dl-017 written. First applied to task-076 and, by plan-062 ruling 4, to plan-062's branch.

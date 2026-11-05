@@ -105,3 +105,6 @@ tree's `methodology/kanban` do, stays valid.
   the charter's note says the text awaits approval.
 - 2026-10-26: focused re-review: approve; two wordings applied (§18's "of its own", the charter's
   bullet states all of D1) and a wrap. Submitted.
+- 2026-11-05, plan-062: the Consequences' "reported `late` under the closed one until it completes"
+  no longer holds after plan-047 ruling 15 and task-057; the WingFoil side is F-036. The body stays
+  as approved; the register's row on it moves to Closed with this note.

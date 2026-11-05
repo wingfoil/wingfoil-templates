@@ -78,3 +78,9 @@ The points below are **proposed**; they become rulings when the approver approve
   `main`'s CI, which the title does not name.
 - 2026-10-29: re-review: approve after amendments, nothing blocking; applied: P3's start (a
   practice since 2026-10-23, a rule at approval), P4 notes dl-031 R6's later addition.
+- 2026-11-05, plan-062: actions applied by task-065 under plan-054 (`repository-practice` 1.0,
+  `3b7aa96`), the note this element lacked (dl-038 D2). Rule 2 reads with dl-036 R5 (a notice's
+  recipients named by project) and rule 3 with dl-035 A2 and A4 (the warning annotations read, a
+  warning opening a bug) and dl-038 C3 (the run of a plan's last push read by the next plan), in
+  `repository-practice` 1.2 (`5a1ed4d`). The body stays as approved; the register's row on this note
+  moves to Closed with it.

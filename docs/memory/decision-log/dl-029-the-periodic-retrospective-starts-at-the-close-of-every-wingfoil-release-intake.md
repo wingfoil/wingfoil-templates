@@ -93,3 +93,7 @@ The points below are **proposed**; they become rulings when the approver approve
   started before the intake closed); the approver ruled the deadline in plan-060 (ruling 6), and
   dl-040 (approved) makes it general, to be written in `wingfoil-release-intake` v6 by the dl
   actions plan of dl-035 … dl-040.
+- 2026-11-05, plan-062: T2 reads with dl-040 D1 … D3 (a WingFoil release planning that has started
+  before the intake closes, or before its retrospective closes, and one already ended), and T1's "as
+  announced" also reads "or reported by the approver"; applied in `wingfoil-release-intake` v6
+  (`7d73ca4`). The body stays as approved.

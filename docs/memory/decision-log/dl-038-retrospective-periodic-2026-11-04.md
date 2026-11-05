@@ -109,3 +109,6 @@ Each change of governance takes effect only when its own decision-log is approve
 - 2026-11-04: re-review (dl-017, decisions changed): approve after amendments, nothing blocking;
   applied: a governance decision-log still `pending` at the close handled as a rejected one until
   approved; rows 10 and 39 owned by the approver; "G7 (row 6)"; C2's wording.
+- 2026-11-05, plan-062: C3 applied in `repository-practice` 1.2 (`5a1ed4d`); D3 applied: dl-039 and
+  dl-040 applied, the notes on dl-017, dl-026, dl-029 and dl-030 written (rows 1 … 6 of plan-062:
+  `ded156e`, task-076 (merged at `a886d8c`), `5a1ed4d`, `603c650`, `b6a1f9c`, `7d73ca4`).

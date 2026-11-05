@@ -63,3 +63,7 @@ The configuration changes of dl-017, dl-018 and dl-019 touch the same phase desc
 file (dl-016 A2).
 
 ## Execution Notes
+- 2026-11-05, plan-062: dl-039 R2's order stands beside this element's re-review rule in the
+  `review` phase of `tooling-delivery` v3 and `kanban-delivery` v5 (`ded156e`): the build review and
+  its amendments first, then the checks once on the frozen commit; a fix that changes behaviour, a
+  test or an Acceptance command is still re-reviewed. The body stays as approved.
