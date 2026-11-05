@@ -303,3 +303,14 @@ Then, in dl-039 R2's order:
   json` exits 0 with `"warnings": []`. This commit changes only `docs/plans`, after the checks'
   head: no new run (dl-039 R2). Privacy check of the branch's diff (`a663618...c0b5067`) and
   messages: no local or scratch path, no private project, no intermediary session.
+- 2026-11-05: the approver gave the merge OK in chat, and confirmed the `pack-compatibility`
+  leftover's place in the `tooling-change` plan's row; `--no-ff` merge into `main`.
+- 2026-11-05, close: merged into `main` (`89c633d`), pushed, the branch removed; `main`'s CI on
+  `89c633d`, run 42078778482, `success`, jobs Node.js 22.12.0 13 min 24 s and 22.21.0 17 min 59 s
+  (none over 25 minutes), no warning annotation. Done: spec-001 and spec-002 amended in place and
+  approved by the merge OK, `pack-authoring` and `pack-semver` on `main`, the review and re-reviews
+  applied, dl-024 and dl-025 record their actions applied or owed, dl-011 its note; the register's
+  row of this plan moved to Closed with this note, its remainders in rows of their own (the
+  `tooling-change` plan, the `mcp` kind's tooling, the four packs' `Precedence:` line, dl-025 D7's
+  halves). The run of this close's push is read by the next plan, WingFoil UI's feedback (dl-038
+  C3). `active → done`.
