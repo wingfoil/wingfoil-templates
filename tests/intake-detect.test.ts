@@ -151,3 +151,72 @@ describe('intake detection, the command (task-078)', () => {
     }
   });
 });
+
+/** A stub npm on PATH, its body given; returns the environment and a cleanup. */
+function stubNpm(body: string[]): { env: NodeJS.ProcessEnv; dispose: () => void } {
+  const dir = mkdtempSync(join(tmpdir(), 'intake-npm-'));
+  const stub = join(dir, 'npm');
+  writeFileSync(stub, ['#!/usr/bin/env bash', ...body, ''].join('\n'));
+  chmodSync(stub, 0o755);
+  return { env: { ...process.env, PATH: `${dir}${delimiter}${process.env['PATH'] ?? ''}` },
+    dispose: () => { rmSync(dir, { recursive: true, force: true }); } };
+}
+
+describe('intake detection, the command\'s refusals (task-078 build review)', () => {
+  const FAILED = '::error title=WingFoil release check failed::';
+
+  it('exits 2 with a fixed annotation for an invalid or missing compat file', () => {
+    const run = withFile('format: 1\n', (file) => withFile(JSON.stringify(answer(['0.3.2'])),
+      (registry) => cli(['--registry', registry, '--compat', file, '--github'])));
+    assert.equal(run.status, 2);
+    assert.equal(run.stdout, `${FAILED}compat.yaml is not valid\n`);
+    const missing = withFile(JSON.stringify(answer(['0.3.2'])),
+      (registry) => cli(['--registry', registry, '--compat', join(FIXTURES, 'intake', 'none.yaml')]));
+    assert.equal(missing.status, 2);
+    assert.equal(missing.stdout, '');
+  });
+
+  it('exits 2 for a refused or unparsable answer, never echoing its entries', () => {
+    for (const content of ['{', JSON.stringify(answer(['0.2.2', '0.3.3::error::x'])),
+      JSON.stringify({ time: {} })]) {
+      const run = withFile(content, (file) => cli(['--registry', file, '--compat', COMPAT,
+        '--github']));
+      assert.equal(run.status, 2, content);
+      assert.equal(run.stdout, `${FAILED}the registry answer is refused\n`, content);
+      assert.ok(!run.stderr.includes('::error::x'), run.stderr);
+    }
+  });
+
+  it('exits 2 for a bad usage, with the usage on stderr and nothing on stdout', () => {
+    const run = cli(['--nonsense']);
+    assert.equal(run.status, 2);
+    assert.equal(run.stdout, '');
+    assert.match(run.stderr, /usage: intake:detect/);
+  });
+
+  it('exits 2 naming the signal when npm is killed, and the cause when npm cannot start', () => {
+    const killed = stubNpm(['kill -TERM $$']);
+    try {
+      const run = cli(['--compat', COMPAT, '--github'], killed.env);
+      assert.equal(run.status, 2);
+      assert.equal(run.stdout, `${FAILED}npm view exited signal SIGTERM\n`);
+    } finally {
+      killed.dispose();
+    }
+    const run = cli(['--compat', COMPAT, '--github'], { ...process.env, PATH: '/nonexistent' });
+    assert.equal(run.status, 2);
+    assert.equal(run.stdout, `${FAILED}npm view exited ENOENT\n`);
+  });
+
+  it('reads no network with --registry: a failing npm on PATH is never run', () => {
+    const failing = stubNpm(['exit 9']);
+    try {
+      const run = withFile(JSON.stringify(answer(['0.2.2', '0.3.0', '0.3.2'])),
+        (file) => cli(['--registry', file, '--compat', COMPAT], failing.env));
+      assert.equal(run.status, 0, run.stderr);
+      assert.equal(run.stdout, 'no missing version\n');
+    } finally {
+      failing.dispose();
+    }
+  });
+});
