@@ -244,3 +244,7 @@ other branch meanwhile (W-14).
     moves it `open → triaged`, exit 0, while the workflow stays at `work`. With `bug-ingest`'s own
     shape (the gate entered in the phase before the approving one) the approval is listed in phase.
   No point failed to reproduce.
+- 2026-11-05: the approver triaged bug-011 … bug-015 (`approved`, `minor`), ruled dl-041 (option
+  (d), G1 … G4) and accepted task-077 into the backlog; their rows of `docs/owed-items.md` added in
+  this commit (five fixes, dl-041 G1's later part and G3), each element's note citing its row
+  (dl-036 R2).

@@ -45,3 +45,6 @@ The section names the mapping as `scrum`'s default and points to the workflows' 
 - 2026-11-05: independent review: approve after amendments, nothing blocking; applied: where the
   mapping lives (the workflows' roles and `dna.yaml`, not `roles.yaml`), how to get the tag's tree.
 - 2026-11-05: re-review: approve.
+- 2026-11-05: triaged by the approver (`pending → approved`), `minor`; its fix is the row "bug-013's
+  fix" of `docs/owed-items.md`, owner approver, trigger the next release of its pack (plan-064
+  ruling 6).

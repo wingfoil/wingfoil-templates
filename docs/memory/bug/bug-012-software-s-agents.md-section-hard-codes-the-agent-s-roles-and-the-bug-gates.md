@@ -58,3 +58,6 @@ default (spec-001 §8), so that a project's choice reaches the region.
   `<agent_name>`, how to get the tag's tree.
 - 2026-11-05: re-review: approve (its nit applied). bug-011, bug-013, bug-014 and bug-015 likewise
   approved by the re-review.
+- 2026-11-05: triaged by the approver (`pending → approved`), `minor`; its fix is the row "bug-012's
+  fix" of `docs/owed-items.md`, owner approver, trigger the next release of its pack (plan-064
+  ruling 6).

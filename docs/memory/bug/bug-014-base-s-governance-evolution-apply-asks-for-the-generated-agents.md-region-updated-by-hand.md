@@ -47,3 +47,6 @@ pack added or removed), regenerated (pasted by hand until WingFoil exports AGENT
 - 2026-11-05: independent review: approve after amendments, nothing blocking; applied: regeneration
   by the composer, the composition as a cause, how to get the tag's tree.
 - 2026-11-05: re-review: approve.
+- 2026-11-05: triaged by the approver (`pending → approved`), `minor`; its fix is the row "bug-014's
+  fix" of `docs/owed-items.md`, owner approver, trigger the next release of its pack (plan-064
+  ruling 6).

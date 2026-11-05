@@ -60,3 +60,6 @@ a message).
   identity's email as the second exception, the class left to the release, Reproduction's steps 3
   and 4, "names" dropped, how to get the tag's tree.
 - 2026-11-05: re-review: approve.
+- 2026-11-05: triaged by the approver (`pending → approved`), `minor`; its fix is the row "bug-011's
+  fix" of `docs/owed-items.md`, owner approver, trigger the next release of its pack (plan-064
+  ruling 6).

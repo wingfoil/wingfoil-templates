@@ -58,3 +58,6 @@ selected), while `release.sprint` is a reference with no exception.
   directive, the not-applicable value a WingFoil check must accept and `release.sprint`'s, the
   release case's source, "set", how to get the tag's tree.
 - 2026-11-05: re-review: approve.
+- 2026-11-05: triaged by the approver (`pending → approved`), `minor`; its fix is the row "bug-015's
+  fix" of `docs/owed-items.md`, owner approver, trigger the next release of its pack (plan-064
+  ruling 6).

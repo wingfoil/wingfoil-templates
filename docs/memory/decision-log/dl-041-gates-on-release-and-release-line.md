@@ -105,3 +105,7 @@ The points below are **proposed**; they become rulings when the approver approve
 - 2026-11-05: re-review: approve after one amendment (the approver's OK at `approve-release`, in
   `releasing`, and at `publish`, not before `releasing`), applied with its nit (G1's later part in
   two steps).
+- 2026-11-05: ruled by the approver (`pending → approved`): option (d), G1 … G4 as proposed. Owed,
+  rows of `docs/owed-items.md`: G1's wording with bug-012's fix (its row), G1's later part (trigger
+  a WingFoil release binding gates to their phase, F-044), G3 in `pack-semver` (trigger the first
+  release that moves a `requires` range).
