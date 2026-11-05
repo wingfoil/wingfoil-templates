@@ -49,8 +49,8 @@ CHANGELOG at the GitHub tag only, not in the npm tarball (plan-060).
 6. **`retrospective-start` for a verified patch:** the approver rules, once, whether a verified
    patch takes dl-029 T2's patch case by default.
 
-**`main`'s CI before this plan** (dl-038 C3): plan-064's last push, its close, read here before
-`submit`.
+**`main`'s CI before this plan** (dl-038 C3): plan-064's last push, its close, pushed with this
+plan's `submit`: that run is read and recorded in the Execution Notes.
 
 **Not in this plan:** any change to plan-060's record of 0.3.2 or to plan-061; the `tooling-change`
 plan of dl-024 and dl-025 (after this one); WingFoil's own inputs (its capabilities query, its

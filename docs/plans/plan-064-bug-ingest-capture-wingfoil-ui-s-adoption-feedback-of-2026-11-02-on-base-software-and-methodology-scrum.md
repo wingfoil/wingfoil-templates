@@ -267,3 +267,11 @@ other branch meanwhile (W-14).
   (`99e58d7...f564913`) and messages: no local or scratch path, no maintainer name or email beyond
   the CLI's approval trailer, only fictional `.example` identities, no private project, no
   intermediary session.
+- 2026-11-05: the approver gave the merge OK in chat; `--no-ff` merge into `main`.
+- 2026-11-05, close: merged into `main` (`534a3dd`), pushed, the branch removed; `main`'s CI on
+  `534a3dd`, run 42116020090, `success`, jobs Node.js 22.12.0 16 min 34 s and 22.21.0 20 min 25 s
+  (none over 25 minutes), no warning annotation. Done: bug-011 … bug-015 triaged, dl-041 ruled,
+  task-077 done with F-043 … F-046, `scrum`'s open point 1 closed; the fixes, dl-041's owed parts
+  and the notice to WingFoil UI in rows of their own; the register's row of WingFoil UI's feedback
+  moved to Closed with this note. The run of this close's push is read by the next plan, the
+  intake's automation (dl-038 C3). `active → done`.
