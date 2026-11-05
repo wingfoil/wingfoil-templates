@@ -56,7 +56,8 @@ plan-062 row 3, not this task.
    and `npm run lint` exit 0 locally (the full `npm test` runs in the branch CI). The privacy check
    of the branch's diff recorded.
 7. **The register:** the row "CI policy for advisories in transitive dependencies" moves to Closed,
-   settled by this task, in its own commit, before the frozen commit (dl-039 R2 exempts only
+   settled by this task, in its own commit, the frozen commit or one before
+   it (dl-039 R2 exempts only
    `docs/memory` and `docs/plans` from a new run).
 8. **Delivery:** `--no-ff` merge into `dl/dl-035-dl-040-actions`, plan-062's branch, not `main`: a
    departure from `tooling-delivery` › `deliver`, ruled by the approver in plan-062 (ruling 3,
@@ -104,3 +105,5 @@ row; then the frozen commit's checks; the notes (`docs/memory` only) after them.
   the register's commit before the frozen commit; the stub on the inherited `PATH`, its mode, the
   temporary directory's removal; the annotation's format and flushing; both no-report cases; a job
   over 25 minutes; the warning's text asserted (dl-035).
+- 2026-11-05: re-review: approve; its nit applied (the register's commit is the frozen commit or
+  precedes it).
