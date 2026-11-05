@@ -193,6 +193,9 @@ points 4, 7 and 9 included.
 6. **Point 6:** one row per pack for the first-line class, at its next minor; the check in
    `pack-authoring`.
 7. **Point 7:** one note by a content-only task on its own branch, merged into this plan's.
+   Corrected by the approver on 2026-11-05: no note here; the `schema-note` lint (task-015) asks
+   for the note generated with the schema change, so the `tooling-change` plan's schema task writes
+   it (`npm run feedback:note -- --schema`); row 6 dropped.
 8. **Point 8:** `dl/dl-024-dl-025-actions`; dl-039's checks once on the frozen head.
 9. **Point 9:** this plan, then WingFoil UI's feedback plan, then the `tooling-change` plan.
 10. **Point 10:** (i) … (iv) as written.
@@ -260,3 +263,13 @@ Then, in dl-039 R2's order:
   "if WingFoil keeps the name", point 6's check in `pack-authoring` (no workflow change), the major
   class's cascade and the `stage/*` packs born at format 2, the index as information in the note,
   `tensions` not in the catalog, CB-8, D5's escalation in §10's subsection.
+- 2026-11-05: rulings recorded (`59b2166`); submitted (`a663618`), `main` pushed; `main`'s CI on
+  plan-062's close (`b3e7fcb`), run 42059337106, `success`, read in the Context; on the submit, read
+  before the close. Rows 1 … 5: `6df2e95`, `fa565ed`, `9b7162a`, `72f0e5c`, `196e21b`; after each,
+  `workflow list` and `npm run lint` exit 0 and the privacy check found nothing. Row 6 dropped
+  (ruling 7 as corrected by the approver on 2026-11-05: the `schema-note` lint ties the note to the
+  schema change). Row 7: the notes on dl-024, dl-025 and dl-011, seven rows of `docs/owed-items.md`
+  (the `mcp` tooling, the `tooling-change` plan, the four packs' first line, D7's halves) and row
+  43's trigger (the rows of rulings 4, 6 and 9 added here,
+  not with the rulings' commit `59b2166`, a slip against dl-036 R2; ruling 7's correction and its
+  outcome in this same commit).

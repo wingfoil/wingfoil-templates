@@ -184,3 +184,12 @@ the fragment, and the server entry is removed from section 3 (as F6.1's hand ste
   actions that implement this decision (D6), with D3 5 read as "a pack install or update"; the
   decision (option (b), with (a) as the interim) unchanged. The dl actions have their row in
   `docs/owed-items.md`.
+- 2026-11-05, plan-063: actions applied to the texts (D6), amended in place with dl-024's approval
+  and plan-063's merge OK: spec-001 §2, §5, §6.1, §6.3, §6.4, a new §7.8, §12, §17, §18 and O16
+  (`fa565ed`), spec-002 §2.3 and CB-3 (`72f0e5c`), `pack-authoring` (`196e21b`); findings 1 … 5
+  applied there. Departure ruled by the approver (plan-063 ruling 4): the `mcp` fragment schema, the
+  composer's merge, the lint and `compat.yaml`'s `kinds` and `reads` wait for a released WingFoil
+  that reads the kind, a row of `docs/owed-items.md`; format 2's `pack.yaml` admits the kind.
+  `schema/`'s format-2 change and its note are owed to the `tooling-change` plan (plan-063 rulings 1
+  and 7, the note generated with the schema change by `feedback:note`), a row of
+  `docs/owed-items.md`.

@@ -248,3 +248,13 @@ F3.5 is extended: each pack is composed with every pack its `tensions` name and 
   the target stage's transition workflow reads the exit-check directives that the conditional
   entries ship, so D4's format change needs no conditional entry replacing a workflow. The
   decision (option (c)) unchanged. The dl actions have their row in `docs/owed-items.md`.
+- 2026-11-05, plan-063: actions applied to the texts (D7), amended in place with dl-025's approval
+  and plan-063's merge OK: spec-001 (`6df2e95`: `tensions`, conditional entries with any earlier
+  `with`, isolation and dl-026's rule per entry, bridges and the check before the swap reading the
+  `exit-check` directives, finding 1 option (ii); `pack.yaml` and `catalog.yaml` at format 2; D6's
+  coverage) and §10.1 (`9b7162a`: D2's table, D5's escalation through `governance-evolution`),
+  spec-002 (`72f0e5c`), `pack-authoring` (`196e21b`); findings 2 … 6 applied there,
+  `tensions[].pack` with an optional range (plan-063 ruling 10). Owed, each a row of
+  `docs/owed-items.md`: the tooling (`tooling-change` plan), the first-line class of the four
+  published packs at their next minor (ruling 6), D7's two halves in the stage charters (W12). D3's
+  question at initialization stays with dl-011.

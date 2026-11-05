@@ -318,3 +318,6 @@ Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`, when the sequencer
   WingFoil has released stable configuration contracts (at least v0.3, preferably later); dl-014 may
   be ruled earlier. The element stays `pending` until then (precedent: dl-007). At the ruling, the
   text is re-checked against the formats that WingFoil release defines.
+- 2026-11-05, plan-063 (ruling 10 (iii)): dl-025 D3, approved, asks that the initialization template
+  (this element) ask the user about the declared tensions of the packs chosen (spec-001 §6.2). Not
+  added to spec-002 while this element is `pending`; to be read at its ruling.
