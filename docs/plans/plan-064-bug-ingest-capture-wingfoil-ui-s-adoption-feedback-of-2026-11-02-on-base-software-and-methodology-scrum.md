@@ -48,9 +48,11 @@ only `planning: { reject: draft }` (`packs/software/fragments/memory.yaml`); `bu
 **`main`'s CI before this plan** (dl-038 C3): plan-063's last push, `4b9cfc3` (its close and
 `active → done`), CI run 42081846882, read and recorded here before `submit`.
 
-**What it produces:** bugs (`bug-ingest`), each reviewed and ruled at `triage`, and the
-decision-log a design choice needs (point 2), hosted here as plan-053 hosted task-063. It fixes
-nothing: each fix is a pack release, owed in `docs/owed-items.md`.
+**What it produces:** bugs (`bug-ingest`), each reviewed and ruled at `triage`, and the decision-log
+a design choice needs (point 2), and the feedback notes of points 3(d) and 4, written by one
+content-only task (`tooling-delivery`, dl-039 R1) on a branch of its own cut from this plan's and
+merged into it, all hosted here as plan-053 hosted task-063. It fixes nothing: each fix is a pack
+release, owed in `docs/owed-items.md`.
 
 **Not in this plan:** the fixes (pack releases of `base`, `software`, `methodology/scrum`); the
 WingFoil-side points WingFoil UI sends itself; the intake's automation and the `tooling-change`
@@ -104,8 +106,9 @@ Each point with a recommendation.
      (`sprint-planning`, `plan-release`), no action sets it. The risk: a task or a release with a
      wrong `sprint` is never selected by `development` or `release`, silently. Recommended: a
      feedback note to WingFoil (reference-typed frontmatter fields) as the main outcome, by a
-     content-only task hosted here (task-063's precedent), and `scrum`'s descriptions naming the
-     risk, a `minor` bug.
+     content-only task hosted here (task-063's precedent: `tooling-delivery`, its own branch from
+     this plan's, merged into it), the one task carrying every note of 3(d) and point 4, and
+     `scrum`'s descriptions naming the risk, a `minor` bug.
 4. **The points WingFoil UI does not send to WingFoil itself** (UI's list is hand-edited states,
    forged history, `memory deprecate` without approval, author-only approvals). Feedback 2 (gates
    listed out of phase), "ungated" in `workflow status`, and a non-approver identity starting
@@ -146,8 +149,10 @@ Each point with a recommendation.
   approver the command, with `cd` and `--reason`. No pull request. Files staged by name;
   `docs/notes/` and `.idea/` stay untracked. Repository texts follow `repository-practice`;
   WingFoil UI is named by project.
-- **Reviewers (subagents):** this plan; each bug and the decision-log (dl-017).
+- **Reviewers (subagents):** this plan; each bug and the decision-log; the notes task's body and its
+  build, with its notes (dl-017).
 - **Approver:** the outline (before `submit`); each bug's triage; the decision-log's ruling; the
+  notes task's acceptance into the backlog and its approval at `in-review` (`tooling-delivery`); the
   merge OK.
 - Done when the bugs, the decision-log and the feedback notes are on `main` with their rulings, the
   fixes owed in rows of their own, the charter note written, the branch CI and `main`'s run read
@@ -169,3 +174,6 @@ Each point with a recommendation.
   approvals (a) removes; 3(b) on `software` and `scrum`; 3(c) consistent with 3(b); point 5 without
   inferring UI's choice; `specification.approve` as designed; the hosted decision-log's own
   instance; the Done criteria.
+- 2026-11-05: re-review: approve after amendments, nothing blocking; applied: what the plan
+  produces names the notes and their task, the task's workflow and branch, the Handoff's reviews and
+  gates for it, one task for every note.
