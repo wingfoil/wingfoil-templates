@@ -18,10 +18,10 @@ release reaches the packs' ranges without a hand-run intake when nothing changed
 
 **What exists** (`main`): every intake is started by hand; the CI has no schedule and does not read
 npm; the 0.3.1 and 0.3.2 intakes each needed a hand-written task (task-059, task-074): the pin and
-its lockfile, the `compat.yaml` row and its `notes`, the six ranges in `catalog.yaml`,
-`npm run index`, spec-001 §12's example and the golden fixture's `compat.yaml` (dl-010), and the
-tests that name real releases (`tests/validate.test.ts`, `matrix.test.ts`, `runs.test.ts`,
-`range.test.ts`, `compat.test.ts`) re-derived. plan-060's scratch run on 0.3.2 was all green, what
+its lockfile, the `compat.yaml` row and its `notes`, the six ranges in `catalog.yaml`, `npm run
+index`, spec-001 §12's example and the golden fixture's `compat.yaml` (dl-010), and the two tests
+that name real releases (`tests/compat.test.ts`, `tests/validate.test.ts`) re-derived; `matrix`,
+`runs` and `range` tests use synthetic releases. plan-060's scratch run on 0.3.2 was all green, what
 an automatic check would have reported; plan-060's recheck confirmed it. WingFoil publishes its
 CHANGELOG at the GitHub tag only, not in the npm tarball (plan-060).
 
@@ -77,17 +77,20 @@ Each point with a recommendation.
      `compat-fixture.test.ts` read the real `compat.yaml`, every other test takes `FROZEN_COMPAT`);
      `tests/validate.test.ts`'s stubs, keyed today by each real release (`'0.3.2 (6de2e13c)'`),
      derived for every release the file lists; spec-001 §12's example and its prose per release
-     replaced by a pointer to `compat.yaml` (each release's facts in its `notes`), the spec half of
-     `compat.test.ts`'s dl-010 equality dropped and the fixture half kept, an amendment of spec-001
-     in place approved by the task's merge OK (as task-059 and task-074 did for §12); dl-009's
-     Execution Note per intake stopped (point 4's decision);
+     replaced by a pointer to `compat.yaml` (each release's facts in its `notes`; §12 keeps the
+     vocabulary and the rules that `record` and dl-021 cite; 0.2.2's row unchanged, so
+     `FROZEN_COMPAT`'s prefix test holds), the spec half of `compat.test.ts`'s dl-010 equality
+     dropped and the fixture half kept, an amendment of spec-001 in place approved by the task's
+     merge OK (as task-059 and task-074 did for §12); dl-009's Execution Note per intake stopped
+     (point 4's decision);
    - (B) **prepare**: `src/intake-prepare.ts` and `npm run intake:prepare -- <version>`, writing the
-     pin folder (`package.json` with the exact version and a placeholder description replaced at the
-     intake, the lockfile by `npm install --package-lock-only --ignore-scripts` with the job's named
-     Node.js and npm), the `compat.yaml` row (`reads` and `capabilities` carried from the newest
-     recorded release under point 4's reading of dl-021 R4, `format_key` from the checks, `notes`
-     a placeholder), the recomputed ranges in `catalog.yaml` (the code `check:packs` uses, in
-     `src/tag-rules.ts`), the golden fixture's `compat.yaml` (dl-010), and `npm run index`;
+     pin folder (`package.json` with the exact version and a fixed description naming no task, the
+     lockfile by `npm install --package-lock-only --ignore-scripts` with the job's named Node.js and
+     npm), the `compat.yaml` row (`reads` and `capabilities` carried from the newest recorded
+     release under point 4's reading of dl-021 R4, `format_key: true` written provisionally and
+     confirmed by verify's zero-warning publication run, a mismatch making the report guided,
+     `notes` a placeholder), the recomputed ranges in `catalog.yaml` (the code `check:packs` uses,
+     in `src/tag-rules.ts`), the golden fixture's `compat.yaml` (dl-010), and `npm run index`;
      deterministic for a given lockfile (two runs byte-identical, tested offline with an injected
      resolver and a fixture tree); refusing a version already recorded;
    - (C) **verify and report**, two jobs: **prepare** runs (B) and runs no WingFoil release, then
@@ -96,12 +99,15 @@ Each point with a recommendation.
      `catalog-index.json`, the fixture's `compat.yaml`), each file's sha256 in the report;
      **verify** downloads it and runs the checks on the new release (`npm test`, the matrix for it,
      `validate`, the golden step, the overlays, `check:runs`, `validate:publication`, `check:pins`,
-     `npm audit` on the new lockfile) on Node.js 22.21.0 and 22.12.0, with no `actions/cache`
-     save; reads the CHANGELOG section from a URL fixed in code (`wingfoil/wingfoil`, tag
-     `v<version>`, never the registry's `repository` field), its text written only to the job
-     summary, escaped as `ci.yml` escapes; writes the report, **verified** or **guided** (point 2).
-     Never a push, a pull request or a comment. The verified lockfile is the artifact's, applied as
-     is at the intake, never regenerated, its sha256 checked.
+     `npm audit` on the new lockfile) on Node.js 22.21.0 and 22.12.0, with no `actions/cache` save;
+     reads the CHANGELOG section from a URL fixed in code (`wingfoil/wingfoil`, tag `v<version>`,
+     never the registry's `repository` field), its text written only to the job summary, escaped as
+     `ci.yml` escapes; writes the report, **verified** or **guided** (point 2). Never a push, a pull
+     request or a comment. The verified lockfile is the artifact's, applied as is at the intake,
+     never regenerated, the sha256s checked on apply, before the intake writes `notes`. A
+     `workflow_dispatch` input re-verifies a recorded version (the newest by default) against a tree
+     with that release removed, its report labelled a rehearsal, never for intake: the way (C) is
+     tried on its branch and its durations measured.
 2. **The bar of "verified".** Recommended, read conservatively; any of these makes it guided, each
    reason listed: a red check or an advisory; a minor, a major or a backport; a CHANGELOG section
    missing or unreadable, or a tag not yet published; a heading `Removed`, `Security` or
@@ -124,21 +130,26 @@ Each point with a recommendation.
    an `Added` entry, which makes the report guided); dl-009's note per intake stopped (§12's facts
    in `notes`); part 6, a verified patch takes dl-029 T2's patch case by default only while a
    retrospective covering its window is open or due, at most three patches or 14 days after the
-   intake that started it, dl-040 D1 … D3 still applying. Applied by a dl actions row of this plan
-   after its ruling: a departure from the separate dl actions plan of plan-062, stated, since the
-   change belongs with the tooling it serves.
+   intake that started it, whichever comes first, never extending the covering retrospective's own
+   deadline (T2's seven days when the planning date is not known; dl-040 D1 … D3). Captured and
+   ruled before (D) starts, since (D) and (B) rely on its reading of dl-021 R4 and on dl-009's note
+   stopped; only `wingfoil-release-intake` v7 is applied by a dl actions row of this plan at the
+   end: a departure from the separate dl actions plan of plan-062, stated, since the change belongs
+   with the tooling it serves.
 5. **Detection's signal.** A green scheduled run nobody reads is no signal. Recommended: a run that
    finds a missing version ends red, with an `::error::` naming it (GitHub notifies the workflow's
-   last editor), and stays red daily until the intake records it; the register's row "the intake
-   workflow read" asks the approver to read its runs weekly, since GitHub disables a scheduled
-   workflow after 60 days without repository activity.
+   last editor), and stays red daily until the intake records it (the reminder that a guided intake
+   is due; repository-practice rule 3 covers `ci.yml`'s runs of `main`, not this workflow); GitHub
+   notifies whoever last edited the schedule, the approver's identity, which pushes `main`; the
+   register's row "the intake workflow read" asks the approver to read its runs weekly, since GitHub
+   disables a scheduled workflow after 60 days without repository activity.
 6. **The checks** (dl-039): each task's build review first, then once on its frozen commit its
    branch CI and the local list. (C)'s jobs are tried on its branch by `gh workflow run intake.yml
-   --ref task/<id>` (`actions: write`, run by claude with the approver's OK each time); the
-   workflow's first run on `main` after the last merge recorded at the close, with no missing
-   version expected (0.3.2 is the newest).
+   --ref task/<id>` (`actions: write`, run by claude with the approver's OK each time), with the
+   rehearsal input; the workflow's first run on `main` after the last merge recorded at the close, a
+   rehearsal of 0.3.2 and a scheduled run with no missing version.
 7. **G12** (dl-039 R3): `intake.yml` is separate from `ci.yml` and verifies only when a version is
-   missing, so the CI's duration is unchanged; its jobs' durations recorded at its first run.
+   missing, so the CI's duration is unchanged; its jobs' durations recorded from the rehearsal.
 8. **The reply about this plan**, as asked by the approver on 2026-11-05: this plan's id and its
    `submit` commit once filed, its text shown to the approver first; the plan id of the first
    automated intake later, a row of `docs/owed-items.md` at the close; nothing of the requester
@@ -177,3 +188,7 @@ Each point with a recommendation.
   others: (D) second, the two jobs and the artifact's allowlist and sha256, the lockfile applied as
   is, the missing checks, detection's signal and edge cases, the CHANGELOG's fixed source, the
   branch runs by dispatch, point 4's options and bounds, the reply's later part as a row.
+- 2026-11-05: re-review: approve after small amendments; applied: the Context's test list, the
+  decision-log ruled before (D), a rehearsal input for (C), `format_key` provisional and confirmed,
+  the bound's "whichever first" and the covering deadline, rule 3's scope, 0.2.2's row unchanged,
+  the sha256s checked before `notes`, the pin's fixed description.
