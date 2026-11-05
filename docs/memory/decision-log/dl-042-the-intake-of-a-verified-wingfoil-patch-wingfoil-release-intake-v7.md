@@ -114,3 +114,8 @@ The points below are **proposed**; they become rulings when the approver approve
   note, the options' For and Against, the Context's bar, I5's interim.
 - 2026-11-05: re-review: approve; its should-fix and nits applied (I4's count of patches
   verified or guided, the several-versions rule moved to I1, dl-009's stop from task (D) on).
+- 2026-11-05: ruled by the approver (`pending → approved`): option (b), I1 … I5 as proposed. Applied
+  by plan-065: I3's spec-001 change and I2's `capabilities` bullet in its task (D);
+  `wingfoil-release-intake` v7 and the notes on dl-021, dl-029 and dl-009 by its dl actions row
+  after task (C) (plan-065 › Steps 5); nothing deferred beyond plan-065, so no row of
+  `docs/owed-items.md`.
