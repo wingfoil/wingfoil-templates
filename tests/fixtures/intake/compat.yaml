@@ -1,0 +1,25 @@
+format: 1
+kinds:
+  dna: ".wingfoil/dna.yaml"
+  memory: ".wingfoil/memory.yaml"
+  roles: ".wingfoil/roles.yaml"
+  workflows: ".wingfoil/workflows.yaml"
+  workflow: "a workflow file"
+  directive: "a directive file"
+  memory-template: "a Memory template"
+capabilities:
+  pack-install: "init, pack add and upgrade install packs from this repository"
+  workflow-engine: "WingFoil executes workflows"
+releases:
+  - wingfoil: 0.2.2
+    format_key: false
+    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
+    capabilities: []
+  - wingfoil: 0.3.0
+    format_key: true
+    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
+    capabilities: [workflow-engine]
+  - wingfoil: 0.3.2
+    format_key: true
+    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
+    capabilities: [workflow-engine]
