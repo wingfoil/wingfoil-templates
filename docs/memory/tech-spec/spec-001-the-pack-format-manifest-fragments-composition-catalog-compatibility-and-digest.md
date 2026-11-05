@@ -84,9 +84,9 @@ dl-003 D1/D6, dl-008, dl-022):
   example `base@^1` (dl-003 D1). `base` requires nothing.
 - `software` requires `base@^<major>` only. Every phase pack **must** require `software`, written
   `software@^<major>`, and so **must** every pack that uses a Memory type, a workflow, a directive
-  or a parameter shipped by `software` outside a conditional part (§6.3, §6.5).
+  or a parameter shipped by `software` outside a conditional entry with `software` (§6.3, §6.5).
 - A composition without `software` has no life cycle: no `sw-life-cycle`, no slot, and no phase
-  pack. Its methodology, if any, contributes everything but its conditional part (dl-022 S3).
+  pack. Its methodology, if any, contributes everything but its entry with `software` (dl-022 S3).
 - Every pack **must** only add to or tighten what the packs composed before it ship (§7). An
   overlay is composed after every non-overlay pack, so it can tighten them all.
 - The axes, cardinalities, slots and stage scale are data of `catalog.yaml` (§11), so that a resolver
@@ -158,10 +158,11 @@ This specification applies it twice.
      (§11). The bump is made for readers: a composer, a resolver or a future `pack-install` must
      tell a manifest it cannot read from one it can, and format 1's limit (one entry, `with`
      `software` only) is what format 2 lifts. Format 1 stays valid and readable: the packs published
-     at format 1 stay at format 1, the composer and the lint pick the schema by the file's
-     `format`, and a format-1 file keeps format 1's rules. A pack moves to format 2 only when it
-     needs a key of format 2, and that move is a major release (`pack-semver`): a reader of format 1
-     cannot read the new version. A pack whose first version needs format 2 is born at format 2.
+     at format 1 stay at format 1, the composer and the lint pick the schema by the file's `format`,
+     and a format-1 file keeps format 1's rules. A pack moves to format 2 only when it needs a key
+     of format 2, and that move is a major release (`pack-semver`): a reader of format 1 cannot read
+     the new version. A new pack is written at format 2; a pack published at format 1 stays there
+     until a version needs a key of format 2.
    - The frozen schemas of format 1 are `schema/pack.v1.schema.json` and
      `schema/catalog.v1.schema.json`; `pack.schema.json` and `catalog.schema.json` validate
      format 2.
@@ -202,7 +203,7 @@ packs/<catalog pack id>/
 ### 6.2 `pack.yaml`
 
 ```yaml
-format: 1
+format: 2
 id: methodology/kanban          # catalog pack id (§4)
 axis: methodology               # absent for the foundation packs
 name: kanban                    # equals the last segment of id
@@ -244,7 +245,7 @@ tensions: []                    # format 2: packs to combine with care (below)
 | `slot` | phase packs only | One of the `phase` slots. Equals the middle segment of `id`. |
 | `title`, `description` | yes | Non-empty. English (dl-001 D8). |
 | `version` | yes | §4. |
-| `formats` | yes | Map from file kind (§12) to format, one entry per kind the pack ships. May be empty only for a pack that ships no WingFoil file. |
+| `formats` | yes | Map from file kind (§12) to format, one entry per kind the pack ships, `mcp` included in format 2 (§7.8). May be empty only for a pack that ships no WingFoil file. |
 | `requires_capabilities` | yes | Capability names from `compat.yaml` (§12), sorted, unique. May be empty. |
 | `requires` | yes, except `base` | §6.3. Exactly one `base@^<major>` entry for every pack but `base`; empty or absent for `base`; `software` requires `base@^<major>` only. |
 | `conflicts` | no | §6.3. |
@@ -366,8 +367,8 @@ conditional:                    # illustrative: a stage pack, composed after bot
   - the AGENTS.md section is always composed (§10).
 - **Fragments are never conditional.** A pack therefore cannot tighten another pack's Memory types
   through this part (O14), and a bridge adds no Memory type and tightens none.
-- **One owner, slots.** §7.6's one-owner rule and §9's slot rule are checked on every composition
-  that holds the entries' packs, each entry with and without its pack.
+- **One owner, slots.** §7.6's one-owner rule and §9's slot rule are checked on the composition with
+  every entry's pack and on each with one entry's pack left out in turn.
 - A methodology that does not require `software` ships `delivery` in its entry with `software`,
   never in `contents`; a methodology that requires `software` ships it in `contents` (dl-022 S3: a
   methodology does not always require `software`). A composition with `software` holds exactly
@@ -379,10 +380,12 @@ conditional:                    # illustrative: a stage pack, composed after bot
   carries the shared constraint, so that one entry covers several stricter packs), with directives
   and workflows only. A move between stages, which replaces one `stage/*` overlay by another (§14),
   has two halves: the stage being left ships the rules that apply while it runs, and the target
-  stage ships the check before the swap. The target stage's transition workflow is unconditional
-  and names no directive of an entry: its step before the swap reads every composed directive whose
-  `tags` include `exit-check`, which the target stage's entries ship (one per stricter pack), and
-  passes when the composition holds none (dl-025 finding 1, option (ii)).
+  stage ships the check before the swap. The target stage's transition workflow is unconditional and
+  names no directive of an entry: its step before the swap reads, in the target composition (the one
+  the update produces, holding the target stage, before it replaces the project's files), every
+  directive whose `tags` include `exit-check`, which the target stage's entries ship (one per
+  stricter pack), and passes without them only when the target composition holds no pack that
+  declares a tension with the stage being left (dl-025 finding 1, option (ii)).
 
 ## 7. Composition and the merge of fragments
 
@@ -640,7 +643,7 @@ README's interim applies (spec-002 §2.3, dl-024 D5). The reference composer imp
 section once a released WingFoil reads the kind (plan-063 ruling 4).
 
 ```yaml
-format: 1                       # the kind's WingFoil format (§5)
+format: 1                       # illustrative: the kind's format is WingFoil's (§5, O16)
 servers:
   - name: tracker               # illustrative
     transport: stdio            # stdio or http
@@ -648,24 +651,25 @@ servers:
     args: ["-y", "@vendor/tracker-mcp@2.3.1"]   # a pinned package version
     env: [TRACKER_TOKEN]        # variable names only, never values
     access: read                # read by default; write tools listed explicitly
-    write_tools: []
+        write_tools: []             # illustrative names; access: write requires a non-empty list
     vendor_hosted: true         # sends data to its vendor
     data_location: "EU"
     roles: [developer]
-    phases: [delivery.build]    # where it is enabled; a write tool only behind an approval gate
+    phases: [delivery.build]    # illustrative syntax; a write tool only behind an approval gate
 restrictions:
   deny: []                      # server names never enabled
   read_only: []                 # server names whose write tools are never enabled
 ```
 
-- **Packs declare servers; they never ship server code** (D1). An entry names how to start or
-  reach the server and pins it: `name`, `transport`, and either `command` with `args` holding a
-  pinned package version, or `url` for a remote server; `env` names environment variables only
-  (`security-secrets`; §18's secret lint applies); `access` is `read` unless write tools are listed;
-  `vendor_hosted: true` with `data_location` for a server that sends data to its vendor (not
-  `remote`, which §7.6 uses for the asset class); `roles` and `phases` say where it is enabled, a
-  write tool only in phases behind their approval gate. Declaring a `command` leads WingFoil to
-  start code a third party wrote: the approval at install is its safeguard (D4).
+- **Packs declare servers; they never ship server code** (D1). An entry names how to start or reach
+  the server and pins it: `name`, `transport`, and either `command` with `args` holding a pinned
+  package version, or `url` for a remote server; `env` names environment variables only
+  (`security-secrets`; §18's secret lint applies); `access` is `read` unless write tools are listed,
+  and `write` requires them listed; `vendor_hosted: true` with `data_location` for a server that
+  sends data to its vendor (not `remote`, which §7.6 uses for the asset class); `roles` and `phases`
+  say where it is enabled, a write tool only in phases behind their approval gate. Declaring a
+  `command` leads WingFoil to start code a third party wrote: the approval at install is its
+  safeguard (D4).
 - **The merge** keeps §7.2's monotony:
   - `servers` is a keyed list by `name` with **one owner per server**: a second pack declaring the
     same name fails the composition. This list rule is new, departing from §7.2's merge of
@@ -790,7 +794,7 @@ only in a composition with `software`:
 - A phase pack of slot `<slot>` **must** ship `workflows/<slot>.yaml`, with `name: <slot>` and
   `kind: sub`. Its file replaces `software`'s default. This is the only case in which a pack's file
   replaces another's (§7.6). A phase pack requires `software` (§3), so it carries no conditional
-  part.
+  entry naming `software`.
 - No other pack may ship a workflow named after a slot.
 - There is no `operations` slot (dl-008). Operations is the stage overlays' concern.
 
@@ -849,8 +853,8 @@ the strongest:
 - Classes 1 … 3 follow the directive's subject; the others follow its pack or axis (`foundation`
   has no axis). A class-1 or class-2 directive names the law or standard it implements, and review
   checks the claim.
-- A bridge directive (§6.5) takes the highest class among the directives it reconciles, not the
-  class of the pack that ships it.
+- A bridge directive (§6.5) takes the highest class among the stricter pack's directives it
+  reconciles, not the class of the pack that ships it.
 - The project's `custom/` directives declare their class, only add or tighten, never claim classes
   1 … 3 to override a pack's rule of those classes, and never reuse the id of a pack's directive (in
   WingFoil a `custom/` directive with that id overrides it; dl-025 finding 5).
@@ -999,8 +1003,9 @@ releases:
   joins `kinds`, and each release's `reads`, when a release reads it: `compat.yaml`'s schema refuses
   an unknown kind, so that change comes with its own format decision and feedback note (plan-063
   ruling 4).
-- **`capabilities`** are this repository's provisional vocabulary (dl-021 R4) until WingFoil's
-  capabilities query publishes one (WingFoil dl-177; F-013). WingFoil owns the final names.
+- **`capabilities`** are this repository's provisional vocabulary (dl-021 R4; `mcp-servers` joins it
+  only when a release's CHANGELOG names the feature, §7.8) until WingFoil's capabilities query
+  publishes one (WingFoil dl-177; F-013). WingFoil owns the final names.
 - **`releases[]`:**
   - only released WingFoil versions (`MAJOR.MINOR.PATCH`, no pre-release), in ascending order;
   - `format_key` says whether the release accepts the `format:` key without a warning;
@@ -1159,9 +1164,10 @@ actions:
   executable form when WingFoil defines how a pack update runs a transition (WingFoil dl-178); that
   will be a format bump of the transition kind.
 - **The check before the swap** is a step of the transition workflow the target stage ships. It
-  reads every composed directive tagged `exit-check`, which the target stage's conditional entries
-  ship, one per stricter pack (§6.5's bridges, dl-025 D4), and names none of them; the stage being
-  left ships, in its own entries, the rules that apply while it runs. A stricter pack added after a
+  reads, in the target composition (the one the update produces, before it replaces the project's
+  files), every directive tagged `exit-check`, which the target stage's conditional entries ship,
+  one per stricter pack (§6.5's bridges, dl-025 D4), and names none of them; the stage being left
+  ships, in its own entries, the rules that apply while it runs. A stricter pack added after a
   stage's release gets its halves in a later minor release of each stage (dl-025 D7).
 
 ## 15. Presets
@@ -1197,11 +1203,12 @@ parameters: {}
 - A preset has no version. It is a curated pointer to version ranges, and its history is git's.
 - Every preset is part of the compatibility matrix of every pack it contains
   (`pack-compatibility`).
-- A pack with a conditional part is validated in compositions with and without each entry's pack
-  (`pack-compatibility`).
+- A pack with a conditional part is validated in the composition with every entry's pack and in each
+  with one entry's pack left out in turn (`pack-compatibility`).
 - A pack that declares `tensions` is validated in a composition with each pack they name, and every
   pack with each `stage/*` overlay: the declared and the known-risky pairs, not the Cartesian
-  product (dl-025 D6, `pack-compatibility`).
+  product (dl-025 D6, `pack-compatibility`); before D6, each pack was validated with `base`, and
+  with the first methodology when it needs `software` (task-012, task-031).
 
 ## 16. Open points
 
@@ -1275,7 +1282,7 @@ check the rest, and the composer refuses what they reject.
 - a type's definition declares `template.frontmatter.required`, an empty list at least; the merge
   refuses it otherwise, and the lint reports it through the compositions it runs (§7.5);
 - `requires_capabilities` is sorted;
-- `contents.fragments` is in the order `dna`, `roles`, `memory`;
+- `contents.fragments` is in the order `dna`, `roles`, `memory`, then `mcp` in format 2 (§6.4);
 - `contents` and the conditional entries' `contents` together match the files present, both ways,
   each file listed once (§6.4);
 - `conditional`, by the file's format (§6.5): in format 1, at most one entry, on a non-foundation

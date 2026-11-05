@@ -56,13 +56,14 @@ Applies to every role that writes or reviews pack content under `packs/`.
   `stage`) only add or tighten relative to everything else; they never remove what a methodology
   ships. In a Memory state machine, adding a state or a gate is allowed; removing either is not.
 - A pack that does not require `software`, and whose content only makes sense with it (a
-  methodology's `delivery`), declares that content in a `conditional` entry,
-  `with: software@^<major>` (spec-001 §6.5): it counts only in a composition holding `software`,
-  and nothing outside it uses that content or anything of `software`'s. A pack that requires
-  `software` ships everything in `contents`. In `pack.yaml` format 2 (spec-001 §5) a pack may carry
-  several entries, each naming a pack composed earlier, one entry per pack id; each entry is
-  isolated from what is always composed and from the other entries. A pack stays at format 1 unless
-  it needs a key of format 2; moving to format 2 is a major release (`pack-semver`).
+  methodology's `delivery`), declares that content in a `conditional` entry, `with:
+  software@^<major>` (spec-001 §6.5): it counts only in a composition holding `software`, and
+  nothing outside it uses that content or anything of `software`'s. A pack that requires `software`
+  ships everything in `contents`. In `pack.yaml` format 2 (spec-001 §5) a pack may carry several
+  entries, each naming a pack composed earlier, one entry per pack id; each entry is isolated from
+  what is always composed and from the other entries. A new pack is written at format 2 once the
+  tooling reads it (until then at format 1); a published pack stays at format 1 unless it needs a
+  key of format 2, and moving to format 2 is a major release (`pack-semver`).
 - Slots (dl-003 D4, D11). They exist only with `software`. `sw-life-cycle` and the slot defaults
   belong to `software`, `retrospective` and `governance-evolution` to `base` (dl-022).
   `sw-life-cycle` includes `inception`, `specification`, `delivery` and `end-of-life` by name; the
@@ -82,20 +83,23 @@ Applies to every role that writes or reviews pack content under `packs/`.
   ships, and a directive only adds or tightens obligations; it never says that another pack's rule
   is waived, skipped or optional (D1). A lighter pack expresses lightness only where no stricter
   pack speaks, or through a bridge: a conditional entry of a pack composed later than the stricter
-  one, with directives and workflows only (spec-001 §6.5). The stricter pack declares a combination
-  that needs care in `tensions`, with its resolution (format 2, spec-001 §6.2); `conflicts` stays
-  for real incompatibilities. What remains after the precedence is escalated, never chosen
-  (spec-001 §10.1): a decision-log, and a ruling that becomes a project `custom/` directive is
-  applied through `governance-evolution`.
+  one, with directives and workflows only (spec-001 §6.5). Waiver wording ("skip", "not required",
+  "optional", "ignore") in an overlay's or a `stage/*` pack's directive about something it does not
+  ship is reported for review, a bridge exempt (spec-001 §18). The stricter pack declares a
+  combination that needs care in `tensions`, with its resolution (format 2, spec-001 §6.2);
+  `conflicts` stays for real incompatibilities. What remains after the precedence is escalated,
+  never chosen (spec-001 §10.1): a decision-log, and a ruling that becomes a project `custom/`
+  directive is applied through `governance-evolution`.
 - **Precedence line** (dl-025 D2, spec-001 §10.1). A directive's first line after its `# ` title is
-  `Precedence: <class>`, one of `law`, `standard`, `security`, `foundation`, `governance`,
-  `method`, `overlay`; a class-1 or class-2 directive names what it implements,
-  `Precedence: law (<act>)` or `Precedence: standard (<standard>)`, and a directive that only partly
-  implements a law is split. Classes 1 … 3 follow the subject, the others the pack or axis
-  (`foundation` has no axis); a bridge directive takes the highest class among the directives it
-  reconciles. A project's `custom/` directive never reuses the id of a pack's directive. Review
-  checks the line for every pack version prepared after 2026-11-05 (plan-063 ruling 6); the four
-  packs published before carry it from their next minor release, classed minor.
+  `Precedence: <class>`, one of `law`, `standard`, `security`, `foundation`, `governance`, `method`,
+  `overlay`; a class-1 or class-2 directive names what it implements, `Precedence: law (<act>)` or
+  `Precedence: standard (<standard>)`, and a directive that only partly implements a law is split.
+  Classes 1 … 3 follow the subject, the others the pack or axis (`foundation` has no axis); a bridge
+  directive takes the highest class among the stricter pack's directives it reconciles, and a target
+  stage's bridge directive carries `tags: [exit-check]` (spec-001 §6.5, §14). A project's `custom/`
+  directive never reuses the id of a pack's directive. Review checks the line for every pack version
+  prepared after 2026-11-05 (plan-063 ruling 6); the four packs published before carry it from their
+  next minor release, classed minor.
 - **MCP servers** (dl-024, spec-001 §7.8). A pack declares servers and never ships server code: a
   pinned package version or a `url`, environment variable names only, read access unless write
   tools are listed, a write tool only in phases behind their approval gate, `vendor_hosted` with

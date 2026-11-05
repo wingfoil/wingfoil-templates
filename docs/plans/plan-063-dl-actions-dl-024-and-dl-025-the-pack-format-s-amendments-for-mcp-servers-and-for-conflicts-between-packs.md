@@ -270,10 +270,22 @@ Then, in dl-039 R2's order:
   (ruling 7 as corrected by the approver on 2026-11-05: the `schema-note` lint ties the note to the
   schema change). Row 7: the notes on dl-024, dl-025 and dl-011, seven rows of `docs/owed-items.md`
   (the `mcp` tooling, the `tooling-change` plan, the four packs' first line, D7's halves) and row
-  43's trigger (the rows of rulings 4, 6 and 9 added here,
-  not with the rulings' commit `59b2166`, a slip against dl-036 R2; ruling 7's correction and its
-  outcome in this same commit).
+  43's trigger (the rows of rulings 4, 6 and 9 added here, not with the rulings' commit `59b2166`, a
+  slip against dl-036 R2; ruling 7's correction and its outcome in this same commit).
 - 2026-11-05: a row asked by the approver outside any element (dl-036 R4), cited here as the plan
   active on `main`: the automation of `wingfoil-release-intake` where safe, asked by the approver on
   2026-11-02, its own plan placed by the approver on 2026-11-05 after WingFoil UI's feedback plan
   and before this plan's `tooling-change` plan, whose row's trigger moves after it.
+- 2026-11-05: independent review of the branch (`408d87e`): approve after amendments, nothing
+  blocking; applied: the check before the swap reads the target composition and passes without
+  `exit-check` directives only when no pack declares a tension with the stage being left (§6.5,
+  §14); §6.2's example at format 2; §3's and §9's single-part wording; finding 6's bridge class, gap
+  3's wording (§15) and the waiver heuristic in `pack-authoring`; a new pack written at format 2
+  (§5; in `pack-authoring`, once the tooling reads it); `pack-semver`'s major list gains the move of
+  `pack.yaml` to a new format (ruling 3, which spec-001 §5 cites); the nits (§18's fragment order,
+  §6.2's `formats` and §12's `mcp-servers`, §7.8's illustrative example and `access`, "left out in
+  turn", dl-024's note, spec-002's note on "Combines with care", row 43's Source). Leftovers:
+  `pack-compatibility`'s bullet on a conditional part ("with and without `software`") goes to the
+  `tooling-change` plan's row with the code it describes, to be confirmed by the approver at the
+  merge OK; the bridge exemption of §18 does not cover a bridge whose `with` is a common pack the
+  stricter packs require (finding 6 as written), noted here.

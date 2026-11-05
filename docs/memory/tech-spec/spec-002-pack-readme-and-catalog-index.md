@@ -407,5 +407,6 @@ All closed in wave W14 (plan-024):
   care" for `tensions` (dl-025 D3, D7); §2.3's MCP interim (dl-024 D5, finding 1); §3.2's Summary
   per entry and its tensions; §3.3 at format 2 (the entries, `pack_format`, `conditional_parts`,
   `tensions`; format 1's schema frozen); CB-3, CB-4 and CB-8 read the same. dl-025 D3's question at
-  initialization (dl-011, `pending`) is not added (plan-063 ruling 10 (iii)). The tooling follows in
-  the `tooling-change` plan.
+  initialization (dl-011, `pending`) is not added (plan-063 ruling 10 (iii)). "Combines with care"
+  is a line inside Composition, not a section of its own, since §2.1 fixes the headings. The tooling
+  follows in the `tooling-change` plan.
