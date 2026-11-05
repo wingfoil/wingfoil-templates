@@ -215,3 +215,7 @@ Given by the approver on 2026-11-05: every point of the outline as recommended.
   decision-log ruled before (D), a rehearsal input for (C), `format_key` provisional and confirmed,
   the bound's "whichever first" and the covering deadline, rule 3's scope, 0.2.2's row unchanged,
   the sha256s checked before `notes`, the pin's fixed description.
+- 2026-11-05: submitted (`4a16fe5`), pushed with plan-064's close; `main`'s CI on it, run
+  42119230419, `success`, jobs Node.js 22.12.0 12 min 30 s and 22.21.0 15 min 46 s (none over 25
+  minutes). Step 2: the reply about this plan, its text shown to the approver first, sent on
+  2026-11-05 with this plan's id and its `submit` commit. Step 3: the decision-log added (dl-042).
