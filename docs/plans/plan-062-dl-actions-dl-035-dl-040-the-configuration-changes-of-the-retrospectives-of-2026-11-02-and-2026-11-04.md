@@ -133,7 +133,19 @@ Each point with a recommendation.
 
 ## The approver's rulings
 
-<!-- Filled when the approver rules the outline. -->
+Given by the approver on 2026-11-05: every point of the outline as recommended.
+1. **Point 1:** this plan on `main`; the work on `dl/dl-035-dl-040-actions`, one commit per row; one
+   `--no-ff` merge at the close.
+2. **Point 2:** the rows in the order of Steps.
+3. **Point 3:** one tooling task, on its own branch from this plan's, merged into it (a departure
+   from `deliver`, task-064's precedent); an audit that cannot produce a report writes a
+   `::warning::` and exits 0 (option (b), dl-035 A1 read literally).
+4. **Point 4:** dl-039 R1 and R2's checks from now on, for the task and for this plan's branch; no
+   clean clones.
+5. **Point 5:** `repository-practice` 1.2 as written, with the register's header.
+6. **Point 6:** the notes as written; the optional note on dl-034 left to the approver at row 7.
+7. **Point 7:** each row closed in the commit that settles it; row 14 unchanged.
+8. **Point 8:** `main` pushed at `submit`, at the merge and once at the close.
 
 ## Steps
 
