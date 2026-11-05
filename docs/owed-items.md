@@ -23,7 +23,6 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 
 | Item | Source | Owner | Trigger |
 |---|---|---|---|
-| CI policy for advisories in transitive dependencies (met again by bug-009, answered by an override) | bug-004 › note 2026-10-24; bug-009; dl-035 A4 (closes it); dl-038 D1 | approver | the tooling task of dl-035 A4 |
 | `check:pins` covering `overrides` in `package.json`, which it does not read today (`src/check-pins.ts`, its dependency fields) | bug-009; task-071 | approver | the next dependency update |
 | The `minimatch` override removed once `eslint`, `@eslint/config-array` and `typescript-eslint` accept `minimatch` 11; until then it forces every `minimatch` of the tree onto 11.0.3, a later dependency needing another major included, with no warning | bug-009; task-071 | approver | the next dependency update |
 | Recheck W-01 … W-14 and the open notes against 0.3.x (F-003, F-005, F-012, F-017) | dl-021's note; `wingfoil-cli` rule 5 | W10 | the pin bump |
@@ -83,3 +82,4 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | A decision-log making in-place amendment general; see also G7 | plan-031 › Context | merged into G7 by dl-038 D1 (plan-061) |
 | `--param` applies to an `entries` composition only (hit again at prel-003) | plan-043 › note (task-039's review) | merged into "The private projects' check scripted" by dl-038 D1 (plan-061) |
 | G12: the suite's duration tracked against the CI timeout | dl-028 D1 (inventory §7); dl-039 R3; dl-038 D1 | plan-062 (dl-039 R3: `tooling-delivery` v3 and `kanban-delivery` v5 record every task's branch CI job durations, a job over 25 minutes to the approver) |
+| CI policy for advisories in transitive dependencies (met again by bug-009, answered by an override) | bug-004 › note 2026-10-24; bug-009; dl-035 A4 (closes it); dl-038 D1 | task-076 (plan-062): the root's audit gates the runtime tree, the whole tree only warns (dl-035 A1) |
