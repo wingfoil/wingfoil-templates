@@ -17,34 +17,45 @@ WingFoil UI does not send to WingFoil itself and that held when reproduced on Wi
 (plan-064 › Execution Notes, step 1):
 
 - **F-043** (`request`): a frontmatter field cannot be declared as a reference to an element of a
-  type; a `sprint` naming no Sprint is accepted at `memory submit`, and the element is never
-  selected by a `where` on that field (bug-015). The check accepts a type's not-applicable value
-  where the type allows it.
-- **F-044** (`defect`): a gate's approval is offered before the phase that owns it: `workflow
-  status` lists it as carried by no open workflow while the owning phase is pending, and `memory
-  approve` moves the element at once (dl-041 G1 waits on it).
-- **F-045** (`defect`): `workflow status` heads the elements waiting at a gate "ungated elements".
-- **F-046** (`gap`): an identity that is not a member of `dna.yaml` › `team` starts a workflow and
-  finalizes a non-approval step, each committed under its name.
+  type; a `sprint` naming no Sprint is accepted at `memory submit`. The consequence for a `where` on
+  that field (the element never selected) is bug-015's, cited outside `## Observed`. A check keeps a
+  type's not-applicable value (`n/a — <reason>`, 0.3.2's `not_applicable_allowed`) where the type
+  allows it. Distinct from F-018 (`where` on `iterate_over`).
+- **F-044** (`request`): an element that a later phase of an open instance will select is offered
+  for approval before that phase: `workflow status` lists it among the elements no open workflow
+  carries (WingFoil spec-017 §5.1 defines that list), and `memory approve` moves it at once
+  (REQ-SEC-03 limits only who approves). The request: not offered before its phase. dl-041 G1 waits
+  on it. Distinct from F-039 (an approval step that returns) and F-025; names F-045.
+- **F-045** (`request`): the same list is headed "ungated elements", meaning "not carried by a
+  workflow", though each element is waiting at a gate (spec-017 §5.1); the request: a heading that
+  says so (for example "elements waiting at a gate outside any workflow"). Names F-044.
+- **F-046** (`request`): an identity that is not a member of `dna.yaml` › `team` starts a workflow
+  and finalizes a non-approval step, each committed under its name; WingFoil requires an identity
+  and checks roles for approvals only (REQ-SEC-01, REQ-SEC-03), so this is a request: membership
+  checked for every step that commits. Distinct from F-041 (a role no member holds).
 
 ## Acceptance
 
 `npm run build` precedes the commands.
 
 1. **Four notes**, `docs/wingfoil-feedback/F-043-…md` … `F-046-…md`, in the inbox format (README ›
-   Rules, WingFoil dl-163 R4): the six fields in order (`id`, `title`, `kind` as listed in Context,
-   `status: open`, `wingfoil_version: 0.3.2`, `answered_by: []`; `wingfoil_version` written by hand,
-   the governance pin being 0.2.2); a body opening with `New note (task-077).`, its origin in this
-   repository (public element ids: plan-064, the bug or decision-log it serves) and that WingFoil UI
-   reported it on adopting this repository's packs; then `## Observed` with WingFoil 0.3.2's version
-   and commit (`6de2e13c`), the configuration, the commands, their output (excerpts marked) and exit
-   codes; then `## Expected`; no `## Replies`. Before writing each, the inbox is searched for a note
-   on the same point (none expected).
-2. **Reproduced with WingFoil alone**: each `## Observed` comes from a scratch project outside the
+   Rules, WingFoil dl-163 R4): the six fields in order (`id`, `title`, `kind: request`, `status:
+   open`, `wingfoil_version: 0.3.2`, `answered_by: []`; `wingfoil_version` written by hand, the
+   governance pin being 0.2.2); a body opening with `New note (task-077).`, its origin in this
+   repository (public element ids: plan-064, the bug or decision-log it serves), that WingFoil UI
+   reported it on adopting this repository's packs, the WingFoil rule it builds on (spec-017 §5.1,
+   REQ-SEC-01, REQ-SEC-03) and the notes it is distinct from (Context); then `## Observed` with
+   WingFoil 0.3.2's version and commit (`6de2e13c`), the configuration, the commands, their output
+   (excerpts marked) and exit codes; then `## Expected` (for F-043, where the check runs, at `memory
+   submit` as the required-fields check does, its error, and a reference to a `deprecated` element);
+   no `## Replies`. Before writing each, the inbox is searched for a note on the same point (none
+   found by the body's review).
+2. **Reproduced with WingFoil alone**, each `## Observed` from a scratch project outside the
    repository (`git init`, WingFoil 0.3.2 installed with `npm ci` from `src/matrix/wingfoil-0.3.2/`,
-   `wingfoil init --template Scrum` or `Kanban --no-interactive`, a fictional `.example` approver
-   identity, configuration written by hand where a note needs one, never this repository's packs); a
-   point that does not reproduce so goes to the approver (dl-019) before its note is written.
+   `wingfoil init --template <Scrum|Kanban> --no-interactive`, fictional `.example` identities,
+   configuration written by hand where a note needs one, never this repository's packs), as Design
+   lists per note; a point that does not reproduce so goes to the approver (dl-019) before its note
+   is written.
 3. **No private content:** no local path, non-public repository, private project, the maintainer's
    name or email, or an intermediary session (`repository-practice` rules 1, 2); WingFoil UI named
    by project; WingFoil references are public ids, tags or commits.
@@ -61,10 +72,24 @@ WingFoil UI does not send to WingFoil itself and that held when reproduced on Wi
 
 ## Design
 
-Branch `task/task-077-feedback-notes-ui` from `bug/ui-feedback-2026-11-02` at this task's add. One
-commit per note with its ledger row; the notes from the reproductions of Acceptance 2, in a scratch
-project per note (or one with a fresh element per note); the notes' wording reviewed against
-WingFoil's public ids. Then the checks and the notes.
+Branch `task/task-077-feedback-notes-ui` from `bug/ui-feedback-2026-11-02` at this task's add. Red
+steps: none of code (dl-018 R2's exception, as task-064 and task-073); the inbox tests checked by
+mutation instead, on a scratch copy: a gap in the numbering (`assertNumbering`), a ledger cell
+changed (`assertLedger`), the opening line changed (`assertOpenings`), two fields swapped
+(`assertFields`), `## Expected` removed (`assertSections`), each failing, and a count of `New note
+(task-077).` once per note. The reproduction per note, each in a scratch project:
+- F-043: a `sprint` type written by hand, `task.template.frontmatter.required: [sprint]` with
+  `not_applicable_allowed: [sprint]`; a task whose `sprint` names no Sprint, `memory submit` exit 0;
+  a task with `n/a — <reason>`, accepted (what a check keeps).
+- F-044: a three-phase custom workflow on `defaults` (enter the `pending` gate, work, decide with
+  `memory.approve` and `approval`); with `work` current, `workflow status` and `memory approve`
+  (`pending → approved`, exit 0); then what the instance does once `decide` is reached (`workflow
+  next`, `workflow status`): whether the step closes or waits.
+- F-045: one element in `pending`, `workflow status`.
+- F-046: a member holding `approver` and a second git identity in no `team` entry; with the second,
+  `workflow start bug-ingest` and `workflow finalize` of `capture`; `git log --format='%an <%ae>'`.
+
+One commit per note with its ledger row. Then the build review, the checks and the notes.
 
 ## Execution Notes
 
@@ -75,3 +100,8 @@ WingFoil's public ids. Then the checks and the notes.
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
 - 2026-11-05: written under plan-064 (step 4), added on its branch, no other task added on any
   branch meanwhile (W-14).
+- 2026-11-05: independent review of the body: approve after amendments, nothing blocking; applied:
+  every note `request` (F-044 and F-045 follow spec-017 §5.1, F-046 REQ-SEC-01 and REQ-SEC-03),
+  F-044 and F-045 naming each other, the reproduction per note, the notes each is distinct from, the
+  red steps by mutation of the inbox tests, F-043's consequence outside `## Observed` and its
+  Expected's place, error and `deprecated` case, the second identity, the nits.
