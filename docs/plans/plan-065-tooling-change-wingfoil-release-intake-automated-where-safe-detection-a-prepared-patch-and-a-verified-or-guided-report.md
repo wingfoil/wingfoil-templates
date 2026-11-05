@@ -61,59 +61,88 @@ CHANGELOG lines).
 Each point with a recommendation.
 
 1. **One `tooling-change` plan, four tasks**, one `tooling-delivery` v3 iteration each, under WIP 1,
-   in this order (each depends on the one before):
+   each added only after the one before is done (W-14), in this order:
    - (A) **detect**: `src/intake-detect.ts` and `npm run intake:detect`, reading the registry's
-     version list (`npm view wingfoil versions --json`, its output injectable for the tests) and
-     `compat.yaml`, printing the missing versions and their class (patch, minor, major against the
-     newest recorded), and `.github/workflows/intake.yml` (schedule daily and `workflow_dispatch`,
-     `permissions: contents: read`, actions pinned by SHA as `ci.yml`'s test asserts), its summary
-     written to the job summary; red first with a test of the workflow file as `ci-workflow.test.ts`
-     does, and of the script on fixture lists;
+     version list (`npm view wingfoil versions time --json`, injectable for the tests) and
+     `compat.yaml`; ignoring pre-releases and unpublished versions; each missing version validated
+     as strict `X.Y.Z` before it reaches a path or a shell, classed against its predecessor (patch;
+     minor or major, a 0.x minor counting as breaking); a version below the newest recorded (a
+     backport) reported guided, never prepared; several missing versions listed and prepared one at
+     a time. `.github/workflows/intake.yml`: `schedule` daily and `workflow_dispatch`, `permissions:
+     contents: read`, actions pinned by SHA, `concurrency` with no cancel of a running verify,
+     `timeout-minutes`; its signal (point 5). Merged first, so that the file exists on `main` for
+     `workflow_dispatch`;
+   - (D) **the release-pinned parts derived**, second, so that a prepared diff passes `npm test`
+     without hand edits: task-045's rule kept (only `tests/compat.test.ts` and
+     `compat-fixture.test.ts` read the real `compat.yaml`, every other test takes `FROZEN_COMPAT`);
+     `tests/validate.test.ts`'s stubs, keyed today by each real release (`'0.3.2 (6de2e13c)'`),
+     derived for every release the file lists; spec-001 §12's example and its prose per release
+     replaced by a pointer to `compat.yaml` (each release's facts in its `notes`), the spec half of
+     `compat.test.ts`'s dl-010 equality dropped and the fixture half kept, an amendment of spec-001
+     in place approved by the task's merge OK (as task-059 and task-074 did for §12); dl-009's
+     Execution Note per intake stopped (point 4's decision);
    - (B) **prepare**: `src/intake-prepare.ts` and `npm run intake:prepare -- <version>`, writing the
-     pin folder (`package.json` with the exact version, the lockfile by `npm install
-     --package-lock-only --ignore-scripts`), the `compat.yaml` row (`reads` and `capabilities`
-     copied from the newest recorded release, `format_key: true`, `notes: "TO BE WRITTEN at the
-     intake"`), the recomputed ranges in `catalog.yaml` (the code `check:packs`' `catalog-range`
-     already uses), the golden fixture's `compat.yaml` (dl-010), and `npm run index`; deterministic
-     (two runs byte-identical) and refusing a version already recorded; tested offline with a
-     fixture tree;
-   - (C) **verify and report**: the intake job runs (B) in its workspace, then the CI's checks on
-     the new release (the matrix for it, `validate`, the golden step, the overlays, `check:runs`,
-     `validate:publication`), reads the release's CHANGELOG section from the GitHub tag, and writes
-     the report, **verified** or **guided**, with the prepared diff as an artifact
-     (`actions/upload-artifact`, pinned); never a push, a pull request or a comment;
-   - (D) **derived release-pinned parts** (part 4): the tests that name real releases read them
-     from `compat.yaml` (or the fixture (B) regenerates), and spec-001 §12's example replaced by a
-     pointer to `compat.yaml` with dl-010's equality checked by a test, an amendment of spec-001 in
-     place approved by the task's merge OK, as task-059 and task-074 did for §12.
-2. **The bar of "verified"** (part 2). Recommended as the request writes it, read conservatively:
-   the CHANGELOG section's headings `Removed`, `Security`, `Deprecated` or one containing
-   `Breaking`, and any `Upgrading` line naming a file kind of `compat.yaml`'s `kinds`, make it
-   guided, as does a red check, a missing or unreadable CHANGELOG section, a minor or a major, or a
-   `format:` value the release accepts beyond those recorded (read from the matrix's run on it);
-   the report lists each reason. A verified report is a proposal, never a record: the intake plan
-   still writes `notes` and the approver merges.
-3. **Network access.** Recommended: only the detect and verify job reads the network (the npm
-   registry, the GitHub tag's CHANGELOG over HTTPS, no token); `ci.yml` stays as it is; tests stay
-   offline (the `testing` directive), with the registry's and the CHANGELOG's responses as
-   fixtures.
-4. **The intake for a verified patch** (part 3 and part 6). Recommended: a governance decision-log
-   of its own, hosted here (`decision-log-ingest` › `capture`, then the approver's `rule`), for
-   `wingfoil-release-intake` v7: a verified patch's intake runs its phases on the prepared diff
-   (`record` applied from the artifact, `recheck` read from the report, `plan-migrations` empty by
-   the bar, `notify` as today), and part 6, whether a verified patch takes dl-029 T2's patch case by
-   default in `retrospective-start` (recommended: yes, the retrospective covering it closing before
-   WingFoil's next release planning, as T2's patch case says, so the automatic path is not held by
-   a hand-run phase); applied by this plan's last row after its ruling.
-5. **The checks** (dl-039): each task's build review first, then once on its frozen commit its
-   branch CI and the local list; the intake workflow's first real run (`workflow_dispatch` on `main`
-   after the merge) recorded at the close, with no missing version expected (0.3.2 is the newest).
-6. **G12** (dl-039 R3): the intake job is separate from `ci.yml` and runs only when a version is
-   missing, so the CI's duration is unchanged; the intake job's duration recorded at its first run
-   with a version (or at the close for a no-op run).
-7. **The reply about this plan**, as asked by the approver on 2026-11-05: this plan's id and its
-   `submit` commit once filed, and the plan id of the first automated intake later; its text shown
-   to the approver first; nothing of it written here beyond this point.
+     pin folder (`package.json` with the exact version and a placeholder description replaced at the
+     intake, the lockfile by `npm install --package-lock-only --ignore-scripts` with the job's named
+     Node.js and npm), the `compat.yaml` row (`reads` and `capabilities` carried from the newest
+     recorded release under point 4's reading of dl-021 R4, `format_key` from the checks, `notes`
+     a placeholder), the recomputed ranges in `catalog.yaml` (the code `check:packs` uses, in
+     `src/tag-rules.ts`), the golden fixture's `compat.yaml` (dl-010), and `npm run index`;
+     deterministic for a given lockfile (two runs byte-identical, tested offline with an injected
+     resolver and a fixture tree); refusing a version already recorded;
+   - (C) **verify and report**, two jobs: **prepare** runs (B) and runs no WingFoil release, then
+     uploads the diff (`actions/upload-artifact`, pinned, `retention-days` set), restricted to an
+     allowlist (`src/matrix/wingfoil-<v>/`, `compat.yaml`, `catalog.yaml`, `CATALOG.md`,
+     `catalog-index.json`, the fixture's `compat.yaml`), each file's sha256 in the report;
+     **verify** downloads it and runs the checks on the new release (`npm test`, the matrix for it,
+     `validate`, the golden step, the overlays, `check:runs`, `validate:publication`, `check:pins`,
+     `npm audit` on the new lockfile) on Node.js 22.21.0 and 22.12.0, with no `actions/cache`
+     save; reads the CHANGELOG section from a URL fixed in code (`wingfoil/wingfoil`, tag
+     `v<version>`, never the registry's `repository` field), its text written only to the job
+     summary, escaped as `ci.yml` escapes; writes the report, **verified** or **guided** (point 2).
+     Never a push, a pull request or a comment. The verified lockfile is the artifact's, applied as
+     is at the intake, never regenerated, its sha256 checked.
+2. **The bar of "verified".** Recommended, read conservatively; any of these makes it guided, each
+   reason listed: a red check or an advisory; a minor, a major or a backport; a CHANGELOG section
+   missing or unreadable, or a tag not yet published; a heading `Removed`, `Security` or
+   `Deprecated`, or one containing `Breaking`; any line naming `format`, `format:` or a kind of
+   `compat.yaml`'s `kinds`; any `Added` or `Changed` entry naming a command or a feature (a possible
+   capability, dl-021 R4). `format_key: true` is measured, by publication mode's zero-warning run.
+   No probe of unknown `format:` values (WingFoil's refusal of one is not established). Measured
+   against 0.3.1 and 0.3.2, both would have been guided: their CHANGELOGs add commands and
+   features. A verified report is a proposal, never a record.
+3. **Network access.** The only new endpoints are the npm registry's version list and the GitHub
+   tag's CHANGELOG, over HTTPS, with no token; `ci.yml` is unchanged; tests stay offline (the
+   `testing` directive), the responses as fixtures. `--before=<publish time>` for the lockfile is
+   not used (it would freeze older, possibly vulnerable, dependencies); the audit decides.
+4. **A governance decision-log**, hosted here (`decision-log-ingest` › `capture`, then the
+   approver's `rule`), for `wingfoil-release-intake` v7, with the options (a) no workflow change,
+   the report feeding today's hand-run `record`; (b) v7: a verified patch's intake applies the
+   artifact in `record`, reads `recheck` from the report, `plan-migrations` empty by the bar,
+   `notify` as today; (c) a separate patch-intake workflow. Recommended (b), with: dl-021 R4 read as
+   a carry-forward (a capability carries over unless the CHANGELOG removes it; a new one only from
+   an `Added` entry, which makes the report guided); dl-009's note per intake stopped (§12's facts
+   in `notes`); part 6, a verified patch takes dl-029 T2's patch case by default only while a
+   retrospective covering its window is open or due, at most three patches or 14 days after the
+   intake that started it, dl-040 D1 … D3 still applying. Applied by a dl actions row of this plan
+   after its ruling: a departure from the separate dl actions plan of plan-062, stated, since the
+   change belongs with the tooling it serves.
+5. **Detection's signal.** A green scheduled run nobody reads is no signal. Recommended: a run that
+   finds a missing version ends red, with an `::error::` naming it (GitHub notifies the workflow's
+   last editor), and stays red daily until the intake records it; the register's row "the intake
+   workflow read" asks the approver to read its runs weekly, since GitHub disables a scheduled
+   workflow after 60 days without repository activity.
+6. **The checks** (dl-039): each task's build review first, then once on its frozen commit its
+   branch CI and the local list. (C)'s jobs are tried on its branch by `gh workflow run intake.yml
+   --ref task/<id>` (`actions: write`, run by claude with the approver's OK each time); the
+   workflow's first run on `main` after the last merge recorded at the close, with no missing
+   version expected (0.3.2 is the newest).
+7. **G12** (dl-039 R3): `intake.yml` is separate from `ci.yml` and verifies only when a version is
+   missing, so the CI's duration is unchanged; its jobs' durations recorded at its first run.
+8. **The reply about this plan**, as asked by the approver on 2026-11-05: this plan's id and its
+   `submit` commit once filed, its text shown to the approver first; the plan id of the first
+   automated intake later, a row of `docs/owed-items.md` at the close; nothing of the requester
+   written here or in that row.
 
 ## The approver's rulings
 
@@ -143,3 +172,8 @@ Each point with a recommendation.
 - 2026-11-05: written as asked by the approver on 2026-11-02 and 2026-11-05, after plan-064's
   merge; `workflow` and `phase` filled by editing the draft (W-02). Next free numbers when written:
   plan-066, task-078, dl-042, bug-016, prel-007, F-047.
+- 2026-11-05: independent review: approve after amendments, three blocking (task-045's rule for
+  (D); the format clause not measurable; copying capabilities against dl-021 R4); applied with the
+  others: (D) second, the two jobs and the artifact's allowlist and sha256, the lockfile applied as
+  is, the missing checks, detection's signal and edge cases, the CHANGELOG's fixed source, the
+  branch runs by dispatch, point 4's options and bounds, the reply's later part as a row.
