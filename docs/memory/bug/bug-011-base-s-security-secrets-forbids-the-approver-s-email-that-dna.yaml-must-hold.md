@@ -2,7 +2,7 @@
 id: bug-011-base-s-security-secrets-forbids-the-approver-s-email-that-dna.yaml-must-hold
 type: bug
 title: "base's security-secrets forbids the approver's email that dna.yaml must hold"
-status: pending
+status: approved
 severity: "minor"        # critical | major | minor
 pack: "pack-foundation-base"
 tags: ["packs","feedback"]
