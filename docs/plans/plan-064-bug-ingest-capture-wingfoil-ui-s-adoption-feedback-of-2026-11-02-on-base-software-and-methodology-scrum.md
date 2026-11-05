@@ -2,7 +2,7 @@
 id: plan-064-bug-ingest-capture-wingfoil-ui-s-adoption-feedback-of-2026-11-02-on-base-software-and-methodology-scrum
 type: plan
 title: "bug-ingest capture: WingFoil UI's adoption feedback of 2026-11-02 on base, software and methodology/scrum"
-status: draft
+status: active
 workflow: "bug-ingest"
 phase: "capture"
 tags: ["process","bug","feedback","packs"]
