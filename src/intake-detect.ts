@@ -63,7 +63,9 @@ export function detectMissing(registry: unknown, recorded: readonly string[]): D
   const known = [...recorded].sort(semver.compare);
   const oldest = known[0];
   const newest = known[known.length - 1];
-  if (oldest === undefined || newest === undefined) return refused('compat.yaml records no release');
+  if (oldest === undefined || newest === undefined) {
+    return refused('compat.yaml records no release');
+  }
   const recordedSet = new Set(known);
   const all = [...new Set([...versions, ...known])].sort(semver.compare);
   const lines: string[] = [];

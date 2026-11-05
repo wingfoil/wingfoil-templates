@@ -53,7 +53,9 @@ export function runIntakeDetect(argv: string[], cwd: string): Outcome {
   if (report.code === 2) return { code: 2, stdout: [], stderr: report.errors };
   const stdout = [...report.lines];
   if (github && report.code === 1) {
-    for (const line of report.lines) stdout.push(`::error title=WingFoil release not recorded::${line}`);
+    for (const line of report.lines) {
+      stdout.push(`::error title=WingFoil release not recorded::${line}`);
+    }
   }
   return { code: report.code, stdout, stderr: [] };
 }
