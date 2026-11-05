@@ -57,3 +57,4 @@ selected), while `release.sprint` is a reference with no exception.
 - 2026-11-05: independent review: approve after amendments, nothing blocking; applied: the `scrum`
   directive, the not-applicable value a WingFoil check must accept and `release.sprint`'s, the
   release case's source, "set", how to get the tag's tree.
+- 2026-11-05: re-review: approve.

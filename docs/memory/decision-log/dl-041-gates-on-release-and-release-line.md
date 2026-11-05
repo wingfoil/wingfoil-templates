@@ -48,9 +48,10 @@ new gate, a behaviour change; `pack-semver` has no rule for a `requires` range m
   ratification after it, and its `reject: in-development` has no meaning for a published release.
 - **(b) The approvals kept in the workflows, as today,** and a note in `software`'s section and
   README that a project not running the engine follows those steps by hand, the approver's OK
-  recorded before `releasing` and before the tag, never moving a release past `releasing` by
-  `submit` alone. For: no change to any pack's state machine or workflows (only `software`'s
-  wording), no out-of-phase approval. Against: the type itself still lets `submit` reach `released`.
+  recorded at `approve-release` (in `releasing`, before the release commit) and at `publish` (before
+  the tag), never moving a release past `releasing` by `submit` alone. For: no change to any pack's
+  state machine or workflows (only `software`'s wording), no out-of-phase approval. Against: the
+  type itself still lets `submit` reach `released`.
 - **(c) (a) for `release` only.** The same against as (a), without the line's gate.
 - **(d) (b) now, (a) once WingFoil binds a gate's approval to the phase that owns it,** a feedback
   note asking it (plan-064 point 4); the release of `software` 2.0.0 with its dependants then.
@@ -64,13 +65,14 @@ The points below are **proposed**; they become rulings when the approver approve
 - **G1 — Option (d).** Until a released WingFoil binds a gate's approval to the phase that owns it
   (the feedback note of plan-064 point 4), `software` keeps the approvals in `release-submit` ›
   `approve-release` and `release-publishing` › `publish`; its section and README state that a
-  project not running the engine follows those steps by hand, the approver's OK recorded before
-  `releasing` and before the tag, never moving a release past `releasing` by `submit` alone. When a
-  release that `compat.yaml` lists binds gates to their phase, (a) is applied by a decision of its
-  own, which rules the approvals' shape: `publish`'s approval kept before the tag, the gate on
-  `releasing` approved at `mark-released` as the ratification that publication completed (a reject
-  there returns a release whose publication failed), and `approve-release` kept or dropped; a
-  release approved two or three times is that decision's trade-off.
+  project not running the engine follows those steps by hand, the approver's OK recorded at
+  `approve-release` (in `releasing`, before the release commit) and at `publish` (before the tag),
+  never moving a release past `releasing` by `submit` alone. When a release that `compat.yaml` lists
+  binds gates to their phase, (a) is applied by a decision of its own, which rules the approvals'
+  shape: `publish`'s approval kept before the tag, the gate on `releasing` approved at
+  `mark-released` as the ratification that publication completed (a reject there returns a release
+  whose publication failed), and `approve-release` kept or dropped; a release approved two or three
+  times is that decision's trade-off.
 - **G2 — The `bug` gate at `planned` stays.** WingFoil UI gave no reason for dropping it. Here,
   being listed as waiting is the intended signal: the approver's go-ahead before a fix starts
   (`planned → in-progress`), and the won't-fix exit (`planned → closed`) it carries. That
@@ -83,12 +85,12 @@ The points below are **proposed**; they become rulings when the approver approve
   unless their own content changes.
 - **G4 — Where:** G1's wording in `software`'s AGENTS.md section and README, in its next release
   (with bug-012's change), a row of `docs/owed-items.md`; G1's later part, a row whose trigger is a
-  WingFoil release binding gates to their phase; G3 in `pack-semver` by a dl actions plan, a row
-  whose trigger is the first pack release that moves a `requires` range (at the latest G1's
-  `software` 2.0.0), beside the register's row on `pack-semver`'s rule for fixes and changed
-  defaults. The rows are added in the commit that records the ruling (dl-036 R2). WingFoil UI's
-  local gates stay its deviations until then; a notice at the first fix published (plan-064 ruling
-  7).
+  WingFoil release binding gates to their phase, in two steps: the decision ruling the approvals'
+  shape under (a), then `software` 2.0.0; G3 in `pack-semver` by a dl actions plan, a row whose
+  trigger is the first pack release that moves a `requires` range (at the latest G1's `software`
+  2.0.0), beside the register's row on `pack-semver`'s rule for fixes and changed defaults. The rows
+  are added in the commit that records the ruling (dl-036 R2). WingFoil UI's local gates stay its
+  deviations until then; a notice at the first fix published (plan-064 ruling 7).
 
 ## Execution Notes
 
@@ -100,3 +102,6 @@ The points below are **proposed**; they become rulings when the approver approve
   approved after publication), G2 argued without a reason UI did not give, G3 in `pack-semver`'s
   terms and §6.3's form with the dependants' path, G4's triggers, the nits (the release slot,
   `release-line`'s edges, (b)'s wording).
+- 2026-11-05: re-review: approve after one amendment (the approver's OK at `approve-release`, in
+  `releasing`, and at `publish`, not before `releasing`), applied with its nit (G1's later part in
+  two steps).

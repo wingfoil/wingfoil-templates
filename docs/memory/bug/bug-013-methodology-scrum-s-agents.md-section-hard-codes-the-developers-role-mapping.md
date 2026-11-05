@@ -44,3 +44,4 @@ The section names the mapping as `scrum`'s default and points to the workflows' 
   Severity `minor`, proposed: as bug-012; fixed by the next release of `methodology/scrum`.
 - 2026-11-05: independent review: approve after amendments, nothing blocking; applied: where the
   mapping lives (the workflows' roles and `dna.yaml`, not `roles.yaml`), how to get the tag's tree.
+- 2026-11-05: re-review: approve.

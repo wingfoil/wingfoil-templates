@@ -42,7 +42,7 @@ default (spec-001 §8), so that a project's choice reaches the region.
    workflow list --format json` shows no diagnostic.
 2. The composer's `AGENTS.region.md` reads "`<agent_name>` acts as developer, reviewer, qa and
    architect" and names the `bug` gates at `triaged` and `planned`, whatever the project's
-   `dna.yaml` and    `memory.yaml` later say; the composed `.wingfoil/dna.yaml` ›
+   `dna.yaml` and `memory.yaml` later say; the composed `.wingfoil/dna.yaml` ›
    `team.agents[0].executes_as` lists six roles: `facilitator`, `product-owner`, `developer`,
    `reviewer`, `qa`, `architect`.
 
@@ -56,3 +56,5 @@ default (spec-001 §8), so that a project's choice reaches the region.
 - 2026-11-05: independent review: approve after amendments, nothing blocking; applied: two of the
   five gates named, the default composition's six roles against the region's four (reproduced),
   `<agent_name>`, how to get the tag's tree.
+- 2026-11-05: re-review: approve (its nit applied). bug-011, bug-013, bug-014 and bug-015 likewise
+  approved by the re-review.

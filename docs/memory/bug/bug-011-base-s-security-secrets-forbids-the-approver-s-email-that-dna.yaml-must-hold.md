@@ -59,3 +59,4 @@ a message).
   approval's mechanism (the approving identity's email; the refusal reproduced on 0.3.2), the git
   identity's email as the second exception, the class left to the release, Reproduction's steps 3
   and 4, "names" dropped, how to get the tag's tree.
+- 2026-11-05: re-review: approve.

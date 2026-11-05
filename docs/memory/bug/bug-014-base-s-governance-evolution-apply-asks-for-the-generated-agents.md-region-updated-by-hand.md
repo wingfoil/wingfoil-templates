@@ -46,3 +46,4 @@ pack added or removed), regenerated (pasted by hand until WingFoil exports AGENT
   no failing command; fixed by the next release of `base`.
 - 2026-11-05: independent review: approve after amendments, nothing blocking; applied: regeneration
   by the composer, the composition as a cause, how to get the tag's tree.
+- 2026-11-05: re-review: approve.
