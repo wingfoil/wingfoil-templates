@@ -295,3 +295,11 @@ Then, in dl-039 R2's order:
   for the `tooling-change` plan or the first stage charter: with several stricter packs, whether the
   check before the swap fails when one of them has no `exit-check` directive, which a tag alone
   cannot tell.
+- 2026-11-05: checks (ruling 8, dl-039 R1 and R2), once, on the frozen head `c0b5067`: the branch
+  CI, run 42066442833, `success`, jobs Node.js 22.12.0 20 min 38 s and 22.21.0 15 min 52 s (none
+  over 25 minutes), no warning annotation; from a clean working tree of `c0b5067` on Node.js
+  22.21.0: `npm ci`, `npm run build`, `npm run validate:publication`, the golden tree in
+  publication mode and `npm run -s wingfoil -- workflow list` exit 0; `directives list --format
+  json` exits 0 with `"warnings": []`. This commit changes only `docs/plans`, after the checks'
+  head: no new run (dl-039 R2). Privacy check of the branch's diff (`a663618...c0b5067`) and
+  messages: no local or scratch path, no private project, no intermediary session.
