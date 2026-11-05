@@ -1,5 +1,8 @@
 import { strict as assert } from 'node:assert';
-import { join } from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { delimiter, join } from 'node:path';
 import { describe, it } from 'node:test';
 
 import { loadYamlFile } from '../src/yaml-load';
@@ -83,7 +86,8 @@ describe('the CI workflow (task-013)', () => {
 
   it('runs every check, on every path', () => {
     for (const command of ['npm ci', 'npm run build', 'npm test', 'npm run lint',
-      'npm run check:pins', 'npm run check:schemas', 'npm run check:packs', 'npm audit',
+      'npm run check:pins', 'npm run check:schemas', 'npm run check:packs',
+      'npm audit --omit=dev',
       'npm run site -- --out "$RUNNER_TEMP/site"']) {
       const step = stepRunning(command);
       assert.ok(step !== undefined, command);
@@ -129,5 +133,91 @@ describe('the CI workflow (task-013)', () => {
       });
     assert.ok(scrum !== undefined && kanban !== undefined && runs !== undefined);
     assert.ok(scrum < kanban && kanban < runs, `${scrum} < ${kanban} < ${runs}`);
+  });
+
+  it('audits the root\'s runtime tree as a gate, and the whole tree only to warn (dl-035)', () => {
+    const blocking = steps.find((step) => step.name === 'Audit the root lockfile');
+    assert.equal(blocking?.run?.trim(), 'npm audit --omit=dev', 'the gate on the runtime tree');
+    assert.equal(blocking?.if, undefined, 'on branches and tags');
+    const warning = steps.find((step) => step.name === WARNING_STEP);
+    assert.ok(warning !== undefined, WARNING_STEP);
+    assert.equal(steps.indexOf(warning), steps.indexOf(blocking) + 1, 'right after the gate');
+    assert.equal(warning.if, undefined, 'on branches and tags');
+    assert.ok(!Object.hasOwn(warning, 'continue-on-error'));
+  });
+});
+
+const WARNING_STEP = 'Audit the whole root tree, warning only (dl-035)';
+
+interface AuditRun { status: number | null; warnings: string[]; args: string }
+
+/** Runs the warning step's script under `bash -e`, as GitHub does, with a stub `npm` first on the
+ * PATH that prints `output` and exits with `code`. */
+function runWarningStep(output: string, code: number): AuditRun {
+  const run = steps.find((step) => step.name === WARNING_STEP)?.run;
+  assert.ok(run !== undefined, WARNING_STEP);
+  const dir = mkdtempSync(join(tmpdir(), 'ci-audit-'));
+  try {
+    const bin = join(dir, 'bin');
+    const runnerTemp = join(dir, 'runner-temp');
+    mkdirSync(bin);
+    mkdirSync(runnerTemp);
+    writeFileSync(join(dir, 'output'), output);
+    const stub = join(bin, 'npm');
+    writeFileSync(stub, ['#!/usr/bin/env bash', `printf '%s' "$*" > '${join(dir, 'args')}'`,
+      `cat '${join(dir, 'output')}'`, `exit ${code}`, ''].join('\n'));
+    chmodSync(stub, 0o755);
+    const result = spawnSync('bash', ['-e', '-c', run], {
+      encoding: 'utf8',
+      env: { ...process.env, PATH: `${bin}${delimiter}${process.env['PATH'] ?? ''}`,
+        RUNNER_TEMP: runnerTemp },
+    });
+    const warnings = result.stdout.split('\n').filter((line) => line.startsWith('::warning'));
+    return { status: result.status, warnings, args: readFileSync(join(dir, 'args'), 'utf8') };
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+const REPORT = JSON.stringify({
+  auditReportVersion: 2,
+  vulnerabilities: {
+    minimatch: { name: 'minimatch', severity: 'moderate', isDirect: false, via: [], range: '<11' },
+    eslint: { name: 'eslint', severity: 'high', isDirect: true, via: ['minimatch'], range: '*' },
+  },
+  metadata: { vulnerabilities: { moderate: 1, high: 1, total: 2 } },
+});
+
+describe('the whole root tree\'s audit step (dl-035 A1, plan-062 ruling 3)', () => {
+  it('names every advisory in one warning and exits 0', () => {
+    const run = runWarningStep(REPORT, 1);
+    assert.equal(run.status, 0);
+    assert.equal(run.args, 'audit --json', 'the whole tree, no --omit');
+    assert.equal(run.warnings.length, 1, run.warnings.join('\n'));
+    for (const part of ['minimatch (moderate)', 'eslint (high)', 'dl-035']) {
+      assert.ok(run.warnings[0]?.includes(part), `${part} in ${run.warnings[0]}`);
+    }
+  });
+
+  const noReport: [string, string][] = [
+    ['an error object', JSON.stringify({ error: { code: 'ENOTFOUND',
+      summary: 'request to the registry failed' } })],
+    ['no output', ''],
+  ];
+  for (const [what, output] of noReport) {
+    it(`warns that the audit could not run on ${what}, and exits 0`, () => {
+      const run = runWarningStep(output, 1);
+      assert.equal(run.status, 0);
+      assert.equal(run.args, 'audit --json');
+      assert.equal(run.warnings.length, 1, run.warnings.join('\n'));
+      assert.match(run.warnings[0] ?? '', /could not run/);
+    });
+  }
+
+  it('writes no warning when the audit is clean', () => {
+    const run = runWarningStep(JSON.stringify({ auditReportVersion: 2, vulnerabilities: {} }), 0);
+    assert.equal(run.status, 0);
+    assert.equal(run.args, 'audit --json');
+    assert.deepEqual(run.warnings, []);
   });
 });
