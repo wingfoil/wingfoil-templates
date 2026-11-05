@@ -2,7 +2,7 @@
 id: task-077-feedback-notes-f-043-to-f-046-for-wingfoil-0.3.2-reference-fields-gate-approvals-out-of-phase-ungated-non-member-identities-plan-064
 type: task
 title: "Feedback notes F-043 to F-046 for WingFoil 0.3.2: reference fields, gate approvals out of phase, ungated, non-member identities (plan-064)"
-status: in-review
+status: approved
 pack: ""            # content-only task (tooling-delivery v3, dl-039 R1), plan-064
 depends_on: []
 tags: ["feedback","wingfoil"]
