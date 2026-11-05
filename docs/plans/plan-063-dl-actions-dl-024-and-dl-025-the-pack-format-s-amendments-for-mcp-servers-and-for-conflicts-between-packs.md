@@ -106,41 +106,53 @@ Each point with a recommendation; points 4, 7 and 9 are departures the approver 
      `mcp` fragment kind (point 4), one bump; the published packs stay at format 1, and the composer
      and the lint pick the schema by `format`; `schema/pack.v1.schema.json` the frozen copy (§5);
    - `catalog.yaml` format 2, since a version entry copies `conditional` (§11), with its frozen
-     `catalog.v1`; each version entry also records its `pack.yaml` format, so that a resolver
-     decides from the catalog alone (§11);
-   - `catalog-index.json` format 2 (spec-002 §3.3), with its schema's frozen copy;
+     `catalog.v1`; a format-2 version entry also records its `pack.yaml` format, so that a resolver
+     decides from the catalog alone (§11); the field is absent in format 1 and an absent field reads
+     as 1, so no published entry is edited (§11: an entry is never edited after publication, except
+     its `wingfoil` field); `tensions` is not copied into version entries (the index reads it from
+     the tags);
+   - `catalog-index.json` format 2 (spec-002 §3.3), with its schema's frozen copy; spec-002 CB-8
+     (`catalog.yaml`, `compat.yaml` and `schema/` unchanged by spec-002's tasks) still holds, since
+     the catalog's changes are spec-001's;
    - `pack-semver`: moving a pack's `pack.yaml` to a new format is **major** (a reader of the old
      format cannot read the new version; "in doubt, take the higher"), so a pack moves only when it
-     needs format 2's keys; the class is the approver's.
+     needs format 2's keys; a major of `base` breaks every `requires: base@^2`, so every dependent
+     pack would need a release, which is why the four published packs stay at format 1; a pack whose
+     first version needs format 2 (the `stage/*` packs) is born at format 2, so dl-025 D7's later
+     minor releases of each stage stay minor; the class is the approver's.
 4. **The `mcp` kind: specified now, its tooling when a WingFoil release reads it** (a departure from
    dl-024 D6, which lists `schema/`'s fragment schema and the F3.5 lint's D2 rules among the changes
    after approval). Recommended: spec-001 and spec-002 state the kind, its merge, its lint and the
    interim (dl-024 D5) now, the name provisional (D2); format 2's `pack.yaml` schema admits `mcp` in
-   `contents.fragments` and `formats` (so a later reader needs no format 3), unshippable through
-   §12's empty range; the fragment schema, the merge and the lint wait for a released WingFoil that
-   reads the kind and names it. Recorded in dl-024's notes; the register's row split, the remainder
-   a row of its own (owner approver, trigger: a WingFoil release whose CHANGELOG names the feature,
-   dl-024 D3). Alternative: all of it in the `tooling-change` plan (D6 as written): a first fragment
-   schema and code no pack can use, under a name that may change.
+   `contents.fragments` and `formats` (so a later reader needs no format 3, if WingFoil keeps the
+   name), unshippable through §12's empty range; the fragment schema, the merge, the lint and
+   `compat.yaml`'s `kinds` and `reads` (whose schema, `additionalProperties: false`, refuses a new
+   kind) wait for a released WingFoil that reads the kind and names it, with that task's format bump
+   or ruling and its note (rule 8). Recorded in dl-024's notes; the register's row split, the
+   remainder a row of its own (owner approver, trigger: a WingFoil release whose CHANGELOG names the
+   feature, dl-024 D3). Alternative: all of it in the `tooling-change` plan (D6 as written): a first
+   fragment schema and code no pack can use, under a name that may change.
 5. **The review findings' places**, as ruled on 2026-11-03, each in the row whose file it touches:
    dl-024's 1 (spec-002 §2.3 and `pack-authoring`), 2 (spec-001's places above), 3 (spec-001's
    WingFoil-side paragraph), 4 (§6.3), 5 (spec-001, D3 5's wording); dl-025's 1 (ii) (§14), 2 (the
-   places above), 3 (`pack-authoring` and spec-001 §10: escalation through `governance-evolution`),
-   4 (§6.5, §9, §18), 5 (`pack-authoring`), 6 (the nits: the waiver heuristic's exemption in §18 and
-   `pack-authoring`; gap 3's wording, "the highest class among the S directives", "by pack or axis"
-   in `pack-authoring`; the other three in point 10). Bodies stay as approved.
+   places above), 3 (escalation through `governance-evolution`: in `pack-authoring` and in §10's new
+   "Precedence" subsection, point 10 (i), as the agent's rule), 4 (§6.5, §9, §18), 5
+   (`pack-authoring`), 6 (the nits: the waiver heuristic's exemption in §18 and `pack-authoring`;
+   gap 3's wording, "the highest class among the S directives", "by pack or axis" in
+   `pack-authoring`; the other three in point 10). Bodies stay as approved.
 6. **The packs' own changes.** dl-025 D2 asks every directive to state its class on its first line,
    and `base`'s AGENTS.md section to state the table: published content, a release of each pack.
    Recommended: one row of `docs/owed-items.md` per pack (owner approver, trigger the next minor
    release of that pack, the change classed **minor**: content added, not wording only), the check
-   part of `pack-release-cycle` › `prepare` for any version prepared after this amendment (not gated
-   on format 2, which these packs need not take); `pack-authoring` defines the first line's place
-   (the line after the `# ` title, `Precedence: <class>` or `Precedence: law (<act>)`); WingFoil's
-   built-in directives cannot carry it and rely on `base`'s table. D7 itself lists only
-   `pack-authoring`. Alternative: four pack releases now.
+   in `pack-authoring`'s review list for any version prepared after this amendment (not gated on
+   format 2, which these packs need not take; no workflow changes); `pack-authoring` defines the
+   first line's place (the line after the `# ` title, `Precedence: <class>` or `Precedence: law
+   (<act>)`); WingFoil's built-in directives cannot carry it and rely on `base`'s table. D7 itself
+   lists only `pack-authoring`. Alternative: four pack releases now.
 7. **The feedback note** (a departure from `tooling-delivery` › `deliver`, as plan-062 ruling 3).
    Recommended: one note, the next free F number, for the `schema/` change (`wingfoil-cli` rule 8):
-   `pack.yaml`, `catalog.yaml` and `catalog-index.json` at format 2 (point 3); written by a
+   `pack.yaml` and `catalog.yaml` at format 2 (point 3), `catalog-index.json`'s bump as information
+   only (spec-002 §3.3: its schema is not part of the contract with WingFoil); written by a
    content-only task (dl-039 R1) on its own branch from this plan's, merged into it (task-064's
    precedent), with its ledger row, naming the `tooling-change` task that makes the change; the
    `mcp` fragment schema's note with its own task (point 4). F-035 already asks WingFoil for the MCP
@@ -203,3 +215,8 @@ Each point with a recommendation; points 4, 7 and 9 are departures the approver 
   stated as departures; point 6's lint not gated on format 2, its class and the line's place; no
   file under `schema/` on this branch; point 10 for finding 6's open questions; dl-020 R3 by
   analogy; the Handoff.
+- 2026-11-05: re-review: approve after amendments, nothing blocking; applied: the catalog's new
+  field absent in format 1 (no published entry edited), `compat.yaml` with the deferred `mcp` task,
+  "if WingFoil keeps the name", point 6's check in `pack-authoring` (no workflow change), the major
+  class's cascade and the `stage/*` packs born at format 2, the index as information in the note,
+  `tensions` not in the catalog, CB-8, D5's escalation in §10's subsection.
