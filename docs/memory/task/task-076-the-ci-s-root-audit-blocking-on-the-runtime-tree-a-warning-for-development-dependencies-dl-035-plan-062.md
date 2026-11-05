@@ -3,22 +3,74 @@ id: task-076-the-ci-s-root-audit-blocking-on-the-runtime-tree-a-warning-for-deve
 type: task
 title: "The CI's root audit: blocking on the runtime tree, a warning for development dependencies (dl-035, plan-062)"
 status: draft
-pack: ""            # the pack element id this task works on; empty for tooling tasks
+pack: ""            # tooling task (tooling-delivery v3, dl-035)
 depends_on: []
 tags: ["tooling","ci","dependencies"]
 ---
 
 ## Context
 
-<!-- Why this task exists, and the element it comes from (pack charter, spec, DL, bug). -->
+dl-035 (approved 2026-11-02) A1 and A4, applied by plan-062 (row 2, ruling 3). The CI's step
+"Audit the root lockfile" runs `npm audit` on the whole root tree and fails on any advisory: an
+advisory that reaches only development dependencies (bug-009) turned every branch and `main` red
+for about a day. dl-035 A1: that step runs `npm audit --omit=dev` and stays blocking; a second step
+runs `npm audit` on the whole root tree and never fails at the shell level (no
+`continue-on-error`, which `tests/ci-workflow.test.ts` forbids): when it finds advisories it writes
+a `::warning::` annotation naming them, and exits 0; it runs after the blocking step, not under
+`if: always()`; both Node.js jobs run it. "Audit every matrix release's lockfile" is unchanged and
+blocking. plan-062 ruling 3: an audit that cannot produce a report (a registry or network error)
+also writes a `::warning::` and exits 0 (A1 read literally). Settles the row "CI policy for
+advisories in transitive dependencies" of `docs/owed-items.md` (dl-035 A4); the `minimatch`
+override's two rows stay. Rule 3 of `repository-practice` (reading the warning, A2's bug) is
+plan-062 row 3, not this task.
 
 ## Acceptance
 
-<!-- Verifiable criteria: the command to run and the expected result. -->
+1. **Red first** (dl-018): `tests/ci-workflow.test.ts` changed before `ci.yml`, the failing run
+   recorded (`npm test -- tests/ci-workflow.test.ts` or the file's own `node --test` run, the
+   command and the failing count).
+2. **The blocking step:** "Audit the root lockfile" runs exactly `npm audit --omit=dev`, with no
+   `if`; the test asserts it.
+3. **The warning step:** a step named for the whole root tree's audit (dl-035), directly after the
+   blocking step, with no `if` and no `continue-on-error`, runs `npm audit` on the whole root tree
+   (no `--omit`); the test asserts its place, its absent `if`, and that no step has
+   `continue-on-error` (as today).
+4. **Its behaviour**, asserted by running the step's `run` script with `bash` against a stub
+   `npm` first on the `PATH`, in a temporary directory removed after the test, offline (the
+   `testing` directive):
+   - the stub exits 1 with a report naming two advisories (as `npm audit --json` prints them): the
+     script exits 0 and prints one `::warning` line naming both packages and their severities;
+   - the stub exits 1 with no report (an error object, or no output): exit 0 and one `::warning`
+     line saying the audit could not run;
+   - the stub exits 0 with no advisory: exit 0 and no `::warning` line.
+5. **The matrix step** unchanged, and its existing assertion kept as it is; the commands of "runs
+   every check, on every path" still found (`npm audit` included, now through the two steps).
+6. **The checks** (`tooling-delivery` v3 › `review`, dl-039, plan-062 ruling 4): the build review
+   and its amendments first; then, once, on the frozen commit: the branch CI `success`, both jobs,
+   the run id and the jobs' durations recorded, and the new step's log read (no warning expected:
+   `npm audit` and `npm audit --omit=dev` exit 0 in the root on 2026-11-04); from a clean working
+   tree on Node.js 22.21.0 after `npm ci` and `npm run build`, `npm run validate:publication`, the
+   golden tree in publication mode and `npm run -s wingfoil -- workflow list` exit 0; the changed test file and
+   `npm run lint` exit 0 locally (the full `npm test` runs in the branch CI). The privacy check of the branch's diff recorded.
+7. **The register:** the row "CI policy for advisories in transitive dependencies" moves to Closed,
+   settled by this task, in its own commit.
+8. **Delivery:** `--no-ff` merge into `dl/dl-035-dl-040-actions`, plan-062's branch, not `main`: a
+   departure from `tooling-delivery` › `deliver`, ruled by the approver in plan-062 (ruling 3,
+   task-064 under plan-054 as the precedent).
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-076-ci-root-audit` from `dl/dl-035-dl-040-actions` at this task's add.
+Red steps: (1) the test's assertions for Acceptance 2 … 4 against the current `ci.yml` (red: the
+blocking step runs `npm audit`, no warning step); (2) `ci.yml` changed (green). The warning step's
+script, shell with an inline `node -e` (no new dependency, adr-003): `npm audit --json` into a file
+under `$RUNNER_TEMP`; exit 0 → nothing; otherwise `node` reads the report: with `vulnerabilities`
+entries, one `::warning title=…::` naming each package and its severity and asking for a bug within
+a day (dl-035 A2); without them (an error or no report), one `::warning` that the audit could not
+run; the script ends with exit 0. The test reads the step's `run` from the parsed `ci.yml`, sets
+`RUNNER_TEMP` and `PATH` to a temporary directory holding the stub `npm`, and runs it with
+`bash` through `node:child_process`. Commits: the red test; `ci.yml`; the register's row; the
+notes.
 
 ## Execution Notes
 
@@ -27,3 +79,5 @@ tags: ["tooling","ci","dependencies"]
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-05: written under plan-062 (row 2, ruling 3), added on its branch after row 1 (`ded156e`),
+  no other task added on any branch meanwhile (W-14); born under `tooling-delivery` v3.
