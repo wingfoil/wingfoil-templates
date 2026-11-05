@@ -106,3 +106,28 @@ the report, and its CLI (green); (3) `intake.yml` (green). `package.json` gains 
   red by assertion with a throwing stub, the workflow's concurrency group and extra assertions.
 - 2026-11-05: re-review: approve; its optional nits applied (the spawn's success path, the CLI's
   stub, a signal, `main`'s CI after the row's commit).
+- 2026-11-05: started (backlog → in-progress) on `task/task-078-intake-detect` from `main` at
+  `1672455`+. Red (dl-018), `0b10c3d`, the tests with a throwing stub of `src/intake-detect.ts`
+  and of its CLI: `npm run build && node --test dist/tests/intake-detect.test.js
+  dist/tests/intake-workflow.test.js` gives 19 tests, 19 failing (9 by assertion, 10 by the stub's
+  throw). Green: `b61bb4d` (the detection and its CLI), `5fb3212` (wrapping), `ecbbf95`
+  (`intake.yml`); 36 tests passing with `ci-workflow` and `compat-fixture`, `npm run lint` exit 0.
+  Deviations: a `--compat <file>` option (default `<cwd>/compat.yaml`), so that the tests read only
+  their fixture `compat.yaml` (task-045's rule); the fixture answers built inline by the test's
+  `answer()`, only the fixture `compat.yaml` under `tests/fixtures/intake/`.
+- 2026-11-05: independent build review of `ecbbf95`: approve after amendments, three should-fix
+  (an invalid or missing compat file exited 1, the finding's code; the signal and the exit-2
+  outputs untested; npm not starting reported as a signal) and nits. Applied test first: red
+  `802167f` (19 tests, 3 failing), fix `2728234` (exit 2 with a fixed `::error` for an invalid
+  compat, a refused answer and a spawn error, the error's code from `result.error`, the plural, an
+  unreadable registry file named). Re-review: approve; its nits applied in `53c9fa3` (the
+  refusals' stderr and the missing compat's annotation asserted exactly).
+- 2026-11-06: checks (dl-039 R1, R2), once, on the frozen commit `53c9fa3`: the branch CI, run
+  42126405576, `success`, jobs Node.js 22.12.0 16 min 25 s and 22.21.0 19 min 57 s (none over 25
+  minutes); from a clean working tree on Node.js 22.21.0 after `npm ci` and `npm run build`:
+  `npm run validate:publication`, the golden tree in publication mode and `npm run -s wingfoil --
+  workflow list` exit 0, `directives list --format json` with `"warnings": []`; the detection
+  against the real registry, `npm run -s intake:detect`: `no missing version`, exit 0 (0.2.1 below
+  the floor ignored). This commit changes only `docs/memory`: no new run. Privacy check of the
+  branch's diff and messages: no local or scratch path, no maintainer name or email, no private
+  project, no intermediary session.
