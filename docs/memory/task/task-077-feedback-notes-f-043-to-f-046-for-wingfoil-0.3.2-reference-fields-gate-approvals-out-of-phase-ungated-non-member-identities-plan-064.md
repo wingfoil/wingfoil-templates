@@ -43,13 +43,14 @@ WingFoil UI does not send to WingFoil itself and that held when reproduced on Wi
    open`, `wingfoil_version: 0.3.2`, `answered_by: []`; `wingfoil_version` written by hand, the
    governance pin being 0.2.2); a body opening with `New note (task-077).`, its origin in this
    repository (public element ids: plan-064, the bug or decision-log it serves), that WingFoil UI
-   reported it on adopting this repository's packs, the WingFoil rule it builds on (spec-017 §5.1,
-   REQ-SEC-01, REQ-SEC-03) and the notes it is distinct from (Context); then `## Observed` with
-   WingFoil 0.3.2's version and commit (`6de2e13c`), the configuration, the commands, their output
-   (excerpts marked) and exit codes; then `## Expected` (for F-043, where the check runs, at `memory
-   submit` as the required-fields check does, its error, and a reference to a `deprecated` element);
-   no `## Replies`. Before writing each, the inbox is searched for a note on the same point (none
-   found by the body's review).
+   reported it on adopting this repository's packs, the WingFoil rule it builds on, where one
+   applies (spec-017 §5.1, REQ-SEC-01, REQ-SEC-03; for F-043, 0.3.2's `not_applicable_allowed`) and
+   the notes it is distinct from (Context); then `## Observed` with WingFoil 0.3.2's version and
+   commit (`6de2e13c`), the configuration, the commands, their output (excerpts marked) and exit
+   codes; then `## Expected` (for F-043, where the check runs, at `memory submit` as the
+   required-fields check does, its error, and a reference to a `deprecated` element); no `##
+   Replies`. Before writing each, the inbox is searched for a note on the same point (none found by
+   the body's review).
 2. **Reproduced with WingFoil alone**, each `## Observed` from a scratch project outside the
    repository (`git init`, WingFoil 0.3.2 installed with `npm ci` from `src/matrix/wingfoil-0.3.2/`,
    `wingfoil init --template <Scrum|Kanban> --no-interactive`, fictional `.example` identities,
@@ -60,11 +61,12 @@ WingFoil UI does not send to WingFoil itself and that held when reproduced on Wi
    name or email, or an intermediary session (`repository-practice` rules 1, 2); WingFoil UI named
    by project; WingFoil references are public ids, tags or commits.
 4. **The ledger** in `docs/wingfoil-feedback/README.md` gains four rows (cells equal to the
-   frontmatter, `answered_by` empty); `Last sync` unchanged (the first sync stays at W10, plan-062's
-   note). No `wingfoil-cli` entry (rule 5 at the pin bump).
+   frontmatter, `answered_by` empty, any `|` in a title escaped); `Last sync` unchanged (the first
+   sync stays at W10, plan-062's note). No `wingfoil-cli` entry (rule 5 at the pin bump).
 5. **Checks** (`tooling-delivery` v3 › `review`, dl-039): the build review and its amendments first;
    then once on the frozen commit the branch CI `success`, both jobs, run id and durations recorded,
-   and dl-039's local list on Node.js 22.21.0 after `npm ci` and `npm run build`; `node --test
+   and dl-039's local list on Node.js 22.21.0 after `npm ci` and `npm run build`
+   (`validate:publication`, the golden tree in publication mode, `workflow list`); `node --test
    dist/tests/wingfoil-feedback.test.js dist/tests/feedback-note.test.js` and `npm run lint` exit 0
    locally. No file changes outside `docs/wingfoil-feedback/` and this task's file.
 6. **Delivery:** `--no-ff` merge into `bug/ui-feedback-2026-11-02`, plan-064's branch, not `main`
@@ -105,3 +107,5 @@ One commit per note with its ledger row. Then the build review, the checks and t
   F-044 and F-045 naming each other, the reproduction per note, the notes each is distinct from, the
   red steps by mutation of the inbox tests, F-043's consequence outside `## Observed` and its
   Expected's place, error and `deprecated` case, the second identity, the nits.
+- 2026-11-05: re-review: approve; its small findings applied (the ledger's escaped `|`, dl-039's
+  local list named, F-043's rule).
