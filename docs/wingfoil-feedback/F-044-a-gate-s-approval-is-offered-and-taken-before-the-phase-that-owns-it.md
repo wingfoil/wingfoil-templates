@@ -29,7 +29,7 @@ A custom workflow, written by hand, included in `workflows.yaml` and committed (
 --format json`: `"diagnostics":[]`):
 
 ```yaml
-name: late-gate
+name: late-gate                # excerpt: format, description and version omitted
 kind: main
 element: decision-log          # defaults: draft → pending (gate) → approved
 phases:
@@ -45,14 +45,18 @@ phases:
     approval: { by_role: approver }
 ```
 
+Excerpts: omitted lines shown as `…`, long lines wrapped; every command exits 0 unless noted.
+
 ```
 $ wingfoil memory add --type decision-log --title "A decision"
 $ wingfoil workflow start late-gate --element decision-log:dl-001-a-decision
 $ wingfoil memory submit dl-001-a-decision              # draft → pending, exit 0
 $ wingfoil workflow status
+open workflows: 1
 * late-gate-dl-001-a-decision-plan (late-gate) — active
     element: decision-log:dl-001-a-decision (pending)
     phases: enter complete, work current, decide pending
+    …
 ungated elements: 1
   human needed: approve or reject dl-001-a-decision (decision-log, pending; no open workflow
   carries it) — routed to Tester <tester@notes.example>
@@ -61,6 +65,7 @@ $ wingfoil memory approve dl-001-a-decision --reason "approved before its phase"
 $ git commit docs/notes/work.md …                        # work's evidence
 $ wingfoil workflow status
 * late-gate-dl-001-a-decision-plan (late-gate) — active, complete
+    element: decision-log:dl-001-a-decision (approved)
     phases: enter complete, work complete, decide complete
 ```
 

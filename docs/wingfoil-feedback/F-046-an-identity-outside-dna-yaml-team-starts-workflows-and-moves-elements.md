@@ -24,14 +24,21 @@ unless said otherwise).
 Then the git identity is changed to `Visitor <visitor@notes.example>`, which no `team.members` entry
 holds:
 
+Excerpts: omitted lines shown as `…`, long lines wrapped; every command exits 0 unless noted.
+
 ```
 $ wingfoil workflow start bug-ingest                    # exit 0
 started bug-ingest as bug-ingest-1-plan (active)
 $ wingfoil memory add --type bug --title "A bug" --workflow bug-ingest-1-plan --step bug-ingest.capture
 $ wingfoil memory submit bug-001-a-bug                  # draft → pending, exit 0
 $ wingfoil workflow status
+open workflows: 1
 * bug-ingest-1-plan (bug-ingest) — active
+    element: bug:bug-001-a-bug (pending)
     phases: capture complete, approve current
+    …
+pending approvals: 1
+    …
 $ wingfoil memory approve bug-001-a-bug --reason x
 error: user not authorized to approve type 'bug'        # exit 1
 $ git log --format='%an <%ae> %s'

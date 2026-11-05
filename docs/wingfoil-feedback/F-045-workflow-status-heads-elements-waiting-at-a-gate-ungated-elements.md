@@ -21,6 +21,8 @@ WingFoil 0.3.2 (`6de2e13c`), installed from npm, pinned by the lockfile
 tester@notes.example --entry-roles approver,developer` (a fictional identity, also the git identity
 unless said otherwise).
 
+Excerpts: omitted lines shown as `…`, long lines wrapped; every command exits 0 unless noted.
+
 ```
 $ wingfoil memory add --type decision-log --title "A decision"
 $ wingfoil memory submit dl-001-a-decision              # draft → pending (a gate), exit 0

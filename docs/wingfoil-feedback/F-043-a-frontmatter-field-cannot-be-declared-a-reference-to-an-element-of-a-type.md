@@ -31,6 +31,8 @@ reports `"diagnostics":[]`. No Sprint exists (`memory search --type sprint`: no 
 are added with `memory add --type task`; one is left without `sprint`, one gets `sprint:
 sprint-099-does-not-exist`, one `sprint: "n/a — not planned in a Sprint"` (edited and committed):
 
+Excerpts: omitted lines shown as `…`, long lines wrapped; every command exits 0 unless noted.
+
 ```
 $ wingfoil memory submit task-003-three
 error: missing required field on submit: sprint        # exit 1
