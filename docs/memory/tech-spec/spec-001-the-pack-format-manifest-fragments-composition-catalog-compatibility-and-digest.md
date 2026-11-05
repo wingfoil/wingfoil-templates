@@ -58,7 +58,7 @@ The key words **must**, **must not**, **should** and **may** are normative.
 | **tension** | A pack a pack combines with only with care, declared with its resolution in `tensions` (§6.2); it never makes a composition fail. |
 | **slot** | A workflow name that `sw-life-cycle` or `delivery` (directly or through the methodology's sub-workflows) includes and that one pack fills (§9). Slots exist only in a composition with `software`. |
 | **overlay** | A pack that only adds to or tightens the packs composed before it (dl-001 D1). |
-| **fragment** | A partial `dna.yaml`, `roles.yaml` or `memory.yaml`, merged with the other packs' (§7). |
+| **fragment** | A partial `dna.yaml`, `roles.yaml` or `memory.yaml`, or, in format 2, a pack's MCP server declarations (`mcp`), merged with the other packs' (§7). |
 | **asset file** | A file copied whole into the project: a workflow, a directive, a Memory template (§6). |
 | **composition** | The resolved, ordered set of packs with their parameter values, and the `.wingfoil/` it produces. |
 | **composer** | The program that turns a composition into files: the reference composer of adr-001, or WingFoil. |
@@ -182,6 +182,7 @@ packs/<catalog pack id>/
   fragments/dna.yaml      optional (§7.3)
   fragments/roles.yaml    optional (§7.4)
   fragments/memory.yaml   optional (§7.5)
+  fragments/mcp.yaml      optional, format 2 (§7.8)
   directives/<id>.md      zero or more (§7.6)
   workflows/<name>.yaml   zero or more (§7.6)
   memory-templates/<type>.md   zero or more (§7.6)
@@ -300,12 +301,16 @@ tensions:
 - A pack that uses a parameter, a Memory type, a role, a directive or an included workflow that it
   does not ship itself **must** `require` the pack that ships it (`pack-authoring`). The one
   exception is a conditional entry, whose `with` requires its pack for what that entry uses (§6.5).
+  A server's `phases` entry that names another pack's workflow is a use of that workflow: the pack
+  requires the pack that ships it (§7.8, dl-024 D1, finding 4). A restriction naming another pack's
+  server is not a use, and adds nothing to this list (§7.8).
 
 ### 6.4 `contents`
 
 `contents` is the pack's inventory. Each list holds identifiers, in the order the pack wants them to
 appear in the composed files:
-- `fragments`: a subset of `[dna, roles, memory]`, in that order;
+- `fragments`: a subset of `[dna, roles, memory]`, in that order; in format 2, of
+  `[dna, roles, memory, mcp]`, `mcp` last (§7.8);
 - `directives`, `workflows`, `memory_templates`: file stems;
 - `agents_section`: `true` when `agents/section.md` exists.
 
@@ -625,6 +630,65 @@ A slot workflow appears once, at the position of the pack whose file is used.
 An include list written by each pack would duplicate `contents` and could drift from it. Workflows
 include each other by name, never by path (`pack-authoring`, WingFoil bug-144).
 
+### 7.8 `mcp`: MCP servers (format 2)
+
+A pack may declare the MCP servers through which agents reach an external resource (a tracker, a
+cloud provider), in `fragments/mcp.yaml` (dl-024). The kind's name is **provisional**: it is
+WingFoil's to fix when a release reads it (dl-024 D2, D3). Until then no pack can ship it, since
+§12's computed range of a pack whose `formats` names a kind no release reads is empty, and the
+README's interim applies (spec-002 §2.3, dl-024 D5). The reference composer implements this
+section once a released WingFoil reads the kind (plan-063 ruling 4).
+
+```yaml
+format: 1                       # the kind's WingFoil format (§5)
+servers:
+  - name: tracker               # illustrative
+    transport: stdio            # stdio or http
+    command: npx
+    args: ["-y", "@vendor/tracker-mcp@2.3.1"]   # a pinned package version
+    env: [TRACKER_TOKEN]        # variable names only, never values
+    access: read                # read by default; write tools listed explicitly
+    write_tools: []
+    vendor_hosted: true         # sends data to its vendor
+    data_location: "EU"
+    roles: [developer]
+    phases: [delivery.build]    # where it is enabled; a write tool only behind an approval gate
+restrictions:
+  deny: []                      # server names never enabled
+  read_only: []                 # server names whose write tools are never enabled
+```
+
+- **Packs declare servers; they never ship server code** (D1). An entry names how to start or
+  reach the server and pins it: `name`, `transport`, and either `command` with `args` holding a
+  pinned package version, or `url` for a remote server; `env` names environment variables only
+  (`security-secrets`; §18's secret lint applies); `access` is `read` unless write tools are listed;
+  `vendor_hosted: true` with `data_location` for a server that sends data to its vendor (not
+  `remote`, which §7.6 uses for the asset class); `roles` and `phases` say where it is enabled, a
+  write tool only in phases behind their approval gate. Declaring a `command` leads WingFoil to
+  start code a third party wrote: the approval at install is its safeguard (D4).
+- **The merge** keeps §7.2's monotony:
+  - `servers` is a keyed list by `name` with **one owner per server**: a second pack declaring the
+    same name fails the composition. This list rule is new, departing from §7.2's merge of
+    keyed-list items that share a name, and borrows §7.6's one-owner rule for asset files;
+  - `restrictions.deny` and `restrictions.read_only` are sets (§7.2): they only grow and do not
+    depend on order, so any pack restricts any server without editing its entry, and a stricter
+    pack adds to `deny` the vendor-hosted servers it does not allow. Naming a server here is not a
+    use of the declaring pack (§6.3);
+  - a restriction whose server no pack of the composition declares produces a notice, not a
+    failure (§17).
+- **WingFoil's side** (D3; F-035): reading the composed declarations as a kind it names; adding the
+  servers to the configuration every adapter passes to the agent, beside its own, through a
+  placeholder in the adapter template or a merge WingFoil performs (an adapter with `mcp.via: args`
+  has no template, so only a merge reaches it, finding 3); enabling a server only for its roles and
+  phases at `agent execute`; resolving environment references at launch, never storing values;
+  asking for explicit approval when a pack install or update adds or widens a server (D3 5, finding
+  5); recording the MCP calls of an agent run with the run. The capability `mcp-servers` joins
+  `compat.yaml`'s vocabulary only when a release's CHANGELOG names the feature, and a pack that
+  ships `mcp` declares it in `requires_capabilities` (§12).
+- **Security** (D4): an MCP server runs code and its responses can carry prompt injection; write
+  access is never a default; the official catalog lists only servers published by the vendor of the
+  resource or by a maintained open-source project (`pack-authoring`).
+
 ## 8. Parameters
 
 ### 8.1 Declaration
@@ -890,7 +954,10 @@ releases:
   is listed even though packs ship no fragment of it, because the composed file has a format
   (§7.7). WingFoil's other kinds, `workflows/bindings.yaml` (WingFoil dl-153) and the adapter
   manifests, are at format 1 in v0.3; packs ship neither, so they are not listed, and changes to
-  them, such as v0.3's `mcp.via: config-arg`, leave the pack format unchanged.
+  them, such as v0.3's `mcp.via: config-arg`, leave the pack format unchanged. The `mcp` kind (§7.8)
+  joins `kinds`, and each release's `reads`, when a release reads it: `compat.yaml`'s schema refuses
+  an unknown kind, so that change comes with its own format decision and feedback note (plan-063
+  ruling 4).
 - **`capabilities`** are this repository's provisional vocabulary (dl-021 R4) until WingFoil's
   capabilities query publishes one (WingFoil dl-177; F-013). WingFoil owns the final names.
 - **`releases[]`:**
@@ -1116,6 +1183,7 @@ Each has an owner outside this specification. None blocks format 1.
 | O13 | A pack's `memory.yaml` fragment names its template as `memory/templates/built-in/<type>.md` (§7.6), the one path a pack writes that names a folder. How it reads under the `remote` class: rewritten by `pack-install`, or a kind-relative form. The format-1 rule stays until then. | WingFoil dl-138's Action 2 tech-spec (F-029) |
 | O14 | Fragments are never conditional (§6.5), so no pack can tighten `software`'s Memory types (for example `bug` or `release`) only in a composition with `software`. A conditional fragment is a later format. | this repository, when a methodology's charter needs it |
 | O15 | A later pack may add `waiting` only on the states it inserts (§7.5). Adding `waiting` to an existing state is a tightening (it removes a manual verb) that a pack shipping the workflow which drives the edge could make, restoring for the projects that run it the edges the foundation leaves without `waiting` because WingFoil 0.3.0 drives them for no adopter (plan-041, ruling 14). | this repository, when a methodology ships such a workflow (M3) |
+| O16 | The `mcp` kind (§7.8): its name, its WingFoil format and how WingFoil reads it (dl-024 D3, F-035); the reference composer's merge, the fragment's schema and the lint follow a release that reads it (plan-063 ruling 4). | WingFoil, through F-035 |
 
 ## 17. What the reference composer does
 
@@ -1133,8 +1201,9 @@ pack ids with ranges, or local paths), parameter values and an output directory,
    those of a conditional entry only with its pack (§6.5), and generates `workflows.yaml` (§7.7);
 6. writes `.wingfoil/` with UTF-8, `LF` line endings and a final newline;
 7. produces the AGENTS.md generated region as a separate output (§10);
-8. prints, as notices, each tension the composition holds, with its resolution (§6.2); a notice
-   never fails the composition.
+8. prints, as notices, each tension the composition holds, with its resolution (§6.2), and each
+   `mcp` restriction whose server no pack of the composition declares (§7.8); a notice never fails
+   the composition.
 
 It computes digests (§13) and computed ranges (§12) for the release process. It writes no lock,
 downloads nothing beyond reading git tags of this repository, and never touches `custom/` or the
@@ -1175,6 +1244,11 @@ check the rest, and the composer refuses what they reject.
   `contents` holds `workflows` and `directives` only, at least one of them, and the isolation rules
   of §6.5 hold per entry; a methodology's `delivery` in its entry with `software` when the
   methodology does not require `software`, in `contents` when it does;
+- `mcp` (format 2, §7.8): every server pins its package version or names a `url`; `env` holds
+  names, no values (the secret lint); a server with write tools has a `phases` entry behind an
+  approval; a `phases` entry naming another pack's workflow is covered by `requires`; a restriction
+  names a server some pack of the tree declares (otherwise a failure of the lint; at composition, a
+  notice); no two packs of a composition declare one server name;
 - `tensions` (format 2): each entry names a catalog pack id other than the pack, at most once and
   not in `conflicts`, with a non-empty `resolution` (§6.2); a format-1 `pack.yaml` has none;
 - a directive of an overlay or a `stage/*` pack that uses waiver wording ("skip", "not required",
@@ -1403,3 +1477,10 @@ check the rest, and the composer refuses what they reject.
   `pack_format`, absent before format 2 and read as `1` (§11); D6's coverage (§15). §16's O14 still
   holds (fragments are never conditional). The tooling follows in the `tooling-change` plan
   (plan-063 ruling 1).
+- 2026-11-05, **amended in place** (dl-024, plan-063 row 2; dl-024's approval and the merge OK
+  approve the text): the `mcp` fragment kind in format 2, its name provisional (§2, §6.1, §6.4, a
+  new §7.8 with D1's entries, D2's merge, D3's WingFoil side and D4's security, §12, §17, §18; O16);
+  §6.3 extended to a server's `phases` naming another pack's workflow (finding 4); D3 5 read "a pack
+  install or update" (finding 5); an adapter with `mcp.via: args` (finding 3). The kind is
+  unshippable until a release reads it; its tooling and `compat.yaml`'s `kinds` and `reads` follow
+  that release (plan-063 ruling 4).
