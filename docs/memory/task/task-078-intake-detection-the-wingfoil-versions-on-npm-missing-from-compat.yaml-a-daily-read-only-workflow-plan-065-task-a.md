@@ -2,7 +2,7 @@
 id: task-078-intake-detection-the-wingfoil-versions-on-npm-missing-from-compat.yaml-a-daily-read-only-workflow-plan-065-task-a
 type: task
 title: "Intake detection: the wingfoil versions on npm missing from compat.yaml, a daily read-only workflow (plan-065 task A)"
-status: draft
+status: pending
 pack: ""            # tooling task (tooling-delivery v3), plan-065 task (A)
 depends_on: []
 tags: ["tooling","ci","intake"]
