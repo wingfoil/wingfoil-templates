@@ -134,3 +134,38 @@ its CLI: green; (3) Acceptance 6's scratch tree, by a script in the task's notes
   minor or major not refused, the stub `npm`, the fake lockfile's fields, the exact byte format,
   the exit codes, the placeholder greppable, `ci.yml` unchanged.
 - 2026-11-06: re-review: approve; its one nit (an I/O error during the writes) applied.
+- 2026-11-06: accepted into the backlog by the approver; started (backlog → in-progress) on
+  `task/task-080-intake-prepare`. Red (dl-018): `tests/intake-prepare.test.ts` with the module's
+  signature returning a refusal and an empty CLI, `npm run build && node --test
+  dist/tests/intake-prepare.test.js`: 19 tests, 19 failing, each on its assertion (the trees
+  build). Green: `19661ce` (`src/intake-prepare.ts`, `src/intake-prepare-cli.ts`, the script in
+  `package.json`): 19 tests, 0 failing; two test bugs fixed on the way (a `trim()` cutting git's
+  status column; a `PATH` hiding git as well as npm, replaced by a failing stub `npm` never run).
+  Mutations of the built module, each caught by one failing test: the golden fixture's equality,
+  the pin folder present, the text after the last row, the stale index, the lockfile's pins, the
+  backport, the range's quoting.
+- 2026-11-06: independent build review of `19661ce`: approve after amendments, nothing blocking;
+  should-fix: the stale-index test covering `CATALOG.md` only (a check narrowed to the root outputs
+  survived), the quotes kept untested from a quoted range, an error other than a refusal crashing
+  the CLI; nits: an indented comment after the last row, a block or alias range, `lockfileVersion
+  1` with a `packages` map, npm's stderr dropped, the temporary directory's removal on a failure,
+  the I/O-error path, duplicated helpers, the matrix rule's comment, CRLF; all applied in
+  `bc02c04`, the frozen commit (23 tests, 0 failing; the reviewer's two surviving mutations now
+  caught). Re-review: approve; its two nits need no change (the `lockfileVersion: 1` case is in the
+  lockfile test already; `Refusal` kept as documentation).
+- 2026-11-06: Acceptance 6, on a local-only scratch clone with its tags, run alone, by a script run
+  outside the repository (`git clone`, `npm ci`, `npm run build`, then `prepareIntake` for `0.3.3`
+  with a resolver answering the 0.3.2 lockfile with the top-level `name`, `packages[""].name`,
+  `packages[""].dependencies.wingfoil` and `node_modules/wingfoil`'s `version` changed): on
+  `19661ce` and again on `bc02c04`, exit 0, the diff the seven files of task (C)'s allowlist, the
+  six ranges `>=0.3.0 <=0.3.3`; `npm run check:pins`, `npm run index -- --check` and `npm run
+  check:packs` exit 0; `npm test` 1099 tests, 0 failing on `19661ce`, 1103 tests, 0 failing on
+  `bc02c04`.
+- 2026-11-06: checks (dl-039 R1, R2), once, on `bc02c04`: the branch CI, run 42227582673,
+  `success`, jobs Node.js 22.12.0 20 min 21 s and 22.21.0 20 min 17 s (none over 25 minutes); from a
+  clean working tree on Node.js 22.21.0 after `npm ci` and `npm run build`: `npm run
+  validate:publication`, the golden tree in publication mode and `npm run -s wingfoil -- workflow
+  list` exit 0, `directives list --format json` with `"warnings": []`; `npm run lint` exits 0;
+  Acceptance 6's tree passes (above). This commit changes only `docs/memory`: no new run. Privacy
+  check of the branch's diff and messages: no local or scratch path, no maintainer name or email,
+  no private project, no intermediary session.
