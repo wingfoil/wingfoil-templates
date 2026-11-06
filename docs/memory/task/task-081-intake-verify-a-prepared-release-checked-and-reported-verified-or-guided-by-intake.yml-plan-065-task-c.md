@@ -52,7 +52,8 @@ a tag not yet pushed answers 404.
    - `prepare`, `needs: detect`, `if: ${{ !cancelled() && needs.detect.outputs.version != '' }}`
      (it runs after a red `detect`); Node.js 22.21.0; no WingFoil release run; in a rehearsal it
      first runs `intake:rehearse` (Acceptance 4); then `intake:prepare`, then `intake:collect`
-     (Acceptance 2) to `$RUNNER_TEMP/intake`, then `actions/upload-artifact` of that directory,
+     (Acceptance 2) to `$RUNNER_TEMP/intake`, then `actions/upload-artifact` of that directory
+     (`path: ${{ runner.temp }}/intake`, as in every `with:`, where `$RUNNER_TEMP` is not expanded),
      named `intake-<version>`, `retention-days: 14`, `if-no-files-found: error`.
    - `verify`, `needs: [detect, prepare]`, `if: ${{ !cancelled() && needs.prepare.result ==
      'success' }}`, on Node.js 22.12.0 and 22.21.0 (`fail-fast: false`): `actions/download-artifact`
@@ -65,14 +66,17 @@ a tag not yet pushed answers 404.
      validate:publication` (dl-009's zero-warning run, confirming the row's provisional
      `format_key: true`). Each check a step with a fixed `id` and `continue-on-error: true`, so
      that all of them run; the set-up, install, build, download and apply steps are not, and fail
-     the job at once. A last step (no `always()` needed) writes each check's outcome to the job
-     summary and to `$RUNNER_TEMP/checks.json` (the fixed ids and their outcomes), uploads it as
-     `verify-<node>` (pinned `upload-artifact`, `retention-days: 14`), and fails the job when one
-     is not `success`. No `actions/cache`, no save and no restore, stricter than the plan's "no
-     save" at no cost: `ci.yml`'s key hashes every pin lockfile, so a new lockfile always misses.
+     the job at once. Three last steps, in this order, none needing `always()` since the checks are
+     `continue-on-error`: a `run` step writes each check's outcome to the job summary and to
+     `$RUNNER_TEMP/checks.json` (the node version, the fixed ids and their outcomes); a pinned
+     `actions/upload-artifact` step uploads it as `verify-<node>` (`retention-days: 14`); a `run`
+     step fails the job when an outcome is not `success`. No `actions/cache`, no save and no
+     restore, stricter than the plan's "no save" at no cost: `ci.yml`'s key hashes every pin lockfile, so a new lockfile always misses.
    - `report`, `needs: [detect, prepare, verify]`, `if: ${{ !cancelled() &&
-     needs.detect.outputs.version != '' }}`: downloads the artifacts that exist (`intake-<v>` when
-     `prepare` succeeded, each `verify-<node>` that was uploaded) to `$RUNNER_TEMP`, and runs
+     needs.detect.outputs.version != '' }}`: downloads `intake-<v>` with `if: ${{
+     needs.prepare.result == 'success' }}` to `${{ runner.temp }}/intake`, and the checks by
+     `pattern: verify-*` (one subfolder per artifact) to `${{ runner.temp }}/checks`, that step
+     `continue-on-error: true` (a pattern matching nothing does not make `report` red); then runs
      `intake:report` (Acceptance 5), which reads the CHANGELOG and writes the report to the job
      summary; it ends green for either verdict and red only when no report could be written.
    `prepare` and `verify` check out with `fetch-depth: 0` and `fetch-tags: true`, as `ci.yml` does
@@ -131,23 +135,26 @@ a tag not yet pushed answers 404.
    - a class other than `patch`;
    - the CHANGELOG not fetched (any status but 200, a redirect, a timeout, over 1 MiB), or no
      section for the version;
-   - a `###` heading other than `Added`, `Changed`, `Fixed`, `Upgrading from <v>` and `For
-     contributors` (so `Removed`, `Security`, `Deprecated` and any heading not known), or a heading
-     (`###` or `####`) containing `Breaking` (case-insensitive);
+   - a `###` heading other than `Added`, `Changed`, `Fixed`, `Upgrading from` followed by any
+     text, and `For contributors` (so `Removed`, `Security`, `Deprecated` and any heading not
+     known), or a heading (`###` or `####`) containing `Breaking` (case-insensitive);
    - any `Added` or `Changed` entry, an entry being any non-blank line under that heading,
      its `####` sub-headings included: read conservatively as "an entry naming a command or a
      feature" (dl-042 I2), since each such entry describes one;
    - any line of the section (the "Upgrading line" of the request read as any line) matching
      `\bformats?\b` (`format:` and `--format` included) or naming a kind of `compat.yaml`'s
      `kinds`, case-insensitive: a backtick span equal to the key (`` `dna` ``; a key inside a longer
-     span, as in `` `memory history` ``, is a command, not a kind), the file name of a path value as
-     a whole word (`dna.yaml`), or a description value without its article as a substring, plural
-     included (`directive file`, `Memory template`).
+     span, as in `` `memory history` ``, is a command, not a kind); for a value ending in `.yaml` (a
+     path), its file name as a whole word (`dna.yaml`); for any other value (a description), the
+     value without a leading `a `, `an ` or `the `, as a substring, plural included (`directive
+     file`, `Memory template`).
    The report, Markdown: a first line `Rehearsal of <version>: never for intake (dl-042 I1)` in a
    rehearsal; the verdict and the version, its class, the run's `BASE` (`unknown` without an
    artifact); each reason with the section's line number (no CHANGELOG text in a reason);
    `prepare`'s result and each `verify` leg's checks by Node.js version from `--checks` (`no
-   checks` for a leg without one), for `recheck` to cite (dl-042 I1); the artifact's `SHA256SUMS`
+   checks` for a leg without one, or whose `checks.json` is not valid: its node not one of the two
+   named versions, an id not of the fixed set, or an outcome not `success`, `failure`, `cancelled`
+   or `skipped`), for `recheck` to cite (dl-042 I1); the artifact's `SHA256SUMS`
    lines (`no artifact` without one); for each kind a line names, the `catalog.yaml` packs whose
    versions declare that kind in `formats`; then the section as a checklist for a guided intake
    (plan-065 point 5). The directives an item touches are left to the guided intake: no mechanical
@@ -164,7 +171,8 @@ a tag not yet pushed answers 404.
    repository, `FROZEN_COMPAT` or a frozen copy, never this repository's `compat.yaml` or
    `catalog.yaml`, task-045's rule); synthetic CHANGELOG fixtures under
    `tests/fixtures/intake/report/` (no copy of WingFoil's text), each rule of Acceptance 5 tested
-   alone, the verified case, the fence, the control characters, a 404, a redirect, a timeout and
+   alone, the verified case, the fence, the control characters, `checks.json`'s validation, the
+   subfolders the checks pattern downloads and a leg missing, a 404, a redirect, a timeout and
    the size bound through the injected fetch; every refusal of Acceptance 2 to 4 tested and
    writing nothing; a collect then apply round trip byte-identical, and rehearse then prepare
    giving back the removed release's row (its `notes` the placeholder) and ranges; the workflow
@@ -185,8 +193,10 @@ a tag not yet pushed answers 404.
    green with no missing version (or red naming only versions above 0.3.2, its outputs still
    naming 0.3.2), `prepare`, `verify` (both jobs) and `report` run, the report labelled a rehearsal
    of 0.3.2 and **guided** (its CHANGELOG has `Added` and `Changed` entries, plan-065 ruling 2),
-   each job's duration recorded (G12, ruling 7). A `verify` red on the rehearsal is recorded with
-   its cause, and blocks the task unless the cause is outside it. The privacy check of the
+   each job's duration recorded (G12, ruling 7). The path of a real intake (`detect` red, its
+   outputs reaching `prepare`) is covered by the workflow test's `if` and `outputs` assertions and
+   first runs at the first real missing version, recorded by plan-065's close. A `verify` red on
+   the rehearsal is recorded with its cause, and blocks the task unless the cause is outside it. The privacy check of the
    branch's diff recorded.
 
 ## Design
@@ -217,3 +227,8 @@ their CLIs and `intake.yml`: green; (3) the rehearsal dispatch (Acceptance 8).
   check's outcome per Node.js version in the report and the packs per kind, the directives left
   to the guided intake, the fence stated as a departure from the plan's escape, the search page
   among the checks, the refactor of `intake-prepare.ts` allowed, the fetch's redirect refused.
+- 2026-11-06: re-review: approve after small amendments, no blocking; applied: `verify`'s last
+  steps split (summary, upload, fail), `report`'s downloads (the artifact by `if`, the checks by
+  pattern, `continue-on-error`), `checks.json` validated, `${{ runner.temp }}` in `with:`, the
+  kinds' path and description rule, `Upgrading from` any text, the real intake's path covered by
+  the workflow test and first run recorded at plan-065's close.
