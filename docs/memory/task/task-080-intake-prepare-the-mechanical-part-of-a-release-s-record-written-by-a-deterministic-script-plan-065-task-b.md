@@ -2,7 +2,7 @@
 id: task-080-intake-prepare-the-mechanical-part-of-a-release-s-record-written-by-a-deterministic-script-plan-065-task-b
 type: task
 title: "Intake prepare: the mechanical part of a release's record written by a deterministic script (plan-065 task B)"
-status: backlog
+status: in-progress
 pack: ""            # tooling task (tooling-delivery v3), plan-065 task (B)
 depends_on: []
 tags: ["tooling","intake"]
