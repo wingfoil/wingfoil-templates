@@ -112,6 +112,10 @@ describe('intake:collect (task-081)', () => {
   const refusals: [string, (repo: TestRepo, out: string) => [string, string]][] = [
     ['a version not strict', (_repo, out) => ['v9.0.1', out]],
     ['an --out inside the tree', (repo) => [NEXT, join(repo.dir, 'out')]],
+    ['an --out through a link into the tree', (repo, out) => {
+      symlinkSync(repo.dir, out);
+      return [NEXT, join(out, 'new')];
+    }],
     ['an --out existing and not empty', (_repo, out) => {
       mkdirSync(out);
       writeFileSync(join(out, 'x'), 'x');
@@ -180,7 +184,7 @@ describe('intake:apply (task-081)', () => {
   });
 
   const sums = (out: string): string => readFileSync(join(out, 'SHA256SUMS'), 'utf8');
-  const refusals: [string, (repo: TestRepo, out: string) => string][] = [
+  const refusals: [string, (repo: TestRepo, out: string) => string, RegExp?][] = [
     ['a version not strict', () => '9.0'],
     ['the artifact of another version', () => '9.0.2'],
     ['a BASE not 40 hex', (_repo, out) => {
@@ -228,16 +232,26 @@ describe('intake:apply (task-081)', () => {
       writeFileSync(join(out, 'files', 'extra.txt'), 'x');
       return NEXT;
     }],
+    // The link's target holds the listed bytes, so only the link check refuses it.
     ['a symbolic link under files/', (_repo, out) => {
-      rmSync(join(out, 'files', 'CATALOG.md'));
-      symlinkSync('/etc/hostname', join(out, 'files', 'CATALOG.md'));
+      const file = join(out, 'files', 'CATALOG.md');
+      const target = join(out, '..', 'catalog-copy.md');
+      writeFileSync(target, readFileSync(file));
+      rmSync(file);
+      symlinkSync(target, file);
       return NEXT;
-    }],
+    }, /symbolic link in the artifact/],
+    // A committed link: the tree is clean, so only the link check refuses it.
     ['a symbolic link at a target path', (repo) => {
-      mkdirSync(join(repo.dir, PIN), { recursive: true });
-      symlinkSync('/etc/hostname', join(repo.dir, PIN, 'package.json'));
+      rmSync(join(repo.dir, 'CATALOG.md'));
+      symlinkSync('README.md', join(repo.dir, 'CATALOG.md'));
+      repo.commitAll('a link');
       return NEXT;
-    }],
+    }, /CATALOG\.md: a symbolic link in the tree/],
+    ['a staged rename of an allowlisted path', (repo) => {
+      repo.git(['mv', 'catalog.yaml', 'catalog-moved.yaml']);
+      return NEXT;
+    }, /uncommitted changes/],
     ['an allowlisted path with uncommitted changes', (repo) => {
       repo.write('catalog.yaml', `${read(repo, 'catalog.yaml')}# local\n`);
       return NEXT;
@@ -248,7 +262,7 @@ describe('intake:apply (task-081)', () => {
       return NEXT;
     }],
   ];
-  for (const [label, setup] of refusals) {
+  for (const [label, setup, why] of refusals) {
     it(`refuses ${label}, writing nothing`, () => {
       preparedRepo((repo) => {
         const out = join(scratch(), 'intake');
@@ -261,6 +275,7 @@ describe('intake:apply (task-081)', () => {
           const result = applyArtifact(repo.dir, out, version);
           assert.equal(result.code, 1, label);
           assert.match(result.lines.join('\n'), /^intake:apply: .*, nothing written$/);
+          if (why !== undefined) assert.match(result.lines.join('\n'), why);
           assert.equal(status(repo), before);
           for (const [path, bytes] of head) {
             const now = existsSync(join(repo.dir, path)) ? readFileSync(join(repo.dir, path))

@@ -10,8 +10,6 @@ import { gt } from 'semver';
 import { isMap, isScalar, isSeq, parse, parseDocument } from 'yaml';
 import type { Node, Scalar, YAMLMap } from 'yaml';
 
-type YamlMap = YAMLMap<unknown, unknown>;
-
 import { checkPins } from './check-pins';
 import { compatFrom } from './compat';
 import type { Compat } from './compat';
@@ -22,6 +20,8 @@ import { computeRange } from './range';
 import type { CompatRelease } from './range';
 
 /** The golden fixture's compat.yaml, equal to the root's (dl-010). */
+type YamlMap = YAMLMap<unknown, unknown>;
+
 export const GOLDEN_COMPAT = 'tests/fixtures/compose/tree/compat.yaml';
 /** The fixed notes of a prepared row, which the intake replaces (dl-042 I3); greppable. */
 export const NOTES_PLACEHOLDER = 'Prepared by intake:prepare; the intake writes this sentence '

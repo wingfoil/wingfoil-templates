@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto';
 import {
   existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, realpathSync, writeFileSync,
 } from 'node:fs';
-import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 
 import { runGit } from './git';
 import { byBytes } from './index-data';
@@ -59,8 +59,19 @@ function statusPaths(tree: string): string[] {
   return output.split('\n').filter((line) => line !== '').map((line) => line.slice(3));
 }
 
+/** The real path of a path that may not exist yet: its nearest existing parent's, resolved. */
+function realOrParent(path: string): string {
+  let current = resolve(path);
+  const rest: string[] = [];
+  while (!lstatExists(current) && dirname(current) !== current) {
+    rest.unshift(basename(current));
+    current = dirname(current);
+  }
+  return join(realpathSync(current), ...rest);
+}
+
 function isInside(path: string, dir: string): boolean {
-  const rel = relative(resolve(dir), resolve(path));
+  const rel = relative(realpathSync(dir), realOrParent(path));
   return rel === '' || (!rel.startsWith('..') && !isAbsolute(rel));
 }
 
@@ -191,9 +202,12 @@ function applyPlan(tree: string, dir: string, version: string): Map<string, Buff
       }
     }
   }
-  const dirty = statusPaths(tree).filter((path) => allowed.includes(path));
+  // With a pathspec a rename shows as its two sides, so a staged `git mv` is seen too.
+  const dirty = git(tree, ['status', '--porcelain', '--untracked-files=all', '--', ...allowed])
+    .split('\n').filter((line) => line !== '');
   if (dirty.length > 0) {
-    throw new Refusal(`allowlisted paths have uncommitted changes: ${dirty.join(', ')}`);
+    throw new Refusal(`allowlisted paths have uncommitted changes: ${
+      dirty.map((line) => line.slice(3)).join(', ')}`);
   }
   const head = git(tree, ['rev-parse', 'HEAD']).trim();
   if (base !== head) {

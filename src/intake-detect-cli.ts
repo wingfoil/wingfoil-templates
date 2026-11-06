@@ -40,16 +40,12 @@ class NpmFailure extends Error {}
 
 interface Next { version: string; class: string }
 
-/** The job's class: detect's `minor, breaking in 0.x` is a minor. */
-function jobClass(text: string): string {
-  return text.startsWith('minor') ? 'minor' : text;
-}
-
-/** The first line naming a version above the newest recorded: the lowest one, lines in order. */
+/** The first line naming a version above the newest recorded: the lowest one, lines in order;
+ * detect's `minor, breaking in 0.x` reads as `minor`, the word the pattern captures. */
 function toPrepare(lines: string[]): Next | undefined {
   for (const line of lines) {
     const match = /^(\d+\.\d+\.\d+) (patch|minor|major)\b/.exec(line);
-    if (match !== null) return { version: match[1] ?? '', class: jobClass(match[2] ?? '') };
+    if (match !== null) return { version: match[1] ?? '', class: match[2] ?? '' };
   }
   return undefined;
 }

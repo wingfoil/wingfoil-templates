@@ -192,10 +192,8 @@ export function report(input: ReportInput): Report {
   if (input.verify !== 'success') {
     reasons.push(`the verify job's result is \`${known(input.verify)}\``);
   }
-  if (input.class !== 'patch') {
-    reasons.push(`the class is \`${['minor', 'major'].includes(input.class) ? input.class
-      : 'unknown'}\`, not \`patch\``);
-  }
+  const kind = ['patch', 'minor', 'major'].includes(input.class) ? input.class : 'unknown';
+  if (kind !== 'patch') reasons.push(`the class is \`${kind}\`, not \`patch\``);
   let section: Section | undefined;
   let kindsNamed: string[] = [];
   if (!input.changelog.ok) {
@@ -214,7 +212,7 @@ export function report(input: ReportInput): Report {
   const out: string[] = [];
   if (input.rehearsal) out.push(`Rehearsal of ${input.version}: never for intake (dl-042 I1)`, '');
   out.push(`## WingFoil ${input.version}: ${verdict}`, '',
-    `- Class: ${input.class === '' ? 'unknown' : input.class}`,
+    `- Class: ${kind}`,
     `- Base: ${input.base ?? 'unknown'}`,
     `- prepare: ${known(input.prepare)}`,
     `- verify: ${known(input.verify)}`);

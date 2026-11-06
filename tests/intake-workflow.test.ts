@@ -1,5 +1,7 @@
 import { strict as assert } from 'node:assert';
-import { existsSync, readFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
@@ -186,6 +188,46 @@ describe('the verify job (task-081)', () => {
       path: '${{ runner.temp }}/checks.json', 'retention-days': 14, 'if-no-files-found': 'error' });
     assert.ok(fail?.run?.includes('process.exit'));
     for (const step of [write, upload, fail]) assert.equal(step?.if, undefined);
+  });
+});
+
+describe('the verify job\'s scripts, run (task-081)', () => {
+  /** Each check's step as `toJSON(steps)` gives it: `conclusion` success on continue-on-error. */
+  function stepsJson(failing: string[]): string {
+    return JSON.stringify(Object.fromEntries(CHECK_IDS.map((id) => [id, { outputs: {},
+      outcome: failing.includes(id) ? 'failure' : 'success', conclusion: 'success' }])));
+  }
+
+  function runStep(script: string, env: NodeJS.ProcessEnv): number | null {
+    return spawnSync('bash', ['-e', '-c', script], { env: { PATH: process.env['PATH'], ...env },
+      encoding: 'utf8' }).status;
+  }
+
+  it('records each outcome, not the conclusion, and fails the job on one not green', () => {
+    const [write, , fail] = job('verify').steps.slice(-3);
+    for (const failing of [['publication'], []]) {
+      const dir = mkdtempSync(join(tmpdir(), 'intake-verify-steps-'));
+      try {
+        const env = { RUNNER_TEMP: dir, GITHUB_STEP_SUMMARY: join(dir, 'summary.md'),
+          NODE_VERSION: '22.12.0', STEPS: stepsJson(failing) };
+        assert.equal(runStep(write?.run ?? '', env), 0);
+        const leg = JSON.parse(readFileSync(join(dir, 'checks.json'), 'utf8')) as
+          { node: string; checks: Record<string, string> };
+        assert.equal(leg.node, '22.12.0');
+        assert.deepEqual(Object.keys(leg.checks), [...CHECK_IDS]);
+        assert.equal(leg.checks['publication'], failing.length > 0 ? 'failure' : 'success');
+        assert.match(readFileSync(join(dir, 'summary.md'), 'utf8'), /\| publication \| /);
+        assert.equal(runStep(fail?.run ?? '', env), failing.length > 0 ? 1 : 0);
+      } finally {
+        rmSync(dir, { recursive: true, force: true });
+      }
+    }
+  });
+
+  it('passes every leg\'s checks to the report, whichever layout the download gives', () => {
+    const last = runs('report').pop() ?? '';
+    assert.ok(last.includes('"$RUNNER_TEMP"/checks/checks.json'));
+    assert.ok(last.includes('"$RUNNER_TEMP"/checks/*/checks.json'));
   });
 });
 

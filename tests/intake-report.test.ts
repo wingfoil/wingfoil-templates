@@ -63,6 +63,8 @@ describe('the bar of "verified" (task-081, plan-065 ruling 2)', () => {
     guidedBy(input({ verify: 'skipped' }), /verify/);
     guidedBy(input({ class: 'minor' }), /class/);
     guidedBy(input({ class: 'major' }), /class/);
+    const odd = report(input({ class: '<b>odd</b>' }));
+    assert.ok(!odd.markdown.includes('<b>') && odd.reasons.some((one) => one.includes('unknown')));
   });
 
   it('is guided when the CHANGELOG was not read, or has no section for the version', () => {
@@ -123,10 +125,13 @@ describe('the bar of "verified" (task-081, plan-065 ruling 2)', () => {
     assert.ok(result.reasons.every((reason) => !reason.includes('zebra')));
   });
 
-  it('ends the section at the next release heading', () => {
+  it('ends the section at the next release heading, or any other `## ` line', () => {
     // 9.0.0's Added entry is not 9.0.1's.
     assert.equal(report(input()).verdict, 'verified');
     guidedBy(input({ version: '9.0.0' }), /`Added` or `Changed`/);
+    const text = CHANGELOG.replace('## [9.0.0]',
+      '## Links\n\n### Added\n\n- A link.\n\n## [9.0.0]');
+    assert.equal(report(input({ changelog: { ok: true, text } })).verdict, 'verified');
   });
 });
 
