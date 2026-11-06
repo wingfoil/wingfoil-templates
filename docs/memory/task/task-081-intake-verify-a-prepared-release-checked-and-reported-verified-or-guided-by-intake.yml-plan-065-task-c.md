@@ -258,3 +258,23 @@ their CLIs and `intake.yml`: green; (3) the rehearsal dispatch (Acceptance 8).
   (`28ca167`, the frozen commit): a comment put back on `GOLDEN_COMPAT`, a change outside the
   allowlist shown not to block apply, the summary row's outcome asserted. Intake tests 127, 0
   failing; `npm run lint` 0.
+- 2026-11-06: the checks on the frozen commit `28ca167` (dl-039; after it only these notes, docs
+  only). Branch CI run 42257607151 on `1525044`, `success`: 22.21.0 13 min 23 s, 22.12.0 13 min
+  54 s. dl-039's local list on Node.js 22.21.0 on a clean worktree of `28ca167`: `npm ci`, `npm
+  run build`, `npm run validate:publication`, the golden fixture's publication run, `workflow
+  list`, `directives list --format json`, each exit 0, `warnings []`; `npm run lint` 0. The
+  rehearsal, dispatched with the approver's OK (`gh workflow run intake.yml --ref
+  task/task-081-intake-verify -f rehearsal=true`), run 42259278303 on `1525044`, `success`:
+  `detect` 18 s (no missing version), `prepare` 25 s, `verify` 22.21.0 13 min 1 s and 22.12.0
+  18 min 24 s (every one of the 15 checks `success` on both, the `verify-<node>` artifacts read),
+  `report` 17 s; the whole run 19 min 33 s, `ci.yml` unchanged (G12). The report: `::warning`
+  "rehearsal of 0.3.2 guided: 7 reasons" (`Added` and `Changed` entries, the word format, the
+  kinds `directive`, `roles`, `memory`, `dna`, `memory-template`), as Acceptance 8 expects. The
+  artifact `intake-0.3.2`, its BASE `1525044`: four files differ from `HEAD`, as expected of a
+  rehearsal: `compat.yaml` and the golden fixture's (0.3.2's `notes` now the placeholder, sha256
+  equal), the pin's `package.json` (the fixed description, without task-074's id) and its
+  lockfile, resolved afresh (ip-address 10.7.5 → 10.7.6, two `peer` flags dropped), audited
+  green in `audit-pins`; the ranges, `CATALOG.md` and `catalog-index.json` came back unchanged.
+  The path of a real intake (`detect` red) first runs at the first real missing version, recorded
+  at plan-065's close. Privacy check of the branch's diff: no local or scratch path, no private
+  project, no intermediary session.
