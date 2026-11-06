@@ -222,7 +222,7 @@ describe('npm run validate', () => {
     assert.equal(result.code, 2);
     assert.ok(result.lines.some((line) => /wingfoil@0\.2\.2: npm ci failed/.test(line)),
       result.lines.join('\n'));
-    assert.ok(result.lines.some((line) => /wingfoil@0\.3\.2: npm ci failed/.test(line)),
+    assert.ok(result.lines.some((line) => line.includes(`wingfoil@${NEWEST}: npm ci failed`)),
       result.lines.join('\n'));
     assert.ok(result.lines.includes(
       'matrix: self-test, 26 runs, 26 failed, tolerance applied: none'),
