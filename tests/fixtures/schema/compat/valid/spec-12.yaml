@@ -1,4 +1,4 @@
-# spec-001 §12 example.
+# compat.yaml as of spec-001 §12 (its example, until task-079).
 format: 1
 kinds:
   dna: ".wingfoil/dna.yaml"
