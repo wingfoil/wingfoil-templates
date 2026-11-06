@@ -2,7 +2,7 @@
 id: task-079-the-release-pinned-parts-derived-from-compat.yaml-the-tests-release-stubs-spec-001-12-pointing-to-compat.yaml-plan-065-task-d-dl-042-i2-i3
 type: task
 title: "The release-pinned parts derived from compat.yaml: the tests' release stubs, spec-001 §12 pointing to compat.yaml (plan-065 task D, dl-042 I2, I3)"
-status: approved
+status: done
 pack: ""            # tooling task (tooling-delivery v3), plan-065 task (D)
 depends_on: []
 tags: ["tooling","intake","spec"]
