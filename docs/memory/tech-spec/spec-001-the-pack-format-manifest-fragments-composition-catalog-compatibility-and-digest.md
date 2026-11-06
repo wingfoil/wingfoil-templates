@@ -958,43 +958,9 @@ presets:
 ## 12. `compat.yaml` and the computed range
 
 `compat.yaml`, at the repository root, maps each released WingFoil to what it reads and provides
-(dl-002).
-
-```yaml
-format: 1
-kinds:
-  dna: ".wingfoil/dna.yaml"
-  memory: ".wingfoil/memory.yaml"
-  roles: ".wingfoil/roles.yaml"
-  workflows: ".wingfoil/workflows.yaml"
-  workflow: "a workflow file"
-  directive: "a directive file"
-  memory-template: "a Memory template"
-capabilities:
-  pack-install: "init, pack add and upgrade install packs from this repository"
-  workflow-engine: "WingFoil executes workflows"
-releases:
-  - wingfoil: 0.2.2
-    format_key: false
-    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
-    capabilities: []
-    notes: "Predates dl-149: reads format 1 but warns on the format: key."
-  - wingfoil: 0.3.0
-    format_key: true
-    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
-    capabilities: [workflow-engine]
-    notes: "Accepts the format: key. workflow-engine recorded because the CHANGELOG names workflow start, end, next and finalize (dl-021 R4); the vocabulary is provisional, WingFoil's to name (dl-177)."
-  - wingfoil: 0.3.1
-    format_key: true
-    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
-    capabilities: [workflow-engine]
-    notes: "Accepts the format: key; format 1; no new capability (plan-051 ruling 2, dl-021 R4). A fresh 0.3.0 install resolving zod 4.6 showed zod's bare message on a refused cadence; 0.3.1 names the key again (bug-415)."
-  - wingfoil: 0.3.2
-    format_key: true
-    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], memory-template: [1] }
-    capabilities: [workflow-engine]
-    notes: "Accepts the format: key; format 1; no new capability: short element references are needed by no pack (plan-060 ruling 1, dl-021 R4). Refuses a memory.yaml type path absolute or holding . or .., a malformed id_pattern, an extra dna.yaml paths category that is not a list of strings and a directive missing a header field: no pack ships one."
-```
+(dl-002). The file is the record: its schema is `schema/compat.schema.json`, and each release's
+facts (the checks run on it, their dates and commits) are in its `notes`, written at its intake
+(dl-042 I3). The golden fixture's `compat.yaml` equals it (dl-010), which a test checks.
 
 - **`kinds`** are the seven dl-149 kinds a composition involves, all of them required. `workflows`
   is listed even though packs ship no fragment of it, because the composed file has a format
@@ -1014,40 +980,18 @@ releases:
   - `capabilities` lists what it provides, from the `capabilities` vocabulary above;
     `wingfoil-release-intake` records a capability for a release only when its CHANGELOG names
     the feature or command behind it (dl-021 R4), since WingFoil names features and commands, not
-    capabilities;
+    capabilities. For a patch the intake's report finds **verified** (dl-042 I2), its predecessor's
+    capabilities carry forward unless the report flags a change (a `Removed`, `Deprecated` or
+    `Breaking` heading, an `Added` or `Changed` entry naming a command or a feature) or a check that
+    exercises one is red; a capability no check exercises is carried only when the predecessor has
+    it and the report flags nothing; a new capability is recorded only from a CHANGELOG entry naming
+    it, which makes the report guided;
   - `notes` is optional free text for people, never read by a resolver.
 
   WingFoil 0.2.2 predates dl-149. It reads format 1, which is files with no key, but warns on the
   key: `unknown field(s) ignored: format` from `workflow list`, `dna show` and `directives list`
   (checked on 2026-10-06 in a scratch clone of this repository). Its `format_key` is therefore
   `false`.
-
-  WingFoil 0.3.0 accepts the key: on the composed golden tree, committed in a scratch repository,
-  `workflow list`, `dna show` and `directives list` run with `--format json` exit 0 with no
-  warning (checked on 2026-10-21, task-035). Its `format_key` is `true`, it reads format 1 for
-  every kind, and it provides `workflow-engine`, its CHANGELOG naming `workflow start`, `end`,
-  `next` and `finalize` (dl-021 R4).
-
-  WingFoil 0.3.1 accepts the key too: on the composed golden tree and the seven README examples
-  of this repository, each committed in a scratch repository, `workflow list`, `dna show` and
-  `directives list` run with `--format json` exit 0 with no warning (checked on 2026-10-27,
-  task-059, with `0.3.1 (870bd4406f3b9bba5ecde7a5f8198b80c2a98583)`). Its `format_key` is
-  `true`, it reads format 1 for every kind, and it provides `workflow-engine`; its CHANGELOG
-  names no new format, and its additions (`workflow adopt`, `workflow rekey`, manual checks) need
-  no new capability (plan-051 ruling 2, dl-021 R4).
-
-  WingFoil 0.3.2 accepts the key too: on the composed golden tree and the nine README examples of
-  this repository, each committed in a scratch repository with the release's own built-in
-  directive files, as its `init` writes them (bug-010, task-075), `workflow list`, `dna show` and
-  `directives list` run with `--format json` exit 0 with no warning (checked on 2026-11-03,
-  task-074, with `0.3.2 (6de2e13c004bbf419acfa7dc4d98d5a7468cd693)`). Its `format_key` is `true`,
-  it reads format 1 for every kind, and it provides `workflow-engine`; its CHANGELOG names no new
-  format, and its short element references need no new capability (plan-060 ruling 1, dl-021 R4).
-  It refuses some inputs 0.3.1 accepted (a `memory.yaml` type path absolute or holding `.` or `..`,
-  a malformed `id_pattern`, an extra `dna.yaml` `paths` category that is not a list of strings, a
-  directive missing a header field), which no pack ships, and, without `--role`, also warns on a
-  directive binding that has no file; the matrix's scratch repository holds the built-in files, so
-  no such warning arises.
 
   `wingfoil-release-intake` appends one entry per WingFoil release (dl-002).
 
@@ -1539,3 +1483,36 @@ check the rest, and the composer refuses what they reject.
   approve the text): §10.1, the precedence of directives that `base`'s section states (D1, D2, D5;
   findings 3, 5 and 6's wording), with the AGENTS.md region's limit (plan-063 ruling 10 (i), (iv)).
   `base`'s section itself changes with its next minor release (a row of `docs/owed-items.md`).
+- 2026-11-06, **amended in place** (task-079, plan-065 task (D); dl-042 I2 and I3, approved by the
+  task's merge OK, as task-059 and task-074 did for §12): §12's example replaced by a pointer to
+  `compat.yaml`, its schema and dl-010's fixture equality; the `releases[]` › `capabilities` bullet
+  reads with dl-042 I2 for a verified patch, dl-021 R4's sentence kept for every other intake;
+  0.2.2's paragraph kept; the paragraphs of 0.3.0, 0.3.1 and 0.3.2 moved here, verbatim, as
+  history; from now on each release's facts are in its `notes` in `compat.yaml`. The paragraphs:
+
+  WingFoil 0.3.0 accepts the key: on the composed golden tree, committed in a scratch repository,
+  `workflow list`, `dna show` and `directives list` run with `--format json` exit 0 with no
+  warning (checked on 2026-10-21, task-035). Its `format_key` is `true`, it reads format 1 for
+  every kind, and it provides `workflow-engine`, its CHANGELOG naming `workflow start`, `end`,
+  `next` and `finalize` (dl-021 R4).
+
+  WingFoil 0.3.1 accepts the key too: on the composed golden tree and the seven README examples
+  of this repository, each committed in a scratch repository, `workflow list`, `dna show` and
+  `directives list` run with `--format json` exit 0 with no warning (checked on 2026-10-27,
+  task-059, with `0.3.1 (870bd4406f3b9bba5ecde7a5f8198b80c2a98583)`). Its `format_key` is
+  `true`, it reads format 1 for every kind, and it provides `workflow-engine`; its CHANGELOG
+  names no new format, and its additions (`workflow adopt`, `workflow rekey`, manual checks) need
+  no new capability (plan-051 ruling 2, dl-021 R4).
+
+  WingFoil 0.3.2 accepts the key too: on the composed golden tree and the nine README examples of
+  this repository, each committed in a scratch repository with the release's own built-in
+  directive files, as its `init` writes them (bug-010, task-075), `workflow list`, `dna show` and
+  `directives list` run with `--format json` exit 0 with no warning (checked on 2026-11-03,
+  task-074, with `0.3.2 (6de2e13c004bbf419acfa7dc4d98d5a7468cd693)`). Its `format_key` is `true`,
+  it reads format 1 for every kind, and it provides `workflow-engine`; its CHANGELOG names no new
+  format, and its short element references need no new capability (plan-060 ruling 1, dl-021 R4).
+  It refuses some inputs 0.3.1 accepted (a `memory.yaml` type path absolute or holding `.` or `..`,
+  a malformed `id_pattern`, an extra `dna.yaml` `paths` category that is not a list of strings, a
+  directive missing a header field), which no pack ships, and, without `--role`, also warns on a
+  directive binding that has no file; the matrix's scratch repository holds the built-in files, so
+  no such warning arises.
