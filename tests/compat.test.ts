@@ -93,10 +93,13 @@ describe('compat.yaml', () => {
     });
   });
 
-  it('refuses a repeated release', () => {
-    withCompat((text) => `${text}${SECOND_RELEASE.replace('99.0.0', '0.3.2')}`, (path) => {
+  it('refuses a repeated release: the newest, repeated (task-079)', () => {
+    const releases = loadCompat(REAL).releases;
+    const newest = releases[releases.length - 1]?.wingfoil;
+    assert.ok(newest !== undefined);
+    withCompat((text) => `${text}${SECOND_RELEASE.replace('99.0.0', newest)}`, (path) => {
       assert.throws(() => loadCompat(path),
-        (error: unknown) => error instanceof CompatError && /0\.3\.2/.test(error.message));
+        (error: unknown) => error instanceof CompatError && error.message.includes(newest));
     });
   });
 

@@ -7,13 +7,13 @@ import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { after, describe, it } from 'node:test';
 
+import { loadCompat } from '../src/compat';
 import { EXEMPTION } from '../src/examples';
 import { MatrixIoError } from '../src/matrix';
 import { runIndex } from '../src/index';
 import { runPublish } from '../src/publish';
 import { runSite } from '../src/site';
 import { mapOverlayPaths, runValidate } from '../src/validate';
-import { loadCompat } from '../src/compat';
 import type { ValidateOptions, ValidateResult } from '../src/validate';
 import { writePack } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
@@ -44,7 +44,7 @@ function stubbed(command: StubCommand): StubWingfoil {
 const WINGFOIL = stubbed({ stderr: [FORMAT_WARNING] });
 after(() => WINGFOIL.dispose());
 
-/** WingFoil 0.3.0 as the tests see it: its version line, JSON with nothing to report (task-036). */
+/** JSON with nothing to report, as every release from 0.3.0 on prints it (task-036, task-079). */
 const CLEAN_JSON = { stdout: [JSON.stringify({ workflows: [], diagnostics: [], entries: [],
   warnings: [] })] };
 /** A release from 0.3.0 on as the tests see it: its version line, JSON with nothing to report but
@@ -149,7 +149,7 @@ describe('npm run validate', () => {
     });
 
   it('fails a warning diagnostic of the newest release on its runs only, 0.2.2 tolerated '
-    + '(task-036, task-059, task-074)', () => {
+    + '(task-036, task-059, task-074, task-079)', () => {
       const warned = stubbedClean(NEWEST, [{ code: 'W_SAMPLE', severity: 'warning', file: 'f',
         path: 'p', message: 'sample' }]);
       try {

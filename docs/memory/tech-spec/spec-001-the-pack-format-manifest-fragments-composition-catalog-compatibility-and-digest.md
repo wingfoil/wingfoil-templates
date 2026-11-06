@@ -978,14 +978,14 @@ facts (the checks run on it, their dates and commits) are in its `notes`, writte
   - `format_key` says whether the release accepts the `format:` key without a warning;
   - `reads` maps each kind to the formats that release reads;
   - `capabilities` lists what it provides, from the `capabilities` vocabulary above;
-    `wingfoil-release-intake` records a capability for a release only when its CHANGELOG names
-    the feature or command behind it (dl-021 R4), since WingFoil names features and commands, not
+    `wingfoil-release-intake` records a capability for a release only when its CHANGELOG names the
+    feature or command behind it (dl-021 R4), since WingFoil names features and commands, not
     capabilities. For a patch the intake's report finds **verified** (dl-042 I2), its predecessor's
     capabilities carry forward unless the report flags a change (a `Removed`, `Deprecated` or
     `Breaking` heading, an `Added` or `Changed` entry naming a command or a feature) or a check that
     exercises one is red; a capability no check exercises is carried only when the predecessor has
-    it and the report flags nothing; a new capability is recorded only from a CHANGELOG entry naming
-    it, which makes the report guided;
+    it and the report flags nothing, otherwise the report is guided; a new capability is recorded
+    only from a CHANGELOG entry naming it, which makes the report guided;
   - `notes` is optional free text for people, never read by a resolver.
 
   WingFoil 0.2.2 predates dl-149. It reads format 1, which is files with no key, but warns on the
