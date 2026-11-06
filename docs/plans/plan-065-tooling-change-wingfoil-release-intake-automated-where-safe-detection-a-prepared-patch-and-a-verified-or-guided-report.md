@@ -223,3 +223,12 @@ Given by the approver on 2026-11-05: every point of the outline as recommended.
   approved by the approver, merged into `main` (`0d0603b`) and done; its branch CI run 42126405576
   `success` (16 min 25 s, 19 min 57 s); `intake.yml` dispatched once, run 42177750411 `success` in
   13 s, `no missing version`; the weekly reading's row added (ruling 5, dl-036 R2). Next, task (D).
+- 2026-11-06: step 4, task (D): task-079 approved by the approver, merged into `main` (`972dc3e`)
+  and done; `main`'s CI run on the merge cancelled by the next push, run 42224371231 on
+  `bfbf08c` (docs only after the merge) `success` (22.21.0 20 min 51 s, 22.12.0 16 min 25 s).
+- 2026-11-06: step 4, task (B): task-080 accepted, built test first, reviewed and re-reviewed,
+  approved by the approver, merged into `main` (`dfd14a9`) and done; its branch CI run
+  42227582673 `success` (22.12.0 20 min 21 s, 22.21.0 20 min 17 s); a scratch clone's 0.3.3
+  prepared by `intake:prepare` touched only (C)'s seven files, 1103 of 1103 tests passing with
+  `check:pins`, `index --check` and `check:packs` green. `main`'s CI on this push is read by
+  the next note. Next, task (C).
