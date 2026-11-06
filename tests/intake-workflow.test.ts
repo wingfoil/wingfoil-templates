@@ -216,7 +216,8 @@ describe('the verify job\'s scripts, run (task-081)', () => {
         assert.equal(leg.node, '22.12.0');
         assert.deepEqual(Object.keys(leg.checks), [...CHECK_IDS]);
         assert.equal(leg.checks['publication'], failing.length > 0 ? 'failure' : 'success');
-        assert.match(readFileSync(join(dir, 'summary.md'), 'utf8'), /\| publication \| /);
+        assert.ok(readFileSync(join(dir, 'summary.md'), 'utf8').includes(
+          `| publication | ${failing.length > 0 ? 'failure' : 'success'} |`));
         assert.equal(runStep(fail?.run ?? '', env), failing.length > 0 ? 1 : 0);
       } finally {
         rmSync(dir, { recursive: true, force: true });

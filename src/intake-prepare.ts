@@ -19,9 +19,9 @@ import { checkRepositoryTop, overlay, workingTree } from './index-source';
 import { computeRange } from './range';
 import type { CompatRelease } from './range';
 
-/** The golden fixture's compat.yaml, equal to the root's (dl-010). */
 type YamlMap = YAMLMap<unknown, unknown>;
 
+/** The golden fixture's compat.yaml, equal to the root's (dl-010). */
 export const GOLDEN_COMPAT = 'tests/fixtures/compose/tree/compat.yaml';
 /** The fixed notes of a prepared row, which the intake replaces (dl-042 I3); greppable. */
 export const NOTES_PLACEHOLDER = 'Prepared by intake:prepare; the intake writes this sentence '

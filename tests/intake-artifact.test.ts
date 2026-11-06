@@ -176,6 +176,9 @@ describe('intake:apply (task-081)', () => {
         collected(repo, out);
         repo.write('NOTES.md', 'an unrelated commit\n');
         repo.commitAll('unrelated');
+        // A change outside the allowlist does not count as an uncommitted change.
+        repo.write('NOTES.md', 'an unrelated edit\n');
+        repo.write('UNTRACKED.md', 'untracked\n');
         assert.equal(applyArtifact(repo.dir, out, NEXT).code, 0);
       } finally {
         rmSync(join(out, '..'), { recursive: true, force: true });
