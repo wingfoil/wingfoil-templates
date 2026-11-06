@@ -97,3 +97,34 @@ with no red of its own (dl-018 allows it), and the schema fixture's header comme
   no file; §12's `capabilities` sub-bullet with I2 in full; 0.2.2's paragraph kept and what stays
   listed; the Design's steps; dl-009 untouched here; the schema fixture's comment.
 - 2026-11-06: re-review: approve; its two nits applied.
+- 2026-11-06: started (backlog → in-progress) on `task/task-079-release-pinned-parts`. Red (dl-018)
+  on a local-only scratch tree, by a script run outside the repository: `git clone` of this
+  repository at the task's head, a `0.3.3` row (as 0.3.2's, `capabilities: [workflow-engine]`,
+  `notes` a placeholder) appended to `compat.yaml` and to the golden fixture's, the six
+  `catalog.yaml` ranges set to `>=0.3.0 <=0.3.3` (`npm run check:packs` then reports `0
+  problems`, so they equal `computeRange`'s), `npm ci`, `npm run build`, `npm run index`, `npm
+  test`: 1080 tests, 46 failing: `compat.test.ts` (the §12 equality, the release list, the range,
+  the ascending list) and the `validate` tests, through the missing stub for 0.3.3 and the newest
+  release's matrix lines (golden preset, publication, this repository, the overlays, the legs).
+- 2026-11-06: green: `0052a32` (`tests/compat.test.ts`, `tests/validate.test.ts`), `e6ecdd4`
+  (spec-001 §12 amended in place; the schema fixture's header comment). Deviation (dl-019), for the
+  approver at `in-review`: Acceptance 3 says the stub factory "reads no file"; it reads none, but
+  `NEWEST`, the newest release the tests expect, is read from the golden fixture's `compat.yaml`
+  (equal to this repository's by dl-010, which `compat.test.ts` checks), not from the real file:
+  task-045's rule holds in its letter (`compat-fixture.test.ts`) and its reason (an intake moves
+  the fixture with the real file). Proposed reading: a fixture, not this repository's file.
+- 2026-11-06: independent build review of `e6ecdd4`: approve after amendments, nothing blocking;
+  should-fix: the deviation above (recorded here), the repeated-release test repeating the newest
+  release; nits: I2's "otherwise the report is guided", a comment, a title, an import's order;
+  applied in `3fd5c07`. Re-review: approve. The scratch tree on `3fd5c07` gave 1080 tests, 1
+  failing (an install failure's assertion naming 0.3.2 as a regex, missed by the first search);
+  fixed in `c699e15`, the frozen commit; on it the scratch tree passes `npm test`, 1080 tests, 0
+  failing. No re-review for that fix: one assertion's version derived as the others were.
+- 2026-11-06: checks (dl-039 R1, R2), once, on `c699e15`: the branch CI, run 42185547938,
+  `success`, jobs Node.js 22.12.0 20 min 10 s and 22.21.0 20 min 0 s (none over 25 minutes); from a
+  clean working tree on Node.js 22.21.0 after `npm ci` and `npm run build`: `npm run
+  validate:publication`, the golden tree in publication mode and `npm run -s wingfoil -- workflow
+  list` exit 0, `directives list --format json` with `"warnings": []`; `npm run lint` exits 0;
+  Acceptance 1's tree passes `npm test` (above). This commit changes only `docs/memory`: no new
+  run. Privacy check of the branch's diff and messages: no local or scratch path, no maintainer
+  name or email, no private project, no intermediary session.
