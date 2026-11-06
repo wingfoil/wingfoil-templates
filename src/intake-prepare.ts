@@ -4,7 +4,7 @@
 // outputs. Every check and every file's new text come before the first write: a refusal or a failed
 // step writes nothing. The lockfile comes from an injected resolver, the only step outside the
 // process; the CLI's runs npm (intake-prepare-cli.ts).
-import { existsSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { gt } from 'semver';
 import { isMap, isScalar, isSeq, parse, parseDocument } from 'yaml';
@@ -14,7 +14,7 @@ import { checkPins } from './check-pins';
 import { compatFrom } from './compat';
 import type { Compat } from './compat';
 import { indexOutputs, rootOutputs } from './index';
-import { byBytes } from './index-data';
+import { byBytes, isDoc } from './index-data';
 import { checkRepositoryTop, overlay, workingTree } from './index-source';
 import { computeRange } from './range';
 import type { CompatRelease } from './range';
@@ -37,13 +37,8 @@ type Doc = Record<string, unknown>;
 /** A refusal or a failed step, before any write. */
 class Refusal extends Error {}
 
-function isDoc(value: unknown): value is Doc {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
 function text(tree: string, path: string): string | undefined {
-  const full = join(tree, path);
-  return existsSync(full) && lstatSync(full).isFile() ? readFileSync(full, 'utf8') : undefined;
+  return workingTree(tree).read(path);
 }
 
 function required(tree: string, path: string): string {
@@ -82,6 +77,12 @@ function preparedRow(content: string, version: string): string {
   }
   const newest = releases.items[releases.items.length - 1];
   if (!isMap(newest)) throw new Refusal('compat.yaml: the newest release is not a mapping');
+  // An indented comment after the last row falls inside the sequence's range: refused too.
+  const lastValue = newest.items[newest.items.length - 1]?.value as Node | null | undefined;
+  const rowEnd = lastValue?.range?.[2] ?? releases.range[2];
+  if (content.slice(rowEnd, releases.range[2]).trim().length > 0) {
+    throw new Refusal('compat.yaml: text follows the last release row');
+  }
   const field = (key: string): unknown =>
     newest.items.find((pair) => isScalar(pair.key) && pair.key.value === key)?.value;
   return `  - wingfoil: ${version}\n`
@@ -91,12 +92,16 @@ function preparedRow(content: string, version: string): string {
     + `    notes: ${JSON.stringify(NOTES_PLACEHOLDER)}\n`;
 }
 
+/** The scalar styles a range is rewritten in, in place. */
+const REWRITABLE = ['PLAIN', 'QUOTE_DOUBLE', 'QUOTE_SINGLE'];
+
 interface RangeSlot { label: string; scalar: Scalar; formats: Record<string, number>;
   capabilities: string[] }
 
 /** Each version entry's `wingfoil` scalar in catalog.yaml, and what its range is computed from. */
 function rangeSlots(content: string): RangeSlot[] {
   const document = parseDocument(content);
+  if (document.errors.length > 0) throw new Refusal('catalog.yaml: not valid YAML');
   const packs = document.get('packs', true) as Node | undefined;
   if (!isSeq(packs)) throw new Refusal('catalog.yaml has no packs list');
   const slots: RangeSlot[] = [];
@@ -108,12 +113,17 @@ function rangeSlots(content: string): RangeSlot[] {
     for (const entry of versions.items) {
       if (!isMap(entry)) continue;
       const scalar = entry.get('wingfoil', true);
-      if (!isScalar(scalar)) continue;
+      if (scalar === undefined) continue;
+      // Only a plain or quoted scalar is rewritten in place; an alias or a block scalar is refused.
+      const label = `${id}@${String(entry.get('version'))}`;
+      if (!isScalar(scalar) || !REWRITABLE.includes(scalar.type ?? '')) {
+        throw new Refusal(`catalog.yaml: ${label}: the range is not a plain or quoted scalar`);
+      }
       const data = entry.toJSON() as Doc;
       const formats = isDoc(data['formats']) ? data['formats'] as Record<string, number> : {};
       const capabilities = Array.isArray(data['requires_capabilities'])
         ? data['requires_capabilities'].map(String) : [];
-      slots.push({ label: `${id}@${String(entry.get('version'))}`, scalar, formats, capabilities });
+      slots.push({ label, scalar, formats, capabilities });
     }
   }
   return slots;
@@ -168,6 +178,8 @@ function checkedLockfile(manifest: string, resolve: Resolver): string {
     || typeof lockfile['lockfileVersion'] !== 'number' || lockfile['lockfileVersion'] < 2) {
     throw new Refusal('the lockfile: no `packages` map (lockfileVersion < 2)');
   }
+  // check-pins' matrix rule (wingfoil only, at the folder's version) holds by construction of
+  // the manifest; the lockfile is checked as check:pins checks it.
   const problems = checkPins(JSON.parse(manifest) as unknown, lockfile);
   if (problems.length > 0) throw new Refusal(`the lockfile: ${problems.join('; ')}`);
   return lockText;
@@ -182,6 +194,7 @@ function plan(tree: string, version: string, resolve: Resolver): Map<string, str
     throw new Refusal(error instanceof Error ? error.message : String(error));
   }
   const compatText = required(tree, 'compat.yaml');
+  if (compatText.includes('\r')) throw new Refusal('compat.yaml: not LF line endings');
   const compat = loadCompatText(compatText, 'compat.yaml');
   const recorded = compat.releases.map((release) => release.wingfoil);
   if (recorded.includes(version)) {
@@ -241,14 +254,16 @@ function plan(tree: string, version: string, resolve: Resolver): Map<string, str
 
 export function prepareIntake(tree: string, version: string, resolve: Resolver): PrepareResult {
   let files: Map<string, string>;
+  let changed: string[];
   try {
     files = plan(tree, version, resolve);
+    changed = [...files.keys()].filter((path) => text(tree, path) !== files.get(path))
+      .sort(byBytes);
   } catch (error) {
-    if (!(error instanceof Refusal)) throw error;
-    return { code: 1, lines: [`intake:prepare: ${error.message}, nothing written`] };
+    // Every error before the first write is a refusal with its reason, never a stack trace.
+    const why = error instanceof Error ? error.message : String(error);
+    return { code: 1, lines: [`intake:prepare: ${why}, nothing written`] };
   }
-  const changed = [...files.keys()].filter((path) => text(tree, path) !== files.get(path))
-    .sort(byBytes);
   const lines: string[] = [];
   for (const path of changed) {
     try {

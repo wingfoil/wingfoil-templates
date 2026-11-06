@@ -167,6 +167,20 @@ describe('intake:prepare (task-080)', () => {
     }
   });
 
+  it('keeps a range\'s quotes: double-quoted stays double-quoted, single-quoted single', () => {
+    for (const [quoted, expected] of [[`"${STUB_RELEASE}"`, `">=${STUB_RELEASE} <=${NEXT}"`],
+      [`'${STUB_RELEASE}'`, `'>=${STUB_RELEASE} <=${NEXT}'`]] as const) {
+      consistentRepo((repo) => {
+        repo.write('catalog.yaml', read(repo, 'catalog.yaml')
+          .replace(`wingfoil: ${STUB_RELEASE}\n`, `wingfoil: ${quoted}\n`));
+        repo.commitAll('a quoted range');
+        const result = prepareIntake(repo.dir, NEXT, fakeResolver());
+        assert.equal(result.code, 0, result.lines.join('\n'));
+        assert.ok(read(repo, 'catalog.yaml').includes(`wingfoil: ${expected}\n`));
+      });
+    }
+  });
+
   it('keeps a catalog.yaml comment and every byte outside the range scalars', () => {
     consistentRepo((repo) => {
       repo.write('catalog.yaml', `# a comment kept\n${read(repo, 'catalog.yaml')}`);
@@ -222,6 +236,29 @@ describe('intake:prepare (task-080)', () => {
     });
   });
 
+  it('refuses an indented comment after the last row, and CRLF line endings', () => {
+    refuses(NEXT, /text follows the last release row/, (repo) => {
+      for (const path of ['compat.yaml', GOLDEN_COMPAT]) {
+        appendFileSync(join(repo.dir, path), '    # a planned row\n');
+      }
+    });
+    refuses(NEXT, /compat\.yaml: not LF line endings/, (repo) => {
+      for (const path of ['compat.yaml', GOLDEN_COMPAT]) {
+        repo.write(path, read(repo, path).replace(/\n/g, '\r\n'));
+      }
+    });
+  });
+
+  it('refuses a catalog.yaml that is not valid YAML, or whose range is an alias', () => {
+    refuses(NEXT, /catalog\.yaml: not valid YAML/,
+      (repo) => appendFileSync(join(repo.dir, 'catalog.yaml'), 'packs: [\n'));
+    refuses(NEXT, /base@1\.0\.0: the range is not a plain or quoted scalar/, (repo) => {
+      repo.write('catalog.yaml', read(repo, 'catalog.yaml')
+        .replace(`wingfoil: ${STUB_RELEASE}\n`, 'wingfoil: *range\n')
+        .replace(/^packs:/m, `x-range: &range "${STUB_RELEASE}"\npacks:`));
+    });
+  });
+
   it('refuses a catalog.yaml range that does not recompute from the current compat.yaml', () => {
     const recomputes = /base@1\.0\.0: the range .* recomputes from compat\.yaml to "9\.0\.0"/;
     refuses(NEXT, recomputes, (repo) => {
@@ -233,9 +270,11 @@ describe('intake:prepare (task-080)', () => {
     });
   });
 
-  it('refuses an index that is not up to date', () => {
+  it('refuses an index not up to date: every file npm run index -- --check compares', () => {
     refuses(NEXT, /the index is not up to date: CATALOG\.md/,
       (repo) => appendFileSync(join(repo.dir, 'CATALOG.md'), 'stale\n'));
+    refuses(NEXT, /the index is not up to date: llms\.txt/,
+      (repo) => appendFileSync(join(repo.dir, 'llms.txt'), 'stale\n'));
   });
 
   it('refuses when the lockfile cannot be resolved, naming the step', () => {
@@ -250,6 +289,31 @@ describe('intake:prepare (task-080)', () => {
     refuses(NEXT, /the lockfile: no `packages` map \(lockfileVersion < 2\)/, undefined,
       () => `${JSON.stringify({ name: 'x', lockfileVersion: 1, dependencies: {} }, null, 2)}\n`);
     refuses(NEXT, /the lockfile: not JSON/, undefined, () => 'not json');
+    refuses(NEXT, /the lockfile: no `packages` map \(lockfileVersion < 2\)/, undefined, () => {
+      const lock = JSON.parse(lockfile(NEXT)) as Record<string, unknown>;
+      return `${JSON.stringify({ ...lock, lockfileVersion: 1 }, null, 2)}\n`;
+    });
+  });
+
+  it('names the files already written when a write fails (the one exception)', (t) => {
+    if (process.getuid?.() === 0) {
+      t.skip('root ignores a read-only directory');
+      return;
+    }
+    consistentRepo((repo) => {
+      mkdirSync(join(repo.dir, 'src', 'matrix'), { recursive: true });
+      chmodSync(join(repo.dir, 'src', 'matrix'), 0o555);
+      try {
+        const result = prepareIntake(repo.dir, NEXT, fakeResolver());
+        assert.equal(result.code, 1);
+        assert.deepEqual(result.lines.slice(0, 4),
+          WRITTEN.slice(0, 4).map((path) => `wrote ${path}`));
+        assert.match(result.lines[4] ?? '', new RegExp('writing src/matrix/wingfoil-9\\.0\\.1/'
+          + 'package-lock\\.json: .*; the files above were written'));
+      } finally {
+        chmodSync(join(repo.dir, 'src', 'matrix'), 0o755);
+      }
+    });
   });
 
   it('refuses a tree that is not the top level of a git repository', () => {
@@ -311,13 +375,16 @@ describe('npm run intake:prepare (task-080)', () => {
   it('exits 1 naming the step when npm fails, and writes nothing', () => {
     consistentRepo((repo) => {
       const record = mkdtempSync(join(tmpdir(), 'intake-prepare-record-'));
-      const npm = stubNpm(record, ['exit 3']);
+      const npm = stubNpm(record, ['echo "npm error" >&2', 'echo "no registry" >&2', 'exit 3']);
       try {
         const run = cli(['--tree', repo.dir, NEXT], npm.env);
         assert.equal(run.status, 1);
-        assert.match(run.stderr, /the lockfile: npm install exited 3, nothing written/);
+        assert.match(run.stderr,
+          /the lockfile: npm install exited 3 \(no registry\), nothing written/);
         assert.equal(run.stdout, '');
         assert.equal(status(repo), '');
+        const cwd = readFileSync(join(record, 'cwd'), 'utf8').trim();
+        assert.ok(!existsSync(cwd), 'the temporary directory is removed on a failure too');
       } finally {
         npm.dispose();
         rmSync(record, { recursive: true, force: true });

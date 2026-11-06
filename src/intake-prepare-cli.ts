@@ -27,8 +27,11 @@ function npmResolve(manifest: string): string {
       throw new Error(`npm install could not run: ${code ?? 'an error'}`);
     }
     if (result.status !== 0) {
+      // npm's last stderr line names the cause in a CI log.
+      const last = result.stderr.trim().split('\n').slice(-1)[0] ?? '';
       throw new Error(`npm install exited ${result.status === null
-        ? `on signal ${result.signal ?? 'unknown'}` : String(result.status)}`);
+        ? `on signal ${result.signal ?? 'unknown'}` : String(result.status)}`
+        + (last === '' ? '' : ` (${last})`));
     }
     return readFileSync(join(dir, 'package-lock.json'), 'utf8');
   } finally {
