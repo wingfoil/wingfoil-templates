@@ -26,6 +26,10 @@
     "index": "node dist/src/index-cli.js",
     "intake:detect": "node dist/src/intake-detect-cli.js",
     "intake:prepare": "node dist/src/intake-prepare-cli.js",
+    "intake:collect": "node dist/src/intake-artifact-cli.js collect",
+    "intake:apply": "node dist/src/intake-artifact-cli.js apply",
+    "intake:rehearse": "node dist/src/intake-rehearsal-cli.js",
+    "intake:report": "node dist/src/intake-report-cli.js",
     "site": "node dist/src/site-cli.js",
     "wingfoil": "wingfoil"
   },

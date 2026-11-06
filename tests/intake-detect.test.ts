@@ -224,3 +224,56 @@ describe('intake detection, the command\'s refusals (task-078 build review)', ()
     }
   });
 });
+
+describe('intake detection, the job outputs (task-081)', () => {
+  function outputs(versions: string[], extra: string[] = []): { run: Run; text: string } {
+    const dir = mkdtempSync(join(tmpdir(), 'intake-detect-output-'));
+    try {
+      const output = join(dir, 'output');
+      writeFileSync(output, 'earlier=1\n');
+      const run = withFile(JSON.stringify(answer(versions)),
+        (file) => cli(['--registry', file, '--compat', COMPAT, '--github-output', output,
+          ...extra]));
+      return { run, text: readFileSync(output, 'utf8') };
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  }
+
+  it('writes the lowest missing version above the newest recorded, and its class', () => {
+    const { run, text } = outputs(['0.2.2', '0.3.0', '0.3.1', '0.3.2', '0.3.3', '0.4.0']);
+    assert.equal(run.status, 1);
+    assert.equal(run.stdout, '0.3.1 backport (below 0.3.2)\n0.3.3 patch (against 0.3.2)\n'
+      + '0.4.0 minor, breaking in 0.x (against 0.3.3)\n');
+    assert.equal(text, 'earlier=1\nversion=0.3.3\nclass=patch\n');
+  });
+
+  it('writes a 0.x minor as minor and a major as major', () => {
+    assert.equal(outputs(['0.2.2', '0.3.0', '0.3.2', '0.4.0']).text,
+      'earlier=1\nversion=0.4.0\nclass=minor\n');
+    assert.equal(outputs(['0.2.2', '0.3.0', '0.3.2', '1.0.0']).text,
+      'earlier=1\nversion=1.0.0\nclass=major\n');
+  });
+
+  it('writes empty outputs when nothing is missing, or only a backport', () => {
+    for (const versions of [['0.2.2', '0.3.0', '0.3.2'], ['0.2.2', '0.3.0', '0.3.1', '0.3.2']]) {
+      assert.equal(outputs(versions).text, 'earlier=1\nversion=\nclass=\n');
+    }
+  });
+
+  it('writes the newest recorded release in a rehearsal, its lines and exit code unchanged', () => {
+    const quiet = outputs(['0.2.2', '0.3.0', '0.3.2'], ['--rehearsal']);
+    assert.equal(quiet.run.status, 0);
+    assert.equal(quiet.run.stdout, 'no missing version\n');
+    assert.equal(quiet.text, 'earlier=1\nversion=0.3.2\nclass=patch\n');
+    const missing = outputs(['0.2.2', '0.3.0', '0.3.2', '0.3.3'], ['--rehearsal']);
+    assert.equal(missing.run.status, 1);
+    assert.equal(missing.text, 'earlier=1\nversion=0.3.2\nclass=patch\n');
+  });
+
+  it('refuses --rehearsal without --github-output', () => {
+    const run = withFile(JSON.stringify(answer(['0.2.2'])),
+      (file) => cli(['--registry', file, '--compat', COMPAT, '--rehearsal']));
+    assert.equal(run.status, 2);
+  });
+});
