@@ -246,3 +246,15 @@ their CLIs and `intake.yml`: green; (3) the rehearsal dispatch (Acceptance 8).
   trip compares a plain `wingfoil: 9.0.0` of the fixture's catalog with the double-quoted one
   task-080 writes, and the "no pin folder" case starts from the recorded tree, since the fixture
   with 9.0.0 removed keeps no release that base's range meets (refused, a test of its own).
+- 2026-11-06: the full suite on the green commit: `npm test`, 1179 tests, 0 failing. Build
+  review: approve after amendments, no blocking; the real 0.3.2 CHANGELOG reported guided (its
+  `Added` and `Changed` entries, the word format, five kinds), 0.3.1 and 0.3.0 guided too; applied
+  (`c272c3b`): `intake:apply`'s uncommitted check with the allowlist as pathspec (a staged `git mv`
+  was missed), both symbolic-link tests made to reach the link check and assert its message, a
+  test running verify's two inline scripts with a fake `STEPS` (a `conclusion` read for `outcome`
+  would have shown every check green) and asserting both checks layouts, a `## ` bound test, the
+  summary's class mapped, `--out` compared by real path, `jobClass` dropped. Each surviving mutant
+  of the review then caught (one failing test each). Re-review: approve, three nits applied
+  (`28ca167`, the frozen commit): a comment put back on `GOLDEN_COMPAT`, a change outside the
+  allowlist shown not to block apply, the summary row's outcome asserted. Intake tests 127, 0
+  failing; `npm run lint` 0.
