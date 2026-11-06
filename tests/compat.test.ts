@@ -24,7 +24,7 @@ function withCompat(edit: (text: string) => string, body: (path: string) => void
 }
 
 const SECOND_RELEASE = [
-  '  - wingfoil: 0.4.0',
+  '  - wingfoil: 99.0.0',
   '    format_key: true',
   '    reads: { dna: [1], memory: [1], roles: [1], workflows: [1], workflow: [1], directive: [1], '
     + 'memory-template: [1] }',
@@ -33,16 +33,9 @@ const SECOND_RELEASE = [
 ].join('\n');
 
 describe('compat.yaml', () => {
-  it('is the example of spec-001 §12, and the fixture tree carries the same file (dl-010)', () => {
-    const spec = readFileSync(join(REPO_ROOT, 'docs', 'memory', 'tech-spec',
-      'spec-001-the-pack-format-manifest-fragments-composition-catalog-compatibility-and-digest.md'),
-    'utf8');
-    const section = spec.slice(spec.indexOf('## 12. '), spec.indexOf('## 13. '));
-    const example = /```yaml\n([\s\S]*?)```/.exec(section)?.[1];
-    assert.ok(example !== undefined);
-    const real = readFileSync(REAL, 'utf8');
-    assert.equal(real, example);
-    assert.equal(readFileSync(join(FIXTURES, 'compose', 'tree', 'compat.yaml'), 'utf8'), real);
+  it('is carried by the fixture tree as it is (dl-010; spec-001 §12 points to it, task-079)', () => {
+    assert.equal(readFileSync(join(FIXTURES, 'compose', 'tree', 'compat.yaml'), 'utf8'),
+      readFileSync(REAL, 'utf8'));
   });
 
   it('starts with the frozen 0.2.2-only header the fixture compat files build on (task-035)',
@@ -51,30 +44,44 @@ describe('compat.yaml', () => {
     });
 
   it('loads the releases of the real file: 0.2.2, then 0.3.0, 0.3.1 and 0.3.2 with '
-    + 'workflow-engine (task-036, task-059, task-074)', () => {
+    + 'workflow-engine, and every later release as an intake writes it (task-036, task-059, '
+    + 'task-074, task-079)', () => {
       const compat = loadCompat(REAL);
-      assert.deepEqual(compat.releases.map((release) => [release.wingfoil, release.format_key,
-        release.capabilities]), [['0.2.2', false, []], ['0.3.0', true, ['workflow-engine']],
-        ['0.3.1', true, ['workflow-engine']], ['0.3.2', true, ['workflow-engine']]]);
-      for (const index of [1, 2, 3]) {
-        assert.deepEqual(compat.releases[index]?.reads, { dna: [1], memory: [1], roles: [1],
-          workflows: [1], workflow: [1], directive: [1], 'memory-template': [1] });
+      assert.deepEqual(compat.releases.slice(0, 4).map((release) => [release.wingfoil,
+        release.format_key, release.capabilities]), [['0.2.2', false, []],
+        ['0.3.0', true, ['workflow-engine']], ['0.3.1', true, ['workflow-engine']],
+        ['0.3.2', true, ['workflow-engine']]]);
+      const kinds = Object.keys(compat.kinds).sort();
+      for (const release of compat.releases.slice(1)) {
+        assert.deepEqual(Object.keys(release.reads).sort(), kinds, release.wingfoil);
+      }
+      for (const release of compat.releases.slice(4)) {
+        assert.equal(release.format_key, true, release.wingfoil);
+        for (const capability of release.capabilities) {
+          assert.ok(Object.hasOwn(compat.capabilities, capability), capability);
+        }
       }
       assert.deepEqual(Object.keys(compat.capabilities),
         ['pack-install', 'workflow-engine']);
     });
 
-  it('gives a version requiring workflow-engine the range >=0.3.0 <=0.3.2 from the real file '
-    + '(task-036, task-059, task-074)', () => {
+  it('gives a version requiring workflow-engine the range from 0.3.0 to the newest release of the '
+    + 'real file, while every later release carries it (task-036, task-059, task-074, task-079)',
+    () => {
+      const releases = loadCompat(REAL).releases;
+      const newest = releases[releases.length - 1];
+      assert.ok(newest !== undefined);
+      assert.ok(releases.slice(1).every((release) =>
+        release.capabilities.includes('workflow-engine')));
       const formats = { dna: 1, memory: 1, roles: 1, workflow: 1, directive: 1 };
       assert.equal(computeRange({ formats, requires_capabilities: ['workflow-engine'] },
-        loadCompat(REAL).releases), '>=0.3.0 <=0.3.2');
+        releases), `>=0.3.0 <=${newest.wingfoil}`);
     });
 
   it('loads releases in ascending order', () => {
     withCompat((text) => `${text}${SECOND_RELEASE}`, (path) => {
       assert.deepEqual(loadCompat(path).releases.map((release) => release.wingfoil),
-        ['0.2.2', '0.3.0', '0.3.1', '0.3.2', '0.4.0']);
+        [...loadCompat(REAL).releases.map((release) => release.wingfoil), '99.0.0']);
     });
   });
 
@@ -87,7 +94,7 @@ describe('compat.yaml', () => {
   });
 
   it('refuses a repeated release', () => {
-    withCompat((text) => `${text}${SECOND_RELEASE.replace('0.4.0', '0.3.2')}`, (path) => {
+    withCompat((text) => `${text}${SECOND_RELEASE.replace('99.0.0', '0.3.2')}`, (path) => {
       assert.throws(() => loadCompat(path),
         (error: unknown) => error instanceof CompatError && /0\.3\.2/.test(error.message));
     });

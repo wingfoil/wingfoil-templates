@@ -13,6 +13,7 @@ import { runIndex } from '../src/index';
 import { runPublish } from '../src/publish';
 import { runSite } from '../src/site';
 import { mapOverlayPaths, runValidate } from '../src/validate';
+import { loadCompat } from '../src/compat';
 import type { ValidateOptions, ValidateResult } from '../src/validate';
 import { writePack } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
@@ -46,44 +47,44 @@ after(() => WINGFOIL.dispose());
 /** WingFoil 0.3.0 as the tests see it: its version line, JSON with nothing to report (task-036). */
 const CLEAN_JSON = { stdout: [JSON.stringify({ workflows: [], diagnostics: [], entries: [],
   warnings: [] })] };
-function stubbed030(diagnostics: unknown[] = []): StubWingfoil {
-  return new StubWingfoil({ version: '0.3.0 (cc31d7a8)', commands: {
+/** A release from 0.3.0 on as the tests see it: its version line, JSON with nothing to report but
+ * the given diagnostics (task-036, task-059, task-074; task-079: one for every release). */
+function stubbedClean(release: string, diagnostics: unknown[] = []): StubWingfoil {
+  return new StubWingfoil({ version: `${release} (0000000)`, commands: {
     'workflow list': { stdout: [JSON.stringify({ workflows: [], diagnostics })] },
-    'dna show': CLEAN_JSON, 'directives list': CLEAN_JSON } }, '0.3.0');
+    'dna show': CLEAN_JSON, 'directives list': CLEAN_JSON } }, release);
 }
-const WINGFOIL_030 = stubbed030();
-after(() => WINGFOIL_030.dispose());
 
-/** WingFoil 0.3.1 as the tests see it, as 0.3.0's (task-059). */
-function stubbed031(diagnostics: unknown[] = []): StubWingfoil {
-  return new StubWingfoil({ version: '0.3.1 (870bd440)', commands: {
-    'workflow list': { stdout: [JSON.stringify({ workflows: [], diagnostics })] },
-    'dna show': CLEAN_JSON, 'directives list': CLEAN_JSON } }, '0.3.1');
-}
-const WINGFOIL_031 = stubbed031();
-after(() => WINGFOIL_031.dispose());
+/** The newest release the golden tree's compat.yaml lists, which equals this repository's
+ * (dl-010, checked by compat.test.ts): read from the fixture, so that task-045's rule holds. */
+const NEWEST = (() => {
+  const releases = loadCompat(join(FIXTURES, 'compose', 'tree', 'compat.yaml')).releases;
+  const last = releases[releases.length - 1];
+  assert.ok(last !== undefined);
+  return last.wingfoil;
+})();
 
-/** WingFoil 0.3.2 as the tests see it, as 0.3.1's (task-074). */
-function stubbed032(diagnostics: unknown[] = []): StubWingfoil {
-  return new StubWingfoil({ version: '0.3.2 (6de2e13c)', commands: {
-    'workflow list': { stdout: [JSON.stringify({ workflows: [], diagnostics })] },
-    'dna show': CLEAN_JSON, 'directives list': CLEAN_JSON } }, '0.3.2');
-}
-const WINGFOIL_032 = stubbed032();
-after(() => WINGFOIL_032.dispose());
+/** Strict `X.Y.Z`: the versions the factory below answers. */
+const STRICT = /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/;
+/** A default stub per release, made when first asked for and removed at the end. */
+const DEFAULTS = new Map<string, StubWingfoil>();
+after(() => { for (const stub of DEFAULTS.values()) stub.dispose(); });
 
 /**
- * The stub of each release `compat.yaml` lists: `wingfoil-<version>` is never installed in the
- * tests, and a release with no stub is an error.
+ * The stub of each release a `compat.yaml` lists: `wingfoil-<version>` is never installed in the
+ * tests. 0.2.2 has its format warning; any other strict `X.Y.Z` a clean stub (task-079), unless
+ * `overrides` gives one; anything else is an error.
  */
-function byRelease(release022: StubWingfoil = WINGFOIL, release030: StubWingfoil = WINGFOIL_030,
-  release031: StubWingfoil = WINGFOIL_031, release032: StubWingfoil = WINGFOIL_032,
-): (version: string) => string {
-  const stubs: Record<string, StubWingfoil> = { '0.2.2': release022, '0.3.0': release030,
-    '0.3.1': release031, '0.3.2': release032 };
+function byRelease(overrides: Record<string, StubWingfoil> = {}): (version: string) => string {
   return (version) => {
-    const stub = stubs[version];
-    if (stub === undefined) throw new Error(`no stub for wingfoil@${version}`);
+    const given = overrides[version] ?? (version === '0.2.2' ? WINGFOIL : undefined);
+    if (given !== undefined) return given.cli;
+    if (!STRICT.test(version)) throw new Error(`no stub for wingfoil@${version}`);
+    let stub = DEFAULTS.get(version);
+    if (stub === undefined) {
+      stub = stubbedClean(version);
+      DEFAULTS.set(version, stub);
+    }
     return stub.cli;
   };
 }
@@ -128,8 +129,8 @@ describe('npm run validate', () => {
     assert.ok(result.lines.includes('compositions: 13'));
   });
 
-  it('runs the golden preset against wingfoil@0.2.2 and 0.3.2 in self-test mode, the oldest and '
-    + 'the newest (task-036, task-059, task-074)',
+  it('runs the golden preset against wingfoil@0.2.2 and the newest release in self-test mode, the '
+    + 'oldest and the newest (task-036, task-059, task-074, task-079)',
     () => {
       const result = validate(['--tree', TREE, ...NAME]);
       assert.equal(result.code, 0, result.lines.join('\n'));
@@ -140,7 +141,7 @@ describe('npm run validate', () => {
           ...['workflow list', 'dna show', 'directives list'].map((command) =>
             `matrix ${label} wingfoil@0.2.2 ${command}: pass (self-test, tolerated 1)`),
           ...['workflow list', 'dna show', 'directives list'].map((command) =>
-            `matrix ${label} wingfoil@0.3.2 ${command}: pass (self-test)`)]),
+            `matrix ${label} wingfoil@${NEWEST} ${command}: pass (self-test)`)]),
         'matrix: self-test, 26 runs, 0 failed, tolerance applied: 0.2.2',
       ]);
       assert.equal(result.mode, 'self-test');
@@ -149,14 +150,14 @@ describe('npm run validate', () => {
 
   it('fails a warning diagnostic of the newest release on its runs only, 0.2.2 tolerated '
     + '(task-036, task-059, task-074)', () => {
-      const warned = stubbed032([{ code: 'W_SAMPLE', severity: 'warning', file: 'f', path: 'p',
-        message: 'sample' }]);
+      const warned = stubbedClean(NEWEST, [{ code: 'W_SAMPLE', severity: 'warning', file: 'f',
+        path: 'p', message: 'sample' }]);
       try {
         const result = validate(['--tree', TREE, ...NAME],
-          { install: byRelease(WINGFOIL, WINGFOIL_030, WINGFOIL_031, warned) });
+          { install: byRelease({ [NEWEST]: warned }) });
         assert.equal(result.code, 1, result.lines.join('\n'));
         assert.ok(result.lines.some((line) => line.startsWith(
-          'matrix presets/golden.yaml wingfoil@0.3.2 workflow list: fail (self-test)')),
+          `matrix presets/golden.yaml wingfoil@${NEWEST} workflow list: fail (self-test)`)),
         result.lines.join('\n'));
         assert.ok(result.lines.includes(
           'matrix: self-test, 26 runs, 13 failed, tolerance applied: 0.2.2'),
@@ -166,13 +167,13 @@ describe('npm run validate', () => {
       }
     });
 
-  it('in publication mode, runs the golden preset against 0.3.0 and 0.3.2 (dl-009, task-036, '
-    + 'task-059, task-074)', () => {
+  it('in publication mode, runs the golden preset against 0.3.0 and the newest release (dl-009, '
+    + 'task-036, task-059, task-074, task-079)', () => {
     const result = validate(['--tree', TREE, ...NAME], { mode: 'publication' });
     assert.equal(result.code, 0, result.lines.join('\n'));
     const matrix = result.lines.filter((line) => line.startsWith('matrix'));
     assert.ok(matrix.every((line) => !line.includes('wingfoil@0.2.2')), matrix.join('\n'));
-    for (const version of ['0.3.0', '0.3.2']) {
+    for (const version of ['0.3.0', NEWEST]) {
       assert.ok(matrix.includes(
         `matrix presets/golden.yaml wingfoil@${version} workflow list: pass (publication)`),
       matrix.join('\n'));
@@ -200,7 +201,8 @@ describe('npm run validate', () => {
   it('fails a composition that fails the matrix, naming release and command', () => {
     const noisy = stubbed({ stderr: ['Warning: something else'] });
     try {
-      const result = validate(['--tree', TREE, ...NAME], { install: byRelease(noisy) });
+      const result = validate(['--tree', TREE, ...NAME],
+        { install: byRelease({ '0.2.2': noisy }) });
       assert.equal(result.code, 1);
       assert.ok(result.lines.some((line) => line.startsWith(
         'matrix presets/golden.yaml wingfoil@0.2.2 workflow list: fail (self-test)')),
@@ -335,8 +337,8 @@ describe('npm run validate', () => {
   });
 
   it('validates this repository: base, software, methodology/scrum and methodology/kanban, their '
-    + 'nine examples, on 0.3.0 and 0.3.2 (task-039, task-047, task-055, task-059, task-067, '
-    + 'task-074)', () => {
+    + 'nine examples, on 0.3.0 and the newest release (task-039, task-047, task-055, task-059, '
+    + 'task-067, task-074, task-079)', () => {
       const result = validate(['--tree', REPO_ROOT]);
       assert.equal(result.code, 0, result.lines.join('\n'));
       assert.ok(result.lines.includes('schemas: checked 6 files, 0 problems'));
@@ -389,8 +391,8 @@ describe('npm run validate', () => {
         'matrix: self-test, 26 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
     });
 
-  it('passes a publication run of this repository: the nine examples on 0.3.0 and 0.3.2 '
-    + '(task-039, task-055, task-059, task-067, task-074)',
+  it('passes a publication run of this repository: the nine examples on 0.3.0 and the newest '
+    + 'release (task-039, task-055, task-059, task-067, task-074, task-079)',
     () => {
       const result = validate(['--tree', REPO_ROOT], { mode: 'publication' });
       assert.equal(result.code, 0, result.lines.join('\n'));
@@ -765,7 +767,7 @@ describe('npm run validate --overlay (task-046, plan-046 ruling 1)', () => {
       assert.ok(result.lines.includes('compositions: 13'), result.lines.join('\n'));
       for (const label of labels) {
         assert.ok(result.lines.includes(
-          `matrix ${label} wingfoil@0.3.2 workflow list: pass (self-test)`), label);
+          `matrix ${label} wingfoil@${NEWEST} workflow list: pass (self-test)`), label);
       }
       const index = result.lines.findIndex((line) => line.startsWith('index:'));
       const overlay = result.lines.findIndex((line) => line.startsWith('overlay: '));
