@@ -15,12 +15,13 @@ written by hand today and pinned to real releases, derived from `compat.yaml`, s
 diff of task (B) passes `npm test` without hand edits. dl-042 (approved 2026-11-05) rules it: I3,
 the facts of each release in its `notes`, spec-001 §12 pointing to `compat.yaml`, §12's prose per
 release for 0.3.0 … 0.3.2 kept as history in spec-001's Execution Notes, no Execution Note on dl-009
-per release from this task on; I2, §12's `capabilities` bullet read as a carry-forward for a patch.
-Today task-059 and task-074 each changed `tests/compat.test.ts` (the spec-001 §12 example equal to
-`compat.yaml`, and the list of the real file's releases) and `tests/validate.test.ts` (a stub per
-real release, keyed by its version) by hand. task-045's rule stays: only `tests/compat.test.ts` and
-`compat-fixture.test.ts` read this repository's `compat.yaml` as such; every other test takes
-`FROZEN_COMPAT`. dl-009 is not touched here: its last note is plan-065's dl actions row (dl-042 I5).
+per release from this task on; I2, the `releases[]` › `capabilities` sub-bullet of §12, for a
+verified patch. Today task-059 and task-074 each changed `tests/compat.test.ts` (the spec-001 §12
+example equal to `compat.yaml`, and the list of the real file's releases) and
+`tests/validate.test.ts` (a stub per real release, keyed by its version) by hand. task-045's rule
+stays: only `tests/compat.test.ts` and `compat-fixture.test.ts` read this repository's `compat.yaml`
+as such; every other test takes `FROZEN_COMPAT`. dl-009 is not touched here: its last note is
+plan-065's dl actions row (dl-042 I5).
 
 ## Acceptance
 
@@ -68,8 +69,9 @@ real release, keyed by its version) by hand. task-045's rule stays: only `tests/
    leaves), the spec, this task and `docs/owed-items.md` changes.
 6. **The checks** (`tooling-delivery` v3 › `review`, dl-039): the build review and its amendments
    first; then once on the frozen commit the branch CI `success` (both jobs, run id and durations)
-   and dl-039's local list on Node.js 22.21.0; `npm run lint` exits 0; Acceptance 1's tree passes
-   `npm test`. The privacy check of the branch's diff recorded.
+   and dl-039's local list on Node.js 22.21.0; `npm run lint` exits 0; Acceptance 1's tree, with the
+   frozen commit's changed files copied in and rebuilt, passes `npm test`. The privacy check of the
+   branch's diff recorded.
 
 ## Design
 
@@ -94,3 +96,4 @@ with no red of its own (dl-018 allows it), and the schema fixture's header comme
   folder, local-only, a clone with its tags; the range and ascending tests; the stub factory reading
   no file; §12's `capabilities` sub-bullet with I2 in full; 0.2.2's paragraph kept and what stays
   listed; the Design's steps; dl-009 untouched here; the schema fixture's comment.
+- 2026-11-06: re-review: approve; its two nits applied.
