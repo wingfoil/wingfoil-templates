@@ -131,3 +131,8 @@ the report, and its CLI (green); (3) `intake.yml` (green). `package.json` gains 
   the floor ignored). This commit changes only `docs/memory`: no new run. Privacy check of the
   branch's diff and messages: no local or scratch path, no maintainer name or email, no private
   project, no intermediary session.
+- 2026-11-06: approved by the approver, merged into `main` (`0d0603b`) and done. Acceptance 8:
+  `intake.yml` dispatched once with the approver's OK (`gh workflow run intake.yml --ref main`), run
+  42177750411, `success` (event `workflow_dispatch`, job `detect` 13 s), its log `no missing
+  version`; the row of `docs/owed-items.md` for the weekly reading added (owner approver, trigger
+  every week, with GitHub's 60-day disable); `main`'s CI read on that last push (plan-065's notes).

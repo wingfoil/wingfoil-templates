@@ -219,3 +219,7 @@ Given by the approver on 2026-11-05: every point of the outline as recommended.
   42119230419, `success`, jobs Node.js 22.12.0 12 min 30 s and 22.21.0 15 min 46 s (none over 25
   minutes). Step 2: the reply about this plan, its text shown to the approver first, sent on
   2026-11-05 with this plan's id and its `submit` commit. Step 3: the decision-log added (dl-042).
+- 2026-11-06: step 4, task (A): task-078 accepted, built test first, reviewed and re-reviewed,
+  approved by the approver, merged into `main` (`0d0603b`) and done; its branch CI run 42126405576
+  `success` (16 min 25 s, 19 min 57 s); `intake.yml` dispatched once, run 42177750411 `success` in
+  13 s, `no missing version`; the weekly reading's row added (ruling 5, dl-036 R2). Next, task (D).
