@@ -71,7 +71,8 @@ a tag not yet pushed answers 404.
      `$RUNNER_TEMP/checks.json` (the node version, the fixed ids and their outcomes); a pinned
      `actions/upload-artifact` step uploads it as `verify-<node>` (`retention-days: 14`); a `run`
      step fails the job when an outcome is not `success`. No `actions/cache`, no save and no
-     restore, stricter than the plan's "no save" at no cost: `ci.yml`'s key hashes every pin lockfile, so a new lockfile always misses.
+     restore, stricter than the plan's "no save" at no cost: `ci.yml`'s key hashes every pin
+     lockfile, so a new lockfile always misses.
    - `report`, `needs: [detect, prepare, verify]`, `if: ${{ !cancelled() &&
      needs.detect.outputs.version != '' }}`: downloads `intake-<v>` with `if: ${{
      needs.prepare.result == 'success' }}` to `${{ runner.temp }}/intake`, and the checks by
@@ -196,8 +197,8 @@ a tag not yet pushed answers 404.
    each job's duration recorded (G12, ruling 7). The path of a real intake (`detect` red, its
    outputs reaching `prepare`) is covered by the workflow test's `if` and `outputs` assertions and
    first runs at the first real missing version, recorded by plan-065's close. A `verify` red on
-   the rehearsal is recorded with its cause, and blocks the task unless the cause is outside it. The privacy check of the
-   branch's diff recorded.
+   the rehearsal is recorded with its cause, and blocks the task unless the cause is outside it.
+   The privacy check of the branch's diff recorded.
 
 ## Design
 
