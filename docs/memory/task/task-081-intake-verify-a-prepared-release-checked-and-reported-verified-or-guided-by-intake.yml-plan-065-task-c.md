@@ -233,3 +233,16 @@ their CLIs and `intake.yml`: green; (3) the rehearsal dispatch (Acceptance 8).
   pattern, `continue-on-error`), `checks.json` validated, `${{ runner.temp }}` in `with:`, the
   kinds' path and description rule, `Upgrading from` any text, the real intake's path covered by
   the workflow test and first run recorded at plan-065's close.
+- 2026-11-06: accepted by the approver (`19ac2b5`, pending → backlog); started on
+  `task/task-081-intake-verify` (`eee0202`). Red: the tests of Acceptance 6 with the modules'
+  signatures and no body, `intake.yml` as on `main`: `node --test` of the five intake test files,
+  99 tests, 75 failing; passing, task-078's 19 tests of `intake:detect`, four workflow assertions
+  today's one-job file already meets (permissions, concurrency, pins, `env`), and `--rehearsal`'s
+  refusal (an unknown option today). `src/intake-prepare.ts` refactored first (its checks and
+  writes exported for the rehearsal), its 23 tests unchanged and passing. Green (`5668027`): the
+  modules, their CLIs, the four scripts and `intake.yml` (`upload-artifact` v7.0.2 `cf430e0`,
+  `download-artifact` v8.0.2 `9000827`, both published 2026-10-07); the intake's six test files,
+  123 tests, 0 failing; `npm run lint` 0. One test changed while green: the rehearsal's round
+  trip compares a plain `wingfoil: 9.0.0` of the fixture's catalog with the double-quoted one
+  task-080 writes, and the "no pin folder" case starts from the recorded tree, since the fixture
+  with 9.0.0 removed keeps no release that base's range meets (refused, a test of its own).
