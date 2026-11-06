@@ -2,7 +2,7 @@
 id: task-081-intake-verify-a-prepared-release-checked-and-reported-verified-or-guided-by-intake.yml-plan-065-task-c
 type: task
 title: "Intake verify: a prepared release checked and reported verified or guided by intake.yml (plan-065 task C)"
-status: backlog
+status: in-progress
 pack: ""            # tooling task (tooling-delivery v3), plan-065 task (C)
 depends_on: []
 tags: ["tooling","intake","ci"]
