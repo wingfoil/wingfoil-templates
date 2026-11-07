@@ -149,6 +149,22 @@ Each point with a recommendation; points 4 and 6 are departures the approver rul
    the CI's duration read at each merge (none over 25 minutes, G12), the coverage of (F) the likely
    growth.
 
+## The approver's rulings
+
+Given by the approver on 2026-11-07: every point of the outline as recommended, the departures of
+points 4 and 6 included.
+1. **Point 1:** tasks (A) … (G) in the order and with the dependencies written; (D) split as (D1)
+   and (D2) if its design finds it too large.
+2. **Point 2:** fixture packs only, format 1's refusals tested; no adoption run, no matrix row.
+3. **Point 3:** the root `catalog.yaml` at format 2 with (B), no published entry edited.
+4. **Point 4:** the waiver heuristic a review list, exit unchanged, read at `pack-release-cycle` ›
+   `prepare`.
+5. **Point 5:** the tensions' notices on stderr, in a fixed order, never failing.
+6. **Point 6:** an `mcp` fragment refused by the lint and the composer until its row.
+7. **Point 7:** both open points left to the first `stage/*` charter, each in a row.
+8. **Point 8:** spec-001 §5's exception in a row, settled at (G)'s merge.
+9. **Point 9:** dl-039's checks, a branch per task, `main` never pushed while its CI runs.
+
 ## Steps
 
 1. **This plan:** independent review and re-review (dl-017); the outline shown to the approver and
@@ -191,3 +207,7 @@ Each point with a recommendation; points 4 and 6 are departures the approver rul
 - 2026-11-07: re-review: approve, nothing blocking; applied: the rows of point 7 with the rulings'
   commit (dl-036 R2), the composer's `mcp` refusal in (C), §6.5 cited for a `with`'s range, a
   split of (D) named (D1) and (D2).
+- 2026-11-07: `main`'s CI before this plan (dl-038 C3), on plan-065's close (`775f445`), run
+  42365575072, `success` (22.12.0 16 min 25 s, 22.21.0 18 min 8 s), no annotation. The approver
+  ruled every point as recommended; the rulings recorded with the rows of points 7 and 8 in
+  `docs/owed-items.md` (dl-036 R2).
