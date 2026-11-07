@@ -8,6 +8,12 @@ import type { ValidateFunction } from 'ajv';
 /** index/ at the repository root, from the compiled module under dist/src/. */
 export const INDEX_SCHEMA = join(__dirname, '..', '..', 'index', 'catalog-index.schema.json');
 
+/** The schema file, relative to the root, that validates `data`, by the rule of `readsFormatOne`. */
+export function indexSchemaFile(data: unknown): string {
+  void data;
+  throw new Error('not written yet (task-082, red)');
+}
+
 let compiled: { validate: ValidateFunction; warnings: string[] } | undefined;
 let document: Record<string, unknown> | undefined;
 

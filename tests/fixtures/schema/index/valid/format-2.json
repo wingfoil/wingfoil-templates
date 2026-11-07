@@ -1,0 +1,338 @@
+{
+  "format": 2,
+  "repository": "wingfoil/wingfoil-templates",
+  "install": [],
+  "packs": [
+    {
+      "id": "base",
+      "catalog": "official",
+      "status": "active",
+      "axis": null,
+      "slot": null,
+      "latest": "2.0.1",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "base@1.0.0",
+          "wingfoil": ">=0.3.0 <=0.3.2",
+          "formats": {
+            "directive": 1,
+            "dna": 1,
+            "memory": 1,
+            "memory-template": 1,
+            "roles": 1,
+            "workflow": 1
+          },
+          "requires_capabilities": [
+            "workflow-engine"
+          ],
+          "requires": [],
+          "conflicts": [],
+          "pack_format": 1,
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@1.0.0/packs/base/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@1.0.0/packs/base/pack.yaml"
+        },
+        {
+          "version": "2.0.0",
+          "tag": "base@2.0.0",
+          "wingfoil": ">=0.3.0 <=0.3.2",
+          "formats": {
+            "directive": 1,
+            "dna": 1,
+            "memory": 1,
+            "memory-template": 1,
+            "roles": 1,
+            "workflow": 1
+          },
+          "requires_capabilities": [
+            "workflow-engine"
+          ],
+          "requires": [],
+          "conflicts": [],
+          "pack_format": 1,
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.0/packs/base/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.0/packs/base/pack.yaml"
+        },
+        {
+          "version": "2.0.1",
+          "tag": "base@2.0.1",
+          "wingfoil": ">=0.3.0 <=0.3.2",
+          "formats": {
+            "directive": 1,
+            "dna": 1,
+            "memory": 1,
+            "memory-template": 1,
+            "roles": 1,
+            "workflow": 1
+          },
+          "requires_capabilities": [
+            "workflow-engine"
+          ],
+          "requires": [],
+          "conflicts": [],
+          "pack_format": 1,
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.1/packs/base/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.1/packs/base/pack.yaml"
+        }
+      ],
+      "title": "Base",
+      "description": "The core of every project governed by WingFoil, software or not: the Memory types, workflows, directives and DNA that all of them use, and nothing that only some use.",
+      "workflows": [
+        "decision-log-ingest",
+        "governance-evolution",
+        "retrospective",
+        "retrospective-periodic"
+      ],
+      "conditional_workflows": [],
+      "memory_types": [
+        "decision-log",
+        "plan",
+        "task"
+      ],
+      "directives": [
+        "claim-sources",
+        "doc-versioning",
+        "security-secrets",
+        "traceability"
+      ],
+      "conditional_directives": [],
+      "conditional_parts": [],
+      "tensions": [],
+      "parameters": [
+        {
+          "name": "agent_name",
+          "type": "string",
+          "description": "The name of the agent in dna.yaml team.agents"
+        },
+        {
+          "name": "approver_email",
+          "type": "string",
+          "description": "The approver's email, which WingFoil matches to the git user to grant approval"
+        },
+        {
+          "name": "approver_name",
+          "type": "string",
+          "description": "The name of the approver, the team member who approves"
+        },
+        {
+          "name": "decision_log_path",
+          "type": "path",
+          "default": "docs/memory/decision-log/{id}.md",
+          "description": "The decision-log type's path; only letters, digits and . _ / { } -"
+        },
+        {
+          "name": "plan_id",
+          "type": "pattern",
+          "default": "{workflow}-{phase}-plan",
+          "description": "The plan type's id pattern. WingFoil's workflow start fills a started plan's workflow and phase only from the tokens the id pattern or the path declares; a pattern without {workflow} and {phase} leaves them to be filled by hand"
+        },
+        {
+          "name": "plan_path",
+          "type": "path",
+          "default": "docs/plans/{id}.md",
+          "description": "The plan type's path; only letters, digits and . _ / { } -"
+        },
+        {
+          "name": "project_name",
+          "type": "string",
+          "description": "The project's name: dna.yaml project.name"
+        },
+        {
+          "name": "retrospective_path",
+          "type": "path",
+          "default": "docs/retrospectives/",
+          "description": "Where the retrospective's friction inventory goes: a directory, ending with /, by default (weak evidence: any file in it); a project may set a fixed file, with no trailing /. Only letters, digits and . _ / { } -, and no {...} token, since no element is in scope"
+        },
+        {
+          "name": "task_path",
+          "type": "path",
+          "default": "docs/memory/task/{id}.md",
+          "description": "The task type's path; only letters, digits and . _ / { } -"
+        }
+      ],
+      "excerpt": "Every project governed by WingFoil, software or not, starts from `base`: it holds the decision-log, task and plan types, the workflows that capture a decision, run a retrospective and change the project's own governance, the generic directives and the DNA every project shares (one approver, one agent without approval authority). Other packs only add to it or tighten it. It serves every adoption profile (solo developer, code reviewer, team developer, tech lead, non-technical manager,…",
+      "profiles": []
+    },
+    {
+      "id": "methodology/kanban",
+      "catalog": "official",
+      "status": "active",
+      "axis": "methodology",
+      "slot": null,
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "methodology/kanban@1.0.0",
+          "wingfoil": ">=0.3.0 <=0.3.2",
+          "formats": {
+            "directive": 1,
+            "memory": 1,
+            "roles": 1,
+            "workflow": 1
+          },
+          "requires_capabilities": [
+            "workflow-engine"
+          ],
+          "requires": [
+            "base@^2",
+            "software@^1"
+          ],
+          "conflicts": [],
+          "pack_format": 1,
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/kanban@1.0.0/packs/methodology/kanban/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/kanban@1.0.0/packs/methodology/kanban/pack.yaml"
+        }
+      ],
+      "title": "Kanban",
+      "description": "Kanban after the Kanban Guide, May 2025: a continuous flow of work items pulled within WIP limits, carried by releases the Product Owner decides, each release ending with its retrospective, as the delivery of software's life cycle.",
+      "workflows": [
+        "delivery",
+        "release-flow",
+        "work-item"
+      ],
+      "conditional_workflows": [],
+      "memory_types": [
+        "task"
+      ],
+      "directives": [
+        "definition-of-workflow",
+        "kanban"
+      ],
+      "conditional_directives": [],
+      "conditional_parts": [],
+      "tensions": [],
+      "parameters": [
+        {
+          "name": "service_level_expectation",
+          "type": "string",
+          "default": "85% of work items finish within 10 days",
+          "description": "The Service Level Expectation: how long a work item should take, with its probability"
+        },
+        {
+          "name": "wip_in_progress",
+          "type": "integer",
+          "default": 2,
+          "description": "The most tasks in-progress at once, in the whole repository (a positive integer)"
+        },
+        {
+          "name": "wip_in_review",
+          "type": "integer",
+          "default": 1,
+          "description": "The most tasks in-review at once, in the whole repository (a positive integer)"
+        }
+      ],
+      "excerpt": "A software project governed by WingFoil that flows its work without timeboxes composes `methodology/kanban` with `base` and `software`: it fills the life cycle's `delivery` with a continuous flow of work items, each pulled from the backlog to done within explicit WIP limits, and carried by releases the Product Owner decides, each release ending with a retrospective. It holds the workflows `delivery`, `release-flow` and `work-item` and the `kanban` and `definition-of-workflow` directives, adds…",
+      "profiles": []
+    },
+    {
+      "id": "methodology/scrum",
+      "catalog": "official",
+      "status": "active",
+      "axis": "methodology",
+      "slot": null,
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "methodology/scrum@1.0.0",
+          "wingfoil": ">=0.3.0 <=0.3.2",
+          "formats": {
+            "directive": 1,
+            "memory": 1,
+            "memory-template": 1,
+            "roles": 1,
+            "workflow": 1
+          },
+          "requires_capabilities": [
+            "workflow-engine"
+          ],
+          "requires": [
+            "base@^2",
+            "software@^1"
+          ],
+          "conflicts": [],
+          "conditional": [
+            {
+              "with": "software@^1"
+            },
+            {
+              "with": "governance/strict@^1"
+            }
+          ],
+          "pack_format": 2,
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/scrum@1.0.0/packs/methodology/scrum/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/scrum@1.0.0/packs/methodology/scrum/pack.yaml"
+        }
+      ],
+      "title": "Scrum",
+      "description": "Scrum after the Scrum Guide, November 2020: repeated fixed-length Sprints, each with its planning, its Sprint Backlog, its review and its retrospective, and releases decided by the Product Owner inside the Sprints, as the delivery of software's life cycle.",
+      "workflows": [
+        "backlog-item",
+        "delivery",
+        "sprint"
+      ],
+      "conditional_workflows": [
+        "kanban-delivery"
+      ],
+      "memory_types": [
+        "release",
+        "sprint",
+        "task"
+      ],
+      "directives": [
+        "definition-of-done",
+        "scrum"
+      ],
+      "conditional_directives": [
+        "strict-wip"
+      ],
+      "conditional_parts": [
+        {
+          "with": "software@^1",
+          "workflows": [
+            "kanban-delivery"
+          ],
+          "directives": []
+        },
+        {
+          "with": "governance/strict@^1",
+          "workflows": [],
+          "directives": [
+            "strict-wip"
+          ]
+        }
+      ],
+      "tensions": [
+        {
+          "pack": "stage/prototype",
+          "resolution": "Exploration only in the exploration scope."
+        }
+      ],
+      "parameters": [
+        {
+          "name": "sprint_id",
+          "type": "pattern",
+          "default": "sprint-{n}",
+          "description": "The sprint type's id pattern"
+        },
+        {
+          "name": "sprint_length",
+          "type": "string",
+          "default": "2 weeks",
+          "description": "The Sprints' fixed length, at most one month"
+        },
+        {
+          "name": "sprint_path",
+          "type": "path",
+          "default": "docs/memory/sprint/{id}.md",
+          "description": "The sprint type's path; only letters, digits and . _ / { } -"
+        }
+      ],
+      "excerpt": "A software project governed by WingFoil that works in Sprints composes `methodology/scrum` with `base` and `software`: it fills the life cycle's `delivery` with repeated, fixed-length Sprints, one at a time, each with its planning, its Sprint Backlog, its review and its retrospective, and lets the Product Owner release an Increment inside a Sprint. It holds the `sprint` type, the workflows `delivery`, `sprint` and `backlog-item`, and the `scrum` and `definition-of-done` directives, and it adds…",
+      "profiles": []
+    }
+  ],
+  "presets": [],
+  "transitions": []
+}

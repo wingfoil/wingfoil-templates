@@ -8,6 +8,25 @@ import type { ErrorObject, ValidateFunction } from 'ajv';
 export const SCHEMA_KINDS = ['pack', 'catalog', 'compat', 'preset', 'transition'] as const;
 export type SchemaKind = (typeof SCHEMA_KINDS)[number];
 
+/** The kinds whose format 1 is kept, frozen, as `<kind>.v1.schema.json` (spec-001 §5). */
+export const FROZEN_KINDS = ['pack', 'catalog'] as const;
+
+/**
+ * spec-001 §5's rule, shared with the index's schema: a file whose `format` is 1 reads format 1's
+ * frozen schema; any other value, absent included, reads the current one.
+ */
+export function readsFormatOne(data: unknown): boolean {
+  void data;
+  throw new Error('not written yet (task-082, red)');
+}
+
+/** The file under schema/ that validates `data` of `kind`, by the rule of `readsFormatOne`. */
+export function schemaFile(kind: SchemaKind, data: unknown): string {
+  void kind;
+  void data;
+  throw new Error('not written yet (task-082, red)');
+}
+
 export interface SchemaError {
   keyword: string;
   /** JSON pointer of the offending value, or of the mapping for a key error; '' is the root. */

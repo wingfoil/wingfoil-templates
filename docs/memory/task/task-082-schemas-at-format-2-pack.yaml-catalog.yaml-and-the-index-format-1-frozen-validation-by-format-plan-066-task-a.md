@@ -123,3 +123,9 @@ rule absent); (2) the v1 copies and the shared rule in `src/schemas.ts` and
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-07: started (`backlog → in-progress`) on `task/task-082-schemas-format-2` from `493651f`,
+  the test's base commit. Red (dl-018), step (1): the tests and fixtures of Acceptance 2 … 6 with
+  the signatures of `readsFormatOne`, `schemaFile` and `indexSchemaFile` and no body (the task-080
+  precedent); `npm run build` and `npm run lint` exit 0; `npm test`: 1213 tests, 20 failing, all
+  of them new (the v1 files absent, the format-2 fixtures refused, the rule unwritten, the site's
+  text). The format-1 refusals of Acceptance 6 pass already, as format 1 refuses them today.

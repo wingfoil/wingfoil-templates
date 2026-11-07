@@ -1,0 +1,14 @@
+# expect: enum /contents/fragments/1
+format: 1
+id: methodology/kanban
+axis: methodology
+name: kanban
+title: "Kanban"
+description: "Continuous flow under explicit WIP limits."
+version: 2.0.0
+formats: { roles: 1, mcp: 1 }
+requires_capabilities: []
+requires:
+  - base@^1
+contents:
+  fragments: [roles, mcp]

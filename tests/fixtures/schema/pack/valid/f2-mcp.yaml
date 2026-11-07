@@ -1,0 +1,14 @@
+# spec-001 §6.4, §7.8 at format 2: the mcp fragment, last, and its formats key.
+format: 2
+id: methodology/kanban
+axis: methodology
+name: kanban
+title: "Kanban"
+description: "Continuous flow under explicit WIP limits."
+version: 2.0.0
+formats: { roles: 1, mcp: 1 }
+requires_capabilities: []
+requires:
+  - base@^1
+contents:
+  fragments: [roles, mcp]
