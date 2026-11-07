@@ -32,9 +32,9 @@ each wave close, with the element the approver names to fold them back.
 - **Reading by format:** the composer, the lint and `check:schemas` pick the schema by the file's
   `format`, and a format-1 file keeps format 1's rules.
 - **The composer:** each entry active when the composition holds its `with` pack (an unsatisfied
-  range an error, §6.3; a `with` never adds a pack), its parameter scope its own, its files after
-  the pack's own in written order; §7.1's order; the tensions' notices of §17 step 8, which never
-  fail the composition.
+  range an error and a `with` never adding a pack, §6.5), its parameter scope its own, its files
+  after the pack's own in written order; §7.1's order; the tensions' notices of §17 step 8, which
+  never fail the composition.
 - **The lint (F3.5, §18):** the conditional rules by format and per entry (isolation, inventory,
   `formats` counting every entry's files (§12), scope, `delivery`'s same part and the slots (§9),
   one owner); `tensions`' rules; dl-025 D1's waiver heuristic with bridges exempt; D6's coverage
@@ -84,11 +84,12 @@ Each point with a recommendation; points 4 and 6 are departures the approver rul
    - **(B) The catalog** (needs (A)): `publish` writes `pack_format`, `check:packs` compares it
      (absent read as 1); the root `catalog.yaml` moves to `format: 2` (point 3).
    - **(C) The composer per entry** (needs (A)): the active entries, their order and parameter
-     scopes, §7.1's check of a `with` pointing later, the notices (point 5).
+     scopes, §7.1's check of a `with` pointing later, the notices (point 5), the `mcp` refusal
+     (point 6).
    - **(D) The lint per entry** (needs (A), (C)): §18's conditional rules by format, `tensions`'
      rules, inventory and `formats`, isolation, scopes, `delivery`'s same part, slots and one owner
      per entry, the `mcp` refusal (point 6); its design may split it in two tasks (the manifest's
-     rules, the cross-file rules).
+     rules, the cross-file rules), named (D1) and (D2), the later letters kept.
    - **(E) The waiver heuristic** (needs (D); point 4).
    - **(F) D6's coverage** (needs (B), (C), (D)): `validate`'s legs and the overlay lint per entry
      (each `with` pack present, each left out in turn, a `tensions` pack with each pack it names,
@@ -151,13 +152,13 @@ Each point with a recommendation; points 4 and 6 are departures the approver rul
 ## Steps
 
 1. **This plan:** independent review and re-review (dl-017); the outline shown to the approver and
-   ruled; the rulings and point 8's row committed; `submit` (`draft → active`); `main` pushed; its
-   CI read.
+   ruled; the rulings committed with the rows of points 7 and 8 (dl-036 R2); `submit`
+   (`draft → active`); `main` pushed; its CI read.
 2. **Tasks (A) … (G)**, in order (point 1), each `memory add` on `main` when the one before is done
    (W-14), its loop as point 1 says, the register's rows with their notes.
 3. **Wave close:** per tech-spec, the errata and rulings of the wave, and the element the approver
    names to fold them back, or the ruling that none is needed (dl-020).
-4. **Close:** the rows of point 7 written; point 8's row and this plan's row moved to Closed;
+4. **Close:** point 8's row and this plan's row moved to Closed;
    `main`'s CI on the last merge read; `active → done`.
 
 ## Handoff
@@ -170,9 +171,9 @@ Each point with a recommendation; points 4 and 6 are departures the approver rul
 - **Approver:** the outline (before `submit`), with the departures of points 4 and 6; each task's
   gates; the merge OKs; the wave close's ruling on errata.
 - Done when tasks (A) … (G) are done and merged into `main` (eight if (D) is split); the wave close
-  ruled; the rows of point 7 written; point 8's row and this plan's row Closed; `main`'s CI on the
-  last merge read `success`, both jobs' durations recorded and none over 25 minutes (dl-039 R3,
-  G12); the run of the close's push left to the next plan (dl-038 C3).
+  ruled; point 8's row and this plan's row Closed; `main`'s CI on the last merge read `success`,
+  both jobs' durations recorded and none over 25 minutes (dl-039 R3, G12); the run of the close's
+  push left to the next plan (dl-038 C3).
 
 ## Execution Notes
 
@@ -187,3 +188,6 @@ Each point with a recommendation; points 4 and 6 are departures the approver rul
   the `mcp` notice and rules named as out, `publish`'s empty-range refusal, the notices' order,
   point 7's rows' owner and trigger, point 8 as plan-063's slip settled at the last merge, the
   Handoff's measurable criteria.
+- 2026-11-07: re-review: approve, nothing blocking; applied: the rows of point 7 with the rulings'
+  commit (dl-036 R2), the composer's `mcp` refusal in (C), §6.5 cited for a `with`'s range, a
+  split of (D) named (D1) and (D2).
