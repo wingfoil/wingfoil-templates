@@ -1,8 +1,8 @@
 # Startable when WingFoil publishes a release, or when intake.yml's report names one (plan-065).
 # Keeps compat.yaml true and tells which packs a new format or capability affects (dl-002; brought
 # back by the journeys review, dl-005 G8). Its close starts the periodic retrospective (dl-029), with
-# its deadline when WingFoil's release planning has started (dl-040). A patch intake.yml reports
-# verified takes the artifact it prepared, a guided report the hand-run phases (dl-042).
+# its deadline when WingFoil's release planning has started (dl-040). A patch that intake.yml
+# reports verified takes the artifact it prepared; a guided report, the hand-run phases (dl-042).
 name: wingfoil-release-intake
 kind: main
 description: "Record a new WingFoil release in compat.yaml, re-check the active packs and start the periodic retrospective (dl-029)"
@@ -23,7 +23,8 @@ phases:
       expired artifact, a new advisory, a red branch CI or a rehearsal report makes the intake
       guided, or intake.yml is run again. A verified report is a proposal, never a record. A guided
       report, or none: as follows, the report (the CHANGELOG section as a checklist, the checks,
-      the packs each kind it names touches) the phases' input.
+      the packs each kind it names touches) the phases' input, the directives each item touches
+      worked out by the guided intake (no mechanical mapping exists, task-081).
       Add the release to compat.yaml: the format versions it reads, from the format: keys its files
       accept and its CHANGELOG, and the capabilities it provides, recorded only when its CHANGELOG
       names the feature or command behind one (dl-021 R4). A new format kind enters kinds here; a
@@ -36,8 +37,9 @@ phases:
       every published version in catalog.yaml (spec-001 §12), and regenerate CATALOG.md and
       catalog-index.json with npm run index (spec-002 §3); npm run intake:prepare -- <version>
       writes this mechanical part, a guided intake writing the notes and any change the report
-      lists. The release's facts are in its notes (dl-042 I3): spec-001 §12 points to compat.yaml
-      and gets no prose per release, and dl-009 no Execution Note per release.
+      lists, and checking the capabilities and reads it carries forward against the CHANGELOG
+      (dl-021 R4). The release's facts are in its notes (dl-042 I3): spec-001 §12 points to
+      compat.yaml and gets no prose per release, and dl-009 no Execution Note per release.
     role: tech-lead
     produces:
       - "compat.yaml"
@@ -60,8 +62,8 @@ phases:
     description: >-
       Empty for a verified patch, by the bar of "verified" (dl-042 I1). For each pack whose formats
       the new release no longer reads, or that can now use a new format or capability: open a task
-      (kanban-delivery). Before WingFoil 1.0 the living line moves to the
-      new format; after 1.0 the previous line becomes the N-1 maintenance line (pack-semver).
+      (kanban-delivery). Before WingFoil 1.0 the living line moves to the new format; after 1.0
+      the previous line becomes the N-1 maintenance line (pack-semver).
     role: product-owner
     optional: true
     actions:
@@ -73,34 +75,35 @@ phases:
       a periodic retrospective, unless a periodic retrospective, or a pack-cycle retrospective whose
       inventory has the scope "periodic", has closed since the release this intake takes in, or the
       approver rules in the intake's plan that a release WingFoil holds no planning of its own for
-      (a patch) starts none. A verified patch takes that patch case by default, with no ruling,
-      only while a retrospective covering its window is open (started, not closed), for at most
-      three patches, verified or guided, after the intake that started it (that intake's release
-      not counted) or 14 days after its close, whichever comes first, never extending that
-      retrospective's deadline (dl-042 I4); a guided patch counts toward the three unless its
-      intake starts a retrospective, which restarts the count, and one for which the approver rules
-      the patch case counts as one. Even by default the intake's plan records the planning date,
-      the covering retrospective, its deadline and the count reached; past either bound, or for a
-      guided report, the approver rules in the intake's plan. On the 0.2.2 pin "starts" means the
-      facilitator adds the retrospective's plan (workflow: retrospective-periodic, workflow and
-      phase filled by editing the draft, W-02). The intake's plan records the retrospective that covers the window and its
-      deadline: before WingFoil's next release planning, or, when the date is not known, within
-      seven days of the intake's close, which the approver may tighten in the intake's plan; a
-      retrospective that covers a patch's window too closes before WingFoil's next release planning.
-      When WingFoil's next release planning has started and not ended before the intake closes, or
-      starts before the retrospective closes while its date was recorded at the intake's close as
-      "not known" (or announced later than it turned out), the intake's plan (or the
-      retrospective's, from the day the start is announced or reported) records its start date as
-      announced or reported, and the deadline is: the WingFoil-side notes on main as soon as
-      possible while the planning runs, the notes task, if any, merging into main alone, ahead of
-      the retrospective's branch; the retrospective closed within seven days of the intake's close.
-      A retrospective that covers a patch's window too follows the same rule, its seven days counted
-      from the close of the intake that started it. A date announced at the intake's close and then
-      missed: the approver rules in the plan (dl-040 D1). The notes task merging alone starts from
-      main, on its own branch, added with memory add there and no other task added on any branch
-      meanwhile (W-14); its body cites the inventory by path and date, the cross-references added at
-      the retrospective's close; it merges on the approver's OK (dl-040 D2). When the planning has
-      already ended before the intake closes, the following planning is the "next" one: the
-      retrospective closes before it, or within seven days when its date is not known, and its notes
-      reach main with the retrospective's close (dl-040 D3).
+      (a patch) starts none. A verified patch takes that patch case by default, with no ruling, only
+      while a retrospective covering its window is open (started, not closed), for at most three
+      patches, verified or guided, after the intake that started it (that intake's release not
+      counted) or 14 days after its close, whichever comes first, never extending that
+      retrospective's deadline (T2's seven days when the planning date is not known; dl-040 D1 … D3;
+      dl-042 I4); a guided patch counts toward the three unless its intake starts a retrospective,
+      which restarts the count, and one for which the approver rules the patch case counts as one.
+      Even by default the intake's plan records the planning date, the covering retrospective, its
+      deadline and the count reached; past either bound, or for a guided report, the approver rules
+      in the intake's plan. On the 0.2.2 pin "starts" means the facilitator adds the retrospective's
+      plan (workflow: retrospective-periodic, workflow and phase filled by editing the draft, W-02).
+      The intake's plan records the retrospective that covers the window and its deadline: before
+      WingFoil's next release planning, or, when the date is not known, within seven days of the
+      intake's close, which the approver may tighten in the intake's plan; a retrospective that
+      covers a patch's window too closes before WingFoil's next release planning. When WingFoil's
+      next release planning has started and not ended before the intake closes, or starts before the
+      retrospective closes while its date was recorded at the intake's close as "not known" (or
+      announced later than it turned out), the intake's plan (or the retrospective's, from the day
+      the start is announced or reported) records its start date as announced or reported, and the
+      deadline is: the WingFoil-side notes on main as soon as possible while the planning runs, the
+      notes task, if any, merging into main alone, ahead of the retrospective's branch; the
+      retrospective closed within seven days of the intake's close. A retrospective that covers a
+      patch's window too follows the same rule, its seven days counted from the close of the intake
+      that started it. A date announced at the intake's close and then missed: the approver rules in
+      the plan (dl-040 D1). The notes task merging alone starts from main, on its own branch, added
+      with memory add there and no other task added on any branch meanwhile (W-14); its body cites
+      the inventory by path and date, the cross-references added at the retrospective's close; it
+      merges on the approver's OK (dl-040 D2). When the planning has already ended before the intake
+      closes, the following planning is the "next" one: the retrospective closes before it, or
+      within seven days when its date is not known, and its notes reach main with the
+      retrospective's close (dl-040 D3).
     role: facilitator

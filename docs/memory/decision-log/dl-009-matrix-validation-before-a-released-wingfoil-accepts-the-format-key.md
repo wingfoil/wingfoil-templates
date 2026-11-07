@@ -115,7 +115,8 @@ bumped.
   tree, whose packs require no capability, on 0.2.2 (tolerated) and 0.3.2. 0.3.1 stays in
   `compat.yaml` and in every range, outside the selection (the oldest and the newest).
 - 2026-11-07, plan-065: the last note per release (dl-042 I5). The matrix's selection is the
-  oldest and the newest release of `compat.yaml`, read from the file (task-079 derived the tests
-  from it), so a new release changes it without a note here; each release's facts are in its
+  oldest and the newest release of `compat.yaml` compatible with each composition (with
+  `format_key: true` in publication mode), read from the file (task-079 derived the tests from
+  it), so a new release changes it without a note here; each release's facts are in its
   `compat.yaml` notes (dl-042 I3). `wingfoil-release-intake` v7 (`befee13`) writes no note on this
   element per release. The body stays as approved.

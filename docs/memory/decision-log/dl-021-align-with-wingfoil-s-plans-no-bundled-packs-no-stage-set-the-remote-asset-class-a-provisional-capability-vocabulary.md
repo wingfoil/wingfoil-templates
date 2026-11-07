@@ -167,6 +167,7 @@ Changes this decision implies, each applied later through its own element:
   decision is applied except the tooling one (the removal of `publish:pack --bundled`).
 - 2026-11-07, plan-065: R4 reads with dl-042 I2 for a verified patch: its `capabilities` (and
   `reads`) are its predecessor's, carried forward unless the bar of "verified" flags a change or a
-  check exercising the capability is red; a new capability is recorded only from a CHANGELOG entry
-  naming it, which makes the report guided. Applied in `wingfoil-release-intake` v7 (`befee13`). The
-  body stays as approved.
+  check exercising the capability is red, one no check exercises (`pack-install`, `mcp-servers`
+  when recorded) carried only when the predecessor has it and the bar flags nothing; a new
+  capability is recorded only from a CHANGELOG entry naming it, which makes the report guided.
+  Applied in `wingfoil-release-intake` v7 (`befee13`). The body stays as approved.
