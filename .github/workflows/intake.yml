@@ -1,12 +1,22 @@
-# Intake detection (task-078, plan-065): once a day and by hand, the wingfoil versions published on
-# npm and missing from compat.yaml. A missing version ends the run red, with an ::error naming it,
-# every day until an intake records it (plan-065 point 5). Read-only: no token, no cache, no push.
+# Intake detection, preparation and report (task-078, task-081, plan-065): once a day and by hand,
+# the wingfoil versions published on npm and missing from compat.yaml. A missing version ends the
+# run red, with an ::error naming it, every day until an intake records it (plan-065 point 5); the
+# lowest one above the newest recorded is prepared by intake:prepare, its diff uploaded as an
+# artifact (an allowlist, each file's sha256), verified on the new release by the CI's checks, and
+# reported verified or guided (dl-042). Read-only: no token, no cache, no push, no pull request, no
+# comment. The `rehearsal` input re-verifies the newest recorded release on a tree without it: its
+# report is labelled a rehearsal, never for intake (dl-042 I1).
 name: Intake
 
 on:
   schedule:
     - cron: '17 6 * * *'
   workflow_dispatch:
+    inputs:
+      rehearsal:
+        description: 'Re-verify the newest recorded release on a tree without it (never for intake)'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -21,6 +31,9 @@ jobs:
   detect:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    outputs:
+      version: ${{ steps.detect.outputs.version }}
+      class: ${{ steps.detect.outputs.class }}
     steps:
       - name: Check out
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -35,5 +48,225 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+      # Its outputs are written before it exits, so that prepare runs after a red detection.
       - name: Detect the wingfoil versions missing from compat.yaml
-        run: npm run -s intake:detect -- --github
+        id: detect
+        continue-on-error: true
+        env:
+          REHEARSAL: ${{ inputs.rehearsal }}
+        run: |
+          if [ "$REHEARSAL" = "true" ]; then
+            npm run -s intake:detect -- --github --github-output "$GITHUB_OUTPUT" --rehearsal
+          else
+            npm run -s intake:detect -- --github --github-output "$GITHUB_OUTPUT"
+          fi
+      - name: Stay red while a version is missing (plan-065 point 5)
+        env:
+          OUTCOME: ${{ steps.detect.outcome }}
+        run: test "$OUTCOME" = success
+
+  prepare:
+    needs: detect
+    if: ${{ !cancelled() && needs.detect.outputs.version != '' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      VERSION: ${{ needs.detect.outputs.version }}
+    steps:
+      - name: Check out, with every tag (the index reads them, spec-002 §3.1)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22.21.0'
+          check-latest: false
+      - name: Install
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Remove the newest release from the tree (a rehearsal only)
+        if: ${{ inputs.rehearsal == true }}
+        run: npm run -s intake:rehearse
+      - name: Prepare the release's record
+        run: npm run -s intake:prepare -- "$VERSION"
+      - name: Collect the allowlisted files and their sha256s
+        run: npm run -s intake:collect -- "$VERSION" --out "$RUNNER_TEMP/intake"
+      - name: Upload the prepared diff
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: intake-${{ needs.detect.outputs.version }}
+          path: ${{ runner.temp }}/intake
+          retention-days: 14
+          if-no-files-found: error
+
+  verify:
+    needs: [detect, prepare]
+    if: ${{ !cancelled() && needs.prepare.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22.12.0', '22.21.0']
+    env:
+      VERSION: ${{ needs.detect.outputs.version }}
+    steps:
+      - name: Check out, with every tag (the index reads them, spec-002 §3.1)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+          check-latest: false
+      - name: Install
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Download the prepared diff
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: intake-${{ needs.detect.outputs.version }}
+          path: ${{ runner.temp }}/intake
+      - name: Apply it, its sha256s and its base checked
+        run: npm run -s intake:apply -- "$RUNNER_TEMP/intake" --version "$VERSION"
+      # The checks of ci.yml's self-test, each run whatever the one before gave.
+      - id: test
+        continue-on-error: true
+        run: npm test
+      - id: lint
+        continue-on-error: true
+        run: npm run lint
+      - id: pins
+        continue-on-error: true
+        run: npm run check:pins
+      - id: schemas
+        continue-on-error: true
+        run: npm run check:schemas
+      - id: packs
+        continue-on-error: true
+        run: npm run check:packs
+      - id: site
+        continue-on-error: true
+        run: npm run site -- --out "$RUNNER_TEMP/site"
+      - id: audit-root
+        continue-on-error: true
+        run: npm audit --omit=dev
+      - id: audit-pins
+        continue-on-error: true
+        run: |
+          for dir in src/matrix/wingfoil-*/; do
+            (cd "$dir" && npm audit)
+          done
+      - id: validate
+        continue-on-error: true
+        run: npm run validate
+      - id: golden
+        continue-on-error: true
+        run: npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden
+      - id: software-exit
+        continue-on-error: true
+        run: npm run validate -- --overlay tests/fixtures/software-exit
+      - id: scrum-exit
+        continue-on-error: true
+        run: npm run validate -- --overlay tests/fixtures/scrum-exit
+      - id: kanban-exit
+        continue-on-error: true
+        run: npm run validate -- --overlay tests/fixtures/kanban-exit
+      - id: runs
+        continue-on-error: true
+        run: npm run check:runs
+      - id: publication
+        continue-on-error: true
+        run: npm run validate:publication
+      - name: Write each check's outcome
+        env:
+          NODE_VERSION: ${{ matrix.node }}
+          STEPS: ${{ toJSON(steps) }}
+        run: |
+          node -e '
+            const fs = require("node:fs");
+            const ids = ["test", "lint", "pins", "schemas", "packs", "site", "audit-root",
+              "audit-pins", "validate", "golden", "software-exit", "scrum-exit", "kanban-exit",
+              "runs", "publication"];
+            const steps = JSON.parse(process.env.STEPS);
+            const checks = Object.fromEntries(
+              ids.map((id) => [id, steps[id]?.outcome ?? "skipped"]));
+            const file = `${process.env.RUNNER_TEMP}/checks.json`;
+            const leg = { node: process.env.NODE_VERSION, checks };
+            fs.writeFileSync(file, `${JSON.stringify(leg)}\n`);
+            const rows = ids.map((id) => `| ${id} | ${checks[id]} |`);
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, [
+              `### Checks on Node.js ${process.env.NODE_VERSION}`, "", "| check | outcome |",
+              "| --- | --- |", ...rows, ""].join("\n"));
+          '
+      - name: Upload the checks' outcomes
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: verify-${{ matrix.node }}
+          path: ${{ runner.temp }}/checks.json
+          retention-days: 14
+          if-no-files-found: error
+      - name: Fail when a check is not green
+        run: |
+          node -e '
+            const { checks } = JSON.parse(require("node:fs")
+              .readFileSync(`${process.env.RUNNER_TEMP}/checks.json`, "utf8"));
+            process.exit(Object.values(checks).every((outcome) => outcome === "success") ? 0 : 1);
+          '
+
+  report:
+    needs: [detect, prepare, verify]
+    if: ${{ !cancelled() && needs.detect.outputs.version != '' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      VERSION: ${{ needs.detect.outputs.version }}
+      CLASS: ${{ needs.detect.outputs.class }}
+      PREPARE: ${{ needs.prepare.result }}
+      VERIFY: ${{ needs.verify.result }}
+      REHEARSAL: ${{ inputs.rehearsal }}
+    steps:
+      - name: Check out (compat.yaml's kinds and catalog.yaml's formats only)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22.21.0'
+          check-latest: false
+      - name: Install
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Download the prepared diff
+        if: ${{ needs.prepare.result == 'success' }}
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: intake-${{ needs.detect.outputs.version }}
+          path: ${{ runner.temp }}/intake
+      # A pattern matching nothing (no verify leg uploaded) does not make the report red.
+      - name: Download each verify leg's checks
+        continue-on-error: true
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: verify-*
+          path: ${{ runner.temp }}/checks
+      - name: Report verified or guided
+        run: |
+          args=()
+          if [ -f "$RUNNER_TEMP/intake/BASE" ]; then args+=(--artifact "$RUNNER_TEMP/intake"); fi
+          for file in "$RUNNER_TEMP"/checks/checks.json "$RUNNER_TEMP"/checks/*/checks.json; do
+            if [ -f "$file" ]; then args+=(--checks "$file"); fi
+          done
+          if [ "$REHEARSAL" = "true" ]; then args+=(--rehearsal); fi
+          npm run -s intake:report -- "$VERSION" --class "$CLASS" --prepare "$PREPARE" \
+            --verify "$VERIFY" "${args[@]}" --summary "$GITHUB_STEP_SUMMARY"

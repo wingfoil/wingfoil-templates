@@ -2,7 +2,7 @@
 id: task-081-intake-verify-a-prepared-release-checked-and-reported-verified-or-guided-by-intake.yml-plan-065-task-c
 type: task
 title: "Intake verify: a prepared release checked and reported verified or guided by intake.yml (plan-065 task C)"
-status: backlog
+status: approved
 pack: ""            # tooling task (tooling-delivery v3), plan-065 task (C)
 depends_on: []
 tags: ["tooling","intake","ci"]
@@ -233,3 +233,48 @@ their CLIs and `intake.yml`: green; (3) the rehearsal dispatch (Acceptance 8).
   pattern, `continue-on-error`), `checks.json` validated, `${{ runner.temp }}` in `with:`, the
   kinds' path and description rule, `Upgrading from` any text, the real intake's path covered by
   the workflow test and first run recorded at plan-065's close.
+- 2026-11-06: accepted by the approver (`19ac2b5`, pending → backlog); started on
+  `task/task-081-intake-verify` (`eee0202`). Red: the tests of Acceptance 6 with the modules'
+  signatures and no body, `intake.yml` as on `main`: `node --test` of the five intake test files,
+  99 tests, 75 failing; passing, task-078's 19 tests of `intake:detect`, four workflow assertions
+  today's one-job file already meets (permissions, concurrency, pins, `env`), and `--rehearsal`'s
+  refusal (an unknown option today). `src/intake-prepare.ts` refactored first (its checks and
+  writes exported for the rehearsal), its 23 tests unchanged and passing. Green (`5668027`): the
+  modules, their CLIs, the four scripts and `intake.yml` (`upload-artifact` v7.0.2 `cf430e0`,
+  `download-artifact` v8.0.2 `9000827`, both published 2026-10-07); the intake's six test files,
+  123 tests, 0 failing; `npm run lint` 0. One test changed while green: the rehearsal's round
+  trip compares a plain `wingfoil: 9.0.0` of the fixture's catalog with the double-quoted one
+  task-080 writes, and the "no pin folder" case starts from the recorded tree, since the fixture
+  with 9.0.0 removed keeps no release that base's range meets (refused, a test of its own).
+- 2026-11-06: the full suite on the green commit: `npm test`, 1179 tests, 0 failing. Build
+  review: approve after amendments, no blocking; the real 0.3.2 CHANGELOG reported guided (its
+  `Added` and `Changed` entries, the word format, five kinds), 0.3.1 and 0.3.0 guided too; applied
+  (`c272c3b`): `intake:apply`'s uncommitted check with the allowlist as pathspec (a staged `git mv`
+  was missed), both symbolic-link tests made to reach the link check and assert its message, a
+  test running verify's two inline scripts with a fake `STEPS` (a `conclusion` read for `outcome`
+  would have shown every check green) and asserting both checks layouts, a `## ` bound test, the
+  summary's class mapped, `--out` compared by real path, `jobClass` dropped. Each surviving mutant
+  of the review then caught (one failing test each). Re-review: approve, three nits applied
+  (`28ca167`, the frozen commit): a comment put back on `GOLDEN_COMPAT`, a change outside the
+  allowlist shown not to block apply, the summary row's outcome asserted. Intake tests 127, 0
+  failing; `npm run lint` 0.
+- 2026-11-06: the checks on the frozen commit `28ca167` (dl-039; after it only these notes, docs
+  only). Branch CI run 42257607151 on `1525044`, `success`: 22.21.0 13 min 23 s, 22.12.0 13 min
+  54 s. dl-039's local list on Node.js 22.21.0 on a clean worktree of `28ca167`: `npm ci`, `npm
+  run build`, `npm run validate:publication`, the golden fixture's publication run, `workflow
+  list`, `directives list --format json`, each exit 0, `warnings []`; `npm run lint` 0. The
+  rehearsal, dispatched with the approver's OK (`gh workflow run intake.yml --ref
+  task/task-081-intake-verify -f rehearsal=true`), run 42259278303 on `1525044`, `success`:
+  `detect` 18 s (no missing version), `prepare` 25 s, `verify` 22.21.0 13 min 1 s and 22.12.0
+  18 min 24 s (every one of the 15 checks `success` on both, the `verify-<node>` artifacts read),
+  `report` 17 s; the whole run 19 min 33 s, `ci.yml` unchanged (G12). The report: `::warning`
+  "rehearsal of 0.3.2 guided: 7 reasons" (`Added` and `Changed` entries, the word format, the
+  kinds `directive`, `roles`, `memory`, `dna`, `memory-template`), as Acceptance 8 expects. The
+  artifact `intake-0.3.2`, its BASE `1525044`: four files differ from `HEAD`, as expected of a
+  rehearsal: `compat.yaml` and the golden fixture's (0.3.2's `notes` now the placeholder, sha256
+  equal), the pin's `package.json` (the fixed description, without task-074's id) and its
+  lockfile, resolved afresh (ip-address 10.7.5 → 10.7.6, two `peer` flags dropped), audited
+  green in `audit-pins`; the ranges, `CATALOG.md` and `catalog-index.json` came back unchanged.
+  The path of a real intake (`detect` red) first runs at the first real missing version, recorded
+  at plan-065's close. Privacy check of the branch's diff: no local or scratch path, no private
+  project, no intermediary session.

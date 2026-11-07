@@ -8,7 +8,7 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { gt } from 'semver';
 import { isMap, isScalar, isSeq, parse, parseDocument } from 'yaml';
-import type { Node, Scalar } from 'yaml';
+import type { Node, Scalar, YAMLMap } from 'yaml';
 
 import { checkPins } from './check-pins';
 import { compatFrom } from './compat';
@@ -18,6 +18,8 @@ import { byBytes, isDoc } from './index-data';
 import { checkRepositoryTop, overlay, workingTree } from './index-source';
 import { computeRange } from './range';
 import type { CompatRelease } from './range';
+
+type YamlMap = YAMLMap<unknown, unknown>;
 
 /** The golden fixture's compat.yaml, equal to the root's (dl-010). */
 export const GOLDEN_COMPAT = 'tests/fixtures/compose/tree/compat.yaml';
@@ -30,24 +32,33 @@ export type Resolver = (manifest: string) => string;
 
 export interface PrepareResult { code: 0 | 1; lines: string[] }
 
-const STRICT = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
+export const STRICT = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
 
 type Doc = Record<string, unknown>;
 
 /** A refusal or a failed step, before any write. */
-class Refusal extends Error {}
+export class Refusal extends Error {}
 
-function text(tree: string, path: string): string | undefined {
+/** The tree must be its git repository's top level: the index reads the tags. */
+export function checkTop(tree: string): void {
+  try {
+    checkRepositoryTop(tree);
+  } catch (error) {
+    throw new Refusal(error instanceof Error ? error.message : String(error));
+  }
+}
+
+export function text(tree: string, path: string): string | undefined {
   return workingTree(tree).read(path);
 }
 
-function required(tree: string, path: string): string {
+export function required(tree: string, path: string): string {
   const content = text(tree, path);
   if (content === undefined) throw new Refusal(`${path} is missing`);
   return content;
 }
 
-function loadCompatText(content: string, label: string): Compat {
+export function loadCompatText(content: string, label: string): Compat {
   try {
     return compatFrom(parse(content) as unknown);
   } catch (error) {
@@ -64,8 +75,8 @@ function flowText(content: string, node: unknown, what: string): string {
   return content.slice(node.range[0], node.range[1]);
 }
 
-/** The row appended after the last one: reads and capabilities as the newest release's text. */
-function preparedRow(content: string, version: string): string {
+/** The last release row of compat.yaml and the offset of its line, refusing text after it. */
+export function lastRow(content: string): { row: YamlMap; start: number } {
   const document = parseDocument(content);
   const root = document.contents;
   const last = isMap(root) ? root.items[root.items.length - 1] : undefined;
@@ -83,6 +94,13 @@ function preparedRow(content: string, version: string): string {
   if (content.slice(rowEnd, releases.range[2]).trim().length > 0) {
     throw new Refusal('compat.yaml: text follows the last release row');
   }
+  const at = newest.range?.[0] ?? 0;
+  return { row: newest, start: content.lastIndexOf('\n', at) + 1 };
+}
+
+/** The row appended after the last one: reads and capabilities as the newest release's text. */
+function preparedRow(content: string, version: string): string {
+  const newest = lastRow(content).row;
   const field = (key: string): unknown =>
     newest.items.find((pair) => isScalar(pair.key) && pair.key.value === key)?.value;
   return `  - wingfoil: ${version}\n`
@@ -95,11 +113,11 @@ function preparedRow(content: string, version: string): string {
 /** The scalar styles a range is rewritten in, in place. */
 const REWRITABLE = ['PLAIN', 'QUOTE_DOUBLE', 'QUOTE_SINGLE'];
 
-interface RangeSlot { label: string; scalar: Scalar; formats: Record<string, number>;
+export interface RangeSlot { label: string; scalar: Scalar; formats: Record<string, number>;
   capabilities: string[] }
 
 /** Each version entry's `wingfoil` scalar in catalog.yaml, and what its range is computed from. */
-function rangeSlots(content: string): RangeSlot[] {
+export function rangeSlots(content: string): RangeSlot[] {
   const document = parseDocument(content);
   if (document.errors.length > 0) throw new Refusal('catalog.yaml: not valid YAML');
   const packs = document.get('packs', true) as Node | undefined;
@@ -135,7 +153,8 @@ function range(slot: RangeSlot, releases: CompatRelease[]): string {
 }
 
 /** catalog.yaml with every range recomputed: only the scalars that change, their quoting kept. */
-function recomputedCatalog(content: string, slots: RangeSlot[], releases: CompatRelease[]): string {
+export function recomputedCatalog(content: string, slots: RangeSlot[],
+  releases: CompatRelease[]): string {
   let result = content;
   const edits = slots.map((slot) => ({ slot, value: range(slot, releases) }))
     .filter(({ slot, value }) => slot.scalar.value !== value)
@@ -185,14 +204,45 @@ function checkedLockfile(manifest: string, resolve: Resolver): string {
   return lockText;
 }
 
+/** Every catalog.yaml range equal to computeRange from compat.yaml's releases. */
+export function checkRanges(slots: RangeSlot[], releases: CompatRelease[]): void {
+  for (const slot of slots) {
+    const expected = range(slot, releases);
+    if (slot.scalar.value !== expected) {
+      throw new Refusal(`catalog.yaml: ${slot.label}: the range `
+        + `${JSON.stringify(slot.scalar.value)} recomputes from compat.yaml to `
+        + JSON.stringify(expected));
+    }
+  }
+}
+
+/** The index up to date on the tree as it stands. */
+export function checkIndex(tree: string): void {
+  let current: Map<string, string>;
+  try {
+    current = indexOutputs(tree);
+  } catch (error) {
+    throw new Refusal(`the index: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  const stale = [...current].filter(([path, content]) => text(tree, path) !== content)
+    .map(([path]) => path).sort(byBytes);
+  if (stale.length > 0) throw new Refusal(`the index is not up to date: ${stale.join(', ')}`);
+}
+
+/** The index's root outputs over the tree with new catalog.yaml and compat.yaml texts. */
+export function rootIndex(tree: string, catalog: string, compat: string): Map<string, string> {
+  try {
+    return rootOutputs(tree, overlay(workingTree(tree),
+      { 'catalog.yaml': catalog, 'compat.yaml': compat }));
+  } catch (error) {
+    throw new Refusal(`the index: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
 /** Every file's new text, computed and checked before any write. */
 function plan(tree: string, version: string, resolve: Resolver): Map<string, string> {
   if (!STRICT.test(version)) throw new Refusal(`${JSON.stringify(version)}: not a strict X.Y.Z`);
-  try {
-    checkRepositoryTop(tree);
-  } catch (error) {
-    throw new Refusal(error instanceof Error ? error.message : String(error));
-  }
+  checkTop(tree);
   const compatText = required(tree, 'compat.yaml');
   if (compatText.includes('\r')) throw new Refusal('compat.yaml: not LF line endings');
   const compat = loadCompatText(compatText, 'compat.yaml');
@@ -212,34 +262,13 @@ function plan(tree: string, version: string, resolve: Resolver): Map<string, str
   const row = preparedRow(compatText, version);
   const catalogText = required(tree, 'catalog.yaml');
   const slots = rangeSlots(catalogText);
-  for (const slot of slots) {
-    const expected = range(slot, compat.releases);
-    if (slot.scalar.value !== expected) {
-      throw new Refusal(`catalog.yaml: ${slot.label}: the range `
-        + `${JSON.stringify(slot.scalar.value)} recomputes from compat.yaml to `
-        + JSON.stringify(expected));
-    }
-  }
-  let current: Map<string, string>;
-  try {
-    current = indexOutputs(tree);
-  } catch (error) {
-    throw new Refusal(`the index: ${error instanceof Error ? error.message : String(error)}`);
-  }
-  const stale = [...current].filter(([path, content]) => text(tree, path) !== content)
-    .map(([path]) => path).sort(byBytes);
-  if (stale.length > 0) throw new Refusal(`the index is not up to date: ${stale.join(', ')}`);
+  checkRanges(slots, compat.releases);
+  checkIndex(tree);
 
   const newCompat = `${compatText.endsWith('\n') ? compatText : `${compatText}\n`}${row}`;
   const releases = loadCompatText(newCompat, 'the prepared compat.yaml').releases;
   const newCatalog = recomputedCatalog(catalogText, slots, releases);
-  let index: Map<string, string>;
-  try {
-    index = rootOutputs(tree, overlay(workingTree(tree),
-      { 'catalog.yaml': newCatalog, 'compat.yaml': newCompat }));
-  } catch (error) {
-    throw new Refusal(`the index: ${error instanceof Error ? error.message : String(error)}`);
-  }
+  const index = rootIndex(tree, newCatalog, newCompat);
   const manifest = manifestFor(version);
   const lockfile = checkedLockfile(manifest, resolve);
   return new Map([
