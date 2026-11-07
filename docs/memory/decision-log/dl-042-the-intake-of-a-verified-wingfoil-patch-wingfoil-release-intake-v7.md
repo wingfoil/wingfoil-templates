@@ -119,3 +119,10 @@ The points below are **proposed**; they become rulings when the approver approve
   `wingfoil-release-intake` v7 and the notes on dl-021, dl-029 and dl-009 by its dl actions row
   after task (C) (plan-065 › Steps 5); nothing deferred beyond plan-065, so no row of
   `docs/owed-items.md`.
+- 2026-11-07, plan-065 step 5, the dl actions row: I1 … I4 applied in `wingfoil-release-intake`
+  v7 (`befee13`): `record` (the path from `intake.yml`'s report, the artifact applied by `npm run
+  intake:apply`, the notes sentence, the carry-forward), `recheck` (the report's checks cited),
+  `plan-migrations` (empty for a verified patch), `retrospective-start` (T2's patch case by
+  default within I4's bounds); `notify`, named in I1 as "as v6", is no phase of v6 or v7, so
+  nothing is applied for it. Execution Notes added on dl-021 (R4 with I2), dl-029 (T2 with I4) and
+  dl-009 (the last note per release). The tooling it relies on: task-078 … task-081.

@@ -97,3 +97,8 @@ The points below are **proposed**; they become rulings when the approver approve
   before the intake closes, or before its retrospective closes, and one already ended), and T1's "as
   announced" also reads "or reported by the approver"; applied in `wingfoil-release-intake` v6
   (`7d73ca4`). The body stays as approved.
+- 2026-11-07, plan-065: T2's patch case applies by default to a verified patch, with no ruling in
+  the intake's plan, within dl-042 I4's bounds (a covering retrospective open, at most three
+  patches or 14 days after the intake that started it, whichever comes first, never extending its
+  deadline); past them, or for a guided report, T2 as before. Applied in
+  `wingfoil-release-intake` v7 (`befee13`). The body stays as approved.
