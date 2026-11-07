@@ -211,3 +211,6 @@ points 4 and 6 included.
   42365575072, `success` (22.12.0 16 min 25 s, 22.21.0 18 min 8 s), no annotation. The approver
   ruled every point as recommended; the rulings recorded with the rows of points 7 and 8 in
   `docs/owed-items.md` (dl-036 R2).
+- 2026-11-07: `main`'s CI on this plan's `submit` (`83a78bc`), run 42402980192, `success`
+  (22.12.0 20 min 35 s, 22.21.0 13 min 16 s); the Pages run 42402980279 `success`. Task (A),
+  task-082, added, reviewed, re-reviewed, submitted and approved to `backlog` on 2026-11-07.
