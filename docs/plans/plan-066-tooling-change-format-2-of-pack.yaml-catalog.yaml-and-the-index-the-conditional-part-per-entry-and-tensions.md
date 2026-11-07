@@ -53,8 +53,8 @@ the lint (`pack-rules`, `pack-files`, `workflow-rules`, `overlay-rules`) and `va
 `check:packs`; directives' `tags` parsed nowhere; `publish` already copies every entry's `with`;
 the index's model, render and README generator read `conditional[0]`. The golden trees
 (`tests/fixtures/compose/tree`, `tests/fixtures/index/expected`) and the root's
-`catalog-index.json`, `CATALOG.md` and `llms.txt` change with the index. No pack, fixture or tree has two entries or a
-tension; no `stage/*` pack exists (W12).
+`catalog-index.json`, `CATALOG.md` and `llms.txt` change with the index. No pack, fixture or tree
+has two entries or a tension; no `stage/*` pack exists (W12).
 
 **Not in this plan:** the `mcp` kind's tooling (its fragment schema, merge, lint, `compat.yaml`'s
 `kinds` and `reads`; its own row, plan-063 ruling 4); any published pack moved to format 2
