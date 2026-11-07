@@ -129,3 +129,13 @@ rule absent); (2) the v1 copies and the shared rule in `src/schemas.ts` and
   precedent); `npm run build` and `npm run lint` exit 0; `npm test`: 1213 tests, 20 failing, all
   of them new (the v1 files absent, the format-2 fixtures refused, the rule unwritten, the site's
   text). The format-1 refusals of Acceptance 6 pass already, as format 1 refuses them today.
+- 2026-11-07: steps (2) and (3) green, each committed: the v1 copies with the shared rule, then the
+  format-2 schemas; `check:packs`'s `schema-note` red after (3), as Acceptance 7 expects. Step (4):
+  F-047 written by `npm run feedback:note -- --schema --from <this task>` from the committed tree
+  (`schema/` digest `sha256:2836141582da…`; `pack.v1` and `catalog.v1` added, `pack` and `catalog`
+  changed, since F-031), not edited; `schema-note` green; `tests/feedback-note.test.ts` reads
+  `Changed since F-047`. The index's bump, information only (spec-002 §3.3, §4; `index/` is
+  outside the digest): `index/catalog-index.schema.json` at format 2 (`pack_format`,
+  `conditional_parts`, `tensions`, a `with` in `requires`' syntax) and
+  `index/catalog-index.v1.schema.json` frozen; the generated `catalog-index.json` stays at format 1
+  until (G).
