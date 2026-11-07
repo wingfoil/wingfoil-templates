@@ -228,7 +228,8 @@ describe('the index\'s schemas by format (task-082 Acceptance 4, 5, 6)', () => {
     }
     const versionKeys = Object.keys(defs['packVersion']?.properties ?? {});
     assert.equal(after(versionKeys, 'conditional'), 'pack_format');
-    for (const list of [Object.keys(defs['pack']?.properties ?? {}), defs['pack']?.required ?? []]) {
+    for (const list of [Object.keys(defs['pack']?.properties ?? {}),
+      defs['pack']?.required ?? []]) {
       assert.equal(after(list, 'conditional_directives'), 'conditional_parts', list.join());
       assert.equal(after(list, 'conditional_parts'), 'tensions', list.join());
       assert.equal(after(list, 'tensions'), 'parameters', list.join());

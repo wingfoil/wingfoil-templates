@@ -12,7 +12,7 @@ export const INDEX_SCHEMA = join(__dirname, '..', '..', 'index', 'catalog-index.
 /** Format 1's schema, frozen (spec-002 §3.3). */
 export const INDEX_SCHEMA_V1 = join(__dirname, '..', '..', 'index', 'catalog-index.v1.schema.json');
 
-/** The schema file, relative to the root, that validates `data`, by the rule of `readsFormatOne`. */
+/** The index schema file, relative to the root, chosen by `readsFormatOne`. */
 export function indexSchemaFile(data: unknown): string {
   return readsFormatOne(data) ? 'index/catalog-index.v1.schema.json'
     : 'index/catalog-index.schema.json';
@@ -55,7 +55,9 @@ export function indexSchema(): IndexSchemas {
  */
 export function indexSchemaErrors(data: unknown): string[] {
   const schemas = indexSchema();
-  const validate = readsFormatOne(data) ? schemas.v1 : schemas.current;
+  // The same choice as `indexSchemaFile`, so that the site's text names the schema used here.
+  const validate = indexSchemaFile(data) === 'index/catalog-index.v1.schema.json' ? schemas.v1
+    : schemas.current;
   if (validate(data)) return [];
   return (validate.errors ?? []).map((error) =>
     `${error.instancePath === '' ? '/' : error.instancePath} ${error.message ?? error.keyword}`);

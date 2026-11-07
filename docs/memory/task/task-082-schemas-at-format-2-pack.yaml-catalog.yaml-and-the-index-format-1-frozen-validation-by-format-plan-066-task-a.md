@@ -139,3 +139,12 @@ rule absent); (2) the v1 copies and the shared rule in `src/schemas.ts` and
   `conditional_parts`, `tensions`, a `with` in `requires`' syntax) and
   `index/catalog-index.v1.schema.json` frozen; the generated `catalog-index.json` stays at format 1
   until (G).
+- 2026-11-07: `npm test` after step (4): 1213 tests, 1 failing: `compose-cli`'s "exits 1 on a
+  catalog that breaks its schema" broke the catalog with `format: 2`, valid now; it breaks it with
+  `format: 3` (Acceptance 8 read as: the test's intent kept, its means moved). `check:schemas`,
+  `check:packs` and `validate` passed, the tree unchanged.
+- 2026-11-07: independent build review: approve, nothing blocking; applied: four lines over 100
+  characters, a fixture with an entry holding neither list (`f2-entry-no-lists`), the second
+  error of `validate` worded apart, `indexSchemaErrors` choosing through `indexSchemaFile`, each
+  frozen copy's `$comment` checked against its own section. No decision changed, so no
+  re-review.

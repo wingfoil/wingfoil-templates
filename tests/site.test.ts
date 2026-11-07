@@ -149,7 +149,8 @@ describe('npm run site (task-024)', () => {
       cpSync(join(repo.dir, 'llms.txt'), join(tree, 'llms.txt'));
       const index = JSON.parse(readFileSync(join(repo.dir, 'catalog-index.json'), 'utf8')) as
         Record<string, unknown>;
-      writeFileSync(join(tree, 'catalog-index.json'), `${JSON.stringify({ ...index, date: 'x' })}\n`);
+      const broken = JSON.stringify({ ...index, date: 'x' });
+      writeFileSync(join(tree, 'catalog-index.json'), `${broken}\n`);
       const one = runSite(['--tree', tree, '--out', join(tree, 'site')]);
       assert.equal(one.code, 1);
       assert.match(one.lines.join('\n'), /breaks index\/catalog-index\.v1\.schema\.json: /);

@@ -102,7 +102,7 @@ describe('npm run compose', () => {
       const tree = join(dir, 'tree');
       cpSync(TREE, tree, { recursive: true });
       const catalog = join(tree, 'catalog.yaml');
-      writeFileSync(catalog, readFileSync(catalog, 'utf8').replace('format: 1', 'format: 2'));
+      writeFileSync(catalog, readFileSync(catalog, 'utf8').replace('format: 1', 'format: 3'));
       const result = run(['--tree', tree, '--out', join(dir, 'out'), ...PARAMS, ...ENTRIES]);
       assert.equal(result.status, 1);
       assert.match(result.stderr, /not a valid catalog/);

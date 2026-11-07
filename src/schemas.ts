@@ -85,7 +85,7 @@ export function loadSchemas(dir: string = SCHEMA_DIR): SchemaSet {
         throw new Error(`unknown schema kind: ${kind}`);
       }
       const validator = validators.get(schemaFile(kind, data));
-      if (validator === undefined) throw new Error(`unknown schema kind: ${kind}`);
+      if (validator === undefined) throw new Error(`no compiled schema for ${kind}`);
       if (validator(data)) return [];
       // An `if` error only says that its `then` failed; that error is reported on its own.
       return (validator.errors ?? [])

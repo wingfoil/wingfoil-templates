@@ -5,7 +5,9 @@ import { join } from 'node:path';
 import { describe, it } from 'node:test';
 import Ajv2020 from 'ajv/dist/2020';
 
-import { FROZEN_KINDS, SCHEMA_KINDS, loadSchemas, readsFormatOne, schemaFile } from '../src/schemas';
+import {
+  FROZEN_KINDS, SCHEMA_KINDS, loadSchemas, readsFormatOne, schemaFile,
+} from '../src/schemas';
 import { parseYaml } from '../src/yaml-load';
 import { FIXTURES, REPO_ROOT } from './support/paths';
 
@@ -23,9 +25,9 @@ const SCHEMA_FILES = [
 
 /** Each frozen copy and the file it was copied from at the base commit. */
 const FROZEN = [
-  ['schema/pack.v1.schema.json', 'schema/pack.schema.json'],
-  ['schema/catalog.v1.schema.json', 'schema/catalog.schema.json'],
-  ['index/catalog-index.v1.schema.json', 'index/catalog-index.schema.json'],
+  ['schema/pack.v1.schema.json', 'schema/pack.schema.json', 'spec-001 §5'],
+  ['schema/catalog.v1.schema.json', 'schema/catalog.schema.json', 'spec-001 §5'],
+  ['index/catalog-index.v1.schema.json', 'index/catalog-index.schema.json', 'spec-002 §3.3'],
 ] as const;
 
 const schemas = loadSchemas();
@@ -89,7 +91,7 @@ describe('loadSchemas', () => {
 });
 
 describe('format 1, frozen (task-082 Acceptance 2)', () => {
-  for (const [copy, source] of FROZEN) {
+  for (const [copy, source, section] of FROZEN) {
     it(`${copy} equals ${source} at the base commit but its $id and $comment`, () => {
       assert.ok(existsSync(join(REPO_ROOT, copy)), `${copy} exists`);
       const frozen = JSON.parse(readFileSync(join(REPO_ROOT, copy), 'utf8')) as
@@ -97,7 +99,7 @@ describe('format 1, frozen (task-082 Acceptance 2)', () => {
       const before = JSON.parse(execFileSync('git', ['show', `${BASE}:${source}`],
         { cwd: REPO_ROOT, encoding: 'utf8' })) as Record<string, unknown>;
       assert.equal(frozen['$id'], `${ID_ROOT}${copy}`);
-      assert.match(String(frozen['$comment']), /^Format 1, frozen \(spec-00[12] §(?:5|3\.3)\)/);
+      assert.ok(String(frozen['$comment']).startsWith(`Format 1, frozen (${section})`), copy);
       const rest = (schema: Record<string, unknown>): string[] => Object.keys(schema)
         .filter((key) => key !== '$id' && key !== '$comment');
       assert.deepEqual(rest(frozen), rest(before), 'the same keys, in the same order');
