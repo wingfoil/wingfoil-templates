@@ -148,3 +148,10 @@ rule absent); (2) the v1 copies and the shared rule in `src/schemas.ts` and
   error of `validate` worded apart, `indexSchemaErrors` choosing through `indexSchemaFile`, each
   frozen copy's `$comment` checked against its own section. No decision changed, so no
   re-review.
+- 2026-11-07: the checks (dl-039), once on the frozen commit `24d1dd0`: the branch CI run
+  42420441902 `success` (22.12.0 19 min 56 s, 22.21.0 13 min 21 s); dl-039's local list on
+  Node.js 22.21.0 on a clean worktree of `24d1dd0`: `npm ci`, `npm run build`, `npm run
+  validate:publication` (18 runs, 0 failed), the golden tree in publication (26 runs, 0 failed),
+  `workflow list`, `directives list --format json` (`warnings []`), each exit 0; `npm run lint` 0.
+  The privacy check of the branch's diff: no local or scratch path, no private project. This note
+  is documentation-only and needs no new run (dl-039 R2).
