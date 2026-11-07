@@ -241,3 +241,11 @@ Given by the approver on 2026-11-05: every point of the outline as recommended.
   run 19 min 33 s (`verify` 13 min 1 s and 18 min 24 s; `ci.yml` unchanged, G12). The four tasks
   are done; next, the dl actions row (step 5), then the close (step 6). `main`'s CI on this push
   is read by the next note.
+- 2026-11-07: `main`'s CI on the previous note's push (`af17a18`), run 42349907172, `success`
+  (22.21.0 18 min 10 s, 22.12.0 20 min 57 s). Step 5, the dl actions row: on
+  `dl/dl-042-actions`, `wingfoil-release-intake` v7 (`befee13`, dl-042 I1 … I4) and the notes on
+  dl-009, dl-021, dl-029 and dl-042 (`11dbb53`); reviewed: approve after amendments, no blocking,
+  applied (`6bf447b`: the directives left to the guided intake, a guided intake checking what
+  `intake:prepare` carries forward, T2's seven days cited, wording and wraps); WingFoil reads v7
+  with no diagnostic; its branch CI run 42350312944 `success` (18 min 32 s, 20 min 1 s); merged
+  on the approver's OK (`efe2526`). Next, the close (step 6).
