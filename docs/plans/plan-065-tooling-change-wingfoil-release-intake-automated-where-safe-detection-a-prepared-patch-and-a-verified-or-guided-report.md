@@ -257,3 +257,13 @@ Given by the approver on 2026-11-05: every point of the outline as recommended.
   19 s, the run 21 min 48 s; its report "rehearsal of 0.3.2 guided: 7 reasons", as on the task's
   branch. No scheduled run on `main` yet: the schedule (06:17 UTC daily) has not fired on
   2026-11-07; the close waits for one.
+- 2026-11-07, close: step 6's scheduled run with no missing version left to a row of
+  `docs/owed-items.md`, as asked by the approver on 2026-11-07: "`intake.yml`'s first scheduled
+  run on `main`" (owner claude; a red run, or none by 2026-11-09, opens a bug), since the rest of
+  the close does not depend on it and the schedule is GitHub's to fire. The reply's later part
+  (point 8) in a row of its own; the weekly reading's row was added by task (A). The register's
+  row of this request moved to Closed, settled by this plan. Done: task-078 … task-081 done and
+  merged into `main`, dl-042 ruled and applied (`wingfoil-release-intake` v7), the intake
+  workflow's first runs read (42177750411, 42355075000), the reply sent; `main`'s CI on the last
+  merge read (42351761462). The run of this close's push is read by the next plan, the
+  `tooling-change` plan of dl-024 and dl-025 (dl-038 C3). `active → done`.
