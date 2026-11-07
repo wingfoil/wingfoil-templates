@@ -2,7 +2,7 @@
 id: plan-066-tooling-change-format-2-of-pack.yaml-catalog.yaml-and-the-index-the-conditional-part-per-entry-and-tensions
 type: plan
 title: "tooling-change: format 2 of pack.yaml, catalog.yaml and the index, the conditional part per entry and tensions"
-status: draft
+status: active
 workflow: "tooling-change"
 phase: "deliver"
 tags: ["tooling","format","packs","schema"]
