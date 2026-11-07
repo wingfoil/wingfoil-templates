@@ -1,5 +1,6 @@
-// The five JSON Schemas of schema/ (spec-001 §5, §6, §11, §12, §14, §15), compiled once with
-// Ajv2020 as adr-003 fixes it: strict, union types allowed, every error reported.
+// The JSON Schemas of schema/ (spec-001 §5, §6, §11, §12, §14, §15): one per kind, plus format 1's
+// frozen copies of pack and catalog, compiled once with Ajv2020 as adr-003 fixes it: strict, union
+// types allowed, every error reported.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import Ajv2020 from 'ajv/dist/2020';
@@ -16,15 +17,14 @@ export const FROZEN_KINDS = ['pack', 'catalog'] as const;
  * frozen schema; any other value, absent included, reads the current one.
  */
 export function readsFormatOne(data: unknown): boolean {
-  void data;
-  throw new Error('not written yet (task-082, red)');
+  return typeof data === 'object' && data !== null && !Array.isArray(data)
+    && (data as Record<string, unknown>)['format'] === 1;
 }
 
 /** The file under schema/ that validates `data` of `kind`, by the rule of `readsFormatOne`. */
 export function schemaFile(kind: SchemaKind, data: unknown): string {
-  void kind;
-  void data;
-  throw new Error('not written yet (task-082, red)');
+  const frozen = (FROZEN_KINDS as readonly string[]).includes(kind) && readsFormatOne(data);
+  return `${kind}${frozen ? '.v1' : ''}.schema.json`;
 }
 
 export interface SchemaError {
@@ -70,15 +70,21 @@ export function loadSchemas(dir: string = SCHEMA_DIR): SchemaSet {
     allErrors: true,
     logger: { log: () => undefined, warn: record, error: record },
   });
-  const validators = new Map<SchemaKind, ValidateFunction>();
-  for (const kind of SCHEMA_KINDS) {
-    const schema = JSON.parse(readFileSync(join(dir, `${kind}.schema.json`), 'utf8')) as object;
-    validators.set(kind, ajv.compile(schema));
+  // Keyed by file name: a frozen kind has two, chosen per file by `schemaFile`.
+  const validators = new Map<string, ValidateFunction>();
+  const files = [...SCHEMA_KINDS.map((kind) => `${kind}.schema.json`),
+    ...FROZEN_KINDS.map((kind) => `${kind}.v1.schema.json`)];
+  for (const file of files) {
+    const schema = JSON.parse(readFileSync(join(dir, file), 'utf8')) as object;
+    validators.set(file, ajv.compile(schema));
   }
   return {
     warnings,
     validate(kind, data) {
-      const validator = validators.get(kind);
+      if (!(SCHEMA_KINDS as readonly string[]).includes(kind)) {
+        throw new Error(`unknown schema kind: ${kind}`);
+      }
+      const validator = validators.get(schemaFile(kind, data));
       if (validator === undefined) throw new Error(`unknown schema kind: ${kind}`);
       if (validator(data)) return [];
       // An `if` error only says that its `then` failed; that error is reported on its own.
