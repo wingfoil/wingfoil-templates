@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/wingfoil/wingfoil-templates/schema/catalog.schema.json",
   "title": "WingFoil-Templates catalog (catalog.yaml)",
-  "$comment": "Format 1, specified by spec-001 (docs/memory/tech-spec/). A change to this schema is a change of the contract with the WingFoil CLI and produces a feedback note (wingfoil-feedback directive).",
+  "$comment": "Format 2, specified by spec-001 §5 and §11 (docs/memory/tech-spec/); format 1 is schema/catalog.v1.schema.json, frozen, and a file is read against the schema its format names. A change to this schema is a change of the contract with the WingFoil CLI and produces a feedback note (wingfoil-feedback directive).",
   "type": "object",
   "required": [
     "format",
@@ -17,7 +17,7 @@
   "properties": {
     "format": {
       "type": "integer",
-      "const": 1
+      "const": 2
     },
     "foundation": {
       "const": [
@@ -471,7 +471,8 @@
           "roles",
           "workflow",
           "directive",
-          "memory-template"
+          "memory-template",
+          "mcp"
         ]
       },
       "additionalProperties": {
@@ -693,8 +694,8 @@
         },
         "conditional": {
           "type": "array",
-          "maxItems": 1,
-          "description": "copied from pack.yaml, its with only (spec-001 §6.5, §11)",
+          "minItems": 1,
+          "description": "copied from pack.yaml, each entry's with only (spec-001 §6.5, §11)",
           "items": {
             "type": "object",
             "required": [
@@ -703,11 +704,18 @@
             "additionalProperties": false,
             "properties": {
               "with": {
-                "type": "string",
-                "pattern": "^software@\\^(?:0|[1-9][0-9]*)$"
+                "$ref": "#/$defs/requiresEntry"
               }
             }
           }
+        },
+        "pack_format": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ],
+          "description": "the format of the published pack.yaml; absent reads as 1 (spec-001 §5, §11)"
         },
         "wingfoil": {
           "type": "string",
