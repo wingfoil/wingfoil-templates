@@ -69,10 +69,10 @@ repository is at format 2 (Acceptance 8), so the gap is left to (C) and (D), whi
    caller (the resolver, `check:packs`, `check:schemas`, `validate`, `publish`, the index and the
    site) reads through it unchanged, and the site's error text (`src/site.ts`) names the schema
    the rule chose (`src/index.ts`'s text names none and stays). The strict compilation of all
-   nine schemas (the seven of `schema/`: `catalog`, `catalog.v1`, `compat`, `pack`, `pack.v1`, `preset`,
-   `transition`; the two of `index/`: `catalog-index`, `catalog-index.v1`) logs nothing, the
-   index's `indexSchema()` (or its successor) exposing one `warnings` list covering both index
-   schemas, asserted empty. The direct readers of `schema/pack.schema.json` keep their
+   nine schemas (the seven of `schema/`: `catalog`, `catalog.v1`, `compat`, `pack`, `pack.v1`,
+   `preset`, `transition`; the two of `index/`: `catalog-index`, `catalog-index.v1`) logs
+   nothing, the index's `indexSchema()` (or its successor) exposing one `warnings` list covering
+   both index schemas, asserted empty. The direct readers of `schema/pack.schema.json` keep their
    paths at format 2: `$defs.packId` (`src/digest.ts`), `$defs.requiresEntry` and
    `$defs.conflictsEntry` (`src/requirements.ts`), the parameter types under
    `properties.parameters` (`src/parameters.ts`); and of the index's, `indexSchemaDocument()`'s
