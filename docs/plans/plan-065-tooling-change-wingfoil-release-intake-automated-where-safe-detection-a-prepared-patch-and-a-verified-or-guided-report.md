@@ -2,7 +2,7 @@
 id: plan-065-tooling-change-wingfoil-release-intake-automated-where-safe-detection-a-prepared-patch-and-a-verified-or-guided-report
 type: plan
 title: "tooling-change: wingfoil-release-intake automated where safe, detection, a prepared patch and a verified or guided report"
-status: active
+status: done
 workflow: "tooling-change"
 phase: "deliver"
 tags: ["tooling","ci","intake","wingfoil"]
