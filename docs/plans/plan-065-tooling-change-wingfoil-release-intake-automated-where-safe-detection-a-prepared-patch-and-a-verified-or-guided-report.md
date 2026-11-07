@@ -249,3 +249,11 @@ Given by the approver on 2026-11-05: every point of the outline as recommended.
   `intake:prepare` carries forward, T2's seven days cited, wording and wraps); WingFoil reads v7
   with no diagnostic; its branch CI run 42350312944 `success` (18 min 32 s, 20 min 1 s); merged
   on the approver's OK (`efe2526`). Next, the close (step 6).
+- 2026-11-07: `main`'s CI on the previous note's push (`ab43b9d`), run 42351761462, `success`
+  (22.12.0 14 min 59 s, 22.21.0 17 min 54 s). Step 6, the workflow's first runs on `main`: the
+  rehearsal of 0.3.2, dispatched with the approver's OK (`gh workflow run intake.yml --ref main -f
+  rehearsal=true`), run 42355075000 on `ab43b9d`, `success`: `detect` 20 s, `prepare` 23 s,
+  `verify` 22.21.0 16 min 9 s and 22.12.0 20 min 33 s (the 15 checks `success` on both), `report`
+  19 s, the run 21 min 48 s; its report "rehearsal of 0.3.2 guided: 7 reasons", as on the task's
+  branch. No scheduled run on `main` yet: the schedule (06:17 UTC daily) has not fired on
+  2026-11-07; the close waits for one.
