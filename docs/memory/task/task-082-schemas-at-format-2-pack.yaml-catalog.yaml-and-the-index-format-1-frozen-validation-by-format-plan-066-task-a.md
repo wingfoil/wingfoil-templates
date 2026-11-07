@@ -20,61 +20,84 @@ moves in (B), ruling 3; the generated index in (G)). The `mcp` kind is admitted 
 refused by the lint and the composer in (C) and (D) (ruling 6); its own schema is not here
 (plan-063 ruling 4).
 
+Between this task and (C) and (D), a format-2 manifest with two entries passes the schema while
+the resolver and the lint still read `conditional[0]` and format 1's rules; nothing in the
+repository is at format 2 (Acceptance 8), so the gap is left to (C) and (D), which close it.
+
 ## Acceptance
 
 `npm run build` precedes the commands.
 
 1. **Red first** (dl-018): the tests of Acceptance 2 … 6 committed before the schemas and the code,
    with the v1 files absent and the dispatch not written, so that the build passes and the tests
-   fail by assertion; the failing run recorded with its command and count.
+   fail by assertion, not at load: a test reading a v1 file first asserts that it exists. The
+   failing run recorded with its command and count.
 2. **Format 1 frozen:** `schema/pack.v1.schema.json`, `schema/catalog.v1.schema.json` and
    `index/catalog-index.v1.schema.json` equal the files `schema/pack.schema.json`,
-   `schema/catalog.schema.json` and `index/catalog-index.schema.json` at this task's base commit,
-   except their `$id` (`….v1.schema.json`) and their `$comment` or `description` (format 1,
-   frozen, spec-001 §5 / spec-002 §3.3); a test compares them with the base commit's files
-   (`git show`), key by key.
+   `schema/catalog.schema.json` and `index/catalog-index.schema.json` at the branch's base commit,
+   except the top-level `$id` (`….v1.schema.json`) and the top-level `$comment` (format 1, frozen,
+   spec-001 §5 / spec-002 §3.3; the index's copy adds one, since its source has none); a test
+   compares them with `git show <base>:<file>`, key by key, the base commit's SHA a constant of
+   the test.
 3. **`schema/pack.schema.json` at format 2** (spec-001 §5, §6.2, §6.4, §6.5): `format` `const` 2;
    `tensions`, a list of `{ pack, resolution }` with no other key, `pack` in `conflicts`' syntax
    (§6.3, the range optional), `resolution` a non-empty string; `conditional` one or more entries,
    `with` in `requires`' syntax (§6.3: any pack id, a range required), `contents` with
-   `workflows` and `directives` only and at least one of them non-empty; `conditional` still
-   refused on `base` and `software`; `contents.fragments` and the `formats` keys admitting `mcp`;
-   every other rule as format 1; its `$comment` names format 2, spec-001 §5, and the rules left
-   to the lint (one entry per pack id, `with` earlier in the order, the order of `fragments`,
-   `tensions`' uniqueness and `conflicts`, §18).
+   `workflows` and `directives` only and at least one of them non-empty (a tightening at format 2
+   by design: format 1 leaves that rule to the lint, which (D) keeps for both formats);
+   `conditional` still refused on `base` and `software`; `contents.fragments` and the `formats`
+   keys admitting `mcp`; every other rule as format 1. Its `$comment` names format 2, spec-001
+   §5, and the rules left to the lint (§6.5, §18): one entry per pack id; a `with` earlier in the
+   order, not the pack itself, not in `requires` or `conflicts`; a phase pack with no `with`
+   naming `software`; isolation per entry; the order of `fragments`; `tensions` naming neither
+   the pack itself nor a pack of `conflicts`, each pack at most once.
 4. **`schema/catalog.schema.json` at format 2** (spec-001 §11): `format` `const` 2; a version
    entry's `conditional` one or more `{ with }` in `requires`' syntax; an optional `pack_format`,
-   `1` or `2`; `formats` keys admitting `mcp`; every other rule as format 1. **The index's schema
-   at format 2** (spec-002 §3.3): `format` `const` 2; a version's `conditional` one or more
-   `{ with }` in `requires`' syntax and a required `pack_format` (`1` or `2`); a pack's required
-   `conditional_parts` (`with`, `workflows`, `directives`) and `tensions` (`pack`, `resolution`),
-   in §3.3's key order; `formats` keys admitting `mcp`.
-5. **Validation by `format`:** `SchemaSet.validate('pack' | 'catalog', data)` and the index's
-   validation choose the schema by the data's `format`: `1` the v1 schema, any other value
-   (absent included) the current one, so that a missing or unknown format is reported against
-   the current schema's `const`. Every caller (the resolver, `check:packs`, `check:schemas`,
-   `validate`, `publish`, the index and the site) reads through it unchanged. The strict
-   compilation of all eight schemas logs nothing (`warnings` empty). The schemas' grammar reads
-   (`src/digest.ts`, `src/requirements.ts`, `src/parameters.ts`) keep reading
-   `schema/pack.schema.json`, whose `$defs` they use stay the same.
-6. **The tests** (`tests/schemas.test.ts`, `tests/index-schema.test.ts` or the existing ones),
-   offline: under `tests/fixtures/schema/`, the fixtures of both formats, each read through the
-   dispatch, and each schema file also compiled on its own. At least: the format-1 fixtures as
-   today (`conditional-two-entries`, `conditional-with-other-pack`, catalog
-   `version-conditional-two` stay invalid: format 1's refusals); at format 2, valid: two entries,
-   a `with` other than `software`, `tensions` with and without a range, `mcp` in `fragments` and
-   `formats`, a catalog entry with `pack_format` and with none; invalid: `tensions` at format 1,
-   a `tensions` entry with an empty `resolution` or an extra key, a `with` without a range, an
-   entry with neither `workflows` nor `directives` or with another key, `conditional` on `base`,
-   `pack_format: 3`, a format-1 file with `mcp`, `format: 3`. Each invalid fixture asserted with
-   its keyword and pointer. The index: the generated root `catalog-index.json` (format 1) valid
-   through the dispatch; a format-2 fixture index valid; one with a version missing `pack_format`
-   invalid.
-7. **The schema note** (`wingfoil-cli` rule 8; plan-066 point 1): `npm run feedback:note --
-   --schema --from <this task's id>` writes the next free note (F-047 when written), its listing
-   naming the two v1 files added and the two schemas changed; the `schema-note` rule of
-   `check:packs` is red before it and green after; the index's bump is information only (spec-002
-   §3.3, §4), named in the note's text if the generator allows, else in this task's notes.
+   `1` or `2`; no `tensions` (not copied, §11); `formats` keys admitting `mcp`; every other rule
+   as format 1. **`index/catalog-index.schema.json` at format 2** (spec-002 §3.3): `format`
+   `const` 2; a version's `conditional` one or more `{ with }` in `requires`' syntax and a
+   required `pack_format` (`1` or `2`), after `conditional` and before `readme_url` in the
+   schema's `properties` and `required`; a pack's required `conditional_parts` (`with` in
+   `requires`' syntax, `workflows`, `directives`) and `tensions` (`pack` in `conflicts`' syntax,
+   `resolution` non-empty), after `conditional_directives` and before `parameters`; `formats`
+   unchanged (it has no key list); `$defs.pack.properties.axis.enum`, which the site reads, kept.
+   The order in the generated file is (G)'s.
+5. **Validation by `format`**, one rule shared by `src/schemas.ts` and `src/index-schema.ts` (one
+   helper): `format` `1` reads the v1 schema, any other value (absent included) the current one,
+   so that a missing or unknown format is reported against the current schema's `const`.
+   `SchemaSet.validate('pack' | 'catalog', data)` and the index's validation apply it; every
+   caller (the resolver, `check:packs`, `check:schemas`, `validate`, `publish`, the index and the
+   site) reads through it unchanged, and the index's and the site's error texts (`src/index.ts`,
+   `src/site.ts`) name the schema the rule chose. The strict compilation of all nine schemas (the
+   seven of `schema/`: `catalog`, `catalog.v1`, `compat`, `pack`, `pack.v1`, `preset`,
+   `transition`; the two of `index/`: `catalog-index`, `catalog-index.v1`) logs nothing, the
+   index's warnings reported for both. The direct readers of `schema/pack.schema.json` keep their
+   paths at format 2: `$defs.packId` (`src/digest.ts`), `$defs.requiresEntry` and
+   `$defs.conflictsEntry` (`src/requirements.ts`), the parameter types under
+   `properties.parameters` (`src/parameters.ts`); and of the index's, `indexSchemaDocument()`'s
+   `$defs.pack.properties.axis.enum` (`src/site.ts`).
+6. **The tests** (`tests/schemas.test.ts`, the index's tests), offline: under
+   `tests/fixtures/schema/`, the fixtures of both formats, each read through the rule, and each
+   schema file also compiled on its own. At least: the format-1 fixtures as today
+   (`conditional-two-entries`, `conditional-with-other-pack`, catalog `version-conditional-two`
+   stay invalid: format 1's refusals); at format 2, valid: two entries, a `with` other than
+   `software`, `tensions` with and without a range, `mcp` in `fragments` and `formats`, a catalog
+   entry with `pack_format` and with none; invalid: `tensions` at format 1, a `tensions` entry with
+   an empty `resolution` or an extra key, a `with` without a range, an entry with neither
+   `workflows` nor `directives` or with another key, `conditional` on `base`, `pack_format: 3`,
+   `pack_format` in a format-1 catalog, `tensions` in a catalog version entry, a format-1 file with
+   `mcp`, `format: 3`. Each invalid fixture asserted with its keyword and pointer. The index: the
+   generated root `catalog-index.json` (format 1) valid through the rule; a format-2 fixture index
+   valid; one with a version missing `pack_format` invalid.
+7. **The schema note** (`wingfoil-cli` rule 8; plan-066 point 1): once the v1 files and the
+   format-2 schemas are committed (the digest reads the files git tracks), `npm run feedback:note
+   -- --schema --from <this task's id>` writes the next free note (F-047 when written), its
+   listing naming `pack.v1.schema.json` and `catalog.v1.schema.json` added and `pack.schema.json`
+   and `catalog.schema.json` changed; the generated note is not edited by hand. The `schema-note`
+   rule of `check:packs` is red before it and green after. In the same commit,
+   `tests/feedback-note.test.ts`'s expectation `Changed since F-031` becomes `Changed since F-047`,
+   its comment to match. The index's bump, information only (spec-002 §3.3, §4; `index/` is
+   outside the digest), is recorded in this task's Execution Notes.
 8. **Nothing else moves:** `check:packs`, `check:schemas`, `validate`, the golden trees and the
    generated root files unchanged (format 1 everywhere); `npm test` and `npm run lint` exit 0.
 9. **The checks** (`tooling-delivery` v3 › `review`, dl-039): the build review and its amendments
@@ -83,12 +106,14 @@ refused by the lint and the composer in (C) and (D) (ruling 6); its own schema i
 
 ## Design
 
-Branch `task/task-082-schemas-format-2` from `main` at this task's add. Red steps: (1) the tests
-and fixtures of Acceptance 2 … 6 (red by assertion: the v1 files absent, the format-2 fixtures
-refused by today's schemas, the dispatch absent); (2) the v1 copies and the dispatch in
-`src/schemas.ts` (a kind with versions maps `format` 1 to `<kind>.v1.schema.json`) and in
-`src/index-schema.ts` (green for the format-1 half); (3) the format-2 schemas and their
-`$comment` texts (green); (4) the schema note, `schema-note` green. No new dependency.
+Branch `task/task-082-schemas-format-2` from `main` at this task's add; the test's base-commit
+SHA reads with `git show`, which needs full history (`ci.yml` checks out with `fetch-depth: 0`;
+dl-039's clean clones are full clones). Red steps: (1) the tests and fixtures of Acceptance 2 … 6
+(red by assertion: the v1 files absent, the format-2 fixtures refused by today's schemas, the
+rule absent); (2) the v1 copies and the shared rule in `src/schemas.ts` and
+`src/index-schema.ts` (green for the format-1 half), committed; (3) the format-2 schemas and their
+`$comment` texts (green), committed; (4) the schema note from the committed tree, with
+`tests/feedback-note.test.ts`'s expectation, `schema-note` green. No new dependency.
 
 ## Execution Notes
 
