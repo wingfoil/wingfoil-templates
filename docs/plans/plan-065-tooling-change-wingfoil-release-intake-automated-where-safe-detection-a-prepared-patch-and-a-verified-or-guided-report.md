@@ -232,3 +232,12 @@ Given by the approver on 2026-11-05: every point of the outline as recommended.
   prepared by `intake:prepare` touched only (C)'s seven files, 1103 of 1103 tests passing with
   `check:pins`, `index --check` and `check:packs` green. `main`'s CI on this push is read by
   the next note. Next, task (C).
+- 2026-11-07: `main`'s CI on the previous note's push (`9606fed`), run 42247880434, `success`
+  (22.21.0 19 min 34 s, 22.12.0 17 min 29 s). Step 4, task (C): task-081 accepted, built test
+  first, reviewed and re-reviewed, approved by the approver, merged into `main` (`650a064`) and
+  done; its branch CI run 42257607151 `success` (13 min 23 s, 13 min 54 s); the rehearsal of
+  0.3.2, dispatched on its branch with the approver's OK, run 42259278303 `success`, its report
+  guided with 7 reasons as expected, every check of `verify` green on both Node.js versions, the
+  run 19 min 33 s (`verify` 13 min 1 s and 18 min 24 s; `ci.yml` unchanged, G12). The four tasks
+  are done; next, the dl actions row (step 5), then the close (step 6). `main`'s CI on this push
+  is read by the next note.
