@@ -9,7 +9,9 @@ import { dirname, join } from 'node:path';
 import { after, before, describe, it } from 'node:test';
 
 import { indexOutputs, runIndex } from '../src/index';
-import { indexSchema, indexSchemaErrors } from '../src/index-schema';
+import {
+  indexSchema, indexSchemaDocument, indexSchemaErrors, indexSchemaFile,
+} from '../src/index-schema';
 import { runCheckPacks } from '../src/check-packs';
 import { withRepo } from './support/git-repo';
 import type { TestRepo } from './support/git-repo';
@@ -188,6 +190,52 @@ describe('index/catalog-index.schema.json (acceptance 7)', () => {
     const data = JSON.parse(readFileSync(join(REPO_ROOT, 'catalog-index.json'), 'utf8')) as object;
     assert.deepEqual(indexSchemaErrors(data), []);
     assert.notDeepEqual(indexSchemaErrors({ ...data, date: 'x' }), []);
+  });
+});
+
+describe('the index\'s schemas by format (task-082 Acceptance 4, 5, 6)', () => {
+  const FORMAT_2 = join(FIXTURES, 'schema', 'index', 'valid', 'format-2.json');
+  type Index = { packs: { versions: Record<string, unknown>[] }[] };
+  const format2 = (): Index => JSON.parse(readFileSync(FORMAT_2, 'utf8')) as Index;
+
+  it('reads the root index, at format 1, through the frozen schema', () => {
+    const data = JSON.parse(readFileSync(join(REPO_ROOT, 'catalog-index.json'), 'utf8')) as object;
+    assert.equal(indexSchemaFile(data), 'index/catalog-index.v1.schema.json');
+    assert.deepEqual(indexSchemaErrors(data), []);
+  });
+
+  it('accepts a format-2 index and refuses a version without pack_format', () => {
+    const data = format2();
+    assert.equal(indexSchemaFile(data), 'index/catalog-index.schema.json');
+    assert.equal(indexSchemaFile({}), 'index/catalog-index.schema.json');
+    assert.deepEqual(indexSchemaErrors(data), []);
+    const version = data.packs[2]?.versions[0];
+    assert.ok(version !== undefined);
+    delete version['pack_format'];
+    const errors = indexSchemaErrors(data);
+    assert.ok(errors.some((error) => error.startsWith('/packs/2/versions/0 ')
+      && error.includes('pack_format')), errors.join('; '));
+  });
+
+  it('declares the format-2 keys in spec-002 §3.3\'s order, the axis order kept', () => {
+    type Object_ = { required: string[]; properties: Record<string, { enum?: unknown[] }> };
+    const defs = indexSchemaDocument()['$defs'] as Record<string, Object_>;
+    const after = (list: string[], key: string): string | undefined => list[list.indexOf(key) + 1];
+    for (const list of [Object.keys(defs['packVersion']?.properties ?? {}),
+      defs['packVersion']?.required ?? []]) {
+      assert.ok(list.includes('pack_format'), list.join());
+      assert.equal(after(list, 'pack_format'), 'readme_url', list.join());
+    }
+    const versionKeys = Object.keys(defs['packVersion']?.properties ?? {});
+    assert.equal(after(versionKeys, 'conditional'), 'pack_format');
+    for (const list of [Object.keys(defs['pack']?.properties ?? {}),
+      defs['pack']?.required ?? []]) {
+      assert.equal(after(list, 'conditional_directives'), 'conditional_parts', list.join());
+      assert.equal(after(list, 'conditional_parts'), 'tensions', list.join());
+      assert.equal(after(list, 'tensions'), 'parameters', list.join());
+    }
+    assert.deepEqual(defs['pack']?.properties['axis']?.enum, [null, 'methodology', 'phase',
+      'blueprint', 'governance', 'team-mode', 'stage']);
   });
 });
 

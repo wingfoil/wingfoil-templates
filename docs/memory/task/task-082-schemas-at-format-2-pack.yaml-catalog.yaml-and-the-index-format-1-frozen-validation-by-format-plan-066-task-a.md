@@ -2,7 +2,7 @@
 id: task-082-schemas-at-format-2-pack.yaml-catalog.yaml-and-the-index-format-1-frozen-validation-by-format-plan-066-task-a
 type: task
 title: "Schemas at format 2: pack.yaml, catalog.yaml and the index, format 1 frozen, validation by format (plan-066 task A)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-delivery v3), plan-066 task (A)
 depends_on: []
 tags: ["tooling","format","schema"]
@@ -123,3 +123,35 @@ rule absent); (2) the v1 copies and the shared rule in `src/schemas.ts` and
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-07: started (`backlog → in-progress`) on `task/task-082-schemas-format-2` from `493651f`,
+  the test's base commit. Red (dl-018), step (1): the tests and fixtures of Acceptance 2 … 6 with
+  the signatures of `readsFormatOne`, `schemaFile` and `indexSchemaFile` and no body (the task-080
+  precedent); `npm run build` and `npm run lint` exit 0; `npm test`: 1213 tests, 20 failing, all
+  of them new (the v1 files absent, the format-2 fixtures refused, the rule unwritten, the site's
+  text). The format-1 refusals of Acceptance 6 pass already, as format 1 refuses them today.
+- 2026-11-07: steps (2) and (3) green, each committed: the v1 copies with the shared rule, then the
+  format-2 schemas; `check:packs`'s `schema-note` red after (3), as Acceptance 7 expects. Step (4):
+  F-047 written by `npm run feedback:note -- --schema --from <this task>` from the committed tree
+  (`schema/` digest `sha256:2836141582da…`; `pack.v1` and `catalog.v1` added, `pack` and `catalog`
+  changed, since F-031), not edited; `schema-note` green; `tests/feedback-note.test.ts` reads
+  `Changed since F-047`. The index's bump, information only (spec-002 §3.3, §4; `index/` is
+  outside the digest): `index/catalog-index.schema.json` at format 2 (`pack_format`,
+  `conditional_parts`, `tensions`, a `with` in `requires`' syntax) and
+  `index/catalog-index.v1.schema.json` frozen; the generated `catalog-index.json` stays at format 1
+  until (G).
+- 2026-11-07: `npm test` after step (4): 1213 tests, 1 failing: `compose-cli`'s "exits 1 on a
+  catalog that breaks its schema" broke the catalog with `format: 2`, valid now; it breaks it with
+  `format: 3` (Acceptance 8 read as: the test's intent kept, its means moved). `check:schemas`,
+  `check:packs` and `validate` passed, the tree unchanged.
+- 2026-11-07: independent build review: approve, nothing blocking; applied: four lines over 100
+  characters, a fixture with an entry holding neither list (`f2-entry-no-lists`), the second
+  error of `validate` worded apart, `indexSchemaErrors` choosing through `indexSchemaFile`, each
+  frozen copy's `$comment` checked against its own section. No decision changed, so no
+  re-review.
+- 2026-11-07: the checks (dl-039), once on the frozen commit `24d1dd0`: the branch CI run
+  42420441902 `success` (22.12.0 19 min 56 s, 22.21.0 13 min 21 s); dl-039's local list on
+  Node.js 22.21.0 on a clean worktree of `24d1dd0`: `npm ci`, `npm run build`, `npm run
+  validate:publication` (18 runs, 0 failed), the golden tree in publication (26 runs, 0 failed),
+  `workflow list`, `directives list --format json` (`warnings []`), each exit 0; `npm run lint` 0.
+  The privacy check of the branch's diff: no local or scratch path, no private project. This note
+  is documentation-only and needs no new run (dl-039 R2).

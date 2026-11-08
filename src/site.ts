@@ -10,7 +10,7 @@ import { parseArgs } from 'node:util';
 import { byBytes, isDoc } from './index-data';
 import type { CatalogIndex, IndexPack } from './index-model';
 import { axisHeading, profilePacks, summaryOf } from './index-render';
-import { indexSchemaDocument, indexSchemaErrors } from './index-schema';
+import { indexSchemaDocument, indexSchemaErrors, indexSchemaFile } from './index-schema';
 import { readmeOnGithub } from './index-urls';
 import { packAnchor } from './readme';
 
@@ -198,7 +198,7 @@ function build(tree: string, out: string, vendor: string, axes: string[]): strin
   }
   const errors = indexSchemaErrors(index);
   if (errors.length > 0) {
-    throw new SiteError(1, `catalog-index.json: breaks index/catalog-index.schema.json: `
+    throw new SiteError(1, `catalog-index.json: breaks ${indexSchemaFile(index)}: `
       + errors.join('; '));
   }
   for (const pack of (index as CatalogIndex).packs) {

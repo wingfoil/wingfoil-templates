@@ -143,6 +143,23 @@ describe('npm run site (task-024)', () => {
       assert.equal(runSite(['--tree', tree, '--out', join(dir, 'y')]).code, 1);
     });
 
+    it('names the schema the index was read against (task-082 Acceptance 5)', () => {
+      const tree = join(dir, 'named-schema');
+      mkdirSync(tree);
+      cpSync(join(repo.dir, 'llms.txt'), join(tree, 'llms.txt'));
+      const index = JSON.parse(readFileSync(join(repo.dir, 'catalog-index.json'), 'utf8')) as
+        Record<string, unknown>;
+      const broken = JSON.stringify({ ...index, date: 'x' });
+      writeFileSync(join(tree, 'catalog-index.json'), `${broken}\n`);
+      const one = runSite(['--tree', tree, '--out', join(tree, 'site')]);
+      assert.equal(one.code, 1);
+      assert.match(one.lines.join('\n'), /breaks index\/catalog-index\.v1\.schema\.json: /);
+      writeFileSync(join(tree, 'catalog-index.json'), '{"format": 2}\n');
+      const two = runSite(['--tree', tree, '--out', join(tree, 'site')]);
+      assert.equal(two.code, 1);
+      assert.match(two.lines.join('\n'), /breaks index\/catalog-index\.schema\.json: /);
+    });
+
     it('checks the vendored script against its sha256, and refuses a changed one', () => {
       const vendor = join(REPO_ROOT, 'index', 'vendor');
       const sum = readFileSync(join(vendor, 'search.js.sha256'), 'utf8');

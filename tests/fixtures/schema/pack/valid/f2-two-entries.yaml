@@ -1,0 +1,22 @@
+# spec-001 §6.5 at format 2: a stage pack with two entries, one naming software, one another pack.
+format: 2
+id: stage/production
+axis: stage
+name: production
+title: "Production"
+description: "Released software under its full checks."
+version: 1.0.0
+formats: { workflow: 1, directive: 1 }
+requires_capabilities: []
+requires:
+  - base@^1
+contents:
+  workflows: [production-entry]
+conditional:
+  - with: software@^1
+    contents:
+      workflows: [stage-release-gate]
+      directives: []
+  - with: governance/strict@^1
+    contents:
+      directives: [strict-exit-check]

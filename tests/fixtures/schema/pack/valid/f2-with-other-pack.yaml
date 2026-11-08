@@ -1,0 +1,19 @@
+# spec-001 §6.5 at format 2: a pack that requires software, its entry naming another pack.
+format: 2
+id: governance/strict
+axis: governance
+name: strict
+title: "Strict"
+description: "Every requirement traced before release."
+version: 2.0.0
+formats: { directive: 1 }
+requires_capabilities: []
+requires:
+  - base@^1
+  - software@^1
+contents:
+  directives: [traceability]
+conditional:
+  - with: blueprint/web-app@~1.2
+    contents:
+      directives: [web-app-traceability]

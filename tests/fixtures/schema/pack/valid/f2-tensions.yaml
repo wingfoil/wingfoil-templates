@@ -1,0 +1,19 @@
+# spec-001 §6.2 at format 2: tensions, one with a range and one without.
+format: 2
+id: governance/strict
+axis: governance
+name: strict
+title: "Strict"
+description: "Every requirement traced before release."
+version: 1.0.0
+formats: { directive: 1 }
+requires_capabilities: []
+requires:
+  - base@^1
+contents:
+  directives: [traceability]
+tensions:
+  - pack: stage/prototype
+    resolution: "Exploration only in the exploration scope."
+  - pack: team-mode/solo@^1
+    resolution: "The reviewer is a second session."
