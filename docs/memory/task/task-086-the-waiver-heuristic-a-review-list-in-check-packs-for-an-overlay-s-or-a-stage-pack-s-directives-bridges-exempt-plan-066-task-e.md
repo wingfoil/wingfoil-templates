@@ -2,7 +2,7 @@
 id: task-086-the-waiver-heuristic-a-review-list-in-check-packs-for-an-overlay-s-or-a-stage-pack-s-directives-bridges-exempt-plan-066-task-e
 type: task
 title: "The waiver heuristic: a review list in check:packs for an overlay's or a stage pack's directives, bridges exempt (plan-066 task E)"
-status: draft
+status: pending
 pack: ""            # tooling task (tooling-delivery v3), plan-066 task (E)
 depends_on: ["task-085-the-lint-per-entry-the-conditional-entries-and-tensions-rules-by-format-parameter-scopes-per-entry-the-mcp-refusal-plan-066-task-d"]
 tags: ["tooling","lint","directives"]
