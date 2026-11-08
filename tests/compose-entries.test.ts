@@ -109,6 +109,20 @@ describe('compose per entry: the active entries (spec-001 §6.5, §17 step 1)', 
     assert.ok(!neither.has('.wingfoil/workflows/built-in/s-gov.yaml'));
   });
 
+  it('composes each entry\'s directives in written order after the pack\'s own', () => {
+    const s = stage({}, { directives: ['s-own'], conditional: [
+      { with: 'software@^1', workflows: ['s-sw-flow'], directives: ['s-sw-b', 's-sw-a'] },
+      { with: 'governance/g@^1', workflows: ['s-gov'], directives: ['s-gov-b', 's-gov-a'] }] });
+    withPackTree(PACKS(s), (root) => {
+      const composed = composeDocuments(root, CATALOG,
+        [...WITH_SOFTWARE, 'governance/g', 'stage/s'], {});
+      assert.deepEqual(composed.files.filter((file) => file.pack === 'stage/s'
+        && file.path.startsWith('directives/')).map((file) => file.path),
+      ['directives/s-own.md', 'directives/s-sw-b.md', 'directives/s-sw-a.md',
+        'directives/s-gov-b.md', 'directives/s-gov-a.md']);
+    });
+  });
+
   it('never adds the pack an entry names', () => {
     withPackTree(PACKS(), (root) => {
       assert.deepEqual(resolve(root, CATALOG, ['stage/s']).map((pack) => pack.id),
@@ -119,7 +133,8 @@ describe('compose per entry: the active entries (spec-001 §6.5, §17 step 1)', 
   it('fails on an entry\'s pack present outside its range, naming the entry', () => {
     const later = { ...GOV, version: '2.0.0' };
     resolveFails(PACKS(stage(), later), ['governance/g', 'stage/s'],
-      /governance\/g 2\.0\.0 does not satisfy \^1, asked by stage\/s for its conditional entry with governance\/g@\^1/);
+      new RegExp('governance/g 2\\.0\\.0 does not satisfy \\^1, asked by stage/s for its '
+        + 'conditional entry with governance/g@\\^1'));
     withPackTree(PACKS(stage(), later), (root) => {
       assert.ok(resolve(root, CATALOG, ['stage/s']).length > 0);
     });
@@ -130,7 +145,8 @@ describe('compose per entry: parameter scopes (spec-001 §8.1, §6.5)', () => {
   it('lets an entry use its own with pack\'s parameters, and no other entry\'s', () => {
     const files = plan(PACKS(), [...WITH_SOFTWARE, 'governance/g', 'stage/s']);
     assert.match(files.get('.wingfoil/workflows/built-in/s-sw-flow.yaml') ?? '', /swx/);
-    fails(PACKS(stage({ 'workflows/s-gov.yaml': workflow('s-gov', 'description: "{{sw_param}}"\n') })),
+    const using = workflow('s-gov', 'description: "{{sw_param}}"\n');
+    fails(PACKS(stage({ 'workflows/s-gov.yaml': using })),
       [...WITH_SOFTWARE, 'governance/g', 'stage/s'], /s-gov\.yaml.*sw_param/);
   });
 });
@@ -141,7 +157,8 @@ describe('compose per entry: §7.1 and the shapes the resolver applies (spec-001
 
   it('fails on an entry naming a later pack, in a composition holding it', () => {
     resolveFails([...PACKS(), B], ['blueprint/b', 'stage/s'],
-      /blueprint\/b: its entry with stage\/s@\^1 names stage\/s, later in the composition order \(spec-001 §7\.1\)/);
+      new RegExp('blueprint/b: its entry with stage/s@\\^1 names stage/s, later in the '
+        + 'composition order \\(spec-001 §7\\.1\\)'));
     withPackTree([...PACKS(), B], (root) => {
       assert.ok(resolve(root, CATALOG, ['blueprint/b']).length > 0);
     });
@@ -178,7 +195,8 @@ describe('compose per entry: §7.1 and the shapes the resolver applies (spec-001
     const twice = stage({}, { conditional: [
       { with: 'software@^1', workflows: ['s-sw-flow'], directives: ['s-sw'] },
       { with: 'governance/g@^1', workflows: ['s-gov'], directives: ['s-sw'] }] });
-    resolveFails(PACKS(twice), ['stage/s'], /stage\/s: directives\/s-sw\.md is listed in two conditional entries/);
+    resolveFails(PACKS(twice), ['stage/s'],
+      /stage\/s: directives\/s-sw\.md is listed in two conditional entries/);
     const both = stage({}, { directives: ['s-gov-d'], conditional: [
       { with: 'software@^1', workflows: ['s-sw-flow'], directives: ['s-sw'] },
       { with: 'governance/g@^1', workflows: ['s-gov'], directives: ['s-gov-d'] }] });
@@ -216,6 +234,21 @@ describe('compose per entry: the workflow rules the composer applies (spec-001 �
     fails(PACKS(s), ['governance/g', 'stage/s'], /roles\.yaml.*s-g.*conditional part/);
   });
 
+  it('refuses a workflow of one entry including a workflow of another entry', () => {
+    fails(PACKS(stage({ 'workflows/s-gov.yaml': workflow('s-gov',
+      'phases:\n  - { name: a, include: s-sw-flow }\n') })),
+    [...WITH_SOFTWARE, 'governance/g', 'stage/s'],
+    /s-gov\.yaml.*s-sw-flow.*conditional part.*composed only with software/);
+  });
+
+  it('refuses a methodology without software shipping delivery in an entry not naming it', () => {
+    const flow: PackSpec = { id: 'methodology/flow', format: 2, workflows: ['board'],
+      conditional: [{ with: 'base@^1', workflows: ['delivery'] }],
+      extraFiles: { 'workflows/delivery.yaml': DELIVERY } };
+    resolveFails([BASE_COMPOSABLE, SW, flow], ['methodology/flow'],
+      /methodology\/flow: does not require software, so it ships delivery in its conditional part/);
+  });
+
   it('composes a methodology with delivery in its software entry at the second position', () => {
     // An entry naming base is a shape (D)'s lint refuses; only base and software precede a
     // methodology, so it is the one way to put the software entry second (task-084 notes).
@@ -232,7 +265,8 @@ describe('compose per entry: the tensions\' notices (spec-001 §6.2, §17 step 8
   const tense = (tensions: { pack: string; resolution: string }[]): PackSpec[] => [
     BASE_COMPOSABLE, SW, KANBAN, GOV,
     { id: 'governance/h', format: 2, directives: ['h'], tensions },
-    { id: 'team-mode/t', directives: ['t'] }, stage(),
+    { id: 'team-mode/t', format: 2, directives: ['t'],
+      tensions: [{ pack: 'governance/h', resolution: 'Mind h.' }] }, stage(),
   ];
   const notices = (specs: PackSpec[], request: string[]): unknown => {
     let result: unknown;
@@ -251,6 +285,7 @@ describe('compose per entry: the tensions\' notices (spec-001 §6.2, §17 step 8
     assert.deepEqual(notices(specs, ['governance/g', 'governance/h', 'team-mode/t', 'stage/s']), [
       'notice: governance/h and stage/s: Explore only in the exploration scope.',
       'notice: governance/h and governance/g: Audit first.',
+      'notice: team-mode/t and governance/h: Mind h.',
     ]);
     assert.deepEqual(notices(specs, ['governance/h']), []);
   });
@@ -263,5 +298,8 @@ describe('compose per entry: the mcp refusal (plan-066 ruling 6)', () => {
         contents: { fragments: ['mcp'], directives: ['m'] } } };
     resolveFails([...PACKS(), mcp], ['blueprint/m'],
       /blueprint\/m: ships the mcp kind, which no WingFoil release reads yet \(spec-001 §7\.8\)/);
+    const formatsOnly: PackSpec = { id: 'blueprint/m', format: 2, directives: ['m'],
+      manifest: { formats: { directive: 1, mcp: 1 } } };
+    resolveFails([...PACKS(), formatsOnly], ['blueprint/m'], /blueprint\/m: ships the mcp kind/);
   });
 });

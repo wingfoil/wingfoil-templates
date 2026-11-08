@@ -352,7 +352,8 @@ export function resolve(tree: string, catalog: Catalog, request: string[]): Reso
   checkConditional(packs);
   const listed = installListed(tree);
   for (const pack of byId) {
-    // An mcp fragment waits for its tooling's row (plan-066 ruling 6), before the inventory.
+    // The mcp kind, in fragments or formats, waits for its tooling's row (plan-066 ruling 6),
+    // refused before the inventory and formats checks.
     throwFirst(mcpProblems(pack));
     throwFirst(inventoryProblems(tree, pack));
     throwFirst(formatKindsProblems(pack));

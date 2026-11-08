@@ -117,8 +117,9 @@ export function composeTwice(
       if (result.code !== 0) {
         return { code: result.code, files: 0, message: result.message.split(root).join('<tmp>') };
       }
-      // A successful run prints only its notices on stderr (spec-001 §17 step 8).
-      notices.push(result.message === '' ? [] : result.message.split('\n'));
+      // A successful run's notices (spec-001 §17 step 8): its `notice: ` lines only, so that a
+      // runtime warning on stderr is neither printed as one nor compared.
+      notices.push(result.message.split('\n').filter((line) => line.startsWith('notice: ')));
     }
     if (JSON.stringify(notices[0]) !== JSON.stringify(notices[1])) {
       return { code: 1, files: 0, message: 'not deterministic: the notices differ' };

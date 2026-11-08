@@ -13,7 +13,8 @@ export function tensionNotices(packs: ResolvedPack[]): string[] {
       // The schema has checked the entry's syntax (§6.3); an absent range means every version.
       const { id, range } = parseEntry(tension.pack, 'conflicts');
       const other = byId.get(id);
-      if (other === undefined || (range !== undefined && !satisfies(other.version, range))) continue;
+      if (other === undefined) continue;
+      if (range !== undefined && !satisfies(other.version, range)) continue;
       // One line per tension: the resolution's line breaks folded to single spaces.
       const resolution = tension.resolution.trim().replace(/\s*\n\s*/g, ' ');
       notices.push(`notice: ${pack.id} and ${other.id}: ${resolution}`);

@@ -120,9 +120,10 @@ function conditionalWorkflows(manifest: PackManifest): string[] {
  */
 export function mcpProblems(pack: PackLike): Problem[] {
   const { manifest } = pack;
-  if (!(manifest.contents.fragments ?? []).includes('mcp')
-    && !Object.hasOwn(manifest.formats, 'mcp')) return [];
-  return [at(pack, '/contents/fragments', 'mcp', `${pack.id}: ships the mcp kind, which no `
+  const fragment = (manifest.contents.fragments ?? []).includes('mcp');
+  if (!fragment && !Object.hasOwn(manifest.formats, 'mcp')) return [];
+  return [at(pack, fragment ? '/contents/fragments' : '/formats/mcp', 'mcp',
+    `${pack.id}: ships the mcp kind, which no `
     + 'WingFoil release reads yet (spec-001 §7.8); refused until its tooling (plan-066 ruling 6)')];
 }
 
