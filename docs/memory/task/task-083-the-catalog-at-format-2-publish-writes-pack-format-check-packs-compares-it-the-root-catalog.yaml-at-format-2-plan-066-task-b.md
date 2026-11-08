@@ -2,7 +2,7 @@
 id: task-083-the-catalog-at-format-2-publish-writes-pack-format-check-packs-compares-it-the-root-catalog.yaml-at-format-2-plan-066-task-b
 type: task
 title: "The catalog at format 2: publish writes pack_format, check:packs compares it, the root catalog.yaml at format 2 (plan-066 task B)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-delivery v3), plan-066 task (B)
 depends_on: ["task-082-schemas-at-format-2-pack.yaml-catalog.yaml-and-the-index-format-1-frozen-validation-by-format-plan-066-task-a"]
 tags: ["tooling","format","catalog"]
@@ -105,3 +105,25 @@ working-tree file. No new dependency.
   catalog left to §5's exception, Acceptance 3's "when the tagged file is read", Acceptance 4's
   evidence named.
 - 2026-11-08: re-review: approve, nothing blocking.
+- 2026-11-08: started (`backlog → in-progress`) on `task/task-083-catalog-format-2`. Red
+  (dl-018), step (1): the tests of Acceptance 2, 3 and 5; `npm run build` and `npm run lint` exit
+  0; `node --test dist/tests/publish.test.js dist/tests/tag-rules.test.js
+  dist/tests/catalog.test.js`: 46 tests, 7 failing, each by assertion (no `pack_format` written,
+  none compared, the format-1 refusal absent, the root catalog at format 1).
+- 2026-11-08: steps (2) and (3) green, each committed; after (3) `npm test` 1219 tests, 0
+  failing; `validate`, `check:schemas`, `check:packs`, `check:pins` exit 0; `npm run index --
+  --check` 0 not up to date; the tree unchanged.
+- 2026-11-08: independent build review: approve, nothing blocking; applied: the format-1
+  refusal's message says why (an absent pack_format reads as 1), `packFormatFor`'s signature
+  wrapped as the file's others, a tagged pack.yaml with no `format` read as 1 by the tag rule too.
+  A deviation from Acceptance 3's letter, kept: a mismatch with `pack_format` absent is reported at
+  the version entry, not at `/pack_format`, since a missing key has no position of its own (it
+  would fall back to line 1); a present one is reported at `/pack_format`. No decision changed,
+  so no re-review.
+- 2026-11-08: the checks (dl-039), once on the frozen commit `d1b38cd`: the branch CI run
+  42461942893 `success` (22.12.0 20 min 22 s, 22.21.0 22 min 21 s, under G12's 25 minutes, the
+  margin narrow); dl-039's local list on Node.js 22.21.0 on a clean worktree of `d1b38cd`: `npm
+  ci`, `npm run build`, `npm run validate:publication` (18 runs, 0 failed), the golden tree in
+  publication (26 runs, 0 failed), `workflow list`, `directives list --format json` (`warnings
+  []`), each exit 0; `npm run lint` 0. The privacy check of the branch's diff: no local or
+  scratch path, no private project. This note is documentation-only (dl-039 R2).

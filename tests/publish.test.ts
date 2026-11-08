@@ -49,6 +49,17 @@ function catalogOf(repo: TestRepo): Doc[] {
   return (parse(readFileSync(join(repo.dir, 'catalog.yaml'), 'utf8')) as { packs: Doc[] }).packs;
 }
 
+/** The keys a version entry copies or computes, in publish's order (spec-001 §11). */
+const ENTRY_KEYS = ['version', 'commit', 'digest', 'formats', 'requires_capabilities', 'requires',
+  'conflicts', 'wingfoil'];
+
+/** The repository's catalog.yaml at `format`, committed (task-083). */
+function catalogAt(repo: TestRepo, format: number): void {
+  const file = join(repo.dir, 'catalog.yaml');
+  writeFileSync(file, readFileSync(file, 'utf8').replace(/^format: \d+$/m, `format: ${format}`));
+  repo.commitAll(`catalog.yaml at format ${format}`);
+}
+
 function state(repo: TestRepo): string {
   return [repo.git(['rev-parse', 'HEAD']), repo.git(['tag', '-l']), repo.git(['status',
     '--porcelain', '--ignored']), readFileSync(join(repo.dir, 'catalog.yaml'), 'utf8')].join('|');
@@ -124,6 +135,49 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
     }, [...FOUNDATION, KANBAN, flow]);
   });
 
+  it('writes pack_format in a catalog at format 2, after the copied fields (task-083)', () => {
+    const flow: PackSpec = { id: 'methodology/flow', workflows: ['board'],
+      manifest: { conditional: [{ with: 'software@^1', contents: { workflows: ['delivery'] } }] },
+      extraFiles: { 'workflows/delivery.yaml': DELIVERY } };
+    withRepository((repo) => {
+      catalogAt(repo, 2);
+      for (const [pack, entry] of [['base', 'methodology/kanban'],
+        ['methodology/kanban', 'methodology/kanban'], ['methodology/flow', 'methodology/flow']]) {
+        const result = publish(repo, ['--pack', pack ?? '', entry ?? '']);
+        assert.equal(result.code, 0, `${pack}: ${result.lines.join('\n')}`);
+      }
+      const versionOf = (id: string): Doc => ((catalogOf(repo).find((entry) => entry['id'] === id)
+        ?.['versions'] as Doc[])[0] ?? {});
+      assert.deepEqual(Object.keys(versionOf('base')), [...ENTRY_KEYS, 'pack_format']);
+      assert.deepEqual(Object.keys(versionOf('methodology/flow')),
+        [...ENTRY_KEYS, 'conditional', 'pack_format']);
+      assert.equal(versionOf('base')['pack_format'], 1);
+      assert.equal(versionOf('methodology/flow')['pack_format'], 1);
+      const lint = runCheckPacks(repo.dir);
+      assert.equal(lint.code, 0, lint.lines.join('\n'));
+    }, [...FOUNDATION, KANBAN, flow]);
+  });
+
+  it('writes no pack_format at format 1, and refuses a format-2 pack there (task-083)', () => {
+    withRepository((repo) => {
+      catalogAt(repo, 1);
+      const result = publish(repo, ['--pack', 'base', ...WITH_KANBAN]);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      const base = (catalogOf(repo).find((entry) => entry['id'] === 'base')?.['versions'] as
+        Doc[])[0] ?? {};
+      assert.deepEqual(Object.keys(base), ENTRY_KEYS);
+      editManifest(repo, 'methodology/kanban', (manifest) => { manifest['format'] = 2; });
+      repo.commitAll('kanban at format 2');
+      const before = state(repo);
+      const refused = publish(repo, ['--pack', 'methodology/kanban', ...WITH_KANBAN], () => {
+        throw new Error('refused before the publication validation');
+      });
+      assert.equal(refused.code, 1, refused.lines.join('\n'));
+      assert.match(refused.lines.join('\n'), /catalog\.yaml is at format 1/);
+      assert.equal(state(repo), before);
+    });
+  });
+
   it('counts an example that contains the pack as a composition (task-022)', () => {
     withRepository((repo) => {
       const result = publish(repo, ['--pack', 'base']);
@@ -140,6 +194,7 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
     withRepository((repo) => {
       repo.write('transitions/mvp-to-production.yaml', transition);
       repo.commitAll('a transition');
+      catalogAt(repo, 2);
       const result = publish(repo, ['--pack', 'stage/production', ...WITH_KANBAN,
         'stage/production']);
       assert.equal(result.code, 0, result.lines.join('\n'));
@@ -147,6 +202,7 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
       const version = (entry?.['versions'] as Doc[])[0];
       assert.match(String((version?.['transitions'] as Doc)['mvp-to-production']),
         /^sha256:[0-9a-f]{64}$/);
+      assert.deepEqual(Object.keys(version ?? {}).slice(-2), ['pack_format', 'transitions']);
       assert.equal(runCheckPacks(repo.dir).code, 0, runCheckPacks(repo.dir).lines.join('\n'));
     }, [...FOUNDATION, KANBAN, { id: 'stage/mvp' }, { id: 'stage/production' }]);
   });
@@ -369,6 +425,28 @@ describe('npm run publish:pack, the lines (task-016, F5.3)', () => {
       assert.equal((entry?.['versions'] as Doc[])[2]?.['commit'],
         repo.git(['rev-parse', 'refs/tags/base@1.1.0^{commit}']).trim());
       // main passes the lint, the tag rules included, with tags reachable only from the branch.
+      repo.git(['checkout', '--quiet', 'main']);
+      const lint = runCheckPacks(repo.dir);
+      assert.equal(lint.code, 0, lint.lines.join('\n'));
+    });
+  });
+
+  it('on a maintenance line, writes pack_format by main\'s catalog.yaml (task-083)', () => {
+    withRepository((repo) => {
+      catalogAt(repo, 1);
+      published(repo, ['--pack', 'base', ...WITH_KANBAN]);
+      bump(repo, '2.0.0');
+      catalogAt(repo, 2);
+      published(repo, ['--pack', 'base', ...WITH_KANBAN]);
+      repo.git(['checkout', '--quiet', '-b', 'maint/base/1.x', 'base@1.0.0']);
+      assert.match(readFileSync(join(repo.dir, 'catalog.yaml'), 'utf8'), /^format: 1$/m);
+      bump(repo, '1.0.1');
+      published(repo, ['--pack', 'base', ...WITH_KANBAN]);
+      const entry = (parse(repo.git(['show', 'main:catalog.yaml'])) as { packs: Doc[] }).packs
+        .find((pack) => pack['id'] === 'base');
+      assert.deepEqual((entry?.['versions'] as Doc[]).map((version) =>
+        [version['version'], version['pack_format']]),
+      [['1.0.0', undefined], ['1.0.1', 1], ['2.0.0', 1]]);
       repo.git(['checkout', '--quiet', 'main']);
       const lint = runCheckPacks(repo.dir);
       assert.equal(lint.code, 0, lint.lines.join('\n'));

@@ -217,6 +217,25 @@ function publishedVersions(text: string, pack: string): PublishedVersion[] {
   }));
 }
 
+/**
+ * The `pack_format` a version entry records (spec-001 §5, §11), by the catalog the entry is added
+ * to: the published pack.yaml's format in a catalog at format 2; none at format 1, whose schema
+ * refuses it, and where a pack at format 2 is refused, since its absent pack_format reads as 1.
+ */
+function packFormatFor(catalogText: string, manifest: PackManifest,
+  tag: string): number | undefined {
+  const catalogFormat = (parseYaml(catalogText, 'catalog.yaml').data as Doc | null)?.['format'];
+  const declared = (manifest as unknown as Doc)['format'];
+  const format = typeof declared === 'number' ? declared : 1;
+  if (catalogFormat !== 1) return format;
+  if (format !== 1) {
+    throw new PublishError(1, `${tag}: catalog.yaml is at format 1, which records no pack_format, `
+      + `and the pack is at format ${format}, which an absent pack_format would read as 1: `
+      + 'catalog.yaml moves to format 2 first (spec-001 §11)');
+  }
+  return undefined;
+}
+
 /** Whether HEAD descends from a tag. */
 function descends(tree: string, tag: string): boolean {
   try {
@@ -305,6 +324,7 @@ function publishIn(tree: string, args: Args, options: PublishOptions, cache: str
   }
   const line = decide({ ...input, published });
   if (tagExists(tree, tag)) throw new PublishError(1, `the tag ${tag} already exists`);
+  const packFormat = packFormatFor(catalogText, manifest, tag);
   const changelog = changelogEntry(tree, pack, version);
   if (compositionsWith(tree, catalog, pack, args.entries).length === 0) {
     throw new PublishError(1, `no composition of the validation contains ${pack}: give a preset or `
@@ -334,7 +354,7 @@ function publishIn(tree: string, args: Args, options: PublishOptions, cache: str
     identity);
   try {
     return [...lines, ...afterTag(tree, pack, tag, version, manifest, range, catalogText,
-      identity, line)];
+      identity, line, packFormat)];
   } catch (error) {
     // Never half-published: the tag goes, and the branch returns to its head before the tag (the
     // working tree was clean), whatever commit was already made; on a maintenance line, main too.
@@ -355,7 +375,7 @@ function publishIn(tree: string, args: Args, options: PublishOptions, cache: str
 /** The steps after the tag: the digest, the catalog commit and the Publication section. */
 function afterTag(tree: string, pack: string, tag: string, version: string,
   manifest: PackManifest, range: string, catalogText: string, identity: NodeJS.ProcessEnv,
-  line: Line): string[] {
+  line: Line, packFormat: number | undefined): string[] {
   const lines: string[] = [];
   const ref = `refs/tags/${tag}`;
   const commit = resolveCommit(tree, ref);
@@ -368,6 +388,8 @@ function afterTag(tree: string, pack: string, tag: string, version: string,
   if (manifest.conditional !== undefined) {
     entry['conditional'] = manifest.conditional.map((part) => ({ with: part.with }));
   }
+  // From catalog.yaml format 2 on, the published pack.yaml's format (spec-001 §11).
+  if (packFormat !== undefined) entry['pack_format'] = packFormat;
   const transitions = transitionsTo(tree, pack);
   if (transitions.length > 0) {
     entry['transitions'] = Object.fromEntries(transitions.map((file) => [

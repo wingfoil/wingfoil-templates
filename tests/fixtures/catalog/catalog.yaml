@@ -2,7 +2,7 @@
 # axes and slots are spec-001 §3 and §9 as data; the order of axes is the composition order (§7.1).
 # Packs are listed when their first version is published (pack-release-cycle, publish); until then
 # the lists are empty (dl-010).
-format: 1
+format: 2
 foundation: [base, software]
 axes:
   methodology: { cardinality: one, required_with: software }

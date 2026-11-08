@@ -48,6 +48,58 @@ CheckPacksResult {
   }
 }
 
+/**
+ * base, at `packFormat`, published by hand into a catalog at format 2, its entry edited, the tree
+ * linted (task-083).
+ */
+function lintedAt(packFormat: number, edit: (entry: Doc) => void): CheckPacksResult {
+  const [base, software] = FOUNDATION;
+  assert.ok(base !== undefined && software !== undefined);
+  const repo = treeRepo([{ ...base, manifest: { ...base.manifest, format: packFormat } },
+    software, KANBAN]);
+  try {
+    const file = join(repo.dir, 'catalog.yaml');
+    writeFileSync(file, readFileSync(file, 'utf8').replace(/^format: \d+$/m, 'format: 2'));
+    repo.commitAll('catalog.yaml at format 2');
+    publishByHand(repo, 'base');
+    const catalog = parse(readFileSync(file, 'utf8')) as Doc;
+    const entry = ((catalog['packs'] as Doc[]).find((pack) => pack['id'] === 'base')
+      ?.['versions'] as Doc[])[0] as Doc;
+    edit(entry);
+    writeFileSync(file, stringify(catalog));
+    repo.commitAll('edited');
+    return runCheckPacks(repo.dir);
+  } finally {
+    repo.dispose();
+  }
+}
+
+describe('catalog-manifest: pack_format (spec-001 §11, task-083)', () => {
+  it('passes with pack_format 1, written last by publishByHand, or none, on a format-1 tag', () => {
+    const written = lintedAt(1, (entry) => {
+      assert.deepEqual(Object.keys(entry).slice(-2), ['wingfoil', 'pack_format']);
+      assert.equal(entry['pack_format'], 1);
+    });
+    assert.equal(written.code, 0, written.lines.join('\n'));
+    const absent = lintedAt(1, (entry) => { delete entry['pack_format']; });
+    assert.equal(absent.code, 0, absent.lines.join('\n'));
+  });
+
+  it('fails when it differs from the tagged pack.yaml\'s format, absent reading as 1', () => {
+    const cases: [number, (entry: Doc) => void][] = [
+      [1, (entry) => { entry['pack_format'] = 2; }],
+      [2, (entry) => { entry['pack_format'] = 1; }],
+      [2, (entry) => { delete entry['pack_format']; }],
+    ];
+    for (const [packFormat, edit] of cases) {
+      const result = lintedAt(packFormat, edit);
+      assert.deepEqual(rules(result), ['catalog-manifest'], result.lines.join('\n'));
+      assert.ok(result.problems.some((problem) => /pack_format/.test(problem.message)),
+        result.lines.join('\n'));
+    }
+  });
+});
+
 describe('tag-dependent catalog rules (spec-001 §18, task-014)', () => {
   it('pass on a version published in the order of spec-001 §11', () => {
     const result = linted();

@@ -89,6 +89,8 @@ export function publishByHand(repo: TestRepo, packId: string, { index = true } =
     entry['conditional'] = conditional.map((part) => ({ with: (part as Doc)['with'] }));
   }
   const catalog = parse(readFileSync(join(repo.dir, 'catalog.yaml'), 'utf8')) as Doc;
+  // From catalog.yaml format 2 on, the pack.yaml's format, as publish:pack writes it (task-083).
+  if (catalog['format'] !== 1) entry['pack_format'] = manifest['format'] ?? 1;
   const packs = catalog['packs'] as Doc[];
   const existing = packs.find((pack) => pack['id'] === packId);
   if (existing === undefined) {
