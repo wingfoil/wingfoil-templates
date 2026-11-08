@@ -1094,3 +1094,184 @@ describe('F3.5 secrets', () => {
     });
   });
 });
+
+// plan-066 task (D), task-085: the lint per entry at format 2.
+describe('format 2: conditional entries, tensions, scopes and mcp (spec-001 §6.5, §18)', () => {
+  const directive = (id: string, body = `# ${id}\n`): string =>
+    `---\nid: ${id}\nformat: 1\n---\n${body}`;
+  const SW: PackSpec = { ...SOFTWARE_COMPOSABLE, manifest: { parameters: {
+    sw_param: { type: 'string', default: 'swx', description: 'software parameter' } } } };
+  const G: PackSpec = { id: 'governance/g', directives: ['g-rule'], manifest: { parameters: {
+    g_param: { type: 'string', default: 'gx', description: 'governance parameter' } } } };
+  const I: PackSpec = { id: 'phase/inception/i', workflows: ['inception'] };
+  /** A phase pack naming a pack of an earlier slot. */
+  const R: PackSpec = { id: 'phase/release/r', format: 2, workflows: ['release'],
+    conditional: [{ with: 'phase/inception/i@^1', directives: ['r-i'] }] };
+  /** A stage: an entry with software, one with a pack of an earlier axis, a tension. */
+  function stage(extra: Partial<PackSpec> = {}): PackSpec {
+    return { id: 'stage/s', format: 2, workflows: ['s-board'],
+      conditional: [{ with: 'software@^1', directives: ['s-sw'] },
+        { with: 'governance/g@^1', directives: ['s-gov'] }],
+      tensions: [{ pack: 'methodology/kanban', resolution: 'Keep the board small.' }],
+      ...extra,
+      extraFiles: { 'directives/s-sw.md': directive('s-sw', '# {{sw_param}}\n'),
+        'directives/s-gov.md': directive('s-gov', '# {{g_param}}\n'), ...extra.extraFiles } };
+  }
+  const TREE = (...more: PackSpec[]): PackSpec[] => [BASE, SW, KANBAN, G, I, R, ...more];
+  /** The problems of one rule, as `file: message`. */
+  const of = (result: CheckPacksResult, rule: string): string[] => result.problems
+    .filter((problem) => problem.rule === rule)
+    .map((problem) => `${problem.file}: ${problem.message}`);
+  const S_YAML = 'packs/stage/s/pack.yaml';
+
+  it('passes two entries, a phase pack naming an earlier slot, and a tension', () => {
+    const result = lint(TREE(stage()));
+    assert.equal(result.code, 0, result.lines.join('\n'));
+  });
+
+  it('conditional: a with naming no pack directory, the pack itself, or a pack id twice', () => {
+    type Entries = NonNullable<PackSpec['conditional']>;
+    const one = (entries: Entries, extra: Partial<PackSpec> = {}): string[] => {
+      // s-gov plain: only an entry with governance/g sees g_param.
+      const result = lint(TREE(stage({ conditional: entries, ...extra, extraFiles: {
+        'directives/s-gov.md': directive('s-gov'), ...extra.extraFiles } })));
+      assert.deepEqual(rules(result), ['conditional'], result.lines.join('\n'));
+      return of(result, 'conditional');
+    };
+    assert.deepEqual(one([{ with: 'software@^1', directives: ['s-sw'] },
+      { with: 'blueprint/none@^1', directives: ['s-gov'] }]), [`${S_YAML}: stage/s: its entry `
+      + 'with blueprint/none@^1 names blueprint/none, which has no pack directory in the tree '
+      + '(spec-001 §18)']);
+    assert.deepEqual(one([{ with: 'software@^1', directives: ['s-sw'] },
+      { with: 'stage/s@^1', directives: ['s-gov'] }]),
+    [`${S_YAML}: stage/s: its entry with stage/s@^1 names the pack itself (spec-001 §6.5)`]);
+    assert.deepEqual(one([{ with: 'governance/g@^1', directives: ['s-sw'] },
+      { with: 'governance/g@^1', directives: ['s-gov'] }], { extraFiles: {
+      'directives/s-sw.md': directive('s-sw') } }), [`${S_YAML}: stage/s: its entry with `
+      + 'governance/g@^1 names governance/g, which an earlier entry names (spec-001 §18)']);
+  });
+
+  it('conditional: a with naming a pack of requires or conflicts', () => {
+    const requires = lint(TREE(stage({ requires: ['base@^1', 'governance/g@^1'] })));
+    assert.deepEqual(of(requires, 'conditional'), [`${S_YAML}: stage/s: its entry with `
+      + 'governance/g@^1 names governance/g, which its requires lists (spec-001 §6.5)'],
+    requires.lines.join('\n'));
+    const conflicts = lint(TREE(stage({ conflicts: ['governance/g'] })));
+    assert.deepEqual(of(conflicts, 'conditional'), [`${S_YAML}: stage/s: its entry with `
+      + 'governance/g@^1 names governance/g, which its conflicts lists (spec-001 §6.5)'],
+    conflicts.lines.join('\n'));
+  });
+
+  it('conditional: a with naming a pack never composed with it, or not always earlier', () => {
+    const T: PackSpec = { id: 'stage/t', workflows: ['t-board'] };
+    const Q: PackSpec = { id: 'phase/release/q', workflows: ['release'] };
+    const A: PackSpec = { id: 'blueprint/a', directives: ['a'] };
+    const entry = (id: string, withId: string, extra: Partial<PackSpec> = {}): PackSpec => ({
+      id, format: 2, ...extra, conditional: [{ with: `${withId}@^1`, directives: ['e'] }] });
+    const cases: [PackSpec[], string, string][] = [
+      // An axis of cardinality one, or the same slot: the entry is never active (§3, §6.5).
+      [[T, entry('stage/s', 'stage/t', { workflows: ['s-board'] })], 'stage/s',
+        'stage/t, which never composes with it (spec-001 §3, §6.5)'],
+      [[Q, entry('phase/release/p', 'phase/release/q', { workflows: ['release'] })],
+        'phase/release/p', 'phase/release/q, which never composes with it (spec-001 §3, §6.5)'],
+      // An axis of cardinality many: Kahn's order counts requires only (§7.1).
+      [[A, entry('blueprint/b', 'blueprint/a', { directives: ['b'] })], 'blueprint/b',
+        'blueprint/a, not always composed earlier (spec-001 §7.1)'],
+      // A later axis, a later slot.
+      [[T, entry('blueprint/b', 'stage/t', { directives: ['b'] })], 'blueprint/b',
+        'stage/t, not always composed earlier (spec-001 §7.1)'],
+      [[entry('phase/inception/j', 'phase/release/r', { workflows: ['inception'] })],
+        'phase/inception/j', 'phase/release/r, not always composed earlier (spec-001 §7.1)'],
+    ];
+    for (const [more, pack, tail] of cases) {
+      const result = lint(TREE(...more));
+      const withId = tail.slice(0, tail.indexOf(','));
+      assert.deepEqual(of(result, 'conditional'), [`packs/${pack}/pack.yaml: ${pack}: its entry `
+        + `with ${withId}@^1 names ${tail}`], result.lines.join('\n'));
+    }
+  });
+
+  it('conditional: a with naming base, which every non-foundation pack requires', () => {
+    const result = lint(TREE({ id: 'blueprint/b', format: 2, directives: ['b'],
+      conditional: [{ with: 'base@^1', directives: ['e'] }] }));
+    assert.deepEqual(rules(result), ['conditional'], result.lines.join('\n'));
+    assert.deepEqual(of(result, 'conditional'), ['packs/blueprint/b/pack.yaml: blueprint/b: its '
+      + 'entry with base@^1 names base, which its requires lists (spec-001 §6.5)']);
+  });
+
+  it('conditional: the order rule is skipped when catalog.yaml does not load', () => {
+    const late: PackSpec = { id: 'blueprint/b', format: 2, directives: ['b'],
+      conditional: [{ with: 'stage/t@^1', directives: ['e'] }] };
+    const result = lint(TREE(late, { id: 'stage/t', workflows: ['t-board'] }),
+      (root) => rmSync(join(root, 'catalog.yaml')));
+    assert.deepEqual(of(result, 'conditional'), [], result.lines.join('\n'));
+  });
+
+  it('tensions: the pack itself, a pack twice, a pack of conflicts, no pack directory', () => {
+    const tensions = (entries: { pack: string }[], extra: Partial<PackSpec> = {}): string[] => {
+      const result = lint(TREE(stage({ ...extra, tensions: entries.map((entry) => ({ ...entry,
+        resolution: 'With care.' })) })));
+      assert.deepEqual(rules(result), ['tensions'], result.lines.join('\n'));
+      return of(result, 'tensions');
+    };
+    assert.deepEqual(tensions([{ pack: 'stage/s' }]),
+      [`${S_YAML}: stage/s: its tension with stage/s names the pack itself (spec-001 §18)`]);
+    assert.deepEqual(tensions([{ pack: 'methodology/kanban' }, { pack: 'methodology/kanban@^1' }]),
+      [`${S_YAML}: stage/s: its tension with methodology/kanban@^1 names methodology/kanban, `
+        + 'which an earlier tension names (spec-001 §18)']);
+    assert.deepEqual(tensions([{ pack: 'methodology/kanban' }],
+      { conflicts: ['methodology/kanban'] }), [`${S_YAML}: stage/s: its tension with `
+      + 'methodology/kanban names methodology/kanban, which its conflicts lists (spec-001 §18)']);
+    assert.deepEqual(tensions([{ pack: 'blueprint/none' }]), [`${S_YAML}: stage/s: its tension `
+      + 'with blueprint/none names blueprint/none, which has no pack directory in the tree '
+      + '(spec-001 §18)']);
+  });
+
+  it('tensions: checked when catalog.yaml does not load', () => {
+    const result = lint(TREE(stage({ tensions: [{ pack: 'stage/s', resolution: 'x' }] })),
+      (root) => rmSync(join(root, 'catalog.yaml')));
+    assert.deepEqual(of(result, 'tensions'),
+      [`${S_YAML}: stage/s: its tension with stage/s names the pack itself (spec-001 §18)`]);
+  });
+
+  it('fragment-order and mcp: mcp last is in order, mcp first is not; mcp is refused', () => {
+    const mcp = (fragments: string[]): PackSpec => ({ id: 'blueprint/m', format: 2,
+      directives: ['m'], fragments,
+      extraFiles: { 'fragments/mcp.yaml': 'format: 1\n', 'fragments/dna.yaml': 'format: 1\n' } });
+    const last = lint(TREE(mcp(['dna', 'mcp'])));
+    // Exactly mcp: the pack's own rule reported it, so no compose problem follows.
+    assert.deepEqual(rules(last), ['mcp'], last.lines.join('\n'));
+    assert.deepEqual(of(last, 'mcp'), ['packs/blueprint/m/pack.yaml: blueprint/m: ships the mcp '
+      + 'kind, which no WingFoil release reads yet (spec-001 §7.8); refused until its tooling '
+      + '(plan-066 ruling 6)']);
+    const first = lint(TREE(mcp(['mcp', 'dna'])));
+    assert.deepEqual(rules(first), ['fragment-order', 'mcp'], first.lines.join('\n'));
+    assert.deepEqual(of(first, 'fragment-order'), ['packs/blueprint/m/pack.yaml: blueprint/m: '
+      + 'contents.fragments must keep the order dna, roles, memory, mcp']);
+  });
+
+  it('mcp: in formats alone', () => {
+    const result = lint(TREE({ id: 'blueprint/m', format: 2, directives: ['m'],
+      manifest: { formats: { directive: 1, mcp: 1 } } }));
+    assert.deepEqual(rules(result), ['formats', 'mcp'], result.lines.join('\n'));
+  });
+
+  it('parameter-scope: each entry its own with pack\'s parameters, no other entry\'s', () => {
+    const swInGov = lint(TREE(stage({ extraFiles: {
+      'directives/s-gov.md': directive('s-gov', '# {{sw_param}}\n') } })));
+    assert.deepEqual(of(swInGov, 'parameter-scope'), ['packs/stage/s/directives/s-gov.md: '
+      + 'packs/stage/s/directives/s-gov.md: {{sw_param}} names no parameter in the scope of '
+      + 'stage/s\'s entry with governance/g@^1'], swInGov.lines.join('\n'));
+    const govInSw = lint(TREE(stage({ extraFiles: {
+      'directives/s-sw.md': directive('s-sw', '# {{g_param}}\n') } })));
+    assert.deepEqual(of(govInSw, 'parameter-scope'), ['packs/stage/s/directives/s-sw.md: '
+      + 'packs/stage/s/directives/s-sw.md: {{g_param}} names no parameter in the scope of '
+      + 'stage/s\'s entry with software@^1'], govInSw.lines.join('\n'));
+    const always = lint(TREE(stage({ extraFiles: {
+      'workflows/s-board.yaml': 'format: 1\nname: s-board\nkind: sub\ndescription: "{{g_param}}"\n',
+    } })));
+    assert.deepEqual(of(always, 'parameter-scope'), ['packs/stage/s/workflows/s-board.yaml: '
+      + 'packs/stage/s/workflows/s-board.yaml: {{g_param}} names no parameter in the scope of '
+      + 'stage/s'], always.lines.join('\n'));
+  });
+});

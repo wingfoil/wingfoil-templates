@@ -25,7 +25,8 @@ export interface PackLike {
 export const BASE_ONLY_WORKFLOWS = ['retrospective', 'governance-evolution'];
 /** Workflows only the software layer may ship; the slot defaults are its too (§9, dl-022 S3). */
 export const SOFTWARE_ONLY_WORKFLOWS = ['sw-life-cycle'];
-const FRAGMENT_ORDER = ['dna', 'roles', 'memory'];
+/** §6.4: the fragments' order; `mcp`, format 2's, comes last (format 1's schema refuses it). */
+const FRAGMENT_ORDER = ['dna', 'roles', 'memory', 'mcp'];
 export const INVENTORY_FOLDERS = ['fragments', 'directives', 'workflows', 'memory-templates',
   'agents'];
 
@@ -125,6 +126,99 @@ export function mcpProblems(pack: PackLike): Problem[] {
   return [at(pack, fragment ? '/contents/fragments' : '/formats/mcp', 'mcp',
     `${pack.id}: ships the mcp kind, which no `
     + 'WingFoil release reads yet (spec-001 §7.8); refused until its tooling (plan-066 ruling 6)')];
+}
+
+/**
+ * spec-001 §6.5, §18 at format 2: each conditional entry's `with` and each `tensions` entry names
+ * a pack directory of the tree (`packDirs`) other than the pack, at most once, and none of its
+ * `requires` or `conflicts`; a `with` names a pack always composed earlier (§7.1), read statically
+ * when `catalog` loads. Format 1's limits are the v1 schema's.
+ */
+export function conditionalProblems(catalog: Catalog | undefined, pack: PackLike,
+  packDirs: string[]): Problem[] {
+  const { manifest } = pack;
+  if ((manifest.format ?? 1) < 2) return [];
+  const problems: Problem[] = [];
+  const requires = (manifest.requires ?? []).map((entry) => entryId(entry, 'requires'));
+  const conflicts = (manifest.conflicts ?? []).map((entry) => entryId(entry, 'conflicts'));
+  const seen = new Set<string>();
+  conditionalEntries(manifest).forEach((entry, index) => {
+    const id = entryId(entry.with, 'requires');
+    if (id === undefined) return;
+    const named = `${pack.id}: its entry with ${entry.with}`;
+    const problem = (message: string): void => {
+      problems.push(at(pack, `/conditional/${index}/with`, 'conditional', message));
+    };
+    // An entry naming a required software is foundationProblems' (§6.5), reported once.
+    const software = catalog !== undefined && id === softwarePack(catalog);
+    if (id === pack.id) problem(`${named} names the pack itself (spec-001 §6.5)`);
+    else if (!packDirs.includes(id)) problem(`${named} names ${id}, ${NO_DIRECTORY}`);
+    else if (requires.includes(id) && !software) {
+      problem(`${named} names ${id}, which its requires lists (spec-001 §6.5)`);
+    } else if (conflicts.includes(id)) {
+      problem(`${named} names ${id}, which its conflicts lists (spec-001 §6.5)`);
+    } else if (seen.has(id)) {
+      problem(`${named} names ${id}, which an earlier entry names (spec-001 §18)`);
+    } else if (catalog !== undefined) {
+      const order = orderOf(catalog, pack, id);
+      if (order === 'never') {
+        problem(`${named} names ${id}, which never composes with it (spec-001 §3, §6.5)`);
+      } else if (order === 'later') {
+        problem(`${named} names ${id}, not always composed earlier (spec-001 §7.1)`);
+      }
+    }
+    seen.add(id);
+  });
+  const tensions = new Set<string>();
+  (manifest.tensions ?? []).forEach((tension, index) => {
+    const id = entryId(tension.pack, 'conflicts');
+    if (id === undefined) return;
+    const named = `${pack.id}: its tension with ${tension.pack}`;
+    const problem = (message: string): void => {
+      problems.push(at(pack, `/tensions/${index}/pack`, 'tensions', message));
+    };
+    if (id === pack.id) problem(`${named} names the pack itself (spec-001 §18)`);
+    else if (!packDirs.includes(id)) problem(`${named} names ${id}, ${NO_DIRECTORY}`);
+    else if (conflicts.includes(id)) {
+      problem(`${named} names ${id}, which its conflicts lists (spec-001 §18)`);
+    } else if (tensions.has(id)) {
+      problem(`${named} names ${id}, which an earlier tension names (spec-001 §18)`);
+    }
+    tensions.add(id);
+  });
+  return problems;
+}
+
+/** §18's "catalog pack" read as a pack directory of the tree (task-085). */
+const NO_DIRECTORY = 'which has no pack directory in the tree (spec-001 §18)';
+
+/**
+ * Whether the pack `id` is always composed before `pack` (§7.1), read from the catalog's axes and
+ * slots and the id's segments (§4): `earlier`; `never` when the two never compose together (an
+ * axis of cardinality one, or one slot: §3's cardinalities); `later` otherwise, a pack of an axis
+ * of cardinality many included, since Kahn's order counts only `requires`. Undefined when an axis
+ * is not the catalog's.
+ */
+function orderOf(catalog: Catalog, pack: PackLike, id: string):
+'earlier' | 'never' | 'later' | undefined {
+  // Foundation packs come first (§7.1); base, always required, is refused before this.
+  if (catalog.foundation.includes(id)) return 'earlier';
+  const segments = id.split('/');
+  const names = catalog.axes.map((axis) => axis.name);
+  const theirs = names.indexOf(segments[0] ?? '');
+  const ours = names.indexOf(pack.manifest.axis ?? '');
+  // An id outside the catalog's axes is the layout rule's problem.
+  if (theirs < 0 || ours < 0) return undefined;
+  if (theirs !== ours) return theirs < ours ? 'earlier' : 'later';
+  const axis = catalog.axes[ours];
+  if (axis?.slots !== undefined) {
+    const slot = axis.slots.indexOf(segments.length === 3 ? segments[1] ?? '' : '');
+    const own = axis.slots.indexOf(pack.manifest.slot ?? '');
+    if (slot < 0 || own < 0) return undefined;
+    if (slot === own) return 'never';
+    return slot < own ? 'earlier' : 'later';
+  }
+  return axis?.cardinality === 'many' ? 'later' : 'never';
 }
 
 /** The files a pack's inventory lists, relative to the pack (spec-001 §6.4). */

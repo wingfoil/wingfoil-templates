@@ -2,7 +2,7 @@
 id: task-085-the-lint-per-entry-the-conditional-entries-and-tensions-rules-by-format-parameter-scopes-per-entry-the-mcp-refusal-plan-066-task-d
 type: task
 title: "The lint per entry: the conditional entries' and tensions' rules by format, parameter scopes per entry, the mcp refusal (plan-066 task D)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-delivery v3), plan-066 task (D)
 depends_on: ["task-084-the-composer-per-entry-active-entries-their-order-and-parameter-scopes-the-notices-of-tensions-the-mcp-refusal-plan-066-task-c"]
 tags: ["tooling","format","lint"]
@@ -147,3 +147,35 @@ body (it throws), uncalled; (2) the code, committed. No new dependency.
   `conditionalProblems` taking an absent catalog, Acceptance 4's claim narrowed, ruling point 1's
   wording, §18's "catalog pack" read as a pack directory. The message of a misordered format-1
   pack's fragments will name `mcp` too (its test asserts the rule only), left as is.
+- 2026-11-08: red (dl-018), commit 183986b: the tests of Acceptance 2 … 7, `conditionalProblems`'
+  signature with no body, uncalled. `npm run build && node --test dist/tests/check-packs.test.js`:
+  113 tests, 9 failing by assertion; one green already, the order rule skipped when `catalog.yaml`
+  does not load (no rule reported any `conditional` problem there yet).
+- 2026-11-08: after the red commit, one fixture fixed: the cases of a `with` naming no pack
+  directory or the pack itself kept `s-gov`'s `{{g_param}}`, outside the scope of an entry no
+  longer naming `governance/g`; `s-gov` is now plain there.
+- 2026-11-08: green, readings taken: a foundation pack is always composed earlier (§7.1's steps 1
+  and 2), though an entry naming `base`, which every non-foundation pack requires, is refused as
+  naming a pack of `requires`; an entry naming `software`, which the pack requires, stays
+  `foundationProblems`' (one problem, not two); a file listed in two parts, already the inventory
+  rule's problem, is read once, with its first part's scope; a format-1 entry keeps `software`'s
+  scope, its message now naming the entry as every entry's does, and gets it from its `with` when
+  `catalog.yaml` does not load (before, its own scope only: a false `parameter-scope` problem);
+  `readPackFiles` loses its `software` argument.
+- 2026-11-08: build review: approve, five non-blocking findings, applied: the `compose` assertion
+  of the formats-only `mcp` case dropped (that pack already had a `formats` problem; the `mcp`-last
+  case, with `mcp` its only rule, proves it); the misordered fragments asserted by file and
+  message; the scope reading without `catalog.yaml` recorded above (the format-1 entry using
+  `software`'s parameters keeps its test, "the entry may use software's types, workflows and
+  parameters"); a test of an entry naming `base`, first written so that the schema refused its
+  pack (no `base` in `requires`), now asserting the `requires` refusal; comments in `orderOf` on
+  foundation ids and on ids outside the catalog's axes.
+- 2026-11-08: the checks (Acceptance 9), on the frozen commit 9a58fb2: branch CI run 42503733888
+  `success`, `validate (22.21.0)` 22:08 and `validate (22.12.0)` 23:39 (G12's 25 minutes held,
+  the margin narrow, as on main); dl-039's local list on Node.js 22.21.0 from a clean worktree:
+  `npm ci`, `npm run build`, `npm run validate:publication` (18 runs, 0 failed), the same on the
+  golden tree with `--param project_name=Golden` (26 runs, 0 failed), `workflow list`,
+  `directives list --format json` (`warnings []`), `npm run lint`, each exit 0. Before them, on
+  the green commit: `npm test` 1252 of 1252, `validate`, `check:packs` (74 files, 0 problems),
+  `check:schemas`, `check:pins` and the index check exit 0. The privacy check of the branch's
+  diff: no local path, no private project, no session.
