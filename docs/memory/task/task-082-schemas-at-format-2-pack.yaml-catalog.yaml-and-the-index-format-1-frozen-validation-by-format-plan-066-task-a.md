@@ -2,7 +2,7 @@
 id: task-082-schemas-at-format-2-pack.yaml-catalog.yaml-and-the-index-format-1-frozen-validation-by-format-plan-066-task-a
 type: task
 title: "Schemas at format 2: pack.yaml, catalog.yaml and the index, format 1 frozen, validation by format (plan-066 task A)"
-status: approved
+status: done
 pack: ""            # tooling task (tooling-delivery v3), plan-066 task (A)
 depends_on: []
 tags: ["tooling","format","schema"]
