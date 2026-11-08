@@ -14,22 +14,30 @@ plan-066 (rulings 1, 2, 6 and 9), its fourth task, after task-084 (the composer 
 spec-001 §18 at format 2: `conditional` by the file's format, in format 2 each `with` naming a
 catalog pack composed earlier (§7.1), at most one entry per pack id, no `with` naming a pack of
 `requires` or `conflicts`; `tensions` naming a catalog pack id other than the pack, at most once,
-not in `conflicts`, a format-1 `pack.yaml` having none; every `{{name}}` in its part's scope, each
-entry its own (§6.5, §8.1). Ruling 6: a pack shipping `mcp` refused by the lint too.
+not in `conflicts`, a format-1 `pack.yaml` having none; `contents.fragments` in the order `dna`,
+`roles`, `memory`, then `mcp` in format 2 (§6.4); every `{{name}}` in its part's scope, each entry
+its own (§6.5, §8.1). Ruling 6: a pack shipping `mcp` refused by the lint too.
 
 What task-084 left here (its Context and notes): the composer, and so the lint, already reads per
-entry and by format the inventory, `formats`, slots, `delivery`'s part, the foundation rule and
-`workflowProblems` (isolation, known names per entry). What the lint does not check yet:
+entry and by format the inventory, `formats`, slots, `delivery`'s part, the foundation rule (no
+entry naming `software` on a pack requiring it) and `workflowProblems`, whose isolation messages
+already name the entry's `with`. The schema checks "on a non-foundation pack" and an entry's
+`contents` (workflows and directives only, at least one). What the lint does not check yet:
 - the manifest's rules on `with` beyond `software` and on `tensions` (format 1's limits are the
   v1 schema's; format 2's schema leaves these to the lint, its `$comment` says so);
+- the fragments' order with `mcp`: `FRAGMENT_ORDER` (`src/pack-rules.ts`) has no `mcp`, so a
+  format-2 pack listing it would get a false `fragment-order` problem;
 - the parameter scopes of `src/pack-files.ts` (`readPackFiles`, `scopeOf`): every entry's files get
   `software`'s scope, whatever their `with`;
-- the `mcp` refusal: `mcpProblems` (`src/pack-rules.ts`) is called by the resolver only.
+- the `mcp` refusal under its own rule: `mcpProblems` is called by the resolver only, so today
+  `check:packs` reports such a pack only through the overlay lint's compositions (rule `compose`).
 
 Not here: §7.6's one owner and §9's slots on the compositions with an entry's pack left out in
-turn, and the overlay lint's legs per entry, both D6's coverage, task (F); the waiver heuristic,
-task (E); the `mcp` kind's own rules (its row). No published pack moves to format 2 (plan-063
-ruling 3): fixture packs only (ruling 2).
+turn, and the overlay lint's legs per entry: task-084's Context gave them to (D), but they are
+compositions, and plan-066 (F) owns the legs (D6's coverage), so this task reads them as (F)'s. The
+waiver heuristic is task (E); the `mcp` kind's own rules wait for their row. An overlay tree
+(`validate --overlay`) gets no `packProblems`, so its fixture packs are (F)'s too. No published
+pack moves to format 2 (plan-063 ruling 3): fixture packs only (ruling 2).
 
 ## Acceptance
 
@@ -39,48 +47,71 @@ ruling 3): fixture packs only (ruling 2).
    build passes and they fail by assertion, except any already green on `main` (recorded as such);
    the failing run recorded with its command and count.
 2. **`conditional` at format 2** (`check:packs`, rule `conditional`, each problem at
-   `/conditional/<index>/with`): an entry's `with` names a pack of the tree (`packs/<id>`); the
-   pack itself; a pack of its `requires` or `conflicts`; a pack id named by an earlier entry; a pack
-   not composed earlier, read statically from §7.1: a foundation pack is earlier than every
-   non-foundation pack, `base` earlier than `software`, and a non-foundation pack earlier when its
-   axis comes earlier in `catalog.yaml`'s order; a `with` naming a pack of the pack's own axis is
-   refused (§7.1 orders that axis by `requires`, which a `with` is not, so no order is guaranteed).
-   Each a problem naming the pack, the entry's `with` and the rule. Format 1's limits stay the v1
-   schema's (one entry, `software@^<major>`), unchanged.
+   `/conditional/<index>/with`), a problem when an entry's `with`: names no pack directory of the
+   tree (`packs/<id>/pack.yaml` present, whether or not it passes its schema); names the pack
+   itself; names a pack of its `requires` or `conflicts`; names a pack id an earlier entry names;
+   or names a pack not composed earlier in every composition holding both, read statically from
+   §7.1 (the approver's ruling, point 1 below): `software` is earlier than every non-foundation
+   pack; a pack of another axis is earlier when its axis comes earlier in `catalog.yaml`'s `axes`;
+   within `phase`, a pack of an earlier slot (the axis's `slots` order) is earlier; any other pack
+   of the pack's own axis is refused: of an axis of cardinality one, or of the same slot, since the
+   two never compose together (§3's cardinalities are conflicts, §6.3, §6.5); of an axis of
+   cardinality many, since Kahn's order counts only `requires` (§7.1), so no order is guaranteed.
+   The axis and slot are read from the named id's segments (§4). The message of the last case:
+   `<pack>: its entry with <with> names <id>, not always composed earlier (spec-001 §7.1)`.
+   Each other problem names the pack, the entry's `with` and the rule. Format 1's limits stay the
+   v1 schema's (one entry, `software@^<major>`), unchanged. The order rule needs `catalog.yaml`
+   and is skipped when it does not load, as `foundationProblems` is.
 3. **`tensions`** (rule `tensions`, at `/tensions/<index>/pack`): an entry naming the pack itself,
-   a pack id named by an earlier entry, a pack of `conflicts`, or no pack of the tree is a problem
-   naming the pack and the entry; a format-1 `pack.yaml` with `tensions` stays the v1 schema's
-   refusal.
-4. **Parameter scopes per entry** (rule `parameter-scope`, §8.1, §6.5): an entry's files may use
+   a pack id an earlier entry names, a pack of `conflicts`, or no pack directory of the tree is a
+   problem naming the pack and the entry, checked whether or not `catalog.yaml` loads; a format-1
+   `pack.yaml` with `tensions` stays the v1 schema's refusal.
+4. **The fragments' order** (rule `fragment-order`, §6.4): `contents.fragments` keeps `dna`,
+   `roles`, `memory`, then `mcp` in format 2, so a format-2 pack listing `mcp` last gets no
+   `fragment-order` problem (it gets Acceptance 6's `mcp` problem only), and `mcp` before another
+   fragment is one; a format-1 pack listing `mcp` stays the v1 schema's refusal.
+5. **Parameter scopes per entry** (rule `parameter-scope`, §8.1, §6.5): an entry's files may use
    the parameters of the pack, of the packs it reaches through `requires`, and of the entry's
-   `with` pack with the packs that one reaches, and no other entry's `with` pack's; a format-1
-   pack's entry keeps `software`'s scope, as today.
-5. **The `mcp` refusal** (rule `mcp`): `check:packs` reports a pack whose `contents.fragments` or
+   `with` pack with the packs that one reaches, and no other entry's `with` pack's; the message
+   names the entry (`… in the scope of <pack>'s entry with <with>`); a format-1 pack's entry keeps
+   `software`'s scope, as today.
+6. **The `mcp` refusal** (rule `mcp`): `check:packs` reports a pack whose `contents.fragments` or
    `formats` holds `mcp`, with the resolver's message (plan-066 ruling 6), until the row of the
-   `mcp` kind's tooling.
-6. **The tests** (`tests/check-packs.test.ts`, offline): a format-2 fixture tree (written by
-   `tests/support/pack-tree.ts`) for each refusal of Acceptance 2 … 5 and for a pack passing all of
-   them (two entries, one naming `software`, one naming a pack of an earlier axis, a tension naming
-   a pack of the tree), each refusal asserted by rule, file and message.
-7. **Nothing else moves:** the four published packs, the golden trees, `validate`, `check:packs`,
+   `mcp` kind's tooling; and no `compose` problem for it (the pack is then left out of the overlay
+   lint's compositions, its own rule having reported it).
+7. **The tests** (`tests/check-packs.test.ts`, offline): a format-2 fixture tree (written by
+   `tests/support/pack-tree.ts`) for each refusal of Acceptance 2 … 6 and for a pack passing all of
+   them (two entries, one naming `software`, one naming a pack of an earlier axis, a phase pack
+   naming a pack of an earlier slot, a tension naming a pack of the tree), each refusal asserted by
+   rule, file and message.
+8. **Nothing else moves:** the four published packs, the golden trees, `validate`, `check:packs`,
    `check:schemas` and the generated root files unchanged; `npm test` and `npm run lint` exit 0. No
    schema change, so no schema note.
-8. **The checks** (`tooling-delivery` v3 › `review`, dl-039): the build review and its amendments
+9. **The checks** (`tooling-delivery` v3 › `review`, dl-039): the build review and its amendments
    first; then once on the frozen commit the branch CI `success`, both jobs, run id and durations
    (G12's 25 minutes), and dl-039's local list on Node.js 22.21.0. The privacy check of the
    branch's diff recorded.
 
+**For the approver's ruling before `backlog`:**
+1. **The static reading of §18's "composed earlier"** (Acceptance 2): spec-001 gives no lint-time
+   reading of it; this task reads it as written there, refusing a `with` within an axis of
+   cardinality many. Recommended as written; listed at the wave close for spec-001 (plan-066
+   Steps 3). Alternative: accept a same-axis `with` of an axis of cardinality many, leaving its
+   order to the composer's §7.1 check at composition.
+
 ## Design
 
 Branch `task/task-085-lint-per-entry` from `main` at this task's add. A new function in
-`src/pack-rules.ts`, `entryProblems(catalog, pack, packs)` (the manifest's `with` and `tensions`
-rules, by format), called by `check-packs`' `packProblems` with `mcpProblems`; the composer keeps
-calling only what it called (the lint's rules on `with` and `tensions` need the tree's packs, which
-the resolver does not load). `scopeOf` in `src/pack-files.ts` takes the entry's `with` id, and
-`readPackFiles` reads each entry's files with its own scope (`conditionalEntries`, `entryFiles`).
-Red steps: (1) the tests of Acceptance 2 … 6 in `tests/check-packs.test.ts`, with
-`entryProblems`' signature and no body (it throws), uncalled; (2) the code, committed. No new
-dependency.
+`src/pack-rules.ts`, `conditionalProblems(catalog, pack, packDirs)` (the manifest's `with` and
+`tensions` rules, by format; `packDirs` the ids with a `packs/<id>/pack.yaml`, from the layout's
+listing, which `LintContext` gains as a field), called by `check-packs`' `packProblems` with
+`mcpProblems`; the composer keeps calling only what it called (the lint's rules on `with` and
+`tensions` need the tree's packs, which the resolver does not load). `FRAGMENT_ORDER` gains `mcp`
+last, read by `inventoryProblems` for every format (format 1's schema refuses `mcp` before it).
+`scopeOf` in `src/pack-files.ts` takes the entry's `with` id, and `readPackFiles` reads each entry's
+files with its own scope (`conditionalEntries`, `entryFiles`). Red steps: (1) the tests of
+Acceptance 2 … 7 in `tests/check-packs.test.ts`, with `conditionalProblems`' signature and no body
+(it throws), uncalled; (2) the code, committed. No new dependency.
 
 ## Execution Notes
 
@@ -93,3 +124,12 @@ dependency.
   by editing the draft (W-02). Not split in (D1) and (D2) (ruling 1 allowed it): task-084 took the
   rules the composer applies, so what is left is one manifest function, the lint's scopes and one
   call.
+- 2026-11-08: independent review: approve after amendments, three blocking (the static reading of
+  "composed earlier" too strict for `phase`'s slots, now read by slot, and put to the approver as a
+  ruling; Acceptance 2's first case read backwards; the fragments' order with `mcp` missing, now
+  Acceptance 4); applied with the others: "a pack of the tree" read as a pack directory, whatever
+  its schema says, and overlay trees named as (F)'s; the left-out compositions named as a reading
+  that differs from task-084's Context; the rules already the schema's or `foundationProblems`'
+  named; the `mcp` refusal asserted with no `compose` problem; the scope message naming the entry;
+  the function named `conditionalProblems` (`layout-rules` has an `entryProblems`); `tensions`
+  checked without `catalog.yaml`; the order message fixed.
