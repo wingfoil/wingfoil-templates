@@ -28,6 +28,7 @@ import { hasInbox, newestSchemaRecord, readNotes } from './feedback-inbox';
 import { schemaListing } from './schema-digest';
 import { tagProblems } from './tag-rules';
 import { treeProblems } from './tree-rules';
+import { waiverReviews } from './waiver-rules';
 import { workflowProblems } from './workflow-rules';
 import { YamlError, loadYamlFile } from './yaml-load';
 
@@ -211,7 +212,7 @@ export function runCheckPacks(tree: string, options: CheckPacksOptions = {}): Ch
       code: sorted.length > 0 ? 1 : 0,
       checked,
       problems: sorted,
-      reviews: [],
+      reviews: waiverReviews(context),
       lines: [`lint: checked ${count(checked, 'file')}, ${count(sorted.length, 'problem')}`,
         ...sorted.map(formatProblem)],
     };

@@ -17,6 +17,8 @@ export function readFrontmatter(text: string, file: string): LoadedYaml | undefi
  * closing `---`, or 0 when the file has none.
  */
 export function bodyStart(text: string): number {
-  void text;
-  throw new Error('bodyStart: not implemented yet (task-086)');
+  const match = FRONTMATTER.exec(text.replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n'));
+  if (match === null) return 0;
+  const lines = match[0].split('\n').length - 1;
+  return match[0].endsWith('\n') ? lines : lines + 1;
 }
