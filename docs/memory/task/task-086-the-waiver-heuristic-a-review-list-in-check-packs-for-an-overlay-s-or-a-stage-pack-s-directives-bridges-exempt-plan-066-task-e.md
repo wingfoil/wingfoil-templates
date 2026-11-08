@@ -109,9 +109,10 @@ stricter packs require: their rows, owner the approver, trigger the first `stage
    the sentence Acceptance 5 adds to `pack-authoring` names `npm run check:packs` as where
    `prepare`'s review reads the hits (no phase runs it today), and every line `validate` reads
    after the summary is a failure. Recommended as written. Alternative: `validate` prints the same
-   `review:` lines in a block of their own, never failing on them; the hits would then show in the
-   CI, at `pack-release-cycle`'s own `validate` step right after `prepare`, and in `publish`,
-   which runs `validate`, too. A third way, beyond the ruling: naming
+   `review:` lines in a block of their own, never failing on them; the hits would then show at
+   `pack-release-cycle`'s own `validate` step right after `prepare`, in `publish`, which runs
+   `validate`, and in the CI's `validate` steps (the CI shows them either way, in its
+   `npm run check:packs` step, `.github/workflows/ci.yml`). A third way, beyond the ruling: naming
    `npm run check:packs` in `prepare`'s description in `pack-release-cycle` as well.
 
 ## Design
@@ -151,3 +152,6 @@ apart (`wf(config)`, `docs`). No new dependency.
   alternative naming `pack-release-cycle`'s `validate` step; columns 1-based without the BOM; a
   missing listed file not read; tests of a missing `with` pack and of `validate`'s result with and
   without a hit on a copied tree; the frontmatter helper named in the Design.
+- 2026-11-08: ruling point 2's alternative corrected: it said the hits would show in the CI only
+  with `validate` printing them, but the CI runs `npm run check:packs` as a step of its own, so
+  they show there either way. The approver, told so, kept the recommendation (no alternative).
