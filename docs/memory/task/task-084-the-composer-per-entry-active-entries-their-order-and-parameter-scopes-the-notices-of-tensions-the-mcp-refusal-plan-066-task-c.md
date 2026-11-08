@@ -174,3 +174,22 @@ in an earlier axis (or sorts earlier in its own). No new dependency.
   per entry, `inventoryProblems` per entry, `conditionalFiles` over every entry (`pack-files`'
   scopes still give every entry `software`'s, (D)'s), `foundationProblems` by format, the
   `mcp` refusal in the resolver only (the lint's in (D)).
+- 2026-11-08: independent build review: approve after amendments, nothing blocking; applied:
+  `composeTwice` keeps only a successful run's `notice: ` lines (a runtime warning on stderr was
+  read as a notice, and its process id would differ between the runs); tests added for each
+  entry's directives in written order, a workflow of one entry including one of another, `delivery`
+  in an entry not naming `software`, notices from two declaring packs in composition order, and
+  `mcp` in `formats` only; the `mcp` problem's pointer at `/formats/mcp` when only `formats` holds
+  it; `output.ts` reading the entries through `conditionalEntries`; long lines wrapped. A format-1
+  message changed by Acceptance 2: software outside an entry's range now ends "for its conditional
+  entry with software@^<major>", not "for its conditional part" (its test matches both). The
+  notices are tested in `tests/compose-entries.test.ts`, not `tests/compose-documents.test.ts`
+  (Acceptance 6 names the latter). No decision changed, so no re-review. `npm test` 1242 tests,
+  0 failing; `validate` and `check:packs` exit 0.
+- 2026-11-08: the checks (dl-039), once on the frozen commit `53530bb`: the branch CI run
+  42487729736 `success` (22.12.0 14 min 34 s, 22.21.0 15 min 10 s, under G12's 25 minutes);
+  dl-039's local list on Node.js 22.21.0 on a clean worktree of `53530bb`: `npm ci`, `npm run
+  build`, `npm run validate:publication` (18 runs, 0 failed), the golden tree in publication (26
+  runs, 0 failed), `workflow list`, `directives list --format json` (`warnings []`), each exit 0;
+  `npm run lint` 0. The privacy check of the branch's diff: no local or scratch path, no private
+  project. This note is documentation-only (dl-039 R2).
