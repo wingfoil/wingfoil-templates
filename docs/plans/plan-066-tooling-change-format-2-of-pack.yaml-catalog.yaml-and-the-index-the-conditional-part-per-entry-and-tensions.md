@@ -249,3 +249,6 @@ points 4 and 6 included.
   entry's pack left out. For the wave close: the static reading of §18's "composed earlier"
   (ruling 1) and of "catalog pack" as a pack directory of the tree. `main`'s CI on the merge read
   in the next note.
+- 2026-11-08: `main`'s CI on task-085's merge (pushed with this plan's note, `8969f71`), run
+  42506039848, `success` (22.12.0 22 min 43 s, 22.21.0 22 min 31 s), under 25 minutes (G12), the
+  margin narrow on both jobs now.
