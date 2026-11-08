@@ -10,7 +10,8 @@ import type { AxisSpec, Catalog } from './catalog';
 import { isCatalogPackId } from './digest';
 import { packLayoutProblems } from './layout-rules';
 import {
-  formatKindsProblems, foundationProblems, inventoryProblems, manifestProblems, slotProblems,
+  conditionalEntries, formatKindsProblems, foundationProblems, inventoryProblems, manifestProblems,
+  mcpProblems, slotProblems,
 } from './pack-rules';
 import type { Problem } from './problems';
 import { installListed, readmeProblems } from './readme-rules';
@@ -42,6 +43,8 @@ export interface ParameterDeclaration {
 
 /** The fields of pack.yaml the composer reads (spec-001 §6.2); the schema has checked them. */
 export interface PackManifest {
+  /** 1 or 2; a format-1 pack keeps format 1's rules (spec-001 §5). */
+  format?: number;
   id: string;
   axis?: string;
   name: string;
@@ -54,8 +57,10 @@ export interface PackManifest {
   conflicts?: string[];
   parameters?: Record<string, ParameterDeclaration>;
   contents: PackContents;
-  /** Content that counts only in a composition with software (spec-001 §6.5). */
+  /** Entries that each count only in a composition holding their `with` pack (spec-001 §6.5). */
   conditional?: { with: string; contents: Pick<PackContents, 'workflows' | 'directives'> }[];
+  /** Format 2: the packs to combine with care (spec-001 §6.2). */
+  tensions?: { pack: string; resolution: string }[];
 }
 
 export interface ResolvedPack {
@@ -68,8 +73,8 @@ export interface ResolvedPack {
   requiredIds: string[];
   /** pack.yaml as loaded, with the source text of each value (spec-001 §18). */
   source: LoadedYaml;
-  /** The conditional part counts: the composition holds software (spec-001 §6.5). */
-  conditionalActive: boolean;
+  /** The indexes of the conditional entries whose pack the composition holds (spec-001 §6.5). */
+  activeEntries: number[];
 }
 
 
@@ -124,7 +129,7 @@ function loadPack(tree: string, id: string, schemas: SchemaSet, requiredBy: stri
   }
   const manifest = loaded.data as PackManifest;
   const pack: ResolvedPack = { id, version: manifest.version, path, manifest, requiredIds: [],
-    source: loaded, conditionalActive: false };
+    source: loaded, activeEntries: [] };
   throwFirst(manifestProblems(pack));
   return pack;
 }
@@ -251,20 +256,22 @@ export function axesMessages(
 }
 
 /**
- * spec-001 §6.5, §17 step 1: a conditional part counts when the composition holds software, whose
- * version must then satisfy its `with`; it never adds a pack.
+ * spec-001 §6.5, §17 step 1: a conditional entry counts when the composition holds its `with`
+ * pack, whose version must then satisfy the entry's range; it never adds a pack.
  */
-function checkConditional(catalog: Catalog, packs: Map<string, ResolvedPack>): void {
-  const software = packs.get(softwarePack(catalog));
+function checkConditional(packs: Map<string, ResolvedPack>): void {
   for (const pack of [...packs.values()].sort((a, b) => byBytes(a.id, b.id))) {
-    const [entry] = pack.manifest.conditional ?? [];
-    if (entry === undefined || software === undefined) continue;
-    const range = attempt(() => parseEntry(entry.with, 'requires')).range ?? '';
-    if (!satisfies(software.version, range)) {
-      throw new ResolveError(`${software.id} ${software.version} does not satisfy ${range}, asked `
-        + `by ${pack.id} for its conditional part (spec-001 §6.5)`);
-    }
-    pack.conditionalActive = true;
+    conditionalEntries(pack.manifest).forEach((entry, index) => {
+      const parsed = attempt(() => parseEntry(entry.with, 'requires'));
+      const other = packs.get(parsed.id);
+      if (other === undefined) return;
+      const range = parsed.range ?? '';
+      if (!satisfies(other.version, range)) {
+        throw new ResolveError(`${other.id} ${other.version} does not satisfy ${range}, asked by `
+          + `${pack.id} for its conditional entry with ${entry.with} (spec-001 §6.5)`);
+      }
+      pack.activeEntries.push(index);
+    });
   }
 }
 
@@ -305,15 +312,20 @@ function order(catalog: Catalog, packs: Map<string, ResolvedPack>): ResolvedPack
     }
   }
   const position = new Map(ordered.map((pack, index) => [pack.id, index]));
+  const later = (id: string, pack: ResolvedPack): boolean =>
+    (position.get(id) ?? -1) > (position.get(pack.id) ?? -1);
   for (const pack of ordered) {
-    // A conditional part's `with` counts as a requirement here (§7.1, §6.5); in format 1 it
+    for (const required of pack.requiredIds.filter((id) => later(id, pack))) {
+      throw new ResolveError(`${pack.id} requires ${required}, which comes later in the `
+        + 'composition order (spec-001 §7.1)');
+    }
+    // A conditional entry's `with` counts as a requirement here (§7.1, §6.5); in format 1 it
     // names software, composed second, so it is never later.
-    const withIds = (pack.manifest.conditional ?? []).flatMap((entry) =>
-      attempt(() => parseEntry(entry.with, 'requires')).id);
-    for (const required of [...pack.requiredIds, ...withIds]) {
-      if ((position.get(required) ?? -1) > (position.get(pack.id) ?? -1)) {
-        throw new ResolveError(`${pack.id} requires ${required}, which comes later in the `
-          + 'composition order (spec-001 §7.1)');
+    for (const entry of conditionalEntries(pack.manifest)) {
+      const id = attempt(() => parseEntry(entry.with, 'requires')).id;
+      if (later(id, pack)) {
+        throw new ResolveError(`${pack.id}: its entry with ${entry.with} names ${id}, later in `
+          + 'the composition order (spec-001 §7.1)');
       }
     }
   }
@@ -337,9 +349,11 @@ export function resolve(tree: string, catalog: Catalog, request: string[]): Reso
     throwFirst(foundationProblems(catalog, pack, reached));
     throwFirst(slotProblems(catalog, pack, reached));
   }
-  checkConditional(catalog, packs);
+  checkConditional(packs);
   const listed = installListed(tree);
   for (const pack of byId) {
+    // An mcp fragment waits for its tooling's row (plan-066 ruling 6), before the inventory.
+    throwFirst(mcpProblems(pack));
     throwFirst(inventoryProblems(tree, pack));
     throwFirst(formatKindsProblems(pack));
     throwFirst(packLayoutProblems(tree, pack));

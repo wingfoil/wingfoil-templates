@@ -18,6 +18,8 @@ class UsageError extends Error {}
 interface Outcome {
   code: number;
   message?: string;
+  /** The tensions' notices of a composition that succeeded (spec-001 §17 step 8). */
+  notices?: string[];
 }
 
 function parameters(raw: string[]): Record<string, string> {
@@ -45,7 +47,7 @@ function parseCompose(argv: string[]) {
   });
 }
 
-function compose(argv: string[]): void {
+function compose(argv: string[]): string[] {
   let parsed: ReturnType<typeof parseCompose>;
   try {
     parsed = parseCompose(argv);
@@ -61,12 +63,13 @@ function compose(argv: string[]): void {
   const composed = composeDocuments(tree, catalog, parsed.positionals, given,
     { givenAsText: true });
   writeOutput(out, planOutput(composed, catalog));
+  return composed.notices;
 }
 
 export function runCompose(argv: string[]): Outcome {
   try {
-    compose(argv);
-    return { code: 0 };
+    const notices = compose(argv);
+    return notices.length === 0 ? { code: 0 } : { code: 0, notices };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (error instanceof UsageError) return { code: 3, message: `${message}\n${USAGE}` };
@@ -82,6 +85,7 @@ export function runCompose(argv: string[]): Outcome {
 
 if (require.main === module) {
   const outcome = runCompose(process.argv.slice(2));
+  for (const notice of outcome.notices ?? []) process.stderr.write(`${notice}\n`);
   if (outcome.message !== undefined) process.stderr.write(`${outcome.message}\n`);
   process.exitCode = outcome.code;
 }

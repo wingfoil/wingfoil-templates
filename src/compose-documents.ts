@@ -14,7 +14,9 @@ import type { Fragment } from './merge';
 import { mergeMemoryWithOwners } from './memory-merge';
 import { parameterScopes, resolveParameters, substitute } from './parameters';
 import type { PackScopes } from './parameters';
-import { conditionalFiles } from './pack-rules';
+import { conditionalEntries, entryFiles } from './pack-rules';
+import type { ConditionalEntry } from './pack-rules';
+import { tensionNotices } from './notices';
 import { listedFiles, resolve } from './resolve';
 import type { ResolvedPack } from './resolve';
 import { secretProblems } from './secret-rules';
@@ -48,6 +50,8 @@ export interface ComposedDocuments {
   memory: Doc;
   /** Memory type -> the pack that defined it. */
   memoryTypes: Map<string, string>;
+  /** The tensions the composition holds, one line each (spec-001 §17 step 8). */
+  notices: string[];
 }
 
 type FragmentKind = 'dna' | 'roles' | 'memory';
@@ -60,12 +64,19 @@ function readFiles(
 ): ComposedFile[] {
   const files: ComposedFile[] = [];
   for (const pack of packs) {
-    // The conditional part's files come after the pack's own, only with software (§6.5, §7.7).
-    const entry = pack.conditionalActive ? conditionalFiles(pack.manifest) : [];
-    for (const path of [...listedFiles(pack.manifest.contents), ...entry]) {
+    // Each active entry's files come after the pack's own and the earlier entries' (§6.5, §7.7),
+    // each with its own parameter scope (§8.1).
+    const entries = conditionalEntries(pack.manifest);
+    const parts: { files: string[]; scope: Set<string> | undefined }[] = [
+      { files: listedFiles(pack.manifest.contents), scope: scopes.get(pack.id)?.always },
+      ...pack.activeEntries.map((index) => ({
+        files: entryFiles(entries[index] as ConditionalEntry),
+        scope: scopes.get(pack.id)?.entries[index] })),
+    ];
+    for (const { path, scope } of parts.flatMap((part) =>
+      part.files.map((file) => ({ path: file, scope: part.scope })))) {
       const label = `${pack.path}/${path}`;
       const raw = readFileSync(join(tree, pack.path, path), 'utf8');
-      const scope = scopes.get(pack.id)?.[entry.includes(path) ? 'conditional' : 'always'];
       const text = substitute(raw, values, scope ?? new Set(), label, pack.id);
       const file: ComposedFile = { pack: pack.id, path, text };
       if (path.endsWith('.yaml')) {
@@ -191,5 +202,6 @@ export function composeDocuments(
     roles: composed(roles.format, mergedRoles),
     memory: composed(memory.format, mergedMemory.doc),
     memoryTypes: mergedMemory.definedBy,
+    notices: tensionNotices(packs),
   };
 }

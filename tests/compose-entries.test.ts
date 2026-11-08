@@ -148,9 +148,9 @@ describe('compose per entry: §7.1 and the shapes the resolver applies (spec-001
   });
 
   it('composes a format-2 pack requiring software with an entry naming another pack', () => {
-    const c: PackSpec = { id: 'blueprint/c', format: 2, requires: ['base@^1', 'software@^1'],
+    const c: PackSpec = { id: 'team-mode/c', format: 2, requires: ['base@^1', 'software@^1'],
       directives: ['c'], conditional: [{ with: 'governance/g@^1', directives: ['c-g'] }] };
-    assert.ok(plan([...PACKS(), c], [...WITH_SOFTWARE, 'governance/g', 'blueprint/c'])
+    assert.ok(plan([...PACKS(), c], [...WITH_SOFTWARE, 'governance/g', 'team-mode/c'])
       .has('.wingfoil/directives/built-in/c-g.md'));
   });
 

@@ -153,8 +153,8 @@ export function resolveParameters(
 export interface PackScopes {
   /** Its own, and those of the packs it transitively requires. */
   always: Set<string>;
-  /** Its conditional part's: those, and those of the `with` pack and of the packs it requires. */
-  conditional: Set<string>;
+  /** Per conditional entry, by index: those, and its `with` pack's with the packs it requires. */
+  entries: Set<string>[];
 }
 
 /** Per pack, the parameters each part may use (§8.1, §6.5). */
@@ -169,10 +169,9 @@ export function parameterScopes(
     .filter((parameter) => reachable.has(parameter.pack)).map((parameter) => parameter.name));
   const scopes = new Map<string, PackScopes>();
   for (const pack of packs) {
-    const withIds = (pack.manifest.conditional ?? [])
-      .map((entry) => parseEntry(entry.with, 'requires').id);
     scopes.set(pack.id, { always: names(reach([pack.id])),
-      conditional: names(reach([pack.id, ...withIds])) });
+      entries: (pack.manifest.conditional ?? []).map((entry) =>
+        names(reach([pack.id, parseEntry(entry.with, 'requires').id]))) });
   }
   return scopes;
 }
