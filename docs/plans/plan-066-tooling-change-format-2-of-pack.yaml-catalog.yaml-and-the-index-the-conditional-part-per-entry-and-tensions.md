@@ -220,3 +220,7 @@ points 4 and 6 included.
 - 2026-11-08: `main`'s CI on task-082's merge (pushed with this plan's note, `1eb2187`), run
   42458531818, `success` (22.12.0 19 min 49 s, 22.21.0 16 min 56 s), under 25 minutes (G12).
   Task (B), task-083, added, reviewed, re-reviewed, submitted and approved to `backlog`.
+- 2026-11-08: task (B), task-083, approved by the approver, merged `--no-ff` (`5bdea69`) and done;
+  its branch CI run 42461942893 `success` (22.12.0 20 min 22 s, 22.21.0 22 min 21 s, a narrow
+  margin under G12's 25 minutes); the root `catalog.yaml` at format 2. `main`'s CI on the merge
+  read in the next note.
