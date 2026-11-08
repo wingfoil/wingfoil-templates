@@ -153,3 +153,24 @@ in an earlier axis (or sorts earlier in its own). No new dependency.
 - 2026-11-08: re-review: approve, nothing blocking; applied: the §7.1 message on one line, the roles
   fragment assigning no directive of any entry, the fallback for any of `validate`'s checks, the
   fixtures' axes, `workflowProblems` per entry shared with the lint from this task on.
+- 2026-11-08: started (`backlog → in-progress`) on `task/task-084-composer-per-entry`. Red
+  (dl-018), step (1): the tests of Acceptance 2 … 7, in a new file `tests/compose-entries.test.ts`
+  (Acceptance 2 … 5 and 7, and the notices through `composeDocuments`) and in
+  `tests/compose-cli.test.ts`, `tests/determinism.test.ts` and `tests/validate.test.ts`, with
+  `PackSpec`'s `format`, `conditional` and `tensions`, and the signatures of `tensionNotices`
+  (`src/notices.ts`), `conditionalEntries` and `entryFiles` (they throw); `npm run build` and
+  `npm run lint` exit 0; `npm test`: 1239 tests, 19 failing, each by assertion or by today's
+  refusal of the shape under test (an entry's files "present but not listed", a format-2 pack
+  requiring `software` refused), none by the throwing signatures; format 1's three schema
+  refusals green on `main`, as Acceptance 1 allows. The `validate` test runs on the golden tree
+  with a format-2 pack declaring a tension, which today's checks accept (no fallback needed).
+- 2026-11-08: green, steps (2) … (4) in one commit (`compose-documents` carries both the files per
+  entry and the notices, so the steps do not split cleanly). One test fixed after the red commit:
+  "a format-2 pack requiring software with an entry naming another pack" used a blueprint naming
+  `governance/g`, a later pack, refused by §7.1 as it should be; the pack is now a `team-mode`.
+  `npm test` 1239 tests, 0 failing; `validate`, `check:schemas`, `check:packs`, `check:pins` exit
+  0; `npm run index -- --check` 0 not up to date; the golden trees unchanged. Shared with the lint
+  from here on (format 1 unchanged, (D) builds on them): `workflowProblems` and `deliveryProblems`
+  per entry, `inventoryProblems` per entry, `conditionalFiles` over every entry (`pack-files`'
+  scopes still give every entry `software`'s, (D)'s), `foundationProblems` by format, the
+  `mcp` refusal in the resolver only (the lint's in (D)).
