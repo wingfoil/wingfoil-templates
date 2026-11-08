@@ -127,6 +127,18 @@ export function mcpProblems(pack: PackLike): Problem[] {
     + 'WingFoil release reads yet (spec-001 §7.8); refused until its tooling (plan-066 ruling 6)')];
 }
 
+/**
+ * spec-001 §6.5, §18 at format 2: each conditional entry's `with` and each `tensions` entry names
+ * a pack directory of the tree (`packDirs`) other than the pack, at most once, and none of its
+ * `requires` or `conflicts`; a `with` names a pack always composed earlier (§7.1), read statically
+ * when `catalog` loads. Format 1's limits are the v1 schema's.
+ */
+export function conditionalProblems(catalog: Catalog | undefined, pack: PackLike,
+  packDirs: string[]): Problem[] {
+  void catalog; void pack; void packDirs;
+  throw new Error('conditionalProblems: not implemented yet (task-085)');
+}
+
 /** The files a pack's inventory lists, relative to the pack (spec-001 §6.4). */
 export function listedFiles(contents: PackContents): string[] {
   return [
