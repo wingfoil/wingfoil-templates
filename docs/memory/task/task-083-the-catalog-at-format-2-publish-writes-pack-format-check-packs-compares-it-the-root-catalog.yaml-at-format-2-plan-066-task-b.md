@@ -24,7 +24,9 @@ tagged `pack.yaml`, not its format. The root `catalog.yaml` is at format 1, and
 Ruling 3: the root `catalog.yaml` moves to `format: 2` in the commit with the code that writes
 `pack_format`, no published entry edited (§11); the next version published carries
 `pack_format: 1` for a format-1 pack; F-047 (task-082) covers the bump. No pack moves to format 2
-(plan-063 ruling 3), and the index's `pack_format` is task (G)'s.
+(plan-063 ruling 3), and the index's `pack_format` is task (G)'s. A format-2 pack in a format-2
+catalog is not refused here: spec-001 §5's temporary exception (plan-066 point 8's row) and
+plan-063 ruling 3 govern it.
 
 ## Acceptance
 
@@ -34,14 +36,18 @@ Ruling 3: the root `catalog.yaml` moves to `format: 2` in the commit with the co
    build passes and they fail by assertion; the failing run recorded with its command and count.
 2. **`publish` writes `pack_format`** (spec-001 §5, §11): in a catalog at format 2, the new
    version entry carries `pack_format`, equal to the published `pack.yaml`'s `format` (`1` for
-   every pack today), after the copied fields (`conditional` when present) and before
-   `transitions`; in a catalog at format 1 it carries none (format 1's schema refuses it), and a
-   pack at format 2 is refused there before the tag, with a message naming the catalog's format
-   (its entry could not record the format, which a reader would take as 1). The maintenance line
-   (the entry committed on `main`) follows `main`'s `catalog.yaml`. The test helper that publishes
-   by hand (`tests/support/published-repo.ts`, `publishByHand`) writes it by the same rule.
+   every pack today), the entry's keys in the order `version`, `commit`, `digest`, `formats`,
+   `requires_capabilities`, `requires`, `conflicts`, `wingfoil`, `conditional` (when present),
+   `pack_format`, `transitions` (when present); in a catalog at format 1 it carries none (format
+   1's schema refuses it), and a pack at format 2 is refused there before the publication
+   validation (nothing validated, nothing tagged), with a message naming the catalog's format (its
+   entry could not record the format, which a reader would take as 1). The catalog's format is
+   the one of the text the entry is added to: `main`'s `catalog.yaml` on a maintenance line. The
+   test helper that publishes by hand (`tests/support/published-repo.ts`, `publishByHand`) writes
+   it by the same rule and in the same order.
 3. **`check:packs` compares it** (`catalog-manifest`, at `/pack_format`): an entry's `pack_format`,
-   `1` when absent, equals the tagged `pack.yaml`'s `format`; otherwise a problem naming the tag,
+   `1` when absent, equals the tagged `pack.yaml`'s `format`, when the tagged file is read (when it
+   is not, the existing rule already reports each copied field); otherwise a problem naming the tag,
    the two values and the absent-reads-as-1 rule. Tested: an entry with `pack_format: 1`, one
    without (both with a format-1 tag), and one whose value differs from the tagged file (a
    fixture tag at format 2 with `pack_format: 1` or none, and a format-1 tag with
@@ -49,14 +55,19 @@ Ruling 3: the root `catalog.yaml` moves to `format: 2` in the commit with the co
 4. **The root `catalog.yaml` at `format: 2`**, every published entry unchanged (no `pack_format`
    added); `tests/fixtures/catalog/catalog.yaml` with it (its test unchanged); the golden tree's
    `tests/fixtures/compose/tree/catalog.yaml` stays at format 1, a format-1 catalog still read
-   through `catalog.v1` (spec-001 §5). Every reader of the root catalog (the resolver,
-   `check:schemas`, `check:packs`, `validate`, the index, `publish`) reads it at format 2 with
-   no output changed: `npm run index -- --check` reports nothing out of date, and
-   `catalog-index.json`, `CATALOG.md` and `llms.txt` are unchanged.
-5. **The tests** (`tests/publish.test.ts`, `tests/tag-rules.test.ts`, offline): Acceptance 2's
-   two catalogs (format 2 with `pack_format: 1` written; format 1 with none, and its refusal of a
-   format-2 pack, nothing tagged); Acceptance 3's cases; the root catalog read at format 2 by
-   `loadCatalog` with no error.
+   through `catalog.v1` (spec-001 §5). Every reader of the root catalog reads it at format 2 with
+   no output changed, the evidence being: `npm run index -- --check` reports nothing out of date;
+   `catalog-index.json`, `CATALOG.md` and `llms.txt` unchanged; `check:pins`, `check:schemas`,
+   `check:packs` and `validate` exit 0 on the frozen commit (and in the branch CI).
+5. **The tests** (`tests/publish.test.ts`, `tests/tag-rules.test.ts`, `tests/catalog.test.ts`,
+   offline): Acceptance 2's two catalogs, each test writing its catalog's `format:` line itself
+   (the fixture's text with that line replaced), so that the root's move changes none of them:
+   format 2 with `pack_format: 1` written and the key order asserted; format 1 with none, and its
+   refusal of a format-2 pack, nothing validated or tagged; a maintenance line whose branch's
+   `catalog.yaml` is at format 1 and `main`'s at format 2, the entry committed on `main` carrying
+   `pack_format: 1`; Acceptance 3's cases; the root catalog at format 2: `tests/catalog.test.ts`
+   › "the real catalog.yaml" asserts `format` 2 (red until Design step 3), its other tests
+   unchanged; no other test reads the root catalog (task-040, `tests/catalog-fixture.test.ts`).
 6. **Nothing else moves:** `check:pins`, `check:schemas`, `check:packs`, `validate`, the golden
    trees and the generated root files unchanged; `npm test` and `npm run lint` exit 0. No new
    schema change, so no schema note (`schema-note` stays green).
@@ -67,12 +78,15 @@ Ruling 3: the root `catalog.yaml` moves to `format: 2` in the commit with the co
 ## Design
 
 Branch `task/task-083-catalog-format-2` from `main` at this task's add. Red steps: (1) the tests
-of Acceptance 2, 3 and 5 (red by assertion: no `pack_format` written, none compared, the
-format-1 refusal absent); (2) `publish`, `publishByHand` and `versionProblems` by the rule
-(green), committed; (3) the root `catalog.yaml` and the fixture catalog at `format: 2`, with the
-index check and the golden trees read unchanged, committed. The catalog's format read from the
-parsed `catalog.yaml` that `publish` already loads (`main`'s for a maintenance line). No new
-dependency.
+of Acceptance 2, 3 and 5, in `tests/publish.test.ts`, `tests/tag-rules.test.ts` and
+`tests/catalog.test.ts` (red by assertion: no `pack_format` written, none compared, the format-1
+refusal absent, the root at format 1); (2) `publish`, `publishByHand` and `versionProblems` by
+the rule (green but for the root's format), committed; (3) the root `catalog.yaml` and the
+fixture catalog at `format: 2`, with the index check and the golden trees read unchanged, and
+every publish test that uses the fixture catalog checked (each now writes `pack_format: 1`; no
+assertion compares a whole entry), committed. The catalog's format read from `catalogText`, the
+text `addVersion` edits (`main`'s on a maintenance line), never from `loadCatalog`'s
+working-tree file. No new dependency.
 
 ## Execution Notes
 
@@ -81,3 +95,12 @@ dependency.
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-08: written as plan-066 task (B), after task-082's merge; `pack` and `depends_on` filled
+  by editing the draft (W-02).
+- 2026-11-08: independent review: approve after amendments, two blocking (the root catalog's test
+  in `tests/catalog.test.ts`, the only file allowed to read it, task-040; the maintenance line's
+  rule tested); applied with the others: the entry's key order spelled out and tested, the
+  format-1 refusal before the publication validation, the catalog's format read from the text the
+  entry is added to, each test writing its catalog's format itself, a format-2 pack in a format-2
+  catalog left to §5's exception, Acceptance 3's "when the tagged file is read", Acceptance 4's
+  evidence named.
