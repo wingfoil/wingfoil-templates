@@ -120,3 +120,10 @@ working-tree file. No new dependency.
   the version entry, not at `/pack_format`, since a missing key has no position of its own (it
   would fall back to line 1); a present one is reported at `/pack_format`. No decision changed,
   so no re-review.
+- 2026-11-08: the checks (dl-039), once on the frozen commit `d1b38cd`: the branch CI run
+  42461942893 `success` (22.12.0 20 min 22 s, 22.21.0 22 min 21 s, under G12's 25 minutes, the
+  margin narrow); dl-039's local list on Node.js 22.21.0 on a clean worktree of `d1b38cd`: `npm
+  ci`, `npm run build`, `npm run validate:publication` (18 runs, 0 failed), the golden tree in
+  publication (26 runs, 0 failed), `workflow list`, `directives list --format json` (`warnings
+  []`), each exit 0; `npm run lint` 0. The privacy check of the branch's diff: no local or
+  scratch path, no private project. This note is documentation-only (dl-039 R2).
