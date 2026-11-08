@@ -267,3 +267,6 @@ Given by the approver on 2026-11-05: every point of the outline as recommended.
   workflow's first runs read (42177750411, 42355075000), the reply sent; `main`'s CI on the last
   merge read (42351761462). The run of this close's push is read by the next plan, the
   `tooling-change` plan of dl-024 and dl-025 (dl-038 C3). `active → done`.
+- 2026-11-08: `intake.yml`'s first scheduled run on `main`, 42375531328 on `775f445`, created
+  2026-11-07 13:07 UTC (the 06:17 cron, delayed by GitHub), `success`: `detect` 17 s, `no missing
+  version`, the other jobs skipped. Its row in `docs/owed-items.md` moved to Closed.
