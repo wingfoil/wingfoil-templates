@@ -110,3 +110,13 @@ working-tree file. No new dependency.
   0; `node --test dist/tests/publish.test.js dist/tests/tag-rules.test.js
   dist/tests/catalog.test.js`: 46 tests, 7 failing, each by assertion (no `pack_format` written,
   none compared, the format-1 refusal absent, the root catalog at format 1).
+- 2026-11-08: steps (2) and (3) green, each committed; after (3) `npm test` 1219 tests, 0
+  failing; `validate`, `check:schemas`, `check:packs`, `check:pins` exit 0; `npm run index --
+  --check` 0 not up to date; the tree unchanged.
+- 2026-11-08: independent build review: approve, nothing blocking; applied: the format-1
+  refusal's message says why (an absent pack_format reads as 1), `packFormatFor`'s signature
+  wrapped as the file's others, a tagged pack.yaml with no `format` read as 1 by the tag rule too.
+  A deviation from Acceptance 3's letter, kept: a mismatch with `pack_format` absent is reported at
+  the version entry, not at `/pack_format`, since a missing key has no position of its own (it
+  would fall back to line 1); a present one is reported at `/pack_format`. No decision changed,
+  so no re-review.

@@ -222,15 +222,16 @@ function publishedVersions(text: string, pack: string): PublishedVersion[] {
  * to: the published pack.yaml's format in a catalog at format 2; none at format 1, whose schema
  * refuses it, and where a pack at format 2 is refused, since its absent pack_format reads as 1.
  */
-function packFormatFor(catalogText: string, manifest: PackManifest, tag: string):
-number | undefined {
+function packFormatFor(catalogText: string, manifest: PackManifest,
+  tag: string): number | undefined {
   const catalogFormat = (parseYaml(catalogText, 'catalog.yaml').data as Doc | null)?.['format'];
   const declared = (manifest as unknown as Doc)['format'];
   const format = typeof declared === 'number' ? declared : 1;
   if (catalogFormat !== 1) return format;
   if (format !== 1) {
     throw new PublishError(1, `${tag}: catalog.yaml is at format 1, which records no pack_format, `
-      + `and the pack is at format ${format}: catalog.yaml moves to format 2 first (spec-001 §11)`);
+      + `and the pack is at format ${format}, which an absent pack_format would read as 1: `
+      + 'catalog.yaml moves to format 2 first (spec-001 §11)');
   }
   return undefined;
 }
