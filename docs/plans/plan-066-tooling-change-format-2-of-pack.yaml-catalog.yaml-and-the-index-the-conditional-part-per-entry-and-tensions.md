@@ -217,3 +217,6 @@ points 4 and 6 included.
 - 2026-11-08: task (A), task-082, approved by the approver, merged `--no-ff` (`68e5fbc`) and done;
   its branch CI run 42420441902 `success` (22.12.0 19 min 56 s, 22.21.0 13 min 21 s); F-047
   written. `main`'s CI on the merge read in the next note.
+- 2026-11-08: `main`'s CI on task-082's merge (pushed with this plan's note, `1eb2187`), run
+  42458531818, `success` (22.12.0 19 min 49 s, 22.21.0 16 min 56 s), under 25 minutes (G12).
+  Task (B), task-083, added, reviewed, re-reviewed, submitted and approved to `backlog`.
