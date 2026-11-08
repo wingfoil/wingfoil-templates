@@ -105,6 +105,16 @@ function versionProblems(tree: string, catalog: LoadedYaml, packId: string, entr
     problems.push(at('/conditional', 'catalog-manifest', `${tag}: conditional differs from the `
       + 'tagged pack.yaml'));
   }
+  // pack_format, absent reading as 1, is the tagged pack.yaml's format (§5, §11).
+  if (manifest !== undefined) {
+    const recorded = entry['pack_format'] ?? 1;
+    if (recorded !== manifest['format']) {
+      const absent = entry['pack_format'] === undefined;
+      problems.push(at(absent ? '' : '/pack_format', 'catalog-manifest', `${tag}: pack_format `
+        + `${JSON.stringify(recorded)}${absent ? ' (absent, read as 1)' : ''} is not the tagged `
+        + `pack.yaml's format, ${JSON.stringify(manifest['format'])}`));
+    }
+  }
   for (const field of ['version', 'formats', 'requires_capabilities', 'requires', 'conflicts']) {
     const tagged = manifest?.[field] ?? (field === 'requires' || field === 'conflicts' ? [] : undefined);
     if (manifest === undefined || !same(entry[field], tagged)) {
