@@ -46,23 +46,27 @@ stricter packs require: their rows, owner the approver, trigger the first `stage
    every rule of the lint). **Exempt** (a bridge): a directive of a conditional entry whose `with`
    pack declares in `tensions` an entry naming this pack's id, whatever its range. Readings: a
    `with` pack missing from the tree or failing its schema exempts nothing; a directive listed in
-   a bridge entry and in another part (already the inventory rule's problem) is read; a format-1
-   entry is never a bridge, since its `with` is `software`, which has no `tensions`; a bridge whose
-   `with` is a common pack the stricter packs require is not exempt (plan-066 point 7, its row).
+   a bridge entry and in another part (already the inventory rule's problem) is read; a listed
+   file missing from the pack is not read (the inventory rule reports it); the rule reads the
+   `with` pack's `tensions` whatever the formats, so a format-1 entry, whose `with` is `software`,
+   is today never a bridge; an entry whose `with` is a common pack the stricter packs require is
+   exempt only as the rule says (that pack's `tensions`), not because they require it (plan-066
+   point 7, its row).
 3. **The match** (the approver's ruling, point 1 below): on the directive's raw text, its
    `{{name}}` references left in place (no parameter substituted, so no default adds or hides a
-   word, and lines and columns are the file's). The body starts on the line after the frontmatter's
-   closing `---`, read with `src/frontmatter.ts`'s pattern (a BOM and CRLF line ends allowed);
-   a directive with no frontmatter is read whole. Line by line, case-insensitive, whole words
+   word, and lines and columns are the file's, 1-based, a BOM not counted). The body starts on
+   the line after the frontmatter's closing `---`, read with `src/frontmatter.ts`'s pattern (a
+   BOM and CRLF line ends allowed); a directive with no frontmatter is read whole. Line by line, case-insensitive, whole words
    (`\b`, so `non-optional` hits and `skipper`, `optionality`, `optional_x` do not; a hyphenated
    word is left to the reviewer): `skip`, `skips`, `skipped`, `skipping`, `optional`, `optionally`,
    `ignore`, `ignores`, `ignored`, `ignoring`, and `not required` with any run of spaces or tabs
    between the two words, never across two lines. One hit per line holding any of them, at the
    line and column of the first, its message
    `<pack>: <path> uses waiver wording (<words>): review whether it waives a rule of a pack it does
-   not ship (spec-001 §18, dl-025 D1)`, `<words>` the line's words lower-cased, unique, in the
-   order they first appear, each in double quotes, separated by `, ` (for example
-   `("skip", "optional")`; `not required` written with one space).
+   not ship (spec-001 §18, dl-025 D1)`, `<path>` the file's path within the pack
+   (`directives/<name>.md`), as `src/pack-rules.ts`'s messages write it, `<words>` the line's
+   words lower-cased, unique, in the order they first appear, each in double quotes, separated by
+   `, ` (for example `("skip", "optional")`; `not required` written with one space).
 4. **The review list** (rule `waiver`): `runCheckPacks` returns the hits in a new field,
    `reviews`, sorted as problems are; `problems`, `code` and `lines` (its summary line included)
    unchanged by them, so the exit is unchanged and `validate` neither prints nor fails on them (the
@@ -84,8 +88,9 @@ stricter packs require: their rows, owner the approver, trigger the first `stage
    `optionality`) no hit; case, inflections, `not  required` with two spaces, and the message's
    words for a line holding `Skip`, `optional` and `skip`; a hit after a `{{param}}` on its line,
    its column the raw file's, and a parameter whose default is `optional`, no hit; a directive
-   with no frontmatter read whole; `check:packs` exit 0 with the `review:` lines printed;
-   `validate` on a tree with a hit and no problem exit 0, no `review:` line in its output; a
+   with no frontmatter read whole; an entry whose `with` pack is missing from the tree, its
+   directive read; `check:packs` exit 0 with the `review:` lines printed; `validate`'s result on
+   one tree identical with and without a hit, no `review:` line in its output; a
    `stage/*` pack's hit without `catalog.yaml`, and a `team-mode/*` pack's none there.
 7. **Nothing else moves:** the four published packs, the golden trees, `validate`, `check:packs`,
    `check:schemas` and the generated root files unchanged; `npm test` and `npm run lint` exit 0.
@@ -105,7 +110,8 @@ stricter packs require: their rows, owner the approver, trigger the first `stage
    `prepare`'s review reads the hits (no phase runs it today), and every line `validate` reads
    after the summary is a failure. Recommended as written. Alternative: `validate` prints the same
    `review:` lines in a block of their own, never failing on them; the hits would then show in the
-   CI and in `publish`, which runs `validate`, too. A third way, beyond the ruling: naming
+   CI, at `pack-release-cycle`'s own `validate` step right after `prepare`, and in `publish`,
+   which runs `validate`, too. A third way, beyond the ruling: naming
    `npm run check:packs` in `prepare`'s description in `pack-release-cycle` as well.
 
 ## Design
@@ -114,7 +120,9 @@ Branch `task/task-086-waiver-heuristic` from `main` at this task's add. A new mo
 `src/waiver-rules.ts`, `waiverReviews(context: LintContext): Problem[]`, reading the raw text of
 the directives Acceptance 2 names from the tree (not `context.files`, whose text has its
 parameters substituted, which moves columns and could add or hide a word) and the `with` packs'
-`tensions` from `context.packs`; `runCheckPacks` calls it after the groups and returns `reviews`;
+`tensions` from `context.packs`; `src/frontmatter.ts` gains a helper giving the body's first
+line, so its pattern is not copied; the `validate` test copies the golden tree into a temporary
+directory and adds the hit there; `runCheckPacks` calls it after the groups and returns `reviews`;
 `src/check-packs-cli.ts` prints them. The heuristic is its own module, not a group of `GROUPS`,
 since a group's result is problems. Red steps: (1) the tests of Acceptance 2 … 6, with
 `waiverReviews`' signature and no body (it throws), uncalled, and `reviews` typed on
@@ -138,3 +146,8 @@ apart (`wf(config)`, `docs`). No new dependency.
   `not required`'s spacing and the word boundary defined; the `stage/` prefix read with the overlay
   axes, as §18 writes it; the bridge's readings named; the golden fixtures said to ship no
   directive; no `review:` line on exit 2, the summary line unchanged.
+- 2026-11-08: re-review: approve, seven non-blocking findings, applied: `<path>` defined; the
+  common-pack reading worded as the rule; the format-1 reading said "today"; ruling point 2's
+  alternative naming `pack-release-cycle`'s `validate` step; columns 1-based without the BOM; a
+  missing listed file not read; tests of a missing `with` pack and of `validate`'s result with and
+  without a hit on a copied tree; the frontmatter helper named in the Design.
