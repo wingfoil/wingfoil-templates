@@ -170,3 +170,11 @@ apart (`wf(config)`, `docs`). No new dependency.
   checks. Before the amendments: `npm test` 1260 of 1260, `npm run lint`, `validate`,
   `check:packs` (74 files, 0 problems), `check:schemas`, `check:pins` and the index check exit 0;
   after them, the two suites touched rerun, 120 and 1 pass.
+- 2026-11-08: the checks (Acceptance 8), on the frozen commit 71e98bd: branch CI run 42521389447
+  `success`, `validate (22.12.0)` 14:11 and `validate (22.21.0)` 15:09 (G12's 25 minutes held,
+  well under task-085's 23 minutes, the runner's load the likely difference); dl-039's local list
+  on Node.js 22.21.0 from a clean worktree: `npm ci`, `npm run build`,
+  `npm run validate:publication` (18 runs, 0 failed), the same on the golden tree with
+  `--param project_name=Golden` (26 runs, 0 failed), `workflow list`,
+  `directives list --format json` (`warnings []`), `npm run lint`, each exit 0. The privacy check
+  of the branch's diff: no local path, no private project, no session.
