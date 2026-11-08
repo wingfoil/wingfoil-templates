@@ -7,7 +7,8 @@ import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { describe, it } from 'node:test';
 
-import { FIXTURES, REPO_ROOT } from './support/paths';
+import { BASE_COMPOSABLE, writePack } from './support/pack-tree';
+import { FIXTURES, FIXTURE_CATALOG, REPO_ROOT } from './support/paths';
 
 const CLI = join(REPO_ROOT, 'dist', 'src', 'compose-cli.js');
 const TREE = join(FIXTURES, 'compose', 'tree');
@@ -159,6 +160,26 @@ describe('npm run compose', () => {
         '--param', 'wip_limit=two', ...ENTRIES]);
       assert.equal(result.status, 1);
       assert.match(result.stderr, /wip_limit.*integer/);
+    });
+  });
+});
+
+describe('npm run compose: the tensions\' notices (spec-001 §17 step 8, task-084)', () => {
+  it('prints one notice line per tension held on stderr, and exits 0', () => {
+    withTemp((dir) => {
+      const tree = join(dir, 'tree');
+      for (const spec of [BASE_COMPOSABLE, { id: 'team-mode/t', directives: ['t'] },
+        { id: 'governance/h', format: 2, directives: ['h'],
+          tensions: [{ pack: 'team-mode/t', resolution: 'Pair on every change.' }] }]) {
+        writePack(tree, spec);
+      }
+      cpSync(FIXTURE_CATALOG, join(tree, 'catalog.yaml'));
+      const held = run(['--tree', tree, '--out', join(dir, 'held'), 'governance/h', 'team-mode/t']);
+      assert.equal(held.status, 0, held.stderr);
+      assert.equal(held.stderr, 'notice: governance/h and team-mode/t: Pair on every change.\n');
+      const alone = run(['--tree', tree, '--out', join(dir, 'alone'), 'governance/h']);
+      assert.equal(alone.status, 0, alone.stderr);
+      assert.equal(alone.stderr, '');
     });
   });
 });

@@ -708,6 +708,8 @@ ValidateResult {
       : `, dropped ${composition.dropped.join(', ')}`;
     lines.push(`${label}: composed twice, ${count(result.files, 'file')}, ${result.message}`
       + dropped);
+    // The tensions' notices, after the composition's line (spec-001 §17 step 8, task-084).
+    lines.push(...(result.notices ?? []).map((notice) => `  ${notice}`));
     if (!ran) skipped();
     return { packs, ran };
   };

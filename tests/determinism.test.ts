@@ -33,6 +33,18 @@ describe('composeTwice, with the real comparison', () => {
     });
   }
 
+  it('keeps the notices of a successful composition, equal in both runs (task-084)', () => {
+    const result = withLeak('notice', () => composeTwice(REQUEST, { cli: LEAKY }));
+    assert.deepEqual(result, { code: 0, files: 1, message: 'byte-identical',
+      notices: ['notice: a and b: c.'] });
+  });
+
+  it('fails a composition whose notices differ between the runs (task-084)', () => {
+    const result = withLeak('notice-home', () => composeTwice(REQUEST, { cli: LEAKY }));
+    assert.equal(result.code, 1, result.message);
+    assert.equal(result.message, 'not deterministic: the notices differ');
+  });
+
   it('reports a killed composition as exit 2, with its signal', () => {
     const result = withLeak('kill', () => composeTwice(REQUEST, { cli: LEAKY }));
     assert.deepEqual(result, { code: 2, files: 0, message: 'killed by SIGKILL' });

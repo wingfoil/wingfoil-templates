@@ -20,6 +20,8 @@ export interface DeterminismResult {
   code: number;
   files: number;
   message: string;
+  /** The tensions' notices of a composition that succeeded, when it printed any (task-084). */
+  notices?: string[];
 }
 
 export type Compare = (first: string, second: string) => string[];
@@ -29,6 +31,7 @@ const RUNNER = [
   'const [cli, umask, ...args] = process.argv.slice(1);',
   'process.umask(parseInt(umask, 8));',
   'const outcome = require(cli).runCompose(args);',
+  'for (const notice of outcome.notices ?? []) process.stderr.write(notice + "\\n");',
   'if (outcome.message !== undefined) process.stderr.write(outcome.message + "\\n");',
   'process.exitCode = outcome.code;',
 ].join('\n');
@@ -108,11 +111,18 @@ export function composeTwice(
         },
       },
     ];
+    const notices: string[][] = [];
     for (const run of runs) {
       const result = composeOnce(request, run, options.cli ?? COMPOSE_CLI);
       if (result.code !== 0) {
         return { code: result.code, files: 0, message: result.message.split(root).join('<tmp>') };
       }
+      // A successful run's notices (spec-001 §17 step 8): its `notice: ` lines only, so that a
+      // runtime warning on stderr is neither printed as one nor compared.
+      notices.push(result.message.split('\n').filter((line) => line.startsWith('notice: ')));
+    }
+    if (JSON.stringify(notices[0]) !== JSON.stringify(notices[1])) {
+      return { code: 1, files: 0, message: 'not deterministic: the notices differ' };
     }
     const differences = compare(first, join(root, 'second'));
     if (differences.length > 0) {
@@ -120,7 +130,9 @@ export function composeTwice(
     }
     const files = listTree(first).length;
     options.use?.(first);
-    return { code: 0, files, message: 'byte-identical' };
+    const printed = notices[0] ?? [];
+    return printed.length === 0 ? { code: 0, files, message: 'byte-identical' }
+      : { code: 0, files, message: 'byte-identical', notices: printed };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     const shown = root === undefined ? message : message.split(root).join('<tmp>');

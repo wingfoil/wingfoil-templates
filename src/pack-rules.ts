@@ -91,14 +91,40 @@ export function manifestProblems(pack: PackLike): Problem[] {
   return problems;
 }
 
-/** The contents of a pack's conditional part, or an empty one (spec-001 §6.5). */
-export function conditionalContents(manifest: PackManifest): PackContents {
-  return manifest.conditional?.[0]?.contents ?? {};
+/** A conditional entry (spec-001 §6.5). */
+export type ConditionalEntry = NonNullable<PackManifest['conditional']>[number];
+
+/** A pack's conditional entries, in written order; none when it has no conditional part. */
+export function conditionalEntries(manifest: PackManifest): ConditionalEntry[] {
+  return manifest.conditional ?? [];
 }
 
-/** The files of a pack's conditional part, relative to the pack (spec-001 §6.5). */
+/** The files of one conditional entry, relative to the pack (spec-001 §6.5). */
+export function entryFiles(entry: ConditionalEntry): string[] {
+  return listedFiles(entry.contents);
+}
+
+/** The files of every conditional entry, relative to the pack, in written order (§6.5). */
 export function conditionalFiles(manifest: PackManifest): string[] {
-  return listedFiles(conditionalContents(manifest));
+  return conditionalEntries(manifest).flatMap(entryFiles);
+}
+
+/** The workflows of every conditional entry (§6.5). */
+function conditionalWorkflows(manifest: PackManifest): string[] {
+  return conditionalEntries(manifest).flatMap((entry) => entry.contents.workflows ?? []);
+}
+
+/**
+ * plan-066 ruling 6: no WingFoil release reads the mcp kind yet (spec-001 §7.8), so a pack
+ * shipping it is refused until the row of the mcp kind's tooling.
+ */
+export function mcpProblems(pack: PackLike): Problem[] {
+  const { manifest } = pack;
+  const fragment = (manifest.contents.fragments ?? []).includes('mcp');
+  if (!fragment && !Object.hasOwn(manifest.formats, 'mcp')) return [];
+  return [at(pack, fragment ? '/contents/fragments' : '/formats/mcp', 'mcp',
+    `${pack.id}: ships the mcp kind, which no `
+    + 'WingFoil release reads yet (spec-001 §7.8); refused until its tooling (plan-066 ruling 6)')];
 }
 
 /** The files a pack's inventory lists, relative to the pack (spec-001 §6.4). */
@@ -134,13 +160,21 @@ export function inventoryProblems(tree: string, pack: PackLike): Problem[] {
     }
   }
   const always = listedFiles(pack.manifest.contents);
-  const entry = conditionalFiles(pack.manifest);
-  // The two parts together match the files present, each file listed once (§6.4, §6.5).
-  for (const twice of always.filter((file) => entry.includes(file))) {
-    problems.push(at(pack, '/conditional/0/contents', 'contents',
-      `${pack.id}: ${twice} is listed in contents and in the conditional part`));
-  }
-  const listed = [...always, ...entry];
+  // The parts together match the files present, each file listed once (§6.4, §6.5).
+  const seen = new Set<string>();
+  conditionalEntries(pack.manifest).forEach((entry, index) => {
+    for (const file of entryFiles(entry)) {
+      if (always.includes(file)) {
+        problems.push(at(pack, `/conditional/${index}/contents`, 'contents',
+          `${pack.id}: ${file} is listed in contents and in the conditional part`));
+      } else if (seen.has(file)) {
+        problems.push(at(pack, `/conditional/${index}/contents`, 'contents',
+          `${pack.id}: ${file} is listed in two conditional entries`));
+      }
+      seen.add(file);
+    }
+  });
+  const listed = [...always, ...seen];
   for (const missing of listed.filter((file) => !present.includes(file)).sort(byBytes)) {
     problems.push(at(pack, '/contents', 'contents',
       `${pack.id}: ${missing} is listed in contents but missing`));
@@ -156,8 +190,11 @@ export function inventoryProblems(tree: string, pack: PackLike): Problem[] {
 export function slotProblems(catalog: Catalog, pack: PackLike, reached: string[]): Problem[] {
   const problems: Problem[] = [];
   const always = pack.manifest.contents.workflows ?? [];
-  const entry = conditionalContents(pack.manifest).workflows ?? [];
-  const workflows = [...always, ...entry];
+  // A methodology's delivery in its entry naming software (§6.5, §9, read per entry).
+  const withSoftware = conditionalEntries(pack.manifest).filter((candidate) =>
+    entryId(candidate.with, 'requires') === softwarePack(catalog));
+  const entry = withSoftware.flatMap((candidate) => candidate.contents.workflows ?? []);
+  const workflows = [...always, ...conditionalWorkflows(pack.manifest)];
   for (const slot of catalog.slots) {
     const axis = catalog.axes.find((candidate) => candidate.name === slot.filledBy);
     const fills = pack.manifest.axis === slot.filledBy
@@ -212,9 +249,16 @@ Problem[] {
       `${pack.id}: a phase pack must require ${software} (spec-001 §3)`));
   }
   if (pack.manifest.conditional !== undefined) {
-    if (requiresSoftware(catalog, reached)) {
+    // Format 1: no conditional part on a pack requiring software; format 2: no entry naming it.
+    const formatTwo = (pack.manifest.format ?? 1) >= 2;
+    const naming = conditionalEntries(pack.manifest)
+      .findIndex((entry) => entryId(entry.with, 'requires') === software);
+    if (requiresSoftware(catalog, reached) && !formatTwo) {
       problems.push(at(pack, '/conditional', 'conditional', `${pack.id}: requires ${software}, `
         + 'so it ships everything in contents and carries no conditional part (spec-001 §6.5)'));
+    } else if (requiresSoftware(catalog, reached) && naming >= 0) {
+      problems.push(at(pack, `/conditional/${naming}/with`, 'conditional', `${pack.id}: requires `
+        + `${software}, so it carries no conditional entry with ${software} (spec-001 §6.5)`));
     }
     if (conditionalFiles(pack.manifest).length === 0) {
       problems.push(at(pack, '/conditional/0/contents', 'conditional', `${pack.id}: its `

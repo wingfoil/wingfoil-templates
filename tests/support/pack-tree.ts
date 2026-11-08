@@ -17,6 +17,12 @@ export interface PackSpec {
   fragments?: string[];
   memoryTemplates?: string[];
   agentsSection?: boolean;
+  /** pack.yaml's format; 1 when absent (spec-001 §5). */
+  format?: number;
+  /** Conditional entries (spec-001 §6.5), their files written as the contents' are. */
+  conditional?: { with: string; workflows?: string[]; directives?: string[] }[];
+  /** Format 2's tensions (spec-001 §6.2), written as they are. */
+  tensions?: { pack: string; resolution: string }[];
   /** Overrides written into pack.yaml as they are. */
   manifest?: Record<string, unknown>;
   /** Files written under the pack directory, besides those the contents list. */
@@ -28,9 +34,12 @@ export interface PackSpec {
 /** Format 1 for every file kind the pack ships (spec-001 §5). */
 function formatsFor(spec: PackSpec): Record<string, number> {
   const formats: Record<string, number> = {};
+  const entries = spec.conditional ?? [];
   for (const fragment of spec.fragments ?? []) formats[fragment] = 1;
-  if ((spec.workflows ?? []).length > 0) formats['workflow'] = 1;
-  if ((spec.directives ?? []).length > 0) formats['directive'] = 1;
+  if ([spec.workflows, ...entries.map((entry) => entry.workflows)]
+    .some((names) => (names ?? []).length > 0)) formats['workflow'] = 1;
+  if ([spec.directives, ...entries.map((entry) => entry.directives)]
+    .some((names) => (names ?? []).length > 0)) formats['directive'] = 1;
   if ((spec.memoryTemplates ?? []).length > 0) formats['memory-template'] = 1;
   return formats;
 }
@@ -79,7 +88,7 @@ export function manifestFor(spec: PackSpec): Record<string, unknown> {
   const segments = spec.id.split('/');
   const isBase = spec.id === 'base';
   const isFoundation = isBase || spec.id === 'software';
-  const manifest: Record<string, unknown> = { format: 1, id: spec.id };
+  const manifest: Record<string, unknown> = { format: spec.format ?? 1, id: spec.id };
   if (!isFoundation) manifest['axis'] = segments[0];
   manifest['name'] = segments[segments.length - 1];
   if (segments[0] === 'phase') manifest['slot'] = segments[1];
@@ -103,6 +112,12 @@ export function manifestFor(spec: PackSpec): Record<string, unknown> {
     memory_templates: spec.memoryTemplates ?? [],
     agents_section: spec.agentsSection ?? false,
   };
+  if (spec.conditional !== undefined) {
+    manifest['conditional'] = spec.conditional.map((entry) => ({ with: entry.with, contents: {
+      ...(entry.workflows === undefined ? {} : { workflows: entry.workflows }),
+      ...(entry.directives === undefined ? {} : { directives: entry.directives }) } }));
+  }
+  if (spec.tensions !== undefined) manifest['tensions'] = spec.tensions;
   return { ...manifest, ...spec.manifest };
 }
 
@@ -113,6 +128,9 @@ function contentFiles(spec: PackSpec): string[] {
     ...(spec.workflows ?? []).map((name) => `workflows/${name}.yaml`),
     ...(spec.memoryTemplates ?? []).map((name) => `memory-templates/${name}.md`),
     ...(spec.agentsSection === true ? ['agents/section.md'] : []),
+    ...(spec.conditional ?? []).flatMap((entry) => [
+      ...(entry.directives ?? []).map((name) => `directives/${name}.md`),
+      ...(entry.workflows ?? []).map((name) => `workflows/${name}.yaml`)]),
   ];
 }
 

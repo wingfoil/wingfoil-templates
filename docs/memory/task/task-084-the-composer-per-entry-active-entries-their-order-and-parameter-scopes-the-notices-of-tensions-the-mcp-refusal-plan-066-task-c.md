@@ -2,7 +2,7 @@
 id: task-084-the-composer-per-entry-active-entries-their-order-and-parameter-scopes-the-notices-of-tensions-the-mcp-refusal-plan-066-task-c
 type: task
 title: "The composer per entry: active entries, their order and parameter scopes, the notices of tensions, the mcp refusal (plan-066 task C)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-delivery v3), plan-066 task (C)
 depends_on: ["task-082-schemas-at-format-2-pack.yaml-catalog.yaml-and-the-index-format-1-frozen-validation-by-format-plan-066-task-a"]
 tags: ["tooling","format","composer"]
@@ -153,3 +153,43 @@ in an earlier axis (or sorts earlier in its own). No new dependency.
 - 2026-11-08: re-review: approve, nothing blocking; applied: the §7.1 message on one line, the roles
   fragment assigning no directive of any entry, the fallback for any of `validate`'s checks, the
   fixtures' axes, `workflowProblems` per entry shared with the lint from this task on.
+- 2026-11-08: started (`backlog → in-progress`) on `task/task-084-composer-per-entry`. Red
+  (dl-018), step (1): the tests of Acceptance 2 … 7, in a new file `tests/compose-entries.test.ts`
+  (Acceptance 2 … 5 and 7, and the notices through `composeDocuments`) and in
+  `tests/compose-cli.test.ts`, `tests/determinism.test.ts` and `tests/validate.test.ts`, with
+  `PackSpec`'s `format`, `conditional` and `tensions`, and the signatures of `tensionNotices`
+  (`src/notices.ts`), `conditionalEntries` and `entryFiles` (they throw); `npm run build` and
+  `npm run lint` exit 0; `npm test`: 1239 tests, 19 failing, each by assertion or by today's
+  refusal of the shape under test (an entry's files "present but not listed", a format-2 pack
+  requiring `software` refused), none by the throwing signatures; format 1's three schema
+  refusals green on `main`, as Acceptance 1 allows. The `validate` test runs on the golden tree
+  with a format-2 pack declaring a tension, which today's checks accept (no fallback needed).
+- 2026-11-08: green, steps (2) … (4) in one commit (`compose-documents` carries both the files per
+  entry and the notices, so the steps do not split cleanly). One test fixed after the red commit:
+  "a format-2 pack requiring software with an entry naming another pack" used a blueprint naming
+  `governance/g`, a later pack, refused by §7.1 as it should be; the pack is now a `team-mode`.
+  `npm test` 1239 tests, 0 failing; `validate`, `check:schemas`, `check:packs`, `check:pins` exit
+  0; `npm run index -- --check` 0 not up to date; the golden trees unchanged. Shared with the lint
+  from here on (format 1 unchanged, (D) builds on them): `workflowProblems` and `deliveryProblems`
+  per entry, `inventoryProblems` per entry, `conditionalFiles` over every entry (`pack-files`'
+  scopes still give every entry `software`'s, (D)'s), `foundationProblems` by format, the
+  `mcp` refusal in the resolver only (the lint's in (D)).
+- 2026-11-08: independent build review: approve after amendments, nothing blocking; applied:
+  `composeTwice` keeps only a successful run's `notice: ` lines (a runtime warning on stderr was
+  read as a notice, and its process id would differ between the runs); tests added for each
+  entry's directives in written order, a workflow of one entry including one of another, `delivery`
+  in an entry not naming `software`, notices from two declaring packs in composition order, and
+  `mcp` in `formats` only; the `mcp` problem's pointer at `/formats/mcp` when only `formats` holds
+  it; `output.ts` reading the entries through `conditionalEntries`; long lines wrapped. A format-1
+  message changed by Acceptance 2: software outside an entry's range now ends "for its conditional
+  entry with software@^<major>", not "for its conditional part" (its test matches both). The
+  notices are tested in `tests/compose-entries.test.ts`, not `tests/compose-documents.test.ts`
+  (Acceptance 6 names the latter). No decision changed, so no re-review. `npm test` 1242 tests,
+  0 failing; `validate` and `check:packs` exit 0.
+- 2026-11-08: the checks (dl-039), once on the frozen commit `53530bb`: the branch CI run
+  42487729736 `success` (22.12.0 14 min 34 s, 22.21.0 15 min 10 s, under G12's 25 minutes);
+  dl-039's local list on Node.js 22.21.0 on a clean worktree of `53530bb`: `npm ci`, `npm run
+  build`, `npm run validate:publication` (18 runs, 0 failed), the golden tree in publication (26
+  runs, 0 failed), `workflow list`, `directives list --format json` (`warnings []`), each exit 0;
+  `npm run lint` 0. The privacy check of the branch's diff: no local or scratch path, no private
+  project. This note is documentation-only (dl-039 R2).

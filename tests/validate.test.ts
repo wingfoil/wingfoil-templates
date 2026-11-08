@@ -687,6 +687,24 @@ describe('npm run validate: both legs of a conditional part (spec-001 §15, plan
       });
   });
 
+describe('npm run validate: the tensions\' notices (spec-001 §17 step 8, task-084)', () => {
+  const CAREFUL: PackSpec = { id: 'governance/careful', format: 2, directives: ['careful'],
+    tensions: [{ pack: 'stage/production@^1', resolution: 'Release only\nafter the review.' }] };
+
+  it('prints each notice after the composition\'s line, and none without a tension', () => {
+    withTree((tree) => writePack(tree, CAREFUL), (tree) => {
+      const result = validate(['--tree', tree, ...NAME, ...ENTRIES, 'governance/careful']);
+      const at = result.lines.findIndex((line) =>
+        line.startsWith('composition entries: composed twice, '));
+      assert.ok(at >= 0, result.lines.join('\n'));
+      assert.equal(result.lines[at + 1],
+        '  notice: governance/careful and stage/production: Release only after the review.');
+      assert.ok(!result.lines.some((line, index) => index !== at + 1
+        && line.includes('notice:')), result.lines.join('\n'));
+    }, true);
+  });
+});
+
 describe('npm run validate --overlay (task-046, plan-046 ruling 1)', () => {
   const OVERLAY = 'tests/fixtures/overlay';
   const CORE = `${OVERLAY}/compositions/core-team/example.yaml`;

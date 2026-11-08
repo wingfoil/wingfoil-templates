@@ -5,8 +5,8 @@
 // references is declared by the pack or by a pack it requires directly. The lint applies them to
 // every pack of the tree; the composer, to every pack it composes.
 import { softwarePack } from './catalog';
-import { conditionalContents, conditionalFiles } from './pack-rules';
-import { reachableIds } from './requirements';
+import { conditionalEntries, entryFiles } from './pack-rules';
+import { parseEntry, reachableIds } from './requirements';
 import type { Catalog } from './catalog';
 import { BUILTIN_DIRECTIVE_IDS } from './wingfoil-builtins';
 import type { Problem } from './problems';
@@ -91,27 +91,39 @@ export function workflowProblems(
 ): Problem[] {
   const problems: Problem[] = [];
   const own = files.get(pack.id) ?? [];
-  // The pack and its direct requires; its conditional part also sees its own files and the
-  // software layer with the packs it requires (§6.3, §6.5). Nothing always composed may use them.
+  // The pack and its direct requires; each conditional entry also sees its own files and its
+  // `with` pack with the packs that one requires (§6.3, §6.5). Nothing always composed may use
+  // them, and no entry uses another entry's.
   const always = declared([pack.id, ...pack.requiredIds], packs, files);
   // The software layer's id, whether or not its pack is composed: without it, slots do not exist.
   const softwareId = catalog === undefined ? undefined : softwarePack(catalog);
-  const software = softwareId === undefined ? undefined : packs.get(softwareId);
-  const part = conditionalContents(pack.manifest);
-  const partFiles = conditionalFiles(pack.manifest);
-  const partKnown = declared([pack.id, ...pack.requiredIds,
-    ...(software === undefined ? [] : [software.id, ...software.requiredIds])], packs, files);
-  for (const name of part.workflows ?? []) partKnown.workflows.add(name);
-  for (const name of part.directives ?? []) partKnown.directives.add(name);
-  const reachesSoftware = softwareId !== undefined && reachableIds([pack.id],
-    (id) => packs.get(id)?.requiredIds).includes(softwareId);
+  const reaches = (start: string[]): boolean => softwareId !== undefined
+    && reachableIds(start, (id) => packs.get(id)?.requiredIds).includes(softwareId);
+  const entries = conditionalEntries(pack.manifest).map((entry) => {
+    const withId = parseEntry(entry.with, 'requires').id;
+    const other = packs.get(withId);
+    const known = declared([pack.id, ...pack.requiredIds,
+      ...(other === undefined ? [] : [other.id, ...other.requiredIds])], packs, files);
+    for (const name of entry.contents.workflows ?? []) known.workflows.add(name);
+    for (const name of entry.contents.directives ?? []) known.directives.add(name);
+    return { entry, withId, known, files: entryFiles(entry),
+      software: withId === softwareId || reaches([pack.id, withId]) };
+  });
+  const entryOf = (path: string): (typeof entries)[number] | undefined =>
+    entries.find((part) => part.files.includes(path));
+  /** The entry shipping a workflow, other than the given one. */
+  const otherEntry = (name: string, part: (typeof entries)[number] | undefined) =>
+    entries.find((candidate) => candidate !== part
+      && (candidate.entry.contents.workflows ?? []).includes(name));
+  const reachesSoftware = reaches([pack.id]);
   const slots = new Set(catalog?.slots.map((slot) => slot.name) ?? []);
   for (const file of own.filter((candidate) => candidate.path.startsWith('workflows/'))) {
     const data = file.yaml?.data;
     if (!isDoc(data)) continue;
     const label = `${pack.id}: ${file.path}`;
-    const inPart = partFiles.includes(file.path);
-    const known = inPart ? partKnown : always;
+    const part = entryOf(file.path);
+    const known = part?.known ?? always;
+    const partReachesSoftware = part === undefined ? reachesSoftware : part.software;
     const element = data['element'];
     if (typeof element === 'string' && !known.types.has(element)) {
       problems.push(problemAt(file, '/element', 'memory-type', `${label}: element ${element} is `
@@ -134,11 +146,11 @@ export function workflowProblems(
           problems.push(problemAt(file, `${pointer}/include`, 'include', `${label}: phase ${name} `
             + `includes ${JSON.stringify(include)}; a workflow is included by its bare name, never `
             + 'by path (pack-authoring, WingFoil bug-144)'));
-        } else if (!inPart && (part.workflows ?? []).includes(include)) {
+        } else if (otherEntry(include, part) !== undefined) {
           problems.push(problemAt(file, `${pointer}/include`, 'isolation', `${label}: phase `
             + `${name} includes ${include}, a workflow of the pack's conditional part, which is `
-            + 'composed only with software (spec-001 §6.5)'));
-        } else if (!inPart && slots.has(include) && softwareId !== undefined && !reachesSoftware) {
+            + `composed only with ${otherEntry(include, part)?.withId ?? ''} (spec-001 §6.5)`));
+        } else if (slots.has(include) && softwareId !== undefined && !partReachesSoftware) {
           problems.push(problemAt(file, `${pointer}/include`, 'isolation', `${label}: phase `
             + `${name} includes the slot ${include}; slots exist only with ${softwareId}, which `
             + `${pack.id} does not require (spec-001 §6.5, §9)`));
@@ -177,10 +189,13 @@ export function workflowProblems(
     }
     for (const [pointer, ids] of lists) {
       list(ids).forEach((id, index) => {
-        if (typeof id === 'string' && (part.directives ?? []).includes(id)) {
+        // The roles fragment is always composed: it assigns no directive of any entry (§6.5).
+        const owner = entries.find((part) =>
+          typeof id === 'string' && (part.entry.contents.directives ?? []).includes(id));
+        if (typeof id === 'string' && owner !== undefined) {
           problems.push(problemAt(roles, `${pointer}/${index}`, 'isolation', `${pack.id}: roles.yaml `
             + `${pointer.slice(1)}: directive ${id} belongs to the pack's conditional part, `
-            + 'composed only with software (spec-001 §6.5)'));
+            + `composed only with ${owner.withId} (spec-001 §6.5)`));
           return;
         }
         if (typeof id === 'string' && (always.directives.has(id)
@@ -245,9 +260,10 @@ function deliveryProblems(catalog: Catalog | undefined, pack: RulePack,
   }
   const delivery = workflows.get('delivery');
   if (delivery === undefined) return [];
-  const conditional = new Set(conditionalContents(pack.manifest).workflows ?? []);
-  const always = new Set(pack.manifest.contents.workflows ?? []);
-  const deliveryInPart = conditional.has('delivery');
+  // delivery's part: contents, or the entry that ships it (§6.5, §9, dl-026, read per entry).
+  const inPart = conditionalEntries(pack.manifest).find((entry) =>
+    (entry.contents.workflows ?? []).includes('delivery'));
+  const part = new Set(inPart?.contents.workflows ?? pack.manifest.contents.workflows ?? []);
   const softwareId = softwarePack(catalog);
   const fields = releaseFields(packs.has(softwareId) ? softwareId : undefined, pack, files);
   const label = `${pack.id}: workflows/delivery.yaml`;
@@ -269,7 +285,7 @@ function deliveryProblems(catalog: Catalog | undefined, pack: RulePack,
       if (!workflows.has(include) || visited.has(include)) return;
       visited.add(include);
       // The other mismatch, a contents workflow including a conditional one, is isolation's.
-      if (deliveryInPart && always.has(include)) {
+      if (inPart !== undefined && !part.has(include)) {
         problems.push(problemAt(file, `/phases/${index}/include`, 'life-cycle-includes',
           `${pack.id}: workflows/${name}.yaml: phase ${String(phase['name'])} includes ${include}, `
           + 'which the pack ships in another part than delivery; every workflow delivery reaches '
