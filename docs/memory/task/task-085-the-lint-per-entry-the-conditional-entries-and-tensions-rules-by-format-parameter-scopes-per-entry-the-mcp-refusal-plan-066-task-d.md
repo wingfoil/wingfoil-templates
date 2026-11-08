@@ -2,7 +2,7 @@
 id: task-085-the-lint-per-entry-the-conditional-entries-and-tensions-rules-by-format-parameter-scopes-per-entry-the-mcp-refusal-plan-066-task-d
 type: task
 title: "The lint per entry: the conditional entries' and tensions' rules by format, parameter scopes per entry, the mcp refusal (plan-066 task D)"
-status: in-progress
+status: in-review
 pack: ""            # tooling task (tooling-delivery v3), plan-066 task (D)
 depends_on: ["task-084-the-composer-per-entry-active-entries-their-order-and-parameter-scopes-the-notices-of-tensions-the-mcp-refusal-plan-066-task-c"]
 tags: ["tooling","format","lint"]
