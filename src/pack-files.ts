@@ -9,10 +9,10 @@ import { isScalar } from 'yaml';
 import { formatMessage } from './formats';
 import { readFrontmatter } from './frontmatter';
 import { assetIdMessage, slotKindMessage } from './output';
-import { conditionalFiles, kindOf, listedFiles } from './pack-rules';
+import { conditionalEntries, entryFiles, kindOf, listedFiles } from './pack-rules';
 import type { PackLike } from './pack-rules';
 import { defaultMessage, referencesIn } from './parameters';
-import { reachableIds } from './requirements';
+import { parseEntry, reachableIds } from './requirements';
 import type { ParameterValue } from './parameters';
 import type { Problem } from './problems';
 import type { ParameterDeclaration } from './resolve';
@@ -57,7 +57,7 @@ export function reachable(pack: LintPack, packs: Map<string, LintPack>): string[
 
 /**
  * The parameters in a pack's scope, each with the pack declaring it; with `withPack`, the scope of
- * its conditional part, which adds that pack's and the packs it requires (§8.1, §6.5).
+ * the conditional entry naming it, which adds that pack's and the packs it requires (§8.1, §6.5).
  */
 function scopeOf(pack: LintPack, packs: Map<string, LintPack>, withPack?: string):
 Map<string, ParameterDeclaration> {
@@ -70,6 +70,15 @@ Map<string, ParameterDeclaration> {
     }
   }
   return scope;
+}
+
+/** The id an entry's `with` names, or undefined when it does not parse. */
+function withId(entry: string): string | undefined {
+  try {
+    return parseEntry(entry, 'requires').id;
+  } catch {
+    return undefined;
+  }
 }
 
 function lineOf(text: string, offset: number): { line: number; column: number } {
@@ -165,7 +174,6 @@ export function readPackFiles(
   pack: LintPack,
   packs: Map<string, LintPack>,
   slots: Set<string>,
-  software?: string,
 ): { files: PackFile[]; problems: Problem[] } {
   const problems: Problem[] = [];
   for (const [name, declaration] of Object.entries(pack.manifest.parameters ?? {})) {
@@ -176,12 +184,20 @@ export function readPackFiles(
         message });
     }
   }
-  const always = scopeOf(pack, packs);
-  const entry = conditionalFiles(pack.manifest);
-  const conditional = scopeOf(pack, packs, software);
+  // Each part with its own scope: contents the pack's, each entry its with pack's too (§6.5).
+  const parts: { paths: string[]; scope: Map<string, ParameterDeclaration>; label: string }[] = [
+    { paths: listedFiles(pack.manifest.contents), scope: scopeOf(pack, packs), label: pack.id },
+    ...conditionalEntries(pack.manifest).map((entry) => ({ paths: entryFiles(entry),
+      scope: scopeOf(pack, packs, withId(entry.with)),
+      label: `${pack.id}'s entry with ${entry.with}` })),
+  ];
   const files: PackFile[] = [];
-  for (const path of [...listedFiles(pack.manifest.contents), ...entry]) {
-    const scope = entry.includes(path) ? conditional : always;
+  const read = new Set<string>();
+  for (const { path, scope, label } of parts.flatMap((part) =>
+    part.paths.map((path) => ({ path, scope: part.scope, label: part.label })))) {
+    // A file listed twice is the inventory rule's problem; it is read once.
+    if (read.has(path)) continue;
+    read.add(path);
     const file = `${pack.path}/${path}`;
     // A missing file, or a directory in its place, is the inventory rule's problem.
     if (!existsSync(join(tree, file)) || !lstatSync(join(tree, file)).isFile()) continue;
@@ -189,7 +205,7 @@ export function readPackFiles(
     for (const reference of referencesIn(raw)) {
       if (!scope.has(reference.name)) {
         problems.push({ file, ...lineOf(raw, reference.offset), rule: 'parameter-scope',
-          message: `${file}: {{${reference.name}}} names no parameter in the scope of ${pack.id}` });
+          message: `${file}: {{${reference.name}}} names no parameter in the scope of ${label}` });
       }
     }
     const text = raw.replace(/\{\{([a-z][a-z0-9_]*)\}\}/g, (_match, name: string) => {

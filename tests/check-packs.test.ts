@@ -1130,8 +1130,11 @@ describe('format 2: conditional entries, tensions, scopes and mcp (spec-001 §6.
   });
 
   it('conditional: a with naming no pack directory, the pack itself, or a pack id twice', () => {
-    const one = (entries: NonNullable<PackSpec['conditional']>, extra: Partial<PackSpec> = {}): string[] => {
-      const result = lint(TREE(stage({ conditional: entries, ...extra })));
+    type Entries = NonNullable<PackSpec['conditional']>;
+    const one = (entries: Entries, extra: Partial<PackSpec> = {}): string[] => {
+      // s-gov plain: only an entry with governance/g sees g_param.
+      const result = lint(TREE(stage({ conditional: entries, ...extra, extraFiles: {
+        'directives/s-gov.md': directive('s-gov'), ...extra.extraFiles } })));
       assert.deepEqual(rules(result), ['conditional'], result.lines.join('\n'));
       return of(result, 'conditional');
     };

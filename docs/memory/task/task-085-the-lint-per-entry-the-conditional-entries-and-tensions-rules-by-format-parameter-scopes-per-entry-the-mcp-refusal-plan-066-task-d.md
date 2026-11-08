@@ -147,3 +147,15 @@ body (it throws), uncalled; (2) the code, committed. No new dependency.
   `conditionalProblems` taking an absent catalog, Acceptance 4's claim narrowed, ruling point 1's
   wording, §18's "catalog pack" read as a pack directory. The message of a misordered format-1
   pack's fragments will name `mcp` too (its test asserts the rule only), left as is.
+- 2026-11-08: red (dl-018), commit 183986b: the tests of Acceptance 2 … 7, `conditionalProblems`'
+  signature with no body, uncalled. `npm run build && node --test dist/tests/check-packs.test.js`:
+  113 tests, 9 failing by assertion; one green already, the order rule skipped when `catalog.yaml`
+  does not load (no rule reported any `conditional` problem there yet).
+- 2026-11-08: after the red commit, one fixture fixed: the cases of a `with` naming no pack
+  directory or the pack itself kept `s-gov`'s `{{g_param}}`, outside the scope of an entry no
+  longer naming `governance/g`; `s-gov` is now plain there.
+- 2026-11-08: green, readings taken: `base`, like `software`, is always composed earlier (§7.1's
+  step 1); an entry naming `software`, which the pack requires, stays `foundationProblems`' (one
+  problem, not two); a file listed in two parts, already the inventory rule's problem, is read once,
+  with its first part's scope; a format-1 entry keeps `software`'s scope, its message now naming
+  the entry as every entry's does; `readPackFiles` loses its `software` argument.

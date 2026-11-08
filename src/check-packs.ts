@@ -4,7 +4,7 @@
 import { existsSync, lstatSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { CatalogError, loadCatalog, softwarePack } from './catalog';
+import { CatalogError, loadCatalog } from './catalog';
 import { exampleProblems } from './example-rules';
 import { EXAMPLES } from './examples';
 import type { Catalog } from './catalog';
@@ -13,7 +13,8 @@ import { packLayoutProblems, treeLayout } from './layout-rules';
 import { reachable, readPackFiles } from './pack-files';
 import type { LintPack, PackFile } from './pack-files';
 import {
-  formatKindsProblems, foundationProblems, inventoryProblems, manifestProblems, slotProblems,
+  conditionalProblems, formatKindsProblems, foundationProblems, inventoryProblems, manifestProblems,
+  mcpProblems, slotProblems,
 } from './pack-rules';
 import { installListed, readmeProblems } from './readme-rules';
 import { parseEntry } from './requirements';
@@ -45,6 +46,8 @@ export interface LintContext {
   tree: string;
   catalog: Catalog | undefined;
   packs: Map<string, LintPack>;
+  /** The ids with a `packs/<id>/pack.yaml`, whether or not it passes its schema (task-085). */
+  packDirs: string[];
   files: Map<string, PackFile[]>;
   /** Files that failed their schema, relative to the tree. */
   broken: Set<string>;
@@ -105,14 +108,14 @@ function packProblems(context: LintContext): Problem[] {
   for (const pack of context.packs.values()) {
     problems.push(...manifestProblems(pack), ...inventoryProblems(context.tree, pack),
       ...formatKindsProblems(pack), ...packLayoutProblems(context.tree, pack),
-      ...readmeProblems(context.tree, pack, listed));
+      ...readmeProblems(context.tree, pack, listed), ...mcpProblems(pack),
+      ...conditionalProblems(context.catalog, pack, context.packDirs));
     if (context.catalog !== undefined) {
       const reached = reachable(pack, context.packs);
       problems.push(...foundationProblems(context.catalog, pack, reached),
         ...slotProblems(context.catalog, pack, reached));
     }
-    const read = readPackFiles(context.tree, pack, context.packs, slots,
-      context.catalog === undefined ? undefined : softwarePack(context.catalog));
+    const read = readPackFiles(context.tree, pack, context.packs, slots);
     context.files.set(pack.id, read.files);
     problems.push(...read.problems);
   }
@@ -171,7 +174,7 @@ export function lintContext(tree: string, broken: Set<string>, problems: Problem
       if (!(error instanceof CatalogError) && !(error instanceof YamlError)) throw error;
     }
   }
-  return { tree, catalog, broken, files: new Map(),
+  return { tree, catalog, broken, files: new Map(), packDirs: layout.packs,
     packs: loadPacks(tree, layout.packs, problems) };
 }
 
