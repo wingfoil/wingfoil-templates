@@ -170,3 +170,12 @@ body (it throws), uncalled; (2) the code, committed. No new dependency.
   parameters"); a test of an entry naming `base`, first written so that the schema refused its
   pack (no `base` in `requires`), now asserting the `requires` refusal; comments in `orderOf` on
   foundation ids and on ids outside the catalog's axes.
+- 2026-11-08: the checks (Acceptance 9), on the frozen commit 9a58fb2: branch CI run 42503733888
+  `success`, `validate (22.21.0)` 22:08 and `validate (22.12.0)` 23:39 (G12's 25 minutes held,
+  the margin narrow, as on main); dl-039's local list on Node.js 22.21.0 from a clean worktree:
+  `npm ci`, `npm run build`, `npm run validate:publication` (18 runs, 0 failed), the same on the
+  golden tree with `--param project_name=Golden` (26 runs, 0 failed), `workflow list`,
+  `directives list --format json` (`warnings []`), `npm run lint`, each exit 0. Before them, on
+  the green commit: `npm test` 1252 of 1252, `validate`, `check:packs` (74 files, 0 problems),
+  `check:schemas`, `check:pins` and the index check exit 0. The privacy check of the branch's
+  diff: no local path, no private project, no session.
