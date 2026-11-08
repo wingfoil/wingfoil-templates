@@ -233,3 +233,6 @@ points 4 and 6 included.
   `deliveryProblems`, the inventory, `formats`, slots and the foundation rule per entry and by
   format, shared with the lint; (D) keeps the rest (task-084's Context). `main`'s CI on the merge
   read in the next note.
+- 2026-11-08: `main`'s CI on task-084's merge (pushed with this plan's note, `19b26ef`), run
+  42492253200, `success` (22.12.0 16 min 29 s, 22.21.0 22 min 11 s), under 25 minutes (G12),
+  the margin on 22.21.0 still narrow.
