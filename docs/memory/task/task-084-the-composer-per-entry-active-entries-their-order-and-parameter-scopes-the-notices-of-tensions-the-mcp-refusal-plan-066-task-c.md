@@ -2,7 +2,7 @@
 id: task-084-the-composer-per-entry-active-entries-their-order-and-parameter-scopes-the-notices-of-tensions-the-mcp-refusal-plan-066-task-c
 type: task
 title: "The composer per entry: active entries, their order and parameter scopes, the notices of tensions, the mcp refusal (plan-066 task C)"
-status: in-review
+status: approved
 pack: ""            # tooling task (tooling-delivery v3), plan-066 task (C)
 depends_on: ["task-082-schemas-at-format-2-pack.yaml-catalog.yaml-and-the-index-format-1-frozen-validation-by-format-plan-066-task-a"]
 tags: ["tooling","format","composer"]
