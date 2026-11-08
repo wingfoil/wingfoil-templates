@@ -86,7 +86,9 @@ Applies to every role that writes or reviews pack content under `packs/`.
   pack speaks, or through a bridge: a conditional entry of a pack composed later than the stricter
   one, with directives and workflows only (spec-001 §6.5). Waiver wording ("skip", "not required",
   "optional", "ignore") in an overlay's or a `stage/*` pack's directive about something it does not
-  ship is reported for review, a bridge exempt (spec-001 §18). The stricter pack declares a
+  ship is reported for review, a bridge exempt (spec-001 §18): `npm run check:packs` prints these
+  hits as `review:` lines, its exit unchanged, and at `pack-release-cycle` › `prepare` the
+  `pack-release` element's review records each hit with its verdict. The stricter pack declares a
   combination that needs care in `tensions`, with its resolution (format 2, spec-001 §6.2);
   `conflicts` stays for real incompatibilities. What remains after the precedence is escalated,
   never chosen (spec-001 §10.1): a decision-log, and a ruling that becomes a project `custom/`
