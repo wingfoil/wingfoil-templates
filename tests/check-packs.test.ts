@@ -1289,7 +1289,8 @@ describe('the waiver heuristic: a review list for overlay and stage directives (
     + 'A skipper keeps optionality.\n'
     + 'Value {{s_param}} then ignore it.\n'
     + 'Use {{s_param}} freely.\n'
-    + 'It is not  required.\n';
+    + 'It is not  required.\n'
+    + 'It is not\trequired; skipped.\n';
   function stage(extra: Partial<PackSpec> = {}): PackSpec {
     return { id: 'stage/s', format: 2, workflows: ['s-board'], directives: ['s-rule'],
       conditional: [{ with: 'governance/g@^1', directives: ['s-bridge'] },
@@ -1301,6 +1302,7 @@ describe('the waiver heuristic: a review list for overlay and stage directives (
         'directives/s-bridge.md': `${fm('s-bridge')}# b\nSkip the stricter check here.\n`,
         'directives/s-sw.md': `${fm('s-sw')}# w\nThe log is Ignored.\n`, ...extra.extraFiles } };
   }
+  // Its frontmatter's `id: skip-list` holds a waiver word (`-` is a word boundary): no hit there.
   const T: PackSpec = { id: 'team-mode/t', directives: ['skip-list'],
     extraFiles: { 'directives/skip-list.md': `${fm('skip-list')}# t\nOptionally pair.\n` } };
   const B: PackSpec = { id: 'blueprint/b', directives: ['b-rule'],
@@ -1314,6 +1316,8 @@ describe('the waiver heuristic: a review list for overlay and stage directives (
   const EXPECTED = [
     `${S}/s-rule.md:10:7: waiver: stage/s: directives/s-rule.md uses waiver wording `
       + `("not required"): ${tail}`,
+    `${S}/s-rule.md:11:7: waiver: stage/s: directives/s-rule.md uses waiver wording `
+      + `("not required", "skipped"): ${tail}`,
     `${S}/s-rule.md:6:1: waiver: stage/s: directives/s-rule.md uses waiver wording ("skip", `
       + `"optional"): ${tail}`,
     `${S}/s-rule.md:8:24: waiver: stage/s: directives/s-rule.md uses waiver wording ("ignore"): `
