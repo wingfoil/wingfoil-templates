@@ -35,7 +35,8 @@ After `npm ci` and `npm run build`, the main commands are:
 - `npm run validate`: the one validation command, which checks the schemas, the lint and the
   index, and composes every preset and example twice and runs them through the compatibility
   matrix;
-- `npm run check:packs`: the lint rules alone;
+- `npm run check:packs`: the lint rules alone, then a `review:` line for each waiver word in an
+  overlay's or a `stage/*` pack's directive, for review, its exit unchanged (spec-001 §18);
 - `npm run index`: writes `CATALOG.md`, `catalog-index.json`, `llms.txt` and the generated
   sections of each pack README (`--check` compares them);
 - `npm run compose`: composes packs into a `.wingfoil/` configuration;
