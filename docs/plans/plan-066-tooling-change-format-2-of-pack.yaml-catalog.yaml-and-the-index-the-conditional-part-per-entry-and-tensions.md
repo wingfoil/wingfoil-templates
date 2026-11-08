@@ -224,3 +224,6 @@ points 4 and 6 included.
   its branch CI run 42461942893 `success` (22.12.0 20 min 22 s, 22.21.0 22 min 21 s, a narrow
   margin under G12's 25 minutes); the root `catalog.yaml` at format 2. `main`'s CI on the merge
   read in the next note.
+- 2026-11-08: `main`'s CI on task-083's merge (pushed with this plan's note, `dcb3be5`), run
+  42478138860, `success` (22.12.0 17 min 57 s, 22.21.0 22 min 19 s), under 25 minutes (G12)
+  with a narrow margin on 22.21.0.
