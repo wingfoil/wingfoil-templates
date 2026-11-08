@@ -56,12 +56,12 @@ stricter packs require: their rows, owner the approver, trigger the first `stage
    `{{name}}` references left in place (no parameter substituted, so no default adds or hides a
    word, and lines and columns are the file's, 1-based, a BOM not counted). The body starts on
    the line after the frontmatter's closing `---`, read with `src/frontmatter.ts`'s pattern (a
-   BOM and CRLF line ends allowed); a directive with no frontmatter is read whole. Line by line, case-insensitive, whole words
-   (`\b`, so `non-optional` hits and `skipper`, `optionality`, `optional_x` do not; a hyphenated
-   word is left to the reviewer): `skip`, `skips`, `skipped`, `skipping`, `optional`, `optionally`,
-   `ignore`, `ignores`, `ignored`, `ignoring`, and `not required` with any run of spaces or tabs
-   between the two words, never across two lines. One hit per line holding any of them, at the
-   line and column of the first, its message
+   BOM and CRLF line ends allowed); a directive with no frontmatter is read whole. Line by line,
+   case-insensitive, whole words (`\b`, so `non-optional` hits and `skipper`, `optionality`,
+   `optional_x` do not; a hyphenated word is left to the reviewer): `skip`, `skips`, `skipped`,
+   `skipping`, `optional`, `optionally`, `ignore`, `ignores`, `ignored`, `ignoring`, and
+   `not required` with any run of spaces or tabs between the two words, never across two lines.
+   One hit per line holding any of them, at the line and column of the first, its message
    `<pack>: <path> uses waiver wording (<words>): review whether it waives a rule of a pack it does
    not ship (spec-001 §18, dl-025 D1)`, `<path>` the file's path within the pack
    (`directives/<name>.md`), as `src/pack-rules.ts`'s messages write it, `<words>` the line's
