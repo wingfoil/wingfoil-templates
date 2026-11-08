@@ -2,7 +2,7 @@
 id: task-083-the-catalog-at-format-2-publish-writes-pack-format-check-packs-compares-it-the-root-catalog.yaml-at-format-2-plan-066-task-b
 type: task
 title: "The catalog at format 2: publish writes pack_format, check:packs compares it, the root catalog.yaml at format 2 (plan-066 task B)"
-status: backlog
+status: in-progress
 pack: ""            # tooling task (tooling-delivery v3), plan-066 task (B)
 depends_on: ["task-082-schemas-at-format-2-pack.yaml-catalog.yaml-and-the-index-format-1-frozen-validation-by-format-plan-066-task-a"]
 tags: ["tooling","format","catalog"]
