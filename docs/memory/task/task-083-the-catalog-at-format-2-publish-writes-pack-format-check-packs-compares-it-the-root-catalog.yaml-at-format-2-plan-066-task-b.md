@@ -104,3 +104,4 @@ working-tree file. No new dependency.
   entry is added to, each test writing its catalog's format itself, a format-2 pack in a format-2
   catalog left to §5's exception, Acceptance 3's "when the tagged file is read", Acceptance 4's
   evidence named.
+- 2026-11-08: re-review: approve, nothing blocking.
