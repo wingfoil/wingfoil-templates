@@ -105,3 +105,8 @@ working-tree file. No new dependency.
   catalog left to §5's exception, Acceptance 3's "when the tagged file is read", Acceptance 4's
   evidence named.
 - 2026-11-08: re-review: approve, nothing blocking.
+- 2026-11-08: started (`backlog → in-progress`) on `task/task-083-catalog-format-2`. Red
+  (dl-018), step (1): the tests of Acceptance 2, 3 and 5; `npm run build` and `npm run lint` exit
+  0; `node --test dist/tests/publish.test.js dist/tests/tag-rules.test.js
+  dist/tests/catalog.test.js`: 46 tests, 7 failing, each by assertion (no `pack_format` written,
+  none compared, the format-1 refusal absent, the root catalog at format 1).
