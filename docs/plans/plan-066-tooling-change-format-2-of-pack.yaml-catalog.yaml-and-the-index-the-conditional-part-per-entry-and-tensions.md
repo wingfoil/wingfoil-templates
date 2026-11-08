@@ -236,3 +236,16 @@ points 4 and 6 included.
 - 2026-11-08: `main`'s CI on task-084's merge (pushed with this plan's note, `19b26ef`), run
   42492253200, `success` (22.12.0 16 min 29 s, 22.21.0 22 min 11 s), under 25 minutes (G12),
   the margin on 22.21.0 still narrow.
+- 2026-11-08: `main`'s CI on task-085's start (`dc5e338`, task-084's notes and task-085's add
+  pushed together), run 42500865053, `success` (22.12.0 22 min 35 s, 22.21.0 17 min 45 s), under
+  25 minutes (G12).
+- 2026-11-08: task (D), task-085, added, reviewed, re-reviewed, approved to `backlog` by the
+  approver with rulings 1 and 2 as recommended (the static reading of "composed earlier", a
+  same-axis `with` refused; the left-out compositions to (F)), built, approved, merged `--no-ff`
+  (`8a9740b`) and done; its branch CI run 42503733888 `success` (22.12.0 23 min 39 s, 22.21.0
+  22 min 8 s), the margin under G12's 25 minutes narrow. The lint now checks `with` and `tensions`
+  at format 2, `mcp` last in the fragments' order, parameter scopes per entry, and refuses `mcp`
+  under its own rule. For (F): §7.6's one owner and §9's slots on the compositions with an
+  entry's pack left out. For the wave close: the static reading of §18's "composed earlier"
+  (ruling 1) and of "catalog pack" as a pack directory of the tree. `main`'s CI on the merge read
+  in the next note.
