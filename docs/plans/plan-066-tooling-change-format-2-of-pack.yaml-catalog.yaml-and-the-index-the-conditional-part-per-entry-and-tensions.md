@@ -227,3 +227,9 @@ points 4 and 6 included.
 - 2026-11-08: `main`'s CI on task-083's merge (pushed with this plan's note, `dcb3be5`), run
   42478138860, `success` (22.12.0 17 min 57 s, 22.21.0 22 min 19 s), under 25 minutes (G12)
   with a narrow margin on 22.21.0.
+- 2026-11-08: task (C), task-084, added, reviewed, re-reviewed, approved to `backlog` by the
+  approver, built, approved, merged `--no-ff` (`0750014`) and done; its branch CI run 42487729736
+  `success` (22.12.0 14 min 34 s, 22.21.0 15 min 10 s). The composer reads `workflowProblems`,
+  `deliveryProblems`, the inventory, `formats`, slots and the foundation rule per entry and by
+  format, shared with the lint; (D) keeps the rest (task-084's Context). `main`'s CI on the merge
+  read in the next note.
