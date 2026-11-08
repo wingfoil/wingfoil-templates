@@ -1068,3 +1068,24 @@ describe('npm run validate --overlay (task-046, plan-046 ruling 1)', () => {
     assert.equal(runSite(['--overlay', OVERLAY]).code, 3);
   });
 });
+
+describe('npm run validate: the waiver heuristic\'s review list left out (task-086)', () => {
+  const W = (body: string): PackSpec => ({ id: 'stage/w', directives: ['w-rule'],
+    extraFiles: { 'directives/w-rule.md': `---\nid: w-rule\nformat: 1\n---\n# w\n${body}\n` } });
+  const run = (body: string): ValidateResult => {
+    let result: ValidateResult | undefined;
+    withTree((tree) => writePack(tree, W(body)), (tree) => {
+      result = validate(['--tree', tree, ...NAME]);
+    }, true);
+    assert.ok(result !== undefined);
+    return result;
+  };
+
+  it('gives the same result with and without a hit, and no review line', () => {
+    const plain = run('Keep the log.');
+    const hit = run('Skip the log.');
+    assert.equal(hit.code, plain.code);
+    assert.deepEqual(hit.lines, plain.lines);
+    assert.ok(!hit.lines.some((line) => line.includes('review:')), hit.lines.join('\n'));
+  });
+});

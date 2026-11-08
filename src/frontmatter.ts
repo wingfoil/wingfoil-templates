@@ -11,3 +11,12 @@ export function readFrontmatter(text: string, file: string): LoadedYaml | undefi
   if (match === null) return undefined;
   return parseYaml(match[1] ?? '', file);
 }
+
+/**
+ * The 0-based index of a Markdown file's first body line: the line after the frontmatter's
+ * closing `---`, or 0 when the file has none.
+ */
+export function bodyStart(text: string): number {
+  void text;
+  throw new Error('bodyStart: not implemented yet (task-086)');
+}

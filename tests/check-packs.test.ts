@@ -11,6 +11,7 @@ import { runCheckPacks } from '../src/check-packs';
 import { loadCatalog } from '../src/catalog';
 import { composeDocuments } from '../src/compose-documents';
 import type { CheckPacksResult } from '../src/check-packs';
+import { formatProblem } from '../src/problems';
 import { FIXTURES, FIXTURE_CATALOG, REPO_ROOT } from './support/paths';
 import { FROZEN_COMPAT } from './support/published-repo';
 import {
@@ -1273,5 +1274,102 @@ describe('format 2: conditional entries, tensions, scopes and mcp (spec-001 §6.
     assert.deepEqual(of(always, 'parameter-scope'), ['packs/stage/s/workflows/s-board.yaml: '
       + 'packs/stage/s/workflows/s-board.yaml: {{g_param}} names no parameter in the scope of '
       + 'stage/s'], always.lines.join('\n'));
+  });
+});
+
+// plan-066 task (E), task-086: the waiver heuristic, a review list (spec-001 §18, dl-025 D1).
+describe('the waiver heuristic: a review list for overlay and stage directives (§18)', () => {
+  const fm = (id: string): string => `---\nid: ${id}\nformat: 1\n---\n`;
+  /** governance/g declares a tension naming stage/s: s-bridge, its entry with g, is a bridge. */
+  const G: PackSpec = { id: 'governance/g', format: 2, directives: ['g-rule'],
+    tensions: [{ pack: 'stage/s@^1', resolution: 'Bridge it.' }],
+    extraFiles: { 'directives/g-rule.md': `${fm('g-rule')}# g\n` } };
+  const S_RULE = `${fm('s-rule')}# s\n`
+    + 'Skip the review when optional, and skip it again.\n'
+    + 'A skipper keeps optionality.\n'
+    + 'Value {{s_param}} then ignore it.\n'
+    + 'Use {{s_param}} freely.\n'
+    + 'It is not  required.\n';
+  function stage(extra: Partial<PackSpec> = {}): PackSpec {
+    return { id: 'stage/s', format: 2, workflows: ['s-board'], directives: ['s-rule'],
+      conditional: [{ with: 'governance/g@^1', directives: ['s-bridge'] },
+        { with: 'software@^1', directives: ['s-sw'] }],
+      ...extra,
+      manifest: { parameters: { s_param: { type: 'string', default: 'optional',
+        description: 'a default holding a waiver word' } }, ...extra.manifest },
+      extraFiles: { 'directives/s-rule.md': S_RULE,
+        'directives/s-bridge.md': `${fm('s-bridge')}# b\nSkip the stricter check here.\n`,
+        'directives/s-sw.md': `${fm('s-sw')}# w\nThe log is Ignored.\n`, ...extra.extraFiles } };
+  }
+  const T: PackSpec = { id: 'team-mode/t', directives: ['skip-list'],
+    extraFiles: { 'directives/skip-list.md': `${fm('skip-list')}# t\nOptionally pair.\n` } };
+  const B: PackSpec = { id: 'blueprint/b', directives: ['b-rule'],
+    extraFiles: { 'directives/b-rule.md': `${fm('b-rule')}# b\nSkip it, ignore it.\n` } };
+  const TREE = (s: PackSpec = stage()): PackSpec[] => [...CLEAN, G, s, T, B];
+  const hits = (result: CheckPacksResult): string[] => result.reviews.map(formatProblem);
+  const S = 'packs/stage/s/directives';
+  const tail = 'review whether it waives a rule of a pack it does not ship '
+    + '(spec-001 §18, dl-025 D1)';
+  // In byte order of their lines, as problems are sorted: line 10 before line 6.
+  const EXPECTED = [
+    `${S}/s-rule.md:10:7: waiver: stage/s: directives/s-rule.md uses waiver wording `
+      + `("not required"): ${tail}`,
+    `${S}/s-rule.md:6:1: waiver: stage/s: directives/s-rule.md uses waiver wording ("skip", `
+      + `"optional"): ${tail}`,
+    `${S}/s-rule.md:8:24: waiver: stage/s: directives/s-rule.md uses waiver wording ("ignore"): `
+      + tail,
+    `${S}/s-sw.md:6:12: waiver: stage/s: directives/s-sw.md uses waiver wording ("ignored"): `
+      + tail,
+    'packs/team-mode/t/directives/skip-list.md:6:1: waiver: team-mode/t: directives/skip-list.md '
+      + `uses waiver wording ("optionally"): ${tail}`,
+  ];
+
+  it('lists each hit by file, line, column and message, the exit and problems unchanged', () => {
+    const result = lint(TREE());
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    assert.deepEqual(hits(result), EXPECTED);
+    assert.ok(result.lines.every((line) => !line.includes('waiver')), result.lines.join('\n'));
+  });
+
+  it('a bridge is exempt; the same directive in a non-bridge entry too is read', () => {
+    const both = lint(TREE(stage({ conditional: [
+      { with: 'governance/g@^1', directives: ['s-bridge'] },
+      { with: 'software@^1', directives: ['s-sw', 's-bridge'] }] })));
+    assert.ok(hits(both).includes(`${S}/s-bridge.md:6:1: waiver: stage/s: directives/s-bridge.md `
+      + `uses waiver wording ("skip"): ${tail}`), hits(both).join('\n'));
+  });
+
+  it('an entry whose with pack is missing exempts nothing', () => {
+    const result = lint(TREE(stage({ conditional: [
+      { with: 'governance/none@^1', directives: ['s-bridge'] },
+      { with: 'software@^1', directives: ['s-sw'] }] })));
+    assert.ok(hits(result).some((line) => line.startsWith(`${S}/s-bridge.md:6:1: `)),
+      hits(result).join('\n'));
+  });
+
+  it('a directive with no frontmatter is read whole', () => {
+    const result = lint(TREE(stage({ extraFiles: { 'directives/s-sw.md': 'Skip all.\n' } })));
+    assert.ok(hits(result).some((line) => line.startsWith(`${S}/s-sw.md:1:1: waiver: `)),
+      hits(result).join('\n'));
+  });
+
+  it('without catalog.yaml: a stage/* pack is read, a team-mode/* pack is not', () => {
+    const result = lint(TREE(), (root) => rmSync(join(root, 'catalog.yaml')));
+    const files = new Set(result.reviews.map((review) => review.file));
+    assert.ok(files.has(`${S}/s-rule.md`), hits(result).join('\n'));
+    assert.ok(!files.has('packs/team-mode/t/directives/skip-list.md'), hits(result).join('\n'));
+  });
+
+  it('npm run check:packs prints the review lines after its report, exit 0', () => {
+    withPackTree(TREE(), (root) => {
+      copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
+      writeFileSync(join(root, 'compat.yaml'), FROZEN_COMPAT);
+      const cli = join(REPO_ROOT, 'dist', 'src', 'check-packs-cli.js');
+      const result = spawnSync(process.execPath, [cli, '--tree', root], { encoding: 'utf8' });
+      assert.equal(result.status, 0, result.stdout);
+      const lines = result.stdout.trimEnd().split('\n');
+      assert.match(lines[0] ?? '', /^lint: checked \d+ files, 0 problems$/);
+      assert.deepEqual(lines.slice(1), EXPECTED.map((line) => `review: ${line}`));
+    });
   });
 });
