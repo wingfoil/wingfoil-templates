@@ -154,8 +154,19 @@ body (it throws), uncalled; (2) the code, committed. No new dependency.
 - 2026-11-08: after the red commit, one fixture fixed: the cases of a `with` naming no pack
   directory or the pack itself kept `s-gov`'s `{{g_param}}`, outside the scope of an entry no
   longer naming `governance/g`; `s-gov` is now plain there.
-- 2026-11-08: green, readings taken: `base`, like `software`, is always composed earlier (§7.1's
-  step 1); an entry naming `software`, which the pack requires, stays `foundationProblems`' (one
-  problem, not two); a file listed in two parts, already the inventory rule's problem, is read once,
-  with its first part's scope; a format-1 entry keeps `software`'s scope, its message now naming
-  the entry as every entry's does; `readPackFiles` loses its `software` argument.
+- 2026-11-08: green, readings taken: a foundation pack is always composed earlier (§7.1's steps 1
+  and 2), though an entry naming `base`, which every non-foundation pack requires, is refused as
+  naming a pack of `requires`; an entry naming `software`, which the pack requires, stays
+  `foundationProblems`' (one problem, not two); a file listed in two parts, already the inventory
+  rule's problem, is read once, with its first part's scope; a format-1 entry keeps `software`'s
+  scope, its message now naming the entry as every entry's does, and gets it from its `with` when
+  `catalog.yaml` does not load (before, its own scope only: a false `parameter-scope` problem);
+  `readPackFiles` loses its `software` argument.
+- 2026-11-08: build review: approve, five non-blocking findings, applied: the `compose` assertion
+  of the formats-only `mcp` case dropped (that pack already had a `formats` problem; the `mcp`-last
+  case, with `mcp` its only rule, proves it); the misordered fragments asserted by file and
+  message; the scope reading without `catalog.yaml` recorded above (the format-1 entry using
+  `software`'s parameters keeps its test, "the entry may use software's types, workflows and
+  parameters"); a test of an entry naming `base`, first written so that the schema refused its
+  pack (no `base` in `requires`), now asserting the `requires` refusal; comments in `orderOf` on
+  foundation ids and on ids outside the catalog's axes.

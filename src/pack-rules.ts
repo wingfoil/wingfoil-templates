@@ -201,11 +201,13 @@ const NO_DIRECTORY = 'which has no pack directory in the tree (spec-001 §18)';
  */
 function orderOf(catalog: Catalog, pack: PackLike, id: string):
 'earlier' | 'never' | 'later' | undefined {
+  // Foundation packs come first (§7.1); base, always required, is refused before this.
   if (catalog.foundation.includes(id)) return 'earlier';
   const segments = id.split('/');
   const names = catalog.axes.map((axis) => axis.name);
   const theirs = names.indexOf(segments[0] ?? '');
   const ours = names.indexOf(pack.manifest.axis ?? '');
+  // An id outside the catalog's axes is the layout rule's problem.
   if (theirs < 0 || ours < 0) return undefined;
   if (theirs !== ours) return theirs < ours ? 'earlier' : 'later';
   const axis = catalog.axes[ours];

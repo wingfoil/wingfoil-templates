@@ -1191,6 +1191,14 @@ describe('format 2: conditional entries, tensions, scopes and mcp (spec-001 §6.
     }
   });
 
+  it('conditional: a with naming base, which every non-foundation pack requires', () => {
+    const result = lint(TREE({ id: 'blueprint/b', format: 2, directives: ['b'],
+      conditional: [{ with: 'base@^1', directives: ['e'] }] }));
+    assert.deepEqual(rules(result), ['conditional'], result.lines.join('\n'));
+    assert.deepEqual(of(result, 'conditional'), ['packs/blueprint/b/pack.yaml: blueprint/b: its '
+      + 'entry with base@^1 names base, which its requires lists (spec-001 §6.5)']);
+  });
+
   it('conditional: the order rule is skipped when catalog.yaml does not load', () => {
     const late: PackSpec = { id: 'blueprint/b', format: 2, directives: ['b'],
       conditional: [{ with: 'stage/t@^1', directives: ['e'] }] };
@@ -1231,19 +1239,21 @@ describe('format 2: conditional entries, tensions, scopes and mcp (spec-001 §6.
       directives: ['m'], fragments,
       extraFiles: { 'fragments/mcp.yaml': 'format: 1\n', 'fragments/dna.yaml': 'format: 1\n' } });
     const last = lint(TREE(mcp(['dna', 'mcp'])));
+    // Exactly mcp: the pack's own rule reported it, so no compose problem follows.
     assert.deepEqual(rules(last), ['mcp'], last.lines.join('\n'));
     assert.deepEqual(of(last, 'mcp'), ['packs/blueprint/m/pack.yaml: blueprint/m: ships the mcp '
       + 'kind, which no WingFoil release reads yet (spec-001 §7.8); refused until its tooling '
       + '(plan-066 ruling 6)']);
     const first = lint(TREE(mcp(['mcp', 'dna'])));
     assert.deepEqual(rules(first), ['fragment-order', 'mcp'], first.lines.join('\n'));
+    assert.deepEqual(of(first, 'fragment-order'), ['packs/blueprint/m/pack.yaml: blueprint/m: '
+      + 'contents.fragments must keep the order dna, roles, memory, mcp']);
   });
 
-  it('mcp: in formats alone, and no compose problem for the pack', () => {
+  it('mcp: in formats alone', () => {
     const result = lint(TREE({ id: 'blueprint/m', format: 2, directives: ['m'],
       manifest: { formats: { directive: 1, mcp: 1 } } }));
     assert.deepEqual(rules(result), ['formats', 'mcp'], result.lines.join('\n'));
-    assert.deepEqual(of(result, 'compose'), []);
   });
 
   it('parameter-scope: each entry its own with pack\'s parameters, no other entry\'s', () => {
