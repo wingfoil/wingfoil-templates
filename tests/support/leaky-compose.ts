@@ -14,12 +14,19 @@ const LEAKS: Record<string, () => string> = {
   tmpdir: () => tmpdir(),
 };
 
-export function runCompose(argv: string[]): { code: number; message?: string } {
+export function runCompose(argv: string[]):
+{ code: number; message?: string; notices?: string[] } {
   const leak = process.env['LEAK'] ?? 'none';
   if (leak === 'kill') process.kill(process.pid, 'SIGKILL');
   if (leak === 'io') return { code: 2, message: 'cannot write the output' };
   const out = argv[argv.indexOf('--out') + 1] ?? '';
   mkdirSync(out, { recursive: true });
   writeFileSync(join(out, 'leak.txt'), `${(LEAKS[leak] ?? LEAKS['none'])?.() ?? ''}\n`);
+  // A tension's notice (spec-001 §17 step 8, task-084): the same in both runs, or one that reads
+  // the home directory, which the second run changes.
+  if (leak === 'notice') return { code: 0, notices: ['notice: a and b: c.'] };
+  if (leak === 'notice-home') {
+    return { code: 0, notices: [`notice: a and b: ${process.env['HOME'] ?? ''}`] };
+  }
   return { code: 0 };
 }

@@ -91,6 +91,19 @@ export function manifestProblems(pack: PackLike): Problem[] {
   return problems;
 }
 
+/** A conditional entry (spec-001 §6.5). */
+export type ConditionalEntry = NonNullable<PackManifest['conditional']>[number];
+
+/** A pack's conditional entries, in written order; none when it has no conditional part. */
+export function conditionalEntries(manifest: PackManifest): ConditionalEntry[] {
+  throw new Error(`conditionalEntries: not implemented (task-084), ${manifest.id}`);
+}
+
+/** The files of one conditional entry, relative to the pack (spec-001 §6.5). */
+export function entryFiles(entry: ConditionalEntry): string[] {
+  throw new Error(`entryFiles: not implemented (task-084), ${entry.with}`);
+}
+
 /** The contents of a pack's conditional part, or an empty one (spec-001 §6.5). */
 export function conditionalContents(manifest: PackManifest): PackContents {
   return manifest.conditional?.[0]?.contents ?? {};
