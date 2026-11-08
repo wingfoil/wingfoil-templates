@@ -3,22 +3,76 @@ id: task-083-the-catalog-at-format-2-publish-writes-pack-format-check-packs-comp
 type: task
 title: "The catalog at format 2: publish writes pack_format, check:packs compares it, the root catalog.yaml at format 2 (plan-066 task B)"
 status: draft
-pack: ""            # the pack element id this task works on; empty for tooling tasks
-depends_on: []
+pack: ""            # tooling task (tooling-delivery v3), plan-066 task (B)
+depends_on: ["task-082-schemas-at-format-2-pack.yaml-catalog.yaml-and-the-index-format-1-frozen-validation-by-format-plan-066-task-a"]
 tags: ["tooling","format","catalog"]
 ---
 
 ## Context
 
-<!-- Why this task exists, and the element it comes from (pack charter, spec, DL, bug). -->
+plan-066 (rulings 1, 3 and 9), its second task, after task-082 (the schemas at format 2, format 1
+frozen, every file read against the schema its `format` names). spec-001 §11 at format 2: a
+version entry records `pack_format`, the format of the published `pack.yaml`, "from
+`catalog.yaml` format 2 on"; an absent `pack_format` reads as `1`, so no published entry is
+edited. Today `publish` (`src/publish.ts`, `afterTag`) writes no `pack_format`, and
+`check:packs`'s `catalog-manifest` rule (`src/tag-rules.ts`, `versionProblems`) compares
+`version`, `formats`, `requires_capabilities`, `requires`, `conflicts` and `conditional` with the
+tagged `pack.yaml`, not its format. The root `catalog.yaml` is at format 1, and
+`tests/fixtures/catalog/catalog.yaml` is that file with no published pack, byte for byte
+(`tests/catalog.test.ts`).
+
+Ruling 3: the root `catalog.yaml` moves to `format: 2` in the commit with the code that writes
+`pack_format`, no published entry edited (§11); the next version published carries
+`pack_format: 1` for a format-1 pack; F-047 (task-082) covers the bump. No pack moves to format 2
+(plan-063 ruling 3), and the index's `pack_format` is task (G)'s.
 
 ## Acceptance
 
-<!-- Verifiable criteria: the command to run and the expected result. -->
+`npm run build` precedes the commands.
+
+1. **Red first** (dl-018): the tests of Acceptance 2 … 5 committed before the code, so that the
+   build passes and they fail by assertion; the failing run recorded with its command and count.
+2. **`publish` writes `pack_format`** (spec-001 §5, §11): in a catalog at format 2, the new
+   version entry carries `pack_format`, equal to the published `pack.yaml`'s `format` (`1` for
+   every pack today), after the copied fields (`conditional` when present) and before
+   `transitions`; in a catalog at format 1 it carries none (format 1's schema refuses it), and a
+   pack at format 2 is refused there before the tag, with a message naming the catalog's format
+   (its entry could not record the format, which a reader would take as 1). The maintenance line
+   (the entry committed on `main`) follows `main`'s `catalog.yaml`. The test helper that publishes
+   by hand (`tests/support/published-repo.ts`, `publishByHand`) writes it by the same rule.
+3. **`check:packs` compares it** (`catalog-manifest`, at `/pack_format`): an entry's `pack_format`,
+   `1` when absent, equals the tagged `pack.yaml`'s `format`; otherwise a problem naming the tag,
+   the two values and the absent-reads-as-1 rule. Tested: an entry with `pack_format: 1`, one
+   without (both with a format-1 tag), and one whose value differs from the tagged file (a
+   fixture tag at format 2 with `pack_format: 1` or none, and a format-1 tag with
+   `pack_format: 2`).
+4. **The root `catalog.yaml` at `format: 2`**, every published entry unchanged (no `pack_format`
+   added); `tests/fixtures/catalog/catalog.yaml` with it (its test unchanged); the golden tree's
+   `tests/fixtures/compose/tree/catalog.yaml` stays at format 1, a format-1 catalog still read
+   through `catalog.v1` (spec-001 §5). Every reader of the root catalog (the resolver,
+   `check:schemas`, `check:packs`, `validate`, the index, `publish`) reads it at format 2 with
+   no output changed: `npm run index -- --check` reports nothing out of date, and
+   `catalog-index.json`, `CATALOG.md` and `llms.txt` are unchanged.
+5. **The tests** (`tests/publish.test.ts`, `tests/tag-rules.test.ts`, offline): Acceptance 2's
+   two catalogs (format 2 with `pack_format: 1` written; format 1 with none, and its refusal of a
+   format-2 pack, nothing tagged); Acceptance 3's cases; the root catalog read at format 2 by
+   `loadCatalog` with no error.
+6. **Nothing else moves:** `check:pins`, `check:schemas`, `check:packs`, `validate`, the golden
+   trees and the generated root files unchanged; `npm test` and `npm run lint` exit 0. No new
+   schema change, so no schema note (`schema-note` stays green).
+7. **The checks** (`tooling-delivery` v3 › `review`, dl-039): the build review and its amendments
+   first; then once on the frozen commit the branch CI `success`, both jobs, run id and durations,
+   and dl-039's local list on Node.js 22.21.0. The privacy check of the branch's diff recorded.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-083-catalog-format-2` from `main` at this task's add. Red steps: (1) the tests
+of Acceptance 2, 3 and 5 (red by assertion: no `pack_format` written, none compared, the
+format-1 refusal absent); (2) `publish`, `publishByHand` and `versionProblems` by the rule
+(green), committed; (3) the root `catalog.yaml` and the fixture catalog at `format: 2`, with the
+index check and the golden trees read unchanged, committed. The catalog's format read from the
+parsed `catalog.yaml` that `publish` already loads (`main`'s for a maintenance line). No new
+dependency.
 
 ## Execution Notes
 
