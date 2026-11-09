@@ -39,6 +39,7 @@ None published yet.
 
 | Pack | Summary | Status | Latest | WingFoil | README |
 | --- | --- | --- | --- | --- | --- |
+| <a id="pack-governance-checks"></a>`governance/checks` | Test pack governance/checks. (`checks-flow` only with `software`; `checks-rule` only with `methodology/flow`) Combines with care: `stage/mvp` | active | 1.0.0 | 9.0.0 | [README](https://github.com/wingfoil/wingfoil-templates/blob/governance/checks@1.0.0/packs/governance/checks/README.md) |
 | <a id="pack-governance-notes"></a>`governance/notes` | Test pack governance/notes. (`notes-rules` only with `software`) | active | 1.0.0 | 9.0.0 | [README](https://github.com/wingfoil/wingfoil-templates/blob/governance/notes@1.0.0/packs/governance/notes/README.md) |
 
 ## Team mode

@@ -65,26 +65,34 @@ export function firstSentence(text: string): string {
 }
 
 /**
- * What a pack's conditional part adds, for its Summary (plan-039 R3): its workflows, or its
- * directives when it has none, and the layer its `with` names; undefined without a part.
+ * What each conditional entry adds, for the Summary (plan-039 R3, spec-002 §3.2): its workflows,
+ * or its directives when it has none, and the id its `with` names, in entry order; an entry that
+ * adds nothing has no mark (the lint refuses it, plan-039 R7).
  */
-export function conditionalMark(pack: IndexPack): { names: string[]; layer: string } | undefined {
-  const latest = pack.versions.find((version) => version.version === pack.latest);
-  const [part] = latest?.conditional ?? [];
-  const names = pack.conditional_workflows.length > 0 ? pack.conditional_workflows
-    : pack.conditional_directives;
-  // A part that adds nothing has no mark (the lint refuses it, plan-039 R7).
-  if (part === undefined || names.length === 0) return undefined;
-  return { names, layer: entryId(part.with) };
+export function conditionalMark(pack: IndexPack): { names: string[]; layer: string }[] {
+  return pack.conditional_parts.flatMap((part) => {
+    const names = part.workflows.length > 0 ? part.workflows : part.directives;
+    return names.length === 0 ? [] : [{ names, layer: entryId(part.with) }];
+  });
 }
 
-/** A pack's Summary: its description's first sentence, and the mark of its conditional part. */
+/**
+ * A pack's Summary (§3.2): its description's first sentence; the entries' marks in one
+ * parenthesis, joined by `; ` (task-088 ruling 2); then the packs its `tensions` name, by id,
+ * sorted and once (task-088 ruling 4).
+ */
 export function summaryOf(pack: IndexPack, codeOf: (text: string) => string,
   textOf: (text: string) => string): string {
-  const first = textOf(firstSentence(pack.description));
-  const mark = conditionalMark(pack);
-  return mark === undefined ? first
-    : `${first} (${mark.names.map(codeOf).join(', ')} only with ${codeOf(mark.layer)})`;
+  const parts = [textOf(firstSentence(pack.description))];
+  const marks = conditionalMark(pack);
+  if (marks.length > 0) {
+    parts.push(`(${marks.map((mark) => `${mark.names.map(codeOf).join(', ')} only with `
+      + codeOf(mark.layer)).join('; ')})`);
+  }
+  const tensions = [...new Set(pack.tensions.map((tension) => entryId(tension.pack)))]
+    .sort(byBytes);
+  if (tensions.length > 0) parts.push(`Combines with care: ${tensions.map(codeOf).join(', ')}`);
+  return parts.join(' ');
 }
 
 function row(cells: string[]): string {
@@ -209,7 +217,7 @@ export function renderLlms(): string {
     '## Index',
     '',
     `- [catalog-index.json](${rawMain('catalog-index.json')}): every published pack, preset and `
-      + 'transition (format 1); search is a local filter over it',
+      + 'transition (format 2); search is a local filter over it',
     `- [CATALOG.md](${rawMain('CATALOG.md')}): the same index for people`,
     '',
     '## Specifications',

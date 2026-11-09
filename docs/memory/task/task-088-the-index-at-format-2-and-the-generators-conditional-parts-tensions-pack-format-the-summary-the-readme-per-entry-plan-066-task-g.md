@@ -2,7 +2,7 @@
 id: task-088-the-index-at-format-2-and-the-generators-conditional-parts-tensions-pack-format-the-summary-the-readme-per-entry-plan-066-task-g
 type: task
 title: "The index at format 2 and the generators: conditional_parts, tensions, pack_format, the Summary, the README per entry (plan-066 task G)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-delivery v3), plan-066 task (G)
 depends_on: ["task-087-d6-s-coverage-validate-s-legs-per-entry-the-overlay-lint-s-pairs-the-publication-check-per-entry-plan-066-task-f"]
 tags: ["tooling","index"]
@@ -227,3 +227,59 @@ files regenerated. No new dependency.
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-09: written as plan-066 task (G), after task-087's merge; `pack` and `depends_on` filled
+  by editing the draft (W-02).
+- 2026-11-09: independent review: approve with amendments, two blocking (`llms.txt` changes, its
+  index line naming the format; the golden tree commits index outputs, so its `catalog-index.json`
+  and `llms.txt` change); applied with the others: the frozen v1 schema keeps a test instance
+  (`format-1.json`); the red step failing by assertion (the `software` entry first, the new
+  fields optional, `format: 1 | 2`); the fixture pack's constraints; the assertions the fixture
+  changes; the Summary's full text and ruling point 4 added; a multi-line resolution folded; the
+  Composition lines nested under **Declares**; ruling 1 re-argued for the tag (a changed
+  decision); Acceptance 2 reworded; the suite's added seconds stated.
+- 2026-11-09: re-review: approve, three nits, applied: the red step's first failing output is
+  `CATALOG.md`; "Combines with care" placed for a pack with no **Declares**; the Context's
+  `llms.txt` bullet no longer credits §3.4 with the format.
+- 2026-11-09: approved to `backlog` by the approver with rulings 1 … 4 as recommended
+  (`pack_format` from the tagged `pack.yaml`; one parenthesis joined by `; `; "Combines with
+  care" the Composition's last bullet; the tension's id without its range in the Summary).
+  Branch `task/task-088-index-format-2`.
+- 2026-11-09: red (`995948d`): `node --test dist/tests/index-model.test.js
+  dist/tests/index-render.test.js dist/tests/readme-generate.test.js dist/tests/site.test.js
+  dist/tests/index.test.js`, 102 tests, 18 failing: 16 by assertion, 2 by the throwing
+  signatures (`conditionalParts`, `tensionsOf`, called by their own tests only); the
+  byte-for-byte test failing by assertion on `CATALOG.md`. Already green, as Acceptance 1
+  allows: the format-1 instance read through the frozen schema, the site's list of pack ids and
+  its count of results (the new pack is published and listed by today's code), and "passes the
+  lint, tag rules included" with the format-2 pack (`governance/checks`: `base@^1`, entries
+  `software@^1` with the workflow `checks-flow` and `methodology/flow@^1` with the directive
+  `checks-rule`, a tension on `stage/mvp@^1`).
+- 2026-11-09: green (`285e9ea`): the code, the root's `catalog-index.json` and `llms.txt`, the
+  golden tree's two files and the fixture catalog's expected outputs regenerated and reviewed (the
+  new pack's version with two `conditional` entries and `pack_format: 2`, its `conditional_parts`,
+  `tensions`, Summary and README sections; every other pack gaining only `pack_format: 1`,
+  `conditional_parts` and `tensions`; the root's `CATALOG.md` and the four READMEs unchanged). One
+  deviation from Acceptance 7's list: `tests/site.test.ts`' "names the schema the index was read
+  against" read the fixture repository's index as a format-1 instance; it now reads
+  `format-1.json` for the v1 case, in the green commit. `npm test` before that fix: 1286 tests,
+  1285 pass, that one failing; after it, `tests/site.test.ts` 21 of 21 (1640 s locally, against
+  1320 s at task-087's frozen commit; local timings vary by run, the branch CI's are G12's);
+  `npm run lint` 0; `check:schemas` and both trees' `npm run index -- --check` 0.
+- 2026-11-09: build review: approve with amendments, no blocking finding; applied (`5c4ad08`):
+  two lines over 100 in `src/`; ruling 3's second case tested (a pack with `tensions` and no
+  **Declares**); the union's "a name once" tested through an exported `unionOf`; the fixture
+  pack's needless `export` and a ragged comment. Not applied: one shared helper for the
+  resolution's fold, now in `src/notices.ts` and `src/readme-generate.ts` (optional, the two
+  lines kept identical). The reviewer's note on the local duration (1640 s against 1320 s) is
+  left to the branch CI's durations (Acceptance 9). After the amendments the five index test
+  files pass, 104 of 104, and both trees' `npm run index -- --check` exit 0.
+- 2026-11-09: checks on the frozen commit `04cab24`. Branch CI run 42629824600 `success`
+  (22.12.0 24 min 57 s, 22.21.0 15 min 12 s), under G12's 25 minutes by 3 s on 22.12.0; read with
+  the row "The CI's margin under G12's 25 minutes" of `docs/owed-items.md` (`main`'s last runs at
+  21 … 23 min on 22.12.0; this task adds no `validate` run, only the fixture pack's lint
+  compositions per `indexCatalog` call). dl-039's local list on Node.js 22.21.0 from a clean
+  worktree at `04cab24`: `npm ci`, `npm run build`, `npm run validate:publication` (18 runs, 0
+  failed), the same with `--tree tests/fixtures/compose/tree --param project_name=Golden` (26
+  runs, 0 failed), `workflow list`, `directives list --format json` (`warnings []`), `npm run
+  lint`, each exit 0. Privacy check of the branch's diff: no local or scratch path, no private
+  project named.

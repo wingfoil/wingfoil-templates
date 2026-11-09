@@ -72,6 +72,51 @@ describe('generatedSections (acceptance 10)', () => {
     }, { examples: false });
   });
 
+  it('writes each entry and the tensions at format 2 (task-088 Acceptance 4)', () => {
+    withPackTree([{ id: 'governance/review', format: 2, workflows: ['review-gate'],
+      directives: ['review-core'],
+      conditional: [
+        { with: 'software@^1', workflows: ['b-flow', 'a-flow'], directives: ['sw-rule'] },
+        { with: 'stage/mvp@^1', directives: ['mvp-rule'] }],
+      tensions: [{ pack: 'stage/production@^1', resolution: 'Two\n  lines. ' },
+        { pack: 'blueprint/web', resolution: 'Fine.' }] }],
+    (root) => {
+      const review = generatedSections(root, 'governance/review');
+      assert.deepEqual(review.composition, ['## Composition', '',
+        '- **Requires:** `base@^1`',
+        '- **Conflicts:** none',
+        '- **Formats:** `directive` 1, `workflow` 1',
+        '- **Requires capabilities:** none',
+        '- **Declares:**',
+        '  - Memory types: none',
+        '  - roles: none',
+        '  - states: none',
+        '  - workflows: `review-gate`',
+        '  - workflows only with `software`: `a-flow`, `b-flow`',
+        '  - directives only with `software`: `sw-rule`',
+        '  - directives only with `stage/mvp`: `mvp-rule`',
+        '- **Combines with care:**',
+        '  - `stage/production@^1`: Two lines.',
+        '  - `blueprint/web`: Fine.']);
+      const adds = review['what-it-adds'];
+      const between = (from: string, to: string): string[] =>
+        adds.slice(adds.indexOf(from) + 2, adds.indexOf(to) - 1);
+      assert.deepEqual(between('### Workflows', '### Memory types'), ['- `review-gate` (sub)',
+        '- `a-flow` (sub), only with `software`', '- `b-flow` (sub), only with `software`']);
+      assert.deepEqual(between('### Directives', '### Fragments'), ['- `review-core`: —',
+        '- `sw-rule`: —, only with `software`', '- `mvp-rule`: —, only with `stage/mvp`']);
+    }, { examples: false });
+  });
+
+  it('puts Combines with care after Requires capabilities with no Declares (task-088)', () => {
+    withPackTree([{ id: 'base', format: 2,
+      tensions: [{ pack: 'stage/mvp', resolution: 'Lightly.' }] }], (root) => {
+      const composition = generatedSections(root, 'base').composition;
+      assert.deepEqual(composition.slice(-3), ['- **Requires capabilities:** none',
+        '- **Combines with care:**', '  - `stage/mvp`: Lightly.'], composition.join('\n'));
+    }, { examples: false });
+  });
+
   it('writes what a pack adds: workflow phases, Memory types, directives and their roles', () => {
     const base = generatedSections(TREE, 'base')['what-it-adds'];
     assert.ok(base.some((line) => line.startsWith('- `task`: `draft` → `pending`')), base.join('\n'));

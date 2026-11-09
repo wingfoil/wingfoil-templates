@@ -42,6 +42,15 @@ const NOTES: PackSpec = { id: 'governance/notes', workflows: ['notes'],
     contents: { directives: ['notes-rules'] } }] },
   extraFiles: { 'directives/notes-rules.md': directiveFile('notes-rules') } };
 
+/**
+ * A governance pack at format 2 (plan-066 task G): two conditional entries, `software` first, one
+ * with a workflow and one with a directive only, and a tension with a range.
+ */
+const CHECKS: PackSpec = { id: 'governance/checks', format: 2, workflows: ['checks-gate'],
+  conditional: [{ with: 'software@^1', workflows: ['checks-flow'] },
+    { with: 'methodology/flow@^1', directives: ['checks-rule'] }],
+  tensions: [{ pack: 'stage/mvp@^1', resolution: 'Checks run lightly in an MVP.' }] };
+
 function kanban(version: string, title: string, extra: Doc): PackSpec {
   return { ...KANBAN, version, manifest: { title, description: `Kanban, ${version}. A pull `
     + 'system with WIP limits.', ...extra } };
@@ -61,15 +70,16 @@ function editCatalog(repo: TestRepo, edit: (catalog: Doc) => void): void {
 }
 
 /**
- * base, software, flow and notes with a conditional part each, a methodology with two versions (1.1.0
- * changes its requires, adds a conflict, a parameter and a new title), a phase pack, two stage
- * packs and their transition, one pack never published, two presets (one with a profile); after
- * the last tag, an unreleased title and section 2 in the working tree.
+ * base, software, flow and notes with a conditional part each, checks at format 2 (two entries
+ * and a tension), a methodology with two versions (1.1.0 changes its requires, adds a conflict, a
+ * parameter and a new title), a phase pack, two stage packs and their transition, one pack never
+ * published, two presets (one with a profile); after the last tag, an unreleased title and
+ * section 2 in the working tree.
  */
 export function indexCatalog(): TestRepo {
   const v1 = kanban('1.0.0', 'Kanban', {});
   const lean: PackSpec = { id: 'phase/inception/lean', workflows: ['inception'] };
-  const repo = treeRepo([BASE_COMPOSABLE, SOFTWARE_COMPOSABLE, v1, FLOW, NOTES, lean,
+  const repo = treeRepo([BASE_COMPOSABLE, SOFTWARE_COMPOSABLE, v1, FLOW, NOTES, CHECKS, lean,
     { id: 'stage/mvp' },
     { id: 'stage/production' }, { id: 'blueprint/web' }]);
   repo.write('packs/methodology/kanban/README.md', readmeFor('methodology/kanban', 'Kanban',
@@ -85,7 +95,7 @@ export function indexCatalog(): TestRepo {
   });
   reindex(repo, 'presets and transition');
   for (const id of ['base', 'software', 'methodology/kanban', 'methodology/flow',
-    'governance/notes', 'phase/inception/lean', 'stage/mvp']) {
+    'governance/notes', 'governance/checks', 'phase/inception/lean', 'stage/mvp']) {
     publishByHand(repo, id);
   }
   publishByHand(repo, 'stage/production');
