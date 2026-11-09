@@ -303,3 +303,11 @@ the comments, committed apart (`wf(config)`). No new dependency.
   duration, locally and on a loaded machine, so indicative only: `main` (`3181032`) 2055 s for
   1260 tests, this branch 1346 s, then 1320 s for 1276 after the amendments; the branch CI's
   durations are G12's measure.
+- 2026-11-09: branch CI run 42601353833 on `ed716df`: 22.21.0 `success` in 25 min 34 s, over
+  G12's 25 minutes (its `Test` step 20 min 34 s, the new `validate` suite of the legs per entry
+  162 s, each of its nine tests a full `validate` run on a copy of the golden tree); 22.12.0
+  cancelled after 8 min 44 s by a runner shutdown on GitHub's side ("The runner has received a
+  shutdown signal"), not by a test. Change: the suite's cases are presets of one tree, validated
+  once in self-test and once in publication mode (`before`), the assertions unchanged but read
+  per preset (the range's failure asserted by its message, the forbidden target by "takes one
+  pack"); the suite 60 s locally. The checks rerun on the new frozen commit.
