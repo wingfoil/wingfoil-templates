@@ -264,3 +264,18 @@ points 4 and 6 included.
 - 2026-11-09: `main`'s CI on task-086's merge (pushed with this plan's note, `4d941b7`), run
   42579992333, `success` (22.12.0 23 min 44 s, 22.21.0 22 min 26 s), under 25 minutes (G12), the
   margin narrow on both jobs. Task (F), task-087, added, reviewed, re-reviewed and submitted.
+- 2026-11-09: `main`'s CI on task-087's add (`546329e`), run 42582554970, `success` (22.12.0
+  18 min 18 s, 22.21.0 23 min 56 s), and on its start (`3181032`), run 42586989377, `success`
+  (22.12.0 20 min 38 s, 22.21.0 18 min 26 s), under 25 minutes (G12), the margin narrow.
+- 2026-11-09: task (F), task-087, approved to `backlog` by the approver with rulings 1 to 4 as
+  recommended (pairs in the overlay lint only; the publication check on the `with` side only; a
+  target the format forbids skipped with its line; a leg whose added pack has a parameter with no
+  value skipped with its line), built, approved, merged `--no-ff` (`30bcf34`) and done. Its first
+  branch CI run 42601353833 went over G12 on 22.21.0 (25 min 34 s, the new `validate` suite
+  162 s; 22.12.0 cancelled by a runner shutdown); the suite was rewritten to one tree run twice
+  and run 42605802018 is `success` (22.12.0 17 min 58 s, 22.21.0 24 min 0 s). `validate` now
+  runs D6's legs per conditional entry (the full target, then each `with` pack left out), R6
+  per entry, the publication check per entry; the overlay lint composes the same targets plus
+  the pairs (`tensions`, and each pack with each stage) under rule `pair`. For the wave close:
+  ruling 3's reading, that §6.5 and §15 assume an entry's packs compose together. `main`'s CI
+  on the merge read in the next note.
