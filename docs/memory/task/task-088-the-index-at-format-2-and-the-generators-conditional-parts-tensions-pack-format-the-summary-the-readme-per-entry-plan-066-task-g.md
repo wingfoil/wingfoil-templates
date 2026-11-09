@@ -273,3 +273,13 @@ files regenerated. No new dependency.
   lines kept identical). The reviewer's note on the local duration (1640 s against 1320 s) is
   left to the branch CI's durations (Acceptance 9). After the amendments the five index test
   files pass, 104 of 104, and both trees' `npm run index -- --check` exit 0.
+- 2026-11-09: checks on the frozen commit `04cab24`. Branch CI run 42629824600 `success`
+  (22.12.0 24 min 57 s, 22.21.0 15 min 12 s), under G12's 25 minutes by 3 s on 22.12.0; read with
+  the row "The CI's margin under G12's 25 minutes" of `docs/owed-items.md` (`main`'s last runs at
+  21 … 23 min on 22.12.0; this task adds no `validate` run, only the fixture pack's lint
+  compositions per `indexCatalog` call). dl-039's local list on Node.js 22.21.0 from a clean
+  worktree at `04cab24`: `npm ci`, `npm run build`, `npm run validate:publication` (18 runs, 0
+  failed), the same with `--tree tests/fixtures/compose/tree --param project_name=Golden` (26
+  runs, 0 failed), `workflow list`, `directives list --format json` (`warnings []`), `npm run
+  lint`, each exit 0. Privacy check of the branch's diff: no local or scratch path, no private
+  project named.
