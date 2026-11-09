@@ -2,7 +2,7 @@
 id: task-086-the-waiver-heuristic-a-review-list-in-check-packs-for-an-overlay-s-or-a-stage-pack-s-directives-bridges-exempt-plan-066-task-e
 type: task
 title: "The waiver heuristic: a review list in check:packs for an overlay's or a stage pack's directives, bridges exempt (plan-066 task E)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-delivery v3), plan-066 task (E)
 depends_on: ["task-085-the-lint-per-entry-the-conditional-entries-and-tensions-rules-by-format-parameter-scopes-per-entry-the-mcp-refusal-plan-066-task-d"]
 tags: ["tooling","lint","directives"]
@@ -155,3 +155,26 @@ apart (`wf(config)`, `docs`). No new dependency.
 - 2026-11-08: ruling point 2's alternative corrected: it said the hits would show in the CI only
   with `validate` printing them, but the CI runs `npm run check:packs` as a step of its own, so
   they show there either way. The approver, told so, kept the recommendation (no alternative).
+- 2026-11-08: red (dl-018), commit 5a5a30f: the tests of Acceptance 2 … 6, `waiverReviews` and
+  `bodyStart` as signatures with no body, uncalled, `CheckPacksResult.reviews` set to `[]`.
+  `npm run build && node --test dist/tests/check-packs.test.js`: 120 tests, 6 failing by
+  assertion, their fixture tree passing the lint with 0 problems; the `validate` test, in
+  `tests/validate.test.ts`, green already (no review line could reach `validate` yet).
+- 2026-11-08: green, commit ad793e6; `pack-authoring` (`434ea66`) and `README.md` (`7a8fc27`)
+  apart, as the Design says. Problems are sorted by their report line in byte order, so the
+  review list is too: a line 10 comes before a line 6 of the same file (the tests assert it).
+- 2026-11-08: build review: approve, four non-blocking findings, applied: the `validate` test now
+  asserts that its tree holds the hit (1) or none (0) before comparing the two results; a comment
+  on the frontmatter case (`id: skip-list`, `-` a word boundary); a tab in `not required` and
+  `skipped` tested on a line of their own; these notes committed before the frozen commit's
+  checks. Before the amendments: `npm test` 1260 of 1260, `npm run lint`, `validate`,
+  `check:packs` (74 files, 0 problems), `check:schemas`, `check:pins` and the index check exit 0;
+  after them, the two suites touched rerun, 120 and 1 pass.
+- 2026-11-08: the checks (Acceptance 8), on the frozen commit 71e98bd: branch CI run 42521389447
+  `success`, `validate (22.12.0)` 14:11 and `validate (22.21.0)` 15:09 (G12's 25 minutes held,
+  well under task-085's 23 minutes, the runner's load the likely difference); dl-039's local list
+  on Node.js 22.21.0 from a clean worktree: `npm ci`, `npm run build`,
+  `npm run validate:publication` (18 runs, 0 failed), the same on the golden tree with
+  `--param project_name=Golden` (26 runs, 0 failed), `workflow list`,
+  `directives list --format json` (`warnings []`), `npm run lint`, each exit 0. The privacy check
+  of the branch's diff: no local path, no private project, no session.

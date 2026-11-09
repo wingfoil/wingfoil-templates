@@ -10,6 +10,7 @@ import { after, describe, it } from 'node:test';
 import { loadCompat } from '../src/compat';
 import { EXEMPTION } from '../src/examples';
 import { MatrixIoError } from '../src/matrix';
+import { runCheckPacks } from '../src/check-packs';
 import { runIndex } from '../src/index';
 import { runPublish } from '../src/publish';
 import { runSite } from '../src/site';
@@ -1066,5 +1067,28 @@ describe('npm run validate --overlay (task-046, plan-046 ruling 1)', () => {
     assert.equal(runPublish(['--pack', 'base', '--overlay', OVERLAY]).code, 3);
     assert.equal(runIndex(['--overlay', OVERLAY]).code, 3);
     assert.equal(runSite(['--overlay', OVERLAY]).code, 3);
+  });
+});
+
+describe('npm run validate: the waiver heuristic\'s review list left out (task-086)', () => {
+  const W = (body: string): PackSpec => ({ id: 'stage/w', directives: ['w-rule'],
+    extraFiles: { 'directives/w-rule.md': `---\nid: w-rule\nformat: 1\n---\n# w\n${body}\n` } });
+  const run = (body: string, hits: number): ValidateResult => {
+    let result: ValidateResult | undefined;
+    // stage/w has no example and no index entry, so the index may refuse the tree: both runs alike.
+    withTree((tree) => writePack(tree, W(body)), (tree) => {
+      assert.equal(runCheckPacks(tree).reviews.length, hits, 'the tree holds the hits it should');
+      result = validate(['--tree', tree, ...NAME]);
+    }, true);
+    assert.ok(result !== undefined);
+    return result;
+  };
+
+  it('gives the same result with and without a hit, and no review line', () => {
+    const plain = run('Keep the log.', 0);
+    const hit = run('Skip the log.', 1);
+    assert.equal(hit.code, plain.code);
+    assert.deepEqual(hit.lines, plain.lines);
+    assert.ok(!hit.lines.some((line) => line.includes('review:')), hit.lines.join('\n'));
   });
 });

@@ -28,6 +28,7 @@ import { hasInbox, newestSchemaRecord, readNotes } from './feedback-inbox';
 import { schemaListing } from './schema-digest';
 import { tagProblems } from './tag-rules';
 import { treeProblems } from './tree-rules';
+import { waiverReviews } from './waiver-rules';
 import { workflowProblems } from './workflow-rules';
 import { YamlError, loadYamlFile } from './yaml-load';
 
@@ -37,6 +38,8 @@ export interface CheckPacksResult {
   /** The files the lint covers (acceptance 2). */
   checked: number;
   problems: Problem[];
+  /** The waiver heuristic's hits, for review: never a problem, the exit unchanged (task-086). */
+  reviews: Problem[];
   /** The report: the summary line, then one line per problem. */
   lines: string[];
 }
@@ -188,7 +191,8 @@ export interface CheckPacksOptions {
 
 export function runCheckPacks(tree: string, options: CheckPacksOptions = {}): CheckPacksResult {
   if (!existsSync(tree) || !statSync(tree).isDirectory()) {
-    return { code: 2, checked: 0, problems: [], lines: [`${tree}: not a directory`] };
+    return { code: 2, checked: 0, problems: [], reviews: [],
+      lines: [`${tree}: not a directory`] };
   }
   try {
     const schemas = runCheckSchemas(tree);
@@ -208,11 +212,12 @@ export function runCheckPacks(tree: string, options: CheckPacksOptions = {}): Ch
       code: sorted.length > 0 ? 1 : 0,
       checked,
       problems: sorted,
+      reviews: waiverReviews(context),
       lines: [`lint: checked ${count(checked, 'file')}, ${count(sorted.length, 'problem')}`,
         ...sorted.map(formatProblem)],
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    return { code: 2, checked: 0, problems: [], lines: [`lint: ${message}`] };
+    return { code: 2, checked: 0, problems: [], reviews: [], lines: [`lint: ${message}`] };
   }
 }
