@@ -252,3 +252,12 @@ points 4 and 6 included.
 - 2026-11-08: `main`'s CI on task-085's merge (pushed with this plan's note, `8969f71`), run
   42506039848, `success` (22.12.0 22 min 43 s, 22.21.0 22 min 31 s), under 25 minutes (G12), the
   margin narrow on both jobs now.
+- 2026-11-08: `main`'s CI on task-086's start (`9517774`), run 42517248182, `success` (22.12.0
+  23 min 12 s, 22.21.0 21 min 10 s), under 25 minutes (G12), the margin narrow.
+- 2026-11-09: task (E), task-086, added, reviewed, re-reviewed, approved to `backlog` by the
+  approver without ruling 2's alternative (the hits stay a review list, `validate` unchanged),
+  built, approved, merged `--no-ff` (`e83aad2`) and done; its branch CI run 42521389447
+  `success` (22.12.0 14 min 11 s, 22.21.0 15 min 9 s). `npm run check:packs` now prints a
+  `review:` line for each line of waiver wording in an overlay's or a `stage/` pack's directives,
+  bridges exempt, its exit unchanged; `pack-authoring` names the lines and where they are
+  reviewed. `main`'s CI on the merge read in the next note.
