@@ -29,11 +29,15 @@ tooling's self-tests, run in the matrix's self-test mode (dl-009).
   `main` of the composition that reaches its workflows, where the tooling can); and, for a pack
   whose README carries install steps, the adoption run on a composition that holds the pack, once
   per `init` template (Scrum and Kanban today), exits 0 (dl-032 E3).
-- A pack with a conditional part (spec-001 §6.5) is validated in compositions with and without
-  `software`. `npm run validate` derives the other leg of each composition that holds one; the
-  leg with `software` needs a methodology, so for a pack that is not one it comes from a
-  documented combination (a README example or a preset) that holds a methodology, and a
-  publication fails without a leg with `software` that ran (plan-039 R2, R6).
+- A pack with a conditional part (spec-001 §6.5) is validated in the composition with every
+  entry's pack and in each with one entry's pack left out in turn. `npm run validate` derives
+  these legs (`[+<pack>]`, `[-<pack>]`) from each composition that holds it, and skips with its
+  line a leg the format forbids or that lacks a parameter's value; a leg adding `software` needs a
+  methodology, so for a pack that is not one it comes from a documented combination (a README
+  example or a preset) that holds a methodology, and a publication fails when an entry's pack is
+  held by no composition with the pack that ran (plan-039 R2, R6). `npm run check:packs` composes,
+  besides, a pack declaring `tensions` with each pack they name and every pack with each `stage/*`
+  overlay (dl-025 D6).
 - Compose twice from a clean state: the two outputs must be byte-identical.
 - Record the commands, the WingFoil versions and the exit codes in the `pack-release` element.
   A claim of "it validates" without the command and its result is not evidence.
