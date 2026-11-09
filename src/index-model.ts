@@ -193,10 +193,17 @@ export function conditionalParts(manifest: Doc):
   });
 }
 
+/** The union of every entry's `workflows` or `directives`, sorted, a name once (§3.3). */
+export function unionOf(parts: { contents: Doc }[], key: 'workflows' | 'directives'): string[] {
+  return sorted(parts.flatMap((part) => strings(part.contents[key])));
+}
+
 /** A pack.yaml's `tensions` as written (spec-001 §6.2); none without them. */
 export function tensionsOf(manifest: Doc): IndexTension[] {
   return list(manifest['tensions']).filter(isDoc)
-    .map((tension) => ({ pack: String(tension['pack']), resolution: String(tension['resolution']) }));
+    .map((tension) => ({
+      pack: String(tension['pack']),
+      resolution: String(tension['resolution']) }));
 }
 
 /** A version's `conditional`, one `{ with }` per entry, when the tagged pack.yaml has one (R3). */
@@ -247,8 +254,7 @@ IndexPack | undefined {
   const contents = isDoc(latest.manifest['contents']) ? latest.manifest['contents'] : {};
   const { axis, slot } = axisAndSlot(id, foundation);
   const parts = conditionalParts(latest.manifest);
-  const union = (key: string): string[] => sorted(parts.flatMap((part) =>
-    strings(part.contents[key])));
+  const union = (key: 'workflows' | 'directives'): string[] => unionOf(parts, key);
   return {
     id,
     catalog: String(entry['catalog']),

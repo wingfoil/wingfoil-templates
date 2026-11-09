@@ -108,6 +108,15 @@ describe('generatedSections (acceptance 10)', () => {
     }, { examples: false });
   });
 
+  it('puts Combines with care after Requires capabilities with no Declares (task-088)', () => {
+    withPackTree([{ id: 'base', format: 2,
+      tensions: [{ pack: 'stage/mvp', resolution: 'Lightly.' }] }], (root) => {
+      const composition = generatedSections(root, 'base').composition;
+      assert.deepEqual(composition.slice(-3), ['- **Requires capabilities:** none',
+        '- **Combines with care:**', '  - `stage/mvp`: Lightly.'], composition.join('\n'));
+    }, { examples: false });
+  });
+
   it('writes what a pack adds: workflow phases, Memory types, directives and their roles', () => {
     const base = generatedSections(TREE, 'base')['what-it-adds'];
     assert.ok(base.some((line) => line.startsWith('- `task`: `draft` → `pending`')), base.join('\n'));

@@ -6,7 +6,7 @@ import { after, before, describe, it } from 'node:test';
 import { parse, stringify } from 'yaml';
 
 import {
-  axisAndSlot, buildIndex, conditionalParts, excerptOf, tensionsOf,
+  axisAndSlot, buildIndex, conditionalParts, excerptOf, tensionsOf, unionOf,
 } from '../src/index-model';
 import { renderCatalog } from '../src/index-render';
 import type { CatalogIndex, IndexPack } from '../src/index-model';
@@ -50,6 +50,14 @@ describe('conditionalParts and tensionsOf (task-088 Acceptance 2)', () => {
       { with: 'software@^1', layer: 'software', contents: { workflows: ['b', 'a'] } },
       { with: 'stage/mvp@^1', layer: 'stage/mvp', contents: { directives: ['d'] } }]);
     assert.deepEqual(conditionalParts({}), []);
+  });
+
+  it('unites the entries\' lists, sorted, a name once', () => {
+    const parts = [{ contents: { workflows: ['b', 'a'], directives: ['d'] } },
+      { contents: { workflows: ['a', 'c'] } }];
+    assert.deepEqual(unionOf(parts, 'workflows'), ['a', 'b', 'c']);
+    assert.deepEqual(unionOf(parts, 'directives'), ['d']);
+    assert.deepEqual(unionOf([], 'workflows'), []);
   });
 
   it('reads the tensions as written, none without them', () => {

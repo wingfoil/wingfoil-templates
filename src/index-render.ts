@@ -78,8 +78,8 @@ export function conditionalMark(pack: IndexPack): { names: string[]; layer: stri
 
 /**
  * A pack's Summary (§3.2): its description's first sentence; the entries' marks in one
- * parenthesis, joined by `; ` (task-088 ruling 2); then the packs its `tensions` name, by id, sorted
- * and once (task-088 ruling 4).
+ * parenthesis, joined by `; ` (task-088 ruling 2); then the packs its `tensions` name, by id,
+ * sorted and once (task-088 ruling 4).
  */
 export function summaryOf(pack: IndexPack, codeOf: (text: string) => string,
   textOf: (text: string) => string): string {
