@@ -2,7 +2,7 @@
 id: task-087-d6-s-coverage-validate-s-legs-per-entry-the-overlay-lint-s-pairs-the-publication-check-per-entry-plan-066-task-f
 type: task
 title: "D6's coverage: validate's legs per entry, the overlay lint's pairs, the publication check per entry (plan-066 task F)"
-status: draft
+status: pending
 pack: ""            # tooling task (tooling-delivery v3), plan-066 task (F)
 depends_on: ["task-086-the-waiver-heuristic-a-review-list-in-check-packs-for-an-overlay-s-or-a-stage-pack-s-directives-bridges-exempt-plan-066-task-e"]
 tags: ["tooling","validate","lint"]
