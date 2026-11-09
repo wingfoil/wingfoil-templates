@@ -1377,3 +1377,78 @@ describe('the waiver heuristic: a review list for overlay and stage directives (
     });
   });
 });
+
+describe('D6\'s coverage: the targets per entry and the pairs (spec-001 §15, §18, task-087)',
+  () => {
+  /** A pack shipping the given directive, a placeholder written by the helper. */
+  const shipping = (id: string, directive: string, extra: Partial<PackSpec> = {}): PackSpec =>
+    ({ id, format: 2, directives: [directive], ...extra });
+  /** The problems of the given rule: their files, and each message's composition. */
+  const of = (result: CheckPacksResult, rule: string): string[] => result.problems
+    .filter((problem) => problem.rule === rule)
+    .map((problem) => `${problem.file}: ${problem.message.slice(0, problem.message.indexOf(':'))}`)
+    .sort();
+
+  it('pair: a tensions pair refused, blamed on both, composed once when both name each other',
+    () => {
+      const result = lint([...CLEAN,
+        shipping('governance/t1', 'same', { tensions: [{ pack: 'governance/t2@^1',
+          resolution: 'Mind t2.' }] }),
+        shipping('governance/t2', 'same', { tensions: [{ pack: 'governance/t1@^1',
+          resolution: 'Mind t1.' }] })]);
+      assert.deepEqual(rules(result), ['pair'], result.lines.join('\n'));
+      assert.deepEqual(of(result, 'pair'), [
+        'packs/governance/t1/pack.yaml: base + governance/t1 + governance/t2',
+        'packs/governance/t2/pack.yaml: base + governance/t1 + governance/t2'],
+      result.lines.join('\n'));
+      assert.match(result.lines.join('\n'), /one owner per file \(spec-001 §7\.6\)/);
+    });
+
+  it('composes no pair the cardinalities forbid: a tension between two team modes', () => {
+    const result = lint([...CLEAN,
+      shipping('team-mode/a', 'same', { tensions: [{ pack: 'team-mode/b@^1',
+        resolution: 'Pick one.' }] }),
+      shipping('team-mode/b', 'same')]);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+  });
+
+  it('pair: a blueprint and a stage that ship one directive (every pack with each stage)', () => {
+    const result = lint([...CLEAN, shipping('blueprint/x', 'same'), shipping('stage/s', 'same')]);
+    assert.deepEqual(rules(result), ['pair'], result.lines.join('\n'));
+    assert.deepEqual(of(result, 'pair'), [
+      'packs/blueprint/x/pack.yaml: base + blueprint/x + stage/s',
+      'packs/stage/s/pack.yaml: base + blueprint/x + stage/s'], result.lines.join('\n'));
+  });
+
+  it('composes no stage pair a declared conflict forbids', () => {
+    const result = lint([...CLEAN, shipping('blueprint/y', 'same', { conflicts: ['stage/s@^1'] }),
+      shipping('stage/s', 'same')]);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+  });
+
+  it('refuses the full target by §7.6\'s one owner: an entry\'s directive another pack ships',
+    () => {
+      const result = lint([...CLEAN, { id: 'blueprint/a', format: 2, directives: ['a'] },
+        shipping('blueprint/b', 'shared'),
+        { id: 'stage/s', format: 2, directives: ['s'],
+          conditional: [{ with: 'blueprint/a@^1', directives: ['shared'] }] }]);
+      assert.deepEqual(rules(result), ['pair'], result.lines.join('\n'));
+      const pair = result.problems.filter((problem) => problem.rule === 'pair');
+      assert.deepEqual(pair.map((problem) => problem.file).sort(),
+        ['packs/blueprint/b/pack.yaml', 'packs/stage/s/pack.yaml'], result.lines.join('\n'));
+      for (const problem of pair) {
+        assert.match(problem.message, /^base \+ .*blueprint\/a/, problem.message);
+        assert.match(problem.message, /blueprint\/b/, problem.message);
+        assert.match(problem.message, /one owner per file/, problem.message);
+      }
+    });
+
+  it('composes the left-out target: a pack whose entries all compose passes', () => {
+    const result = lint([...CLEAN, { id: 'blueprint/a', format: 2, directives: ['a'] },
+      { id: 'team-mode/t', format: 2, directives: ['t'] },
+      { id: 'stage/s', format: 2, directives: ['s'],
+        conditional: [{ with: 'blueprint/a@^1', directives: ['s-a'] },
+          { with: 'team-mode/t@^1', directives: ['s-t'] }] }]);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+  });
+});

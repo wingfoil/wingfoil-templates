@@ -682,11 +682,178 @@ describe('npm run validate: both legs of a conditional part (spec-001 §15, plan
           const result = validate(['--tree', tree, ...NAME, 'governance/x'],
             { mode: 'publication' });
           assert.equal(result.code, 1, result.lines.join('\n'));
-          assert.ok(result.lines.includes('matrix: governance/x has a conditional part and no '
-            + 'composition with software that ran (plan-039 R6)'), result.lines.join('\n'));
+          assert.ok(result.lines.includes('matrix: governance/x\'s entry with software has no '
+            + 'composition holding software that ran (plan-039 R6, spec-001 §15)'),
+          result.lines.join('\n'));
         }, true);
       });
   });
+
+describe('npm run validate: the legs per entry (spec-001 §15, dl-025 D6, task-087)', () => {
+  /** blueprint/api: a tension naming stage/mvp, so stage/mvp's entry with it is a bridge. */
+  const API: PackSpec = { id: 'blueprint/api', format: 2, directives: ['api'],
+    tensions: [{ pack: 'stage/mvp@^1', resolution: 'Keep the API frozen.' }],
+    manifest: { parameters: { api_style: { type: 'string', default: 'rest',
+      description: 'The API style.' } } } };
+  /** stage/mvp: two entries, with blueprint/api (a bridge) and with team-mode/agent-first. */
+  const MVP: PackSpec = { id: 'stage/mvp', format: 2, directives: ['mvp'],
+    conditional: [{ with: 'blueprint/api@^1', directives: ['mvp-api'] },
+      { with: 'team-mode/agent-first@^1', directives: ['mvp-team'] }] };
+  /** A stage pack with one entry with the given pack. */
+  const stageWith = (id: string, entry: string): PackSpec => ({ id, format: 2,
+    directives: [id.slice(id.indexOf('/') + 1)],
+    conditional: [{ with: entry, directives: [`${id.slice(id.indexOf('/') + 1)}-with`] }] });
+
+  /** The composition labels in their order, from `composition <label>: …` lines. */
+  const composed = (result: ValidateResult, prefix: string): string[] => result.lines
+    .filter((line) => line.startsWith(`composition ${prefix}`))
+    .map((line) => line.slice('composition '.length, line.indexOf(': ')));
+
+  /** The three presets: neither entry's pack, one, and both (one fixture tree, task-087). */
+  function d6Tree(tree: string): void {
+    writePack(tree, API);
+    writePack(tree, MVP);
+    const presets: [string, string[], string][] = [
+      ['d6-neither', ['methodology/kanban@^1', 'stage/mvp@^1'], '{}'],
+      ['d6-one', ['methodology/kanban@^1', 'blueprint/api@^1', 'stage/mvp@^1'], '{}'],
+      ['d6-both', ['methodology/kanban@^1', 'blueprint/api@^1', 'team-mode/agent-first@^1',
+        'stage/mvp@^1'], '\n  api_style: graphql'],
+    ];
+    for (const [id, packs, parameters] of presets) {
+      writeFileSync(join(tree, 'presets', `${id}.yaml`), `format: 1\nid: ${id}\n`
+        + `title: "${id}"\ndescription: "D6's coverage."\npacks:\n`
+        + packs.map((pack) => `  - ${pack}\n`).join('') + `parameters: ${parameters}\n`);
+      replaceIn(join(tree, 'catalog.yaml'), 'presets:\n',
+        `presets:\n  - { id: ${id}, path: presets/${id}.yaml }\n`);
+    }
+  }
+
+  it('derives the full target, then each entry\'s pack left out in turn, by label and order',
+    () => {
+    withTree(d6Tree, (tree) => {
+      const result = validate(['--tree', tree, ...NAME]);
+      assert.deepEqual(composed(result, 'presets/d6-'), [
+        'presets/d6-both.yaml', 'presets/d6-both.yaml[-blueprint/api]',
+        'presets/d6-both.yaml[-team-mode/agent-first]',
+        'presets/d6-neither.yaml',
+        'presets/d6-neither.yaml[+blueprint/api][+team-mode/agent-first]',
+        'presets/d6-neither.yaml[+team-mode/agent-first]',
+        'presets/d6-neither.yaml[+blueprint/api]',
+        'presets/d6-one.yaml', 'presets/d6-one.yaml[+team-mode/agent-first]',
+        'presets/d6-one.yaml[+team-mode/agent-first][-blueprint/api]',
+      ], result.lines.join('\n'));
+      const d6 = result.lines.filter((each) => each.startsWith('composition presets/d6-'));
+      for (const line of d6) {
+        assert.match(line, /: composed twice, /, line);
+      }
+      assert.ok(result.lines.some((line) => line.startsWith(
+        'composition presets/d6-both.yaml[-blueprint/api]: composed twice, ')
+        && line.endsWith(', dropped api_style')), result.lines.join('\n'));
+      // The golden tree's own legs are today's (task-032).
+      assert.deepEqual(composed(result, 'tests/fixtures/examples/'), GOLDEN_LEGS);
+    }, true);
+  });
+
+  it('skips a leg adding a pack that needs software when it holds no methodology', () => {
+    withTree((tree) => writePack(tree, stageWith('stage/lean-aware', 'phase/inception/lean@^1')),
+      (tree) => {
+        const result = validate(['--tree', tree, ...NAME, 'stage/lean-aware']);
+        assert.ok(result.lines.includes(
+          'matrix entries[+phase/inception/lean]: skipped, no methodology'),
+        result.lines.join('\n'));
+        assert.deepEqual(composed(result, 'entries'), ['entries'], result.lines.join('\n'));
+      }, true);
+  });
+
+  it('derives no leg leaving out a pack another pack requires unconditionally', () => {
+    withTree((tree) => {
+      writePack(tree, API);
+      writePack(tree, MVP);
+      writePack(tree, { id: 'governance/needs-team', requires: ['base@^1',
+        'team-mode/agent-first@^1'], directives: ['needs-team'] });
+    }, (tree) => {
+      const result = validate(['--tree', tree, ...NAME, 'methodology/kanban', 'blueprint/api',
+        'governance/needs-team', 'stage/mvp']);
+      assert.deepEqual(composed(result, 'entries'), ['entries', 'entries[-blueprint/api]'],
+        result.lines.join('\n'));
+    }, true);
+  });
+
+  it('fails a leg whose added pack does not satisfy its entry\'s range (spec-001 §6.5)', () => {
+    withTree((tree) => writePack(tree, stageWith('stage/far', 'team-mode/agent-first@^2')),
+      (tree) => {
+        const result = validate(['--tree', tree, ...NAME, 'methodology/kanban', 'stage/far']);
+        assert.equal(result.code, 1, result.lines.join('\n'));
+        assert.ok(result.lines.some((line) =>
+          line.startsWith('composition entries[+team-mode/agent-first]: ')
+          && !line.includes('composed twice')), result.lines.join('\n'));
+      }, true);
+  });
+
+  it('runs one leg per target when two packs name the same packs in opposite orders', () => {
+    const two = (id: string, withs: string[]): PackSpec => ({ id, format: 2,
+      conditional: withs.map((entry, index) => ({ with: entry,
+        directives: [`${id.slice(id.indexOf('/') + 1)}-${index}`] })) });
+    withTree((tree) => {
+      writePack(tree, { id: 'blueprint/api', directives: ['api'] });
+      writePack(tree, two('governance/g1', ['blueprint/api@^1', 'blueprint/web-service@^1']));
+      writePack(tree, two('governance/g2', ['blueprint/web-service@^1', 'blueprint/api@^1']));
+    }, (tree) => {
+      const result = validate(['--tree', tree, ...NAME, 'methodology/kanban', 'governance/g1',
+        'governance/g2']);
+      assert.deepEqual(composed(result, 'entries'), ['entries',
+        'entries[+blueprint/api][+blueprint/web-service]', 'entries[+blueprint/web-service]',
+        'entries[+blueprint/api]'], result.lines.join('\n'));
+    }, true);
+  });
+
+  it('skips a target the format forbids, with the resolver\'s reason (ruling point 3)', () => {
+    withTree((tree) => writePack(tree, stageWith('stage/two-methods', 'methodology/flow@^1')),
+      (tree) => {
+        const result = validate(['--tree', tree, ...NAME, 'methodology/kanban',
+          'stage/two-methods']);
+        const line = result.lines.find((each) =>
+          each.startsWith('matrix entries[+methodology/flow]: skipped, '));
+        assert.ok(line !== undefined && !line.endsWith('no methodology'), result.lines.join('\n'));
+        assert.deepEqual(composed(result, 'entries'), ['entries'], result.lines.join('\n'));
+      }, true);
+  });
+
+  it('skips a leg adding a pack whose parameter has no default and no value (ruling point 4)',
+    () => {
+      withTree((tree) => {
+        writePack(tree, { id: 'blueprint/keyed', directives: ['keyed'], manifest: { parameters: {
+          api_key: { type: 'string', description: 'The key.' } } } });
+        writePack(tree, stageWith('stage/keyed', 'blueprint/keyed@^1'));
+      }, (tree) => {
+        const result = validate(['--tree', tree, ...NAME, 'methodology/kanban', 'stage/keyed']);
+        assert.ok(result.lines.includes(
+          'matrix entries[+blueprint/keyed]: skipped, api_key has no value'),
+        result.lines.join('\n'));
+      }, true);
+    });
+
+  it('fails a publication where an entry\'s pack is held by no composition that ran (R6)', () => {
+    withTree((tree) => writePack(tree, stageWith('stage/two-methods', 'methodology/flow@^1')),
+      (tree) => {
+        const result = validate(['--tree', tree, ...NAME, 'methodology/kanban',
+          'stage/two-methods'], { mode: 'publication' });
+        assert.equal(result.code, 1, result.lines.join('\n'));
+        assert.ok(result.lines.includes('matrix: stage/two-methods\'s entry with methodology/flow '
+          + 'has no composition holding methodology/flow that ran (plan-039 R6, spec-001 §15)'),
+        result.lines.join('\n'));
+      }, true);
+  });
+
+  it('passes the publication check when each entry\'s pack is held by a composition that ran',
+    () => {
+      withTree(d6Tree, (tree) => {
+        const result = validate(['--tree', tree, ...NAME], { mode: 'publication' });
+        assert.ok(!result.lines.some((line) => line.startsWith('matrix: stage/mvp')),
+          result.lines.join('\n'));
+      }, true);
+    });
+});
 
 describe('npm run validate: the tensions\' notices (spec-001 §17 step 8, task-084)', () => {
   const CAREFUL: PackSpec = { id: 'governance/careful', format: 2, directives: ['careful'],
