@@ -285,3 +285,20 @@ points 4 and 6 included.
 - 2026-11-09: `main`'s CI on task-087's merge (pushed with this plan's note, `9e636b3`), run
   42619152908, `success` (22.12.0 22 min 43 s, 22.21.0 20 min 5 s), under 25 minutes (G12), the
   margin narrow. Task (G), task-088, added, reviewed, re-reviewed and submitted.
+- 2026-11-09: `main`'s CI on task-087's notes (`22cf99c`), run 42622330225, `success` (22.12.0
+  21 min 33 s, 22.21.0 14 min 21 s), and on task-088's start (`31e41c0`), run 42625623021,
+  `success` (22.12.0 24 min 19 s, 22.21.0 18 min 50 s), under 25 minutes (G12), the margin on
+  22.12.0 down to 41 s.
+- 2026-11-09: task (G), task-088, approved to `backlog` by the approver with rulings 1 to 4 as
+  recommended (`pack_format` from the tagged `pack.yaml`; the Summary's marks in one parenthesis
+  joined by `; `; "Combines with care" the README Composition's last bullet; the tension's id
+  without its range in the Summary), built, approved, merged `--no-ff` (`3d5800a6`) and done; its
+  branch CI run 42629824600 `success` (22.12.0 24 min 57 s, 22.21.0 15 min 12 s), 3 s under G12's
+  25 minutes. `catalog-index.json` is at format 2 (every entry, `pack_format`,
+  `conditional_parts`, `tensions`); the Summary, the search page, `llms.txt` and the README's
+  Composition and What it adds read every entry and the tensions; a fixture pack at format 2 is
+  composed, checked, published and indexed, which settles point 8's row at the plan's close. For
+  the wave close: rulings 1 to 4 as readings of spec-002 §3.2, §3.3 and §2.1 (ruling 1's §3.3
+  parenthetical an erratum candidate). The CI's margin is spent on 22.12.0: the row "The CI's
+  margin under G12's 25 minutes" to be ruled before the next task adds to the suite. `main`'s CI
+  on the merge read in the next note.
