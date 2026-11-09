@@ -332,6 +332,47 @@ function order(catalog: Catalog, packs: Map<string, ResolvedPack>): ResolvedPack
   return ordered;
 }
 
+/** A request's packs, and the breach of the format that forbids composing it (task-087). */
+export interface Forbidden {
+  /** The ids of the packs the request collects, its requires followed. */
+  ids: string[];
+  /**
+   * `no <axis>` when the axis required with software has no pack and software is held, else the
+   * first of §6.3's conflicts and §3's cardinalities (an axis or a slot taking one pack);
+   * undefined when the format allows it.
+   */
+  reason?: string;
+}
+
+/**
+ * Whether the format forbids a request (spec-001 §3, §6.3; D6's coverage skips it, plan-066
+ * task F, ruling 3): read before resolving, after its packs are collected; the `no <axis>` rule
+ * before their `requires` ranges are checked, the others after. Any other refusal throws, as
+ * resolve does.
+ */
+export function forbiddenBy(tree: string, catalog: Catalog, request: string[]): Forbidden {
+  const { packs, constraints } = collect(tree, catalog, parseRequest(request),
+    repositorySchemas());
+  const byId = [...packs.values()].sort((a, b) => byBytes(a.id, b.id));
+  const ids = byId.map((pack) => pack.id);
+  // First, as the leg with software was judged before task-087: no methodology to give it.
+  const software = softwarePack(catalog);
+  const empty = catalog.axes.find((axis) => axis.requiredWith === software
+    && packs.has(software) && membersOf(axis, byId).length === 0);
+  if (empty !== undefined) return { ids, reason: `no ${empty.name}` };
+  checkRanges(packs, constraints);
+  try {
+    checkConflicts(byId, packs);
+  } catch (error) {
+    if (error instanceof ResolveError) return { ids, reason: error.message };
+    throw error;
+  }
+  // §3's cardinalities only (an axis or a slot taking one pack); other breaches are the lint's.
+  const [axisProblem] = axesMessages(catalog, byId)
+    .filter((message) => message.includes(' takes one pack: '));
+  return axisProblem === undefined ? { ids } : { ids, reason: axisProblem };
+}
+
 /**
  * The packs of a composition in composition order. `request` holds catalog pack ids or §6.3
  * entries; the core foundation pack is added, and so is every pack required, transitively.

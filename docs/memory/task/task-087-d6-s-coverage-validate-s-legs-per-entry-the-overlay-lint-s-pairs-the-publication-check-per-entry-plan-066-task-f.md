@@ -2,7 +2,7 @@
 id: task-087-d6-s-coverage-validate-s-legs-per-entry-the-overlay-lint-s-pairs-the-publication-check-per-entry-plan-066-task-f
 type: task
 title: "D6's coverage: validate's legs per entry, the overlay lint's pairs, the publication check per entry (plan-066 task F)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-delivery v3), plan-066 task (F)
 depends_on: ["task-086-the-waiver-heuristic-a-review-list-in-check-packs-for-an-overlay-s-or-a-stage-pack-s-directives-bridges-exempt-plan-066-task-e"]
 tags: ["tooling","validate","lint"]
@@ -268,3 +268,54 @@ the comments, committed apart (`wf(config)`). No new dependency.
   judged first, before resolving, so format 1's lines stay today's; the parameter skip read on a
   pulled-in pack too; ruling 2's second exception; ruling point 3 cited by Acceptance 4 and 5;
   the §7.7 fixture lint-clean (Design).
+- 2026-11-09: approved to `backlog` by the approver with rulings 1 … 4 as recommended (the pairs
+  in the overlay lint only; the publication check on the `with` side; a target the format forbids
+  skipped; an added pack's parameter with no value skipped). Branch `task/task-087-d6-coverage`.
+- 2026-11-09: red (`31e1ba5`): `node --test --test-name-pattern="per entry|D6|R6|both legs"
+  dist/tests/validate.test.js dist/tests/check-packs.test.js`, 19 tests, 12 failing, each by
+  assertion (`ERR_ASSERTION`): the eight new `validate` tests but one, the format-1 publication
+  message, and three lint tests (the `tensions` pair, the `stage/*` pair, the full target's one
+  owner). Already green on `main`: the two "not composed" lint tests (no pair is composed there),
+  the left-out target's lint test and the publication pass of the three presets.
+- 2026-11-09: green (`c18355f`): `src/coverage.ts`'s targets; `src/resolve.ts`' `forbiddenBy`,
+  the format's skips read on the collected packs before resolving (the `no <axis>` rule first,
+  then §6.3's conflicts, then §3's cardinalities); `validate`'s legs and R6 per entry; the
+  overlay lint's targets, its dedupe on resolved ids, and D6's pairs. Deviations: one red
+  fixture fixed (`governance/needs-team` required `team-mode/agent-first`, which comes later in
+  the composition order, so its composition failed for that; replaced by `governance/needs-api`
+  requiring `blueprint/api`, the assertion unchanged in kind); a `tensions` entry parsed as a
+  `conflicts` entry (its range optional, as task-085's rule reads it); the source comments
+  committed with the code, `pack-compatibility` apart (`1ed9585`). `npm test` 1275 of 1275 in
+  1346 s; `npm run lint` exit 0.
+- 2026-11-09: build review: approve with amendments, nothing blocking; applied: the `no <axis>`
+  rule judged before the `requires` ranges, so a leg with no methodology is skipped as before
+  whatever its ranges; ruling 3's skip limited to §3's "takes one pack" breaches (an axis or a
+  slot) and §6.3's conflicts, the other breaches left to the lint; a failing leg marks the
+  `--param` names unjudged, as a failing composition does; the lint's methodology chosen among
+  those not reaching a left-out pack; the imports' order; a lint test of a left-out target that
+  composes and is refused (a pair's target without the entry's pack, `base + governance/p`), the
+  earlier left-out test being deduplicated against an overlay combination. Not applied: the
+  extra collect per leg (no CI cost, format 1 adds no leg); the legs' entries asserted only
+  through the unsatisfied range's failure, which needs the `with` range kept. Acceptance 6's
+  §7.7 case: no refusal only the left-out side shows can be built, since that target only
+  removes files and an include of an entry's workflow from outside it is refused statically,
+  its pack then troubled and never composed (the reviewer's reading agrees). `npm test`'s
+  duration, locally and on a loaded machine, so indicative only: `main` (`3181032`) 2055 s for
+  1260 tests, this branch 1346 s, then 1320 s for 1276 after the amendments; the branch CI's
+  durations are G12's measure.
+- 2026-11-09: branch CI run 42601353833 on `ed716df`: 22.21.0 `success` in 25 min 34 s, over
+  G12's 25 minutes (its `Test` step 20 min 34 s, the new `validate` suite of the legs per entry
+  162 s, each of its nine tests a full `validate` run on a copy of the golden tree); 22.12.0
+  cancelled after 8 min 44 s by a runner shutdown on GitHub's side ("The runner has received a
+  shutdown signal"), not by a test. Change: the suite's cases are presets of one tree, validated
+  once in self-test and once in publication mode (`before`), the assertions unchanged but read
+  per preset (the range's failure asserted by its message, the forbidden target by "takes one
+  pack"); the suite 60 s locally. The checks rerun on the new frozen commit.
+- 2026-11-09: the checks on the frozen commit `5478bb5`: branch CI run 42605802018 `success`
+  (22.12.0 17 min 58 s, 22.21.0 24 min 0 s), under G12's 25 minutes with a narrow margin, as
+  `main`'s own runs (22.21.0 23 min 56 s on `546329e`); dl-039's local list on Node.js 22.21.0
+  from a clean worktree, each exit 0: `npm ci`, `npm run build`, `npm run validate:publication`
+  (18 runs, 0 failed), the same on the golden tree (26 runs, 0 failed, as before: no WingFoil run
+  added), `workflow list`, `directives list --format json` (`warnings []`), `npm run lint`. An
+  earlier run of the list picked Node.js 20.5.1 by a slip of its script and is not counted. The
+  privacy check of the branch's diff: no local or scratch path, no private project named.
