@@ -282,3 +282,6 @@ points 4 and 6 included.
 - 2026-11-09: the row "The CI's margin under G12's 25 minutes" added to `docs/owed-items.md`, as
   asked by the approver on 2026-11-09 (owner approver, trigger the first CI job over 25 minutes,
   at the latest the next retrospective): plan-066's jobs at 18 … 24 minutes, 22.21.0 the slower.
+- 2026-11-09: `main`'s CI on task-087's merge (pushed with this plan's note, `9e636b3`), run
+  42619152908, `success` (22.12.0 22 min 43 s, 22.21.0 20 min 5 s), under 25 minutes (G12), the
+  margin narrow. Task (G), task-088, added, reviewed, re-reviewed and submitted.
