@@ -265,3 +265,11 @@ files regenerated. No new dependency.
   1285 pass, that one failing; after it, `tests/site.test.ts` 21 of 21 (1640 s locally, against
   1320 s at task-087's frozen commit; local timings vary by run, the branch CI's are G12's);
   `npm run lint` 0; `check:schemas` and both trees' `npm run index -- --check` 0.
+- 2026-11-09: build review: approve with amendments, no blocking finding; applied (`5c4ad08`):
+  two lines over 100 in `src/`; ruling 3's second case tested (a pack with `tensions` and no
+  **Declares**); the union's "a name once" tested through an exported `unionOf`; the fixture
+  pack's needless `export` and a ragged comment. Not applied: one shared helper for the
+  resolution's fold, now in `src/notices.ts` and `src/readme-generate.ts` (optional, the two
+  lines kept identical). The reviewer's note on the local duration (1640 s against 1320 s) is
+  left to the branch CI's durations (Acceptance 9). After the amendments the five index test
+  files pass, 104 of 104, and both trees' `npm run index -- --check` exit 0.
