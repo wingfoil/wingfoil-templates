@@ -261,3 +261,6 @@ points 4 and 6 included.
   `review:` line for each line of waiver wording in an overlay's or a `stage/` pack's directives,
   bridges exempt, its exit unchanged; `pack-authoring` names the lines and where they are
   reviewed. `main`'s CI on the merge read in the next note.
+- 2026-11-09: `main`'s CI on task-086's merge (pushed with this plan's note, `4d941b7`), run
+  42579992333, `success` (22.12.0 23 min 44 s, 22.21.0 22 min 26 s), under 25 minutes (G12), the
+  margin narrow on both jobs. Task (F), task-087, added, reviewed, re-reviewed and submitted.
