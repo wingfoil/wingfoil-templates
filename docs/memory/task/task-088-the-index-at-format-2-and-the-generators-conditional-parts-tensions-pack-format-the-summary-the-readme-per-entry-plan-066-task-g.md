@@ -3,22 +3,184 @@ id: task-088-the-index-at-format-2-and-the-generators-conditional-parts-tensions
 type: task
 title: "The index at format 2 and the generators: conditional_parts, tensions, pack_format, the Summary, the README per entry (plan-066 task G)"
 status: draft
-pack: ""            # the pack element id this task works on; empty for tooling tasks
-depends_on: []
+pack: ""            # tooling task (tooling-delivery v3), plan-066 task (G)
+depends_on: ["task-087-d6-s-coverage-validate-s-legs-per-entry-the-overlay-lint-s-pairs-the-publication-check-per-entry-plan-066-task-f"]
 tags: ["tooling","index"]
 ---
 
 ## Context
 
-<!-- Why this task exists, and the element it comes from (pack charter, spec, DL, bug). -->
+plan-066 (point 1, task (G)), its seventh and last task, after task-087 (D6's coverage); it needs
+task-082 (the schemas at format 2: `index/catalog-index.schema.json` at format 2, format 1's
+frozen as `index/catalog-index.v1.schema.json`, the index read against the schema its `format`
+names) and task-083 (the catalog: `publish` writes `pack_format`, `check:packs` compares it with
+the tagged file, absent reading as 1). plan-066 point 1: "model, render, site, `llms.txt`, README
+Composition, What it adds and "Combines with care", the golden trees and the root's generated
+files". What the amended texts ask (spec-002 §2.1, §3.2, §3.3; spec-001 §6.2, §6.5, §11):
+- **`catalog-index.json` at format 2** (§3.3): `format: 2`; in each version, `conditional` "a list
+  of `{ with }`, one per entry, copied as the catalog version entry copies it", and
+  `pack_format`, "the tagged `pack.yaml`'s format (`1` when the catalog entry has none, spec-001
+  §11)"; in each pack, after `conditional_directives`, `conditional_parts` ("one object per entry,
+  in order: `with`, `workflows`, `directives`, each list sorted; empty without one") and
+  `tensions` ("one object per entry: `pack`, `resolution`; empty without one"); the two
+  `conditional_` lists "the union of the conditional entries'".
+- **`CATALOG.md`'s Summary** (§3.2), and the search page's, which renders the same Summary
+  (§5): after the first sentence, "for each entry in order, by the entry's workflows, or its
+  directives when it has none, sorted and in code spans, and the pack its latest version's `with`
+  names", and "for a pack whose latest version declares `tensions`, by `` Combines with care:
+  `<pack>`, … `` with the packs sorted".
+- **The README** (§2.1): Composition, "for a pack with a conditional part, each entry's workflows
+  and directives, one line each when non-empty, in the entries' order, marked as present only
+  with the pack its `with` names", and "for a pack with `tensions`, a line `Combines with care:`
+  followed by one item per entry, the pack (with its range when there is one) and its
+  resolution"; What it adds, each conditional workflow's and directive's line ending `` , only
+  with `<pack>` `` (the pack its entry's `with` names), a conditional directive's roles `—`.
+- **`llms.txt`** (§3.4) holds no per-pack field: links and URL patterns only.
+
+What exists (`main` at task-087's merge):
+- **The model** (`src/index-model.ts`): `CatalogIndex.format` is `1`; `conditionalPart` reads
+  `conditional[0]` only; a version's `conditional` is `[{ with }]` of that first entry; no
+  `pack_format`, `conditional_parts` or `tensions`; `conditional_workflows` and
+  `conditional_directives` are the first entry's.
+- **The render** (`src/index-render.ts`): `conditionalMark` and `summaryOf` read the first entry
+  of the latest version's `conditional` and the two `conditional_` lists, one mark `(<names> only
+  with <layer>)`; `src/site.ts` calls `summaryOf`; `renderLlms` reads nothing of a pack.
+- **The README generator** (`src/readme-generate.ts`): `partOf` reads `conditionalPart`, so one
+  entry; the Composition's two lines `workflows only with` and `directives only with` and What
+  it adds' `, only with <layer>` read that entry; no tensions line.
+- **The outputs:** the root `catalog-index.json` is at format 1 (its four published packs at
+  format 1, none with a conditional part or `tensions`); the fixture catalog
+  (`tests/support/index-catalog.ts`, its outputs committed under `tests/fixtures/index/expected/`
+  and compared byte for byte) holds two format-1 packs with one entry each (`methodology/flow`,
+  `governance/notes`) and no format-2 pack; its `catalog.yaml` is at format 2 (task-083).
+- The lint (task-085) admits a format-2 pack with several entries and `tensions`, and `publish`
+  writes its `pack_format: 2` (task-083), so a format-2 pack can be published in a test repository
+  today; only the index and the generators read one entry.
+
+Not here: the `mcp` kind's tooling (its row, plan-063 ruling 4); any published pack moved to
+format 2 (plan-063 ruling 3); plan-066 point 7's open points (their rows); point 8's row and
+this plan's row, moved to Closed at the plan's close (plan-066 step 4), which this task's evidence
+(a format-2 pack composed, checked, published and indexed, Acceptance 6) lets it do.
 
 ## Acceptance
 
-<!-- Verifiable criteria: the command to run and the expected result. -->
+`npm run build` precedes the commands.
+
+1. **Red first** (dl-018): the tests of Acceptance 2 … 6 committed before the code, so that the
+   build passes and they fail by assertion, except any already green on `main` (recorded as such);
+   the failing run recorded with its command and count.
+2. **`catalog-index.json` at format 2** (§3.3), built key by key in §3.3's order:
+   - `format: 2`, so the index is validated against `index/catalog-index.schema.json`
+     (task-082's choice by format), the v1 schema no longer used by any output;
+   - **each version:** `conditional`, only for a version whose tagged `pack.yaml` has a
+     conditional part, one `{ with }` per entry in written order, `with` as written (format 1's
+     single entry giving today's list); then `pack_format`, after `conflicts` and `conditional`
+     and before `readme_url`, the catalog version entry's `pack_format`, `1` when it has none
+     (the approver's ruling, point 1 below);
+   - **each pack**, from the latest version's tag: `conditional_workflows` and
+     `conditional_directives`, the union of every entry's, sorted, a name once; then, after
+     `conditional_directives` and before `parameters`, `conditional_parts`, one object per entry
+     in written order (`with` as written, `workflows` and `directives` each sorted), and
+     `tensions`, one object per entry in written order (`pack` and `resolution` as written); both
+     `[]` without one.
+   For a format-1 pack the only changes are `format`, `pack_format: 1` and the two empty or
+   one-entry lists; the root `catalog-index.json` changes exactly so (four packs, every version
+   `pack_format: 1`, `conditional_parts: []`, `tensions: []`).
+3. **The Summary** (§3.2), one function for `CATALOG.md` and the search page (`summaryOf`):
+   - **the marks:** for each entry of the latest version's `conditional_parts`, in order, its
+     workflows, or its directives when it has none (an entry with neither has no mark, as today),
+     in code spans joined by `, `, then `only with` and the pack its `with` names (the id, no
+     range); the marks of all entries in one parenthesis after the first sentence, joined by `; `
+     (the approver's ruling, point 2 below), for example `` First sentence. (`delivery` only with
+     `software`; `checks` only with `stage/mvp`) ``; one entry gives today's text;
+   - **the tensions:** for a pack whose latest version declares `tensions`, after the marks (or
+     the first sentence), `` Combines with care: `<pack>`, … `` with the packs' ids (no range),
+     sorted by bytes, a pack once, ending with no full stop (§3.2's example);
+   - the search page shows the same Summary, escaped as today (`site.ts` unchanged but for what
+     `summaryOf` returns).
+4. **The README's generated sections** (§2.1), from the pack's own files (§2.2):
+   - **Composition:** under **Declares**, for each entry in written order, `` - workflows only with
+     `<pack>`: … `` when its workflows are non-empty, then `` - directives only with `<pack>`: …
+     `` when its directives are non-empty (`<pack>` the id its `with` names; names sorted); one
+     entry gives today's lines; then, for a pack with `tensions`, a bullet `- **Combines with
+     care:**` after the **Requires capabilities** bullet and the **Declares** block, with one
+     nested item per entry in written order, `` `<pack>` `` as written (range included when there
+     is one), `: ` and its resolution (the approver's ruling, point 3 below);
+   - **What it adds:** the always-composed workflows and directives first, as today; then each
+     entry's, in entry order, sorted within the entry, each line ending `` , only with `<pack>` ``
+     with its own entry's pack; a conditional directive's roles `—`;
+   - a README whose pack has no conditional part and no `tensions` is unchanged byte for byte
+     (the four published packs' READMEs and every fixture's).
+5. **`llms.txt` unchanged** (§3.4): no per-pack field, so its bytes are today's for the root and the
+   fixture catalog; the test records it.
+6. **The fixture catalog and the evidence** (plan-066 points 2 and 8): `indexCatalog`
+   (`tests/support/index-catalog.ts`) gains one format-2 pack, published with `publishByHand`,
+   with two conditional entries whose `with` name `software` and another pack of the fixture tree
+   composed earlier (§7.1), one entry with a workflow and one with a directive only, and a
+   `tensions` entry naming a pack of the tree with a range and its resolution; its outputs
+   refreshed under `tests/fixtures/index/expected/` (`REFRESH_INDEX_EXPECTED=1`) and reviewed: the
+   new pack's version with two `conditional` entries and `pack_format: 2`, its
+   `conditional_parts` and `tensions`, its Summary with two marks and the tensions, its README's
+   Composition and What it adds per entry; every other pack's lines changed only as Acceptance 2
+   says. The test "passes the lint, tag rules included" stays green on it (task-083's
+   `catalog-manifest`, task-085's rules), so a format-2 pack is composed, checked, published and
+   indexed.
+7. **The tests** (offline): `tests/index-model.test.ts` (Acceptance 2: two entries, the union
+   and its order, `pack_format` from the entry and absent, `tensions`, format 1's pack unchanged
+   but for the new keys); `tests/index-render.test.ts` (Acceptance 3: `conditionalMark` per entry
+   or its replacement, one and two entries, an entry with neither, the tensions sorted and once,
+   both together); `tests/readme-generate.test.ts` (Acceptance 4: two entries, a tension with and
+   without a range, a pack with neither unchanged); `tests/site.test.ts` (the Summary on the
+   page); `tests/index.test.ts` (Acceptance 5, 6, and the index validated against format 2's
+   schema); `npm test`'s duration before and after recorded (G12).
+8. **The root's generated files** regenerated in the same commit as the code (`npm run index`),
+   so `npm run index -- --check` and `validate`'s check pass: `catalog-index.json` changed as
+   Acceptance 2 says; `CATALOG.md`, `llms.txt` and the four packs' READMEs unchanged. The
+   golden tree `tests/fixtures/compose/tree` is unchanged (it has no index outputs to change, the
+   index fixture being `indexCatalog`'s). `check:schemas` exits 0. No schema change, so no schema
+   note; `npm test` and `npm run lint` exit 0.
+9. **The checks** (`tooling-delivery` v3 › `review`, dl-039): the build review and its amendments
+   first; then once on the frozen commit the branch CI `success`, both jobs, run id and durations
+   (G12's 25 minutes; the row "The CI's margin under G12's 25 minutes" of `docs/owed-items.md`
+   read: this task adds no `validate` run), and dl-039's local list on Node.js 22.21.0. The
+   privacy check of the branch's diff recorded.
+
+**For the approver's ruling before `backlog`:**
+1. **Where `pack_format` is read** (Acceptance 2): §3.3 lists it among the fields "from the tag's
+   `pack.yaml`" but says "(`1` when the catalog entry has none, spec-001 §11)". Recommended: the
+   catalog version entry's `pack_format`, absent read as 1, as `version` and `wingfoil` come from
+   `catalog.yaml`; `check:packs` already refuses an entry whose `pack_format` differs from the
+   tagged file's `format` (task-083, `catalog-manifest`), so the two agree on every tree the lint
+   passes. Recorded as a reading for the wave close (§3.3's sentence names both sources).
+   Alternative: the tagged `pack.yaml`'s `format`, absent read as 1.
+2. **The Summary's marks for several entries** (Acceptance 3): §3.2 gives one entry's example and
+   no separator. Recommended: one parenthesis, the entries' marks joined by `; `, so that one entry
+   reads as today and the tensions follow outside it. Alternative: one parenthesis per entry.
+   Recorded as a reading for the wave close.
+3. **Where "Combines with care" goes in the README** (Acceptance 4): §2.1 asks "a line `Combines
+   with care:` followed by one item per entry" and no place. Recommended: a top-level bullet after
+   **Declares** (or after **Requires capabilities** for `base`, which has no **Declares**), its
+   items nested, so it reads as the other Composition bullets. Alternative: a paragraph after the
+   list. Recorded as a reading for the wave close.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-088-index-format-2` from `main` at this task's add. `src/index-model.ts`:
+`conditionalPart` replaced by `conditionalParts(manifest)` (every entry: `with`, its id, its
+contents), `tensionsOf(manifest)`; `IndexVersion` gains `pack_format`, `IndexPack` gains
+`conditional_parts` and `tensions`, `CatalogIndex.format` becomes `2`; `versionOf` takes the
+catalog entry's `pack_format`. `src/index-render.ts`: `conditionalMark` returns one mark per
+entry (read from `conditional_parts`, which carries each entry's lists; the version's
+`conditional` stays the copied `with`s), `summaryOf` joins them and appends the tensions.
+`src/readme-generate.ts`: `PackFiles['part']` becomes a list of entries, each with its layer, its
+workflows and directives; `onlyWith` takes the entry; a `tensionsLines` after **Declares**. The
+fixture pack of Acceptance 6 is written with `tests/support/pack-tree`'s `PackSpec` (format 2 via
+`manifest.format`, as task-085's tests do); its `with` pack is `methodology/flow` or another pack
+of `indexCatalog` that keeps the lint at 0, chosen when the fixture is written and recorded.
+Red steps: (1) the tests of Acceptance 2 … 7, with the signatures of `conditionalParts` and
+`tensionsOf` and no body (they throw), uncalled, and the fixture's expected outputs left as today
+so the byte-for-byte test fails; (2) the code, the expected outputs refreshed and reviewed, the
+root's generated files regenerated. No new dependency.
 
 ## Execution Notes
 
