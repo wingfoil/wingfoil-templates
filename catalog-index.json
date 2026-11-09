@@ -1,5 +1,5 @@
 {
-  "format": 1,
+  "format": 2,
   "repository": "wingfoil/wingfoil-templates",
   "install": [],
   "packs": [
@@ -28,6 +28,7 @@
           ],
           "requires": [],
           "conflicts": [],
+          "pack_format": 1,
           "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@1.0.0/packs/base/README.md",
           "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@1.0.0/packs/base/pack.yaml"
         },
@@ -48,6 +49,7 @@
           ],
           "requires": [],
           "conflicts": [],
+          "pack_format": 1,
           "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.0/packs/base/README.md",
           "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.0/packs/base/pack.yaml"
         },
@@ -68,6 +70,7 @@
           ],
           "requires": [],
           "conflicts": [],
+          "pack_format": 1,
           "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.1/packs/base/README.md",
           "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/base@2.0.1/packs/base/pack.yaml"
         }
@@ -93,6 +96,8 @@
         "traceability"
       ],
       "conditional_directives": [],
+      "conditional_parts": [],
+      "tensions": [],
       "parameters": [
         {
           "name": "agent_name",
@@ -174,6 +179,7 @@
             "software@^1"
           ],
           "conflicts": [],
+          "pack_format": 1,
           "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/kanban@1.0.0/packs/methodology/kanban/README.md",
           "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/kanban@1.0.0/packs/methodology/kanban/pack.yaml"
         }
@@ -194,6 +200,8 @@
         "kanban"
       ],
       "conditional_directives": [],
+      "conditional_parts": [],
+      "tensions": [],
       "parameters": [
         {
           "name": "service_level_expectation",
@@ -244,6 +252,7 @@
             "software@^1"
           ],
           "conflicts": [],
+          "pack_format": 1,
           "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/scrum@1.0.0/packs/methodology/scrum/README.md",
           "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/methodology/scrum@1.0.0/packs/methodology/scrum/pack.yaml"
         }
@@ -266,6 +275,8 @@
         "scrum"
       ],
       "conditional_directives": [],
+      "conditional_parts": [],
+      "tensions": [],
       "parameters": [
         {
           "name": "sprint_id",
@@ -316,6 +327,7 @@
             "base@^2"
           ],
           "conflicts": [],
+          "pack_format": 1,
           "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/software@1.0.0/packs/software/README.md",
           "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/software@1.0.0/packs/software/pack.yaml"
         }
@@ -345,6 +357,8 @@
         "determinism"
       ],
       "conditional_directives": [],
+      "conditional_parts": [],
+      "tensions": [],
       "parameters": [
         {
           "name": "adr_path",

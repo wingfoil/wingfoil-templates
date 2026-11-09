@@ -5,7 +5,8 @@ import {
   byBytes, code, isDoc, list, packYamlIn, sorted, strings, text, yamlIn,
 } from './index-data';
 import type { Doc } from './index-data';
-import { conditionalPart } from './index-model';
+import { conditionalParts, tensionsOf } from './index-model';
+import type { IndexTension } from './index-model';
 import { cell } from './index-render';
 import { workingTree } from './index-source';
 import type { TreeSource } from './index-source';
@@ -39,19 +40,21 @@ interface PackFiles {
   roles: Doc;
   memory: Doc;
   workflows: Doc[];
-  /** The conditional part (spec-001 §6.5): its workflows, directives and the layer it needs. */
-  part: { workflows: Doc[]; directives: string[]; layer: string } | undefined;
+  /** The conditional entries (spec-001 §6.5), in written order: workflows, directives, layer. */
+  parts: Part[];
+  /** The `tensions` as written (spec-001 §6.2). */
+  tensions: IndexTension[];
 }
 
-function partOf(source: TreeSource, dir: string, manifest: Doc): PackFiles['part'] {
-  const part = conditionalPart(manifest);
-  if (part === undefined) return undefined;
-  return {
+interface Part { workflows: Doc[]; directives: string[]; layer: string }
+
+function partsOf(source: TreeSource, dir: string, manifest: Doc): Part[] {
+  return conditionalParts(manifest).map((part) => ({
     workflows: sorted(strings(part.contents['workflows']))
       .map((name) => ({ name, ...packYamlOrEmpty(source, `${dir}/workflows/${name}.yaml`) })),
     directives: sorted(strings(part.contents['directives'])),
     layer: part.layer,
-  };
+  }));
 }
 
 function readPack(source: TreeSource, id: string): PackFiles {
@@ -66,7 +69,8 @@ function readPack(source: TreeSource, id: string): PackFiles {
     dna: fragment('dna'), roles: fragment('roles'), memory: fragment('memory'),
     workflows: sorted(strings(contents['workflows']))
       .map((name) => ({ name, ...packYamlOrEmpty(source, `${dir}/workflows/${name}.yaml`) })),
-    part: partOf(source, dir, manifest),
+    parts: partsOf(source, dir, manifest),
+    tensions: tensionsOf(manifest),
   };
 }
 
@@ -120,15 +124,21 @@ function compositionSection(pack: PackFiles): string[] {
       `  - roles: ${codes(rolesOf(pack))}`,
       `  - states: ${codes(declaredStates(pack))}`,
       `  - workflows: ${codes(pack.workflows.map((workflow) => text(workflow['name'])))}`);
-    // spec-002 §2.1: a conditional part's files, present only with its layer (plan-039 R8).
-    const part = pack.part;
-    if (part !== undefined && part.workflows.length > 0) {
-      lines.push(`  - workflows only with ${code(part.layer)}: ${codes(part.workflows
-        .map((workflow) => text(workflow['name'])))}`);
+    // spec-002 §2.1: each entry's files, present only with its pack (plan-039 R8).
+    for (const part of pack.parts) {
+      if (part.workflows.length > 0) {
+        lines.push(`  - workflows only with ${code(part.layer)}: ${codes(part.workflows
+          .map((workflow) => text(workflow['name'])))}`);
+      }
+      if (part.directives.length > 0) {
+        lines.push(`  - directives only with ${code(part.layer)}: ${codes(part.directives)}`);
+      }
     }
-    if (part !== undefined && part.directives.length > 0) {
-      lines.push(`  - directives only with ${code(part.layer)}: ${codes(part.directives)}`);
-    }
+  }
+  // spec-002 §2.1: the list's last bullet, one item per entry (task-088 ruling 3).
+  if (pack.tensions.length > 0) {
+    lines.push('- **Combines with care:**', ...pack.tensions.map((tension) => `  - `
+      + `${code(tension.pack)}: ${tension.resolution.trim().replace(/\s*\n\s*/g, ' ')}`));
   }
   return lines;
 }
@@ -142,9 +152,9 @@ function phaseLine(phase: Doc): string {
   return `  - ${parts.join(', ')}`;
 }
 
-/** The mark of a line the conditional part adds (plan-039 R8). */
-function onlyWith(pack: PackFiles): string {
-  return pack.part === undefined ? '' : `, only with ${code(pack.part.layer)}`;
+/** The mark of a line a conditional entry adds (plan-039 R8). */
+function onlyWith(part: Part): string {
+  return `, only with ${code(part.layer)}`;
 }
 
 function workflowLines(pack: PackFiles): string[] {
@@ -152,7 +162,8 @@ function workflowLines(pack: PackFiles): string[] {
     `- ${code(text(workflow['name']))} (${text(workflow['kind'] ?? 'unknown')})${mark}`,
     ...list(workflow['phases']).filter(isDoc).map(phaseLine),
   ]);
-  return [...lines(pack.workflows, ''), ...lines(pack.part?.workflows ?? [], onlyWith(pack))];
+  return [...lines(pack.workflows, ''),
+    ...pack.parts.flatMap((part) => lines(part.workflows, onlyWith(part)))];
 }
 
 function gatesOf(states: Doc): string {
@@ -193,7 +204,8 @@ function directiveLines(pack: PackFiles): string[] {
     return `- ${code(id)}: ${roles.length === 0 ? '—' : roles.join(', ')}`;
   })
     // A part's directive is assigned to no role: what is always composed never names it (§6.5).
-    .concat((pack.part?.directives ?? []).map((id) => `- ${code(id)}: —${onlyWith(pack)}`));
+    .concat(pack.parts.flatMap((part) => part.directives
+      .map((id) => `- ${code(id)}: —${onlyWith(part)}`)));
 }
 
 function bullets(names: string[]): string[] {

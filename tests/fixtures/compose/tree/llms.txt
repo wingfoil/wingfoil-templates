@@ -12,7 +12,7 @@ Every file is anonymous and CORS-enabled and may be up to 5 minutes stale; no se
 
 ## Index
 
-- [catalog-index.json](https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/catalog-index.json): every published pack, preset and transition (format 1); search is a local filter over it
+- [catalog-index.json](https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/catalog-index.json): every published pack, preset and transition (format 2); search is a local filter over it
 - [CATALOG.md](https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/CATALOG.md): the same index for people
 
 ## Specifications

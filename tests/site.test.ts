@@ -13,7 +13,7 @@ import { readmeOnGithub } from '../src/index-urls';
 import { runSite } from '../src/site';
 import type { TestRepo } from './support/git-repo';
 import { indexCatalog } from './support/index-catalog';
-import { REPO_ROOT } from './support/paths';
+import { FIXTURES, REPO_ROOT } from './support/paths';
 
 const FILES = ['catalog-index.json', 'index.html', 'llms.txt', 'search.js', 'site.css'];
 const CSP = '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; '
@@ -147,8 +147,9 @@ describe('npm run site (task-024)', () => {
       const tree = join(dir, 'named-schema');
       mkdirSync(tree);
       cpSync(join(repo.dir, 'llms.txt'), join(tree, 'llms.txt'));
-      const index = JSON.parse(readFileSync(join(repo.dir, 'catalog-index.json'), 'utf8')) as
-        Record<string, unknown>;
+      // A format-1 index read through the frozen schema (task-088: the outputs are at format 2).
+      const index = JSON.parse(readFileSync(join(FIXTURES, 'schema', 'index', 'valid',
+        'format-1.json'), 'utf8')) as Record<string, unknown>;
       const broken = JSON.stringify({ ...index, date: 'x' });
       writeFileSync(join(tree, 'catalog-index.json'), `${broken}\n`);
       const one = runSite(['--tree', tree, '--out', join(tree, 'site')]);

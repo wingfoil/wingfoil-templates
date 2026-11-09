@@ -33,7 +33,7 @@ export interface IndexVersion {
   /** Copied as the catalog version entry does, its `with` only (plan-039 R3). */
   conditional?: { with: string }[];
   /** The tagged pack.yaml's format, 1 when it has none (spec-002 §3.3, task-088 ruling 1). */
-  pack_format?: number;
+  pack_format: number;
   readme_url: string;
   manifest_url: string;
 }
@@ -49,15 +49,15 @@ export interface IndexPack {
   title: string;
   description: string;
   workflows: string[];
-  /** The workflows of the pack's conditional part, composed only with software (R3). */
+  /** The workflows of every conditional entry, composed only with its pack (R3, §3.3). */
   conditional_workflows: string[];
   memory_types: string[];
   directives: string[];
   conditional_directives: string[];
   /** One object per conditional entry, in written order (spec-002 §3.3). */
-  conditional_parts?: IndexConditionalPart[];
+  conditional_parts: IndexConditionalPart[];
   /** One object per `tensions` entry, in written order (spec-002 §3.3). */
-  tensions?: IndexTension[];
+  tensions: IndexTension[];
   parameters: IndexParameter[];
   excerpt: string;
   profiles: string[];
@@ -93,7 +93,7 @@ export interface IndexTransition {
 }
 
 export interface CatalogIndex {
-  format: 1 | 2;
+  format: 2;
   repository: string;
   install: string[];
   packs: IndexPack[];
@@ -181,38 +181,33 @@ function memoryTypes(source: TreeSource, packId: string, manifest: Doc): string[
 }
 
 /**
- * A pack's conditional part, from its pack.yaml (spec-001 §6.5): its `with`, the layer that names,
- * and its contents; undefined without one. Format 1 allows one entry.
- */
-export function conditionalPart(manifest: Doc):
-{ with: string; layer: string; contents: Doc } | undefined {
-  const [part] = list(manifest['conditional']).filter(isDoc);
-  if (part === undefined) return undefined;
-  const entry = String(part['with']);
-  return { with: entry, layer: entryId(entry),
-    contents: isDoc(part['contents']) ? part['contents'] : {} };
-}
-
-/**
  * Every conditional entry of a pack.yaml, in written order (spec-001 §6.5): its `with`, the id
  * that names, and its contents; none without a conditional part.
  */
 export function conditionalParts(manifest: Doc):
 { with: string; layer: string; contents: Doc }[] {
-  void manifest;
-  throw new Error('conditionalParts: not implemented (task-088)');
+  return list(manifest['conditional']).filter(isDoc).map((part) => {
+    const entry = String(part['with']);
+    return { with: entry, layer: entryId(entry),
+      contents: isDoc(part['contents']) ? part['contents'] : {} };
+  });
 }
 
 /** A pack.yaml's `tensions` as written (spec-001 §6.2); none without them. */
 export function tensionsOf(manifest: Doc): IndexTension[] {
-  void manifest;
-  throw new Error('tensionsOf: not implemented (task-088)');
+  return list(manifest['tensions']).filter(isDoc)
+    .map((tension) => ({ pack: String(tension['pack']), resolution: String(tension['resolution']) }));
 }
 
-/** A version's `conditional`, its `with` only, when the tagged pack.yaml has one (R3). */
+/** A version's `conditional`, one `{ with }` per entry, when the tagged pack.yaml has one (R3). */
 function conditionalOf(manifest: Doc): { conditional?: { with: string }[] } {
-  const part = conditionalPart(manifest);
-  return part === undefined ? {} : { conditional: [{ with: part.with }] };
+  const parts = conditionalParts(manifest);
+  return parts.length === 0 ? {} : { conditional: parts.map((part) => ({ with: part.with })) };
+}
+
+/** The tagged pack.yaml's format, absent reading as 1 (spec-001 §5; task-088 ruling 1). */
+function packFormatOf(manifest: Doc): number {
+  return typeof manifest['format'] === 'number' ? manifest['format'] : 1;
 }
 
 function versionOf(tree: string, packId: string, entry: Doc): { version: IndexVersion;
@@ -233,6 +228,7 @@ function versionOf(tree: string, packId: string, entry: Doc): { version: IndexVe
       requires: strings(manifest['requires']),
       conflicts: strings(manifest['conflicts']),
       ...conditionalOf(manifest),
+      pack_format: packFormatOf(manifest),
       readme_url: rawAtTag(tag, `packs/${packId}/README.md`),
       manifest_url: rawAtTag(tag, `packs/${packId}/pack.yaml`),
     },
@@ -250,7 +246,9 @@ IndexPack | undefined {
   if (latest === undefined) return undefined;
   const contents = isDoc(latest.manifest['contents']) ? latest.manifest['contents'] : {};
   const { axis, slot } = axisAndSlot(id, foundation);
-  const part = conditionalPart(latest.manifest);
+  const parts = conditionalParts(latest.manifest);
+  const union = (key: string): string[] => sorted(parts.flatMap((part) =>
+    strings(part.contents[key])));
   return {
     id,
     catalog: String(entry['catalog']),
@@ -262,10 +260,14 @@ IndexPack | undefined {
     title: String(latest.manifest['title']),
     description: String(latest.manifest['description']),
     workflows: sorted(strings(contents['workflows'])),
-    conditional_workflows: sorted(strings(part?.contents['workflows'])),
+    conditional_workflows: union('workflows'),
     memory_types: memoryTypes(latest.source, id, latest.manifest),
     directives: sorted(strings(contents['directives'])),
-    conditional_directives: sorted(strings(part?.contents['directives'])),
+    conditional_directives: union('directives'),
+    conditional_parts: parts.map((part) => ({ with: part.with,
+      workflows: sorted(strings(part.contents['workflows'])),
+      directives: sorted(strings(part.contents['directives'])) })),
+    tensions: tensionsOf(latest.manifest),
     parameters: parametersOf(latest.manifest),
     excerpt: excerptOf(latest.source.read(`packs/${id}/README.md`)),
     profiles: sorted(presets.filter((preset) => preset.profile !== null
@@ -337,7 +339,7 @@ export function buildIndex(tree: string, source: TreeSource = workingTree(tree))
   const foundation = strings(catalog['foundation']);
   const packs = byId(entries.flatMap((entry) => packOf(tree, entry, presets, foundation) ?? []));
   return {
-    format: 1,
+    format: 2,
     repository: REPOSITORY,
     install: installReleases(source),
     packs,
