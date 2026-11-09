@@ -2,7 +2,7 @@
 id: task-088-the-index-at-format-2-and-the-generators-conditional-parts-tensions-pack-format-the-summary-the-readme-per-entry-plan-066-task-g
 type: task
 title: "The index at format 2 and the generators: conditional_parts, tensions, pack_format, the Summary, the README per entry (plan-066 task G)"
-status: draft
+status: pending
 pack: ""            # tooling task (tooling-delivery v3), plan-066 task (G)
 depends_on: ["task-087-d6-s-coverage-validate-s-legs-per-entry-the-overlay-lint-s-pairs-the-publication-check-per-entry-plan-066-task-f"]
 tags: ["tooling","index"]
