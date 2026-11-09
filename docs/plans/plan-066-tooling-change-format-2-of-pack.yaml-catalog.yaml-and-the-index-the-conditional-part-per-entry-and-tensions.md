@@ -279,3 +279,6 @@ points 4 and 6 included.
   the pairs (`tensions`, and each pack with each stage) under rule `pair`. For the wave close:
   ruling 3's reading, that §6.5 and §15 assume an entry's packs compose together. `main`'s CI
   on the merge read in the next note.
+- 2026-11-09: the row "The CI's margin under G12's 25 minutes" added to `docs/owed-items.md`, as
+  asked by the approver on 2026-11-09 (owner approver, trigger the first CI job over 25 minutes,
+  at the latest the next retrospective): plan-066's jobs at 18 … 24 minutes, 22.21.0 the slower.
