@@ -227,3 +227,41 @@ files regenerated. No new dependency.
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-09: written as plan-066 task (G), after task-087's merge; `pack` and `depends_on` filled
+  by editing the draft (W-02).
+- 2026-11-09: independent review: approve with amendments, two blocking (`llms.txt` changes, its
+  index line naming the format; the golden tree commits index outputs, so its `catalog-index.json`
+  and `llms.txt` change); applied with the others: the frozen v1 schema keeps a test instance
+  (`format-1.json`); the red step failing by assertion (the `software` entry first, the new
+  fields optional, `format: 1 | 2`); the fixture pack's constraints; the assertions the fixture
+  changes; the Summary's full text and ruling point 4 added; a multi-line resolution folded; the
+  Composition lines nested under **Declares**; ruling 1 re-argued for the tag (a changed
+  decision); Acceptance 2 reworded; the suite's added seconds stated.
+- 2026-11-09: re-review: approve, three nits, applied: the red step's first failing output is
+  `CATALOG.md`; "Combines with care" placed for a pack with no **Declares**; the Context's
+  `llms.txt` bullet no longer credits §3.4 with the format.
+- 2026-11-09: approved to `backlog` by the approver with rulings 1 … 4 as recommended
+  (`pack_format` from the tagged `pack.yaml`; one parenthesis joined by `; `; "Combines with
+  care" the Composition's last bullet; the tension's id without its range in the Summary).
+  Branch `task/task-088-index-format-2`.
+- 2026-11-09: red (`995948d`): `node --test dist/tests/index-model.test.js
+  dist/tests/index-render.test.js dist/tests/readme-generate.test.js dist/tests/site.test.js
+  dist/tests/index.test.js`, 102 tests, 18 failing: 16 by assertion, 2 by the throwing
+  signatures (`conditionalParts`, `tensionsOf`, called by their own tests only); the
+  byte-for-byte test failing by assertion on `CATALOG.md`. Already green, as Acceptance 1
+  allows: the format-1 instance read through the frozen schema, the site's list of pack ids and
+  its count of results (the new pack is published and listed by today's code), and "passes the
+  lint, tag rules included" with the format-2 pack (`governance/checks`: `base@^1`, entries
+  `software@^1` with the workflow `checks-flow` and `methodology/flow@^1` with the directive
+  `checks-rule`, a tension on `stage/mvp@^1`).
+- 2026-11-09: green (`285e9ea`): the code, the root's `catalog-index.json` and `llms.txt`, the
+  golden tree's two files and the fixture catalog's expected outputs regenerated and reviewed (the
+  new pack's version with two `conditional` entries and `pack_format: 2`, its `conditional_parts`,
+  `tensions`, Summary and README sections; every other pack gaining only `pack_format: 1`,
+  `conditional_parts` and `tensions`; the root's `CATALOG.md` and the four READMEs unchanged). One
+  deviation from Acceptance 7's list: `tests/site.test.ts`' "names the schema the index was read
+  against" read the fixture repository's index as a format-1 instance; it now reads
+  `format-1.json` for the v1 case, in the green commit. `npm test` before that fix: 1286 tests,
+  1285 pass, that one failing; after it, `tests/site.test.ts` 21 of 21 (1640 s locally, against
+  1320 s at task-087's frozen commit; local timings vary by run, the branch CI's are G12's);
+  `npm run lint` 0; `check:schemas` and both trees' `npm run index -- --check` 0.
