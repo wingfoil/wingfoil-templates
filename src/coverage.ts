@@ -25,13 +25,33 @@ export interface Target {
  */
 export function entryTargets(conditional: ConditionalPack[], held: (id: string) => boolean):
 Target[] {
-  void conditional;
-  void held;
-  throw new Error('entryTargets: not implemented (task-087)');
+  const targets: Target[] = [];
+  const seen = new Set<string>();
+  const keep = (target: Target): void => {
+    if (target.added.length === 0 && target.removed.length === 0) return;
+    const key = `${target.added.map((pack) => pack.id).sort().join(' ')}|`
+      + target.removed.slice().sort().join(' ');
+    if (seen.has(key)) return;
+    seen.add(key);
+    targets.push(target);
+  };
+  for (const pack of conditional) {
+    // A repeated id counts once, its first entry kept.
+    const withs = pack.withs.filter((each, index) =>
+      pack.withs.findIndex((other) => other.id === each.id) === index);
+    const added = withs.filter((each) => !held(each.id));
+    keep({ added, removed: [] });
+    for (const left of withs) {
+      keep(held(left.id)
+        ? { added, removed: [left.id] }
+        : { added: added.filter((each) => each.id !== left.id), removed: [] });
+    }
+  }
+  return targets;
 }
 
 /** The label suffix: `[+<id>]` per added pack, then `[-<id>]` per removed pack. */
 export function targetLabel(target: Target): string {
-  void target;
-  throw new Error('targetLabel: not implemented (task-087)');
+  return target.added.map((pack) => `[+${pack.id}]`).join('')
+    + target.removed.map((id) => `[-${id}]`).join('');
 }

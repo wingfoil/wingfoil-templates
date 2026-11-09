@@ -769,13 +769,13 @@ describe('npm run validate: the legs per entry (spec-001 §15, dl-025 D6, task-0
     withTree((tree) => {
       writePack(tree, API);
       writePack(tree, MVP);
-      writePack(tree, { id: 'governance/needs-team', requires: ['base@^1',
-        'team-mode/agent-first@^1'], directives: ['needs-team'] });
+      writePack(tree, { id: 'governance/needs-api', requires: ['base@^1', 'blueprint/api@^1'],
+        directives: ['needs-api'] });
     }, (tree) => {
-      const result = validate(['--tree', tree, ...NAME, 'methodology/kanban', 'blueprint/api',
-        'governance/needs-team', 'stage/mvp']);
-      assert.deepEqual(composed(result, 'entries'), ['entries', 'entries[-blueprint/api]'],
-        result.lines.join('\n'));
+      const result = validate(['--tree', tree, ...NAME, 'methodology/kanban',
+        'governance/needs-api', 'team-mode/agent-first', 'stage/mvp']);
+      assert.deepEqual(composed(result, 'entries'), ['entries',
+        'entries[-team-mode/agent-first]'], result.lines.join('\n'));
     }, true);
   });
 
