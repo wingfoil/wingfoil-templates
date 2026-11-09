@@ -28,11 +28,11 @@ import {
   selectReleases,
 } from './matrix';
 import type { MatrixMode } from './matrix';
+import { conditionalEntries } from './pack-rules';
 import { formatProblem, sortProblems } from './problems';
 import type { Problem } from './problems';
 import type { VersionRequirements } from './range';
 import { parseEntry } from './requirements';
-import { conditionalEntries } from './pack-rules';
 import { ResolveError, forbiddenBy, resolve } from './resolve';
 import type { ResolvedPack } from './resolve';
 import { repositorySchemas } from './schemas';
@@ -762,6 +762,7 @@ ValidateResult {
         }
         leg = resolve(tree, catalog, entries);
       } catch (error) {
+        unjudged = true;
         fail(1, `composition ${label}: ${mapped(composition, messageOf(error))}`);
         matrixLines.push(`matrix ${label}: skipped`);
         continue;

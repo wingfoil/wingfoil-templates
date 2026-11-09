@@ -95,7 +95,8 @@ export function overlayProblems(context: LintContext, earlier: Problem[]): Probl
     const ids = closure(request);
     if (!ids.includes(softwarePack(catalog))
       || ids.some((id) => context.packs.get(id)?.manifest.axis === 'methodology')) return request;
-    const allowed = methodologies.find((methodology) => !excluded.includes(methodology.id)
+    const allowed = methodologies.find((methodology) => !reachable(methodology, context.packs)
+      .some((id) => excluded.includes(id))
       && !request.some((pack) => conflicting(pack, methodology) || conflicting(methodology, pack)));
     return allowed === undefined ? undefined
       : [...request.slice(0, lead), allowed, ...request.slice(lead)];

@@ -338,33 +338,38 @@ export interface Forbidden {
   ids: string[];
   /**
    * `no <axis>` when the axis required with software has no pack and software is held, else the
-   * first of §6.3's conflicts and §3's cardinalities; undefined when the format allows it.
+   * first of §6.3's conflicts and §3's cardinalities (an axis or a slot taking one pack);
+   * undefined when the format allows it.
    */
   reason?: string;
 }
 
 /**
  * Whether the format forbids a request (spec-001 §3, §6.3; D6's coverage skips it, plan-066
- * task F, ruling 3): read before resolving, after its packs are collected and their `requires`
- * ranges checked. Any other refusal throws, as resolve does.
+ * task F, ruling 3): read before resolving, after its packs are collected; the `no <axis>` rule
+ * before their `requires` ranges are checked, the others after. Any other refusal throws, as
+ * resolve does.
  */
 export function forbiddenBy(tree: string, catalog: Catalog, request: string[]): Forbidden {
   const { packs, constraints } = collect(tree, catalog, parseRequest(request),
     repositorySchemas());
-  checkRanges(packs, constraints);
   const byId = [...packs.values()].sort((a, b) => byBytes(a.id, b.id));
   const ids = byId.map((pack) => pack.id);
+  // First, as the leg with software was judged before task-087: no methodology to give it.
   const software = softwarePack(catalog);
   const empty = catalog.axes.find((axis) => axis.requiredWith === software
     && packs.has(software) && membersOf(axis, byId).length === 0);
   if (empty !== undefined) return { ids, reason: `no ${empty.name}` };
+  checkRanges(packs, constraints);
   try {
     checkConflicts(byId, packs);
   } catch (error) {
     if (error instanceof ResolveError) return { ids, reason: error.message };
     throw error;
   }
-  const [axisProblem] = axesMessages(catalog, byId);
+  // §3's cardinalities only (an axis or a slot taking one pack); other breaches are the lint's.
+  const [axisProblem] = axesMessages(catalog, byId)
+    .filter((message) => message.includes(' takes one pack: '));
   return axisProblem === undefined ? { ids } : { ids, reason: axisProblem };
 }
 

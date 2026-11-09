@@ -1443,6 +1443,22 @@ describe('D6\'s coverage: the targets per entry and the pairs (spec-001 §15, §
       }
     });
 
+  it('composes the left-out target: a pair\'s target without the entry\'s pack, refused', () => {
+    // governance/p ships a directive base ships too, so it is refused wherever it is composed;
+    // the pair with blueprint/w comes first, then its target leaving blueprint/w out.
+    const result = lint([{ ...BASE, directives: ['shared'] }, SOFTWARE_COMPOSABLE, KANBAN,
+      { id: 'blueprint/w', format: 2, directives: ['w'] },
+      shipping('governance/p', 'shared', { tensions: [{ pack: 'blueprint/w@^1',
+        resolution: 'Mind w.' }],
+        conditional: [{ with: 'blueprint/w@^1', directives: ['p-w'] }] })]);
+    assert.deepEqual(rules(result), ['pair'], result.lines.join('\n'));
+    assert.deepEqual(of(result, 'pair'), [
+      'packs/blueprint/w/pack.yaml: base + governance/p',
+      'packs/blueprint/w/pack.yaml: base + governance/p + blueprint/w',
+      'packs/governance/p/pack.yaml: base + governance/p',
+      'packs/governance/p/pack.yaml: base + governance/p + blueprint/w'], result.lines.join('\n'));
+  });
+
   it('composes the left-out target: a pack whose entries all compose passes', () => {
     const result = lint([...CLEAN, { id: 'blueprint/a', format: 2, directives: ['a'] },
       { id: 'team-mode/t', format: 2, directives: ['t'] },
