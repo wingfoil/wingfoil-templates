@@ -176,8 +176,8 @@ describe('npm run site (task-024)', () => {
   describe('the page (acceptance 4, 6)', () => {
     it('lists every published pack without JavaScript, and nothing unreleased', () => {
       assert.deepEqual(rows(html).map((row) => row.id), ['base', 'software', 'methodology/flow',
-        'methodology/kanban', 'phase/inception/lean', 'governance/notes', 'stage/mvp',
-        'stage/production']);
+        'methodology/kanban', 'phase/inception/lean', 'governance/checks', 'governance/notes',
+        'stage/mvp', 'stage/production']);
       assert.ok(!html.includes('blueprint/web'));
       assert.ok(!html.includes('unreleased'));
       for (const heading of ['Presets', 'Transitions', 'Profiles']) {
@@ -189,6 +189,10 @@ describe('npm run site (task-024)', () => {
     it('marks the Summary of a pack with a conditional part as CATALOG.md does (R3)', () => {
       assert.ok(html.includes('<td>Test pack methodology/flow. (<code>delivery</code>, '
         + '<code>flow-delivery</code> only with <code>software</code>)</td>'), html);
+      // Format 2: one mark per entry, then the tensions (task-088 Acceptance 3).
+      assert.ok(html.includes('<td>Test pack governance/checks. (<code>checks-flow</code> only '
+        + 'with <code>software</code>; <code>checks-rule</code> only with '
+        + '<code>methodology/flow</code>) Combines with care: <code>stage/mvp</code></td>'), html);
     });
 
     it('starts its head with the charset and the CSP, with no inline script or style', () => {
@@ -240,7 +244,7 @@ describe('npm run site (task-024)', () => {
       assert.deepEqual(found('board'), ['methodology/kanban']);
       assert.deepEqual(found('BOARD'), ['methodology/kanban']);
       assert.deepEqual(found('board nothing-like-this'), []);
-      assert.deepEqual(found('').length, 8);
+      assert.deepEqual(found('').length, 9);
     });
 
     it('searches titles and profiles too', () => {

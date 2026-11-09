@@ -32,6 +32,8 @@ export interface IndexVersion {
   conflicts: string[];
   /** Copied as the catalog version entry does, its `with` only (plan-039 R3). */
   conditional?: { with: string }[];
+  /** The tagged pack.yaml's format, 1 when it has none (spec-002 §3.3, task-088 ruling 1). */
+  pack_format?: number;
   readme_url: string;
   manifest_url: string;
 }
@@ -52,9 +54,24 @@ export interface IndexPack {
   memory_types: string[];
   directives: string[];
   conditional_directives: string[];
+  /** One object per conditional entry, in written order (spec-002 §3.3). */
+  conditional_parts?: IndexConditionalPart[];
+  /** One object per `tensions` entry, in written order (spec-002 §3.3). */
+  tensions?: IndexTension[];
   parameters: IndexParameter[];
   excerpt: string;
   profiles: string[];
+}
+
+export interface IndexConditionalPart {
+  with: string;
+  workflows: string[];
+  directives: string[];
+}
+
+export interface IndexTension {
+  pack: string;
+  resolution: string;
 }
 
 export interface IndexPreset {
@@ -76,7 +93,7 @@ export interface IndexTransition {
 }
 
 export interface CatalogIndex {
-  format: 1;
+  format: 1 | 2;
   repository: string;
   install: string[];
   packs: IndexPack[];
@@ -174,6 +191,22 @@ export function conditionalPart(manifest: Doc):
   const entry = String(part['with']);
   return { with: entry, layer: entryId(entry),
     contents: isDoc(part['contents']) ? part['contents'] : {} };
+}
+
+/**
+ * Every conditional entry of a pack.yaml, in written order (spec-001 §6.5): its `with`, the id
+ * that names, and its contents; none without a conditional part.
+ */
+export function conditionalParts(manifest: Doc):
+{ with: string; layer: string; contents: Doc }[] {
+  void manifest;
+  throw new Error('conditionalParts: not implemented (task-088)');
+}
+
+/** A pack.yaml's `tensions` as written (spec-001 §6.2); none without them. */
+export function tensionsOf(manifest: Doc): IndexTension[] {
+  void manifest;
+  throw new Error('tensionsOf: not implemented (task-088)');
 }
 
 /** A version's `conditional`, its `with` only, when the tagged pack.yaml has one (R3). */

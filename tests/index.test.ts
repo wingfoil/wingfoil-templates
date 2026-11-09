@@ -198,8 +198,15 @@ describe('the index\'s schemas by format (task-082 Acceptance 4, 5, 6)', () => {
   type Index = { packs: { versions: Record<string, unknown>[] }[] };
   const format2 = (): Index => JSON.parse(readFileSync(FORMAT_2, 'utf8')) as Index;
 
-  it('reads the root index, at format 1, through the frozen schema', () => {
+  it('reads the root index at format 2 (task-088 Acceptance 2)', () => {
     const data = JSON.parse(readFileSync(join(REPO_ROOT, 'catalog-index.json'), 'utf8')) as object;
+    assert.equal(indexSchemaFile(data), 'index/catalog-index.schema.json');
+    assert.deepEqual(indexSchemaErrors(data), []);
+  });
+
+  it('reads a format-1 index through the frozen schema (task-088 Acceptance 7)', () => {
+    const data = JSON.parse(readFileSync(join(FIXTURES, 'schema', 'index', 'valid',
+      'format-1.json'), 'utf8')) as object;
     assert.equal(indexSchemaFile(data), 'index/catalog-index.v1.schema.json');
     assert.deepEqual(indexSchemaErrors(data), []);
   });

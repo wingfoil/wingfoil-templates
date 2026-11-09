@@ -5,7 +5,9 @@ import { join } from 'node:path';
 import { after, before, describe, it } from 'node:test';
 import { parse, stringify } from 'yaml';
 
-import { axisAndSlot, buildIndex, excerptOf } from '../src/index-model';
+import {
+  axisAndSlot, buildIndex, conditionalParts, excerptOf, tensionsOf,
+} from '../src/index-model';
 import { renderCatalog } from '../src/index-render';
 import type { CatalogIndex, IndexPack } from '../src/index-model';
 import { IndexError } from '../src/index-source';
@@ -36,6 +38,25 @@ describe('axisAndSlot', () => {
       { axis: 'methodology', slot: null });
     assert.deepEqual(axisAndSlot('phase/inception/lean', foundation),
       { axis: 'phase', slot: 'inception' });
+  });
+});
+
+describe('conditionalParts and tensionsOf (task-088 Acceptance 2)', () => {
+  it('reads every entry in written order, its with, the id it names and its contents', () => {
+    const manifest = { conditional: [
+      { with: 'software@^1', contents: { workflows: ['b', 'a'] } },
+      { with: 'stage/mvp@^1', contents: { directives: ['d'] } }] };
+    assert.deepEqual(conditionalParts(manifest), [
+      { with: 'software@^1', layer: 'software', contents: { workflows: ['b', 'a'] } },
+      { with: 'stage/mvp@^1', layer: 'stage/mvp', contents: { directives: ['d'] } }]);
+    assert.deepEqual(conditionalParts({}), []);
+  });
+
+  it('reads the tensions as written, none without them', () => {
+    const tensions = [{ pack: 'stage/mvp@^1', resolution: 'Lightly.' },
+      { pack: 'blueprint/web', resolution: 'Two\nlines.' }];
+    assert.deepEqual(tensionsOf({ tensions }), tensions);
+    assert.deepEqual(tensionsOf({}), []);
   });
 });
 
@@ -96,30 +117,31 @@ describe('buildIndex on the fixture catalog (CB-4)', () => {
     return found;
   };
 
-  it('has the top-level keys of §3.3, in order, and format 1', () => {
+  it('has the top-level keys of §3.3, in order, and format 2 (task-088)', () => {
     assert.deepEqual(Object.keys(index),
       ['format', 'repository', 'install', 'packs', 'presets', 'transitions']);
-    assert.equal(index.format, 1);
+    assert.equal(index.format, 2);
     assert.equal(index.repository, 'wingfoil/wingfoil-templates');
     assert.deepEqual(index.install, []);
   });
 
   it('lists the published packs in byte order, and no unpublished one', () => {
-    assert.deepEqual(index.packs.map((entry) => entry.id), ['base', 'governance/notes',
-      'methodology/flow', 'methodology/kanban', 'phase/inception/lean', 'software', 'stage/mvp',
-      'stage/production']);
+    assert.deepEqual(index.packs.map((entry) => entry.id), ['base', 'governance/checks',
+      'governance/notes', 'methodology/flow', 'methodology/kanban', 'phase/inception/lean',
+      'software', 'stage/mvp', 'stage/production']);
   });
 
   it('builds pack and version objects in the key order of §3.3', () => {
     const kanban = pack('methodology/kanban');
     assert.deepEqual(Object.keys(kanban), ['id', 'catalog', 'status', 'axis', 'slot', 'latest',
       'versions', 'title', 'description', 'workflows', 'conditional_workflows', 'memory_types',
-      'directives', 'conditional_directives', 'parameters', 'excerpt', 'profiles']);
+      'directives', 'conditional_directives', 'conditional_parts', 'tensions', 'parameters',
+      'excerpt', 'profiles']);
     assert.deepEqual(Object.keys(pack('methodology/flow').versions[0] ?? {}), ['version', 'tag',
       'wingfoil', 'formats', 'requires_capabilities', 'requires', 'conflicts', 'conditional',
-      'readme_url', 'manifest_url']);
+      'pack_format', 'readme_url', 'manifest_url']);
     assert.deepEqual(Object.keys(kanban.versions[0] ?? {}), ['version', 'tag', 'wingfoil',
-      'formats', 'requires_capabilities', 'requires', 'conflicts', 'readme_url',
+      'formats', 'requires_capabilities', 'requires', 'conflicts', 'pack_format', 'readme_url',
       'manifest_url']);
     assert.deepEqual(Object.keys(kanban.parameters[0] ?? {}),
       ['name', 'type', 'default', 'description']);
@@ -162,6 +184,33 @@ describe('buildIndex on the fixture catalog (CB-4)', () => {
     assert.deepEqual([kanban.conditional_workflows, kanban.conditional_directives], [[], []]);
   });
 
+  it('carries every entry, the tensions and pack_format at format 2 (task-088 Acc. 2)', () => {
+    const checks = pack('governance/checks');
+    assert.deepEqual(checks.versions[0]?.conditional,
+      [{ with: 'software@^1' }, { with: 'methodology/flow@^1' }]);
+    assert.equal(checks.versions[0]?.pack_format, 2);
+    assert.deepEqual([checks.workflows, checks.conditional_workflows, checks.directives,
+      checks.conditional_directives], [['checks-gate'], ['checks-flow'], [], ['checks-rule']]);
+    assert.deepEqual(checks.conditional_parts, [
+      { with: 'software@^1', workflows: ['checks-flow'], directives: [] },
+      { with: 'methodology/flow@^1', workflows: [], directives: ['checks-rule'] }]);
+    assert.deepEqual(checks.tensions,
+      [{ pack: 'stage/mvp@^1', resolution: 'Checks run lightly in an MVP.' }]);
+    assert.deepEqual(Object.keys(checks.conditional_parts?.[0] ?? {}),
+      ['with', 'workflows', 'directives']);
+    assert.deepEqual(Object.keys(checks.tensions?.[0] ?? {}), ['pack', 'resolution']);
+  });
+
+  it('gives a format-1 pack only pack_format 1 and its one or no entry (task-088)', () => {
+    const kanban = pack('methodology/kanban');
+    assert.deepEqual(kanban.versions.map((version) => version.pack_format), [1, 1]);
+    assert.deepEqual([kanban.conditional_parts, kanban.tensions], [[], []]);
+    const flow = pack('methodology/flow');
+    assert.deepEqual(flow.conditional_parts, [{ with: 'software@^1',
+      workflows: ['delivery', 'flow-delivery'], directives: ['flow-limits'] }]);
+    assert.deepEqual(flow.tensions, []);
+  });
+
   it('marks the Summary of a pack with a conditional part (plan-039 R3)', () => {
     const text = renderCatalog(index, ['methodology', 'phase', 'blueprint', 'governance',
       'team-mode', 'stage'], ['base', 'software']);
@@ -172,6 +221,9 @@ describe('buildIndex on the fixture catalog (CB-4)', () => {
     assert.ok(row('governance/notes').includes('(`notes-rules` only with `software`) |'),
       row('governance/notes'));
     assert.ok(!row('methodology/kanban').includes('only with'));
+    assert.ok(row('governance/checks').includes('Test pack governance/checks. (`checks-flow` only '
+      + 'with `software`; `checks-rule` only with `methodology/flow`) Combines with care: '
+      + '`stage/mvp` |'), row('governance/checks'));
   });
 
   it('writes the foundation section in catalog.yaml\'s order, each row anchored (§3.2)', () => {

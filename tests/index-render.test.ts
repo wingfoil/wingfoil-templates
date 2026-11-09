@@ -4,12 +4,12 @@ import { describe, it } from 'node:test';
 import type { CatalogIndex } from '../src/index-model';
 import type { IndexPack } from '../src/index-model';
 import {
-  cell, conditionalMark, firstSentence, renderCatalog, renderJson, renderLlms,
+  cell, conditionalMark, firstSentence, renderCatalog, renderJson, renderLlms, summaryOf,
 } from '../src/index-render';
 
 const AXES = ['methodology', 'phase', 'blueprint', 'governance', 'team-mode', 'stage'];
 const FOUNDATION = ['base', 'software'];
-const EMPTY: CatalogIndex = { format: 1, repository: 'wingfoil/wingfoil-templates', install: [],
+const EMPTY: CatalogIndex = { format: 2, repository: 'wingfoil/wingfoil-templates', install: [],
   packs: [], presets: [], transitions: [] };
 
 function headings(text: string): string[] {
@@ -30,20 +30,67 @@ describe('table cells and summaries (acceptance 6)', () => {
   });
 });
 
-describe('conditionalMark (plan-039 R3)', () => {
-  const pack = (workflows: string[], directives: string[]): IndexPack => ({
-    latest: '1.0.0', versions: [{ version: '1.0.0', conditional: [{ with: 'software@^1' }] }],
-    conditional_workflows: workflows, conditional_directives: directives,
+describe('conditionalMark, one mark per entry (plan-039 R3, task-088 Acceptance 3)', () => {
+  type Part = { with: string; workflows: string[]; directives: string[] };
+  const pack = (parts: Part[]): IndexPack => ({
+    latest: '1.0.0', versions: [{ version: '1.0.0', conditional: parts.map((part) =>
+      ({ with: part.with })) }],
+    conditional_workflows: [], conditional_directives: [], conditional_parts: parts, tensions: [],
   }) as unknown as IndexPack;
+  const part = (entry: string, workflows: string[], directives: string[]): Part =>
+    ({ with: entry, workflows, directives });
 
-  it('names the part\'s workflows, else its directives, and the layer of its with', () => {
-    assert.deepEqual(conditionalMark(pack(['delivery'], ['d'])),
-      { names: ['delivery'], layer: 'software' });
-    assert.deepEqual(conditionalMark(pack([], ['d'])), { names: ['d'], layer: 'software' });
+  it('names each entry\'s workflows, else its directives, and the id its with names', () => {
+    assert.deepEqual(conditionalMark(pack([part('software@^1', ['delivery'], ['d'])])),
+      [{ names: ['delivery'], layer: 'software' }]);
+    assert.deepEqual(conditionalMark(pack([part('software@^1', [], ['d'])])),
+      [{ names: ['d'], layer: 'software' }]);
+    assert.deepEqual(conditionalMark(pack([part('software@^1', ['a'], []),
+      part('stage/mvp@^1', [], ['c'])])),
+    [{ names: ['a'], layer: 'software' }, { names: ['c'], layer: 'stage/mvp' }]);
   });
 
-  it('gives no mark for a part that adds nothing', () => {
-    assert.equal(conditionalMark(pack([], [])), undefined);
+  it('gives no mark for an entry that adds nothing, none without a part', () => {
+    assert.deepEqual(conditionalMark(pack([part('software@^1', [], [])])), []);
+    assert.deepEqual(conditionalMark(pack([part('software@^1', [], []),
+      part('stage/mvp@^1', ['w'], [])])), [{ names: ['w'], layer: 'stage/mvp' }]);
+    assert.deepEqual(conditionalMark(pack([])), []);
+  });
+});
+
+describe('summaryOf: the marks and the tensions (task-088 Acceptance 3)', () => {
+  type Part = { with: string; workflows: string[]; directives: string[] };
+  const pack = (parts: Part[], tensions: string[]): IndexPack => ({
+    description: 'First sentence. Second one.', latest: '1.0.0',
+    versions: [{ version: '1.0.0', conditional: parts.map((part) => ({ with: part.with })) }],
+    conditional_workflows: [], conditional_directives: [], conditional_parts: parts,
+    tensions: tensions.map((entry) => ({ pack: entry, resolution: 'R.' })),
+  }) as unknown as IndexPack;
+  const code = (text: string): string => `\`${text}\``;
+  const same = (text: string): string => text;
+  const SW = { with: 'software@^1', workflows: ['checks-flow', 'b'], directives: [] };
+  const FLOW = { with: 'methodology/flow@^1', workflows: [], directives: ['checks-rule'] };
+
+  it('keeps one entry\'s text and writes nothing without parts or tensions', () => {
+    assert.equal(summaryOf(pack([SW], []), code, same),
+      'First sentence. (`checks-flow`, `b` only with `software`)');
+    assert.equal(summaryOf(pack([], []), code, same), 'First sentence.');
+  });
+
+  it('joins the entries\' marks with "; " in one parenthesis, in entry order', () => {
+    assert.equal(summaryOf(pack([SW, FLOW], []), code, same), 'First sentence. (`checks-flow`, '
+      + '`b` only with `software`; `checks-rule` only with `methodology/flow`)');
+  });
+
+  it('appends the tensions\' ids, no range, sorted, once, with no full stop', () => {
+    assert.equal(summaryOf(pack([], ['stage/mvp@^1', 'blueprint/web', 'stage/mvp@^2']), code,
+      same), 'First sentence. Combines with care: `blueprint/web`, `stage/mvp`');
+  });
+
+  it('writes the full text: the marks, then the tensions', () => {
+    assert.equal(summaryOf(pack([{ ...SW, workflows: ['checks-flow'] }, FLOW], ['stage/mvp@^1']),
+      code, same), 'First sentence. (`checks-flow` only with `software`; `checks-rule` only with '
+      + '`methodology/flow`) Combines with care: `stage/mvp`');
   });
 });
 
@@ -92,6 +139,12 @@ describe('renderLlms (§3.4)', () => {
       ['## Index', '## Specifications', '## Reading a pack']);
     assert.ok(renderLlms().includes('/refs/tags/<catalog pack id>@<version>/packs/'
       + '<catalog pack id>/README.md'));
+  });
+
+  it('names the index\'s format 2 on its index line, its one change (task-088 Acc. 5)', () => {
+    const line = renderLlms().split('\n').find((entry) => entry.includes('catalog-index.json)'));
+    assert.ok(line?.includes('every published pack, preset and transition (format 2); search is '
+      + 'a local filter over it'), line);
   });
 });
 
