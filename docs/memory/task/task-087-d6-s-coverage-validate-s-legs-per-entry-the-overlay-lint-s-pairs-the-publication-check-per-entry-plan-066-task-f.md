@@ -311,3 +311,11 @@ the comments, committed apart (`wf(config)`). No new dependency.
   once in self-test and once in publication mode (`before`), the assertions unchanged but read
   per preset (the range's failure asserted by its message, the forbidden target by "takes one
   pack"); the suite 60 s locally. The checks rerun on the new frozen commit.
+- 2026-11-09: the checks on the frozen commit `5478bb5`: branch CI run 42605802018 `success`
+  (22.12.0 17 min 58 s, 22.21.0 24 min 0 s), under G12's 25 minutes with a narrow margin, as
+  `main`'s own runs (22.21.0 23 min 56 s on `546329e`); dl-039's local list on Node.js 22.21.0
+  from a clean worktree, each exit 0: `npm ci`, `npm run build`, `npm run validate:publication`
+  (18 runs, 0 failed), the same on the golden tree (26 runs, 0 failed, as before: no WingFoil run
+  added), `workflow list`, `directives list --format json` (`warnings []`), `npm run lint`. An
+  earlier run of the list picked Node.js 20.5.1 by a slip of its script and is not counted. The
+  privacy check of the branch's diff: no local or scratch path, no private project named.
