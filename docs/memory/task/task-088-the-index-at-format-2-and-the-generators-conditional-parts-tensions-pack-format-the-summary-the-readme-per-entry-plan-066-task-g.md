@@ -35,8 +35,7 @@ files". What the amended texts ask (spec-002 §2.1, §3.2, §3.3; spec-001 §6.2
   followed by one item per entry, the pack (with its range when there is one) and its
   resolution"; What it adds, each conditional workflow's and directive's line ending `` , only
   with `<pack>` `` (the pack its entry's `with` names), a conditional directive's roles `—`.
-- **`llms.txt`** (§3.4) holds no per-pack field: links and URL patterns only, its index line
-  naming the index's format.
+- **`llms.txt`** (§3.4) holds no per-pack field: links and URL patterns only.
 
 What exists (`main` at task-087's merge):
 - **The model** (`src/index-model.ts`): `CatalogIndex.format` is `1`; `conditionalPart` reads
@@ -114,9 +113,10 @@ this plan's row, moved to Closed at the plan's close (plan-066 step 4), which th
      `` - workflows only with `<pack>`: … `` when its workflows are non-empty, then `` -
      directives only with `<pack>`: … `` when its directives are non-empty (`<pack>` the id its
      `with` names; names sorted); one entry gives today's lines; then, for a pack with `tensions`,
-     a top-level bullet `- **Combines with care:**` after the **Declares** block (the approver's
-     ruling, point 3 below), with one nested item per entry in written order, `` - `<pack as
-     written>`: <resolution> ``, the range included when there is one, the resolution trimmed and
+     a top-level bullet `- **Combines with care:**`, the list's last: after **Declares**, or after
+     **Requires capabilities** where there is no **Declares** (the approver's ruling, point 3
+     below), with one nested item per entry in written order, `` - `<pack as written>`:
+     <resolution> ``, the range included when there is one, the resolution trimmed and
      its line breaks folded to single spaces (as `tensionNotices` does);
    - **What it adds:** the always-composed workflows and directives first, as today; then each
      entry's, in entry order, sorted within the entry, each line ending `` , only with `<pack>` ``
@@ -186,9 +186,10 @@ this plan's row, moved to Closed at the plan's close (plan-066 step 4), which th
    reads as today and the tensions follow outside it. Alternative: one parenthesis per entry.
    Recorded as a reading for the wave close.
 3. **Where "Combines with care" goes in the README** (Acceptance 4): §2.1 asks "a line `Combines
-   with care:` followed by one item per entry" and no place. Recommended: a top-level bullet after
-   **Declares**, its items nested, so it reads as the other Composition bullets. Alternative: a
-   paragraph after the list. Recorded as a reading for the wave close.
+   with care:` followed by one item per entry" and no place. Recommended: a top-level bullet, the
+   list's last (after **Declares**, or after **Requires capabilities** where there is none), its
+   items nested, so it reads as the other Composition bullets. Alternative: a paragraph after
+   the list. Recorded as a reading for the wave close.
 4. **The tension's pack in the Summary** (Acceptance 3): §3.2 writes `` `<pack>` `` and says
    nothing of the range, while §2.1 keeps the range in the README. Recommended: the id without
    its range, as the marks name their `with` pack, the range being the README's and the index's
@@ -213,8 +214,9 @@ composed such a pack (`governance/checks`, a tension on `stage/mvp@^1`) in a scr
 Red steps: (1) the tests of Acceptance 2 … 7, with the signatures of `conditionalParts` and
 `tensionsOf` and no body (they throw), uncalled; in the red commit the new interface fields are
 optional and `CatalogIndex.format` is `1 | 2`, so the tests compile and `packOf` still emits a
-format-1 index; the fixture's expected outputs are left as today, so the byte-for-byte test fails,
-and on the new pack's README by a missing expected file (ENOENT), recorded as such in the red run;
+format-1 index; the fixture's expected outputs are left as today, so the byte-for-byte test fails
+by assertion on the first differing output (`CATALOG.md`), a missing expected file (ENOENT)
+recorded as such if reached;
 (2) the code, the fields required, the expected outputs refreshed and reviewed, the generated
 files regenerated. No new dependency.
 
