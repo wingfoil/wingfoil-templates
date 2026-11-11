@@ -117,3 +117,8 @@ On the branch `spec/plan-066-wave-amendment`, from `main` at this plan's `submit
 - 2026-11-11, step 5: branch CI on `601c8dea`, run 43048922074, `success` (22.12.0 24 min 40 s,
   22.21.0 19 min 36 s): under G12's 25 minutes, the 22.12.0 job 20 s short of it, for the CI
   margin's row (`docs/owed-items.md`), on a text-only change.
+- 2026-11-11, close: merged `--no-ff` at `8f747e0b` on the approver's OK, pushed; `main`'s CI on
+  the merge, run 43067667780, `success` (22.12.0 24 min 17 s, 22.21.0 14 min 55 s); the branch
+  removed. The privacy check of the branch's diff found no local or scratch path, no private
+  project and no session. The row moves to Closed in this commit; `active → done`. The run of
+  this close's push is left to the next plan (dl-038 C3).
