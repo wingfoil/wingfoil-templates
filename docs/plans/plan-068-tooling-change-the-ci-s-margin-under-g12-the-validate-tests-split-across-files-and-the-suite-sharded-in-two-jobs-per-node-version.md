@@ -33,26 +33,43 @@ with this plan's `submit`; that run is read and recorded in the Execution Notes.
    per `describe` at least, and `npm run validate`'s own `describe` (about 757 s) split further,
    so no file holds more than about 5 minutes locally; shared helpers move to `tests/support/`.
    No test is removed or changed in what it checks: the count stays 1288, the names unchanged.
+   The split files run concurrently, so no two of them write a shared path (the repository tree,
+   a fixed temporary name), checked in the build review. The task's design records each file's
+   duration and the local wall time of each shard after the split, the prediction behind point 6:
+   with three files at once on the runner's four vCPUs, a shard takes about the longer of its
+   longest file and a third of its files' total.
 2. **The suite in two shards per Node version.** `ci.yml`'s matrix gains `shard: [1, 2]`, four
-   jobs; each runs `node --test --test-shard=<shard>/2` through an npm script, and `npm test`
-   still runs the whole suite (dl-039's local list unchanged). Node's shards split the files by
-   index, not by time: when the two shards' `Test` steps differ by more than about 3 minutes, the
-   task balances them (the files' split or order), with the numbers in its notes.
-3. **Each check once per Node version.** Install, build and the shard's tests in every job; every
-   other step (lint, pins, schemas, the pack lint, the site, the audits, the six `validate` and
-   `check:runs` steps, publication mode on a tag) in shard 1 only, so nothing is lost and nothing
-   runs twice. `tests/ci-workflow.test.ts` checks it, red first.
-4. **Job names** `validate (<node>, <shard>/2)`. No required check names a job (the ruleset
+   jobs; each runs its shard through an npm script that puts `--test-shard=<shard>/2` before the
+   glob (`node --test` ignores an option after it and would run every file in both shards) and
+   does not rebuild, the Build step having run; `npm test` still runs the whole suite (dl-039's
+   local list unchanged). Node's shards take the sorted files in turn, not by time.
+3. **Each check once per Node version, the jobs balanced.** Install, build and the shard's tests
+   in every job; every other step (lint, pins, schemas, the pack lint, the site, the audits, the
+   six `validate` and `check:runs` steps on a branch, `validate:publication` on a tag) and the
+   matrix cache (its key unchanged) in shard 1 only, so nothing is lost and nothing runs twice; on
+   a tag, shard 2 runs install, build and its tests, and publication mode runs once per Node
+   version. Shard 1's other steps take about 5 min 30 s, so the jobs, not the `Test` steps, are
+   balanced: shard 1 takes the lighter half of the tests (the files' split or names), the jobs of
+   one Node version within about 3 minutes, the numbers in the task's notes.
+   `tests/ci-workflow.test.ts` checks it, red first: the matrix, the shard's command (the option
+   before the glob), every check's `if` in its `matrix.shard == 1` form, the cache's `if`.
+4. **Job names** `validate (<node>, <shard>)`. No required check names a job (the ruleset
    `protect-main` holds `deletion` and `non_fast_forward` only), so the rename breaks nothing.
 5. **Texts.** `tooling-delivery` and `kanban-delivery` record "its two jobs' durations": they
-   become every job's durations (`wf(config)`, in the task); G12, dl-039 and the timeout of 30
-   minutes unchanged.
+   become every job's durations, a wording change that bumps them to v4 and v6 as their last text
+   change did (`wf(config)`, in the task; task-089 follows `tooling-delivery` v3, the version at
+   its `add`). dl-039 R1's "two jobs" is read as every job's after this plan, a reading recorded
+   in the Execution Notes; G12, dl-039 and the timeout of 30 minutes unchanged.
 6. **Done when** every job of the task's branch CI and of `main`'s CI on its merge takes under 20
-   minutes; the row then moves to Closed with the numbers. If a job stays over, the approver rules
-   (a third shard, or G12's bound).
+   minutes, and the two shards' test counts of each Node version add up to 1288; the row then
+   moves to Closed with the numbers. A job over 20 minutes and under 25 goes to the approver, who
+   rules whether the merge goes ahead (a third shard, or G12's bound, as a later row); a ruling
+   that leaves an owed item adds its row in the commit that records it (dl-036 R2).
 
 Not in this plan: the removal of checks the tests repeat (option 2, ruled out); fewer Node
-versions; any change to G12 or to what a test checks.
+versions; any change to G12 or to what a test checks; `intake.yml` (its `verify` job runs the
+whole suite unsharded, timeout 40, `tests/intake-workflow.test.ts` unchanged) and `pages.yml`
+(no tests); the historical records that say "both jobs".
 
 ## Steps
 
@@ -84,3 +101,8 @@ versions; any change to G12 or to what a test checks.
      ruling that none is needed (dl-020).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
 - 2026-11-11: written; `workflow` and `phase` filled by editing the draft (W-02).
+- 2026-11-11: independent review: approve after amendments, two blocking, applied: the shard's
+  option before the glob, and the jobs balanced rather than the `Test` steps (shard 1 carries the
+  other checks); with the others: the prediction recorded in the design, no shared path written
+  by two split files, the cache and tag runs in shard 1, dl-039 R1's reading, the workflows'
+  versions, `intake.yml` out of scope, the 1288 count in point 6, the over-20 branch.
