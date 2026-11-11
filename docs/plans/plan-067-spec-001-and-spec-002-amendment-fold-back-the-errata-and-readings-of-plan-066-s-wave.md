@@ -97,3 +97,5 @@ On the branch `spec/plan-066-wave-amendment`, from `main` at this plan's `submit
   corrected; §18's `tensions` bullet left out on purpose (no wave-close reading names it).
 - 2026-11-11: re-review: approve, two nits on the leftovers grep, applied: the historical records
   (`docs/owed-items.md`, the tech-specs' Execution Notes) excluded with plans and done elements.
+- 2026-11-11: `main`'s CI before this plan (dl-038 C3): plan-066's close pushed at `ed9b22b0`, run
+  43026184602, `success` (22.12.0 18 min 49 s, 22.21.0 16 min 59 s).
