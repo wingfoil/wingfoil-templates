@@ -320,3 +320,11 @@ points 4 and 6 included.
     with these, text only (the tooling already follows them), task-086's departure cited by a
     sentence; after this plan's close; its row "A plan amending spec-001 and spec-002 in place
     with plan-066's wave close" in `docs/owed-items.md`.
+- 2026-11-11, **close** (step 4): tasks (A) … (G), task-082 … task-088, done and merged into
+  `main` ((D) not split); the wave close ruled by the approver; the rows of point 8 (settled by
+  task-088: a format-2 pack composed, checked, published and indexed) and of this plan moved to
+  Closed in `docs/owed-items.md`; `main`'s CI on the last merge, run 42638300365, `success`
+  (22.12.0 23 min 59 s, 22.21.0 23 min 18 s), none over 25 minutes (dl-039 R3, G12). Left open:
+  the rows of point 7 (the first `stage/*` charter), "The CI's margin under G12's 25 minutes"
+  (the margin about a minute on both jobs) and the amending plan's. The run of this close's push
+  is left to the next plan (dl-038 C3).
