@@ -64,7 +64,7 @@ export function parseChecks(text: string): CheckLeg | undefined {
  */
 export function nodeLines(node: string, legs: CheckLeg[]): string[] {
   const mine = legs.filter((one) => one.node === node);
-  const byShard = new Map<number, CheckLeg>();
+  const byShard = new Map<CheckLeg['shard'], CheckLeg>();
   for (const shard of SHARDS) {
     const found = mine.filter((one) => one.shard === shard);
     if (found.length === 1 && found[0] !== undefined) byShard.set(shard, found[0]);

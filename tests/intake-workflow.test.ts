@@ -147,11 +147,11 @@ describe('the prepare job (task-081)', () => {
 describe('the verify job (task-081)', () => {
   it('runs when prepare succeeded, on both Node.js versions in two shards, never failing fast',
     () => {
-    const verify = job('verify');
-    assert.deepEqual(verify['needs'], ['detect', 'prepare']);
-    assert.equal(verify['if'], "${{ !cancelled() && needs.prepare.result == 'success' }}");
-    assert.deepEqual(verify['strategy'],
-      { 'fail-fast': false, matrix: { node: ['22.12.0', '22.21.0'], shard: [1, 2] } });
+      const verify = job('verify');
+      assert.deepEqual(verify['needs'], ['detect', 'prepare']);
+      assert.equal(verify['if'], "${{ !cancelled() && needs.prepare.result == 'success' }}");
+      assert.deepEqual(verify['strategy'],
+        { 'fail-fast': false, matrix: { node: ['22.12.0', '22.21.0'], shard: [1, 2] } });
     });
 
   it('applies the artifact, then runs every check, each continuing on error', () => {

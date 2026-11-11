@@ -16,7 +16,6 @@ import { FIXTURES } from './paths';
 import { FORMAT_WARNING, StubWingfoil } from './stub-wingfoil';
 import type { StubCommand } from './stub-wingfoil';
 
-
 export const TREE = join(FIXTURES, 'compose', 'tree');
 export const ENTRIES = ['methodology/kanban', 'phase/inception/lean', 'blueprint/web-service',
   'team-mode/agent-first', 'stage/production'];
