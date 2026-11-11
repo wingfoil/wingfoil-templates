@@ -108,3 +108,9 @@ On the branch `spec/plan-066-wave-amendment`, from `main` at this plan's `submit
   care" after the parenthesis or the first sentence, the paragraph refilled; §2.1's bullet names
   tied to the row's own wording. No rule changed, so no re-review. §6.5's "catalog pack id" and
   §18's pack directory read together (the glossary and §4 define the id's shape), no change.
+- 2026-11-11, step 4: checks once on the frozen head `04c804a4`, from a clean worktree on Node
+  22.21.0 (dl-039 R2): `npm test` 1288/1288 (21 min 56 s), `npm run lint`, `npm run index --
+  --check` and `npm run validate` exit 0, `directives list --format json` `warnings []`; `git
+  diff main` limited to the table's sections and the Execution Notes; the leftovers grep finds
+  only historical records (spec-001's Execution Note, task-083, plans, `docs/owed-items.md`);
+  the privacy check of the branch's diff clean.
