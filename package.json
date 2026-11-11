@@ -12,6 +12,7 @@
     "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
     "build": "npm run clean && tsc -p tsconfig.json",
     "test": "npm run build && node --test \"dist/tests/**/*.test.js\"",
+    "test:shard": "node --test --test-shard=$SHARD/2 \"dist/tests/**/*.test.js\"",
     "lint": "eslint --max-warnings 0 .",
     "check:pins": "node dist/src/check-pins.js",
     "check:schemas": "node dist/src/check-schemas.js",

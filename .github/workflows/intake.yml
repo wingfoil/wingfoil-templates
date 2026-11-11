@@ -112,6 +112,7 @@ jobs:
       fail-fast: false
       matrix:
         node: ['22.12.0', '22.21.0']
+        shard: [1, 2]
     env:
       VERSION: ${{ needs.detect.outputs.version }}
     steps:
@@ -137,80 +138,100 @@ jobs:
           path: ${{ runner.temp }}/intake
       - name: Apply it, its sha256s and its base checked
         run: npm run -s intake:apply -- "$RUNNER_TEMP/intake" --version "$VERSION"
-      # The checks of ci.yml's self-test, each run whatever the one before gave.
+      # The checks of ci.yml's self-test, each run whatever the one before gave: the tests in two
+      # shards, every other check in shard 1 (task-089), so each runs once per Node.js version.
       - id: test
         continue-on-error: true
-        run: npm test
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: npm run test:shard
       - id: lint
+        if: matrix.shard == 1
         continue-on-error: true
         run: npm run lint
       - id: pins
+        if: matrix.shard == 1
         continue-on-error: true
         run: npm run check:pins
       - id: schemas
+        if: matrix.shard == 1
         continue-on-error: true
         run: npm run check:schemas
       - id: packs
+        if: matrix.shard == 1
         continue-on-error: true
         run: npm run check:packs
       - id: site
+        if: matrix.shard == 1
         continue-on-error: true
         run: npm run site -- --out "$RUNNER_TEMP/site"
       - id: audit-root
+        if: matrix.shard == 1
         continue-on-error: true
         run: npm audit --omit=dev
       - id: audit-pins
+        if: matrix.shard == 1
         continue-on-error: true
         run: |
           for dir in src/matrix/wingfoil-*/; do
             (cd "$dir" && npm audit)
           done
       - id: validate
+        if: matrix.shard == 1
         continue-on-error: true
         run: npm run validate
       - id: golden
+        if: matrix.shard == 1
         continue-on-error: true
         run: npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden
       - id: software-exit
+        if: matrix.shard == 1
         continue-on-error: true
         run: npm run validate -- --overlay tests/fixtures/software-exit
       - id: scrum-exit
+        if: matrix.shard == 1
         continue-on-error: true
         run: npm run validate -- --overlay tests/fixtures/scrum-exit
       - id: kanban-exit
+        if: matrix.shard == 1
         continue-on-error: true
         run: npm run validate -- --overlay tests/fixtures/kanban-exit
       - id: runs
+        if: matrix.shard == 1
         continue-on-error: true
         run: npm run check:runs
       - id: publication
+        if: matrix.shard == 1
         continue-on-error: true
         run: npm run validate:publication
       - name: Write each check's outcome
         env:
           NODE_VERSION: ${{ matrix.node }}
+          SHARD: ${{ matrix.shard }}
           STEPS: ${{ toJSON(steps) }}
         run: |
           node -e '
             const fs = require("node:fs");
-            const ids = ["test", "lint", "pins", "schemas", "packs", "site", "audit-root",
-              "audit-pins", "validate", "golden", "software-exit", "scrum-exit", "kanban-exit",
-              "runs", "publication"];
+            const shard = Number(process.env.SHARD);
+            const ids = shard === 2 ? ["test"] : ["test", "lint", "pins", "schemas", "packs",
+              "site", "audit-root", "audit-pins", "validate", "golden", "software-exit",
+              "scrum-exit", "kanban-exit", "runs", "publication"];
             const steps = JSON.parse(process.env.STEPS);
             const checks = Object.fromEntries(
               ids.map((id) => [id, steps[id]?.outcome ?? "skipped"]));
             const file = `${process.env.RUNNER_TEMP}/checks.json`;
-            const leg = { node: process.env.NODE_VERSION, checks };
+            const leg = { node: process.env.NODE_VERSION, shard, checks };
             fs.writeFileSync(file, `${JSON.stringify(leg)}\n`);
             const rows = ids.map((id) => `| ${id} | ${checks[id]} |`);
             fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, [
-              `### Checks on Node.js ${process.env.NODE_VERSION}`, "", "| check | outcome |",
+              `### Checks on Node.js ${process.env.NODE_VERSION}, shard ${shard}`, "",
+              "| check | outcome |",
               "| --- | --- |", ...rows, ""].join("\n"));
           '
       - name: Upload the checks' outcomes
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: verify-${{ matrix.node }}
+          name: verify-${{ matrix.node }}-${{ matrix.shard }}
           path: ${{ runner.temp }}/checks.json
           retention-days: 14
           if-no-files-found: error

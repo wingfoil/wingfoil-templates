@@ -3,7 +3,8 @@
 # tag <catalog pack id>@<version> is validated in publication mode (dl-009), which selects the
 # releases with format_key: true (WingFoil 0.3.0 on, task-036) and fails while the tree holds no
 # composition. Every action is pinned to a commit SHA; the job reads the repository and nothing
-# more.
+# more. Each Node.js version runs in two shards (task-089, plan-068, G12's 25 minutes): every job
+# runs half of the test files; shard 1 also runs every other check, once per version.
 name: CI
 
 on:
@@ -29,6 +30,7 @@ jobs:
       matrix:
         # The Node.js floor (adr-002) and the newest 22.x the tasks are checked on.
         node: ['22.12.0', '22.21.0']
+        shard: [1, 2]
     steps:
       - name: Check out, with every tag (spec-002 §3.1)
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -42,6 +44,7 @@ jobs:
           node-version: ${{ matrix.node }}
           check-latest: false
       - name: Cache the matrix's WingFoil releases (task-011)
+        if: matrix.shard == 1
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .cache/wingfoil-matrix
@@ -50,21 +53,30 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
-      - name: Test
-        run: npm test
+      - name: Test, shard ${{ matrix.shard }} of 2 (task-089)
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: npm run test:shard
       - name: Lint (ESLint)
+        if: matrix.shard == 1
         run: npm run lint
       - name: Exact pins
+        if: matrix.shard == 1
         run: npm run check:pins
       - name: Schemas
+        if: matrix.shard == 1
         run: npm run check:schemas
       - name: Pack lint (spec-001 §18, F3.5)
+        if: matrix.shard == 1
         run: npm run check:packs
       - name: Build the search page (task-024), as pages.yml does
+        if: matrix.shard == 1
         run: npm run site -- --out "$RUNNER_TEMP/site"
       - name: Audit the root lockfile
+        if: matrix.shard == 1
         run: npm audit --omit=dev
       - name: Audit the whole root tree, warning only (dl-035)
+        if: matrix.shard == 1
         run: |
           if npm audit --json > "$RUNNER_TEMP/root-audit.json"; then exit 0; fi
           node -e '
@@ -87,28 +99,29 @@ jobs:
           ' "$RUNNER_TEMP/root-audit.json" || true
           exit 0
       - name: Audit every matrix release's lockfile
+        if: matrix.shard == 1
         run: |
           for dir in src/matrix/wingfoil-*/; do
             (cd "$dir" && npm audit)
           done
       - name: Validate this repository (self-test)
-        if: github.ref_type != 'tag'
+        if: matrix.shard == 1 && github.ref_type != 'tag'
         run: npm run validate
       - name: Validate the golden fixture against the listed releases (self-test, W6 exit criterion)
-        if: github.ref_type != 'tag'
+        if: matrix.shard == 1 && github.ref_type != 'tag'
         run: npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden
       - name: Validate software through its fixture methodology (self-test, dl-022 S6)
-        if: github.ref_type != 'tag'
+        if: matrix.shard == 1 && github.ref_type != 'tag'
         run: npm run validate -- --overlay tests/fixtures/software-exit
       - name: Validate methodology/scrum with the governed repositories' parameters (task-056)
-        if: github.ref_type != 'tag'
+        if: matrix.shard == 1 && github.ref_type != 'tag'
         run: npm run validate -- --overlay tests/fixtures/scrum-exit
       - name: Validate methodology/kanban with the governed repositories' parameters (task-068)
-        if: github.ref_type != 'tag'
+        if: matrix.shard == 1 && github.ref_type != 'tag'
         run: npm run validate -- --overlay tests/fixtures/kanban-exit
       - name: Run the packs' workflows on every selected WingFoil release (task-053, task-058)
-        if: github.ref_type != 'tag'
+        if: matrix.shard == 1 && github.ref_type != 'tag'
         run: npm run check:runs
       - name: Validate for publication (dl-009)
-        if: github.ref_type == 'tag'
+        if: matrix.shard == 1 && github.ref_type == 'tag'
         run: npm run validate:publication

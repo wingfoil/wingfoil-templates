@@ -18,7 +18,9 @@ const OUTCOMES = ['success', 'failure', 'cancelled', 'skipped'];
 export const CHANGELOG_TIMEOUT_MS = 30_000;
 export const CHANGELOG_MAX_BYTES = 1 << 20;
 
-export interface CheckLeg { node: string; checks: Record<string, string> }
+/** The shards of each Node.js version: shard 1 runs every check, shard 2 the tests (task-089). */
+export const SHARDS = [1, 2] as const;
+export interface CheckLeg { node: string; shard: 1 | 2; checks: Record<string, string> }
 export type Fetched = { ok: true; text: string } | { ok: false; why: string };
 export interface ReportInput {
   version: string; class: string; prepare: string; verify: string; rehearsal: boolean;
@@ -42,15 +44,42 @@ export function parseChecks(text: string): CheckLeg | undefined {
     return undefined;
   }
   if (typeof data !== 'object' || data === null || Array.isArray(data)) return undefined;
-  const { node, checks } = data as { node?: unknown; checks?: unknown };
+  const { node, shard, checks } = data as { node?: unknown; shard?: unknown; checks?: unknown };
   if (typeof node !== 'string' || !(NODES as readonly string[]).includes(node)) return undefined;
+  if (shard !== 1 && shard !== 2) return undefined;
   if (typeof checks !== 'object' || checks === null || Array.isArray(checks)) return undefined;
   const entries = Object.entries(checks as Record<string, unknown>);
   for (const [id, outcome] of entries) {
     if (!(CHECK_IDS as readonly string[]).includes(id)) return undefined;
+    if (shard === 2 && id !== 'test') return undefined;
     if (typeof outcome !== 'string' || !OUTCOMES.includes(outcome)) return undefined;
   }
-  return { node, checks: Object.fromEntries(entries) as Record<string, string> };
+  return { node, shard, checks: Object.fromEntries(entries) as Record<string, string> };
+}
+
+/**
+ * The report's lines for a Node.js version (task-089): one line of every check, `test` from both
+ * shards (`failure` when one is not green, `missing` when one is absent), the others from shard 1;
+ * then a `no checks` line per absent shard. Two legs of one node and shard are both dropped.
+ */
+export function nodeLines(node: string, legs: CheckLeg[]): string[] {
+  const mine = legs.filter((one) => one.node === node);
+  const byShard = new Map<number, CheckLeg>();
+  for (const shard of SHARDS) {
+    const found = mine.filter((one) => one.shard === shard);
+    if (found.length === 1 && found[0] !== undefined) byShard.set(shard, found[0]);
+  }
+  const first = byShard.get(1);
+  const outcomes = CHECK_IDS.map((id) => {
+    if (id !== 'test') return `${id} ${first?.checks[id] ?? 'missing'}`;
+    const tests = SHARDS.map((shard) => byShard.get(shard)?.checks['test']);
+    const outcome = tests.some((one) => one === undefined) ? 'missing'
+      : tests.every((one) => one === 'success') ? 'success' : 'failure';
+    return `${id} ${outcome}`;
+  });
+  return [`- verify on Node.js ${node}: ${outcomes.join(', ')}`,
+    ...SHARDS.filter((shard) => !byShard.has(shard))
+      .map((shard) => `- verify on Node.js ${node} shard ${shard}: no checks`)];
 }
 
 /** The CHANGELOG over HTTPS, no token, no redirect, a timeout and a size bound. */
@@ -216,12 +245,7 @@ export function report(input: ReportInput): Report {
     `- Base: ${input.base ?? 'unknown'}`,
     `- prepare: ${known(input.prepare)}`,
     `- verify: ${known(input.verify)}`);
-  for (const node of NODES) {
-    const leg = input.legs.find((one) => one.node === node);
-    out.push(leg === undefined ? `- verify on Node.js ${node}: no checks`
-      : `- verify on Node.js ${node}: ${Object.entries(leg.checks)
-        .map(([id, outcome]) => `${id} ${outcome}`).join(', ')}`);
-  }
+  for (const node of NODES) out.push(...nodeLines(node, input.legs));
   out.push('', '### Reasons', '');
   out.push(...(reasons.length === 0 ? ['- none'] : reasons.map((reason) => `- ${reason}`)));
   out.push('', '### Artifact', '');

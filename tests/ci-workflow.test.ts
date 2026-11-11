@@ -164,11 +164,11 @@ describe('the CI workflow (task-013)', () => {
   it('audits the root\'s runtime tree as a gate, and the whole tree only to warn (dl-035)', () => {
     const blocking = steps.find((step) => step.name === 'Audit the root lockfile');
     assert.equal(blocking?.run?.trim(), 'npm audit --omit=dev', 'the gate on the runtime tree');
-    assert.equal(blocking?.if, undefined, 'on branches and tags');
+    assert.equal(blocking?.if, SHARD_ONE, 'on branches and tags, in shard 1 (task-089)');
     const warning = steps.find((step) => step.name === WARNING_STEP);
     assert.ok(warning !== undefined, WARNING_STEP);
     assert.equal(steps.indexOf(warning), steps.indexOf(blocking) + 1, 'right after the gate');
-    assert.equal(warning.if, undefined, 'on branches and tags');
+    assert.equal(warning.if, SHARD_ONE, 'on branches and tags, in shard 1 (task-089)');
     assert.ok(!Object.hasOwn(warning, 'continue-on-error'));
   });
 });
