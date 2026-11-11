@@ -61,8 +61,10 @@ On the branch `spec/plan-066-wave-amendment`, from `main` at this plan's `submit
    `npm run index -- --check`, `npm run validate` and `npm run -s wingfoil -- directives list
    --format json` (`warnings []`) exit 0; `git diff main` limited to the table's sections and the
    Execution Notes; a leftovers grep for "until then at format 1", "temporary exception" and "once
-   the reference composer" across `.wingfoil/`, `docs/` (outside plans and done elements) and the
-   READMEs, none left; the privacy check of the branch's diff (repository-practice rule 2).
+   the reference composer" across `.wingfoil/`, `docs/` and the READMEs, none left outside the
+   historical records (plans, done elements, `docs/owed-items.md` and the tech-specs' Execution
+   Notes, which quote the replaced text); the privacy check of the branch's diff
+   (repository-practice rule 2).
 5. **Branch close:** push, the branch CI's run and both jobs' durations recorded here (G12); on the
    approver's OK, `--no-ff` merge into `main`, push, `main`'s CI read, the branch removed; the close
    note records the privacy check of the branch's diff, and the row moves to Closed in its commit;
@@ -93,3 +95,5 @@ On the branch `spec/plan-066-wave-amendment`, from `main` at this plan's `submit
   leftovers grep and the privacy check added; `packs/<id>/pack.yaml`, `validate` silent on the
   waiver hits, §3.3's check cited at spec-001 §11, §18, §5's citation and the CI's commit
   corrected; §18's `tensions` bullet left out on purpose (no wave-close reading names it).
+- 2026-11-11: re-review: approve, two nits on the leftovers grep, applied: the historical records
+  (`docs/owed-items.md`, the tech-specs' Execution Notes) excluded with plans and done elements.
