@@ -99,3 +99,12 @@ On the branch `spec/plan-066-wave-amendment`, from `main` at this plan's `submit
   (`docs/owed-items.md`, the tech-specs' Execution Notes) excluded with plans and done elements.
 - 2026-11-11: `main`'s CI before this plan (dl-038 C3): plan-066's close pushed at `ed9b22b0`, run
   43026184602, `success` (22.12.0 18 min 49 s, 22.21.0 16 min 59 s).
+- 2026-11-11, steps 1 and 2: spec-001 (`571e5f46`), spec-002 (`4e0118a3`) and `pack-authoring`
+  (`deffb25a`) amended as the table says, an Execution Note in each tech-spec.
+- 2026-11-11, step 3: independent review: approve, seven nits, applied: §6.5's static reading
+  moved after the `with` list as one paragraph (the list stays loose, a rendering spacing only),
+  naming the axes' `slots`; §18's waiver bullet saying the match case-insensitive and `not
+  required` with any spacing, and the departure sentence reworded; spec-002 §3.2's "Combines with
+  care" after the parenthesis or the first sentence, the paragraph refilled; §2.1's bullet names
+  tied to the row's own wording. No rule changed, so no re-review. §6.5's "catalog pack id" and
+  §18's pack directory read together (the glossary and §4 define the id's shape), no change.
