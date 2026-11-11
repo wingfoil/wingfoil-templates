@@ -47,7 +47,7 @@ other level-1 or level-2 heading:
 | 1 | `# <title>` | generated | `pack.yaml` `title` as the heading; then `description`; then one line `Axis: <axis>` and, for a phase pack, ` · Slot: <slot>`; the foundation packs, `base` and `software`, write `Axis: foundation` |
 | 2 | `## When to use it` | written | the problem it solves; the adoption profiles it serves (`docs/01_vision/04_personas.md` §2), as the presets that contain it name them; when **not** to use it |
 | 3 | `## Install and update` | written | §2.3 |
-| 4 | `## Composition` | generated | `requires`, `conflicts`, `formats`, `requires_capabilities`; for every pack but `base`, the Memory types, roles and workflows it adds or tightens over the foundation (`base`, and `software` for a pack that requires it); for `software`, over `base`; for a pack with a conditional part (spec-001 §6.5), each entry's workflows and directives, one line each when non-empty, in the entries' order, marked as present only with the pack its `with` names: `` workflows only with `software`: … `` and `` directives only with `software`: … ``; for a pack with `tensions` (spec-001 §6.2), a line `Combines with care:` followed by one item per entry, the pack (with its range when there is one) and its resolution |
+| 4 | `## Composition` | generated | `requires`, `conflicts`, `formats`, `requires_capabilities`; for every pack but `base`, the Memory types, roles and workflows it adds or tightens over the foundation (`base`, and `software` for a pack that requires it); for `software`, over `base`; for a pack with a conditional part (spec-001 §6.5), each entry's workflows and directives, one line each when non-empty, in the entries' order, marked as present only with the pack its `with` names: `` workflows only with `software`: … `` and `` directives only with `software`: … ``; for a pack with `tensions` (spec-001 §6.2), the list's last bullet, `Combines with care:`, after the bullet of what it adds or tightens (**Declares**), or after `requires_capabilities`' bullet (**Requires capabilities**) for a pack with none, with one nested item per entry, the pack (with its range when there is one) and its resolution on one line |
 | 5 | `## What it adds` | generated | workflows (name, kind, phases with their roles and gates), Memory types (states, gates), directives (id, the roles fragment entries that assign them), fragments (`dna`, `roles`), Memory templates; a conditional entry's workflows and directives too, each workflow's and directive's line ending `` , only with `software` `` (the pack its entry's `with` names), a directive of an entry with `—` for its roles, since nothing always composed assigns it (spec-001 §6.5) |
 | 6 | `## Parameters` | generated | one row per parameter: name, type, default (or "required"), description; "None." when there is none |
 | 7 | `## Examples` | written | §2.4 |
@@ -175,13 +175,15 @@ The human index, in this order:
    `catalog.yaml` order: a table with the columns Pack, Summary, Slot (phase only), Status, Latest,
    WingFoil, README. Pack is the id, preceded by `<a id="pack-<id with / replaced by ->"></a>`, the
    anchor READMEs link (§2.5); Summary is `description`'s first sentence, followed, for a pack
-   with a conditional part (spec-001 §6.5), for each entry in order, by the entry's workflows, or
-   its directives when it has none, sorted and in code spans, and the pack its latest version's
-   `with` names, for example `` Continuous flow under explicit WIP limits. (`delivery`,
-   `kanban-delivery` only with `software`) ``, and, for a pack whose latest version declares
-   `tensions`, by `` Combines with care: `<pack>`, … `` with the packs sorted; Latest and
-   WingFoil are the last published version and its computed range; README links the
-   README rendered on github.com at the latest version's tag,
+   with a conditional part (spec-001 §6.5), by one parenthesis holding, for each entry in order
+   and joined by `; `, the entry's workflows, or its directives when it has none, sorted and in
+   code spans, and the pack its latest version's `with` names, for example `` Continuous flow
+   under explicit WIP limits. (`delivery`, `kanban-delivery` only with `software`) ``; and, for a
+   pack whose latest version declares `tensions`, after the parenthesis (or the first sentence
+   when there is none), one space before, by `` Combines with care: `<pack>`, … ``, each pack by
+   its id without its range, sorted and once, with no full stop after the last; Latest and
+   WingFoil are the last published version and its computed range; README links the README
+   rendered on github.com at the latest version's tag,
    `https://github.com/wingfoil/wingfoil-templates/blob/<tag>/packs/<catalog pack id>/README.md`;
 4. **Presets**: id, title, profile, packs;
 5. **Transitions**: id, from, to;
@@ -210,7 +212,8 @@ A pack object holds, in order:
   tag's `pack.yaml`: `formats`, `requires_capabilities`, `requires`, `conflicts` and, only for a
   version whose tagged `pack.yaml` carries a conditional part (spec-001 §6.5), `conditional`, a
   list of `{ with }`, one per entry, copied as the catalog version entry copies it; `pack_format`,
-  the tagged `pack.yaml`'s format (`1` when the catalog entry has none, spec-001 §11); plus
+  the tagged `pack.yaml`'s format (`1` when it has no `format`, spec-001 §5; `npm run check:packs`
+  keeps the catalog version entry's `pack_format` equal to it, spec-001 §11, §18); plus
   `readme_url` and `manifest_url` pinned to the tag (§4);
 - from the latest version's tag: `title`, `description`, `workflows`, `conditional_workflows`,
   `memory_types`, `directives` and `conditional_directives` (each a sorted list of names;
@@ -418,3 +421,9 @@ All closed in wave W14 (plan-024):
   in one parenthesis joined by `; `; "Combines with care" the Composition's last bullet; a
   tension's pack by its id without its range in the Summary), folded back by the plan the approver
   named at plan-066's wave close.
+- 2026-11-11, amended in place under plan-067 (option (b)), the approver's OK on its table and the
+  merge OK approving the text: §3.3's `pack_format`, the erratum above, read from the tagged
+  `pack.yaml` (task-088 ruling 1); §3.2's Summary, the marks in one parenthesis joined by `; `
+  and "Combines with care" by ids without ranges (task-088 rulings 2, 4); §2.1's "Combines with
+  care" as Composition's last bullet (task-088 ruling 3). The erratum and the readings above are
+  folded back.

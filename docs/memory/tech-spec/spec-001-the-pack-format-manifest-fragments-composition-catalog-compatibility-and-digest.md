@@ -161,9 +161,9 @@ This specification applies it twice.
      at format 1 stay at format 1, the composer and the lint pick the schema by the file's `format`,
      and a format-1 file keeps format 1's rules. A pack moves to format 2 only when it needs a key
      of format 2, and that move is a major release (`pack-semver`): a reader of format 1 cannot read
-     the new version. A new pack is written at format 2 once the reference composer reads it (until
-     then at format 1, a temporary exception, `docs/owed-items.md`); a pack published at format 1
-     stays there until a version needs a key of format 2.
+     the new version. A new pack is written at format 2, which the reference composer reads
+     (task-088, plan-066); a pack published at format 1 stays there until a version needs a key of
+     format 2.
    - The frozen schemas of format 1 are `schema/pack.v1.schema.json` and
      `schema/catalog.v1.schema.json`; `pack.schema.json` and `catalog.schema.json` validate
      format 2.
@@ -252,7 +252,7 @@ tensions: []                    # format 2: packs to combine with care (below)
 | `conflicts` | no | §6.3. |
 | `parameters` | no | §8. |
 | `contents` | yes | §6.4. |
-| `conditional` | no | §6.5. Format 1: at most one entry, `with` naming `software@^<major>`, on a non-foundation pack that does not require `software`. Format 2: one or more entries, each `with` naming a pack composed earlier (§7.1), at most one entry per pack id, on a non-foundation pack. Each entry's `contents` non-empty. |
+| `conditional` | no | §6.5. Format 1: at most one entry, `with` naming `software@^<major>`, on a non-foundation pack that does not require `software`. Format 2: one or more entries, each `with` naming a pack composed earlier (§7.1, read as §6.5 says), at most one entry per pack id, on a non-foundation pack. Each entry's `contents` non-empty. |
 | `tensions` | no | Format 2 only. Below. |
 
 `schema/pack.schema.json` checks what JSON Schema can express. The lint rules (F3.5) check the
@@ -352,6 +352,13 @@ conditional:                    # illustrative: a stage pack, composed after bot
     unsatisfied, an error, never a reason to leave the entry out;
   - it names no pack of the pack's `requires`, and the pack does not `conflict` with it;
   - it counts as a requirement for §7.1's rule against requiring a later pack.
+
+  "Composed earlier" is read statically, from the pack ids and `catalog.yaml`'s `axes` (with their
+  `slots`), as the lint checks it (task-085): `software` is earlier than every non-foundation pack;
+  a pack of another axis is earlier when its axis comes earlier in `axes`; within `phase`, a pack
+  of an earlier slot is earlier. Any other pack of the pack's own axis is refused: of an axis of
+  cardinality one, or of the same slot, it never composes with the pack; of a later slot, it is not
+  composed earlier; of an axis of cardinality many, Kahn's order (§7.1) guarantees no order.
 - **`contents`** may list `workflows` and `directives` only, by file stem, as §6.4, and lists at
   least one of them: an entry that adds nothing is refused.
   - In a composition with the entry's pack, its workflows and directives come after the pack's own
@@ -369,7 +376,12 @@ conditional:                    # illustrative: a stage pack, composed after bot
 - **Fragments are never conditional.** A pack therefore cannot tighten another pack's Memory types
   through this part (O14), and a bridge adds no Memory type and tightens none.
 - **One owner, slots.** §7.6's one-owner rule and §9's slot rule are checked on the composition with
-  every entry's pack and on each with one entry's pack left out in turn.
+  every entry's pack and on each with one entry's pack left out in turn. A composition that §3's
+  cardinalities or §6.3's conflicts forbid (two methodologies, two packs of an axis taking one or
+  of one slot, a conflict either way) is not checked: `npm run validate` skips it with its line
+  (`matrix <leg>: skipped, <reason>`) and the overlay lint does not compose it, neither failing.
+  An entry whose pack cannot join a given composition is covered by a documented composition (a
+  preset or a README example) holding the pack and the entry's pack (plan-039 R6, task-087).
 - A methodology that does not require `software` ships `delivery` in its entry with `software`,
   never in `contents`; a methodology that requires `software` ships it in `contents` (dl-022 S3: a
   methodology does not always require `software`). A composition with `software` holds exactly
@@ -1150,7 +1162,8 @@ parameters: {}
 - Every preset is part of the compatibility matrix of every pack it contains
   (`pack-compatibility`).
 - A pack with a conditional part is validated in the composition with every entry's pack and in each
-  with one entry's pack left out in turn (`pack-compatibility`).
+  with one entry's pack left out in turn (`pack-compatibility`); a composition the format forbids
+  is skipped with its line, and the entry covered by a documented composition, as §6.5 says.
 - A pack that declares `tensions` is validated in a composition with each pack they name, and every
   pack with each `stage/*` overlay: the declared and the known-risky pairs, not the Cartesian
   product (dl-025 D6, `pack-compatibility`); before D6, each pack of the `phase`, `blueprint` and
@@ -1234,7 +1247,8 @@ check the rest, and the composer refuses what they reject.
   each file listed once (§6.4);
 - `conditional`, by the file's format (§6.5): in format 1, at most one entry, on a non-foundation
   pack that does not require `software`, `with` naming `software@^<major>`; in format 2, entries on
-  a non-foundation pack, each `with` naming a catalog pack composed earlier (§7.1), at most one
+  a non-foundation pack, each `with` naming a pack directory of the tree (`packs/<id>/pack.yaml`
+  present, whether or not it passes its schema) composed earlier, read as §6.5 says, at most one
   entry per pack id; in both, no `with` names a pack of `requires` or `conflicts`, each entry's
   `contents` holds `workflows` and `directives` only, at least one of them, and the isolation rules
   of §6.5 hold per entry; a methodology's `delivery` in its entry with `software` when the
@@ -1247,9 +1261,16 @@ check the rest, and the composer refuses what they reject.
 - `tensions` (format 2): each entry names a catalog pack id other than the pack, at most once and
   not in `conflicts`, with a non-empty `resolution` (§6.2); a format-1 `pack.yaml` has none;
 - a directive of an overlay or a `stage/*` pack that uses waiver wording ("skip", "not required",
-  "optional", "ignore") about something the pack does not ship is reported for review, a heuristic,
-  not a refusal; a directive of a conditional entry whose `with` pack declares a tension naming this
-  pack (a bridge) is exempt (dl-025 D1, finding 6);
+  "optional", "ignore") is reported for review, a heuristic, not a refusal; a directive of a
+  conditional entry whose `with` pack declares a tension naming this pack (a bridge) is exempt
+  (dl-025 D1, finding 6). The four phrases are matched as whole words, case-insensitive, `skip`,
+  `optional` and `ignore` with their inflections and `not required` with any spacing on one line,
+  on the directive's body, one hit per line; `npm run check:packs` prints the hits as a review
+  list, its exit unchanged, and `npm run validate` neither prints nor fails on them. Whether a hit
+  concerns something the pack does not ship is the reviewer's to judge, at `pack-release-cycle` ›
+  `prepare`, and the `pack-release` element's review records each hit with its verdict. This
+  departs from the rule's earlier wording ("about something the pack does not ship"), which code
+  cannot judge (plan-066 ruling 4, task-086);
 - `formats` lists exactly the kinds of the files shipped, with the value each file declares (§5);
 - the layout and path segments of §6.1, with no symbolic link or submodule;
 - asset identifiers equal their file stems (§6.1);
@@ -1523,3 +1544,11 @@ check the rest, and the composer refuses what they reject.
   (task-087 ruling 3); §18's waiver heuristic as four phrases matched as whole words, a bridge
   exempt, a review list (plan-066 ruling 4, task-086). Folded back by the plan the approver named
   at plan-066's wave close.
+- 2026-11-11, amended in place under plan-067 (option (b)), the approver's OK on its table and the
+  merge OK approving the text: §5, a new pack at format 2, which the reference composer reads
+  (task-088), the temporary exception gone; §6.5 and §6.2's row, "composed earlier" read
+  statically, a `with` naming another pack of the pack's own axis refused (task-085 ruling 1);
+  §6.5 and §15, a composition the format forbids skipped with its line and the entry covered by a
+  documented composition (task-087 ruling 3); §18, `conditional`'s `with` naming a pack directory
+  of the tree (task-085), and the waiver heuristic as a review list judged at `pack-release-cycle`
+  › `prepare` (plan-066 ruling 4, task-086). The note above on these readings is folded back.
