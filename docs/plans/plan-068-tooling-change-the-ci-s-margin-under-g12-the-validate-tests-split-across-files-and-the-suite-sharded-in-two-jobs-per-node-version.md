@@ -2,7 +2,7 @@
 id: plan-068-tooling-change-the-ci-s-margin-under-g12-the-validate-tests-split-across-files-and-the-suite-sharded-in-two-jobs-per-node-version
 type: plan
 title: "tooling-change: the CI's margin under G12, the validate tests split across files and the suite sharded in two jobs per Node version"
-status: draft
+status: active
 workflow: "tooling-change"
 phase: "deliver"
 tags: ["tooling","ci"]
