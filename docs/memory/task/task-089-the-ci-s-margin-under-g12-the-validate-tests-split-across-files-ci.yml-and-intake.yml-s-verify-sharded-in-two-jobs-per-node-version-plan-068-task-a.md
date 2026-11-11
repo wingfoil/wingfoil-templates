@@ -190,3 +190,20 @@ tests); the owed row, moved at plan-068's close.
   shard lines, a missing or duplicated shard, `parseChecks`' shard). Already green on `main`:
   the line per version with every shard green (its text unchanged) and the verdict left to the
   verify job; the existing tests changed for the four legs (`leg()` read through `parseChecks`).
+- 2026-11-11, the list before the split (Acceptance 2): `node --test --test-reporter=tap` on `main`
+  at `1b724f5e`, from a clean worktree: 1288 tests, 1288 passing; the list of `describe` path ›
+  name, sorted, 1288 lines (one name twice, in `secretProblems`), SHA-256 `a7e19eca38637293…`.
+- 2026-11-11, the split (`e61cefa7`): nine files `tests/validate-<n>-<part>.test.ts` and
+  `tests/support/validate-harness.ts`, written by a script from the source's lines, no line of
+  the source lost but one wrapped. After the code (`3b143f42`, `8fc1806e`), each shard run by
+  `node --test --test-shard=<n>/2 --test-reporter=tap` from a clean worktree on Node 22.21.0:
+  shard 1 636 tests, 0 failing, wall 467 s; shard 2 663 tests, 0 failing, wall 526 s. Their
+  lists share no line; their union (1299) is the list before the split with this task's tests:
+  the 73 validate tests equal, line for line; 11 tests added (Acceptance 3 … 6) and two renamed
+  in what they check (`ci-workflow`'s "runs every check, on every path", now two tests, and
+  verify's matrix test, "in two shards"). Locally (eleven files at once) shard 1 holds files
+  `validate-2`, `-4`, `-6`, `-8` (its tests' total 1219 s), shard 2 `validate-1`, `-3`, `-5`,
+  `-7`, `-9` and the publish suites (2095 s); with three files at once on the runner, shard 2
+  is about 12 minutes and shard 1 about 8 plus its other checks' 5 min 30 s: the branch CI
+  decides the balance (Acceptance 4).
+- 2026-11-11, the shard script: `SHARD` unset and `SHARD=3` exit 1 (Node refuses the shard).
