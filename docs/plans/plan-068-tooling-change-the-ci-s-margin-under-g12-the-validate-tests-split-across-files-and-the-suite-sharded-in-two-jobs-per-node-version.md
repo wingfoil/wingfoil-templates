@@ -50,7 +50,8 @@ with this plan's `submit`; that run is read and recorded in the Execution Notes.
    a tag, shard 2 runs install, build and its tests, and publication mode runs once per Node
    version. Shard 1's other steps take about 5 min 30 s, so the jobs, not the `Test` steps, are
    balanced: shard 1 takes the lighter half of the tests (the files' split or names), the jobs of
-   one Node version within about 3 minutes, the numbers in the task's notes.
+   one Node version within about 3 minutes, the numbers in the task's notes. A later test file can
+   shift the balance; every task's job durations (dl-039 R3) show it.
    `tests/ci-workflow.test.ts` checks it, red first: the matrix, the shard's command (the option
    before the glob), every check's `if` in its `matrix.shard == 1` form, the cache's `if`.
 4. **Job names** `validate (<node>, <shard>)`. No required check names a job (the ruleset
@@ -106,3 +107,5 @@ whole suite unsharded, timeout 40, `tests/intake-workflow.test.ts` unchanged) an
   other checks); with the others: the prediction recorded in the design, no shared path written
   by two split files, the cache and tag runs in shard 1, dl-039 R1's reading, the workflows'
   versions, `intake.yml` out of scope, the 1288 count in point 6, the over-20 branch.
+- 2026-11-11: re-review: approve, one nit, applied: a later test file can shift the shards'
+  balance, which every task's job durations show (dl-039 R3).
