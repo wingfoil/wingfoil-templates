@@ -183,3 +183,10 @@ tests); the owed row, moved at plan-068's close.
   the `--overlay` describe split, the stubs per file, two Context wordings.
 - 2026-11-11: re-review: approve, four nits, applied: the shard from the environment only, the
   unset and invalid shard checked locally, the union without the file, a reflow.
+- 2026-11-11, red (dl-018): `npm run build && node --test dist/tests/ci-workflow.test.js
+  dist/tests/intake-workflow.test.js dist/tests/intake-report.test.js`: 66 tests, 18 failing by
+  assertion (the matrix, the cache, the shard's tests and shard 1's checks, the branch and tag
+  paths, the shard script; verify's matrix, test step, outcomes and shard 2's leg; the report's
+  shard lines, a missing or duplicated shard, `parseChecks`' shard). Already green on `main`:
+  the line per version with every shard green (its text unchanged) and the verdict left to the
+  verify job; the existing tests changed for the four legs (`leg()` read through `parseChecks`).
