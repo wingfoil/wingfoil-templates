@@ -1516,3 +1516,10 @@ check the rest, and the composer refuses what they reject.
   directive missing a header field), which no pack ships, and, without `--role`, also warns on a
   directive binding that has no file; the matrix's scratch repository holds the built-in files, so
   no such warning arises.
+- 2026-11-11, readings of plan-066's wave (dl-020): §18's "composed earlier" read statically, a
+  `with` naming a pack of its own axis refused, and "catalog pack" as a pack directory of the tree
+  (task-085 ruling 1); §6.5 and §15 assume an entry's packs compose together, so a target the
+  format forbids is skipped with its line and the coverage comes from a documented composition
+  (task-087 ruling 3); §18's waiver heuristic as four phrases matched as whole words, a bridge
+  exempt, a review list (plan-066 ruling 4, task-086). Folded back by the plan the approver named
+  at plan-066's wave close.

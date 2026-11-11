@@ -302,3 +302,21 @@ points 4 and 6 included.
   parenthetical an erratum candidate). The CI's margin is spent on 22.12.0: the row "The CI's
   margin under G12's 25 minutes" to be ruled before the next task adds to the suite. `main`'s CI
   on the merge read in the next note.
+- 2026-11-11: `main`'s CI on task-088's merge (pushed with this plan's note, `18e2b1c0`), run
+  42638300365, `success` (22.12.0 23 min 59 s, 22.21.0 23 min 18 s), under 25 minutes (G12), the
+  margin about a minute on both jobs.
+- 2026-11-11, **wave close** (step 3, dl-020): the errata and rulings of the wave, per tech-spec.
+  - **spec-001:** §18's "composed earlier" read statically, a `with` on its own axis refused, and
+    "catalog pack" as a pack directory of the tree (task-085 ruling 1); §6.5 and §15 assume an
+    entry's packs compose together, a forbidden target skipped with its line (task-087 ruling 3);
+    §18's waiver heuristic as four whole-word phrases, bridges exempt, a review list (ruling 4,
+    task-086). No erratum. Recorded in spec-001's Execution Notes.
+  - **spec-002:** one erratum, §3.3's parenthetical on `pack_format` (task-088 ruling 1: the
+    tagged `pack.yaml`'s `format`, absent as 1); three readings, the Summary's marks of several
+    entries joined by `; ` in one parenthesis, "Combines with care" the README Composition's last
+    bullet, a tension's pack without its range in the Summary (task-088 rulings 2 … 4). Recorded
+    in spec-002's Execution Notes.
+  - **The approver's ruling** (2026-11-11): a small plan amends spec-001 and spec-002 in place
+    with these, text only (the tooling already follows them), task-086's departure cited by a
+    sentence; after this plan's close; its row "A plan amending spec-001 and spec-002 in place
+    with plan-066's wave close" in `docs/owed-items.md`.

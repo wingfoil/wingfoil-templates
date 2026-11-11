@@ -410,3 +410,11 @@ All closed in wave W14 (plan-024):
   initialization (dl-011, `pending`) is not added (plan-063 ruling 10 (iii)). "Combines with care"
   is a line inside Composition, not a section of its own, since §2.1 fixes the headings. The tooling
   follows in the `tooling-change` plan.
+- 2026-11-11, erratum (task-088, dl-020 R1): §3.3 lists `pack_format` among the fields "from the
+  tag's `pack.yaml`" ("the tagged `pack.yaml`'s format") but adds "(`1` when the catalog entry has
+  none, spec-001 §11)"; the tooling reads the tagged `pack.yaml`'s `format`, absent as 1 (spec-001
+  §5; task-088 ruling 1), and `check:packs` keeps the catalog entry equal to it (task-083). With
+  three readings of the same wave (task-088 rulings 2 … 4: the Summary's marks of several entries
+  in one parenthesis joined by `; `; "Combines with care" the Composition's last bullet; a
+  tension's pack by its id without its range in the Summary), folded back by the plan the approver
+  named at plan-066's wave close.
