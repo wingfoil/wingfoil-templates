@@ -67,13 +67,25 @@ with this plan's `submit`; that run is read and recorded in the Execution Notes.
    rules whether the merge goes ahead (a third shard, or G12's bound, as a later row); a ruling
    that leaves an owed item adds its row in the commit that records it (dl-036 R2).
 7. **`intake.yml`'s `verify` sharded the same way** (the approver, 2026-11-11). Its matrix gains
-   `shard: [1, 2]`; every job applies the prepared artifact; shard 1 runs every check and shard 2
-   its half of the tests only, each check still continuing on error; each job writes and uploads
-   its outcomes with its shard (`verify-<node>-<shard>`). `intake:report` reads the four legs as
-   two per Node version: `test` green only when both shards' are, every other check from shard 1,
-   a missing leg reported as now. Its timeout of 40 minutes unchanged. `src/intake-report.ts`,
-   `tests/intake-workflow.test.ts` and the report's tests change with it, red first; the workflow's
-   first run after the merge (a rehearsal by hand) is read and its durations recorded at the close.
+   `shard: [1, 2]`; every job applies the prepared artifact; each check still continues on error.
+   - The `test` step runs the shard's half through the shard script (the option before the glob),
+     in both shards, not `npm test`; shard 1 also runs every other check, shard 2 none.
+   - Each shard's `checks.json` gains `shard` (1 or 2) and lists only the checks it runs: shard 2
+     `test` alone, shard 1 all fifteen. So the step that fails on a check not green holds in both
+     shards; a red test runs the outcomes script with shard 2's steps and sees it pass on green.
+   - The summary's heading `### Checks on Node.js <node>, shard <shard>`; the artifact
+     `verify-<node>-<shard>`, which the report's `verify-*` pattern already downloads.
+   - `intake:report` reads four legs: `parseChecks` checks `shard`, a duplicate `(node, shard)` is
+     refused, a missing shard is reported per shard (`Node.js <node> shard <shard>: no checks`);
+     per Node version `test` shows green only when both shards' are, `missing` when one is absent,
+     every other check from shard 1. Only the display changes: the verdict stays tied to
+     `needs.verify.result`, which fails when any of the four jobs does.
+   - Timeouts unchanged (verify 40, report 10). `src/intake-report.ts`, its tests and
+     `tests/intake-workflow.test.ts` (the `test` step's command, the artifact name) change with it,
+     red first.
+   - The rehearsal is dispatched by hand on the task's branch (`gh workflow run intake.yml --ref
+     <branch> -f rehearsal=true`) before `in-review`, its four `verify` durations in the task's
+     notes; again after the merge, read at the close.
 
 Not in this plan: the removal of checks the tests repeat (option 2, ruled out); fewer Node
 versions; any change to G12 or to what a test checks; the historical records that say "both
@@ -119,3 +131,7 @@ jobs".
   balance, which every task's job durations show (dl-039 R3).
 - 2026-11-11: the approver adds `intake.yml`'s `verify` to the plan (point 7) and keeps option 2
   out; `pages.yml`, which runs no test, is no longer named.
+- 2026-11-11: point 7's review: approve after amendments, one blocking, applied: each shard's
+  `checks.json` lists only the checks it runs, so shard 2's fail step holds; with the others: the
+  leg key `shard`, a missing shard per shard, the verdict unchanged on `needs.verify.result`, the
+  step's command, heading and artifact name, a rehearsal on the branch before `in-review`.
