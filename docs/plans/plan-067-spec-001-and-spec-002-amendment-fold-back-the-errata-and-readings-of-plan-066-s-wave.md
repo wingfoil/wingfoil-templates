@@ -114,3 +114,6 @@ On the branch `spec/plan-066-wave-amendment`, from `main` at this plan's `submit
   diff main` limited to the table's sections and the Execution Notes; the leftovers grep finds
   only historical records (spec-001's Execution Note, task-083, plans, `docs/owed-items.md`);
   the privacy check of the branch's diff clean.
+- 2026-11-11, step 5: branch CI on `601c8dea`, run 43048922074, `success` (22.12.0 24 min 40 s,
+  22.21.0 19 min 36 s): under G12's 25 minutes, the 22.12.0 job 20 s short of it, for the CI
+  margin's row (`docs/owed-items.md`), on a text-only change.
