@@ -47,7 +47,7 @@ other level-1 or level-2 heading:
 | 1 | `# <title>` | generated | `pack.yaml` `title` as the heading; then `description`; then one line `Axis: <axis>` and, for a phase pack, ` · Slot: <slot>`; the foundation packs, `base` and `software`, write `Axis: foundation` |
 | 2 | `## When to use it` | written | the problem it solves; the adoption profiles it serves (`docs/01_vision/04_personas.md` §2), as the presets that contain it name them; when **not** to use it |
 | 3 | `## Install and update` | written | §2.3 |
-| 4 | `## Composition` | generated | `requires`, `conflicts`, `formats`, `requires_capabilities`; for every pack but `base`, the Memory types, roles and workflows it adds or tightens over the foundation (`base`, and `software` for a pack that requires it); for `software`, over `base`; for a pack with a conditional part (spec-001 §6.5), each entry's workflows and directives, one line each when non-empty, in the entries' order, marked as present only with the pack its `with` names: `` workflows only with `software`: … `` and `` directives only with `software`: … ``; for a pack with `tensions` (spec-001 §6.2), the list's last bullet, `Combines with care:`, after **Declares** (or after **Requires capabilities** for a pack with no **Declares**), with one nested item per entry, the pack (with its range when there is one) and its resolution on one line |
+| 4 | `## Composition` | generated | `requires`, `conflicts`, `formats`, `requires_capabilities`; for every pack but `base`, the Memory types, roles and workflows it adds or tightens over the foundation (`base`, and `software` for a pack that requires it); for `software`, over `base`; for a pack with a conditional part (spec-001 §6.5), each entry's workflows and directives, one line each when non-empty, in the entries' order, marked as present only with the pack its `with` names: `` workflows only with `software`: … `` and `` directives only with `software`: … ``; for a pack with `tensions` (spec-001 §6.2), the list's last bullet, `Combines with care:`, after the bullet of what it adds or tightens (**Declares**), or after `requires_capabilities`' bullet (**Requires capabilities**) for a pack with none, with one nested item per entry, the pack (with its range when there is one) and its resolution on one line |
 | 5 | `## What it adds` | generated | workflows (name, kind, phases with their roles and gates), Memory types (states, gates), directives (id, the roles fragment entries that assign them), fragments (`dna`, `roles`), Memory templates; a conditional entry's workflows and directives too, each workflow's and directive's line ending `` , only with `software` `` (the pack its entry's `with` names), a directive of an entry with `—` for its roles, since nothing always composed assigns it (spec-001 §6.5) |
 | 6 | `## Parameters` | generated | one row per parameter: name, type, default (or "required"), description; "None." when there is none |
 | 7 | `## Examples` | written | §2.4 |
@@ -179,11 +179,11 @@ The human index, in this order:
    and joined by `; `, the entry's workflows, or its directives when it has none, sorted and in
    code spans, and the pack its latest version's `with` names, for example `` Continuous flow
    under explicit WIP limits. (`delivery`, `kanban-delivery` only with `software`) ``; and, for a
-   pack whose latest version declares `tensions`, after it and one space before, by
-   `` Combines with care: `<pack>`, … ``, each pack by its id without its range, sorted and once,
-   with no full stop after the last; Latest and
-   WingFoil are the last published version and its computed range; README links the
-   README rendered on github.com at the latest version's tag,
+   pack whose latest version declares `tensions`, after the parenthesis (or the first sentence
+   when there is none), one space before, by `` Combines with care: `<pack>`, … ``, each pack by
+   its id without its range, sorted and once, with no full stop after the last; Latest and
+   WingFoil are the last published version and its computed range; README links the README
+   rendered on github.com at the latest version's tag,
    `https://github.com/wingfoil/wingfoil-templates/blob/<tag>/packs/<catalog pack id>/README.md`;
 4. **Presets**: id, title, profile, packs;
 5. **Transitions**: id, from, to;
