@@ -137,3 +137,4 @@ jobs".
   leg key `shard`, a missing shard per shard, the verdict unchanged on `needs.verify.result`, the
   step's command, heading and artifact name, a rehearsal on the branch before `in-review`.
 - 2026-11-11: point 7's re-review: approve, one nit, applied: claude dispatches the rehearsals.
+- 2026-11-11: the approver's OK on points 1 … 7 as written.
