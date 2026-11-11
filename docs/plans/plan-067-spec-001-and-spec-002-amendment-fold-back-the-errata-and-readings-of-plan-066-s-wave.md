@@ -2,7 +2,7 @@
 id: plan-067-spec-001-and-spec-002-amendment-fold-back-the-errata-and-readings-of-plan-066-s-wave
 type: plan
 title: "spec-001 and spec-002 amendment: fold back the errata and readings of plan-066's wave"
-status: draft
+status: active
 workflow: "sw-life-cycle"
 phase: "specification"
 tags: ["spec","format-2"]
