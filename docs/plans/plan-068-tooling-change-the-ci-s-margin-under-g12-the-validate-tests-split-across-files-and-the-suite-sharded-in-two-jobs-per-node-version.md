@@ -105,7 +105,8 @@ jobs".
 ## Handoff
 
 - **claude (facilitator, developer):** the task and the close, except the approvals and the merge
-  OK. It never runs `memory approve` or `memory reject`: it gives the approver the command, with
+  OK; it dispatches point 7's rehearsals (`gh workflow run`) and reads them. It never runs
+  `memory approve` or `memory reject`: it gives the approver the command, with
   `cd` and `--reason`. No pull request. Files staged by name.
 - **Reviewers (subagents):** this plan; the task's body and build; re-reviews when a fix changes a
   decision (dl-017).
@@ -135,3 +136,4 @@ jobs".
   `checks.json` lists only the checks it runs, so shard 2's fail step holds; with the others: the
   leg key `shard`, a missing shard per shard, the verdict unchanged on `needs.verify.result`, the
   step's command, heading and artifact name, a rehearsal on the branch before `in-review`.
+- 2026-11-11: point 7's re-review: approve, one nit, applied: claude dispatches the rehearsals.
