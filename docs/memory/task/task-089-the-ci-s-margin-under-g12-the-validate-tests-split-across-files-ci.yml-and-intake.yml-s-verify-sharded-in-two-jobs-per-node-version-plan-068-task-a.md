@@ -30,13 +30,13 @@ What exists (`main` at plan-068's `submit`):
   `DEFAULTS`) are disposed by top-level `after` hooks; a split file creates and disposes its own.
 - **`intake.yml`'s `verify`:** one job per Node version, timeout 40: applies the prepared
   artifact, runs `npm test`, the self-test's checks and `validate:publication` (each continuing
-  on error),
-  writes `checks.json` (`{ node, checks }`, fifteen ids, a step not run written `skipped`) and the
-  summary `### Checks on Node.js <node>`, uploads `verify-<node>`, then fails when a check is not
-  `success`. `report` downloads `verify-*`; `src/intake-report.ts`'s `parseChecks` accepts a
-  `node` of `NODES` and the report lists one leg per Node version, `no checks` when missing; the
-  verdict reads `needs.verify.result`, not the legs. `npm test`'s rebuild after `intake:apply`
-  is not needed: the artifact's allowlist (`src/intake-artifact.ts`) holds no `.ts` file.
+  on error), writes `checks.json` (`{ node, checks }`, fifteen ids, a step not run written
+  `skipped`) and the summary `### Checks on Node.js <node>`, uploads `verify-<node>`, then fails
+  when a check is not `success`. `report` downloads `verify-*`; `src/intake-report.ts`'s
+  `parseChecks` accepts a `node` of `NODES` and the report lists one leg per Node version, `no
+  checks` when missing; the verdict reads `needs.verify.result`, not the legs. `npm test`'s
+  rebuild after `intake:apply` is not needed: the artifact's allowlist (`src/intake-artifact.ts`)
+  holds no `.ts` file.
 - **Tests on the workflows:** `tests/ci-workflow.test.ts` (the matrix, every check on every path,
   the branch and tag `if`s, the cache) and `tests/intake-workflow.test.ts` (the `test` step's
   `npm test`, the artifact name, the outcomes script).
@@ -67,13 +67,15 @@ tests); the owed row, moved at plan-068's close.
      equal as a multiset after the split, 0 failing.
    - No two files write a shared path (the repository tree, a fixed temporary name), checked in
      the build review.
-3. **The shard script** (point 2): an npm script runs `node --test --test-shard=$SHARD/2` (or one
-   script per shard) with the option before the glob, the same glob as `npm test`, and no build;
-   it refuses an unset or invalid shard. `npm test` unchanged, the whole suite.
+3. **The shard script** (point 2): an npm script runs `node --test --test-shard=$SHARD/2`, its
+   shard from the environment, with the option before the glob, the same glob as `npm test`, and
+   no build; run with `SHARD` unset or `SHARD=3` it exits non-zero (checked locally, in the
+   notes). `npm test` unchanged, the whole suite.
    - A test reads `package.json` and checks the script's form (the option before the glob, the
      glob equal to `npm test`'s, no build) and `npm test` unchanged.
    - Run locally, each shard's list (keyed by file and path) is disjoint from the other's and
-     their union is Acceptance 2's list; each shard's wall time in the notes.
+     their union, the file dropped, is Acceptance 2's list as a multiset; each shard's wall time
+     in the notes.
 4. **`ci.yml`** (points 2 … 4): the matrix exactly `node: ['22.12.0', '22.21.0']` × `shard: [1,
    2]`, four jobs named `validate (<node>, <shard>)`, `fail-fast` and the timeout unchanged.
    - Every job: checkout, Node, install, build, the shard's tests through Acceptance 3's script,
@@ -136,3 +138,5 @@ tests); the owed row, moved at plan-068's close.
   test` in `ci.yml`, the ids per shard tested, a duplicate dropped, shard 1 missing, the red
   tests through `parseChecks`, dl-039 R1's reading, the 20 … 25 route, the rehearsal's outcomes,
   the `--overlay` describe split, the stubs per file, two Context wordings.
+- 2026-11-11: re-review: approve, four nits, applied: the shard from the environment only, the
+  unset and invalid shard checked locally, the union without the file, a reflow.
