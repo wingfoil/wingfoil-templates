@@ -207,3 +207,30 @@ tests); the owed row, moved at plan-068's close.
   is about 12 minutes and shard 1 about 8 plus its other checks' 5 min 30 s: the branch CI
   decides the balance (Acceptance 4).
 - 2026-11-11, the shard script: `SHARD` unset and `SHARD=3` exit 1 (Node refuses the shard).
+- 2026-11-11, build review: approve after amendments, two blocking (documentation), applied: each
+  file's duration (below) and dl-039 R1's reading in plan-068's notes (`b84fcf8c`); with the
+  nits (`c962ca82`): an `it`'s body indented, a blank line, the map's key typed by the shard.
+  No re-review: no behaviour, test or Acceptance command changed. The list's full SHA-256 was in
+  the scratch area, lost with it at a restart of the machine; the count and the line-for-line
+  comparison stand.
+- 2026-11-11, the checks on the frozen commit `c962ca82` (dl-039 R2), from a clean worktree on
+  Node 22.21.0 after `npm ci` and `npm run build`: `npm run validate:publication`, the golden
+  tree in publication mode and `npm run -s wingfoil -- workflow list` exit 0 (a first run of
+  them was lost at the restart, before its result); `directives list --format json` gives
+  `warnings []`. Each validate file alone, locally: `validate-1` 281 s, `-2` 328 s, `-3` 358 s,
+  `-4` 255 s, `-5` 183 s, `-6` 119 s, `-7` 132 s, `-8` 27 s, `-9` 68 s, every one green.
+- 2026-11-11, the branch CI on `c962ca82`, run 43106029760, `success`: `validate (22.12.0, 1)`
+  10 min 4 s, `(22.12.0, 2)` 4 min 51 s, `(22.21.0, 1)` 9 min 35 s, `(22.21.0, 2)` 7 min 13 s;
+  the `Test` steps 4 min 48 s, 4 min 37 s, 4 min 39 s and 6 min 54 s. Every job under 20
+  minutes (24 min 40 s before, plan-067's branch run).
+- 2026-11-11, the rehearsal of `intake.yml` on the branch, run 43107700626 (`gh workflow run
+  intake.yml --ref task/task-089-ci-shards -f rehearsal=true`): `detect` 21 s, `prepare` 22 s,
+  `verify (22.12.0, 1)` 10 min 33 s, `(22.21.0, 1)` 10 min 24 s, `(22.12.0, 2)` 8 min 22 s,
+  `(22.21.0, 2)` 8 min 0 s, `report` 21 s, all `success`; the report's line `rehearsal of 0.3.2
+  guided: 7 reasons`, as 0.3.2 reads by the bar (plan-065).
+- 2026-11-11, two criteria short of their numbers (dl-019), for the approver's ruling:
+  Acceptance 2's "no file more than about 5 minutes locally": `validate-2` 5 min 28 s and `-3` 5
+  min 58 s; Acceptance 4's "one Node version's two jobs within about 3 minutes": 22.12.0's jobs
+  5 min 13 s apart (22.21.0's 2 min 22 s). The `Test` steps of one version are within 2 min 15 s;
+  the gap is shard 1's other checks (about 5 min), and the same shard's `Test` step varied from
+  4 min 37 s to 6 min 54 s between the versions.

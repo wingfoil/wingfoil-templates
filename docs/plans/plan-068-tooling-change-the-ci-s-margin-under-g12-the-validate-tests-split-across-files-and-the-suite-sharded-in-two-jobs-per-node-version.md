@@ -145,3 +145,6 @@ jobs".
 - 2026-11-11, reading (point 5): dl-039 R1's "its two jobs' durations" is read as every job's
   durations from this plan on, the CI holding four jobs; dl-039's text unchanged, as plan-068
   rules, and `tooling-delivery` v4 and `kanban-delivery` v6 say "every job's" (task-089).
+- 2026-11-11: run 43095345992 on `6e559f81` cannot be read: GitHub lists it queued with no job,
+  refuses to cancel it ("completed") and to re-run it. `main`'s CI on task-089's merge, which
+  holds `6e559f81`, stands for it.
