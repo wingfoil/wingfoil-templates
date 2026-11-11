@@ -66,21 +66,29 @@ with this plan's `submit`; that run is read and recorded in the Execution Notes.
    moves to Closed with the numbers. A job over 20 minutes and under 25 goes to the approver, who
    rules whether the merge goes ahead (a third shard, or G12's bound, as a later row); a ruling
    that leaves an owed item adds its row in the commit that records it (dl-036 R2).
+7. **`intake.yml`'s `verify` sharded the same way** (the approver, 2026-11-11). Its matrix gains
+   `shard: [1, 2]`; every job applies the prepared artifact; shard 1 runs every check and shard 2
+   its half of the tests only, each check still continuing on error; each job writes and uploads
+   its outcomes with its shard (`verify-<node>-<shard>`). `intake:report` reads the four legs as
+   two per Node version: `test` green only when both shards' are, every other check from shard 1,
+   a missing leg reported as now. Its timeout of 40 minutes unchanged. `src/intake-report.ts`,
+   `tests/intake-workflow.test.ts` and the report's tests change with it, red first; the workflow's
+   first run after the merge (a rehearsal by hand) is read and its durations recorded at the close.
 
 Not in this plan: the removal of checks the tests repeat (option 2, ruled out); fewer Node
-versions; any change to G12 or to what a test checks; `intake.yml` (its `verify` job runs the
-whole suite unsharded, timeout 40, `tests/intake-workflow.test.ts` unchanged) and `pages.yml`
-(no tests); the historical records that say "both jobs".
+versions; any change to G12 or to what a test checks; the historical records that say "both
+jobs".
 
 ## Steps
 
 1. **This plan:** independent review, the approver's ruling on the outline, `submit`
    (`draft → active`), `main` pushed with plan-067's close; `main`'s CI read.
-2. **Task (A)**, task-089 (points 1 … 5): `memory add` on `main`, its `tooling-delivery` v3 loop
-   (body review, the approver's acceptance, design with its red steps, build test first, build
-   review, dl-039's checks on the frozen commit, the branch CI with every job's duration, the
-   approver's approval, `--no-ff` merge into `main`, `main`'s CI read).
-3. **Close:** point 6's numbers; the row to Closed; `active → done`.
+2. **Task (A)**, task-089 (points 1 … 5 and 7): `memory add` on `main`, its `tooling-delivery` v3
+   loop (body review, the approver's acceptance, design with its red steps, build test first,
+   build review, dl-039's checks on the frozen commit, the branch CI with every job's duration,
+   the approver's approval, `--no-ff` merge into `main`, `main`'s CI read).
+3. **Close:** point 6's numbers; `intake.yml`'s rehearsal after the merge (point 7), by hand, read
+   with its durations; the row to Closed; `active → done`.
 
 ## Handoff
 
@@ -109,3 +117,5 @@ whole suite unsharded, timeout 40, `tests/intake-workflow.test.ts` unchanged) an
   versions, `intake.yml` out of scope, the 1288 count in point 6, the over-20 branch.
 - 2026-11-11: re-review: approve, one nit, applied: a later test file can shift the shards'
   balance, which every task's job durations show (dl-039 R3).
+- 2026-11-11: the approver adds `intake.yml`'s `verify` to the plan (point 7) and keeps option 2
+  out; `pages.yml`, which runs no test, is no longer named.
