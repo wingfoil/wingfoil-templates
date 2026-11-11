@@ -123,7 +123,50 @@ tests); the owed row, moved at plan-068's close.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+- **The harness** (`tests/support/validate-harness.ts`): `tests/validate.test.ts`'s lines before
+  its first `describe` (the constants, `stubbed`, `stubbedClean`, `NEWEST`, `byRelease`,
+  `validate`, `withTree`, `replaceIn` and the helpers the describes share), exported; its two
+  `after` hooks stay at its top level. Each test file runs in its own process, so each file that
+  imports it has its own stubs, disposed at its end.
+- **The files** (Acceptance 2), each `describe` keeping its name, so every test's path is
+  unchanged, the tests in their order; the local durations of plan-067's run:
+  - `validate-1-run.test.ts`: `npm run validate`, tests 1 … 13 (about 262 s);
+  - `validate-2-run.test.ts`: the same `describe`, tests 14 … 26 (about 225 s);
+  - `validate-3-run.test.ts`: the same `describe`, tests 27 … 39 (about 290 s, the index's
+    137 s among them);
+  - `validate-4-overlay.test.ts`: `--overlay`, tests 1 … 9 (about 209 s);
+  - `validate-5-overlay.test.ts`: the same `describe`, tests 10 … 18 (about 135 s);
+  - `validate-6-legs.test.ts`: both legs of a conditional part (about 55 s);
+  - `validate-7-entries.test.ts`: the legs per entry, with its `before` (about 71 s);
+  - `validate-8-tensions.test.ts` (about 18 s) and `validate-9-waiver.test.ts` (about 33 s).
+  The numbers keep the source's order in the sorted list; Node gives the sorted files to the
+  shards in turn, so the nine alternate between the two. The shards' lists and wall times are
+  measured after the split, and the files renamed if shard 1 is not the lighter (Acceptance 4).
+- **The list** (Acceptance 2, 3): `node --test --test-reporter=tap` on the built files; a script
+  in the scratch area (not committed) reads the nesting of `# Subtest:` lines and prints each
+  test (`type: 'test'`) as its `describe` path › name, sorted; the multiset compared, its count
+  and SHA-256 in the notes.
+- **The shard script:** `"test:shard": "node --test --test-shard=$SHARD/2
+  \"dist/tests/**/*.test.js\""` in `package.json`, after `test`; Node refuses an empty or out
+  of range shard.
+- **`ci.yml`:** the matrix `node` × `shard`; the cache `if: matrix.shard == 1`; the step `Test
+  (shard ${{ matrix.shard }} of 2)` with `env: { SHARD: ${{ matrix.shard }} }` and `run: npm run
+  test:shard`, no `if`; every other check `if: matrix.shard == 1`, the branch steps `matrix.shard
+  == 1 && github.ref_type != 'tag'`, publication `matrix.shard == 1 && github.ref_type ==
+  'tag'`; the header comment says why.
+- **`intake.yml`'s `verify`:** the same matrix; the `test` step as `ci.yml`'s, `id: test`,
+  `continue-on-error: true`; the fourteen others `if: matrix.shard == 1`; the write step's `env`
+  gains `SHARD`, its ids `["test"]` for shard 2, all fifteen for shard 1, the leg `{ node, shard,
+  checks }`; the heading and the artifact name with the shard.
+- **`src/intake-report.ts`:** `CheckLeg` gains `shard: 1 | 2`; `parseChecks` reads it, refusing a
+  leg without it or a shard 2 with another id; a new pure `nodeLine` builds the line of a Node
+  version from its legs (duplicates of one `(node, shard)` dropped first): `test` `failure` when
+  a shard's is not `success`, `missing` when a shard is absent, `success` otherwise; the other
+  ids from shard 1, `missing` without it; then a `no checks` line per absent shard. `report()`
+  calls it in place of today's loop; the verdict untouched.
+- **Red steps:** (1) the ci-workflow and intake-workflow tests and the `package.json` test (in
+  `ci-workflow.test.ts`), (2) the report's tests, both committed before the code, the run's
+  failing count recorded; then the split (Acceptance 2), checked by its lists, then the code.
 
 ## Execution Notes
 
