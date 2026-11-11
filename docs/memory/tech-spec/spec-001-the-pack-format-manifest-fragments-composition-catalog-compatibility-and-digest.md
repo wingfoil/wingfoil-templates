@@ -346,21 +346,19 @@ conditional:                    # illustrative: a stage pack, composed after bot
   naming `software`; a phase pack requires `software` (§3), so it carries none naming it.
 - **`with`** is an entry of §6.3's syntax. Format 1 allows only `software@^<major>`; format 2 allows
   any catalog pack id composed earlier than the pack (§7.1), other than itself, at most one entry
-  per pack id. "Composed earlier" is read statically, from the pack ids and `catalog.yaml`'s `axes`,
-  as the lint checks it (task-085):
-  - `software` is earlier than every non-foundation pack;
-  - a pack of another axis is earlier when its axis comes earlier in `axes`;
-  - within `phase`, a pack of an earlier slot is earlier (the axis's `slots` order);
-  - any other pack of the pack's own axis is refused: of an axis of cardinality one, or of the same
-    slot, it never composes with the pack; of a later slot, it is not composed earlier; of an axis
-    of cardinality many, Kahn's order (§7.1) guarantees no order.
-
-  It is a requirement that counts only when the composition holds that pack:
+  per pack id. It is a requirement that counts only when the composition holds that pack:
   - it never adds a pack, so resolution stays one pass;
   - when the composition holds the pack at a version outside the range, the requirement is
     unsatisfied, an error, never a reason to leave the entry out;
   - it names no pack of the pack's `requires`, and the pack does not `conflict` with it;
   - it counts as a requirement for §7.1's rule against requiring a later pack.
+
+  "Composed earlier" is read statically, from the pack ids and `catalog.yaml`'s `axes` (with their
+  `slots`), as the lint checks it (task-085): `software` is earlier than every non-foundation pack;
+  a pack of another axis is earlier when its axis comes earlier in `axes`; within `phase`, a pack
+  of an earlier slot is earlier. Any other pack of the pack's own axis is refused: of an axis of
+  cardinality one, or of the same slot, it never composes with the pack; of a later slot, it is not
+  composed earlier; of an axis of cardinality many, Kahn's order (§7.1) guarantees no order.
 - **`contents`** may list `workflows` and `directives` only, by file stem, as §6.4, and lists at
   least one of them: an entry that adds nothing is refused.
   - In a composition with the entry's pack, its workflows and directives come after the pack's own
@@ -1265,13 +1263,14 @@ check the rest, and the composer refuses what they reject.
 - a directive of an overlay or a `stage/*` pack that uses waiver wording ("skip", "not required",
   "optional", "ignore") is reported for review, a heuristic, not a refusal; a directive of a
   conditional entry whose `with` pack declares a tension naming this pack (a bridge) is exempt
-  (dl-025 D1, finding 6). The four phrases are matched as whole words with their inflections, on
-  the directive's body, one hit per line; `npm run check:packs` prints the hits as a review list,
-  its exit unchanged, and `npm run validate` neither prints nor fails on them. Whether a hit
+  (dl-025 D1, finding 6). The four phrases are matched as whole words, case-insensitive, `skip`,
+  `optional` and `ignore` with their inflections and `not required` with any spacing on one line,
+  on the directive's body, one hit per line; `npm run check:packs` prints the hits as a review
+  list, its exit unchanged, and `npm run validate` neither prints nor fails on them. Whether a hit
   concerns something the pack does not ship is the reviewer's to judge, at `pack-release-cycle` ›
-  `prepare`, and the `pack-release` element's review records each hit with its verdict: a
-  departure from this rule's earlier wording, which code cannot tell (plan-066 ruling 4,
-  task-086);
+  `prepare`, and the `pack-release` element's review records each hit with its verdict. This
+  departs from the rule's earlier wording ("about something the pack does not ship"), which code
+  cannot judge (plan-066 ruling 4, task-086);
 - `formats` lists exactly the kinds of the files shipped, with the value each file declares (§5);
 - the layout and path segments of §6.1, with no symbolic link or submodule;
 - asset identifiers equal their file stems (§6.1);
