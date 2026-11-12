@@ -145,13 +145,14 @@ describe('the prepare job (task-081)', () => {
 });
 
 describe('the verify job (task-081)', () => {
-  it('runs when prepare succeeded, on both Node.js versions, never failing fast', () => {
-    const verify = job('verify');
-    assert.deepEqual(verify['needs'], ['detect', 'prepare']);
-    assert.equal(verify['if'], "${{ !cancelled() && needs.prepare.result == 'success' }}");
-    assert.deepEqual(verify['strategy'],
-      { 'fail-fast': false, matrix: { node: ['22.12.0', '22.21.0'] } });
-  });
+  it('runs when prepare succeeded, on both Node.js versions in two shards, never failing fast',
+    () => {
+      const verify = job('verify');
+      assert.deepEqual(verify['needs'], ['detect', 'prepare']);
+      assert.equal(verify['if'], "${{ !cancelled() && needs.prepare.result == 'success' }}");
+      assert.deepEqual(verify['strategy'],
+        { 'fail-fast': false, matrix: { node: ['22.12.0', '22.21.0'], shard: [1, 2] } });
+    });
 
   it('applies the artifact, then runs every check, each continuing on error', () => {
     const steps = job('verify').steps;
@@ -168,7 +169,13 @@ describe('the verify job (task-081)', () => {
       assert.ok(step['continue-on-error'] !== true, step.name);
     }
     const run = (id: string): string => checks.find((step) => step.id === id)?.run?.trim() ?? '';
-    assert.equal(run('test'), 'npm test');
+    assert.equal(run('test'), 'npm run test:shard', 'the shard\'s tests (task-089)');
+    const test = checks.find((step) => step.id === 'test');
+    assert.deepEqual(test?.env, { SHARD: '${{ matrix.shard }}' });
+    assert.equal(test?.if, undefined, 'the tests run in both shards');
+    for (const step of checks.filter((one) => one.id !== 'test')) {
+      assert.equal(step.if, 'matrix.shard == 1', `${step.id} in shard 1 only`);
+    }
     assert.equal(run('pins'), 'npm run check:pins');
     assert.equal(run('validate'), 'npm run validate');
     assert.equal(run('runs'), 'npm run check:runs');
@@ -182,9 +189,9 @@ describe('the verify job (task-081)', () => {
     assert.ok(write?.run?.includes('checks.json'));
     assert.ok(CHECK_IDS.every((id) => write?.run?.includes(`"${id}"`)), 'the fixed ids');
     assert.deepEqual(write?.env, { NODE_VERSION: '${{ matrix.node }}',
-      STEPS: '${{ toJSON(steps) }}' });
+      SHARD: '${{ matrix.shard }}', STEPS: '${{ toJSON(steps) }}' });
     assert.ok(upload?.uses?.startsWith('actions/upload-artifact@'));
-    assert.deepEqual(upload?.with, { name: 'verify-${{ matrix.node }}',
+    assert.deepEqual(upload?.with, { name: 'verify-${{ matrix.node }}-${{ matrix.shard }}',
       path: '${{ runner.temp }}/checks.json', 'retention-days': 14, 'if-no-files-found': 'error' });
     assert.ok(fail?.run?.includes('process.exit'));
     for (const step of [write, upload, fail]) assert.equal(step?.if, undefined);
@@ -193,9 +200,10 @@ describe('the verify job (task-081)', () => {
 
 describe('the verify job\'s scripts, run (task-081)', () => {
   /** Each check's step as `toJSON(steps)` gives it: `conclusion` success on continue-on-error. */
-  function stepsJson(failing: string[]): string {
+  function stepsJson(failing: string[], shard = 1): string {
     return JSON.stringify(Object.fromEntries(CHECK_IDS.map((id) => [id, { outputs: {},
-      outcome: failing.includes(id) ? 'failure' : 'success', conclusion: 'success' }])));
+      outcome: shard === 2 && id !== 'test' ? 'skipped'
+        : failing.includes(id) ? 'failure' : 'success', conclusion: 'success' }])));
   }
 
   function runStep(script: string, env: NodeJS.ProcessEnv): number | null {
@@ -209,15 +217,39 @@ describe('the verify job\'s scripts, run (task-081)', () => {
       const dir = mkdtempSync(join(tmpdir(), 'intake-verify-steps-'));
       try {
         const env = { RUNNER_TEMP: dir, GITHUB_STEP_SUMMARY: join(dir, 'summary.md'),
-          NODE_VERSION: '22.12.0', STEPS: stepsJson(failing) };
+          NODE_VERSION: '22.12.0', SHARD: '1', STEPS: stepsJson(failing) };
         assert.equal(runStep(write?.run ?? '', env), 0);
         const leg = JSON.parse(readFileSync(join(dir, 'checks.json'), 'utf8')) as
-          { node: string; checks: Record<string, string> };
+          { node: string; shard: number; checks: Record<string, string> };
         assert.equal(leg.node, '22.12.0');
+        assert.equal(leg.shard, 1);
         assert.deepEqual(Object.keys(leg.checks), [...CHECK_IDS]);
         assert.equal(leg.checks['publication'], failing.length > 0 ? 'failure' : 'success');
         assert.ok(readFileSync(join(dir, 'summary.md'), 'utf8').includes(
           `| publication | ${failing.length > 0 ? 'failure' : 'success'} |`));
+        assert.ok(readFileSync(join(dir, 'summary.md'), 'utf8')
+          .includes('### Checks on Node.js 22.12.0, shard 1'));
+        assert.equal(runStep(fail?.run ?? '', env), failing.length > 0 ? 1 : 0);
+      } finally {
+        rmSync(dir, { recursive: true, force: true });
+      }
+    }
+  });
+
+  it('records shard 2\'s tests alone, so that its job passes on green (task-089)', () => {
+    const [write, , fail] = job('verify').steps.slice(-3);
+    for (const failing of [['test'], []]) {
+      const dir = mkdtempSync(join(tmpdir(), 'intake-verify-shard-'));
+      try {
+        const env = { RUNNER_TEMP: dir, GITHUB_STEP_SUMMARY: join(dir, 'summary.md'),
+          NODE_VERSION: '22.21.0', SHARD: '2', STEPS: stepsJson(failing, 2) };
+        assert.equal(runStep(write?.run ?? '', env), 0);
+        const leg = JSON.parse(readFileSync(join(dir, 'checks.json'), 'utf8')) as
+          { node: string; shard: number; checks: Record<string, string> };
+        assert.deepEqual(leg, { node: '22.21.0', shard: 2,
+          checks: { test: failing.length > 0 ? 'failure' : 'success' } });
+        assert.ok(readFileSync(join(dir, 'summary.md'), 'utf8')
+          .includes('### Checks on Node.js 22.21.0, shard 2'));
         assert.equal(runStep(fail?.run ?? '', env), failing.length > 0 ? 1 : 0);
       } finally {
         rmSync(dir, { recursive: true, force: true });

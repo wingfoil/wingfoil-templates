@@ -16,6 +16,7 @@ interface Step {
   run?: string;
   if?: string;
   with?: Doc;
+  env?: Doc;
 }
 
 const FILE = '.github/workflows/ci.yml';
@@ -24,6 +25,9 @@ const jobs = workflow['jobs'] as Record<string, Doc>;
 const [job] = Object.values(jobs);
 assert.ok(job !== undefined, 'one job');
 const steps = job['steps'] as Step[];
+
+/** Every check but the shard's tests runs once per Node.js version, in shard 1 (task-089). */
+const SHARD_ONE = 'matrix.shard == 1';
 
 function stepRunning(command: string): Step | undefined {
   return steps.find((step) => step.run?.split('\n').some((line) => line.trim() === command));
@@ -53,7 +57,8 @@ describe('the CI workflow (task-013)', () => {
 
   it('runs on a pinned runner, on the Node.js floor and the newest 22.x, with a timeout', () => {
     assert.equal(job['runs-on'], 'ubuntu-24.04');
-    assert.deepEqual((job['strategy'] as Doc)['matrix'], { node: ['22.12.0', '22.21.0'] });
+    assert.deepEqual((job['strategy'] as Doc)['matrix'],
+      { node: ['22.12.0', '22.21.0'], shard: [1, 2] }, 'two shards per version (task-089)');
     assert.equal(typeof job['timeout-minutes'], 'number');
   });
 
@@ -77,6 +82,7 @@ describe('the CI workflow (task-013)', () => {
   it('caches the matrix releases by runner, Node.js version and the release lockfiles', () => {
     const cache = steps.find((step) => step.uses?.startsWith('actions/cache@'));
     assert.equal(cache?.with?.['path'], '.cache/wingfoil-matrix');
+    assert.equal(cache?.if, SHARD_ONE, 'only shard 1 runs the matrix (task-089)');
     const key = String(cache?.with?.['key']);
     for (const part of ['runner.os', 'matrix.node',
       "hashFiles('src/matrix/wingfoil-*/package-lock.json')"]) {
@@ -84,25 +90,45 @@ describe('the CI workflow (task-013)', () => {
     }
   });
 
-  it('runs every check, on every path', () => {
-    for (const command of ['npm ci', 'npm run build', 'npm test', 'npm run lint',
-      'npm run check:pins', 'npm run check:schemas', 'npm run check:packs',
-      'npm audit --omit=dev',
+  it('runs install, build and the shard\'s tests in every job (task-089)', () => {
+    for (const command of ['npm ci', 'npm run build']) {
+      const step = stepRunning(command);
+      assert.ok(step !== undefined, command);
+      assert.equal(step.if, undefined, `${command} runs in every job`);
+    }
+    const test = stepRunning('npm run test:shard');
+    assert.ok(test !== undefined, 'the shard\'s tests');
+    assert.equal(test.if, undefined, 'the shard\'s tests run in every job');
+    assert.deepEqual(test.env, { SHARD: '${{ matrix.shard }}' });
+    assert.equal(stepRunning('npm test'), undefined, 'the whole suite runs in no job');
+  });
+
+  it('runs every other check in shard 1 only, on every path (task-089)', () => {
+    for (const command of ['npm run lint', 'npm run check:pins', 'npm run check:schemas',
+      'npm run check:packs', 'npm audit --omit=dev',
       'npm run site -- --out "$RUNNER_TEMP/site"']) {
       const step = stepRunning(command);
       assert.ok(step !== undefined, command);
-      assert.equal(step.if, undefined, `${command} runs on every path`);
+      assert.equal(step.if, SHARD_ONE, `${command} in shard 1, on every path`);
     }
     const matrixAudit = steps.find((step) => step.run?.includes('src/matrix/'));
     assert.equal(matrixAudit?.run,
       'for dir in src/matrix/wingfoil-*/; do\n  (cd "$dir" && npm audit)\ndone\n',
       'npm audit in every release folder, a failure failing the step');
+    assert.equal(matrixAudit?.if, SHARD_ONE);
+    const everyJob = new Set(['npm ci', 'npm run build', 'npm run test:shard']);
+    for (const step of steps) {
+      if (step.uses !== undefined && !step.uses.startsWith('actions/cache@')) continue;
+      if (step.run !== undefined && everyJob.has(step.run.trim())) continue;
+      assert.ok(step.if === SHARD_ONE || step.if?.startsWith(`${SHARD_ONE} && `),
+        `${step.name ?? step.run ?? step.uses} in shard 1 only`);
+    }
     assert.ok(steps.every((step) => !Object.hasOwn(step, 'continue-on-error')));
   });
 
   it('runs self-test mode on branches and publication mode on tags, never both (dl-009)', () => {
-    const branch = "github.ref_type != 'tag'";
-    const tag = "github.ref_type == 'tag'";
+    const branch = `${SHARD_ONE} && github.ref_type != 'tag'`;
+    const tag = `${SHARD_ONE} && github.ref_type == 'tag'`;
     for (const command of ['npm run validate',
       'npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden',
       'npm run validate -- --overlay tests/fixtures/software-exit',
@@ -138,11 +164,11 @@ describe('the CI workflow (task-013)', () => {
   it('audits the root\'s runtime tree as a gate, and the whole tree only to warn (dl-035)', () => {
     const blocking = steps.find((step) => step.name === 'Audit the root lockfile');
     assert.equal(blocking?.run?.trim(), 'npm audit --omit=dev', 'the gate on the runtime tree');
-    assert.equal(blocking?.if, undefined, 'on branches and tags');
+    assert.equal(blocking?.if, SHARD_ONE, 'on branches and tags, in shard 1 (task-089)');
     const warning = steps.find((step) => step.name === WARNING_STEP);
     assert.ok(warning !== undefined, WARNING_STEP);
     assert.equal(steps.indexOf(warning), steps.indexOf(blocking) + 1, 'right after the gate');
-    assert.equal(warning.if, undefined, 'on branches and tags');
+    assert.equal(warning.if, SHARD_ONE, 'on branches and tags, in shard 1 (task-089)');
     assert.ok(!Object.hasOwn(warning, 'continue-on-error'));
   });
 });
@@ -219,5 +245,20 @@ describe('the whole root tree\'s audit step (dl-035 A1, plan-062 ruling 3)', () 
     assert.equal(run.status, 0);
     assert.equal(run.args, 'audit --json');
     assert.deepEqual(run.warnings, []);
+  });
+});
+
+describe('the shard script (task-089)', () => {
+  const scripts = (JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8')) as
+    { scripts: Record<string, string> }).scripts;
+  const GLOB = '"dist/tests/**/*.test.js"';
+
+  it('keeps npm test the whole suite, built first', () => {
+    assert.equal(scripts['test'], `npm run build && node --test ${GLOB}`);
+  });
+
+  it('runs one shard of the same files, the option before the glob, without a build', () => {
+    assert.equal(scripts['test:shard'], `node --test --test-shard=$SHARD/2 ${GLOB}`,
+      'node --test ignores an option after the glob');
   });
 });

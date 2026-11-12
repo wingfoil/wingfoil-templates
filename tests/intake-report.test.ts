@@ -23,14 +23,32 @@ const KINDS: Record<string, string> = {
 };
 const SUMS = [`${'a'.repeat(64)}  compat.yaml`];
 
-function leg(node: string, outcome = 'success'): CheckLeg {
-  return { node, checks: Object.fromEntries(CHECK_IDS.map((id) => [id, outcome])) };
+/** A verify leg's checks.json: shard 1 runs every check, shard 2 the tests alone (task-089). */
+function legText(node: string, outcome = 'success', shard = 1): string {
+  const ids: readonly string[] = shard === 2 ? ['test'] : CHECK_IDS;
+  const checks = Object.fromEntries(ids.map((id) => [id, outcome]));
+  return JSON.stringify({ node, shard, checks });
+}
+
+/** The leg as parseChecks reads it, so that the tests build legs as the report's input does. */
+function leg(node: string, outcome = 'success', shard = 1): CheckLeg {
+  const parsed = parseChecks(legText(node, outcome, shard));
+  assert.ok(parsed !== undefined, legText(node, outcome, shard));
+  return parsed;
+}
+
+const FOUR = [leg('22.12.0'), leg('22.12.0', 'success', 2), leg('22.21.0'),
+  leg('22.21.0', 'success', 2)];
+
+/** The report's line for a Node.js version. */
+function nodeLine(markdown: string, node: string): string | undefined {
+  return markdown.split('\n').find((line) => line.startsWith(`- verify on Node.js ${node}: `));
 }
 
 function input(overrides: Partial<ReportInput> = {}): ReportInput {
   return {
     version: VERSION, class: 'patch', prepare: 'success', verify: 'success', rehearsal: false,
-    base: 'b'.repeat(40), sums: SUMS, legs: [leg('22.12.0'), leg('22.21.0')],
+    base: 'b'.repeat(40), sums: SUMS, legs: FOUR,
     changelog: { ok: true, text: CHANGELOG }, kinds: KINDS,
     packsByKind: { directive: ['base', 'software'], dna: ['base'] },
     ...overrides,
@@ -158,7 +176,9 @@ describe('the report (task-081)', () => {
       legs: [leg('22.21.0')] }));
     assert.match(markdown, /unknown/);
     assert.match(markdown, /no artifact/);
-    assert.match(markdown, /Node\.js 22\.12\.0: no checks/);
+    assert.ok(markdown.includes('- verify on Node.js 22.12.0 shard 1: no checks'));
+    assert.ok(markdown.includes('- verify on Node.js 22.12.0 shard 2: no checks'));
+    assert.ok(markdown.includes('- verify on Node.js 22.21.0 shard 2: no checks'));
   });
 
   it('fences the section with a fence longer than any backtick run in it', () => {
@@ -177,11 +197,73 @@ describe('the report (task-081)', () => {
   });
 });
 
+describe('the checks per Node.js version, from two shards (task-089)', () => {
+  const rest = CHECK_IDS.filter((id) => id !== 'test').map((id) => `${id} success`).join(', ');
+
+  it('reads one line per version, test from both shards, the others from shard 1', () => {
+    const { markdown } = report(input());
+    for (const node of ['22.12.0', '22.21.0']) {
+      assert.equal(nodeLine(markdown, node), `- verify on Node.js ${node}: test success, ${rest}`);
+    }
+    assert.ok(!markdown.includes('no checks'));
+  });
+
+  it('shows test failure when either shard\'s tests are red', () => {
+    const redOne = parseChecks(legText('22.12.0').replace('"test":"success"', '"test":"failure"'));
+    assert.ok(redOne !== undefined);
+    for (const legs of [[redOne, ...FOUR.slice(1)],
+      [FOUR[0], leg('22.12.0', 'failure', 2), ...FOUR.slice(2)]]) {
+      const line = nodeLine(report(input({ legs: legs as CheckLeg[] })).markdown, '22.12.0');
+      assert.ok(line?.startsWith('- verify on Node.js 22.12.0: test failure, '), line);
+    }
+  });
+
+  it('shows test missing and a no checks line when a shard is absent', () => {
+    const { markdown } = report(input({ legs: [leg('22.12.0'), leg('22.21.0'),
+      leg('22.21.0', 'success', 2)] }));
+    assert.equal(nodeLine(markdown, '22.12.0'),
+      `- verify on Node.js 22.12.0: test missing, ${rest}`);
+    assert.ok(markdown.includes('- verify on Node.js 22.12.0 shard 2: no checks'));
+    const without = report(input({ legs: [leg('22.12.0', 'success', 2), leg('22.21.0'),
+      leg('22.21.0', 'success', 2)] })).markdown;
+    assert.equal(nodeLine(without, '22.12.0'), `- verify on Node.js 22.12.0: ${CHECK_IDS
+      .map((id) => `${id} missing`).join(', ')}`);
+    assert.ok(without.includes('- verify on Node.js 22.12.0 shard 1: no checks'));
+  });
+
+  it('drops both legs of one node and shard', () => {
+    const { markdown } = report(input({ legs: [...FOUR, leg('22.12.0', 'failure', 2)] }));
+    assert.ok(markdown.includes('- verify on Node.js 22.12.0 shard 2: no checks'));
+    assert.ok((nodeLine(markdown, '22.12.0') ?? '').includes('test missing'));
+  });
+
+  it('leaves the verdict to the verify job\'s result', () => {
+    assert.equal(report(input({ legs: [leg('22.12.0', 'failure', 2)] })).verdict, 'verified');
+    assert.equal(report(input({ verify: 'failure' })).verdict, 'guided');
+  });
+});
+
 describe('the checks of a verify leg (task-081)', () => {
   it('reads a valid checks.json', () => {
     assert.deepEqual(parseChecks(JSON.stringify(leg('22.12.0', 'failure'))),
       leg('22.12.0', 'failure'));
   });
+
+  it('reads the shard of a leg (task-089)', () => {
+    assert.equal((parseChecks(legText('22.12.0', 'success', 2)) as { shard?: number }).shard, 2);
+    assert.equal((parseChecks(legText('22.12.0')) as { shard?: number }).shard, 1);
+  });
+
+  it('refuses a leg without a shard, a shard not 1 or 2, a shard 2 beyond its tests (task-089)',
+    () => {
+      const good = JSON.parse(legText('22.12.0')) as Record<string, unknown>;
+      const noShard = { ...good };
+      delete noShard['shard'];
+      for (const bad of [noShard, { ...good, shard: 3 }, { ...good, shard: '1' },
+        { ...good, shard: 2 }]) {
+        assert.equal(parseChecks(JSON.stringify(bad)), undefined, JSON.stringify(bad));
+      }
+    });
 
   it('refuses a node not named, an id not of the fixed set, an outcome not known, not JSON', () => {
     const good = leg('22.12.0');
@@ -260,7 +342,8 @@ describe('the intake:report command (task-081)', () => {
       const text = readFileSync(summary, 'utf8');
       assert.ok(text.startsWith('before\n'));
       assert.ok(text.includes('c'.repeat(40)));
-      assert.match(text, /Node\.js 22\.21\.0: no checks/);
+      assert.ok(text.includes('- verify on Node.js 22.12.0 shard 2: no checks'));
+      assert.ok(text.includes('- verify on Node.js 22.21.0 shard 1: no checks'));
       const guided = await runIntakeReport([...args.slice(0, 2), 'minor', ...args.slice(3),
         '--rehearsal'], dir, fake);
       assert.equal(guided.code, 0);

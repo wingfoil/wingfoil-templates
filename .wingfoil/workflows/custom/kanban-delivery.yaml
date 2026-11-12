@@ -9,7 +9,7 @@
 name: kanban-delivery
 kind: sub
 description: "Kanban delivery loop"
-version: 5
+version: 6
 element: task
 phases:
   - name: plan
@@ -46,7 +46,7 @@ phases:
       (dl-017). Before in-review, dl-039's checks, in its order (R2): the build review and its
       amendments first; then, once, on the commit where the code is frozen, the branch CI's
       conclusion success (or, when a later push cancelled that run, the success of a later head
-      whose diff from the frozen commit is documentation-only), each run id and its two jobs'
+      whose diff from the frozen commit is documentation-only), each run id and every job's
       durations recorded in the notes (a job over 25 minutes goes to the approver, dl-039 R3), and,
       from a clean working tree on that commit, on Node.js 22.21.0 after npm ci and npm run build,
       npm run validate:publication, the golden tree in publication mode (npm run

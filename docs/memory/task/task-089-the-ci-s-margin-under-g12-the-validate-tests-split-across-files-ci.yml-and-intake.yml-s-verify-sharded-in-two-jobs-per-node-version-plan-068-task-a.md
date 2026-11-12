@@ -2,7 +2,7 @@
 id: task-089-the-ci-s-margin-under-g12-the-validate-tests-split-across-files-ci.yml-and-intake.yml-s-verify-sharded-in-two-jobs-per-node-version-plan-068-task-a
 type: task
 title: "The CI's margin under G12: the validate tests split across files, ci.yml and intake.yml's verify sharded in two jobs per Node version (plan-068 task A)"
-status: backlog
+status: approved
 pack: ""            # tooling task (tooling-delivery v3), plan-068 task (A)
 depends_on: []
 tags: ["tooling","ci"]
@@ -123,7 +123,50 @@ tests); the owed row, moved at plan-068's close.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+- **The harness** (`tests/support/validate-harness.ts`): `tests/validate.test.ts`'s lines before
+  its first `describe` (the constants, `stubbed`, `stubbedClean`, `NEWEST`, `byRelease`,
+  `validate`, `withTree`, `replaceIn` and the helpers the describes share), exported; its two
+  `after` hooks stay at its top level. Each test file runs in its own process, so each file that
+  imports it has its own stubs, disposed at its end.
+- **The files** (Acceptance 2), each `describe` keeping its name, so every test's path is
+  unchanged, the tests in their order; the local durations of plan-067's run:
+  - `validate-1-run.test.ts`: `npm run validate`, tests 1 … 13 (about 262 s);
+  - `validate-2-run.test.ts`: the same `describe`, tests 14 … 26 (about 225 s);
+  - `validate-3-run.test.ts`: the same `describe`, tests 27 … 39 (about 290 s, the index's
+    137 s among them);
+  - `validate-4-overlay.test.ts`: `--overlay`, tests 1 … 9 (about 209 s);
+  - `validate-5-overlay.test.ts`: the same `describe`, tests 10 … 18 (about 135 s);
+  - `validate-6-legs.test.ts`: both legs of a conditional part (about 55 s);
+  - `validate-7-entries.test.ts`: the legs per entry, with its `before` (about 71 s);
+  - `validate-8-tensions.test.ts` (about 18 s) and `validate-9-waiver.test.ts` (about 33 s).
+  The numbers keep the source's order in the sorted list; Node gives the sorted files to the
+  shards in turn, so the nine alternate between the two. The shards' lists and wall times are
+  measured after the split, and the files renamed if shard 1 is not the lighter (Acceptance 4).
+- **The list** (Acceptance 2, 3): `node --test --test-reporter=tap` on the built files; a script
+  in the scratch area (not committed) reads the nesting of `# Subtest:` lines and prints each
+  test (`type: 'test'`) as its `describe` path › name, sorted; the multiset compared, its count
+  and SHA-256 in the notes.
+- **The shard script:** `"test:shard": "node --test --test-shard=$SHARD/2
+  \"dist/tests/**/*.test.js\""` in `package.json`, after `test`; Node refuses an empty or out
+  of range shard.
+- **`ci.yml`:** the matrix `node` × `shard`; the cache `if: matrix.shard == 1`; the step `Test
+  (shard ${{ matrix.shard }} of 2)` with `env: { SHARD: ${{ matrix.shard }} }` and `run: npm run
+  test:shard`, no `if`; every other check `if: matrix.shard == 1`, the branch steps `matrix.shard
+  == 1 && github.ref_type != 'tag'`, publication `matrix.shard == 1 && github.ref_type ==
+  'tag'`; the header comment says why.
+- **`intake.yml`'s `verify`:** the same matrix; the `test` step as `ci.yml`'s, `id: test`,
+  `continue-on-error: true`; the fourteen others `if: matrix.shard == 1`; the write step's `env`
+  gains `SHARD`, its ids `["test"]` for shard 2, all fifteen for shard 1, the leg `{ node, shard,
+  checks }`; the heading and the artifact name with the shard.
+- **`src/intake-report.ts`:** `CheckLeg` gains `shard: 1 | 2`; `parseChecks` reads it, refusing a
+  leg without it or a shard 2 with another id; a new pure `nodeLine` builds the line of a Node
+  version from its legs (duplicates of one `(node, shard)` dropped first): `test` `failure` when
+  a shard's is not `success`, `missing` when a shard is absent, `success` otherwise; the other
+  ids from shard 1, `missing` without it; then a `no checks` line per absent shard. `report()`
+  calls it in place of today's loop; the verdict untouched.
+- **Red steps:** (1) the ci-workflow and intake-workflow tests and the `package.json` test (in
+  `ci-workflow.test.ts`), (2) the report's tests, both committed before the code, the run's
+  failing count recorded; then the split (Acceptance 2), checked by its lists, then the code.
 
 ## Execution Notes
 
@@ -140,3 +183,59 @@ tests); the owed row, moved at plan-068's close.
   the `--overlay` describe split, the stubs per file, two Context wordings.
 - 2026-11-11: re-review: approve, four nits, applied: the shard from the environment only, the
   unset and invalid shard checked locally, the union without the file, a reflow.
+- 2026-11-11, red (dl-018): `npm run build && node --test dist/tests/ci-workflow.test.js
+  dist/tests/intake-workflow.test.js dist/tests/intake-report.test.js`: 66 tests, 18 failing by
+  assertion (the matrix, the cache, the shard's tests and shard 1's checks, the branch and tag
+  paths, the shard script; verify's matrix, test step, outcomes and shard 2's leg; the report's
+  shard lines, a missing or duplicated shard, `parseChecks`' shard). Already green on `main`:
+  the line per version with every shard green (its text unchanged) and the verdict left to the
+  verify job; the existing tests changed for the four legs (`leg()` read through `parseChecks`).
+- 2026-11-11, the list before the split (Acceptance 2): `node --test --test-reporter=tap` on `main`
+  at `1b724f5e`, from a clean worktree: 1288 tests, 1288 passing; the list of `describe` path ›
+  name, sorted, 1288 lines (one name twice, in `secretProblems`), SHA-256 `a7e19eca38637293…`.
+- 2026-11-11, the split (`e61cefa7`): nine files `tests/validate-<n>-<part>.test.ts` and
+  `tests/support/validate-harness.ts`, written by a script from the source's lines, no line of
+  the source lost but one wrapped. After the code (`3b143f42`, `8fc1806e`), each shard run by
+  `node --test --test-shard=<n>/2 --test-reporter=tap` from a clean worktree on Node 22.21.0:
+  shard 1 636 tests, 0 failing, wall 467 s; shard 2 663 tests, 0 failing, wall 526 s. Their
+  lists share no line; their union (1299) is the list before the split with this task's tests:
+  the 73 validate tests equal, line for line; 11 tests added (Acceptance 3 … 6) and two renamed
+  in what they check (`ci-workflow`'s "runs every check, on every path", now two tests, and
+  verify's matrix test, "in two shards"). Locally (eleven files at once) shard 1 holds files
+  `validate-2`, `-4`, `-6`, `-8` (its tests' total 1219 s), shard 2 `validate-1`, `-3`, `-5`,
+  `-7`, `-9` and the publish suites (2095 s); with three files at once on the runner, shard 2
+  is about 12 minutes and shard 1 about 8 plus its other checks' 5 min 30 s: the branch CI
+  decides the balance (Acceptance 4).
+- 2026-11-11, the shard script: `SHARD` unset and `SHARD=3` exit 1 (Node refuses the shard).
+- 2026-11-11, build review: approve after amendments, two blocking (documentation), applied: each
+  file's duration (below) and dl-039 R1's reading in plan-068's notes (`b84fcf8c`); with the
+  nits (`c962ca82`): an `it`'s body indented, a blank line, the map's key typed by the shard.
+  No re-review: no behaviour, test or Acceptance command changed. The list's full SHA-256 was in
+  the scratch area, lost with it at a restart of the machine; the count and the line-for-line
+  comparison stand.
+- 2026-11-11, the checks on the frozen commit `c962ca82` (dl-039 R2), from a clean worktree on
+  Node 22.21.0 after `npm ci` and `npm run build`: `npm run validate:publication`, the golden
+  tree in publication mode and `npm run -s wingfoil -- workflow list` exit 0 (a first run of
+  them was lost at the restart, before its result); `directives list --format json` gives
+  `warnings []`. Each validate file alone, locally: `validate-1` 281 s, `-2` 328 s, `-3` 358 s,
+  `-4` 255 s, `-5` 183 s, `-6` 119 s, `-7` 132 s, `-8` 27 s, `-9` 68 s, every one green.
+- 2026-11-11, the branch CI on `c962ca82`, run 43106029760, `success`: `validate (22.12.0, 1)`
+  10 min 4 s, `(22.12.0, 2)` 4 min 51 s, `(22.21.0, 1)` 9 min 35 s, `(22.21.0, 2)` 7 min 13 s;
+  the `Test` steps 4 min 48 s, 4 min 37 s, 4 min 39 s and 6 min 54 s. Every job under 20
+  minutes (24 min 40 s before, plan-067's branch run).
+- 2026-11-11, the rehearsal of `intake.yml` on the branch, run 43107700626 (`gh workflow run
+  intake.yml --ref task/task-089-ci-shards -f rehearsal=true`): `detect` 21 s, `prepare` 22 s,
+  `verify (22.12.0, 1)` 10 min 33 s, `(22.21.0, 1)` 10 min 24 s, `(22.12.0, 2)` 8 min 22 s,
+  `(22.21.0, 2)` 8 min 0 s, `report` 21 s, all `success`; the report's line `rehearsal of 0.3.2
+  guided: 7 reasons`, as 0.3.2 reads by the bar (plan-065).
+- 2026-11-11, two criteria short of their numbers (dl-019), for the approver's ruling:
+  Acceptance 2's "no file more than about 5 minutes locally": `validate-2` 5 min 28 s and `-3` 5
+  min 58 s; Acceptance 4's "one Node version's two jobs within about 3 minutes": 22.12.0's jobs
+  5 min 13 s apart (22.21.0's 2 min 22 s). The `Test` steps of one version are within 2 min 15 s;
+  the gap is shard 1's other checks (about 5 min), and the same shard's `Test` step varied from
+  4 min 37 s to 6 min 54 s between the versions.
+- 2026-11-12, the approver's ruling (dl-019) on the two criteria: both readings accepted.
+  Acceptance 2 holds with `validate-2` at 5 min 28 s and `-3` at 5 min 58 s locally; Acceptance
+  4 holds with 22.12.0's jobs 5 min 13 s apart, the `Test` steps of one version being within 2
+  min 15 s and the gap being shard 1's other checks. The Acceptance text stays as written; the
+  plan's goal (every job under 20 minutes) is met at 10 min 4 s.
