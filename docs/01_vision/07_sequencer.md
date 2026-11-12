@@ -1,7 +1,7 @@
 # Sequencer — WingFoil-Templates
 
-**Version:** 1.5
-**Date:** 2026-10-28
+**Version:** 1.6
+**Date:** 2026-11-12
 **Status:** Approved
 **Traces to:** [06_features.md](06_features.md), [05_journeys.md](05_journeys.md), [04_personas.md](04_personas.md)
 
@@ -36,6 +36,31 @@ Every feature of `06_features.md` is assigned to exactly one wave, except F4.3, 
 review and is not sequenced.
 
 ---
+
+## State of the waves
+
+On 2026-11-12 (amendment 1.6). M0, M1 and M2 are reached; M3 is open.
+
+| Wave | State | Closed by |
+|---|---|---|
+| W1 … W4 | done | plan-012 |
+| W5 … W7 | done | plan-015 |
+| W14 | done | plan-024 |
+| W8 | done | plan-046, closing plan-041 … plan-047 |
+| W9 | done | plan-052: `base` 2.0.1, `software` 1.0.0, `methodology/scrum` 1.0.0 (prel-003 … prel-005) |
+| W10 | in progress | `methodology/kanban` 1.0.0 done (plan-058, prel-006); presets, `governance/wingfoil-dogfood`, this repository's adoption, its WingFoil pin raised from 0.2.2 and the first inbox sync not started. dl-012 (`pending`) would place F4.9 in W10, at its three-feature limit: left to dl-012's ruling |
+| W11 … W13 | not started | — |
+
+Two releases fall outside a wave's close: `base` 1.0.0 within W8 (plan-044, prel-001) and `base`
+2.0.0 between W8 and W9 (plan-049, prel-002).
+
+The work since 1.5 outside the waves amends features already sequenced and opens no wave:
+
+- the format 2 (`tensions`, the conditional part per entry, the `mcp` kind provisional; dl-024,
+  dl-025, plan-063, plan-066, plan-067): F1.1, F1.2, F1.5, F1.6, F2.1, F2.8 and F3.5;
+- a methodology's `delivery` contract (dl-026, dl-027, plan-047, plan-048): F1.4 and F3.5;
+- `wingfoil-release-intake` automated where safe (dl-042, plan-065): F5.2;
+- the CI sharded in two jobs per Node.js version (plan-068): F3.6.
 
 ## M0 — Contract (specification phase)
 
@@ -85,15 +110,23 @@ Starts when the approver confirms that the v0.3 formats are final.
 ## Notes
 
 - **The first publication is `base`, then `software` with `methodology/scrum`.** Every pack requires
-  `base` (pack-model), `software` included (dl-022), so nothing is published before W9. `software`
-  composes only with a methodology, so it is published with `methodology/scrum` (plan-046 ruling 6):
-  F4.3 is the one feature split across two waves, `scrum` in W9 and `kanban` in W10 (plan-052).
+  `base` (pack-model), `software` included (dl-022). `base` 1.0.0 was published within W8
+  (plan-044) and 2.0.0 after it (plan-049); the first publication of `software` and of a methodology
+  is W9's. `software` composes only with a methodology, so it is published with `methodology/scrum`
+  (plan-046 ruling 6): F4.3 is the one feature split across two waves, `scrum` in W9 and `kanban` in
+  W10 (plan-052).
 - **The foundation packs also need a released WingFoil.** The `pack-compatibility` directive forbids
   publishing against an unreleased build. `base` and `software`, written in the v0.3 formats, can
   therefore be published only after WingFoil v0.3 is **released**, not merely when its formats are
   final. Authoring (W8) can start when the formats are final.
-- **Tooling tasks have no workflow host.** `sw-life-cycle` runs `kanban-delivery` only inside
-  `pack-cycle`, which iterates over packs. The tooling of M1 belongs to no pack. See open question 2.
+- **Where tooling tasks run.** The `tooling` phase of `sw-life-cycle` runs one delivery iteration
+  per task with no pack, and `tooling-change` reopens it for later changes (decision 2 below).
+- **W8 holds four features** (F4.1, F4.8, F6.2, F1.6), one over the rule of three: `software`
+  joined W8 with dl-022 (1.4, plan-038), and W8 closed so (plan-046). It is kept as a recorded
+  exception, not split after the fact.
+- **W10's order** (the approver, 2026-11-12): W10's remaining features, then a pack release round
+  (bug-011 … bug-015's fixes, the `Precedence:` lines, the Memory templates' optional fields, the
+  CHANGELOG's first line checked), then the periodic retrospective.
 
 ## Open questions for the sequencer review
 
@@ -125,3 +158,7 @@ Approver, 2026-10-06:
    applied afterwards, with a `version:` bump.
 3. **`base` is published only after WingFoil v0.3 is released.** Authoring can start when the v0.3
    formats are final.
+
+Amendment 1.6 (2026-11-12, plan-069), the first recorded here (1.1 … 1.5 are in the git history):
+the state of the waves, the work outside them, W8's four features kept, W10's order, and the notes
+on the first publication and on tooling's host corrected.
