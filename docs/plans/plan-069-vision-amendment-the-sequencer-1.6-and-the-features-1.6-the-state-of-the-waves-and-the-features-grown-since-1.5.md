@@ -117,3 +117,9 @@ this plan's body, their run read in the Execution Notes before `submit`.
   `(22.21.0, 2)` 8 min 46 s, every job under 20 minutes (G12); `git diff main --stat` names the
   two documents and this plan only; the privacy check of the branch's diff found no local or
   scratch path, no private project and no session.
+- 2026-11-12, close: merged `--no-ff` at `56608f39` on the approver's OK, pushed; the branch
+  removed. `main`'s CI on the merge, run 43234570990, `success`: `validate (22.12.0, 1)` 10 min
+  4 s, `(22.12.0, 2)` 7 min 50 s, `(22.21.0, 1)` 7 min 40 s, `(22.21.0, 2)` 8 min 5 s. The rows
+  "Sequencer: W8 has four features" and "`docs/01_vision/06_features.md` 1.5 → 1.6" move to Closed
+  in this commit; `active → done`. The run of this close's push is left to the next plan (dl-038
+  C3).
