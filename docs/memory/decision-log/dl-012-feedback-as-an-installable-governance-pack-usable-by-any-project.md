@@ -100,7 +100,9 @@ uses `software` is in one conditional entry, `with: software@^1` (spec-001 §6.5
 - a **review workflow** (proposed `feedback-review`), startable on its own at the cadence the
   project chooses: lists triaged items and routes each one (D3), then closes it;
 - a **directive** (proposed `feedback`): what counts as feedback, the required fields, the
-  classification rules, the routing table, the trace both ways, who may close an item;
+  classification rules, the routing table, the trace both ways, who may close an item. Being
+  unconditional, it never names `bug-ingest` or another `software` file: the `bug` route is in the
+  entry (D3; spec-001 §6.5, isolation);
 - `README.md` and `CHANGELOG.md`.
 
 Roles: the pack uses roles `base` ships: `facilitator` captures and closes, `approver` triages
@@ -114,7 +116,8 @@ Each feedback element records, in frontmatter:
 - `source` — who or what produced it (a person, a role, an agent, a check, a channel);
 - `context` — at least one reference to what produced it: a Memory element id, a workflow and
   phase, a commit or a version;
-- `outcome` — set at triage: default `bug | decision-log | upstream-note | declined | duplicate`;
+- `outcome` — set at triage: default `bug | decision-log | task | upstream-note | declined |
+  duplicate`;
 - `resulting` — the id or path of the element the item was routed to, set before `closed`.
 
 The allowed values are configurable per project. How a pack declares a configurable list of values,
@@ -131,9 +134,9 @@ and types, and `software`'s only through the conditional entry — or into an up
   cites (dl-022 S4);
 - `bug` → `software`'s `bug-ingest`, **only in a composition with `software`**: the route (its
   directive or workflow) ships in the entry `with: software@^1` (spec-001 §6.5), so the pack still
-  requires only `base`. Without `software`, the default `outcome` list has no `bug`, and an item
-  that would be a bug routes to a decision-log naming it;
-- a task: a `task` element (`base`'s type, `base` 2.0.1), created in `draft` and cited back;
+  requires only `base`; no unconditional file names it. Without `software`, the default `outcome`
+  list has no `bug`, and an item that would be a bug routes to a decision-log naming it;
+- `task` → a `task` element (`base`'s type, `base` 2.0.1), created in `draft` and cited back;
 - `upstream-note` → the channel an **upstream pack** declares (below);
 - an outcome a project adds (D2) and that has no route of its own becomes a decision-log naming the
   outcome, so nothing is lost.
@@ -177,10 +180,11 @@ key). Before the charter is accepted and before a version is published, the pack
 run on the real engine (dl-032 E2, E3: `check:runs`, a scenario starting `feedback-ingest` and
 `feedback-review`).
 
-- **FA-1 Installable [V].** `base` + `governance/feedback` composes with `methodology/scrum` and
-  `methodology/kanban`, with and without `software` (the `bug` route present only with it), with
-  and without `team-mode/agent-first` and a blueprint; each composition validates (F3.3) and
-  composes deterministically (F3.4). `requires` names only `base@^2`; `conflicts` is empty.
+- **FA-1 Installable [V].** `governance/feedback` composes with `software` and each published
+  methodology (`methodology/scrum`, `methodology/kanban`; the `bug` route present), and without
+  `software` (`base` and the pack alone); with fixture packs for `team-mode/agent-first` and a
+  blueprint until W11 and W12 publish them; each composition validates (F3.3) and composes
+  deterministically (F3.4). `requires` names only `base@^2`; `conflicts` is empty.
 - **FA-2 Reusable [V].** No default, parameter value or rule assumes a specific upstream,
   methodology, project or person; every path, id pattern and value list is a parameter with a
   default; two fixtures with different parameter sets compose and validate; the F3.5 lint rules
@@ -236,9 +240,11 @@ Applied after approval, under the follow-up plan of plan-020, each document bump
   (`wingfoil-cli` rule 8).
 
 Configuration changes of this repository's `.wingfoil/`: none now. This repository adopts the pack
-in W10, with `base`, `software`, `methodology/kanban` and `governance/wingfoil-dogfood`, as the
-last step of W10, after the presets, the dogfood pack and the pack release round (`07_sequencer.md`
-1.6, W10's order; dl-003 D10 as plan-052 ruling 7 reorders it). That adoption plan lists the
+in W10, with `base`, `software`, `methodology/kanban` and `governance/wingfoil-dogfood`. The
+sequencer 1.6 orders W10 as its remaining features (the presets, `governance/feedback`,
+`governance/wingfoil-dogfood`), then a pack release round, then the periodic retrospective; the
+approver chose on 2026-11-12 (option (a)) that the adoption comes last, after the pack release
+round (dl-003 D10 as plan-052 ruling 7 reorders it). That adoption plan lists the
 knock-on effects: `wingfoil-cli` moves from `custom/` to the dogfood pack (composed into
 `built-in/` in format 1, into the `remote` class once WingFoil fixes it, dl-021 R3), and
 `tests/wingfoil-feedback.test.ts`'s directive path with it; this repository's own
@@ -272,7 +278,10 @@ Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`, when the sequencer
   `not_applicable_allowed` (§7.5) and WingFoil's lack of typed references (F-043) are inputs;
 - how an upstream pack declares its channel to the feedback pack;
 - the shape of the entry `with: software@^1` that carries the `bug` route (D3), and whether
-  WingFoil 0.3.2 evaluates any `checks` string the workflows would rely on.
+  WingFoil 0.3.2 evaluates any `checks` string the workflows would rely on;
+- how an entry's directive reaches an agent: no unconditional roles assignment may name it
+  (spec-001 §6.5 isolation, §7.4), so for example through the always-composed AGENTS.md section
+  (§10). The answer serves dl-011's `guided-init-software` too.
 
 The same questions arise for dl-013 (directive levels and types, task fields); one tech-spec answers
 them for both, opened by this pack, the first of the two the sequencer reaches (W10).
@@ -308,7 +317,7 @@ references that resolve and back-references. It is opened as a tooling task (`pa
   dl-021 R1: no pack is bundled in WingFoil's npm package, so the publication of
   `governance/feedback` owes WingFoil no note of its own. The text is re-checked at the ruling, as
   the note of 2026-10-09 says; the element stays `pending`.
-- 2026-11-12: re-checked against WingFoil 0.3.2 and the repository at `6d53241f` before the ruling
+- 2026-11-12: re-checked against WingFoil 0.3.2 and the repository at `0dc03bc2` before the ruling
   (plan-020), amended while `pending`: `base`'s workflows and roles as published (dl-022 S2, S4),
   `bug-ingest` being `software`'s (S3); governance changes routed to `governance-evolution`;
   `task` confirmed as `base`'s type; the owner of `wingfoil-cli` settled (dl-022 S5); format 2
@@ -319,4 +328,9 @@ references that resolve and back-references. It is opened as a tooling task (`pa
   approver's rulings of 2026-11-12 recorded: the `bug` route ships in an entry
   `with: software@^1`, without `software` a would-be bug routes to a decision-log, the pack still
   requiring only `base`; W10 holds four features (F4.3, F2.6, F4.2, F4.9) as a recorded exception;
-  ruling order dl-012, dl-011, dl-013.
+  ruling order dl-012, dl-011, dl-013. Review of the amendment: approve after amendments, applied:
+  FA-1's compositions (with `software` and each published methodology, without it, fixture packs
+  until W11 and W12); the unconditional directive never naming `bug-ingest`; the design question
+  on how an entry's directive reaches an agent, shared with dl-011; `task` in the default
+  outcomes; W10's order cited as the sequencer 1.6 writes it, with the approver's choice of the
+  adoption last.

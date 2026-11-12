@@ -99,8 +99,7 @@ What already exists, and constrains the placement:
 - the parameter types are scalar only, in format 2 as in format 1 (spec-001 §8.1); `memory.yaml`
   has `lists` and `not_applicable_allowed` (§7.5);
 - `team-mode/agent-first` (F4.4, W12) depends on WingFoil's agent work (F-009); `base`'s DNA
-  declares the agent with a name, an optional email, `executes_as` and `approval_authority: false`
-  (dl-015 C9);
+  declares the agent with a name, `executes_as` and `approval_authority: false` (dl-015 C9);
 - changes of the project's governance go through `base`'s `governance-evolution` (dl-022 S4), and
   a contradiction an agent meets is escalated through `decision-log-ingest` (dl-025 D5);
 - dl-011 (initialization template) starts from intent; dl-012 (feedback pack) provides the
@@ -185,6 +184,10 @@ as `service` was). Frontmatter, all required:
   replaces the sentinel is a design-phase question, D11);
 - `dtype` — its category (D5);
 - `authority` — the role that owns it and may change it;
+- `release` — the version of the release that carries its work, as a task's `release` (dl-015
+  C10; spec-001 §8.3), which the dispatch selects on (D5); whether a directive that carries no
+  release (a project or strategic one) takes it as not applicable (`not_applicable_allowed`,
+  spec-001 §7.5) is a design-phase question (D11);
 - `supersedes` is optional.
 
 Body sections, each "where applicable": intent, objective, scope (in / out), constraints, expected
@@ -237,12 +240,14 @@ spec-001 §10.1 applies; the order above is for intent directives among themselv
 
 - `delivery` follows the delivery contract (dl-026 D1, dl-027 D1; spec-001 §9), as
   `methodology/kanban`'s `delivery` and `release-flow` do: a phase that plans a release (creates
-  it and moves it to `in-development`, the directives it carries recorded in it), then **one**
-  `iterate_over: release` phase with `where: { status: [in-development, releasing] }` that
-  includes the pack's release sub-workflow (proposed `directive-release`, `element: release`).
-- Inside it, a phase iterates over the active directives of the levels that produce work and
-  belong to that release (a `where` on their frontmatter), and includes the **`directive-dispatch`**
-  sub-workflow, whose agent step reads `dtype` and runs the type workflow the map names; then
+  it and moves it to `in-development`, and sets the `release` field of the directives it carries,
+  D3), then **one** `iterate_over: release` phase with `where: { status: [in-development,
+  releasing] }` that includes the pack's release sub-workflow (proposed `directive-release`,
+  `element: release`).
+- Inside it, a phase iterates over the active directives of the levels that produce work, with a
+  `where` on their `release` field (`release: "{release.version}"`, as `release-flow` selects its
+  tasks), and includes the **`directive-dispatch`** sub-workflow, whose agent step reads `dtype`
+  and runs the type workflow the map names (how, D11); then
   `release` and `retrospective` by name, each scoped to the release, as `release-flow` does. A
   directive approved after the release's iteration closed waits for the next release (F-037).
 - The default type map lives in the `directive-methodology` directive. A project extends it with a
@@ -266,9 +271,9 @@ spec-001 §10.1 applies; the order above is for intent directives among themselv
   captured work may have none); whether `not_applicable_allowed` (§7.5) replaces `none` is a
   design-phase question (D11).
 - The work is defined before the agent: before a task moves to `in-progress`, it records
-  `complexity`, `risk` and `capabilities` (a workflow check the agent follows); the `agent-selection`
-  directive chooses agent, model, tools, autonomy level, context data and directives to apply from
-  them, and records the choice in the task.
+  `complexity`, `risk` and `capabilities` (a workflow check the agent follows); the
+  `agent-selection` directive chooses agent, model, tools, autonomy level, context data and
+  directives to apply from them, and records the choice in the task.
 - No pack file names an agent product or a model; the project declares its agents in `dna.yaml`.
   Agents never hold approval authority. **Separation of duties:** the verification is done by a
   different agent run or a human than the implementation (a parameter sets which), so that a solo
@@ -315,16 +320,18 @@ version need the runs on the real engine of dl-032 E2–E4, including a run thro
 - **DF-2 Five levels [V].** The composition contains, for each level of D2, the files listed there;
   a test fails if one is missing.
 - **DF-3 Directive element [V].** The directive type requires `level`, `parent`, `dtype`,
-  `authority`; its template has the body sections intent, objective, scope, constraints, expected
-  behaviour, quality criteria, dependencies and verification, and the "what, not how" rule.
+  `authority` and `release`; its template has the body sections intent, objective, scope,
+  constraints, expected behaviour, quality criteria, dependencies and verification, and the "what,
+  not how" rule.
 - **DF-4 Hierarchy [E].** A fixture project with a five-level chain passes; a fixture with a
   directive whose parent is at a lower or equal level, or does not resolve, fails.
 - **DF-5 Conflict [A].** A fixture with two conflicting directives of equal authority and scope
   records the procedure of D4 ending in a decision-log for the approver, with no agent choice.
-- **DF-6 Dispatch [V][A].** Directives of types `general`, `ui` and `infrastructure` run their own
-  workflows through `directive-dispatch`, inside a release's iteration; a fixture project adds a
-  type by a project directive under a new id and a `custom/` workflow, without overriding
-  `directive-methodology`, and validates without changing pack files.
+- **DF-6 Dispatch [E][A].** Directives of types `general`, `ui` and `infrastructure` run their own
+  workflows through `directive-dispatch`, inside a release's iteration, as the fixture's run
+  records show [E]; a fixture project adds a type by a project directive under a new id and a
+  `custom/` workflow, without overriding `directive-methodology`, validates without changing pack
+  files, and its run reaches the new type's workflow [A].
 - **DF-7 Traceability [V][E].** `directive` is required on `task` [V]; every fixture task and
   verification names a directive or `none` with a reason [E].
 - **DF-8 Agent selection [E][A].** Fixture tasks record complexity, risk and capabilities and the
@@ -352,10 +359,12 @@ Applied after approval, under the follow-up plan of plan-020, each document bump
   (journeys J5, J6, J10; Value H, Effort H, Uncertainty **H**);
 - **`07_sequencer.md`** (1.7): F4.11 in **a wave of its own after M3** (chosen by the approver in
   chat on 2026-10-09), with the `directive-first` preset: **W15** (the next free id in sequencer
-  1.6), in a new milestone between M3 and M4 that also holds dl-011's W16 (its id assigned at the
-  amendment). It follows W10 (`governance/feedback`, for the preset). DF-12 is verified at the
-  first release of the later of this pack and `governance/guided-init` (W16), so W15 does not wait
-  for `pack-install`. The MVP (M3) is unchanged;
+  1.6), in **M5 — Guided and directive-first adoption**, the milestone dl-011 D8 creates, ordered
+  between M3 and M4, which also holds dl-011's W16. W15 waits for M3 only: it follows W10
+  (`governance/feedback`, for the preset), and DF-12 is verified at the first release of the
+  later of this pack and `governance/guided-init` (W16), so W15 does not wait for `pack-install`.
+  If dl-011 were rejected, this decision's follow-up creates M5 with W15 alone (its features 1,
+  F4.11). The MVP (M3) is unchanged and holds neither pack;
 - **feedback notes** to WingFoil (`wingfoil-cli` rule 3), written when the charter is accepted:
   (1) directives as first-class elements: hierarchy, inheritance, authority, life cycle,
   verification, conflict detection; (2) the `.wingfoil/` layout of the definition
@@ -376,8 +385,11 @@ Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`:
   the hierarchy and conflict rules as checkable properties, the type map and the project directive
   that extends it (D5), the materialization rule and its `governance-evolution` path, the roles
   (new ones or `software`'s `developer` and `reviewer`), `not_applicable_allowed` for `parent` and
-  `directive` (D3, D6). It reuses dl-012 D8's answer on list-valued parameters (levels, types,
-  task fields) and how a preset sets them;
+  `directive`, and for `release` on a directive that carries no release (D3, D6); how
+  `directive-dispatch` runs a type workflow: a sub can be included only by a static name, so a
+  type a project adds cannot be included by the pack's files, while a `main` type workflow is
+  started on its own (D5). It reuses dl-012 D8's answers on list-valued parameters (levels, types,
+  task fields) and how a preset sets them, and on how an entry's directive reaches an agent;
 - **tasks** (`author` phase, `pack: pack-methodology-directive-first`), proposed:
   1. the directive Memory type, its life cycle and template (DF-3);
   2. `directive-governance`: hierarchy, inheritance, authority, conflict procedure, materialization
@@ -393,9 +405,10 @@ Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`:
      DF-4 … DF-11);
   9. the README with the definition and the operating principle, its examples as fixtures
      (spec-002 §2.4);
-- **the `directive-first` preset** (F2.6, spec-001 §15, next to `classic-scrum` and
-  `classic-kanban`): `software` + `methodology/directive-first` + `governance/feedback` (`base`
-  through their `requires`), with the outcome values of D7 and its `profile`;
+- **the `directive-first` preset**, part of F4.11, in F2.6's preset format (spec-001 §15, as
+  `classic-scrum` and `classic-kanban`): `software` + `methodology/directive-first` +
+  `governance/feedback` (`base` through their `requires`), with the outcome values of D7 and its
+  `profile`;
 - **later, option (c):** a `governance/directive-hierarchy` pack, if a Scrum or Kanban project asks
   for the governance level alone;
 - **the feedback notes** of D10.
@@ -414,14 +427,14 @@ Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`:
   procedure reordered, `level` and `authority` kept apart (N6); `release`, `retrospective`, task
   flow and the method declaration (N7); a wave of its own after M3, chosen by the approver in chat,
   and dl-001 D7 (N8); initial directives created by Reconfigure (N9); Context and option (b)
-  corrected (N10); body sections listed (N11); materialization rules (N12); one required task field,
-  separation of duties as a parameter (N13); README per dl-014 (N14); conditions, handoffs, evidence,
-  the UI point and journeys (N15).
+  corrected (N10); body sections listed (N11); materialization rules (N12); one required task
+  field, separation of duties as a parameter (N13); README per dl-014 (N14); conditions, handoffs,
+  evidence, the UI point and journeys (N15).
 - 2026-10-09: the approver deferred the ruling, in chat: dl-011, dl-012 and dl-013 are ruled once
   WingFoil has released stable configuration contracts (at least v0.3, preferably later); dl-014 may
   be ruled earlier. The element stays `pending` until then (precedent: dl-007). At the ruling, the
   text is re-checked against the formats that WingFoil release defines.
-- 2026-11-12: re-checked against WingFoil 0.3.2 and the repository at `6d53241f` before the ruling
+- 2026-11-12: re-checked against WingFoil 0.3.2 and the repository at `0dc03bc2` before the ruling
   (plan-020), amended while `pending`: the methodology's cardinality and `delivery` only with
   `software`, `requires: [base@^2, software@^1]` (spec-001 §3, §9; dl-022 S3); the composition
   order with `software`; format 2 read (the `mcp` kind, the conditional entry, still no list type,
@@ -435,4 +448,8 @@ Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`:
   (dl-026, dl-027) and the dispatch per directive inside the release sub-workflow, as
   `methodology/kanban`'s `release-flow`; the type map extended by a project directive under a new
   id, never by overriding `directive-methodology` in `custom/` (§10.1); ruling order dl-012,
-  dl-011, dl-013.
+  dl-011, dl-013. Review of the amendment: approve after amendments, applied: a `release` field on
+  `intent-directive`, selected by the dispatch's `where`; how a type workflow is run as a design
+  question, DF-6 tagged [E][A]; W15 in M5 (the coordinator's choice, to be confirmed by the
+  approver), waiting for M3 only, with M5 created by W15 alone if dl-011 were rejected; the
+  preset as part of F4.11; no agent email in `base` 2.0.1's DNA; lines rewrapped.
