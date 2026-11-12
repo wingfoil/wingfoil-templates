@@ -120,3 +120,15 @@ Then commit this plan's Execution Notes and `submit` it (`draft → active`).
   precedent (plan-010 stays `active`). The plan stays `active` meanwhile.
 - 2026-10-10: dl-014's follow-up plan is plan-021, `done` (merged `86d2124`); the tooling tasks of
   dl-014 D7 wait for plan-015 to be `done`. dl-011…dl-013 stay `pending`.
+- 2026-11-12: WingFoil 0.3.2 released, the approver took up the deferred ruling. dl-011, dl-012
+  and dl-013 re-checked against 0.3.2 and the repository, amended while `pending` with the
+  approver's rulings of 2026-11-12 (dl-011 option (e), a `governance` pack with the software
+  hand-off as a conditional entry, its own wave W16 after the `pack-install` release, no work
+  before; dl-012's `bug` route in an entry `with: software@^1`; dl-013's `delivery` iterating
+  over releases and its type map extended by a new-id project directive; W10 at four features;
+  M5 between M3 and M4), each amendment reviewed and re-reviewed (dl-017): `850d8fa0`,
+  `c67ca6a1`, `620f8c70`. Approved by the approver in the order dl-012 (`3d1abacc`), dl-011
+  (`d46da723`), dl-013 (`e7c1a9a5`). All four decision-logs ruled: `active → done`. The
+  follow-up plan (this plan's Handoff) applies the amendments the three list: features 1.7
+  (F4.9 … F4.11), journeys (J10), sequencer 1.7 (W10's four features, W15, W16, M5), the MVP
+  canvas, Execution Notes on dl-001 and dl-003, and the owed row "dl-012's F4.9 placement".
