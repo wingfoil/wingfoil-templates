@@ -1,7 +1,7 @@
 # Features — WingFoil-Templates
 
-**Version:** 1.5
-**Date:** 2026-10-15
+**Version:** 1.6
+**Date:** 2026-11-12
 **Status:** Approved
 **Traces to:** [05_journeys.md](05_journeys.md), [03_is-isnot.md](03_is-isnot.md), [01_product-brief.md](01_product-brief.md) §8
 
@@ -27,26 +27,26 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 
 | ID | Feature | Journey | Value | Effort | Unc. |
 |---|---|---|---|---|---|
-| F1.1 | **`pack.yaml` manifest:** id, axis, slot, version, `formats` and `requires_capabilities`, `requires` and `conflicts` with semver ranges, contents, parameters. | J1.3, J6.1 | H | M | M |
-| F1.2 | **Fragments:** pieces of `dna.yaml`, `roles.yaml`, `memory.yaml` and `workflows.yaml` that are merged in a defined order. The merge rule for Memory state machines is "add or tighten, never remove". | J1.3, J5.3 | H | H | **H** |
+| F1.1 | **`pack.yaml` manifest:** id, axis, slot, version, `formats` and `requires_capabilities`, `requires` and `conflicts` with semver ranges, contents, parameters; at format 2, `tensions` and the conditional part per entry, each entry with its `with` (spec-001 §6.2, §6.5). | J1.3, J6.1 | H | M | M |
+| F1.2 | **Fragments:** pieces of `dna.yaml`, `roles.yaml`, `memory.yaml` and `workflows.yaml` that are merged in a defined order. The merge rule for Memory state machines is "add or tighten, never remove". The `mcp` kind is provisional until a released WingFoil reads it (spec-001 §7.8, O16; dl-024). | J1.3, J5.3 | H | H | **H** |
 | F1.3 | **Parameters** `{{name}}`: typed, each with a default, and with no project values inside packs. Path and id parameters accept the project's tokens (`{release}`, `{scope}`). | J2.2, J6.2 | H | M | M |
-| F1.4 | **Slots:** each slot is included by name. `sw-life-cycle` includes `inception`, `specification`, `delivery` and `end-of-life`, and the methodology's `delivery` includes `release` (dl-003 D4, D11). A phase pack fills a slot by shipping the workflow of that name. Slots exist only in a composition with `software` (dl-022 S3). | J1.3, J6.1 | H | M | M |
-| F1.5 | **`format:` key** on every file a pack ships, and on this repository's own files (`pack.yaml`, catalog, compat, presets, transitions), per WingFoil dl-149. | J4.1, J3.1 | H | L | M |
-| F1.6 | **AGENTS.md section** (`agents_section`): a pack contributes text inside a marked region and never ships the file itself. | J2.4, J5.1 | M | L | **H** |
+| F1.4 | **Slots:** each slot is included by name. `sw-life-cycle` includes `inception`, `specification`, `delivery` and `end-of-life`, and the methodology's `delivery` includes both `release` and `retrospective`, directly or through its own sub-workflows, the phase including `release` iterating over the releases in development or releasing (dl-003 D4, D11; dl-026 D1, D2; dl-027 D1). A phase pack fills a slot by shipping the workflow of that name. Slots exist only in a composition with `software` (dl-022 S3). | J1.3, J6.1 | H | M | M |
+| F1.5 | **`format:` key** on every file a pack ships, and on this repository's own files (`pack.yaml`, catalog, compat, presets, transitions), per WingFoil dl-149. `pack.yaml` and `catalog.yaml` are at format 2, the v1 schemas frozen, each file read by the schema of its `format` (spec-001 §5). | J4.1, J3.1 | H | L | M |
+| F1.6 | **AGENTS.md section** (`agents_section`): a pack contributes text inside a marked region and never ships the file itself. `base`'s section states the precedence of the directives' classes, and each directive's first line its class (spec-001 §10.1; dl-025 D2). | J2.4, J5.1 | M | L | **H** |
 | F1.7 | **JSON Schemas** for every file kind above, published under `schema/`. | J1.3, J1.4 | H | M | L |
 
 ## F2 — Catalog and distribution
 
 | ID | Feature | Journey | Value | Effort | Unc. |
 |---|---|---|---|---|---|
-| F2.1 | **`catalog.yaml`:** axes, packs, published versions with commit, digest, formats, capabilities and the computed WingFoil range. | J3.1, J6.1 | H | M | L |
+| F2.1 | **`catalog.yaml`:** axes, packs, published versions with commit, digest, formats, capabilities and the computed WingFoil range; at format 2 a version entry records `pack_format` and copies the conditional entries (spec-001 §11). | J3.1, J6.1 | H | M | L |
 | F2.2 | **Tag per pack version**, never moved or deleted. | J1.7, J3.2 | H | L | M |
 | F2.3 | **Pack digest:** sha256 over a canonical listing of the pack's files. The procedure (ordering, line endings, exclusions) is fixed in spec-001. | J1.7, J3.2 | H | L | M |
 | F2.4 | **`compat.yaml`:** for each WingFoil release, the formats it reads and the capabilities it provides. The vocabulary belongs to WingFoil (its capabilities query, WingFoil dl-177); until WingFoil publishes it, this repository holds a provisional one, `pack-install` and `workflow-engine`, and records a capability only when a release's CHANGELOG names the feature or command behind it (dl-021 R4). | J4.1, J6.3 | H | L | **H** |
 | F2.5 | **Computed WingFoil range** in the catalog, derived from `compat.yaml`. It is never written by hand. | J1.6, J3.1 | M | L | L |
 | F2.6 | **Presets:** named combinations, organized by the adoption profiles (personas §2). | J6.1 | M | L | L |
 | ~~F2.7~~ | ~~**Release assets.**~~ Dropped in the features review: versions are not published as GitHub Release assets. | brief §8 | — | — | — |
-| F2.8 | **Browsable catalog:** README standard, generated `CATALOG.md`, `catalog-index.json`, `llms.txt` (dl-014, spec-002). | J1.1, J6.1, J7.1 | H | M | L |
+| F2.8 | **Browsable catalog:** README standard, generated `CATALOG.md`, `catalog-index.json`, `llms.txt` (dl-014, spec-002); at format 2 the index carries `conditional_parts`, `tensions` and `pack_format`, and a README "Combines with care" (spec-002 §2.1, §3.2, §3.3). | J1.1, J6.1, J7.1 | H | M | L |
 | F2.9 | **Catalog search page** on GitHub Pages, built from the index (dl-014, spec-002 §5). | J6.1 | M | M | L |
 
 ## F3 — Validation tooling
@@ -55,9 +55,9 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 |---|---|---|---|---|---|
 | F3.1 | **One validation command**, run locally and in CI. It runs schema checks, composition, the compatibility matrix and determinism, in one pass. | J1.4, J1.5 | H | M | L |
 | F3.2 | **Reference composer:** composes a set of packs into a `.wingfoil/`, so that packs can be validated before WingFoil can install them. | J1.4 | H | H | **H** |
-| F3.3 | **Compatibility matrix:** each composition is validated with the oldest and the newest compatible WingFoil release, each installed pinned and in isolation. Validation means `workflow list`, `dna show` and `directives list`, with exit 0 and no warning. | J1.4, J4.2 | H | M | M |
+| F3.3 | **Compatibility matrix:** each composition is validated with the oldest and the newest compatible WingFoil release, each installed pinned and in isolation. Validation means `workflow list`, `dna show` and `directives list`, with exit 0 and no warning, and `check:runs`, with a scenario for every `main`, and the adoption run once per `init` template for a pack with install steps (dl-032 E3). | J1.4, J4.2 | H | M | M |
 | F3.4 | **Determinism check:** two compositions from a clean state must be byte-identical. | J1.4 | H | L | L |
-| F3.5 | **Lint rules:** no empty phases (actions and produces declared), includes by name, no contradictions between overlays, no project values, no secrets. | J5.2, J5.3 | H | M | M |
+| F3.5 | **Lint rules:** no empty phases (actions and produces declared), includes by name, no contradictions between overlays, no project values, no secrets; per entry and by format, the stricter-wins heuristic and the declared tensions' coverage (dl-025 D1, D6), a methodology's `delivery` includes (`life-cycle-includes`, dl-026 D3), the waiver wording as a review list (spec-001 §18; plan-066 ruling 4). | J5.2, J5.3 | H | M | M |
 | F3.6 | **CI:** the validation runs on every pull request and every publication. | J1.5 | M | L | L |
 
 ## F4 — Pack content (official catalog)
@@ -78,7 +78,7 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 | ID | Feature | Journey | Value | Effort | Unc. |
 |---|---|---|---|---|---|
 | F5.1 | **`pack-release` with evidence:** commands, WingFoil versions and exit codes are recorded in the element (already configured). | J1.6 | H | L | L |
-| F5.2 | **`wingfoil-release-intake` workflow:** updates `compat.yaml`, rechecks the active packs, and opens a task for each migration (journeys review). | J4 | H | L | L |
+| F5.2 | **`wingfoil-release-intake` workflow:** updates `compat.yaml`, rechecks the active packs, and opens a task for each migration (journeys review); it starts the periodic retrospective at its close (`retrospective-start`, dl-029). It is automated where safe (dl-042): a daily detection (`intake.yml`), a prepared patch (`intake:prepare`) and a verified or guided report. | J4 | H | L | L |
 | F5.3 | **Line policy:** one living line before WingFoil 1.0; lines N and N-1 after it. | J4.3, J7.1 | M | L | M |
 | F5.4 | **Feedback notes on publication:** a note for every schema change; no pack is bundled in WingFoil, so a publication needs no note of its own (dl-021 R1). | J1.7 | M | L | L |
 
@@ -153,3 +153,6 @@ Approver, 2026-10-06:
    repository's clone and view traffic (F7.3). It is not counted per pack.
 4. **Amendment 1.2 (2026-10-06).** F1.4 is aligned with the slot list of dl-003 D11, which was
    amended while pending.
+5. **Amendment 1.6 (2026-11-12, plan-069).** F1.1, F1.2, F1.4, F1.5, F1.6, F2.1, F2.8, F3.3, F3.5
+   and F5.2 gain what the format 2, the `delivery` contract, `check:runs` and the automated intake
+   added since 1.5; no feature's Value, Effort or Uncertainty changes.
