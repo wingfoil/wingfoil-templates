@@ -3,8 +3,8 @@ id: plan-069-vision-amendment-the-sequencer-1.6-and-the-features-1.6-the-state-o
 type: plan
 title: "Vision amendment: the sequencer 1.6 and the features 1.6, the state of the waves and the features grown since 1.5"
 status: draft
-workflow: ""
-phase: ""
+workflow: "sw-life-cycle"
+phase: "inception"
 tags: ["vision","sequencer"]
 ---
 
