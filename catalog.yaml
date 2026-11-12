@@ -131,4 +131,6 @@ packs:
         conflicts: []
         wingfoil: ">=0.3.0 <=0.3.2"
 transitions: []
-presets: []
+presets:
+  - { id: classic-kanban, path: presets/classic-kanban.yaml }
+  - { id: classic-scrum, path: presets/classic-scrum.yaml }
