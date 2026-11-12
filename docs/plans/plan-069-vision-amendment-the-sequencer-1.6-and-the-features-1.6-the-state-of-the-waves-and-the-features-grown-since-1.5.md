@@ -106,3 +106,9 @@ this plan's body, their run read in the Execution Notes before `submit`.
   row on dl-024 and dl-025 Closed, task-089's `submit` and this plan's body), run 43230493794,
   `success`: `validate (22.12.0, 1)` 6 min 41 s, `(22.12.0, 2)` 6 min 4 s, `(22.21.0, 1)` 7 min
   41 s, `(22.21.0, 2)` 8 min 38 s.
+- 2026-11-12, steps 2 and 3: the sequencer 1.6 (`88e51a77`) and the features 1.6 (`8464a387`) on
+  the branch; its review: approve after amendments, one blocking, applied (`df0d6d70`): "since
+  1.5" dropped from the work outside the waves, the `delivery` contract predating the sequencer's
+  1.5; with the nits: dl-012 written when W10 was W9, F4.9 over the limit rather than at it, F3.5's
+  stricter-wins heuristic named beside the coverage (dl-025 D1, D6). Wording only, no row changed
+  in substance: no re-review.
