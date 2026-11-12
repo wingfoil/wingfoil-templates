@@ -2,7 +2,7 @@
 id: task-090-the-first-presets-classic-scrum-and-classic-kanban-and-the-validation-s-stand-in-values-for-a-preset-s-required-parameters-plan-070-task-a
 type: task
 title: "The first presets, Classic Scrum and Classic Kanban, and the validation's stand-in values for a preset's required parameters (plan-070 task A)"
-status: approved
+status: done
 pack: ""            # tooling task (tooling-delivery v4), plan-070 task (A)
 depends_on: []
 tags: ["tooling","presets"]
