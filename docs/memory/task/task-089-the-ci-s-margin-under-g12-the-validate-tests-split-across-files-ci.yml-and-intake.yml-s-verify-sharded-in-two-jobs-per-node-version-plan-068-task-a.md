@@ -234,3 +234,8 @@ tests); the owed row, moved at plan-068's close.
   5 min 13 s apart (22.21.0's 2 min 22 s). The `Test` steps of one version are within 2 min 15 s;
   the gap is shard 1's other checks (about 5 min), and the same shard's `Test` step varied from
   4 min 37 s to 6 min 54 s between the versions.
+- 2026-11-12, the approver's ruling (dl-019) on the two criteria: both readings accepted.
+  Acceptance 2 holds with `validate-2` at 5 min 28 s and `-3` at 5 min 58 s locally; Acceptance
+  4 holds with 22.12.0's jobs 5 min 13 s apart, the `Test` steps of one version being within 2
+  min 15 s and the gap being shard 1's other checks. The Acceptance text stays as written; the
+  plan's goal (every job under 20 minutes) is met at 10 min 4 s.
