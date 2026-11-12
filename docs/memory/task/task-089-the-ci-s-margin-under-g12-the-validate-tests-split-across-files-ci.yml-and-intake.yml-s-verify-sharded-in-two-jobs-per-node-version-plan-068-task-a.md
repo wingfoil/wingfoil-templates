@@ -2,7 +2,7 @@
 id: task-089-the-ci-s-margin-under-g12-the-validate-tests-split-across-files-ci.yml-and-intake.yml-s-verify-sharded-in-two-jobs-per-node-version-plan-068-task-a
 type: task
 title: "The CI's margin under G12: the validate tests split across files, ci.yml and intake.yml's verify sharded in two jobs per Node version (plan-068 task A)"
-status: in-review
+status: approved
 pack: ""            # tooling task (tooling-delivery v3), plan-068 task (A)
 depends_on: []
 tags: ["tooling","ci"]
