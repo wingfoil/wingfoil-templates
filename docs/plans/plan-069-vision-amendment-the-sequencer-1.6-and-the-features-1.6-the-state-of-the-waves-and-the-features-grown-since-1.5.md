@@ -21,7 +21,8 @@ changes the documentation"). The approver asked on 2026-11-12 for this amendment
 goes on, and set the order after it: W10, then the pack release round, then the periodic
 retrospective. Hosted by `sw-life-cycle` › `inception`, which produces the vision documents
 (`templates-inception` › `features` and `sequencer`), reopened for this amendment only, as
-plan-038 and plan-052 did.
+plan-040 and plan-067 reopened `specification`; plan-038 and plan-052 amended the vision documents
+from their own hosts (`decision-log-ingest` › `rule`, `pack-cycle` › `first-release`).
 
 **How:** both documents edited in place, their version raised to 1.6 with the date of the merge,
 a line in each one's decisions section listing the amendment. The approver's OK on the tables
@@ -32,21 +33,27 @@ file changes.
 
 | Section | Change | Source |
 |---|---|---|
-| a new section "State of the waves" (after "Milestones at a glance") | one line per wave, with its state on the merge's date and the element that closed it: W1 … W4 done (plan-012), W5 … W7 done (plan-015), W14 done (plan-024), W8 done (plan-046; prel-001, prel-002), W9 done (plan-052; prel-003 … prel-005), W10 in progress (`methodology/kanban` done, plan-058, prel-006; presets, `governance/wingfoil-dogfood`, the adoption, the pin raised from 0.2.2 and the first inbox sync not started), W11 … W13 not started; M0, M1 and M2 reached, M3 open | the elements named |
-| the same section | the work outside the waves, as amendments of features already sequenced and not new waves: the format 2 (`tensions`, the conditional part per entry, the `mcp` kind provisional; dl-024, dl-025, plan-063, plan-066, plan-067) amending F1.1, F1.2, F2.8 and F3.5; the intake automated (plan-065) amending F5.2; the CI sharded (plan-068) under F3.6 | the plans named |
+| a new section "State of the waves" (after "Milestones at a glance") | one line per wave, with its state on the merge's date and the element that closed it: W1 … W4 done (plan-012), W5 … W7 done (plan-015), W14 done (plan-024), W8 done (plan-046, closing plan-041 … plan-047), W9 done (plan-052; prel-003 … prel-005), W10 in progress (`methodology/kanban` done, plan-058, prel-006; presets, `governance/wingfoil-dogfood`, the adoption, the pin raised from 0.2.2 and the first inbox sync not started; dl-012, `pending`, would place F4.9 in W10, at its three-feature limit, left to dl-012's ruling), W11 … W13 not started; M0, M1 and M2 reached, M3 open. The releases outside a wave's close: `base` 1.0.0 within W8 (plan-044, prel-001) and `base` 2.0.0 between W8 and W9 (plan-049, prel-002) | the elements named |
+| the same section | the work outside the waves, as amendments of features already sequenced and not new waves: the format 2 (`tensions`, the conditional part per entry, the `mcp` kind provisional; dl-024, dl-025, plan-063, plan-066, plan-067) amending F1.1, F1.2, F1.5, F1.6, F2.1, F2.8 and F3.5; the `delivery` contract of a methodology (dl-026, dl-027, plan-047, plan-048) amending F1.4 and F3.5; the intake automated (plan-065) amending F5.2; the CI sharded (plan-068) under F3.6 | the plans named |
 | Notes, a new bullet | W8 holds four features (F4.1, F4.8, F6.2, F1.6), one over the rule of three: `software` joined W8 with dl-022 (sequencer 1.4, plan-038), and W8 closed so (plan-046); kept as a recorded exception, not split after the fact | the row "Sequencer: W8 has four features" (plan-052 › step 2) |
+| Notes, "The first publication …" | "so nothing is published before W9" corrected: `base` 1.0.0 was published within W8 (plan-044) and 2.0.0 after it (plan-049), the first publication of `software` and a methodology staying W9's | prel-001, prel-002 |
+| Notes, "Tooling tasks have no workflow host" | the bullet replaced by its answer: the `tooling` phase of `sw-life-cycle` and `tooling-change`, as the sequencer review decided (2026-10-06, decision 2) | the sequencer's decisions, 2 |
 | Notes, a new bullet | W10's order after this amendment, as the approver set it on 2026-11-12: W10's remaining features, then a pack release round (bug-011 … bug-015's fixes, the `Precedence:` lines, the Memory templates' optional fields, the CHANGELOG's first line checked), then the periodic retrospective | the approver, 2026-11-12 |
-| Decisions | "Amendment 1.6 (2026-11-12)", one line | this plan |
+| Decisions | "Amendment 1.6 (2026-11-12)", one line, the first amendment recorded there (1.1 … 1.5 are in the git history) | this plan |
 
 **The features, 1.6:**
 
 | Feature | Change | Source |
 |---|---|---|
-| F1.1 | the manifest gains its `format` (1 or 2) and, at format 2, `tensions` and the conditional part per entry, each entry with its `with` | spec-001 §5, §6.2, §6.5 (plan-063, plan-066) |
+| F1.1 | at format 2 the manifest gains `tensions` and the conditional part per entry, each entry with its `with` | spec-001 §6.2, §6.5 (plan-063, plan-066) |
+| F1.4 | a methodology's `delivery` includes both `release` and `retrospective` through its own sub-workflows, and the phase including `release` iterates over the releases in development or releasing | dl-026 D1, D2; dl-027 D1 (plan-047, plan-048) |
+| F1.5 | `pack.yaml` and `catalog.yaml` at format 2, the v1 schemas frozen, the schema chosen by the file's `format` | spec-001 §5 (plan-063, plan-066) |
+| F1.6 | `base`'s section states the precedence of the directives' classes, and each directive's first line its class | spec-001 §10.1; dl-025 D2 (plan-063) |
 | F1.2 | the fragments gain the `mcp` kind, provisional until a released WingFoil reads it (its tooling owed) | spec-001 §7.8, O16; dl-024 |
+| F2.1 | `catalog.yaml` at format 2: a version entry records `pack_format` and copies the conditional entries | spec-001 §11 (plan-066) |
 | F2.8 | the index and the READMEs at format 2: `conditional_parts`, `tensions`, `pack_format`, "Combines with care" | spec-002 §2.1, §3.2, §3.3 (plan-066, plan-067) |
 | F3.3 | `check:runs`, with a scenario for every `main`, and the adoption run once per `init` template for a pack with install steps (dl-032 E3), beside `workflow list`, `dna show` and `directives list` | the row "`06_features.md` 1.5 → 1.6" |
-| F3.5 | the lint per entry and by format, the declared tensions' coverage, the waiver wording as a review list | spec-001 §18; dl-025 D1, D6; plan-066 ruling 4 |
+| F3.5 | the lint per entry and by format, the declared tensions' coverage, the waiver wording as a review list, a methodology's `delivery` includes (`life-cycle-includes`) | spec-001 §18; dl-025 D1, D6; dl-026 D3; plan-066 ruling 4 |
 | F5.2 | `wingfoil-release-intake` starts the periodic retrospective at its close (`retrospective-start`, dl-029); a daily detection (`intake.yml`), a prepared patch (`intake:prepare`) and a verified or guided report | the row "`06_features.md` 1.5 → 1.6"; dl-042, plan-065 |
 | Decisions | "Amendment 1.6 (2026-11-12)", one line | this plan |
 
@@ -67,8 +74,10 @@ this plan's body, their run read in the Execution Notes before `submit`.
    "State of the waves" checked against the element it cites. Role: product-owner.
 3. **The branch's review:** an independent review of the diff against the tables above; its
    amendments, re-reviewed if they change a row.
-4. **Checks** on the frozen commit (dl-039): the branch CI and the local list (`validate:
-   publication`, the golden tree in publication mode, `workflow list`) on Node 22.21.0.
+4. **Checks** on the frozen commit, for a text-only change: the branch CI, its job durations
+   recorded (dl-039 R3, G12); `git diff main --stat` naming only the two documents; the privacy
+   check of the branch's diff (repository-practice rule 2: no local or scratch path, no private
+   project, no session). dl-039 R1's local list is for tooling and pack tasks and is not run.
 5. **The approver's merge OK;** merged `--no-ff`, pushed, `main`'s CI read; the two rows to
    Closed; `active → done`.
 
@@ -76,7 +85,9 @@ this plan's body, their run read in the Execution Notes before `submit`.
 
 - **The approver:** the OK on the two tables (step 1), including the W8 exception kept rather than
   split; the merge OK (step 5).
-- **Alone:** the reviews, the edits, the checks, the rows, the notes.
+- **Alone:** the edits, the checks, the rows, the notes; the reviews of steps 1 and 3 by an
+  independent reviewer (a subagent with no part in the text). No `memory approve`, no pull
+  request; files staged by name.
 - **Done when:** both documents at 1.6 on `main`, every change of the tables applied and no other,
   `main`'s CI green, the two rows Closed.
 
