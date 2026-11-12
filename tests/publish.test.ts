@@ -252,14 +252,14 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
 
   it('publishes a pack whose only composition is a preset that sets no required parameter, with '
     + 'the validation\'s stand-ins (task-090)', () => {
-    const [base, software] = FOUNDATION;
-    assert.ok(base !== undefined && software !== undefined);
+    const [base] = FOUNDATION;
+    assert.ok(base !== undefined);
     const named: PackSpec = { ...base, manifest: { parameters: { project_name: { type: 'string',
       description: 'The project name.' } } } };
     withRepository((repo) => {
       mkdirSync(join(repo.dir, 'presets'), { recursive: true });
       writeFileSync(join(repo.dir, 'presets', 'bare.yaml'), 'format: 1\nid: bare\n'
-        + 'title: "Bare"\ndescription: "Kanban, no values."\npacks:\n  - methodology/kanban@^1\n'
+        + 'title: "Bare"\ndescription: "base alone, no values."\npacks:\n  - base@^1\n'
         + 'parameters: {}\n');
       const catalog = join(repo.dir, 'catalog.yaml');
       writeFileSync(catalog, readFileSync(catalog, 'utf8').replace('presets: []',
@@ -269,7 +269,7 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
       const result = publish(repo, ['--pack', 'base']);
       assert.equal(result.code, 0, result.lines.join('\n'));
       assert.equal(repo.git(['cat-file', '-t', 'refs/tags/base@1.0.0']).trim(), 'tag');
-    }, [named, software, KANBAN], undefined, false);
+    }, [named], undefined, false);
   });
 
   it('creates no tag when the publication validation fails', () => {
