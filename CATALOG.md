@@ -47,7 +47,10 @@ None published yet.
 
 ## Presets
 
-None yet.
+| Preset | Title | Profile | Packs |
+| --- | --- | --- | --- |
+| `classic-kanban` | Classic Kanban | Solo developer | `software@^1`, `methodology/kanban@^1` |
+| `classic-scrum` | Classic Scrum | Team developer | `software@^1`, `methodology/scrum@^1` |
 
 ## Transitions
 
@@ -55,7 +58,10 @@ None yet.
 
 ## Profiles
 
-None yet.
+| Profile | Packs |
+| --- | --- |
+| Solo developer | `methodology/kanban`, `software` |
+| Team developer | `methodology/scrum`, `software` |
 
 ## For agents
 

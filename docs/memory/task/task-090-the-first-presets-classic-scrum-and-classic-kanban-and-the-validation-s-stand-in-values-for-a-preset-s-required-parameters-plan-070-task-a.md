@@ -2,7 +2,7 @@
 id: task-090-the-first-presets-classic-scrum-and-classic-kanban-and-the-validation-s-stand-in-values-for-a-preset-s-required-parameters-plan-070-task-a
 type: task
 title: "The first presets, Classic Scrum and Classic Kanban, and the validation's stand-in values for a preset's required parameters (plan-070 task A)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-delivery v4), plan-070 task (A)
 depends_on: []
 tags: ["tooling","presets"]
@@ -92,7 +92,45 @@ What exists (`main` at plan-070's `submit`):
 
 ## Design
 
-<!-- Filled at the design phase. -->
+- **The module** `src/preset-stand-ins.ts` (Acceptance 2): `STAND_INS`, the fixed values by
+  parameter name, and `withStandIns(params, packs)`, which returns `params` with a stand-in added
+  for each parameter a resolved pack declares with no default, absent from `params` and named in
+  `STAND_INS`; any other required parameter is left unset, so the composer still fails on it
+  (`src/parameters.ts`). The values, for `base`'s four (the only required parameters with no
+  default in the published packs):
+  - `project_name: "Preset Check"`;
+  - `approver_name: "Preset Approver"`;
+  - `approver_email: "approver@preset-check.example"`;
+  - `agent_name: "Preset Agent"`.
+  Each a `string`, with no `{{`, no `<`, `>` or line break; WingFoil 0.3.0 and 0.3.2 check no
+  member's email format.
+- **`src/validate.ts`:** `Composition` gains `standIns?: boolean`, set only by the loop over
+  `presets/*.yaml` (not by the examples', the overlay's or `entries`' loops). `runOne` applies
+  `withStandIns` to `params` after the preset's values and `--param` are in, when the
+  composition's `standIns` is true; `composition.preset` is untouched, so the `--param` refusal,
+  the dropped list (plan-039 R5) and the leg's filtered values read the preset alone. The leg's
+  call of `runOne` passes `standIns: composition.standIns`; ruling 4's `unset` check is
+  unchanged (it reads the preset's values and `--param`, and a stand-in name is `base`'s, never
+  an added pack's: one pack declares each name, spec-001 §8.1).
+- **The red steps** (Acceptance 1), each committed and seen failing before what makes it pass:
+  1. the pinned counts (Acceptance 4): `tests/validate-2-run.test.ts`'s numbers raised by the
+     two presets, failing on the current tree;
+  2. the stand-ins (Acceptance 2): a new `tests/validate-10-presets.test.ts` (the next number of
+     the split, so the shards stay alternated) with, on a tree written by the test: a preset with
+     no values composing (exit 0) in branch and in publication mode, `dna.yaml` holding the four
+     stand-ins; a preset value and a `--param` each winning; an example with no values still
+     failing; a `[-pack]` leg of a preset composing with the stand-ins and a `[+pack]` leg with
+     an unset parameter skipped; `npm run compose` with no value failing; and in
+     `tests/publish.test.ts` one case publishing a pack whose only composition is a preset with
+     no values.
+- **The content** (Acceptance 3, 5), after the code: the two presets, `catalog.yaml`'s
+  `presets[]`, `npm run index`; then `tests/catalog.test.ts` run unchanged.
+- **spec-001** (Acceptance 6): §15, a bullet after `parameters`: "A preset need not set a required
+  parameter: the validation (`npm run validate`, `validate:publication`, `publish:pack`) composes
+  it with a fixed stand-in value for each required parameter with no default that neither the
+  preset nor `--param` sets (task-090), and the adopter gives the real value at `init`. A
+  stand-in is never written to the preset or to a pack"; §18, under **Presets**, a line naming
+  the stand-ins as the validation's, not the composer's (§17 unchanged); an Execution Note.
 
 ## Execution Notes
 
@@ -103,3 +141,61 @@ What exists (`main` at plan-070's `submit`):
   never written to a preset or a pack, a leg's `dropped` list without them, a parameter with no
   stand-in failing as today; the presets listed in the generated files; no file under `packs/`
   and no `pack-release`; the red steps in point 5's order.
+- 2026-11-12, design: written (`75247105`); `base`'s four parameters are the published packs'
+  only required ones with no default (`packs/*/pack.yaml` read), so `STAND_INS` names them alone.
+- 2026-11-12, red 1 (Acceptance 4, `5b210ecc`): `tests/validate-2-run.test.ts` raised to schemas 8
+  files (6 + the two presets), lint 76 files (74 + 2), compositions 11 (9 examples + 2 presets) and
+  22 runs (each composition on 0.3.0 and 0.3.2), the three overlays 15 compositions and 30 runs (13
+  + the tree's 2 presets), the publication 22 runs; `node --test --test-name-pattern="validates this
+  repository|governed repositories|passes a publication run of this repository"
+  dist/tests/validate-2-run.test.js`: 5 tests, 0 pass, 5 fail, by assertion.
+- 2026-11-12, red 2 (Acceptance 2, `0d6fcc35`): `tests/validate-10-presets.test.ts`, on the
+  fixture tree (whose `base` requires `project_name`) with three presets written by the test, run
+  with no `--param`, with it, and in publication mode, the composed `dna.yaml` read through the
+  determinism check's `compare`: 5 tests, 3 pass, 2 fail; the two failing ("composes a preset
+  that sets no required parameter", "gives a preset's leg its stand-ins") on `parameter
+  project_name of base is required and has no value`. Already green on `main`, as guards: a
+  preset's value and `--param` winning, an example with no value failing, `compose` failing.
+  The fixture's `stage/keyed` renamed `stage/locked` (a name `blueprint/keyed` holds, dl-004) and
+  set at format 2 (a `with` other than `software` needs it).
+- 2026-11-12, red 3 (Acceptance 2, `a8288862`): the `publish:pack` case first held `software`
+  and `methodology/kanban` with no examples, which the README rule refuses (spec-002 §2.4: a tree
+  with a methodology gives examples); rewritten on a `base`-only preset, with `base` requiring
+  `project_name`; red without the code (the module removed and `src/validate.ts` stashed, built):
+  1 test, 0 pass, on `composition presets/bare.yaml: parameter project_name of base is required
+  and has no value`.
+- 2026-11-12, green: `src/preset-stand-ins.ts` and `src/validate.ts` (`e1e83647`); the three
+  test files pass. The presets, `catalog.yaml` and the index (`3d56a8d0`): `npm run index` wrote
+  `CATALOG.md` and `catalog-index.json`, 5 files unchanged (`llms.txt` and the READMEs'
+  generated sections name no preset or profile); `profiles`: `software` both, `methodology/kanban`
+  Solo developer, `methodology/scrum` Team developer, `base` none. spec-001 §15 and §18
+  (`648436b4`). `npm run validate` on the repository: exit 0, `compositions: 11`, `matrix:
+  self-test, 22 runs, 0 failed, tolerance applied: none`; `presets/classic-kanban.yaml` 36
+  files and `presets/classic-scrum.yaml` 37, byte-identical, `workflow list`, `dna show` and
+  `directives list` passing on 0.3.0 and 0.3.2.
+- 2026-11-12, `npm test` after the content: 1305 tests, 1304 pass, 1 fail:
+  `tests/check-packs.test.ts` pins this repository's lint count too (`lint: checked 74 files`), a
+  pinned test neither plan-070 nor the body review named; it failed red by assertion on the
+  content's commit (`76` against `74`), the same two preset files as Acceptance 4's lint count, and
+  is raised to 76 with its name in the same commit as these notes (a departure from Acceptance 1's
+  order, recorded). Rerun: the file's 127 tests pass. `npm run lint`: 0 problems.
+- 2026-11-12, build review: approve after amendments, two blocking, applied: spec-001 §15 and §18
+  narrowed to `base`'s four parameters, any other required parameter still needing a value, as
+  the code does; an overlay's composition with no values shown failing (Acceptance 2's claim had
+  no test). With the nits: the `--param` refusal and a leg's `dropped` list without a stand-in
+  asserted; `STAND_INS` imported by the test (the fixture's `base` requires `project_name` alone,
+  so its stand-in is the one read); the presets' descriptions under 100 characters ("Kanban on the
+  software layer: a continuous flow of tasks under WIP limits.", "Scrum on the software layer:
+  Sprints with planning, review and retrospective."), the index regenerated (1 file). Rerun:
+  `tests/validate-10-presets.test.ts` 6 tests pass; `npm run check:packs` 76 files, 0 problems.
+  The spec change narrows the rule to what the code does: no re-review of the code.
+- 2026-11-12, checks on the frozen `0a477364` (Acceptance 7, dl-039): the branch CI, run
+  43255467176, `success`: `validate (22.12.0, 1)` 11 min 25 s, `(22.12.0, 2)` 6 min 59 s,
+  `(22.21.0, 1)` 11 min 7 s, `(22.21.0, 2)` 6 min 1 s, every job under 20 minutes (G12). The
+  local list from a clean worktree on Node 22.21.0, after `npm ci` and `npm run build`:
+  `npm run validate:publication` exit 0 (`compositions: 11`, `matrix: publication, 22 runs, 0
+  failed`, `presets/classic-kanban.yaml` 36 files and `presets/classic-scrum.yaml` 37,
+  byte-identical, `workflow list`, `dna show` and `directives list` passing on 0.3.0 and 0.3.2);
+  the golden tree in publication mode exit 0 (26 runs, 0 failed); `npm run -s wingfoil --
+  workflow list` exit 0. The privacy check of the branch's diff found no local or scratch path,
+  no private project and no session.

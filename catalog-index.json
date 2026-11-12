@@ -223,7 +223,9 @@
         }
       ],
       "excerpt": "A software project governed by WingFoil that flows its work without timeboxes composes `methodology/kanban` with `base` and `software`: it fills the life cycle's `delivery` with a continuous flow of work items, each pulled from the backlog to done within explicit WIP limits, and carried by releases the Product Owner decides, each release ending with a retrospective. It holds the workflows `delivery`, `release-flow` and `work-item` and the `kanban` and `definition-of-workflow` directives, adds…",
-      "profiles": []
+      "profiles": [
+        "Solo developer"
+      ]
     },
     {
       "id": "methodology/scrum",
@@ -298,7 +300,9 @@
         }
       ],
       "excerpt": "A software project governed by WingFoil that works in Sprints composes `methodology/scrum` with `base` and `software`: it fills the life cycle's `delivery` with repeated, fixed-length Sprints, one at a time, each with its planning, its Sprint Backlog, its review and its retrospective, and lets the Product Owner release an Increment inside a Sprint. It holds the `sprint` type, the workflows `delivery`, `sprint` and `backlog-item`, and the `scrum` and `definition-of-done` directives, and it adds…",
-      "profiles": []
+      "profiles": [
+        "Team developer"
+      ]
     },
     {
       "id": "software",
@@ -410,9 +414,35 @@
         }
       ],
       "excerpt": "Every software project governed by WingFoil composes `software` right after `base`, with one methodology: it holds the adr, tech-spec, bug, release and release-line types, the life cycle `sw-life-cycle` with its slots and their defaults (`inception`, `specification`, `release`, `end-of-life`), the release workflows `release-submit` and `release-publishing`, the workflows that capture an architecture decision (`adr-ingest`) and a bug (`bug-ingest`), the `determinism` directive and the software…",
-      "profiles": []
+      "profiles": [
+        "Solo developer",
+        "Team developer"
+      ]
     }
   ],
-  "presets": [],
+  "presets": [
+    {
+      "id": "classic-kanban",
+      "title": "Classic Kanban",
+      "description": "Kanban on the software layer: a continuous flow of tasks under WIP limits.",
+      "profile": "Solo developer",
+      "packs": [
+        "software@^1",
+        "methodology/kanban@^1"
+      ],
+      "url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/presets/classic-kanban.yaml"
+    },
+    {
+      "id": "classic-scrum",
+      "title": "Classic Scrum",
+      "description": "Scrum on the software layer: Sprints with planning, review and retrospective.",
+      "profile": "Team developer",
+      "packs": [
+        "software@^1",
+        "methodology/scrum@^1"
+      ],
+      "url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/presets/classic-scrum.yaml"
+    }
+  ],
   "transitions": []
 }

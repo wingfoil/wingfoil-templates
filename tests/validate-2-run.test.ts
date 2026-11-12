@@ -30,15 +30,15 @@ describe('npm run validate', () => {
   });
 
   it('validates this repository: base, software, methodology/scrum and methodology/kanban, their '
-    + 'nine examples, on 0.3.0 and the newest release (task-039, task-047, task-055, task-059, '
-    + 'task-067, task-074, task-079)', () => {
+    + 'two presets and nine examples, on 0.3.0 and the newest release (task-039, task-047, '
+    + 'task-055, task-059, task-067, task-074, task-079, task-090)', () => {
       const result = validate(['--tree', REPO_ROOT]);
       assert.equal(result.code, 0, result.lines.join('\n'));
-      assert.ok(result.lines.includes('schemas: checked 6 files, 0 problems'));
-      assert.ok(result.lines.includes('lint: checked 74 files, 0 problems'));
-      assert.ok(result.lines.includes('compositions: 9'));
+      assert.ok(result.lines.includes('schemas: checked 8 files, 0 problems'));
+      assert.ok(result.lines.includes('lint: checked 76 files, 0 problems'));
+      assert.ok(result.lines.includes('compositions: 11'));
       assert.ok(result.lines.includes(
-        'matrix: self-test, 18 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
+        'matrix: self-test, 22 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
     });
 
   it('validates software through its fixture methodology: the four governed repositories\' '
@@ -50,9 +50,9 @@ describe('npm run validate', () => {
         + `tests/fixtures/software-exit/compositions/${id}/example.yaml: composed twice, `)),
       `${id}\n${result.lines.join('\n')}`);
     }
-    assert.ok(result.lines.includes('compositions: 13'), result.lines.join('\n'));
+    assert.ok(result.lines.includes('compositions: 15'), result.lines.join('\n'));
     assert.ok(result.lines.includes(
-      'matrix: self-test, 26 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
+      'matrix: self-test, 30 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
   });
 
   it('validates methodology/scrum with the four governed repositories\' parameter sets (task-056, '
@@ -65,9 +65,9 @@ describe('npm run validate', () => {
           + `tests/fixtures/scrum-exit/compositions/${id}/example.yaml: composed twice, `)),
         `${id}\n${result.lines.join('\n')}`);
       }
-      assert.ok(result.lines.includes('compositions: 13'), result.lines.join('\n'));
+      assert.ok(result.lines.includes('compositions: 15'), result.lines.join('\n'));
       assert.ok(result.lines.includes(
-        'matrix: self-test, 26 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
+        'matrix: self-test, 30 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
     });
 
   it('validates methodology/kanban with the four governed repositories\' parameter sets (task-068)',
@@ -79,18 +79,18 @@ describe('npm run validate', () => {
           + `tests/fixtures/kanban-exit/compositions/${id}/example.yaml: composed twice, `)),
         `${id}\n${result.lines.join('\n')}`);
       }
-      assert.ok(result.lines.includes('compositions: 13'), result.lines.join('\n'));
+      assert.ok(result.lines.includes('compositions: 15'), result.lines.join('\n'));
       assert.ok(result.lines.includes(
-        'matrix: self-test, 26 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
+        'matrix: self-test, 30 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
     });
 
-  it('passes a publication run of this repository: the nine examples on 0.3.0 and the newest '
-    + 'release (task-039, task-055, task-059, task-067, task-074, task-079)',
+  it('passes a publication run of this repository: the two presets and nine examples on 0.3.0 and '
+    + 'the newest release (task-039, task-055, task-059, task-067, task-074, task-079, task-090)',
     () => {
       const result = validate(['--tree', REPO_ROOT], { mode: 'publication' });
       assert.equal(result.code, 0, result.lines.join('\n'));
       assert.ok(result.lines.includes(
-        'matrix: publication, 18 runs, 0 failed, tolerance applied: none'),
+        'matrix: publication, 22 runs, 0 failed, tolerance applied: none'),
       result.lines.join('\n'));
     });
 

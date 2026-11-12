@@ -35,6 +35,7 @@ import type { VersionRequirements } from './range';
 import { parseEntry } from './requirements';
 import { ResolveError, forbiddenBy, resolve } from './resolve';
 import type { ResolvedPack } from './resolve';
+import { withStandIns } from './preset-stand-ins';
 import { repositorySchemas } from './schemas';
 import { secretProblems } from './secret-rules';
 import { presetChecks } from './tree-rules';
@@ -75,6 +76,8 @@ interface Composition {
   dropped?: string[];
   /** The skip line's reason, when not the lint's. */
   skipReason?: string;
+  /** A preset of the tree, or its leg: its unset required parameters get stand-ins (task-090). */
+  standIns?: boolean;
   /** Resolved and composed on the overlay's merged tree (task-046). */
   overlay?: boolean;
   /** One of the overlay's compositions or its leg: its packs count as reached (criterion 3). */
@@ -570,7 +573,7 @@ ValidateResult {
       continue;
     }
     try {
-      compositions.push(presetComposition(args.tree, file));
+      compositions.push({ ...presetComposition(args.tree, file), standIns: true });
     } catch (error) {
       unjudged = true;
       fail(error instanceof YamlError && error.reason !== 'syntax' ? 2 : 1, messageOf(error));
@@ -685,6 +688,8 @@ ValidateResult {
         }
         params[name] = value;
       }
+      // spec-001 §15 (task-090): last, below the preset's values and --param.
+      if (composition.standIns === true) params = withStandIns(params, packs);
     } catch (error) {
       unjudged = true;
       fail(1, `${label}: ${mapped(composition, messageOf(error))}`);
@@ -783,6 +788,7 @@ ValidateResult {
         continue;
       }
       const result = runOne({ label, entries, preset, dropped,
+        ...composition.standIns === true ? { standIns: true } : {},
         ...composition.overlay === true ? { overlay: true } : {},
         ...composition.reaches === true ? { reaches: true } : {} });
       record(result.packs, result.ran);

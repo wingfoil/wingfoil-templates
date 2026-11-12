@@ -1157,6 +1157,12 @@ parameters: {}
   exactly one methodology, without it at most one, which contributes no `delivery` (§3, §6.5).
 - `parameters` may set only generic values. A project value, such as a name or a person, is never in
   a preset (`pack-authoring`).
+- A preset need not set `base`'s required parameters (`project_name`, `approver_name`,
+  `approver_email`, `agent_name`). The validation (`npm run validate`, `validate:publication`,
+  `publish:pack`) composes it with a fixed stand-in value for each of them that neither the preset
+  nor `--param` sets, and gives a preset's leg the same stand-ins for the packs it holds; any other
+  required parameter with no default still needs a value. The adopter gives the real values at
+  `init`. A stand-in is never written to a preset or to a pack (task-090).
 - `profile` names the adoption profile it serves (`docs/01_vision/04_personas.md` §2).
 - A preset has no version. It is a curated pointer to version ranges, and its history is git's.
 - Every preset is part of the compatibility matrix of every pack it contains
@@ -1303,7 +1309,9 @@ check the rest, and the composer refuses what they reject.
 - the resolved packs satisfy the cardinalities of §3: with `software`, exactly one methodology;
   without it, at most one methodology and no phase pack; at most one pack per slot, team-mode and
   stage;
-- every parameter value passes the type of the parameter it sets (§8.1).
+- every parameter value passes the type of the parameter it sets (§8.1);
+- a required parameter of `base` the preset does not set is composed by the validation with its
+  stand-in (§15); the stand-ins are the validation's, not the composer's (§17 unchanged).
 
 **Transitions:**
 - `id` is `<from name>-to-<to name>`;
@@ -1552,3 +1560,8 @@ check the rest, and the composer refuses what they reject.
   documented composition (task-087 ruling 3); §18, `conditional`'s `with` naming a pack directory
   of the tree (task-085), and the waiver heuristic as a review list judged at `pack-release-cycle`
   › `prepare` (plan-066 ruling 4, task-086). The note above on these readings is folded back.
+- 2026-11-12, task-090 (plan-070 point 2, the approver's option (A) and OK of 2026-11-12, the
+  merge OK approving the text): §15 gains the bullet on `base`'s required parameters in a preset,
+  composed by the validation with stand-in values (`src/preset-stand-ins.ts`), any other required
+  parameter still needing a value, and §18's **Presets** a line naming them the validation's; §17
+  unchanged. No schema change, so no feedback note.
