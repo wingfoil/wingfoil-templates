@@ -334,3 +334,6 @@ references that resolve and back-references. It is opened as a tooling task (`pa
   on how an entry's directive reaches an agent, shared with dl-011; `task` in the default
   outcomes; W10's order cited as the sequencer 1.6 writes it, with the approver's choice of the
   adoption last.
+- 2026-11-12: re-review of the amendment: approve, two wording nits applied (the choices proposed
+  with the amendment for the approver to confirm at the ruling; dl-013 D3's `release` possibly
+  not applicable). Ready for the ruling, in the order dl-012, dl-011, dl-013.

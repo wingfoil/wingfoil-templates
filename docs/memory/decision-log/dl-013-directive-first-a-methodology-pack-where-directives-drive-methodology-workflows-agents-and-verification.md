@@ -177,7 +177,7 @@ pack moves to them.
 
 A Memory type, proposed name **`intent-directive`**, ids `drv-{n}-{slug}` (the name avoids
 WingFoil's `type: directive`; it is checked against WingFoil's reserved names in the design phase,
-as `service` was). Frontmatter, all required:
+as `service` was). Frontmatter, all required (`release` possibly not applicable, D11):
 - `level` (default levels `project | strategic | domain | feature | implementation`);
 - `parent` — the directive it derives from, or the sentinel **`root`** at the top level (WingFoil
   refuses an empty required field at `submit`; whether `not_applicable_allowed`, spec-001 §7.5,
@@ -450,6 +450,9 @@ Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`:
   id, never by overriding `directive-methodology` in `custom/` (§10.1); ruling order dl-012,
   dl-011, dl-013. Review of the amendment: approve after amendments, applied: a `release` field on
   `intent-directive`, selected by the dispatch's `where`; how a type workflow is run as a design
-  question, DF-6 tagged [E][A]; W15 in M5 (the coordinator's choice, to be confirmed by the
-  approver), waiting for M3 only, with M5 created by W15 alone if dl-011 were rejected; the
-  preset as part of F4.11; no agent email in `base` 2.0.1's DNA; lines rewrapped.
+  question, DF-6 tagged [E][A]; W15 in M5 (proposed with the amendment, for the approver to
+  confirm at the ruling), waiting for M3 only, with M5 created by W15 alone if dl-011 were
+  rejected; the preset as part of F4.11; no agent email in `base` 2.0.1's DNA; lines rewrapped.
+- 2026-11-12: re-review of the amendment: approve, two wording nits applied (the choices proposed
+  with the amendment for the approver to confirm at the ruling; dl-013 D3's `release` possibly
+  not applicable). Ready for the ruling, in the order dl-012, dl-011, dl-013.

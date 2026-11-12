@@ -410,8 +410,12 @@ Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`, when the sequencer
   WingFoil release that provides `pack-install`, in a milestone between M3 and M4, not W11;
   F4.10; ruling order dl-012, dl-011, dl-013. dl-025 D3's request (the note of 2026-11-05) is
   applied. Review of the amendment: approve after amendments, applied: no work before W16 and M5
-  created with its row (the coordinator's choices, to be confirmed by the approver); the hand-off
+  created with its row (proposed with the amendment, for the approver to confirm at the ruling);
+  the hand-off
   pointed to by the AGENTS.md section, no unconditional file naming the entry's files, and how an
   entry's directive reaches an agent shared with dl-012 D8; `init --template` since 0.2.2; the
   pack set's cardinalities per spec-001 §3; (c) against (e), and (e) stated as the approver's
   choice.
+- 2026-11-12: re-review of the amendment: approve, two wording nits applied (the choices proposed
+  with the amendment for the approver to confirm at the ruling; dl-013 D3's `release` possibly
+  not applicable). Ready for the ruling, in the order dl-012, dl-011, dl-013.
