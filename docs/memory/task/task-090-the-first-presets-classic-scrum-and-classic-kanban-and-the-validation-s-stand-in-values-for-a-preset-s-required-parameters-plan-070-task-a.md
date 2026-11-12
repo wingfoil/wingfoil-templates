@@ -92,7 +92,45 @@ What exists (`main` at plan-070's `submit`):
 
 ## Design
 
-<!-- Filled at the design phase. -->
+- **The module** `src/preset-stand-ins.ts` (Acceptance 2): `STAND_INS`, the fixed values by
+  parameter name, and `withStandIns(params, packs)`, which returns `params` with a stand-in added
+  for each parameter a resolved pack declares with no default, absent from `params` and named in
+  `STAND_INS`; any other required parameter is left unset, so the composer still fails on it
+  (`src/parameters.ts`). The values, for `base`'s four (the only required parameters with no
+  default in the published packs):
+  - `project_name: "Preset Check"`;
+  - `approver_name: "Preset Approver"`;
+  - `approver_email: "approver@preset-check.example"`;
+  - `agent_name: "Preset Agent"`.
+  Each a `string`, with no `{{`, no `<`, `>` or line break; WingFoil 0.3.0 and 0.3.2 check no
+  member's email format.
+- **`src/validate.ts`:** `Composition` gains `standIns?: boolean`, set only by the loop over
+  `presets/*.yaml` (not by the examples', the overlay's or `entries`' loops). `runOne` applies
+  `withStandIns` to `params` after the preset's values and `--param` are in, when the
+  composition's `standIns` is true; `composition.preset` is untouched, so the `--param` refusal,
+  the dropped list (plan-039 R5) and the leg's filtered values read the preset alone. The leg's
+  call of `runOne` passes `standIns: composition.standIns`; ruling 4's `unset` check is
+  unchanged (it reads the preset's values and `--param`, and a stand-in name is `base`'s, never
+  an added pack's: one pack declares each name, spec-001 §8.1).
+- **The red steps** (Acceptance 1), each committed and seen failing before what makes it pass:
+  1. the pinned counts (Acceptance 4): `tests/validate-2-run.test.ts`'s numbers raised by the
+     two presets, failing on the current tree;
+  2. the stand-ins (Acceptance 2): a new `tests/validate-10-presets.test.ts` (the next number of
+     the split, so the shards stay alternated) with, on a tree written by the test: a preset with
+     no values composing (exit 0) in branch and in publication mode, `dna.yaml` holding the four
+     stand-ins; a preset value and a `--param` each winning; an example with no values still
+     failing; a `[-pack]` leg of a preset composing with the stand-ins and a `[+pack]` leg with
+     an unset parameter skipped; `npm run compose` with no value failing; and in
+     `tests/publish.test.ts` one case publishing a pack whose only composition is a preset with
+     no values.
+- **The content** (Acceptance 3, 5), after the code: the two presets, `catalog.yaml`'s
+  `presets[]`, `npm run index`; then `tests/catalog.test.ts` run unchanged.
+- **spec-001** (Acceptance 6): §15, a bullet after `parameters`: "A preset need not set a required
+  parameter: the validation (`npm run validate`, `validate:publication`, `publish:pack`) composes
+  it with a fixed stand-in value for each required parameter with no default that neither the
+  preset nor `--param` sets (task-090), and the adopter gives the real value at `init`. A
+  stand-in is never written to the preset or to a pack"; §18, under **Presets**, a line naming
+  the stand-ins as the validation's, not the composer's (§17 unchanged); an Execution Note.
 
 ## Execution Notes
 
