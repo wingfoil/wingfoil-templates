@@ -102,3 +102,7 @@ this plan's body, their run read in the Execution Notes before `submit`.
 - 2026-11-12: re-review: approve, two nits, applied: the features rows in F-number order, F1.4
   "directly or through its own sub-workflows" (dl-026 D1).
 - 2026-11-12: the approver's OK on both tables as written, the W8 exception kept rather than split.
+- 2026-11-12: `main`'s CI before this plan (dl-038 C3), on `69f6bfea` (plan-068's close, the owed
+  row on dl-024 and dl-025 Closed, task-089's `submit` and this plan's body), run 43230493794,
+  `success`: `validate (22.12.0, 1)` 6 min 41 s, `(22.12.0, 2)` 6 min 4 s, `(22.21.0, 1)` 7 min
+  41 s, `(22.21.0, 2)` 8 min 38 s.
