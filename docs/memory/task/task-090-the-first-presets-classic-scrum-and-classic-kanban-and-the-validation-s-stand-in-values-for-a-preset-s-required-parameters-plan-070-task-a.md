@@ -174,8 +174,8 @@ What exists (`main` at plan-070's `submit`):
   files and `presets/classic-scrum.yaml` 37, byte-identical, `workflow list`, `dna show` and
   `directives list` passing on 0.3.0 and 0.3.2.
 - 2026-11-12, `npm test` after the content: 1305 tests, 1304 pass, 1 fail:
-  `tests/check-packs.test.ts` pins this repository's lint count too (`lint: checked 74 files`), a pinned test neither plan-070
-  nor the body review named; it failed red by assertion on the content's commit (`76` against
-  `74`), the same two preset files as Acceptance 4's lint count, and is raised to 76 with its name
-  in the same commit as these notes (a departure from Acceptance 1's order, recorded). Rerun: the
-  file's 127 tests pass. `npm run lint`: 0 problems.
+  `tests/check-packs.test.ts` pins this repository's lint count too (`lint: checked 74 files`), a
+  pinned test neither plan-070 nor the body review named; it failed red by assertion on the
+  content's commit (`76` against `74`), the same two preset files as Acceptance 4's lint count, and
+  is raised to 76 with its name in the same commit as these notes (a departure from Acceptance 1's
+  order, recorded). Rerun: the file's 127 tests pass. `npm run lint`: 0 problems.
