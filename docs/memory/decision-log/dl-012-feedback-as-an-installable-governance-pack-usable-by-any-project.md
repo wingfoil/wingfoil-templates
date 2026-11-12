@@ -34,23 +34,30 @@ What already exists:
 - **dl-003 D6** puts the feedback channel to WingFoil in `governance/wingfoil-dogfood`, because it
   serves only the repositories that dogfood WingFoil: one target (WingFoil), one format, one
   direction. task-010 (approved) later recorded that "`base` will ship `wingfoil-cli` and the README
-  skeleton" instead of the old `wingfoil-feedback` directive;
+  skeleton" instead of the old `wingfoil-feedback` directive; dl-022 S5 settled it: the WingFoil
+  CLI rules and the feedback inbox stay in `governance/wingfoil-dogfood`;
 - **WingFoil dl-163** (consumer projects' feedback sources) fixes the format of a note sent to
   WingFoil: one file per note, exactly six frontmatter fields, statuses other than `open` set only
   by a sync from what WingFoil published. This repository applies it in `docs/wingfoil-feedback/`
   with the `wingfoil-cli` directive, whose rules 1–7 are kept word for word across the feedback
   sources (task-010);
-- `base` ships the capture workflows (`bug-ingest`, `decision-log-ingest`, …) and `retrospective`
-  (dl-003 D2), which are where feedback turns into change. `retrospective` is not a slot and no
-  other pack may change it (spec-001 §9, O6);
-- the `governance` axis has cardinality "many" (dl-003 D6) and is composed after the methodology,
-  the phase and the blueprint packs (spec-001 §7.1), so only `governance`, `team-mode` and `stage`
-  packs may require a governance pack;
-- spec-001 format 1 has scalar parameter types only (`string`, `integer`, `boolean`, `path`,
-  `pattern`, §8.1), each parameter declared by one pack and set only by a default, a preset or the
-  composition; `memory.yaml` has no allowed-values key (§7.5); WingFoil 0.2.2 checks only that
-  required frontmatter fields are present at `submit`, and nothing evaluates a workflow's `checks`
-  strings. The validation command checks packs and compositions, not Memory elements.
+- `base` ships `decision-log-ingest`, `retrospective` and `governance-evolution`, the last for any
+  change of the project's governance (dl-022 S2, S4); `bug-ingest` and `adr-ingest` are
+  `software`'s (dl-022 S3), present only in a composition with `software`. These are where
+  feedback turns into change. `retrospective` is not a slot and no other pack may change it
+  (spec-001 §9, O6);
+- the `governance` axis has cardinality "many" (dl-003 D6) and is composed after `software`, the
+  methodology, the phase and the blueprint packs (spec-001 §7.1), so only `governance`,
+  `team-mode` and `stage` packs may require a governance pack (only `team-mode` and `stage` may
+  name one in a conditional entry's `with`, §6.5); a pack that does not require `software` may
+  carry an entry `with: software@^1` (§6.5);
+- the parameter types are scalar only (`string`, `integer`, `boolean`, `path`, `pattern`, §8.1),
+  in format 2 of `pack.yaml` as in format 1, each parameter declared by one pack and set only by a
+  default, a preset or the composition; `memory.yaml` has `fields`, `lists` and
+  `not_applicable_allowed` (§7.5) but no allowed-values key; WingFoil 0.3.2 executes workflows
+  (`compat.yaml`: `workflow-engine`) and checks required frontmatter fields at `submit`; whether it
+  evaluates a workflow's `checks` strings is re-checked in the design phase (D8). The validation
+  command checks packs and compositions, not Memory elements.
 
 ## Options
 
@@ -76,11 +83,12 @@ What already exists:
 ### D1 — The capability
 
 A governance pack, catalog id **`governance/feedback`** (Memory element `pack-governance-feedback`;
-the name is the approver's to confirm). It **requires nothing but `base`**; `conflicts` is empty.
-It ships:
+the name is the approver's to confirm). It **requires nothing but `base`** (`base@^2`, with
+`requires_capabilities: [workflow-engine]` as every published pack); `conflicts` is empty. What
+uses `software` is in one conditional entry, `with: software@^1` (spec-001 §6.5; D3). It ships:
 - a `fragments/memory.yaml` defining the type **`feedback`** (path and id pattern as parameters
-  with defaults) and its Memory template. States, with `base`'s names (dl-003 D2) and no `waiting`
-  state (dl-003 D3):
+  with defaults) and its Memory template. States, with `base`'s names where they exist (dl-022 S2,
+  dl-015: the default machine `draft → pending → approved`) and no `waiting` state (dl-003 D3):
   - `sequence: [draft, pending, triaged, closed]`, `gates: { pending: { reject: draft } }`;
   - `draft → pending`: `submit` by the capturing role, once source and context are recorded;
   - `pending → triaged`: `approve` by the approver — the **triage**: classification confirmed and
@@ -95,9 +103,8 @@ It ships:
   classification rules, the routing table, the trace both ways, who may close an item;
 - `README.md` and `CHANGELOG.md`.
 
-Roles: the pack uses roles `base` ships (expected: a facilitator captures and closes, the approver
-triages); if `base`'s charter names them differently, role names are `string` parameters
-(spec-001 §8.2). It ships no executable logic and names no methodology.
+Roles: the pack uses roles `base` ships: `facilitator` captures and closes, `approver` triages
+(`base`'s roles fragment and workflows). It ships no executable logic and names no methodology.
 
 ### D2 — Structure and classification
 
@@ -111,23 +118,29 @@ Each feedback element records, in frontmatter:
 - `resulting` — the id or path of the element the item was routed to, set before `closed`.
 
 The allowed values are configurable per project. How a pack declares a configurable list of values,
-and who checks that a value is allowed, is a question for the design phase (D8): format 1 has no
-list type.
+and who checks that a value is allowed, is a question for the design phase (D8): format 2, like
+format 1, has no list type (spec-001 §8.1), and `memory.yaml` no allowed-values key (§7.5).
+Without `software` the default `outcome` list has no `bug` (D3).
 
 ### D3 — Routing into the existing governance
 
-The review workflow routes only into what the composition is sure to have — `base`'s capture
-workflows and types — or into an upstream channel:
-- `bug` → `bug-ingest`; `decision-log` → `decision-log-ingest` (a decision-log is also the path for
-  a change of the governance: a configuration change cites it);
-- a task: only if `base` defines a `task` type, which `base`'s charter confirms; otherwise a
-  decision-log that asks the methodology's owner to open one;
+The review workflow routes only into what the composition is sure to have — `base`'s workflows
+and types, and `software`'s only through the conditional entry — or into an upstream channel:
+- `decision-log` → `decision-log-ingest`, for a decision that changes no governance; a change of
+  the governance → `base`'s `governance-evolution`, whose decision-log the configuration change
+  cites (dl-022 S4);
+- `bug` → `software`'s `bug-ingest`, **only in a composition with `software`**: the route (its
+  directive or workflow) ships in the entry `with: software@^1` (spec-001 §6.5), so the pack still
+  requires only `base`. Without `software`, the default `outcome` list has no `bug`, and an item
+  that would be a bug routes to a decision-log naming it;
+- a task: a `task` element (`base`'s type, `base` 2.0.1), created in `draft` and cited back;
 - `upstream-note` → the channel an **upstream pack** declares (below);
 - an outcome a project adds (D2) and that has no route of its own becomes a decision-log naming the
   outcome, so nothing is lost.
 
-`base`'s `retrospective` is not changed by this pack. Reading open feedback in the retrospective's
-exploration, generically, is an input to `base`'s charter, recorded here for it.
+`base`'s `retrospective` is not changed by this pack. Its exploration reads open feedback through
+the pack's `feedback` directive, bound to `facilitator`; `governance-evolution`'s `assess` already
+takes feedback among its inputs (dl-022 S4).
 
 **Upstreams.** An upstream is added by its own governance pack that `requires` this one and ships
 its channel: the workflow or directive that turns a routed item into a note in the upstream's
@@ -146,11 +159,11 @@ ledger like any other.
 
 ### D4 — Relation with the initialization template (dl-011)
 
-`phase/inception/guided-init`'s Reconfigure WingFoil phase treats installable governance packs as
-part of the initial configuration. The feedback pack is the first one: the areas users (A2),
-policies (A5), team and roles (A7: who triages), QA (A11), success criteria (A13) and dependencies
-(A14: upstreams) decide whether it is proposed and with which kinds, targets and upstreams. Feedback
-collected afterwards reaches the configuration through a decision-log (D3) that a later
+`governance/guided-init`'s Reconfigure WingFoil phase treats installable governance packs as part
+of the initial configuration. The feedback pack is the first one: the areas users (A2), policies
+(A5), team and roles (A7: who triages), QA (A11), success criteria (A13) and dependencies (A14:
+upstreams) decide whether it is proposed and with which kinds, targets and upstreams. Feedback
+collected afterwards reaches the configuration through `governance-evolution` (D3), which a later
 reconfiguration follows (dl-011 D5): that closes the flow initialization → packs → feedback →
 governance → evolution. The scenario that shows it is dl-011 AC-10.
 
@@ -158,13 +171,16 @@ governance → evolution. The scenario that shows it is dl-011 AC-10.
 
 Each criterion says who checks it: **[V]** the validation command or a test under `tests/`;
 **[E]** the fixture-element checks of D8; **[A]** the approver. Fixtures live under
-`tests/fixtures/examples/feedback/<example>/` (dl-014) and run in the matrix's self-test mode
-(dl-009) while no released WingFoil accepts the `format:` key.
+`tests/fixtures/examples/feedback/<example>/` (spec-002 §2.4) and run in the compatibility matrix
+on the released WingFoils `compat.yaml` lists (spec-001 O10: WingFoil 0.3.0 accepts the `format:`
+key). Before the charter is accepted and before a version is published, the pack's workflows are
+run on the real engine (dl-032 E2, E3: `check:runs`, a scenario starting `feedback-ingest` and
+`feedback-review`).
 
-- **FA-1 Installable [V].** `base` + `governance/feedback` composes with each first-scope
-  methodology (fixture methodologies until they are published), with and without
-  `team-mode/agent-first` and a blueprint; each composition validates (F3.3) and composes
-  deterministically (F3.4). `requires` names only `base@^<major>`; `conflicts` is empty.
+- **FA-1 Installable [V].** `base` + `governance/feedback` composes with `methodology/scrum` and
+  `methodology/kanban`, with and without `software` (the `bug` route present only with it), with
+  and without `team-mode/agent-first` and a blueprint; each composition validates (F3.3) and
+  composes deterministically (F3.4). `requires` names only `base@^2`; `conflicts` is empty.
 - **FA-2 Reusable [V].** No default, parameter value or rule assumes a specific upstream,
   methodology, project or person; every path, id pattern and value list is a parameter with a
   default; two fixtures with different parameter sets compose and validate; the F3.5 lint rules
@@ -179,14 +195,16 @@ Each criterion says who checks it: **[V]** the validation command or a test unde
 - **FA-6 Available to the governance [V][E].** The review workflow routes only into workflows the
   composition declares [V]; every closed item names its `resulting` element, and that element cites
   the feedback id back — in frontmatter for `base`'s types, in the body for an upstream note [E].
-- **FA-7 Evolution [E][A].** A fixture shows both paths: feedback → decision-log citing it → a
-  `custom/` change whose commit or element cites the decision-log (governance evolution); feedback
-  → bug citing it (product evolution).
+- **FA-7 Evolution [E][A].** A fixture shows both paths: feedback → `governance-evolution`'s
+  decision-log citing it → a `custom/` change whose commit or element cites the decision-log
+  (governance evolution); with `software`, feedback → bug citing it (product evolution); without
+  it, feedback → a decision-log naming the would-be bug.
 - **FA-8 Upstream [V][E].** A fixture upstream pack that requires `governance/feedback` turns a
   routed item into a note with the dl-163 subset: exactly the six frontmatter fields with allowed
   values, `## Observed` and `## Expected`, no Replies section. The checks of
   `tests/wingfoil-feedback.test.ts` that belong to dl-163, rather than to this repository's ledger
-  and first-line conventions, are factored out so they run on the fixture.
+  and first-line conventions, are factored out so they run on the fixture (the charter checks what
+  `tests/feedback-note.test.ts` and its support already factor).
 
 FA-9 of the first capture moved to dl-011 (AC-10).
 
@@ -200,39 +218,49 @@ Applied after approval, under the follow-up plan of plan-020, each document bump
   one. Recorded by this decision-log; dl-001 and dl-003 stay as approved. Per dl-001 D7 the pack
   enters the official catalog with a maintained line; the approver confirms the commitment at the
   charter;
-- **`06_features.md`:** feature **F4.9**, "`governance/feedback`: installable, configurable feedback
-  capture, triage and routing into the governance" (journeys J5, and J10 if dl-011 is approved;
-  Value H, Effort M, Uncertainty **H**: the format extensions of D8); F4.2's description gains
-  "built on F4.9";
-- **`07_sequencer.md`:** F4.9 joins **W9** (dogfood and adoption), before F4.2 which requires it;
-  W9 then holds three features with one of high uncertainty, within the sequencer's rules. The M2
-  row follows: goal "`base`, `governance/feedback` and `governance/wingfoil-dogfood` published",
-  feature count 5 → 6, and W9's "Ends with";
-- **`08_mvp-canvas.md`:** the MVP content (proposal list and features) gains `governance/feedback`;
-- the feedback note owed to WingFoil when the pack is published is the one `wingfoil-cli` rule 8
-  already requires for a pack WingFoil bundles; no other note now.
+- **`06_features.md`** (1.6 → 1.7): feature **F4.9**, "`governance/feedback`: installable,
+  configurable feedback capture, triage and routing into the governance" (journeys J5, and J10 of
+  dl-011, ruled after this element; Value H, Effort M, Uncertainty **H**: the design questions of
+  D8); F4.2's description gains "built on F4.9";
+- **`07_sequencer.md`** (1.6 → 1.7): F4.9 joins **W10** (Kanban, presets, dogfood and adoption),
+  before F4.2 which requires it. W10 then holds **four features** (F4.3 `kanban`, F2.6, F4.2,
+  F4.9) with one of high uncertainty: one over the rule of three, accepted by the approver on
+  2026-11-12 and recorded as an exception, like W8's. W10's state row, its "Ends with"
+  (`governance/feedback` published) and its order (F4.9 before F4.2) follow; the M3 row's feature
+  count goes 7 → 8;
+- **`08_mvp-canvas.md`** (1.4 → 1.5): the MVP content (proposal list and features) gains
+  `governance/feedback`; the feature count 35 → 36; the main-uncertainty list gains W10;
+- **`docs/owed-items.md`:** the row "dl-012's F4.9 placement" closes with this ruling;
+- no feedback note of its own when the pack is published: no pack is bundled in WingFoil
+  (dl-021 R1, F5.4); a change to `schema/` that the design phase makes still produces one
+  (`wingfoil-cli` rule 8).
 
 Configuration changes of this repository's `.wingfoil/`: none now. This repository adopts the pack
-with `base` in W9 (dl-003 D10); that adoption plan lists the knock-on effects: `wingfoil-cli` moves
-from `custom/` to the dogfood pack's `built-in/` (and `tests/wingfoil-feedback.test.ts`'s directive
-path with it), the comments that name the feedback inbox in `retrospective.yaml` and
-`bug-ingest.yaml`, and `docs/wingfoil-feedback/README.md`.
+in W10, with `base`, `software`, `methodology/kanban` and `governance/wingfoil-dogfood`, as the
+last step of W10, after the presets, the dogfood pack and the pack release round (`07_sequencer.md`
+1.6, W10's order; dl-003 D10 as plan-052 ruling 7 reorders it). That adoption plan lists the
+knock-on effects: `wingfoil-cli` moves from `custom/` to the dogfood pack (composed into
+`built-in/` in format 1, into the `remote` class once WingFoil fixes it, dl-021 R3), and
+`tests/wingfoil-feedback.test.ts`'s directive path with it; this repository's own
+`retrospective.yaml` and `bug-ingest.yaml`, whose comments name the feedback inbox, give way to
+`base`'s and `software`'s; `docs/wingfoil-feedback/README.md`.
 
 ### D7 — Elements opened later
 
 Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`, when the sequencer reaches the pack:
 - **pack charter** `pack-governance-feedback` (`charter` phase), with D1–D5 as scope and acceptance;
-  its README follows dl-014 D1 if approved, otherwise spec-001 §6.1;
+  its README follows spec-002 §2; accepted after the run of dl-032 E2;
 - **`design` phase: required** (D8);
 - **tasks** (`author` phase, `pack: pack-governance-feedback`), proposed:
   1. the `feedback` Memory-type fragment, its states and its template (FA-3, FA-4);
   2. the capture workflow with the triage gate (FA-3, FA-4, FA-5);
-  3. the review workflow and the routing table into `base`'s workflows (FA-6, FA-7);
+  3. the review workflow and the routing table into `base`'s workflows, the `bug` route in the
+     entry `with: software@^1` (FA-6, FA-7);
   4. the `feedback` directive; parameters with defaults; roles (FA-2);
   5. the upstream mechanism and the fixture upstream pack (FA-8);
   6. composition fixtures across methodologies and parameter sets, and the evolution fixture (FA-1,
      FA-2, FA-7);
-  7. the pack README, with its examples as fixtures (dl-014 D1);
+  7. the pack README, with its examples as fixtures (spec-002 §2.4);
 - **`governance/wingfoil-dogfood`'s charter** written as an upstream pack (D3);
 - **the tooling task of D8** (fixture-element checks).
 
@@ -240,25 +268,28 @@ Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`, when the sequencer
 
 **Design (a tech-spec, or an amendment of spec-001 through one).** Its questions:
 - a parameter that holds a list of allowed values (a list type, or a convention over `string`), and
-  how a preset sets it;
+  how a preset sets it; format 2 has none (spec-001 §8.1); `memory.yaml`'s `fields`, `lists` and
+  `not_applicable_allowed` (§7.5) and WingFoil's lack of typed references (F-043) are inputs;
 - how an upstream pack declares its channel to the feedback pack;
-- whether `base`'s charter defines `task` (D3).
+- the shape of the entry `with: software@^1` that carries the `bug` route (D3), and whether
+  WingFoil 0.3.2 evaluates any `checks` string the workflows would rely on.
 
 The same questions arise for dl-013 (directive levels and types, task fields); one tech-spec answers
-them for both, opened by the first of the two packs the sequencer reaches.
+them for both, opened by this pack, the first of the two the sequencer reaches (W10).
 
 **Fixture-element checks (tooling).** A tooling capability, outside any pack: a test helper that
 reads the Memory elements of a fixture project and checks required fields, allowed values,
 references that resolve and back-references. It is opened as a tooling task (`pack: ""`) through
-`tooling-change` once plan-015 is `done`, before the first pack that uses it, and serves dl-011,
-dl-012 and dl-013 (their **[E]** criteria).
+`tooling-change` before the first pack that uses it, and serves dl-011, dl-012 and dl-013 (their
+**[E]** criteria).
 
 ## Execution Notes
 
 - Captured 2026-10-09 under plan-020, on the approver's request in chat; no implementation in this
   step.
-- Open for the approver at the ruling: the pack name; the state machine of D1; the owner of
-  `wingfoil-cli` (D3), to be aligned with the other feedback sources.
+- Open for the approver at the ruling: the pack name; the state machine of D1. The owner of
+  `wingfoil-cli` (D3) is settled by dl-022 S5.
+- Ruling order: dl-012 first, then dl-011 (which cites it in AC-10), then dl-013 (its preset).
 - 2026-10-09: amended while `pending` after an independent review, as the approver asked: design
   phase required and its questions listed, "uses only spec-001 mechanisms" removed (review N1);
   routing limited to `base`'s workflows and upstream packs, retrospective left to `base`'s charter
@@ -277,3 +308,15 @@ dl-012 and dl-013 (their **[E]** criteria).
   dl-021 R1: no pack is bundled in WingFoil's npm package, so the publication of
   `governance/feedback` owes WingFoil no note of its own. The text is re-checked at the ruling, as
   the note of 2026-10-09 says; the element stays `pending`.
+- 2026-11-12: re-checked against WingFoil 0.3.2 and the repository at `6d53241f` before the ruling
+  (plan-020), amended while `pending`: `base`'s workflows and roles as published (dl-022 S2, S4),
+  `bug-ingest` being `software`'s (S3); governance changes routed to `governance-evolution`;
+  `task` confirmed as `base`'s type; the owner of `wingfoil-cli` settled (dl-022 S5); format 2
+  read (still no list type; the conditional entry); self-test mode dropped (spec-001 O10) and the
+  runs of dl-032 added; FA-1 against the published methodologies, with and without `software`;
+  README per spec-002; the bundling line folded in (dl-021 R1); W9 → W10, M2 → M3, the adoption at
+  the end of W10; amendments retargeted (features 1.7, sequencer 1.7, canvas 1.5, owed row). The
+  approver's rulings of 2026-11-12 recorded: the `bug` route ships in an entry
+  `with: software@^1`, without `software` a would-be bug routes to a decision-log, the pack still
+  requiring only `base`; W10 holds four features (F4.3, F2.6, F4.2, F4.9) as a recorded exception;
+  ruling order dl-012, dl-011, dl-013.

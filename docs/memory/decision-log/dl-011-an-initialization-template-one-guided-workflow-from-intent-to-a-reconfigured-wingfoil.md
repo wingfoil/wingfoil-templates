@@ -33,20 +33,31 @@ What already exists:
 - the Adopter's goal is "a working process in one `init` that fits the team and the project"
   (`04_personas.md`, Persona 1, real from WingFoil v0.4); J6 starts a project **from a preset**,
   which presumes the adopter already knows which packs fit (`05_journeys.md`);
-- WingFoil's `init` asks one question (feedback note F-006), and nothing updates the configuration
-  after `init` (F-007; WingFoil dl-138 Q2). In 0.2.2 a project file in `custom/` overrides a pack
-  file only for directives (F-007, WingFoil dl-037), and workflows cannot be patched (spec-001 O6).
-  The reference composer composes packs but does not upgrade a project or merge with its own files
-  (adr-001; spec-001 §1). This repository is not the CLI (`03_is-isnot.md`, IS NOT);
+- WingFoil's `init` asks one question (feedback note F-006); 0.3.x adds `init --template` (Scrum or
+  Kanban) but no way to select a preset of this catalog (F-030), and nothing updates the
+  configuration after `init` (F-007; WingFoil dl-138 Q2). WingFoil lets a project file in `custom/`
+  override a pack file only for directives (F-007, WingFoil dl-037), and this repository forbids
+  even that: a project's `custom/` directive declares its class, only adds or tightens and never
+  reuses a pack directive's id (spec-001 §10.1; dl-025 finding 5); workflows cannot be patched
+  (spec-001 O6). The reference composer composes packs but does not upgrade a project or merge
+  with its own files (adr-001; spec-001 §1). This repository is not the CLI (`03_is-isnot.md`, IS
+  NOT);
 - the capability `pack-install` ("init, pack add and upgrade install packs from this repository")
-  is in this repository's capability vocabulary (spec-001 §12); no released WingFoil provides it
-  yet;
-- the pack model has a `phase/<slot>` axis whose `inception` slot is filled by a phase pack shipping
-  `workflows/inception.yaml` with `name: inception`, `kind: sub` (dl-001 D1, dl-003 D4 and D11;
-  spec-001 §9). The first scope has one inception method, `lean-inception` (dl-001 D5), which frames
-  a product but does not touch the governance;
+  is in this repository's provisional capability vocabulary (spec-001 §12, dl-021 R4); no released
+  WingFoil provides it (`compat.yaml`: 0.3.2 has `workflow-engine` only), and WingFoil's v0.4 plans
+  for it are requests, not commitments (dl-021);
+- `base` serves every governed project, software or not; the life cycle (`sw-life-cycle`), its
+  slots and their defaults, `inception` included, are `software`'s, and a composition without
+  `software` has no slot and no phase pack (dl-022 S1, S3; spec-001 §3, §9). A phase pack filling
+  `inception` must require `software`. The first scope has one inception method, `lean-inception`
+  (dl-001 D5), which frames a product but does not touch the governance;
+- a change of the project's governance goes through `base`'s `governance-evolution` (assess,
+  propose, approve, apply; dl-022 S4); `decision-log-ingest` is for decisions that change no
+  governance;
+- a pack may carry a conditional entry `with: software@^1` whose workflows and directives count
+  only in a composition with `software` (spec-001 §6.5);
 - declaring which method a phase follows is pending (dl-007, F-016): a pack spells its method out
-  in its own directives.
+  in its own directives and in its README's "Sources and adaptations" (spec-002 §2.1).
 
 ## Options
 
@@ -61,9 +72,11 @@ What already exists:
   - Against: the slot takes one pack, so it excludes `lean-inception` in the same composition (the
     Reconfigure phase can still recommend a product-framing method for later); it needs a
     methodology at `init` (cardinality exactly one), before the questions say which one fits (D6).
-- **(b) The default `inception` of `base`.**
-  - Against: `base` must stay minimal and names no method (dl-003 D2, D11); the capability would
-    become mandatory for every project instead of a choice.
+  - Against, since dl-022: a phase pack requires `software`, so the capability would serve only
+    software projects, while `base` serves every governed project (dl-022 S1).
+- **(b) The default `inception` (`software`'s since dl-022 S3).**
+  - Against: the foundation must stay minimal and names no method (dl-003 D11, dl-022 S1); the
+    capability would become mandatory for every software project instead of a choice.
 - **(c) A new axis or pack kind (`bootstrap`) outside the slots.**
   - Against: an axis is a choice between alternatives (dl-003, option 1); it needs a spec-001
     amendment and a schema change, hence a feedback note (wingfoil-cli rule 8), for no gain over
@@ -72,6 +85,16 @@ What already exists:
   - Against: question logic and governance mapping are process content, which is this repository's
     product. The CLI wizard of F-006 and this pack are complementary: the wizard picks packs, the
     pack asks about the project.
+- **(e) A `governance` pack holding the guided workflow as a `main`**, `governance/guided-init`,
+  requiring only `base`, with what uses `software` (the hand-off into `sw-life-cycle`) in a
+  conditional entry `with: software@^1` (spec-001 §6.5). Added 2026-11-12, after dl-022.
+  - For: it serves every governed project, software or not (dl-022 S1); the `governance` axis
+    takes any number of packs, so it excludes no inception method and no other governance pack; no
+    format or schema change; the non-software path ends in a reconfigured `.wingfoil/` without a
+    life cycle, the software path hands off to `sw-life-cycle`.
+  - Against: a `main` is started on its own, not reached through `sw-life-cycle`'s `inception`, so
+    the hand-off is a second step (D1); an unconditional file cannot name the entry's workflow or
+    directive (§6.5, isolation).
 
 **When the pack is published, given that Reconfigure WingFoil changes the pack set.**
 
@@ -88,23 +111,29 @@ What already exists:
 
 ## Decision
 
-**Proposed: (a) with (i)**, captured with plan-020 on 2026-10-09; option (i) was chosen by the
-approver in chat on 2026-10-09 after the independent review. The approver rules at
-`memory approve`.
+**Proposed: (e) with (i)**, captured with plan-020 on 2026-10-09 as (a) with (i); option (i) was
+chosen by the approver in chat on 2026-10-09 after the independent review, and option (e) in place
+of (a) on 2026-11-12, at the re-check before the ruling. The approver rules at `memory approve`.
 
 ### D1 — The capability
 
-A phase pack, catalog id **`phase/inception/guided-init`** (Memory element
-`pack-phase-guided-init`; the name is the approver's to confirm), `requires: [base@^<major>]`,
-`requires_capabilities: [pack-install]`. It ships:
-- `workflows/inception.yaml`, **`name: inception`, `kind: sub`**, the single guided workflow;
+A governance pack, catalog id **`governance/guided-init`** (Memory element
+`pack-governance-guided-init`; the name is proposed, the approver's to confirm at the charter),
+`requires: [base@^2]`, `requires_capabilities: [workflow-engine, pack-install]`, `conflicts` none.
+It ships:
+- `workflows/guided-init.yaml`, **`name: guided-init`, `kind: main`**, the single guided workflow;
 - a `fragments/memory.yaml` defining the type **`project-definition`** (path and id pattern as
   parameters with defaults; states `draft → pending → approved`, gate on `pending`, reject to
-  `draft`) and its Memory template;
+  `draft`: `base`'s default machine, dl-015) and its Memory template;
 - directives: the **method** (`guided-init-method`: coverage map, round rules, stop criteria, the
   Reconfigure rules of D5) and the **question bank** (`guided-init-questions`, D3), both bound to
-  the role that runs the phases;
-- `README.md` and `CHANGELOG.md`.
+  `facilitator`;
+- a **conditional entry `with: software@^1`** (spec-001 §6.5), present only once the composition
+  holds `software`: the hand-off, proposed as a `main` `guided-init-handoff` and a directive
+  `guided-init-software` (the Reconfigure rules that use `software`'s types and workflows: the
+  first release line, the slot packs' parameters, the first plan of `sw-life-cycle`). Its exact
+  shape is the charter's;
+- `README.md` (spec-002 §2) and `CHANGELOG.md`.
 
 The workflow's phases, each with its `role`, `actions` and `produces` (`pack-authoring`: no empty
 phase):
@@ -118,16 +147,21 @@ phase):
    applicable, and no open question blocks the definition.
 3. **`define`** — the agent completes the project definition (D4) and submits it; **gate**: the
    approver approves it (`pending → approved`) or rejects it back to `draft` and `discover`.
-4. **`reconfigure-wingfoil`** — **Reconfigure WingFoil**, always the last phase (D5). The
-   reconfiguration proposal is a `decision-log` (a `base` type) whose required sections the method
-   directive states; **gate**: the approver approves it; the agent applies it and validates the
-   result. The workflow then hands off to the next phase of the project's `sw-life-cycle`, which
-   runs under the new configuration: the **Execution** step of the cycle.
+4. **`reconfigure-wingfoil`** — **Reconfigure WingFoil**, always the last phase (D5), shaped as
+   `governance-evolution`'s propose, approve and apply (dl-022 S4; a `main` cannot be included).
+   The reconfiguration proposal is a `decision-log` (a `base` type, `draft → in-discussion →
+   ready`) whose required sections the method directive states; **gate**: the approver rules it to
+   `ready`; the agent applies it and validates the result. Then the **Execution** step of the
+   cycle runs under the new configuration:
+   - **without `software`**, the workflow ends with a reconfigured `.wingfoil/` and no life cycle;
+     Execution is the first plan of the work that configuration hosts;
+   - **with `software`** in the reconfigured composition, the entry's hand-off starts the
+     project's `sw-life-cycle`, whose `inception` (`software`'s default, or a phase pack such as
+     `lean-inception` the proposal chose) starts from the approved definition.
 
-Roles: the phases use roles `base` ships (expected: a facilitator role runs them, the approver gates
-them); if `base`'s charter names them differently, the pack takes role names as `string`
-parameters (spec-001 §8.2). The method is declared as a house method in the README until WingFoil
-lets a phase declare it (dl-007, F-016), with the README listing its sources and adaptations.
+Roles: the phases use roles `base` ships: `facilitator` runs them, `approver` gates them (`base`'s
+roles fragment and workflows). The method is declared as a house method in the README's "Sources
+and adaptations" (spec-002 §2.1) until WingFoil lets a phase declare it (dl-007, F-016).
 
 ### D2 — The areas the questions cover
 
@@ -140,15 +174,15 @@ At least these fourteen, each with its purpose and the configuration elements it
 | A3 | Business logic | domain Memory types, domain directives |
 | A4 | Features | first backlog, blueprint choice |
 | A5 | Policies and regulations | `governance` packs (by geographic area, dl-001 D8), compliance gates |
-| A6 | Development method and process | `methodology`, `phase/<slot>` packs |
+| A6 | Development method and process | `software` or not (dl-022 S1), `methodology`, `phase/<slot>` packs (with `software` only) |
 | A7 | Team and roles | `dna.yaml` `team` (members, roles, agents and their `executes_as`), `team-mode`, approval roles |
 | A8 | Technology stack | `dna.yaml` `stacks`, `blueprint` |
 | A9 | Architecture | `dna.yaml` `modules`, architecture directives, ADR use |
 | A10 | Infrastructure and tools | `dna.yaml` `stacks` (tools), CI expectations |
 | A11 | QA, testing and validation | testing and review directives, Memory gates, governance packs such as feedback (dl-012) |
-| A12 | Expected results and maturity | the project's maturity and horizon → `stage`; the release slot |
+| A12 | Expected results and maturity | the project's maturity and horizon → `stage`; the release slot (with `software`) |
 | A13 | Success criteria | gates and acceptance criteria, retrospective inputs |
-| A14 | Constraints and dependencies | `requires`/`conflicts` of chosen packs, risks, external dependencies |
+| A14 | Constraints and dependencies | `requires`/`conflicts` of chosen packs, the declared `tensions` among them and how the user resolves each (spec-001 §6.2; dl-025 D3), risks, external dependencies |
 
 Areas are not asked in a fixed order and not every question applies to every project.
 
@@ -157,7 +191,9 @@ Areas are not asked in a fixed order and not every question applies to every pro
 The question bank is a directive, generic and free of project values: per area, its purpose, seed
 questions, and for each question when to ask it, when to skip it and when to go deeper, stated as
 conditions on earlier answers (for example: a solo developer skips approval-delegation questions; a
-regulated domain opens the policies area in depth; "no automated tests yet" opens the QA area). The
+regulated domain opens the policies area in depth; "no automated tests yet" opens the QA area; "not
+a software project" skips the life-cycle questions; a pair of chosen packs that declares a tension
+asks how the project resolves it, dl-025 D3). The
 agent may ask questions that are not in the bank when the answers call for them, and logs them. The
 bank and the rules are content, not code.
 
@@ -171,11 +207,13 @@ the input of `reconfigure-wingfoil` and the first approved artifact of the proje
 ### D5 — Reconfigure WingFoil
 
 **What it decides.** From the approved definition, the proposal records:
-- the **pack set**: one pack per axis where an axis applies (methodology, team-mode, phase slots,
-  blueprints, stage, governance), installable governance packs such as `governance/feedback`
-  (dl-012) — **installable packs are part of the initial configuration** — and every pack's
-  **parameter values**. This set and these values are the record of how the configuration was made
-  (a lock substitute until WingFoil has one, F-005);
+- the **pack set**: whether the project holds `software` (dl-022 S1, S3); one pack per axis where
+  an axis applies (methodology, team-mode, phase slots and blueprints with `software`, stage,
+  governance), installable governance packs such as `governance/feedback` (dl-012) —
+  **installable packs are part of the initial configuration** — every pack's **parameter values**,
+  and the declared `tensions` the set holds with the resolution the user chose (dl-025 D3). This
+  set and these values are the record of how the configuration was made (until WingFoil's lock,
+  dl-138, covers it: dl-021 R3, F-029);
 - **agents and roles** (`dna.yaml` `team`, `roles.yaml` assignments), agents never holding approval
   authority;
 - **directives** (project directives for domain rules), **workflows**, **Memory types, states and
@@ -185,50 +223,59 @@ the input of `reconfigure-wingfoil` and the first approved artifact of the proje
 - for every change, the definition item it traces to; and what was *not* configured, and why.
 
 **How it is applied.** Through the CLI's verbs for the pack set (option (i)). The project's own
-additions use only what WingFoil defines for project files: directives in `custom/` (which override
-a pack directive with the same id), new workflows in `custom/` under new names, included from
-`workflows.yaml`, and the project values of `dna.yaml` and `roles.yaml`. Nothing in `built-in/` is
-edited. What cannot be configured this way while WingFoil lacks a general `custom/` precedence (for
-example a tighter gate on a pack's workflow) is listed in the proposal as *not configured*, and in
-the feedback note of D8.
+additions use only what WingFoil defines for project files and spec-001 §10.1 allows: directives
+in `custom/` under new ids, each stating its class on its first line and only adding or
+tightening, never reusing a pack directive's id; new workflows in `custom/` under new names,
+included from `workflows.yaml`; and the project values of `dna.yaml` and `roles.yaml`. Nothing a
+pack installs is edited (`built-in/` in format 1, the `remote` class once WingFoil fixes it,
+dl-021 R3). What cannot be configured this way while WingFoil lacks a general `custom/` precedence
+(for example a tighter gate on a pack's workflow) is listed in the proposal as *not configured*,
+and in the feedback note of D8.
 
 **Rules.**
-- The result only adds to or tightens what `base` and the chosen packs ship (dl-003 D1).
+- The result only adds to or tightens what `base` and the chosen packs ship (dl-003 D1; stricter
+  wins, dl-025 D1).
 - No fixed methodology: the methodology is a choice the answers lead to, among the catalog's.
 - A change of a Memory path parameter keeps or moves the elements already written under the
   bootstrap paths (the definition and the proposal).
-- `guided-init` stays in the composition: `inception` has run, and the method directive is what
+- `guided-init` stays in the composition: its workflow has run, and the method directive is what
   later reconfigurations follow. Later reconfigurations (for example from feedback, dl-012) run
-  through `base`'s `decision-log-ingest`, by the same rules; `inception` is not re-run.
+  through `base`'s `governance-evolution` (dl-022 S4), by the same rules; `guided-init` is not
+  re-run.
 - The pack ships no executable logic.
 
 ### D6 — The bootstrap preset
 
-`init` needs exactly one methodology before the questions run. Proposed: a preset **`bootstrap`**
-= `base` + `methodology/kanban` + `phase/inception/guided-init`; Reconfigure WingFoil may keep
-Kanban or replace it. The preset is part of F4.8 and is delivered with the pack in W11 (it cannot
-be validated before the pack exists, spec-001 §15). Open for the approver: this preset, or another
-default methodology.
+A composition without `software` needs no methodology (spec-001 §3), so the questions can run on
+`base` and the pack alone. Proposed: a preset **`bootstrap`** (spec-001 §15) =
+`governance/guided-init` (`base` through its `requires`), with a `profile` from `04_personas.md`
+§2; Reconfigure WingFoil adds `software`, a methodology and the rest as the answers lead. The preset is part of F4.10 and is
+delivered with the pack in W16 (it cannot be validated before the pack exists, §15); how `init`
+selects it is WingFoil's (F-030). Open for the charter: this preset, or `classic-kanban`'s packs
+(plan-070) plus the pack, for a team that already knows it builds software.
 
 ### D7 — Acceptance criteria of the capability
 
 Each criterion says who checks it: **[V]** the validation command or a test under `tests/` (the
 pack-specific tests are owned by the pack's tasks); **[E]** the fixture-element checks of dl-012 D8
 (a tooling capability shared with dl-012 and dl-013); **[A]** the approver. Fixtures live under
-`tests/fixtures/examples/guided-init/<scenario>/` (dl-014) and run in the matrix's self-test mode
-(dl-009) while no released WingFoil accepts the `format:` key.
+`tests/fixtures/examples/guided-init/<scenario>/` (spec-002 §2.4) and run in the compatibility
+matrix on the released WingFoils `compat.yaml` lists (spec-001 O10). The charter and the first
+version need the runs on the real engine of dl-032 E2, E3 (`check:runs`, a scenario starting
+`guided-init`, and `guided-init-handoff` with `software`).
 
-- **AC-1 One workflow [V].** The pack ships exactly one workflow, `inception` (`kind: sub`), with the
-  phases `intent`, `discover`, `define`, `reconfigure-wingfoil` in this order, each with role,
-  actions and produces; `reconfigure-wingfoil` is last and its description names "Reconfigure
-  WingFoil". Composed with `base` and a methodology it validates (F3.3) and composes
-  deterministically (F3.4).
+- **AC-1 One workflow [V].** The pack ships exactly one unconditional workflow, `guided-init`
+  (`kind: main`), with the phases `intent`, `discover`, `define`, `reconfigure-wingfoil` in this
+  order, each with role, actions and produces; `reconfigure-wingfoil` is last and its description
+  names "Reconfigure WingFoil". Composed with `base` alone, and with `base`, `software` and a
+  methodology (the entry then present), it validates (F3.3) and composes deterministically (F3.4).
 - **AC-2 Coverage [V].** The question bank has an entry for each of A1–A14, each with a purpose,
   seed questions and the configuration elements it feeds; a test fails if an area is missing.
-- **AC-3 Adaptivity [A].** Two scenarios with different intents (proposed: a solo developer's CLI
-  library; a team's regulated web service) are each run live once, following the method; the
-  recorded question logs show different questions asked, skipped or added, with reasons; the
-  approver reviews both runs. A WingFoil2-Benchmark scenario may later measure this.
+- **AC-3 Adaptivity [A].** Three scenarios with different intents (proposed: a solo developer's
+  CLI library; a team's regulated web service; a non-software project, ending without `software`)
+  are each run live once, following the method; the recorded question logs show different
+  questions asked, skipped or added, with reasons; the approver reviews the runs. A
+  WingFoil2-Benchmark scenario may later measure this.
 - **AC-4 Definition [E][A].** Each scenario's definition has a section for every area, filled or
   *not applicable* with a reason [E]; its traces to answers are judged by the approver [A]; the
   `define` gate is the approver's.
@@ -236,73 +283,83 @@ pack-specific tests are owned by the pack's tasks); **[E]** the fixture-element 
   values, every change with its trace, and covers packs, agents and roles, directives, workflows,
   Memory types and gates, checks, tools, QA and validation, initial elements, or says why an element
   is unchanged [E]; the approver approves it before anything is applied [A].
-- **AC-6 Adapted, not rigid [V].** The two scenarios end in **different** configurations (at least
-  a different methodology or team mode, and different directives or gates). For each, the test
-  recomposes from the recorded pack set and parameters, diffs the result against the fixture's
-  `.wingfoil/`, and allows only the project additions D5 permits; both validate.
-- **AC-7 Execution [A].** For each scenario the first plan of the next `sw-life-cycle` phase is
-  written under the reconfigured configuration and cites the approved proposal and the pack set it
-  runs under: Intent → Questions → Project Definition → WingFoil Configuration → Execution end to
-  end.
+- **AC-6 Adapted, not rigid [V].** The scenarios end in **different** configurations (at least a
+  different methodology or team mode, and different directives or gates; the non-software one
+  without `software` and `sw-life-cycle`). For each, the test recomposes from the recorded pack set
+  and parameters, diffs the result against the fixture's `.wingfoil/`, and allows only the project
+  additions D5 permits; all validate.
+- **AC-7 Execution [A].** For each scenario the first plan under the reconfigured configuration —
+  of `sw-life-cycle`, started by the hand-off, with `software`; of the work the configuration
+  hosts without it — cites the approved proposal and the pack set it runs under: Intent →
+  Questions → Project Definition → WingFoil Configuration → Execution end to end.
 - **AC-8 No project values, no code [V].** The pack carries no project's names, paths, people or
   versions (parameters only) and no executable logic; the F3.5 lint rules pass.
 - **AC-9 Approval [V].** Every gate of the workflow and of `project-definition` is the approver's;
   no phase lets an agent approve.
 - **AC-10 With the feedback pack [E][A].** One scenario's Reconfigure proposes and installs
   `governance/feedback` (dl-012), with parameters traced to the definition (formerly dl-012 FA-9).
-  Verified at `guided-init`'s first release, since the feedback pack is published earlier (W9).
+  Verified at `guided-init`'s first release, since the feedback pack is published earlier (W10).
 
 ### D8 — Amendments this decision implies
 
 Applied after approval, under the follow-up plan of plan-020, each document bumped per
 `doc-versioning`:
-- **dl-001 D5 / dl-003 D7, first scope:** gains `phase/inception/guided-init` (recorded by this
-  decision-log; dl-001 and dl-003 stay as approved). Per dl-001 D7 the pack enters the official
-  catalog with a maintained line; the approver confirms the commitment at the charter;
-- **`06_features.md`:** feature **F4.8**, "`phase/inception/guided-init`: one guided workflow from
-  intent to a reconfigured WingFoil, with the `bootstrap` preset" (journey J10; Value H, Effort M,
-  Uncertainty **H**: the adaptive method and the reconfiguration);
-- **`05_journeys.md`:** journey **J10, "Bootstrap a project from intent"** (Adopter; also the
-  non-technical-manager profile; priority v0.4), next to J6;
-- **`07_sequencer.md`:** F4.8 joins **W11** (phases and blueprints), which then holds three features
-  with one of high uncertainty, within the sequencer's rules; the M3 row's feature count follows;
-- **`08_mvp-canvas.md`:** the MVP proposal gains the pack and the `bootstrap` preset; the feature
-  count (32) and the "Main uncertainty" list (W11) follow;
+- **dl-001 D5 / dl-003 D7, first scope:** not changed: the pack is planned after the first catalog
+  (below), as dl-013's. An Execution Note on dl-001 records it. Per dl-001 D7 the pack enters the
+  official catalog with a maintained line; the approver confirms the commitment at the charter;
+- **`06_features.md`** (1.7, with dl-012's F4.9): feature **F4.10**, "`governance/guided-init`:
+  one guided workflow from intent to a reconfigured WingFoil, for any governed project, with the
+  `bootstrap` preset" (journey J10; Value H, Effort M, Uncertainty **H**: the adaptive method and
+  the reconfiguration);
+- **`05_journeys.md`** (1.3 → 1.4): journey **J10, "Bootstrap a project from intent"** (Adopter;
+  also the non-technical-manager profile; priority: when WingFoil provides `pack-install`), next to
+  J6;
+- **`07_sequencer.md`** (1.7): F4.10 in **a wave of its own, W16** (dl-013 keeps W15), which starts
+  when `compat.yaml` records a released WingFoil providing `pack-install` (option (i)); charter,
+  design and authoring with fixtures may run earlier, publication may not. W16 sits in the new
+  milestone between M3 and M4 that also holds dl-013's W15, not in M3: M3 ends with the first
+  catalog (W12) and with WingFoil v0.4 for J6–J7, and `pack-install` in v0.4 is WingFoil's request,
+  not a commitment (dl-021), so the MVP does not wait on it. One feature with one of high
+  uncertainty, within the sequencer's rules. The MVP (M3) is unchanged;
+- **`08_mvp-canvas.md`:** unchanged by this decision (the pack is outside M3);
 - **feedback note** to WingFoil (`wingfoil-cli` rule 3), written when the charter is accepted: the
-  CLI's `init` wizard (F-006) can hand over to this workflow; Reconfigure WingFoil needs the
-  explicit update verbs of F-007 and a `custom/` precedence beyond directives; the list of what
-  cannot be configured today (D5).
+  CLI's `init` wizard (F-006) and the preset selection (F-030) can hand over to this workflow;
+  Reconfigure WingFoil needs the explicit update verbs of F-007 and a `custom/` precedence beyond
+  directives; the list of what cannot be configured today (D5).
 
 Configuration changes of this repository's `.wingfoil/`: none.
 
 ### D9 — Elements opened later
 
-Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`, when the sequencer reaches the pack:
-- **pack charter** `pack-phase-guided-init` (`charter` phase), with D1–D7 as scope and acceptance;
-  its README follows dl-014 D1 if approved, otherwise spec-001 §6.1. No `design` phase: a slot
-  workflow, a Memory-type fragment, directives and parameters are spec-001 mechanisms;
-- **tasks** (`author` phase, `pack: pack-phase-guided-init`), proposed:
-  1. the `inception` workflow with its four phases, roles, actions, gates and `produces` (AC-1,
-     AC-9);
+Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`, when the sequencer reaches the pack (W16):
+- **pack charter** `pack-governance-guided-init` (`charter` phase), with D1–D7 as scope and
+  acceptance, accepted after the run of dl-032 E2; its README follows spec-002 §2. It fixes the
+  conditional entry's shape (D1). No `design` phase: a `main` workflow, a Memory-type fragment,
+  directives, parameters and a conditional entry are spec-001 mechanisms (§6.5);
+- **tasks** (`author` phase, `pack: pack-governance-guided-init`), proposed:
+  1. the `guided-init` workflow with its four phases, roles, actions, gates and `produces`, and the
+     entry `with: software@^1` with the hand-off (AC-1, AC-7, AC-9);
   2. the `project-definition` type, its states and template (AC-4);
   3. the method directive: coverage map, question log, round rules, stop criteria, Reconfigure rules
      and the required sections of the proposal (AC-3, AC-5);
   4. the question bank directive for A1–A14 with its conditions (AC-2);
   5. the pack-specific tests (AC-1, AC-2, AC-6, AC-8, AC-9);
-  6. the two scenarios as fixtures, their live runs and records, including the feedback-pack
+  6. the three scenarios as fixtures, their live runs and records, including the feedback-pack
      scenario (AC-3 … AC-7, AC-10);
   7. the `bootstrap` preset (D6);
-  8. the pack README, whose examples are the scenarios (dl-014 D1);
+  8. the pack README, whose examples are the scenarios (spec-002 §2.4);
 - **the feedback note** of D8.
 
 ## Execution Notes
 
 - Captured 2026-10-09 under plan-020, on the approver's request in chat; no implementation in this
   step.
-- Depends on `base` (requires) and on `methodology/kanban` (preset); published only when a released
-  WingFoil provides `pack-install` (option (i)). Its fixtures can use fixture packs before then.
-- Related: dl-012 (the feedback pack, AC-10), dl-013 (initial directives seeded by Reconfigure),
-  dl-014 (README standard, fixture layout).
+- Depends on `base` (requires) and, in its conditional entry, on `software`; published only when a
+  released WingFoil provides `pack-install` (option (i)). Its fixtures can use fixture packs before
+  then.
+- Related: dl-012 (the feedback pack, AC-10), dl-013 (initial directives seeded by Reconfigure,
+  DF-12), dl-014 (README standard, fixture layout). Ruling order: dl-012, then this element, then
+  dl-013.
 - 2026-10-09: amended while `pending` after an independent review, as the approver asked:
   Reconfigure WingFoil defined as a pack set plus parameters applied through the CLI, with project
   additions limited to what WingFoil 0.2.2 defines (review N1); publication gated on
@@ -321,3 +378,18 @@ Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`, when the sequencer
 - 2026-11-05, plan-063 (ruling 10 (iii)): dl-025 D3, approved, asks that the initialization template
   (this element) ask the user about the declared tensions of the packs chosen (spec-001 §6.2). Not
   added to spec-002 while this element is `pending`; to be read at its ruling.
+- 2026-11-12: re-checked against WingFoil 0.3.2 and the repository at `6d53241f` before the ruling
+  (plan-020), amended while `pending`: the Context read against dl-022 (`software` holds the life
+  cycle and its slots; `base` serves every project), `init --template` and F-030, §10.1 on
+  `custom/` directives, `pack-install` still absent (`compat.yaml`); roles as `base` ships them;
+  the proposal as a `decision-log` ruled to `ready` and Reconfigure shaped as
+  `governance-evolution`, later reconfigurations through it (dl-022 S4); the declared tensions in
+  A14, D3 and D5, as dl-025 D3 asks; the lock (dl-021 R3); self-test mode dropped (O10), the runs
+  of dl-032 added; README and fixtures per spec-002; AC-10's W9 → W10. The approver's rulings of
+  2026-11-12 recorded: option (e) in place of (a), `governance/guided-init` (name proposed) with
+  a `main` workflow, requiring `base` only, the hand-off into `sw-life-cycle` in an entry
+  `with: software@^1`, the non-software path ending in a reconfigured `.wingfoil/` without a life
+  cycle (D1, D2, D5, D6, D7, D9; a third, non-software scenario); its own wave W16, after the
+  WingFoil release that provides `pack-install`, in the milestone between M3 and M4, not W11;
+  F4.10; ruling order dl-012, dl-011, dl-013. dl-025 D3's request (the note of 2026-11-05) is
+  applied.
