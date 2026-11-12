@@ -2,7 +2,7 @@
 id: plan-070-tooling-change-the-first-presets-classic-scrum-and-classic-kanban-w10-f2.6
 type: plan
 title: "tooling-change: the first presets, Classic Scrum and Classic Kanban (W10, F2.6)"
-status: active
+status: done
 workflow: "tooling-change"
 phase: "deliver"
 tags: ["presets","W10"]
