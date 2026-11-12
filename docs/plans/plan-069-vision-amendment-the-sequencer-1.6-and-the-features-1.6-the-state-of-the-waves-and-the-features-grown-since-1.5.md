@@ -46,10 +46,10 @@ file changes.
 | Feature | Change | Source |
 |---|---|---|
 | F1.1 | at format 2 the manifest gains `tensions` and the conditional part per entry, each entry with its `with` | spec-001 §6.2, §6.5 (plan-063, plan-066) |
-| F1.4 | a methodology's `delivery` includes both `release` and `retrospective` through its own sub-workflows, and the phase including `release` iterates over the releases in development or releasing | dl-026 D1, D2; dl-027 D1 (plan-047, plan-048) |
+| F1.2 | the fragments gain the `mcp` kind, provisional until a released WingFoil reads it (its tooling owed) | spec-001 §7.8, O16; dl-024 |
+| F1.4 | a methodology's `delivery` includes both `release` and `retrospective`, directly or through its own sub-workflows, and the phase including `release` iterates over the releases in development or releasing | dl-026 D1, D2; dl-027 D1 (plan-047, plan-048) |
 | F1.5 | `pack.yaml` and `catalog.yaml` at format 2, the v1 schemas frozen, the schema chosen by the file's `format` | spec-001 §5 (plan-063, plan-066) |
 | F1.6 | `base`'s section states the precedence of the directives' classes, and each directive's first line its class | spec-001 §10.1; dl-025 D2 (plan-063) |
-| F1.2 | the fragments gain the `mcp` kind, provisional until a released WingFoil reads it (its tooling owed) | spec-001 §7.8, O16; dl-024 |
 | F2.1 | `catalog.yaml` at format 2: a version entry records `pack_format` and copies the conditional entries | spec-001 §11 (plan-066) |
 | F2.8 | the index and the READMEs at format 2: `conditional_parts`, `tensions`, `pack_format`, "Combines with care" | spec-002 §2.1, §3.2, §3.3 (plan-066, plan-067) |
 | F3.3 | `check:runs`, with a scenario for every `main`, and the adoption run once per `init` template for a pack with install steps (dl-032 E3), beside `workflow list`, `dna show` and `directives list` | the row "`06_features.md` 1.5 → 1.6" |
@@ -93,3 +93,11 @@ this plan's body, their run read in the Execution Notes before `submit`.
 
 ## Execution Notes
 
+- 2026-11-12: review: approve after amendments, three blocking, applied: W8 closed by plan-046
+  alone, `base` 1.0.0 published within W8 (plan-044) and 2.0.0 between W8 and W9 (plan-049), the
+  sequencer's note corrected; the features table with F1.4, F1.5, F1.6 and F2.1 and F3.5's
+  `delivery` includes; the precedent plan-040 and plan-067; with the nits: the checks of a
+  text-only change, the Decisions line the first recorded, dl-012 named in W10's state, the stale
+  note on tooling's host replaced, the reviewers in the Handoff.
+- 2026-11-12: re-review: approve, two nits, applied: the features rows in F-number order, F1.4
+  "directly or through its own sub-workflows" (dl-026 D1).
