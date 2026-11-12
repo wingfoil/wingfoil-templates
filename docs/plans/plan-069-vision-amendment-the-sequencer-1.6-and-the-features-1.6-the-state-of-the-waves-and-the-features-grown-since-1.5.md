@@ -101,3 +101,4 @@ this plan's body, their run read in the Execution Notes before `submit`.
   note on tooling's host replaced, the reviewers in the Handoff.
 - 2026-11-12: re-review: approve, two nits, applied: the features rows in F-number order, F1.4
   "directly or through its own sub-workflows" (dl-026 D1).
+- 2026-11-12: the approver's OK on both tables as written, the W8 exception kept rather than split.
