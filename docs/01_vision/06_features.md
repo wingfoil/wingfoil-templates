@@ -57,7 +57,7 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 | F3.2 | **Reference composer:** composes a set of packs into a `.wingfoil/`, so that packs can be validated before WingFoil can install them. | J1.4 | H | H | **H** |
 | F3.3 | **Compatibility matrix:** each composition is validated with the oldest and the newest compatible WingFoil release, each installed pinned and in isolation. Validation means `workflow list`, `dna show` and `directives list`, with exit 0 and no warning, and `check:runs`, with a scenario for every `main`, and the adoption run once per `init` template for a pack with install steps (dl-032 E3). | J1.4, J4.2 | H | M | M |
 | F3.4 | **Determinism check:** two compositions from a clean state must be byte-identical. | J1.4 | H | L | L |
-| F3.5 | **Lint rules:** no empty phases (actions and produces declared), includes by name, no contradictions between overlays, no project values, no secrets; per entry and by format, the declared tensions' coverage (dl-025 D1, D6), a methodology's `delivery` includes (`life-cycle-includes`, dl-026 D3), the waiver wording as a review list (spec-001 §18; plan-066 ruling 4). | J5.2, J5.3 | H | M | M |
+| F3.5 | **Lint rules:** no empty phases (actions and produces declared), includes by name, no contradictions between overlays, no project values, no secrets; per entry and by format, the stricter-wins heuristic and the declared tensions' coverage (dl-025 D1, D6), a methodology's `delivery` includes (`life-cycle-includes`, dl-026 D3), the waiver wording as a review list (spec-001 §18; plan-066 ruling 4). | J5.2, J5.3 | H | M | M |
 | F3.6 | **CI:** the validation runs on every pull request and every publication. | J1.5 | M | L | L |
 
 ## F4 — Pack content (official catalog)

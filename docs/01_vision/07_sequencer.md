@@ -48,13 +48,13 @@ On 2026-11-12 (amendment 1.6). M0, M1 and M2 are reached; M3 is open.
 | W14 | done | plan-024 |
 | W8 | done | plan-046, closing plan-041 … plan-047 |
 | W9 | done | plan-052: `base` 2.0.1, `software` 1.0.0, `methodology/scrum` 1.0.0 (prel-003 … prel-005) |
-| W10 | in progress | `methodology/kanban` 1.0.0 done (plan-058, prel-006); presets, `governance/wingfoil-dogfood`, this repository's adoption, its WingFoil pin raised from 0.2.2 and the first inbox sync not started. dl-012 (`pending`) would place F4.9 in W10, at its three-feature limit: left to dl-012's ruling |
+| W10 | in progress | `methodology/kanban` 1.0.0 done (plan-058, prel-006); presets, `governance/wingfoil-dogfood`, this repository's adoption, its WingFoil pin raised from 0.2.2 and the first inbox sync not started. dl-012 (`pending`, written when this wave was W9) would place F4.9 in it, over its three-feature limit: left to dl-012's ruling |
 | W11 … W13 | not started | — |
 
 Two releases fall outside a wave's close: `base` 1.0.0 within W8 (plan-044, prel-001) and `base`
 2.0.0 between W8 and W9 (plan-049, prel-002).
 
-The work since 1.5 outside the waves amends features already sequenced and opens no wave:
+The work outside the waves amends features already sequenced and opens no wave:
 
 - the format 2 (`tensions`, the conditional part per entry, the `mcp` kind provisional; dl-024,
   dl-025, plan-063, plan-066, plan-067): F1.1, F1.2, F1.5, F1.6, F2.1, F2.8 and F3.5;
