@@ -136,3 +136,4 @@ plans); the vision documents (W10's state is updated at W10's close).
 - 2026-11-12: second re-review: approve after amendments, one blocking, applied: a leg of a preset
   inherits its stand-ins for the packs it holds, ruling 4's skip kept for a pack the leg adds,
   with a test each; a clause, no other rule changed.
+- 2026-11-12: final check of the leg clause: approve, no finding.
