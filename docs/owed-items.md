@@ -66,7 +66,7 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | `check:runs` scenarios of the full scrum and kanban runs (`memory park`, `memory reject`, a field rewritten, `set_state`, a refusal expected) and the `include:` null branch test; a tooling task of its own | plan-050 ruling 3; plan-052 › close; plan-057 ruling 5; dl-032 E5 | approver | the next tooling task on `runs.ts` |
 | Check 0.3.1's `COLLABORATION.md` inbox text | plan-051 ruling 4; inbox README › Rules | approver | the first sync |
 | README step 3 "own entries" for Memory types and roles `init` scaffolded, in `base`'s, `software`'s and `scrum`'s READMEs (`kanban`'s answers it, task-067) | plan-052 › close (task-061's review); task-067 | approver | the next README pass |
-| dl-012's F4.9 placement | plan-052 › step 2, close | approver | dl-012's ruling |
+| dl-012's F4.9 placement | plan-052 › step 2, close | approver | dl-012's ruling, met on 2026-11-12 (`3d1abacc`): F4.9 in W10 at four features, applied by the follow-up plan of plan-020 (its row) |
 | W10: presets, `governance/wingfoil-dogfood`, this repository's adoption, its pin, the first inbox sync | plan-052 ruling 7 | W10 | W10 |
 | This repository's per-pack WIP rule under `methodology/kanban`, whose `limits` count the whole repository (a total limit, or the rule kept by hand over a looser one) | plan-056 ruling 10; pack-methodology-kanban › Adoption | W10 | the adoption |
 | How this repository's tasks carry a `release` under `methodology/kanban`, its packs being released per pack, not through `software`'s `release` | plan-056 › step 4; pack-methodology-kanban › Adoption | W10 | the adoption |
@@ -79,6 +79,7 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | With several stricter packs, whether the check before a stage swap fails when one of them ships no `exit-check` directive (a tag alone cannot tell which stricter pack a directive covers; it needs directives' `tags` parsed and a mapping by `with`) | plan-066 ruling 7; plan-063 › Execution Notes 2026-11-05 | approver | the first `stage/*` charter (W12) |
 | A bridge whose `with` is a common pack the stricter packs require, which spec-001 §18's exemption of a bridge from the waiver heuristic misses (dl-025 finding 6 as written) | plan-066 ruling 7; plan-063 › Execution Notes 2026-11-05 | approver | the first `stage/*` charter (W12) |
 | The private projects' check scripted, with `--param` applying to an `entries` composition only (hit at prel-003, plan-043's note) | prel-001 … prel-003; dl-038 D1 | approver | the next pack release that needs a private check |
+| The follow-up plan of plan-020: the amendments dl-011, dl-012 and dl-013 list after their approval, features 1.7 (F4.9, F4.10, F4.11), journeys (J10), sequencer 1.7 (W10's four features with F4.9 before F4.2, W15, W16, M5 between M3 and M4), the MVP canvas, Execution Notes on dl-001 and dl-003; it closes the row "dl-012's F4.9 placement" | plan-020 › Handoff, Execution Notes 2026-11-12 | approver | before `governance/feedback`'s charter (W10), after plan-070 |
 
 ## Closed
 
