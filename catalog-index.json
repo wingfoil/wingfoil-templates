@@ -424,7 +424,7 @@
     {
       "id": "classic-kanban",
       "title": "Classic Kanban",
-      "description": "The software layer with methodology/kanban: a continuous flow of tasks under WIP limits.",
+      "description": "Kanban on the software layer: a continuous flow of tasks under WIP limits.",
       "profile": "Solo developer",
       "packs": [
         "software@^1",
@@ -435,7 +435,7 @@
     {
       "id": "classic-scrum",
       "title": "Classic Scrum",
-      "description": "The software layer with methodology/scrum: Sprints planned, reviewed and retrospected.",
+      "description": "Scrum on the software layer: Sprints with planning, review and retrospective.",
       "profile": "Team developer",
       "packs": [
         "software@^1",

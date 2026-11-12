@@ -179,3 +179,13 @@ What exists (`main` at plan-070's `submit`):
   content's commit (`76` against `74`), the same two preset files as Acceptance 4's lint count, and
   is raised to 76 with its name in the same commit as these notes (a departure from Acceptance 1's
   order, recorded). Rerun: the file's 127 tests pass. `npm run lint`: 0 problems.
+- 2026-11-12, build review: approve after amendments, two blocking, applied: spec-001 §15 and §18
+  narrowed to `base`'s four parameters, any other required parameter still needing a value, as
+  the code does; an overlay's composition with no values shown failing (Acceptance 2's claim had
+  no test). With the nits: the `--param` refusal and a leg's `dropped` list without a stand-in
+  asserted; `STAND_INS` imported by the test (the fixture's `base` requires `project_name` alone,
+  so its stand-in is the one read); the presets' descriptions under 100 characters ("Kanban on the
+  software layer: a continuous flow of tasks under WIP limits.", "Scrum on the software layer:
+  Sprints with planning, review and retrospective."), the index regenerated (1 file). Rerun:
+  `tests/validate-10-presets.test.ts` 6 tests pass; `npm run check:packs` 76 files, 0 problems.
+  The spec change narrows the rule to what the code does: no re-review of the code.

@@ -8,10 +8,12 @@ import { before, describe, it } from 'node:test';
 
 import { compareTrees } from '../src/compare-trees';
 import { runCompose } from '../src/compose-cli';
+import { STAND_INS } from '../src/preset-stand-ins';
 import type { ValidateResult } from '../src/validate';
 
 import { writePack } from './support/pack-tree';
-import { NAME, TREE, validate, withTree, replaceIn } from './support/validate-harness';
+import { NAME, OVERLAY, TREE, validate, withTree, replaceIn, writeComposition }
+  from './support/validate-harness';
 
 /** Every `dna.yaml` under a composed output. */
 function dnaFiles(dir: string): string[] {
@@ -31,8 +33,8 @@ function writePreset(tree: string, id: string, packs: string[], parameters = '{}
     `presets:\n  - { id: ${id}, path: presets/${id}.yaml }\n`);
 }
 
-/** The stand-in for project_name, the fixture base's one required parameter (the Design). */
-const STAND_IN = 'Preset Check';
+/** The fixture base's one required parameter is project_name, so its stand-in is the one read. */
+const STAND_IN = STAND_INS['project_name'] ?? '';
 
 describe('npm run validate: stand-in values for a preset\'s required parameters (task-090)', () => {
   /** The composed dna.yaml texts of a run, through the determinism check's compare. */
@@ -68,10 +70,13 @@ describe('npm run validate: stand-in values for a preset\'s required parameters 
       writePreset(tree, 'own-name', ['methodology/kanban@^1'], '\n  project_name: "Own Name"');
       writePreset(tree, 'with-software', ['software@^1', 'methodology/flow@^1']);
       writePreset(tree, 'keyed', ['methodology/kanban@^1', 'stage/locked@^1']);
+      writeComposition(tree, 'bare', 'format: 1\nid: bare\ntitle: "Bare"\n'
+        + 'description: "No values."\npacks:\n  - methodology/kanban@^1\nparameters: {}\n');
     }, (tree) => {
       runOn(tree, 'bare', []);
       runOn(tree, 'publication', [], 'publication');
       runOn(tree, 'named', NAME);
+      runOn(tree, 'overlay', ['--overlay', OVERLAY]);
     }, true);
   });
 
@@ -90,15 +95,26 @@ describe('npm run validate: stand-in values for a preset\'s required parameters 
       report('named'));
   });
 
-  it('gives no stand-in to an example', () => {
-    assert.ok(run('bare').result.lines.some((line) => line.startsWith('composition '
-      + 'tests/fixtures/examples/') && line.includes('project_name')
-      && line.includes('is required and has no value')), report('bare'));
+  it('refuses a --param overriding a value the preset sets, as before', () => {
+    assert.ok(run('named').result.lines.some((line) => line.startsWith(
+      'composition presets/own-name.yaml: ') && line.includes(
+      '--param project_name overrides the value the preset sets')), report('named'));
+  });
+
+  it('gives no stand-in to an example or to an overlay\'s composition', () => {
+    const failsUnset = (key: string, prefix: string): boolean => run(key).result.lines.some(
+      (line) => line.startsWith(`composition ${prefix}`) && line.includes('project_name')
+        && line.includes('is required and has no value'));
+    assert.ok(failsUnset('bare', 'tests/fixtures/examples/'), report('bare'));
+    assert.ok(failsUnset('overlay', `${OVERLAY}/compositions/bare/example.yaml`),
+      report('overlay'));
   });
 
   it('gives a preset\'s leg its stand-ins, and still skips a leg whose added pack has an unset '
     + 'parameter (plan-066 ruling 4)', () => {
     assert.ok(composed('bare', 'presets/with-software.yaml[-software]'), report('bare'));
+    assert.ok(!run('bare').result.lines.some((line) => /, dropped .*project_name/.test(line)),
+      report('bare'));
     assert.ok(run('bare').result.lines.includes(
       'matrix presets/keyed.yaml[+blueprint/keyed]: skipped, api_key has no value'),
     report('bare'));

@@ -1,7 +1,7 @@
 format: 1
 id: classic-scrum
 title: "Classic Scrum"
-description: "The software layer with methodology/scrum: Sprints planned, reviewed and retrospected."
+description: "Scrum on the software layer: Sprints with planning, review and retrospective."
 profile: "Team developer"
 packs:
   - software@^1
