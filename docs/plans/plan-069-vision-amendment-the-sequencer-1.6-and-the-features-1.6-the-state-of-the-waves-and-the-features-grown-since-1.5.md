@@ -112,3 +112,8 @@ this plan's body, their run read in the Execution Notes before `submit`.
   1.5; with the nits: dl-012 written when W10 was W9, F4.9 over the limit rather than at it, F3.5's
   stricter-wins heuristic named beside the coverage (dl-025 D1, D6). Wording only, no row changed
   in substance: no re-review.
+- 2026-11-12, step 4: on the frozen `d26c8a82`, the branch CI, run 43232355890, `success`:
+  `validate (22.12.0, 1)` 8 min 40 s, `(22.12.0, 2)` 6 min 9 s, `(22.21.0, 1)` 9 min 44 s,
+  `(22.21.0, 2)` 8 min 46 s, every job under 20 minutes (G12); `git diff main --stat` names the
+  two documents and this plan only; the privacy check of the branch's diff found no local or
+  scratch path, no private project and no session.
