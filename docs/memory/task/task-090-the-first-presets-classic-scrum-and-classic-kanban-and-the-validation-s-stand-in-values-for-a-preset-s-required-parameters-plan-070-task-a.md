@@ -189,3 +189,13 @@ What exists (`main` at plan-070's `submit`):
   Sprints with planning, review and retrospective."), the index regenerated (1 file). Rerun:
   `tests/validate-10-presets.test.ts` 6 tests pass; `npm run check:packs` 76 files, 0 problems.
   The spec change narrows the rule to what the code does: no re-review of the code.
+- 2026-11-12, checks on the frozen `0a477364` (Acceptance 7, dl-039): the branch CI, run
+  43255467176, `success`: `validate (22.12.0, 1)` 11 min 25 s, `(22.12.0, 2)` 6 min 59 s,
+  `(22.21.0, 1)` 11 min 7 s, `(22.21.0, 2)` 6 min 1 s, every job under 20 minutes (G12). The
+  local list from a clean worktree on Node 22.21.0, after `npm ci` and `npm run build`:
+  `npm run validate:publication` exit 0 (`compositions: 11`, `matrix: publication, 22 runs, 0
+  failed`, `presets/classic-kanban.yaml` 36 files and `presets/classic-scrum.yaml` 37,
+  byte-identical, `workflow list`, `dna show` and `directives list` passing on 0.3.0 and 0.3.2);
+  the golden tree in publication mode exit 0 (26 runs, 0 failed); `npm run -s wingfoil --
+  workflow list` exit 0. The privacy check of the branch's diff found no local or scratch path,
+  no private project and no session.
