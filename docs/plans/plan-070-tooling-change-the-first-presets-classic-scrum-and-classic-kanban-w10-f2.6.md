@@ -59,8 +59,9 @@ with this plan's body, its run read in the Execution Notes before `submit`.
    - **ranked last:** below the preset's values and below `--param`, and never counted as a value
      the preset sets, so `--param` keeps its rule (it may not override a value the preset sets)
      and CI's golden run (`--param project_name=Golden`) still composes;
-   - **scope:** plan-066 ruling 4 unchanged, a leg that adds a pack with a required parameter
-     and no value still skipped; the examples, which set all four values, unaffected;
+   - **scope:** a leg derived from a preset inherits the preset's stand-ins for the parameters of
+     the packs it holds; plan-066 ruling 4 unchanged, a leg whose added pack has a required
+     parameter with no value still skipped; the examples, which set all four values, unaffected;
    - **values:** fictional and generic, valid for the parameter's type (§8.1), modelled on the
      examples' values (an email on the `.example` domain); the matrix's WingFoil releases check
      no member's email format, only an agent's email (none in `base`) and an agent's name (no
@@ -70,8 +71,10 @@ with this plan's body, its run read in the Execution Notes before `submit`.
    The task's design fixes the values and where they live (one module of `src/`), red tests
    first: a preset with no values composes through `runValidate` in both modes and through one
    `publish:pack` case; the stand-ins appear in the composed `dna.yaml`; a preset's own value
-   and a `--param` each win over a stand-in; an example, an overlay composition and a leg get
-   none (the leg still skipped); `compose` alone still fails.
+   and a `--param` each win over a stand-in; an example and an overlay composition get none; on a
+   fixture preset holding a pack with a conditional part, a `[-pack]` leg composes with the
+   stand-ins and a `[+pack]` leg whose added pack has an unset parameter is still skipped;
+   `compose` alone still fails.
    - spec-001 amended in place in the task (as task-036, task-059 and task-079 did, the merge OK
      approving the text): §15 gains the rule (a preset needs no value for a required parameter;
      the validation supplies a stand-in, the adopter gives the real value at `init`), §18 names
@@ -130,3 +133,6 @@ plans); the vision documents (W10's state is updated at W10's close).
   skip unchanged, each with a red test; with the nits: one code path (`runValidate`), the
   WingFoil releases' real limits on the values, the examples unaffected, the precedent task-036,
   task-059 and task-079, §18 rather than §17, a line rewrapped.
+- 2026-11-12: second re-review: approve after amendments, one blocking, applied: a leg of a preset
+  inherits its stand-ins for the packs it holds, ruling 4's skip kept for a pack the leg adds,
+  with a test each; a clause, no other rule changed.
