@@ -35,11 +35,11 @@ with this plan's body, its run read in the Execution Notes before `submit`.
 ## Proposed outline (ruled by the approver before `submit`)
 
 1. **Two presets**, written by the spec as it stands (no format or schema change):
-   - `presets/classic-scrum.yaml`: `format: 1`, `id: classic-scrum`, `title: "Classic Scrum"`, `packs:
-     [software@^1, methodology/scrum@^1]` (`base` through their `requires`), `parameters: {}`,
+   - `presets/classic-scrum.yaml`: `format: 1`, `id: classic-scrum`, `title: "Classic Scrum"`,
+     `packs: [software@^1, methodology/scrum@^1]` (`base` through their `requires`), `parameters: {}`,
      `profile: "Team developer"`;
-   - `presets/classic-kanban.yaml`: `format: 1`, `id: classic-kanban`, `title: "Classic Kanban"`, `packs:
-     [software@^1, methodology/kanban@^1]`, `parameters: {}`, `profile: "Solo developer"`;
+   - `presets/classic-kanban.yaml`: `format: 1`, `id: classic-kanban`, `title: "Classic Kanban"`,
+     `packs: [software@^1, methodology/kanban@^1]`, `parameters: {}`, `profile: "Solo developer"`;
    - each `description` one sentence naming its packs; the profiles from personas §2, whose table
      gives `methodology` (Kanban) to the solo developer and `methodology` to the team developer.
 2. **`catalog.yaml`'s `presets[]`** gains both, `{ id, path }`, sorted by id; no pack's entry
