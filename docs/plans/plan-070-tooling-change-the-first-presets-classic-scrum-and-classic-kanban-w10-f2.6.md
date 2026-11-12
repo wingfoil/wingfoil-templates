@@ -144,3 +144,13 @@ plans); the vision documents (W10's state is updated at W10's close).
 - 2026-11-12: task-090's body review found point 5 misreading `tests/catalog.test.ts`: it empties
   `presets` before comparing the fixture catalog with `catalog.yaml`, so it stays unchanged; the
   task records the departure, for the approver at task-090's `backlog`.
+- 2026-11-12, close: task-090 approved, merged `--no-ff` at `d9946a9d` on the approver's OK,
+  pushed, the branch removed, `approved → done`. `main`'s CI on the merge, run 43311916342,
+  `success`: `validate (22.12.0, 1)` 11 min 35 s, `(22.12.0, 2)` 8 min 30 s, `(22.21.0, 1)` 9 min
+  3 s, `(22.21.0, 2)` 5 min 47 s, every job under 20 minutes (G12). On `main`: the presets
+  `classic-scrum` and `classic-kanban`, `catalog.yaml`'s `presets[]`, the index with the
+  profiles, the validation's stand-ins and spec-001 §15 and §18. Departures recorded in task-090's
+  notes (the catalog test unchanged, the `publish:pack` case on a `base`-only preset, the
+  `check-packs` count found late). For W10's close (dl-020), per tech-spec: spec-001 §15 and §18
+  amended in place by task-090. `active → done`; the run of this close's push is left to the next
+  plan (dl-038 C3).
