@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { spawnSync } from 'node:child_process';
-import { appendFileSync, chmodSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync }
+  from 'node:fs';
 import { join } from 'node:path';
 import { after, describe, it } from 'node:test';
 import { parse, stringify } from 'yaml';
@@ -248,6 +249,28 @@ describe('npm run publish:pack (task-014, the dry run of W7)', () => {
       // With no example, kanban is in no composition of the validation (task-022).
       }, undefined, undefined, false);
     });
+
+  it('publishes a pack whose only composition is a preset that sets no required parameter, with '
+    + 'the validation\'s stand-ins (task-090)', () => {
+    const [base, software] = FOUNDATION;
+    assert.ok(base !== undefined && software !== undefined);
+    const named: PackSpec = { ...base, manifest: { parameters: { project_name: { type: 'string',
+      description: 'The project name.' } } } };
+    withRepository((repo) => {
+      mkdirSync(join(repo.dir, 'presets'), { recursive: true });
+      writeFileSync(join(repo.dir, 'presets', 'bare.yaml'), 'format: 1\nid: bare\n'
+        + 'title: "Bare"\ndescription: "Kanban, no values."\npacks:\n  - methodology/kanban@^1\n'
+        + 'parameters: {}\n');
+      const catalog = join(repo.dir, 'catalog.yaml');
+      writeFileSync(catalog, readFileSync(catalog, 'utf8').replace('presets: []',
+        'presets:\n  - { id: bare, path: presets/bare.yaml }'));
+      writeIndex(repo);
+      repo.commitAll('a preset with no values');
+      const result = publish(repo, ['--pack', 'base']);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      assert.equal(repo.git(['cat-file', '-t', 'refs/tags/base@1.0.0']).trim(), 'tag');
+    }, [named, software, KANBAN], undefined, false);
+  });
 
   it('creates no tag when the publication validation fails', () => {
     const noisy = new StubWingfoil({ commands: { 'dna show': { stderr: ['Warning: x'] } } },
