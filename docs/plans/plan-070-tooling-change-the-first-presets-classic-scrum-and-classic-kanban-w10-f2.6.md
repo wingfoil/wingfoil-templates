@@ -138,3 +138,6 @@ plans); the vision documents (W10's state is updated at W10's close).
   with a test each; a clause, no other rule changed.
 - 2026-11-12: final check of the leg clause: approve, no finding.
 - 2026-11-12: the approver's OK on points 1 … 6 as written.
+- 2026-11-12: `main`'s CI before this plan (dl-038 C3), on `0dc03bc2` (plan-069's close and this
+  plan's body), run 43245689502, `success`: `validate (22.12.0, 1)` 7 min 56 s, `(22.12.0, 2)` 5 min
+  28 s, `(22.21.0, 1)` 9 min 49 s, `(22.21.0, 2)` 8 min 12 s.
