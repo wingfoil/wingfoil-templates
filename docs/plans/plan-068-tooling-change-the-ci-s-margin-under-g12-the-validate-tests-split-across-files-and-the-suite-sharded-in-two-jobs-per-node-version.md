@@ -148,3 +148,16 @@ jobs".
 - 2026-11-11: run 43095345992 on `6e559f81` cannot be read: GitHub lists it queued with no job,
   refuses to cancel it ("completed") and to re-run it. `main`'s CI on task-089's merge, which
   holds `6e559f81`, stands for it.
+- 2026-11-12, close: task-089 approved on the approver's ruling on its Acceptance 2 and 4 (the
+  task's notes, 2026-11-12), merged `--no-ff` at `3779582f` on the approver's OK, pushed; the
+  branch removed. The privacy check of the merge's diff found no local or scratch path (only the
+  tests' `/tmp/m/tree` fixtures, moved from the old file), no private project and no session.
+- 2026-11-12, point 6: `main`'s CI on the merge, run 43185136126, `success`: `validate (22.12.0,
+  1)` 7 min 54 s, `(22.12.0, 2)` 6 min 23 s, `(22.21.0, 1)` 10 min 8 s, `(22.21.0, 2)` 5 min 56 s;
+  every job under 20 minutes (24 min 17 s on plan-067's merge). It holds `6e559f81` and stands for
+  run 43095345992, still listed queued.
+- 2026-11-12: the rehearsal of `intake.yml` on `main`, run 43186860961, `success`: `detect` 19 s,
+  `prepare` 24 s, `verify (22.12.0, 1)` 10 min 27 s, `(22.21.0, 1)` 10 min 24 s, `(22.12.0, 2)`
+  6 min 47 s, `(22.21.0, 2)` 6 min 15 s, `report` 22 s; the report's line `rehearsal of 0.3.2
+  guided: 7 reasons`, as on the branch. The CI margin's row moves to Closed in this commit;
+  `active → done`. The run of this close's push is left to the next plan (dl-038 C3).
