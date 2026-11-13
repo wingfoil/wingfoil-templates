@@ -74,3 +74,8 @@ Not in this plan: any other dependency update; a change to dl-035's rule. The ro
   the close, `main`'s job durations, the owed rows on the next dependency update kept open with
   the reason, the local list named, `.wingfoil/dna.yaml` and the root `overrides` unchanged, the
   close step's wording, the red on the branch with its summary lines.
+- 2026-11-13: `main`'s CI before this plan (dl-038 C3): run 43390069004 on `c7ea0e33`, `failure`:
+  `validate (22.12.0, 1)` and `(22.21.0, 1)` failing in "Audit every matrix release's lockfile"
+  (bug-016), `(22.12.0, 2)` and `(22.21.0, 2)` `success`. The approver triaged bug-016 (`major`,
+  `approved`) and gave the OK on points 1 … 5, the owed rows on the next dependency update kept
+  open.
