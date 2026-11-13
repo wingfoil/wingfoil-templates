@@ -79,3 +79,10 @@ Not in this plan: any other dependency update; a change to dl-035's rule. The ro
   (bug-016), `(22.12.0, 2)` and `(22.21.0, 2)` `success`. The approver triaged bug-016 (`major`,
   `approved`) and gave the OK on points 1 … 5, the owed rows on the next dependency update kept
   open.
+- 2026-11-13, close: task-091 approved, merged `--no-ff` at `c2f455c8` on the approver's OK, pushed,
+  the branch removed, `approved → done`. `main`'s CI on the merge: run 43456315209 on `c2f455c8`,
+  `success`: `validate (22.12.0, 1)` 7 min 30 s, `(22.12.0, 2)` 6 min 56 s, `(22.21.0, 1)` 7 min 9
+  s, `(22.21.0, 2)` 9 min 4 s; every job under 20 minutes (G12); the matrix audit step green again.
+  bug-016's notes name the fix (bug-016 stays `approved`). dl-020: no tech-spec erratum or ruling in
+  this wave (a lockfile-only change), so nothing to fold back, for the approver to confirm. `active
+  → done`; the run of this close's push is left to the next plan (dl-038 C3).

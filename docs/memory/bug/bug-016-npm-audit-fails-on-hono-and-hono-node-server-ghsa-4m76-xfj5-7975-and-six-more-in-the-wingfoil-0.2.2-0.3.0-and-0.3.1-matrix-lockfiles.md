@@ -73,3 +73,8 @@ lockfiles change the CI's matrix cache key, so the next run installs the release
   development ones in the root; with the nits: the CI's loop stopping at 0.2.2, the output marked
   abridged, `check:pins` in Expected, the root's fix and the cache key in Reproduction, dl-035 A2
   in the severity note.
+- 2026-11-13: fixed by task-091 (plan-072), merged into `main` (`c2f455c8`): `hono` 4.13.18 and
+  `@hono/node-server` 2.1.8 in the root and the WingFoil 0.2.2, 0.3.0 and 0.3.1 matrix lockfiles
+  (`247ced98`); `npm audit` 0 in the root and every matrix folder. `main`'s CI: run 43456315209 on
+  `c2f455c8`, `success`: `validate (22.12.0, 1)` 7 min 30 s, `(22.12.0, 2)` 6 min 56 s, `(22.21.0,
+  1)` 7 min 9 s, `(22.21.0, 2)` 9 min 4 s.
