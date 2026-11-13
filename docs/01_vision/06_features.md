@@ -1,7 +1,7 @@
 # Features — WingFoil-Templates
 
-**Version:** 1.6
-**Date:** 2026-11-12
+**Version:** 1.7
+**Date:** 2026-11-13
 **Status:** Approved
 **Traces to:** [05_journeys.md](05_journeys.md), [03_is-isnot.md](03_is-isnot.md), [01_product-brief.md](01_product-brief.md) §8
 
@@ -65,13 +65,16 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
 | ID | Feature | Journey | Value | Effort | Unc. |
 |---|---|---|---|---|---|
 | F4.1 | **`base`:** the core of every project governed by WingFoil, software or not (dl-022 S1, S2): the Memory types `decision-log`, `task` and `plan`; the workflows `decision-log-ingest`, `retrospective` and `governance-evolution`; the generic directives (traceability, doc-versioning, security-secrets, the sources of claims); the DNA and roles fragments; the path and id parameters. | J2, J5 | H | H | M |
-| F4.2 | **`governance/wingfoil-dogfood`:** the feedback channel to WingFoil and the known behaviours of the pinned CLI. | J2, J5 | M | L | L |
+| F4.2 | **`governance/wingfoil-dogfood`:** the feedback channel to WingFoil and the known behaviours of the pinned CLI, built on F4.9. | J2, J5 | M | L | L |
 | F4.3 | **Methodologies:** `scrum`, `kanban`. | J6.1 | H | M | L |
 | F4.4 | **`team-mode/agent-first`:** depends on WingFoil's agent work (notes T9). | J6.1 | M | M | **H** |
 | F4.5 | **Phase packs:** `inception/lean-inception`, `specification/bdd-sbe`. | J6.1 | M | M | L |
 | F4.6 | **Blueprints:** `web-service`, `cli-library`. The `service` Memory type is renamed, because it clashes with WingFoil dl-088. | J6.1 | M | M | M |
 | F4.7 | **Stages:** `prototype`, `production`, and the transition `prototype-to-production`. A stage is an overlay: the project moves by a pack update of the `stage/*` overlay, whose workflow runs the transition (dl-021 R2, WingFoil dl-178). | J8 | M | M | M |
 | F4.8 | **`software`:** the software foundation layer, composed right after `base` (dl-022 S3): the Memory types `adr`, `tech-spec`, `bug`, `release` and `release-line`; `adr-ingest`, `bug-ingest`, and `sw-life-cycle` with its slots and their defaults; the `determinism` directive; the release id parameters. Every phase pack requires it; a methodology's `delivery` exists only with it. | J2, J5 | H | M | M |
+| F4.9 | **`governance/feedback`:** installable, configurable feedback capture, triage and routing into the governance (dl-012). | J5, J10 | H | M | **H** |
+| F4.10 | **`governance/guided-init`:** one guided workflow from intent to a reconfigured WingFoil, for any governed project, with the `bootstrap` preset (dl-011). | J10 | H | M | **H** |
+| F4.11 | **`methodology/directive-first`:** directives drive methodology, workflows, agents and verification (dl-013). | J5, J6, J10 | H | H | **H** |
 
 ## F5 — Release process
 
@@ -110,6 +113,11 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
     dl-177); the vocabulary here stays provisional until then (dl-021 R4).
   - **F3.2 (reference composer):** see open question 1.
   - **F4.4 (agent-first):** it depends on WingFoil's agent features (notes T9).
+  - **F4.9 (feedback):** the design questions of dl-012 D8 (a configurable list of values, the
+    shape of the entry with `software`, how an entry's directive reaches an agent).
+  - **F4.10 (guided initialization):** the adaptive method and the reconfiguration (dl-011 D8).
+  - **F4.11 (Directive First):** the directive-driven dispatch and the type map's extension by a
+    project directive (dl-013 D5, D11).
   - **F7.1 (community location):** it depends on WingFoil's sources and allowlist (dl-138 Q4).
 - **Download metrics (brief §8), feasibility:**
   - GitHub counts downloads only for assets attached to a Release. F2.7 is therefore what makes the
@@ -121,7 +129,8 @@ Specified in spec-001; the schemas are the contract with the WingFoil CLI.
   Whether the WingFoil CLI fetches release assets or the tag is WingFoil's choice. If it fetches the
   tag, only the traffic signal remains.
 - **Dependency on WingFoil:** F1.5, F1.6, F2.4, F4.1, F4.4 and F4.8 wait for WingFoil decisions or
-  releases. The sequencer has to put work that does not wait first.
+  releases, and F4.10 for a WingFoil release providing `pack-install` (dl-011). The sequencer has
+  to put work that does not wait first.
 
 ## Open questions for the features review
 
@@ -156,3 +165,5 @@ Approver, 2026-10-06:
 5. **Amendment 1.6 (2026-11-12, plan-069).** F1.1, F1.2, F1.4, F1.5, F1.6, F2.1, F2.8, F3.3, F3.5
    and F5.2 gain what the format 2, the `delivery` contract, `check:runs` and the automated intake
    added since 1.5; no feature's Value, Effort or Uncertainty changes.
+6. **Amendment 1.7 (2026-11-13, plan-071).** F4.9 (dl-012), F4.10 (dl-011) and F4.11 (dl-013),
+   each of high uncertainty; F4.2 built on F4.9; F4.10 waits for `pack-install`.
