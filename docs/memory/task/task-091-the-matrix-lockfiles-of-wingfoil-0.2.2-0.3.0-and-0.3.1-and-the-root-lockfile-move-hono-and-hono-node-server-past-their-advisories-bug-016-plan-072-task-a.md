@@ -2,7 +2,7 @@
 id: task-091-the-matrix-lockfiles-of-wingfoil-0.2.2-0.3.0-and-0.3.1-and-the-root-lockfile-move-hono-and-hono-node-server-past-their-advisories-bug-016-plan-072-task-a
 type: task
 title: "The matrix lockfiles of WingFoil 0.2.2, 0.3.0 and 0.3.1 and the root lockfile move hono and @hono/node-server past their advisories (bug-016, plan-072 task A)"
-status: draft
+status: pending
 pack: ""            # tooling task (tooling-delivery v4), plan-072 task (A)
 depends_on: []
 tags: ["tooling","ci","dependencies"]
