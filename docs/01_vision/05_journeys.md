@@ -1,7 +1,7 @@
 # User Journeys — WingFoil-Templates
 
-**Version:** 1.3
-**Date:** 2026-10-15
+**Version:** 1.4
+**Date:** 2026-11-13
 **Status:** Approved
 **Traces to:** [04_personas.md](04_personas.md), [03_is-isnot.md](03_is-isnot.md)
 
@@ -24,6 +24,7 @@ dl-021 R2). A journey states only what the packs must make possible.
 | J4 | Record a WingFoil release | WingFoil maintainer | now: keeps compatibility true |
 | J5 | Work a phase under a composed configuration | Agent | now, in the governed repositories |
 | J6 | Start a project from a preset | Adopter | v0.4 (primary from then) |
+| J10 | Bootstrap a project from intent | Adopter (also the non-technical manager's profile) | when WingFoil provides `pack-install` (dl-011) |
 | J7 | Add a pack, upgrade | Adopter | v0.4 |
 | J8 | Move to the next stage | Adopter | when WingFoil installs pack updates (v0.4) |
 | J9 | Contribute a change or a community pack | Community contributor | deferred |
@@ -134,6 +135,22 @@ edited inside WingFoil.
 
 ---
 
+## J10 — Bootstrap a project from intent (Adopter)
+
+**Trigger:** a new project whose owner knows the goal but not which packs fit it (dl-011).
+
+| # | Step | Touchpoint | Pain / opportunity |
+|---|---|---|---|
+| 1 | States the intent in their own words | the `bootstrap` preset's guided workflow | The agent restates goal, scope and first assumptions; nothing to choose before the questions. |
+| 2 | Answers adaptive questions, in rounds | the coverage map and the question log of the draft definition | Only the questions the answers make relevant; an area not applicable is recorded with its reason. |
+| 3 | Approves the project definition | the `project-definition` element, gated | One reviewed definition instead of choices scattered across files. |
+| 4 | Approves the reconfiguration | a decision-log, then the reconfigured `.wingfoil/` | WingFoil is reconfigured from the definition and validated; with `software`, the life cycle starts from it. |
+
+**Ends well when:** the reconfigured project validates, and its first plan, or its `sw-life-cycle`
+with `software`, starts from the approved definition.
+
+---
+
 ## J7 — Add a pack, upgrade (Adopter)
 
 **Trigger:** the project needs a new concern, such as a blueprint or a governance pack, or a newer
@@ -188,3 +205,5 @@ Approver, 2026-10-06:
    comes after the pack-model rulings, as one of the configuration changes they imply.
 3. **Adoption register.** Each governed repository records its adoption of the foundation packs in
    its own Memory. This repository keeps no list of adopters.
+
+Amendment 1.4 (2026-11-13, plan-071), the first recorded here: J10, from dl-011.
