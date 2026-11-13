@@ -2,7 +2,7 @@
 id: task-091-the-matrix-lockfiles-of-wingfoil-0.2.2-0.3.0-and-0.3.1-and-the-root-lockfile-move-hono-and-hono-node-server-past-their-advisories-bug-016-plan-072-task-a
 type: task
 title: "The matrix lockfiles of WingFoil 0.2.2, 0.3.0 and 0.3.1 and the root lockfile move hono and @hono/node-server past their advisories (bug-016, plan-072 task A)"
-status: in-progress
+status: approved
 pack: ""            # tooling task (tooling-delivery v4), plan-072 task (A)
 depends_on: []
 tags: ["tooling","ci","dependencies"]
@@ -69,3 +69,31 @@ the command and its summary line; the Design's red steps are those runs.
 ## Execution Notes
 - 2026-11-13: body review: approve, three nits applied: the diff "the two packages' entries"
   rather than three lines each, the expected versions cited, the root's `dev` flags kept.
+- 2026-11-13, red (Acceptance 1): on the branch before the fix, `npm audit` exit 1, "2 moderate
+  severity vulnerabilities", in `src/matrix/wingfoil-0.2.2`, `-0.3.0`, `-0.3.1` and in the root
+  (after `npm ci`); exit 0, "found 0 vulnerabilities", in `-0.3.2`; the CI's first red run
+  43390069004.
+- 2026-11-13, fix (Acceptance 2, `247ced98`): `npm audit fix --package-lock-only --ignore-scripts`
+  in the three matrix folders and the root; the diff is the four `package-lock.json` files (12
+  lines in each matrix lockfile, 14 in the root), the `@hono/node-server` entry 2.1.3/2.1.4/2.1.5
+  → 2.1.8 and the `hono` entry 4.13.13/4.13.14 → 4.13.18, as expected; in the root,
+  `@hono/node-server`'s `peerDependencies` `hono: "^4"` → `"^4 || ^5.0.0-0"`, inside its own entry;
+  the root's `dev` flags kept; no `package.json`, pin, `.wingfoil/dna.yaml`, `overrides` or
+  `-0.3.2` change.
+- 2026-11-13, green and adr-003's review (Acceptance 3): `npm audit` exit 0 in the root and in the
+  four matrix folders; in the root, after `npm ci`, `npm audit signatures`: 190 packages with
+  verified registry signatures, 43 with verified attestations; `hono` and `@hono/node-server`
+  still MIT in the four lockfiles; `npm run check:pins` exit 0.
+- 2026-11-13, build review: approve, two nits applied here: `--ignore-scripts` is a harmless
+  addition to plan-072's `--package-lock-only` (no script runs without an install); the
+  `peerDependencies` change shows in the root alone because the matrix lockfiles already held
+  `hono: "^4 || ^5.0.0-0"`. The reviewer reran `npm audit` on copies (main red, the branch green)
+  and matched both integrity values with the registry.
+- 2026-11-13, checks on the frozen `1e597d7e` (Acceptance 4, dl-039): the branch CI, run
+  43399534655, `success`: `validate (22.12.0, 1)` 7 min 1 s, `(22.12.0, 2)` 5 min 41 s,
+  `(22.21.0, 1)` 7 min 52 s, `(22.21.0, 2)` 8 min 44 s, every job under 20 minutes (G12), the
+  matrix releases installed afresh (the cache key moved with the lockfiles). From a clean worktree
+  on Node 22.21.0, after `npm ci` and `npm run build`: `npm run validate:publication` exit 0
+  (`matrix: publication, 22 runs, 0 failed`), the golden tree in publication mode exit 0 (26 runs,
+  0 failed), `npm run -s wingfoil -- workflow list` exit 0. The privacy check of the branch's diff
+  found no local or scratch path, no private project and no session.
