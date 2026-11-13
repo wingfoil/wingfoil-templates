@@ -187,4 +187,6 @@ Configuration changes this decision implies. Each is applied after approval and 
   requires `governance/feedback` and ships `wingfoil-cli` (dl-012 D3); D6's directive name
   `wingfoil-feedback` is the old one. **D10**: this repository's adoption comes last in W10, after
   the pack release round and before the periodic retrospective (the approver, 2026-11-12 and
-  2026-11-13). The body stays as approved.
+  2026-11-13). `governance/guided-init` (dl-011) and `methodology/directive-first` (dl-013) are
+  planned after the first catalog, in M5; D7's first scope is unchanged by them. The body stays as
+  approved.

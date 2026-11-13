@@ -49,7 +49,8 @@ The 36 features of waves W1–W12 and W14 in [07_sequencer.md](07_sequencer.md).
 - the tooling (reference composer, one validation command, matrix, determinism, lint, CI) and a
   browsable catalog for people and agents (`CATALOG.md`, `catalog-index.json`, a search page);
 - the release process (evidence, release intake, line policy, feedback notes);
-- the content: `base`, `software`, `governance/feedback`, `wingfoil-dogfood` and the first scope.
+- the content: `base`, `software`, `governance/feedback`, `governance/wingfoil-dogfood` and the
+  first scope.
 
 ## Expected result
 

@@ -89,3 +89,9 @@ is `done`.
   (task-091, merged at `c2f455c8`), whose run 43456315209 on `main`, holding these commits, is
   `success` (`validate (22.12.0, 1)` 7 min 30 s, `(22.12.0, 2)` 6 min 56 s, `(22.21.0, 1)` 7 min
   9 s, `(22.21.0, 2)` 9 min 4 s). plan-070 is `done`.
+- 2026-11-13, steps 2 and 3: the four documents (`eb6fa54d`, `f459d059`, `381c37a5`, `533316d4`)
+  and the dl notes (`f506a942`) on the branch; its review: approve, four nits applied: dl-003's
+  note with the sentence on `guided-init` and `directive-first` (the row's), and its D10 sentence
+  on the adoption kept (the W10 order the approver OK'd); the presets done (plan-070) named in the
+  sequencer's 1.7 line; M5's Goal with its full stop (its count kept as dl-011 D8 writes it); the
+  canvas's `governance/wingfoil-dogfood`. No row changed in substance: no re-review.

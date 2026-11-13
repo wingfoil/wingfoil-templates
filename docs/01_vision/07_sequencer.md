@@ -29,7 +29,7 @@ Wave ids (`W1`…) belong to this repository and are unrelated to WingFoil's own
 | **M1 — Tooling** | one command composes and validates any pack against every compatible WingFoil release; the release process records its evidence; the catalog is browsable by people and agents. | M0 | Pack author, Agent | 11 |
 | **M2 — Foundation** | the foundation packs `base` and `software` published with a first methodology, `methodology/scrum` (dl-022, plan-052). WingFoil UI, Benchmark and WingFoil adopt them when each is ready, Benchmark and UI between their own releases; Templates adopts at W10, with `methodology/kanban` (plan-052 ruling 7). | the WingFoil v0.3 formats, M1 | Governed-repository maintainer (primary), WingFoil maintainer (primary) | 5 |
 | **M3 — First catalog (MVP)** | the first official catalog, published and validated, ready when WingFoil v0.4 installs packs, with `governance/feedback` and `governance/wingfoil-dogfood` published and this repository adopting `base`, `software` and `methodology/kanban` (W10). | M2, WingFoil v0.4 for J6–J7 | Adopter (primary from v0.4) | 8 |
-| **M5 — Guided and directive-first adoption** | the guided initialization and the Directive First methodology published | M3; for W16, the WingFoil release providing `pack-install` | Adopter | 2 (F4.10, F4.11) |
+| **M5 — Guided and directive-first adoption** | the guided initialization and the Directive First methodology published. | M3; for W16, the WingFoil release providing `pack-install` | Adopter | 2 (F4.10, F4.11) |
 | **M4 — Community** | community catalog, contributions, download traffic. | M3, WingFoil dl-138 Q4 | Community contributor | 3 |
 
 Every feature of `06_features.md` is assigned to exactly one wave, except F4.3, split between W9
@@ -176,4 +176,5 @@ the state of the waves, the work outside them, W8's four features kept, W10's or
 on the first publication and on tooling's host corrected.
 
 Amendment 1.7 (2026-11-13, plan-071): F4.9 in W10 (dl-012), its four features an exception; the
-milestone M5 with W15 (F4.11, dl-013) and W16 (F4.10, dl-011); W10's order with the adoption.
+milestone M5 with W15 (F4.11, dl-013) and W16 (F4.10, dl-011); W10's order with the adoption;
+the presets done (plan-070) in the state of the waves.
