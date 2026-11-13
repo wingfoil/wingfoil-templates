@@ -83,3 +83,9 @@ is `done`.
   the canvas's decisions section opened, W15 following W10's `governance/feedback`.
 - 2026-11-13: the approver's OK on the table as written, the plan's own texts included, and the
   adoption before the periodic retrospective confirmed.
+- 2026-11-13: `main`'s CI before this plan (dl-038 C3): plan-070's close and this plan's body,
+  pushed at `c7ea0e33`, run 43390069004, `failure` in "Audit every matrix release's lockfile"
+  only (bug-016, advisories published overnight, no change of this repository's); fixed by plan-072
+  (task-091, merged at `c2f455c8`), whose run 43456315209 on `main`, holding these commits, is
+  `success` (`validate (22.12.0, 1)` 7 min 30 s, `(22.12.0, 2)` 6 min 56 s, `(22.21.0, 1)` 7 min
+  9 s, `(22.21.0, 2)` 9 min 4 s). plan-070 is `done`.
