@@ -100,3 +100,9 @@ is `done`.
   `(22.21.0, 2)` 8 min 46 s, every job under 20 minutes (G12); `git diff main --stat` names the
   four documents, dl-001, dl-003 and this plan only; the privacy check of the branch's diff found
   no local or scratch path, no private project and no session.
+- 2026-11-13, close: merged `--no-ff` at `ccb35be3` on the approver's OK, pushed; the branch
+  removed. `main`'s CI on the merge, run 43460500399, `success`: `validate (22.12.0, 1)` 9 min
+  20 s, `(22.12.0, 2)` 6 min 59 s, `(22.21.0, 1)` 8 min 49 s, `(22.21.0, 2)` 8 min 26 s. The rows
+  "dl-012's F4.9 placement" and the one beginning "The follow-up plan of plan-020" move to Closed
+  in this commit; `active → done`. The run of this close's push is left to the next plan (dl-038
+  C3).
