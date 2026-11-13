@@ -1,7 +1,7 @@
 # Sequencer — WingFoil-Templates
 
-**Version:** 1.6
-**Date:** 2026-11-12
+**Version:** 1.7
+**Date:** 2026-11-13
 **Status:** Approved
 **Traces to:** [06_features.md](06_features.md), [05_journeys.md](05_journeys.md), [04_personas.md](04_personas.md)
 
@@ -28,7 +28,8 @@ Wave ids (`W1`…) belong to this repository and are unrelated to WingFoil's own
 | **M0 — Contract** | spec-001 and its schemas approved: the format, the catalog, compatibility. `wingfoil-release-intake` back in the configuration. | the pack-model rulings | Pack author, WingFoil maintainer | 12 |
 | **M1 — Tooling** | one command composes and validates any pack against every compatible WingFoil release; the release process records its evidence; the catalog is browsable by people and agents. | M0 | Pack author, Agent | 11 |
 | **M2 — Foundation** | the foundation packs `base` and `software` published with a first methodology, `methodology/scrum` (dl-022, plan-052). WingFoil UI, Benchmark and WingFoil adopt them when each is ready, Benchmark and UI between their own releases; Templates adopts at W10, with `methodology/kanban` (plan-052 ruling 7). | the WingFoil v0.3 formats, M1 | Governed-repository maintainer (primary), WingFoil maintainer (primary) | 5 |
-| **M3 — First catalog (MVP)** | the first official catalog, published and validated, ready when WingFoil v0.4 installs packs, with `governance/wingfoil-dogfood` published and this repository adopting `base`, `software` and `methodology/kanban` (W10). | M2, WingFoil v0.4 for J6–J7 | Adopter (primary from v0.4) | 7 |
+| **M3 — First catalog (MVP)** | the first official catalog, published and validated, ready when WingFoil v0.4 installs packs, with `governance/feedback` and `governance/wingfoil-dogfood` published and this repository adopting `base`, `software` and `methodology/kanban` (W10). | M2, WingFoil v0.4 for J6–J7 | Adopter (primary from v0.4) | 8 |
+| **M5 — Guided and directive-first adoption** | the guided initialization and the Directive First methodology published | M3; for W16, the WingFoil release providing `pack-install` | Adopter | 2 (F4.10, F4.11) |
 | **M4 — Community** | community catalog, contributions, download traffic. | M3, WingFoil dl-138 Q4 | Community contributor | 3 |
 
 Every feature of `06_features.md` is assigned to exactly one wave, except F4.3, split between W9
@@ -39,7 +40,7 @@ review and is not sequenced.
 
 ## State of the waves
 
-On 2026-11-12 (amendment 1.6). M0, M1 and M2 are reached; M3 is open.
+On 2026-11-13 (amendment 1.7). M0, M1 and M2 are reached; M3 is open.
 
 | Wave | State | Closed by |
 |---|---|---|
@@ -48,8 +49,8 @@ On 2026-11-12 (amendment 1.6). M0, M1 and M2 are reached; M3 is open.
 | W14 | done | plan-024 |
 | W8 | done | plan-046, closing plan-041 … plan-047 |
 | W9 | done | plan-052: `base` 2.0.1, `software` 1.0.0, `methodology/scrum` 1.0.0 (prel-003 … prel-005) |
-| W10 | in progress | `methodology/kanban` 1.0.0 done (plan-058, prel-006); presets, `governance/wingfoil-dogfood`, this repository's adoption, its WingFoil pin raised from 0.2.2 and the first inbox sync not started. dl-012 (`pending`, written when this wave was W9) would place F4.9 in it, over its three-feature limit: left to dl-012's ruling |
-| W11 … W13 | not started | — |
+| W10 | in progress | `methodology/kanban` 1.0.0 done (plan-058, prel-006); the presets `classic-scrum` and `classic-kanban` done (plan-070); F4.9 `governance/feedback` (dl-012), `governance/wingfoil-dogfood`, this repository's adoption, its WingFoil pin raised from 0.2.2 and the first inbox sync not started |
+| W11 … W13, W15, W16 | not started | — |
 
 Two releases fall outside a wave's close: `base` 1.0.0 within W8 (plan-044, prel-001) and `base`
 2.0.0 between W8 and W9 (plan-049, prel-002).
@@ -95,9 +96,18 @@ Starts when the approver confirms that the v0.3 formats are final.
 
 | Wave | Features | High unc. | Ends with |
 |---|---|---|---|
-| W10 — Kanban, presets, dogfood and adoption | F4.3 `kanban` · F2.6 presets · F4.2 `governance/wingfoil-dogfood` | — | `methodology/kanban` published, a first preset for each methodology; this repository adopts `base`, `software` and `methodology/kanban`, its WingFoil pin raised and its feedback inbox synced (`wingfoil-cli` rule 7; dl-003 D10 as plan-052 ruling 7 reorders it) |
+| W10 — Kanban, presets, dogfood and adoption | F4.3 `kanban` · F2.6 presets · F4.9 `governance/feedback` · F4.2 `governance/wingfoil-dogfood` | F4.9 | `methodology/kanban` published, a first preset for each methodology, `governance/feedback` published; this repository adopts `base`, `software` and `methodology/kanban`, its WingFoil pin raised and its feedback inbox synced (`wingfoil-cli` rule 7; dl-003 D10 as plan-052 ruling 7 reorders it) |
 | W11 — Phases and blueprints | F4.5 `lean-inception`, `bdd-sbe` · F4.6 `web-service`, `cli-library` | — | every slot and blueprint of the first scope published |
 | W12 — Stages and agent mode | F4.7 `prototype`, `production`, transition (run by the target stage's workflow, dl-021 R2) · F4.4 `agent-first` | F4.4 | **first catalog complete** |
+
+## M5 — Guided and directive-first adoption
+
+Ordered between M3 and M4; its id comes after M4's by number, as W14 is ordered within M1.
+
+| Wave | Features | High unc. | Ends with |
+|---|---|---|---|
+| W15 — Directive First | F4.11 `methodology/directive-first`, with the `directive-first` preset | F4.11 | the pack and its preset published, validated across the compatibility matrix and run on the real engine (dl-032 E2–E4); waits for M3, after W10's `governance/feedback`, which the preset holds |
+| W16 — Guided initialization | F4.10 `governance/guided-init`, with the `bootstrap` preset | F4.10 | the pack and its preset published, dl-032 E2 and the matrix run on the first release `compat.yaml` records providing `pack-install`; no work on the pack starts before that release |
 
 ## M4 — Community (later)
 
@@ -123,10 +133,12 @@ Starts when the approver confirms that the v0.3 formats are final.
   per task with no pack, and `tooling-change` reopens it for later changes (decision 2 below).
 - **W8 holds four features** (F4.1, F4.8, F6.2, F1.6), one over the rule of three: `software`
   joined W8 with dl-022 (1.4, plan-038), and W8 closed so (plan-046). It is kept as a recorded
-  exception, not split after the fact.
-- **W10's order** (the approver, 2026-11-12): W10's remaining features, then a pack release round
-  (bug-011 … bug-015's fixes, the `Precedence:` lines, the Memory templates' optional fields, the
-  CHANGELOG's first line checked), then the periodic retrospective.
+  exception, not split after the fact. **W10 holds four too** (F4.3 `kanban`, F2.6, F4.9, F4.2),
+  F4.9 joining it with dl-012, an exception the approver accepted on 2026-11-12.
+- **W10's order** (the approver, 2026-11-12 and 2026-11-13): the presets, `governance/feedback`,
+  `governance/wingfoil-dogfood`, then a pack release round (bug-011 … bug-015's fixes, the
+  `Precedence:` lines, the Memory templates' optional fields, the CHANGELOG's first line checked),
+  then this repository's adoption, then the periodic retrospective.
 
 ## Open questions for the sequencer review
 
@@ -162,3 +174,6 @@ Approver, 2026-10-06:
 Amendment 1.6 (2026-11-12, plan-069), the first recorded here (1.1 … 1.5 are in the git history):
 the state of the waves, the work outside them, W8's four features kept, W10's order, and the notes
 on the first publication and on tooling's host corrected.
+
+Amendment 1.7 (2026-11-13, plan-071): F4.9 in W10 (dl-012), its four features an exception; the
+milestone M5 with W15 (F4.11, dl-013) and W16 (F4.10, dl-011); W10's order with the adoption.
