@@ -1,7 +1,7 @@
 # MVP Canvas — WingFoil-Templates
 
-**Version:** 1.4
-**Date:** 2026-10-28
+**Version:** 1.5
+**Date:** 2026-11-13
 **Status:** Approved
 **Traces to:** [07_sequencer.md](07_sequencer.md) (milestones M0–M3), [01_product-brief.md](01_product-brief.md)
 
@@ -12,8 +12,9 @@
 **The first official catalog, ready when WingFoil v0.4 installs packs.** It contains:
 - the pack format and its schemas, approved;
 - one command that composes and validates packs against every compatible WingFoil release;
-- the foundation packs `base` and `software`, and `governance/wingfoil-dogfood`, adopted by the four
-  governed software repositories (dl-022);
+- the foundation packs `base` and `software`, and `governance/feedback` and
+  `governance/wingfoil-dogfood`, adopted by the four governed software repositories (dl-022,
+  dl-012);
 - the first scope, published and validated:
   - `scrum`, `kanban`;
   - `agent-first`;
@@ -41,14 +42,14 @@
 
 ## Features
 
-The 35 features of waves W1–W12 and W14 in [07_sequencer.md](07_sequencer.md). In short:
+The 36 features of waves W1–W12 and W14 in [07_sequencer.md](07_sequencer.md). In short:
 
 - the format (manifest, fragments, parameters, slots, `format:` key, AGENTS.md section, schemas);
 - the catalog (tags, digests, `compat.yaml`, computed ranges, presets);
 - the tooling (reference composer, one validation command, matrix, determinism, lint, CI) and a
   browsable catalog for people and agents (`CATALOG.md`, `catalog-index.json`, a search page);
 - the release process (evidence, release intake, line policy, feedback notes);
-- the content: `base`, `software`, `wingfoil-dogfood` and the first scope.
+- the content: `base`, `software`, `governance/feedback`, `wingfoil-dogfood` and the first scope.
 
 ## Expected result
 
@@ -69,13 +70,14 @@ The 35 features of waves W1–W12 and W14 in [07_sequencer.md](07_sequencer.md).
 
 ## Cost and schedule
 
-- **Build effort:** 12 waves. No dates are fixed.
+- **Build effort:** 13 waves. No dates are fixed.
 - **Main uncertainty:**
   - W2: the fragment merge;
   - W4: the capability vocabulary, provisional until WingFoil publishes one (dl-021 R4, WingFoil
     dl-177);
   - W5: the reference composer;
   - W8: the AGENTS.md markers;
+  - W10: `governance/feedback`'s design (dl-012 D8);
   - W12: `agent-first`.
 - **Dependencies on WingFoil:**
   - the v0.3 formats, for W8;
@@ -86,3 +88,9 @@ The 35 features of waves W1–W12 and W14 in [07_sequencer.md](07_sequencer.md).
   - the composer proposal (notes T15).
 - **Run cost:** the validation matrix installs pinned WingFoil releases, and there are no paid
   services.
+
+## Decisions
+
+Amendment 1.5 (2026-11-13, plan-071), the first recorded here: `governance/feedback` in the MVP
+(dl-012), 36 features; the build effort corrected to 13 waves (W1–W12 and W14). dl-011's and
+dl-013's packs are outside the MVP (M5).
