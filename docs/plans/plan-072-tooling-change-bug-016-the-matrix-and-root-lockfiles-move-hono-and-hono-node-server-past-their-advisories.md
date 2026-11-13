@@ -33,7 +33,8 @@ Execution Notes.
 2. **Red and green, as task-042:** a lockfile-only change, with no code and no test (a test of a
    transitive version would duplicate `npm audit`, which needs the network, and go stale): the red
    is `npm audit`'s exit 1 in the three matrix folders and the root (after `npm ci`), on the branch
-   before the fix, its summary line per folder recorded with the CI's first red run; the green is its exit 0 there, and in `wingfoil-0.3.2`.
+   before the fix, its summary line per folder recorded with the CI's first red run; the green is
+   its exit 0 there, and in `wingfoil-0.3.2`.
 3. **adr-003's review of the moved packages:** `npm audit signatures` in the root after `npm ci`
    (its count recorded); the moved versions' licences read from the lockfiles.
 4. **Checks** (dl-039): the branch CI green, every job's duration recorded (R3, G12); the CI's
