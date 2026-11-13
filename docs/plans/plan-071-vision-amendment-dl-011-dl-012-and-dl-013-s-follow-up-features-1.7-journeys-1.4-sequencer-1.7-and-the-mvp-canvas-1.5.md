@@ -81,3 +81,5 @@ is `done`.
 - 2026-11-12: re-review: approve after one amendment, applied: W15's "Ends with" across the matrix
   and on the real engine (dl-013 D9, dl-032 E2–E4), W16's the same on its release; with the nits:
   the canvas's decisions section opened, W15 following W10's `governance/feedback`.
+- 2026-11-13: the approver's OK on the table as written, the plan's own texts included, and the
+  adoption before the periodic retrospective confirmed.
