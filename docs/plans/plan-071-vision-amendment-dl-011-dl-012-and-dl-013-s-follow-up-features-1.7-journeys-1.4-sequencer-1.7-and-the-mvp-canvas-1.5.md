@@ -2,7 +2,7 @@
 id: plan-071-vision-amendment-dl-011-dl-012-and-dl-013-s-follow-up-features-1.7-journeys-1.4-sequencer-1.7-and-the-mvp-canvas-1.5
 type: plan
 title: "Vision amendment: dl-011, dl-012 and dl-013's follow-up, features 1.7, journeys 1.4, sequencer 1.7 and the MVP canvas 1.5"
-status: active
+status: done
 workflow: "sw-life-cycle"
 phase: "inception"
 tags: ["vision","sequencer"]
