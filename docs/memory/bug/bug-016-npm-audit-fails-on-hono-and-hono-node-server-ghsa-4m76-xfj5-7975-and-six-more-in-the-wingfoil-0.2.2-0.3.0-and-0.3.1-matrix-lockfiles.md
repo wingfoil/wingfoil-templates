@@ -33,15 +33,15 @@ fix available via `npm audit fix`
 2 moderate severity vulnerabilities
 ```
 
-Both come through `wingfoil` → `@modelcontextprotocol/sdk` → `@hono/node-server` and `hono`: in
-the matrix lockfiles they are runtime dependencies of the pinned `wingfoil` (listed under
-`dependencies`, the real installs the matrix runs, which is why dl-035 keeps that gate blocking);
-in the root, development ones (`wingfoil@0.2.2` a `devDependency`). The lockfile of WingFoil 0.3.2 already holds `@hono/node-server`
-2.1.6 and `hono` 4.13.16, and passes. The root lockfile holds `hono` 4.13.13 and
-`@hono/node-server` 2.1.3 through `wingfoil@0.2.2`: "Audit the root lockfile" (`npm audit
---omit=dev`) passes, and "Audit the whole root tree, warning only" warns, as dl-035 R1 has it for
-an advisory in a development dependency. No change can be merged with a green CI until the matrix
-lockfiles are fixed, `main` included.
+Both come through `wingfoil` → `@modelcontextprotocol/sdk` → `@hono/node-server` and `hono`: in the
+matrix lockfiles they are runtime dependencies of the pinned `wingfoil` (listed under
+`dependencies`, the real installs the matrix runs, which is why dl-035 keeps that gate blocking); in
+the root, development ones (`wingfoil@0.2.2` a `devDependency`). The lockfile of WingFoil 0.3.2
+already holds `@hono/node-server` 2.1.6 and `hono` 4.13.16, and passes. The root lockfile holds
+`hono` 4.13.13 and `@hono/node-server` 2.1.3 through `wingfoil@0.2.2`: "Audit the root lockfile"
+(`npm audit --omit=dev`) passes, and "Audit the whole root tree, warning only" warns, as dl-035 R1
+has it for an advisory in a development dependency. No change can be merged with a green CI until
+the matrix lockfiles are fixed, `main` included.
 
 ## Expected
 
