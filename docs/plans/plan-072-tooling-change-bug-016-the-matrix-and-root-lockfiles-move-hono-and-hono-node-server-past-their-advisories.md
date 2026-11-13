@@ -28,23 +28,25 @@ Execution Notes.
 1. **The fix:** `npm audit fix --package-lock-only` in `src/matrix/wingfoil-0.2.2`, `-0.3.0`,
    `-0.3.1` and in the root; the diff is the four `package-lock.json` files, moving
    `@hono/node-server` and `hono` (and nothing else; anything else `audit fix` moves goes to the
-   approver, dl-019); every `package.json`, the pinned `wingfoil` versions and
-   `src/matrix/wingfoil-0.3.2/` unchanged.
+   approver, dl-019); every `package.json`, the pinned `wingfoil` versions, `.wingfoil/dna.yaml`,
+   the root `overrides` and `src/matrix/wingfoil-0.3.2/` unchanged.
 2. **Red and green, as task-042:** a lockfile-only change, with no code and no test (a test of a
    transitive version would duplicate `npm audit`, which needs the network, and go stale): the red
-   is `npm audit`'s exit 1 in the three matrix folders and the root, recorded with the CI's first
-   red run; the green is its exit 0 there, and in `wingfoil-0.3.2`.
+   is `npm audit`'s exit 1 in the three matrix folders and the root (after `npm ci`), on the branch
+   before the fix, its summary line per folder recorded with the CI's first red run; the green is its exit 0 there, and in `wingfoil-0.3.2`.
 3. **adr-003's review of the moved packages:** `npm audit signatures` in the root after `npm ci`
    (its count recorded); the moved versions' licences read from the lockfiles.
 4. **Checks** (dl-039): the branch CI green, every job's duration recorded (R3, G12); the CI's
    matrix cache is keyed by the matrix lockfiles, so the branch run installs the moved releases
-   afresh; dl-039's local list on Node 22.21.0 from a clean worktree.
-5. **After the merge:** `main`'s CI green, recorded in bug-016's and this plan's notes; plan-071
-   resumes.
+   afresh; dl-039's local list on Node 22.21.0 from a clean worktree, after `npm ci` and `npm run
+   build`: `validate:publication`, the golden tree in publication mode, `workflow list`.
+5. **After the merge:** `main`'s CI green, its run id and every job's duration recorded in
+   bug-016's and this plan's notes (dl-039 R3); plan-071 resumes.
 
-Not in this plan: any other dependency update (the rows of `docs/owed-items.md` on the next
-dependency update: `check:pins` and `overrides`, the `minimatch` override); a change to dl-035's
-rule.
+Not in this plan: any other dependency update; a change to dl-035's rule. The rows of
+`docs/owed-items.md` due at "the next dependency update" (`check:pins` and `overrides`, the
+`minimatch` override) stay open: a lockfile-only move of transitive dependencies, with no
+`package.json` change, is not that trigger (for the approver at the outline's OK).
 
 ## Steps
 
@@ -53,7 +55,9 @@ rule.
 2. **task-091** (`tooling-delivery` v4, `pack: ""`): its body reviewed, `pending → backlog` by the
    approver, on its branch `task/task-091-hono-lockfiles`; design, build, build review, checks,
    `in-review`, the approver's approval and merge OK; merged `--no-ff`, `main`'s CI read.
-3. **Close:** bug-016's notes, `active → done`.
+3. **Close:** bug-016's notes (the fix commit, the branch and `main` runs; bug-016 stays
+   `approved`); dl-020: the errata and rulings per tech-spec listed (none expected), the
+   approver's ruling recorded; this plan `active → done`.
 
 ## Handoff
 
@@ -61,8 +65,11 @@ rule.
   merge OK.
 - **Alone:** the task's body, design, build, checks and notes; the reviews by an independent
   reviewer (a subagent with no part in the text). No pull request; files staged by name.
-- **Done when:** `npm audit` exits 0 in every matrix folder, `main`'s CI green, bug-016's notes
-  name the fix.
+- **Done when:** `npm audit` exits 0 in every matrix folder and in the root, `main`'s CI green with
+  its jobs' durations recorded, bug-016's notes name the fix.
 
 ## Execution Notes
-
+- 2026-11-13: review: approve after amendments, no blocking finding; the nits applied: dl-020 at
+  the close, `main`'s job durations, the owed rows on the next dependency update kept open with
+  the reason, the local list named, `.wingfoil/dna.yaml` and the root `overrides` unchanged, the
+  close step's wording, the red on the branch with its summary lines.
