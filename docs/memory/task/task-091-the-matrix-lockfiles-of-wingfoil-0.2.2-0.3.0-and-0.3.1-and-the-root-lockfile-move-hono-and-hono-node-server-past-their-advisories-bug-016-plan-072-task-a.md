@@ -37,8 +37,9 @@ the command and its summary line; the Design's red steps are those runs.
    `-0.3.0`, `-0.3.1` and in the root (after `npm ci`) exit 1 ("2 moderate severity
    vulnerabilities"); the CI's first red run, 43390069004, cited.
 2. **The fix** (plan-072 point 1): `npm audit fix --package-lock-only` in the three matrix folders
-   and the root; the fix commit's diff is the four `package-lock.json` files, moving only
-   `@hono/node-server` and `hono` (`version`, `resolved`, `integrity`); every `package.json`, the
+   and the root; the fix commit's diff is the four `package-lock.json` files, moving only the
+   `@hono/node-server` and `hono` entries (expected, not required: 2.1.8 and 4.13.18, as bug-016's
+   reproduction found), the root's `dev` flags kept; every `package.json`, the
    pinned `wingfoil` versions, `.wingfoil/dna.yaml`, the root `overrides` and
    `src/matrix/wingfoil-0.3.2/` unchanged. If `audit fix` moves anything else, it goes to the
    approver (dl-019) before any other approach.
@@ -66,4 +67,5 @@ the command and its summary line; the Design's red steps are those runs.
 - **Branch:** `task/task-091-hono-lockfiles`.
 
 ## Execution Notes
-
+- 2026-11-13: body review: approve, three nits applied: the diff "the two packages' entries"
+  rather than three lines each, the expected versions cited, the root's `dev` flags kept.
