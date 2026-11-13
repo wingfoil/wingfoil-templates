@@ -69,3 +69,18 @@ the command and its summary line; the Design's red steps are those runs.
 ## Execution Notes
 - 2026-11-13: body review: approve, three nits applied: the diff "the two packages' entries"
   rather than three lines each, the expected versions cited, the root's `dev` flags kept.
+- 2026-11-13, red (Acceptance 1): on the branch before the fix, `npm audit` exit 1, "2 moderate
+  severity vulnerabilities", in `src/matrix/wingfoil-0.2.2`, `-0.3.0`, `-0.3.1` and in the root
+  (after `npm ci`); exit 0, "found 0 vulnerabilities", in `-0.3.2`; the CI's first red run
+  43390069004.
+- 2026-11-13, fix (Acceptance 2, `247ced98`): `npm audit fix --package-lock-only --ignore-scripts`
+  in the three matrix folders and the root; the diff is the four `package-lock.json` files (12
+  lines in each matrix lockfile, 14 in the root), the `@hono/node-server` entry 2.1.3/2.1.4/2.1.5
+  → 2.1.8 and the `hono` entry 4.13.13/4.13.14 → 4.13.18, as expected; in the root,
+  `@hono/node-server`'s `peerDependencies` `hono: "^4"` → `"^4 || ^5.0.0-0"`, inside its own entry;
+  the root's `dev` flags kept; no `package.json`, pin, `.wingfoil/dna.yaml`, `overrides` or
+  `-0.3.2` change.
+- 2026-11-13, green and adr-003's review (Acceptance 3): `npm audit` exit 0 in the root and in the
+  four matrix folders; in the root, after `npm ci`, `npm audit signatures`: 190 packages with
+  verified registry signatures, 43 with verified attestations; `hono` and `@hono/node-server`
+  still MIT in the four lockfiles; `npm run check:pins` exit 0.
