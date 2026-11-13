@@ -84,3 +84,16 @@ the command and its summary line; the Design's red steps are those runs.
   four matrix folders; in the root, after `npm ci`, `npm audit signatures`: 190 packages with
   verified registry signatures, 43 with verified attestations; `hono` and `@hono/node-server`
   still MIT in the four lockfiles; `npm run check:pins` exit 0.
+- 2026-11-13, build review: approve, two nits applied here: `--ignore-scripts` is a harmless
+  addition to plan-072's `--package-lock-only` (no script runs without an install); the
+  `peerDependencies` change shows in the root alone because the matrix lockfiles already held
+  `hono: "^4 || ^5.0.0-0"`. The reviewer reran `npm audit` on copies (main red, the branch green)
+  and matched both integrity values with the registry.
+- 2026-11-13, checks on the frozen `1e597d7e` (Acceptance 4, dl-039): the branch CI, run
+  43399534655, `success`: `validate (22.12.0, 1)` 7 min 1 s, `(22.12.0, 2)` 5 min 41 s,
+  `(22.21.0, 1)` 7 min 52 s, `(22.21.0, 2)` 8 min 44 s, every job under 20 minutes (G12), the
+  matrix releases installed afresh (the cache key moved with the lockfiles). From a clean worktree
+  on Node 22.21.0, after `npm ci` and `npm run build`: `npm run validate:publication` exit 0
+  (`matrix: publication, 22 runs, 0 failed`), the golden tree in publication mode exit 0 (26 runs,
+  0 failed), `npm run -s wingfoil -- workflow list` exit 0. The privacy check of the branch's diff
+  found no local or scratch path, no private project and no session.
