@@ -86,3 +86,4 @@ Not in this plan: any other dependency update; a change to dl-035's rule. The ro
   bug-016's notes name the fix (bug-016 stays `approved`). dl-020: no tech-spec erratum or ruling in
   this wave (a lockfile-only change), so nothing to fold back, for the approver to confirm. `active
   → done`; the run of this close's push is left to the next plan (dl-038 C3).
+- 2026-11-13: the approver confirmed dl-020: nothing to fold back from this wave.
