@@ -2,7 +2,7 @@
 id: plan-072-tooling-change-bug-016-the-matrix-and-root-lockfiles-move-hono-and-hono-node-server-past-their-advisories
 type: plan
 title: "tooling-change: bug-016, the matrix and root lockfiles move hono and @hono/node-server past their advisories"
-status: draft
+status: active
 workflow: "tooling-change"
 phase: "deliver"
 tags: ["tooling","ci","dependencies"]
