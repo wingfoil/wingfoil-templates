@@ -118,3 +118,7 @@ Consequences:
 - 2026-10-15, plan-038: **D5**'s first scope also gains `software`, the software foundation pack
   (dl-022), as dl-003 D7 added `base`. `base` serves every project governed by WingFoil, software
   or not; `software` is composed right after it. The body stays as approved.
+- 2026-11-13, plan-071: **D5**'s first scope gains `governance/feedback` (dl-012 D6, approved on
+  2026-11-12), with a maintained line confirmed at its charter (D7). `governance/guided-init`
+  (dl-011) and `methodology/directive-first` (dl-013) are planned after the first catalog, in M5;
+  the first scope is unchanged by them. The body stays as approved.
