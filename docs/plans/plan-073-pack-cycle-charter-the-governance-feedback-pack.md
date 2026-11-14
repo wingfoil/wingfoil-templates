@@ -166,6 +166,14 @@ The run before it, on plan-071's merge `ccb35be3`, is 43460500399, `success`.
 12. **No feedback note** to WingFoil for this charter or the publication (dl-021 R1); a schema
     change the design phase makes still produces one (`wingfoil-cli` rule 8).
 
+## The approver's rulings
+
+Given on 2026-11-14, in chat: the outline is approved as recommended. Points 1 … 12 stand as
+written: the name `governance/feedback` and the maintained line confirmed (point 1); the third
+workflow `feedback-item` (point 2); `outcome` and `resulting` optional, the facilitator proposing
+the outcome and the approver's triage confirming it (point 3); the `bug` route's candidates (a)
+and (b) left to step 2's run and a ruling then (point 5).
+
 ## Steps
 
 On branch `pack/governance-feedback-charter`; one commit per step that writes. Before every
@@ -254,3 +262,5 @@ repository's adoption and pin, dl-011 and dl-013's packs.
 - 2026-11-14: `main`'s CI before this plan (dl-038 C3): run 43608497488 on `671ddf37`,
   conclusion `success`, no annotation; jobs validate (22.21.0, 1) 11m05, (22.21.0, 2) 8m53,
   (22.12.0, 1) 11m13, (22.12.0, 2) 9m27 (dl-039 R3, under G12's 25 minutes).
+- 2026-11-14: the approver's OK on the outline as recommended, in chat; recorded in "The
+  approver's rulings". Submitted (`draft → active`).
