@@ -263,4 +263,6 @@ repository's adoption and pin, dl-011 and dl-013's packs.
   conclusion `success`, no annotation; jobs validate (22.21.0, 1) 11m05, (22.21.0, 2) 8m53,
   (22.12.0, 1) 11m13, (22.12.0, 2) 9m27 (dl-039 R3, under G12's 25 minutes).
 - 2026-11-14: the approver's OK on the outline as recommended, in chat; recorded in "The
-  approver's rulings". Submitted (`draft → active`).
+  approver's rulings". The approver submitted the plan (`draft → active`, `637d9949`). A second
+  `memory submit`, sent by mistake after it, moved the plan `active → done` (`425046c0`); reverted
+  on the approver's OK (`61bc7836`), since no CLI verb moves a plan back. The plan is `active`.
