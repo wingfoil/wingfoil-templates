@@ -251,3 +251,6 @@ repository's adoption and pin, dl-011 and dl-013's packs.
   two nits, wording only, applied: option (a)'s one main in `check:runs`; the `where` claim left
   to step 2's test; the lint's checks named as `src/workflow-rules.ts` has them; `check:runs` on
   the oldest and the newest release. No rule changes.
+- 2026-11-14: `main`'s CI before this plan (dl-038 C3): run 43608497488 on `671ddf37`,
+  conclusion `success`, no annotation; jobs validate (22.21.0, 1) 11m05, (22.21.0, 2) 8m53,
+  (22.12.0, 1) 11m13, (22.12.0, 2) 9m27 (dl-039 R3, under G12's 25 minutes).
