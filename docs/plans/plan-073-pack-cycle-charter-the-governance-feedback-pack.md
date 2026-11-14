@@ -89,8 +89,9 @@ The run before it, on plan-071's merge `ccb35be3`, is 43460500399, `success`.
    closed` by `submit` (facilitator), `memory deprecate` for an item captured by mistake.
    `kind`, `target`, `source` and `context` in `template.frontmatter.required` (FA-3), as
    dl-012 asks. `outcome` and `resulting`, set later, are **proposed optional** (dl-012 requires
-   neither): the directive says when each is set, and the fixture-element checks (FA-6 [E]) catch
-   a `closed` item without them. The alternative, both required with `not_applicable_allowed` (as
+   neither): the directive says when each is set; FA-6 [E] catches a `closed` item without
+   `resulting`, and a check of `outcome` on a `closed` item joins the fixture-element tooling task
+   (point 9). The alternative, both required with `not_applicable_allowed` (as
    `kanban`'s `release`), makes the capture write a placeholder; step 2 tests at which verbs
    WingFoil 0.3.2 checks required fields (`submit` only, or `approve` too) before the approver
    chooses. **Who writes `outcome`:** proposed, the facilitator writes the classification and the
@@ -114,11 +115,16 @@ The run before it, on plan-071's merge `ccb35be3`, is 43460500399, `success`.
    it. The targets are `kind: main` workflows, which no step can `include`: a route adds the
    target element (`memory.add`) and cites it, or leaves the target workflow to be started on its
    own; step 2's run settles which. **The `bug` route** lives only in the entry: no unconditional
-   file names `bug-ingest` or the `bug` type (isolation, spec-001 §6.5, checked by the lint), so
+   file names `bug-ingest` or the `bug` type (isolation, spec-001 §6.5; the lint checks
+   `include`, `element`, `iterate_over` and roles assignments, the review checks action strings,
+   `where` values and directive text), so
    `feedback-item` cannot route an item whose `outcome` is `bug`. Two candidates for step 2 and
    the approver: (a) the entry ships its own main workflow (`feedback-bug-route`) selecting
-   `outcome: bug`, and `feedback-review`'s `where` leaves those items out (if a `where` can
-   exclude a value; the packs only match one); (b) the route is the entry's directive alone, the
+   `outcome: bug` (with a sub of its own in the entry if it iterates, both names in step 1's
+   check and both mains in `check:runs`), and `feedback-review`'s `where` leaves those items out:
+   a `where` only includes values, so leaving one out means listing the others, which a scalar
+   parameter cannot hold (§8.1) and which drops outcomes a project adds (dl-012 D3), unless the
+   run finds another way; (b) the route is the entry's directive alone, the
    facilitator closing the item by hand once the bug exists. Either way the charter states how a
    bug item avoids staying on the review's frontier.
 6. **Upstreams** (dl-012 D3): the charter states the commitment (an upstream pack `requires` this
@@ -135,9 +141,9 @@ The run before it, on plan-071's merge `ccb35be3`, is 43460500399, `success`.
    }`, the unconditional directive only (spec-001 §7.4, §6.5). Parameters: the path, the id
    pattern, and the value lists as the design phase shapes them; nothing else until needed.
    AGENTS.md section level 2, `## Feedback`: capture with source and context, triage only by the
-   approver, routing through the governance; it names no file of the entry (always composed,
-   spec-001 §6.5), and whether a generic pointer there serves the entry's directive is D8's
-   question (shared with dl-011).
+   approver, routing through the governance. Being composed whether or not the entry is, it may
+   name the entry's directive as present only with `software` (spec-001 §10); whether that is how
+   the directive reaches an agent is D8's question (shared with dl-011).
 9. **The design phase and the shared tooling** (dl-012 D7, D8): the charter's Open points list
    D8's four questions; the next plan is the `design` phase, one tech-spec answering them for
    dl-012 and dl-013 (or an amendment of spec-001 through it); the fixture-element checks are a
@@ -148,11 +154,11 @@ The run before it, on plan-071's merge `ccb35be3`, is 43460500399, `success`.
     of fictional projects only (spec-002 §2.4); FA-1's fixture packs for `team-mode/agent-first`
     and a blueprint until W11 and W12 publish them (not needed by step 2: the pack fills no slot).
     `author`'s exit criterion includes, per dl-032 E4, a run of both workflows through every route
-    at least once, with and without `software`, and every composition validated with no warning on
-    every compatible release. Before the first version (dl-032 E3, `first-release`, prepared by
-    `author`, as plan-056's point 10): `check:runs` scenarios starting `feedback-ingest` and
-    `feedback-review` on the oldest and newest release, and the adoption run once per `init`
-    template if the README gives install steps; CB-1 … CB-6 at the first tag. The proposed tasks
+    at least once, with and without `software`; `check:runs` scenarios starting every main the
+    pack ships (`feedback-ingest`, `feedback-review`, and the entry's if point 5 gives it one);
+    every composition validated with no warning on every compatible release. The adoption run of
+    dl-032 E3, once per `init` template if the README gives install steps, is `first-release`'s,
+    prepared by `author` (as plan-056's point 10); CB-1 … CB-6 at the first tag. The proposed tasks
     are dl-012 D7's seven.
 11. **Adoption:** the procedure for any project (fresh, or one with feedback kept elsewhere), and
     this repository's, which is W10's adoption plan with dl-012 D6's knock-ons, not this
@@ -210,7 +216,8 @@ repository's adoption and pin, dl-011 and dl-013's packs.
 - **claude (drafting for the product-owner and the architect; facilitator):** steps 1 … 4 and 6,
   except the approvals and the merge OK. It never runs `memory approve` or `memory reject`. No
   pull request. Files staged by name; reviews by an independent subagent with no part in the text.
-- **Approver:** this outline before `submit` (the name, the maintained line, points 3 … 5); any
+- **Approver:** this outline before `submit` (the name and the maintained line, point 1; points
+  2 … 5: the third workflow `feedback-item`, the machine and fields, the `bug` route); any
   finding of steps 1 … 2 that changes a point; the charter's acceptance; the merge OK.
 - **Start:** the approver rules this outline; the plan is then submitted (`draft → active`) and
   run, in this session or a new one.
@@ -233,3 +240,10 @@ repository's adoption and pin, dl-011 and dl-013's packs.
   methodology in step 2's composition, §8.1 for parameters, the AGENTS.md wording left open to
   D8, dl-037 E1 in step 4, step 5's command, the Start line, dl-043, "non-foundation". Points 2,
   3 and 5 change: re-review.
+- 2026-11-14: re-review: approve after amendments; no blocker, three should-fix, three nits, all
+  applied: points 2 … 5 named in the Handoff; the AGENTS.md section may name the entry's
+  directive as present only with `software` (spec-001 §10, point 8); what the isolation lint
+  checks and what the review checks (point 5); `outcome` on a `closed` item checked by the
+  tooling task, FA-6 covering `resulting` (point 3); the `check:runs` scenarios kept in
+  `author`'s exit criterion as plan-056's, every main counted (point 10); option (a)'s `where`
+  and names (point 5). No ruling changes beyond the wording: no further re-review.
