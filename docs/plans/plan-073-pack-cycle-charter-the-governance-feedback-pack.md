@@ -2,7 +2,7 @@
 id: plan-073-pack-cycle-charter-the-governance-feedback-pack
 type: plan
 title: "pack-cycle charter: the governance/feedback pack"
-status: draft
+status: active
 workflow: "pack-cycle"
 phase: "charter"
 tags: ["packs","feedback","governance","W10"]
