@@ -107,26 +107,25 @@ The run before it, on plan-071's merge `ccb35be3`, is 43460500399, `success`.
    Until then the run's draft holds them as plain `string` fields, the lists in the directive,
    unchecked by the engine.
 5. **Routing** (dl-012 D3). `feedback-review` iterates over the `triaged` items (`iterate_over:
-   feedback`, `where: { status: [triaged] }`, `include: feedback-item`), one pass per item:
-   route, then close. Routes:
-   `decision-log` (`decision-log-ingest`; a governance change through `governance-evolution`),
-   `task` (a `task` in `draft`, cited back), `upstream-note` (an upstream pack's channel),
-   `declined` and `duplicate` (closed with the reason), any other outcome to a decision-log naming
-   it. The targets are `kind: main` workflows, which no step can `include`: a route adds the
-   target element (`memory.add`) and cites it, or leaves the target workflow to be started on its
-   own; step 2's run settles which. **The `bug` route** lives only in the entry: no unconditional
-   file names `bug-ingest` or the `bug` type (isolation, spec-001 §6.5; the lint checks
-   `include`, `element`, `iterate_over` and roles assignments, the review checks action strings,
-   `where` values and directive text), so
-   `feedback-item` cannot route an item whose `outcome` is `bug`. Two candidates for step 2 and
-   the approver: (a) the entry ships its own main workflow (`feedback-bug-route`) selecting
-   `outcome: bug` (with a sub of its own in the entry if it iterates, both names in step 1's
-   check and both mains in `check:runs`), and `feedback-review`'s `where` leaves those items out:
-   a `where` only includes values, so leaving one out means listing the others, which a scalar
-   parameter cannot hold (§8.1) and which drops outcomes a project adds (dl-012 D3), unless the
-   run finds another way; (b) the route is the entry's directive alone, the
-   facilitator closing the item by hand once the bug exists. Either way the charter states how a
-   bug item avoids staying on the review's frontier.
+   feedback`, `where: { status: [triaged] }`, `include: feedback-item`), one pass per item: route,
+   then close. Routes: `decision-log` (`decision-log-ingest`; a governance change through
+   `governance-evolution`), `task` (a `task` in `draft`, cited back), `upstream-note` (an upstream
+   pack's channel), `declined` and `duplicate` (closed with the reason), any other outcome to a
+   decision-log naming it. The targets are `kind: main` workflows, which no step can `include`: a
+   route adds the target element (`memory.add`) and cites it, or leaves the target workflow to be
+   started on its own; step 2's run settles which. **The `bug` route** lives only in the entry: no
+   unconditional file names `bug-ingest` or the `bug` type (isolation, spec-001 §6.5; the lint
+   checks `include`, `element`, `iterate_over` and the directive ids of `roles.yaml`, the review
+   checks action strings, `where` values and directive text), so `feedback-item` cannot route an
+   item whose `outcome` is `bug`. Two candidates for step 2 and the approver: (a) the entry ships
+   its own main workflow (`feedback-bug-route`) selecting `outcome: bug` (with a sub of its own in
+   the entry if it iterates, both names in step 1's check and its main in `check:runs`, point 10),
+   and `feedback-review`'s `where` leaves those items out: the packs' `where`s only list values
+   (step 2 tests whether one can leave a value out); if not, leaving one out means listing the
+   others, which a scalar parameter cannot hold (§8.1) and which drops outcomes a project adds
+   (dl-012 D3), unless the run finds another way; (b) the route is the entry's directive alone, the
+   facilitator closing the item by hand once the bug exists. Either way the charter states how a bug
+   item avoids staying on the review's frontier.
 6. **Upstreams** (dl-012 D3): the charter states the commitment (an upstream pack `requires` this
    one and ships its channel; the mapping of kinds, `observation` to `request` for WingFoil);
    how a channel is declared is the design phase's (D8). `governance/wingfoil-dogfood`'s charter
@@ -155,7 +154,8 @@ The run before it, on plan-071's merge `ccb35be3`, is 43460500399, `success`.
     and a blueprint until W11 and W12 publish them (not needed by step 2: the pack fills no slot).
     `author`'s exit criterion includes, per dl-032 E4, a run of both workflows through every route
     at least once, with and without `software`; `check:runs` scenarios starting every main the
-    pack ships (`feedback-ingest`, `feedback-review`, and the entry's if point 5 gives it one);
+    pack ships (`feedback-ingest`, `feedback-review`, and the entry's if point 5 gives it one) on
+    the oldest and the newest release (dl-032 E3);
     every composition validated with no warning on every compatible release. The adoption run of
     dl-032 E3, once per `init` template if the README gives install steps, is `first-release`'s,
     prepared by `author` (as plan-056's point 10); CB-1 … CB-6 at the first tag. The proposed tasks
@@ -247,3 +247,7 @@ repository's adoption and pin, dl-011 and dl-013's packs.
   tooling task, FA-6 covering `resulting` (point 3); the `check:runs` scenarios kept in
   `author`'s exit criterion as plan-056's, every main counted (point 10); option (a)'s `where`
   and names (point 5). No ruling changes beyond the wording: no further re-review.
+- 2026-11-14: final check of the re-review's fixes: approve after amendments, two should-fix and
+  two nits, wording only, applied: option (a)'s one main in `check:runs`; the `where` claim left
+  to step 2's test; the lint's checks named as `src/workflow-rules.ts` has them; `check:runs` on
+  the oldest and the newest release. No rule changes.
