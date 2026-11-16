@@ -8,12 +8,12 @@ answered_by: []
 ---
 
 New note (task-092). From this repository's plan-073, which ran a draft pack's routing workflow on
-0.3.2: an element created at one workflow's step could not be adopted by the workflow that owns
-its later life, and the refusal told the user to move it with a command 0.3.2 does not have.
-`workflow adopt` implements WingFoil dl-187, titled "adopt, rekey, transfer" (spec-017 §7.11);
-0.3.2 ships `adopt` and `rekey`, not `transfer`, yet the refusal names it. Nothing else moves the
-element: ending or deprecating the owning run leaves the refusal unchanged. Distinct from F-036 (no
-verb moves, renames or supersedes an element), which points to dl-187 for a transfer in general:
+0.3.2: an element created at one workflow's step could not be adopted by the workflow that owns its
+later life, and the refusal told the user to move it with a command 0.3.2 does not have. `workflow
+adopt` implements WingFoil dl-187, titled "adopt, rekey, transfer" (spec-017 §7.11); 0.3.2 ships
+`adopt` and `rekey`, not `transfer`, yet the refusal names it. No verb 0.3.2 lists moves the
+element, and ending or deprecating the owning run leaves the refusal unchanged. Distinct from F-036
+(no verb moves, renames or supersedes an element), which points to dl-187 for a transfer in general:
 this note is the shipped refusal's message and the element it leaves stuck; and from F-032 (no
 suspend).
 
@@ -27,7 +27,8 @@ identity). Written by hand and committed: `.wingfoil/workflows/custom/bug-report
 workflow (`format: 1`, no `element`) with one phase `report` (role `developer`, action
 `'memory.add(type: bug)'`), included in `workflows.yaml`; `workflow list` lists it, startable.
 
-Excerpts: omitted lines shown as `…`, long lines wrapped; every command exits 0 unless noted.
+Excerpts: a command's output left out where none is shown, omitted lines within shown output as `…`,
+long lines wrapped; every command exits 0 unless noted.
 
 ```
 $ wingfoil workflow start bug-ingest

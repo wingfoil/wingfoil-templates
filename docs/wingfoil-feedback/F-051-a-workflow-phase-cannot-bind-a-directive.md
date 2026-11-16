@@ -26,9 +26,9 @@ WingFoil 0.3.2 (`6de2e13c`), installed from npm, pinned by the lockfile
 --no-interactive`, then `wingfoil dna add team.members --value "Tester" --entry-email
 tester@notes.example --entry-roles approver,developer` (a fictional identity, also the git
 identity). Then `wingfoil directive create --name route-rules` (a custom directive, assigned to no
-role) and, written by hand and committed, `.wingfoil/workflows/custom/bug-route.yaml`, a main
-workflow (`format: 1`, no `element`) with one phase `route` (role `developer`, action
-`'memory.add(type: bug)'`), included in `workflows.yaml`.
+role and not `global`, so neither source of §6.2 lists it) and, written by hand and committed,
+`.wingfoil/workflows/custom/bug-route.yaml`, a main workflow (`format: 1`, no `element`) with one
+phase `route` (role `developer`, action `'memory.add(type: bug)'`), included in `workflows.yaml`.
 
 Excerpts: long lines wrapped; every command exits 0.
 

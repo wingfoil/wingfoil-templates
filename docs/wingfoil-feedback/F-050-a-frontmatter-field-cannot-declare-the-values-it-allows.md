@@ -38,7 +38,8 @@ In `.wingfoil/memory.yaml`, written by hand and committed, `bug`'s template gain
           severity: [low, high]
 ```
 
-Excerpts: omitted lines shown as `…`; every command exits 0 unless noted.
+Excerpts: a command's output left out where none is shown, omitted lines within shown output as
+`…`; every command exits 0 unless noted.
 
 ```
 $ wingfoil memory add --type bug --title "A bug"

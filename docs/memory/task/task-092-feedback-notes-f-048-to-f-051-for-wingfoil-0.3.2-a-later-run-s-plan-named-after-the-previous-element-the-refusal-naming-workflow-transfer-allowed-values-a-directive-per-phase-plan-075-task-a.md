@@ -167,9 +167,16 @@ One commit per note with its ledger row. Then the build review, the checks and t
   refusal (exit 1), so nothing moves the element (the first wording of Context, which the
   re-review's amendment had narrowed); the note records what ran. F-051: the `agent.execute`
   action's binding carries no directive (F-034 cited). F-050: no command printed a warning for the
-  would-be key. Notes: F-048 `5d3a2b57`, F-049 `5babb242`, F-050 `f5bf5605`, F-051 `ff917ccb`, one
+  would-be key. Notes: F-048 `68e6aa80`, F-049 `5babb242`, F-050 `f5bf5605`, F-051 `ff917ccb`, one
   commit each with its ledger row. Red by mutation (dl-018 R2's exception, as task-077), each
   mutation reverted after its run: a gap in the numbering 3 failing, a ledger cell changed 2, the
   opening line changed 2, two fields swapped 2, `## Expected` renamed 2; `New note (task-092).`
   once in each of the four notes; unmutated, `node --test dist/tests/wingfoil-feedback.test.js
   dist/tests/feedback-note.test.js` 13 passing, `npm run lint` exit 0.
+- 2026-11-16: independent build review of `f003ae18`: approve after amendments, nothing blocking;
+  it reproduced the four notes on 0.3.2, F-049's deviation included. Applied in the commit that
+  records this note: F-048's commit id in the note above (`68e6aa80`, the amended one); nits: the
+  excerpt headers say a command's output may be left out, F-049's "no verb 0.3.2 lists", F-051's
+  directive not `global`. No re-review: the amendments change wording, not a request. F-049's
+  deviation from Design (ending or deprecating the owner does not release the element, which the
+  note observes and its Expected asks) goes to the approver (dl-019, Acceptance 2).

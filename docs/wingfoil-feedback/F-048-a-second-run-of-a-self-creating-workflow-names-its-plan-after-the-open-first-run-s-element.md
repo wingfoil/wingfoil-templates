@@ -27,7 +27,8 @@ identity). No configuration written by hand: the scaffold's `bug-ingest` declare
 its `capture` runs `memory.add(type: bug)`, and the plan type's `id_pattern` is
 `{workflow}-{phase}-plan`.
 
-Excerpts: omitted lines shown as `…`, long lines wrapped; every command exits 0.
+Excerpts: a command's output left out where none is shown, omitted lines within shown output as `…`,
+long lines wrapped; every command exits 0.
 
 ```
 $ wingfoil workflow start bug-ingest
