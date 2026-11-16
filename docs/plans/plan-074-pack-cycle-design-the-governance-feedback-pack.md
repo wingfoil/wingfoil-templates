@@ -531,3 +531,7 @@ check runs before every commit (`repository-practice` rule 2).
 - 2026-11-16, step 3: spec-003 added (`memory add --type tech-spec`, the printed id
   `spec-003-configurable-value-lists-upstream-channels-and-conditional-directives`); `tags`
   filled by editing the draft (W-02); its sections as point 1 and step 3 list them, step 2 cited.
+- 2026-11-16: the approver asked, in chat, for a row on the engine way of working to adopt with
+  this repository's adoption (W10): the row "The engine way of working, adopted with this
+  repository's adoption" of `docs/owed-items.md`, Source "asked by the approver on 2026-11-16",
+  cited here as the plan active on `main` (dl-036 R4). It changes no point of this plan.
