@@ -192,3 +192,7 @@ One commit per note with its ledger row. Then the build review, the checks and t
   commit changes only `docs/memory`: no new run. Privacy check of the branch's diff and messages:
   no local or scratch path, no maintainer name or email, no private project, no intermediary
   session.
+- 2026-11-16: the approver approved (in-review → approved, `69d956d1`) and gave the merge OK;
+  merged `--no-ff` into `main` at `efae8655`; the row "Two feedback notes to WingFoil" moved to
+  Closed in `docs/owed-items.md`, settled by F-048 … F-051 (Acceptance 5). `main`'s CI after the
+  push is read and recorded in plan-075's notes.
