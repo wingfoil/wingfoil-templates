@@ -39,12 +39,13 @@ Applies to every role that writes or reviews pack content under `packs/`.
 - No project-specific values: names, paths, people and versions of the target project are
   parameters, declared in `pack.yaml` with a type, and a default unless the parameter is required
   (spec-001 §8.1).
-- A list parameter is a `string` whose `description` begins with "List of": items separated by
-  `,`, each trimmed, at least one, unique, each matching `^[a-z][a-z0-9-]*(:[a-z0-9-]+)?$` and
-  none of `null`, `true`, `false`, `yes`, `no`, `on`, `off`, `y`, `n` (spec-001 §8.1, §18). In a
-  YAML file, or a Markdown file's frontmatter, a parameter other than an `integer` or a `boolean`
-  stands inside a double-quoted scalar; a list parameter may also stand as the whole content of a
-  flow sequence, `[{{name}}]`, only in the files of the pack that declares it (spec-001 §8.2).
+- A list parameter is a `string` whose `description` begins with "List of": items separated by `,`,
+  each trimmed, at least one, unique, each matching `^[a-z][a-z0-9-]*(:[a-z0-9-]+)?$` and none of
+  `null`, `true`, `false`, `yes`, `no`, `on`, `off`, `y`, `n` (spec-001 §8.1, §18). In a YAML file,
+  or a Markdown file's frontmatter, a parameter other than an `integer` or a `boolean` stands inside
+  a double-quoted scalar; a list parameter may also stand as the whole content of a flow sequence,
+  `[{{name}}]` (spaces allowed inside the brackets), only in the files of the pack that declares it
+  (spec-001 §8.2).
 - Composition is deterministic: no timestamps, no randomness, no ordering that depends on the
   filesystem. Lists in fragments are written in the order they must appear.
 - A workflow includes another workflow by **name**, never by path (WingFoil bug-144). Every
@@ -53,15 +54,15 @@ Applies to every role that writes or reviews pack content under `packs/`.
 - A lookup by tag is not a use: a pack's file may name a tag the pack owns and defines in its own
   directive, never a directive id, and let the agent read every directive of the composition that
   carries it, saying what happens when none does or none serves the case; a later pack's
-  directive may carry the tag without the reading pack requiring it (spec-001 §6.3).
+  directive may carry the tag without the reading pack requiring that pack (spec-001 §6.3).
 - A pack declares what it `requires` and what it `conflicts` with; one methodology and one pack per
   phase slot per project.
 - Every workflow phase that should create or move an element says so with `actions` and `produces`:
   a phase that parses but declares none of `include`, `actions`, `produces` and `approval` is a
   defect (WingFoil benchmark note N1); a phase with an `approval` alone is a checkpoint, a gate.
 - No rule rests on a workflow's `checks` string, which WingFoil 0.3.2 does not evaluate: a check a
-  rule needs is a directive's, a lint's or a test's, judged at `pack-release-cycle` › `prepare`
-  (spec-001 §18).
+  rule needs is a directive's, a lint's or a test's; a review rule, judged at `pack-release-cycle` ›
+  `prepare` (spec-001 §18).
 - Every pack except `base` requires `base` (`requires: [base@^<major>]`) and only adds to it or
   tightens it (dl-003 D1). `software` requires `base` only. Every phase pack requires `software`,
   and so does every pack that uses a Memory type, a workflow, a directive or a parameter of

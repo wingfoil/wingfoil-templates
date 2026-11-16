@@ -381,7 +381,7 @@ conditional:                    # illustrative: a stage pack, composed after bot
 - **An entry's directive and the agent.** A directive an entry ships reaches no role through
   `roles.yaml`. When an agent needs it at a step of the entry's workflows, the pack names it
   in that step's `agent.execute` action, single-quoted and without braces, and its AGENTS.md
-  section names it as present only with the entry's pack (§10) (spec-003 §7.2). A pack may
+  section names it as present only with the entry's pack (§10; spec-003 §7.2). A pack may
   also let the agent read it by a tag the pack owns (§6.3); the tag is the pack's own. A
   plain `agent.execute` stays allowed; one that names a directive names one in the entry's
   scope (§6.3, §8.1): the pack's own or its required packs', the entry's own, or the `with`
@@ -1315,8 +1315,8 @@ check the rest, and the composer refuses what they reject.
 - an `agent.execute` action of a conditional entry's workflows that names a directive names
   one in the entry's scope (§6.5) (lint);
 - a pack's rule never rests on a workflow's `checks` string, which WingFoil 0.3.2 does not
-  evaluate: a check a rule needs is a directive's, a lint's or a test's (spec-003 §6). A
-  review rule, judged at `pack-release-cycle` › `prepare`, not a lint.
+  evaluate: a check a rule needs is a directive's, a lint's or a test's (spec-003 §6); a
+  review rule, judged at `pack-release-cycle` › `prepare`, not a lint;
 - a phase pack ships its slot workflow, a methodology ships `delivery` (in its conditional part, or
   in `contents` when it requires `software`) and every workflow of its own that its `delivery`
   reaches, in the same part, the same entry when conditional, and no other pack ships a slot name
@@ -1607,4 +1607,5 @@ check the rest, and the composer refuses what they reject.
   parameter in YAML and frontmatter; §10, an entry's directive named in the AGENTS.md section;
   §18, the item rule, the placement rule, an entry's `agent.execute` naming a directive in the
   entry's scope, no rule resting on a `checks` string, and the item rule on presets. No schema
-  change.
+  change. Two punctuation changes from spec-003's quotes, no rule changed: §6.5's two references
+  joined, §18's review-rule sentence ended with `;` to fit its list.

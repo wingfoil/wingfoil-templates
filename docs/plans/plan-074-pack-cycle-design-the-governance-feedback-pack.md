@@ -552,4 +552,11 @@ check runs before every commit (`repository-practice` rule 2).
 - 2026-11-16, step 6: the fold-back, from spec-003 §10. spec-001 amended in place with its
   Execution Note (170413c5, §10.1); `pack-authoring` in a commit of its own (e44ee8af, §10.2);
   the charter's and dl-013's Execution Notes and the root `README.md`'s list of specifications
-  (§10.3) in the commit that records this note.
+  (§10.3) in the commit that records this note. `pack-authoring` follows spec-001 §6.5 as
+  ruled (two required mentions and an optional tag), not §10.2's older "three paths".
+- 2026-11-16, step 6: independent review of the fold-back (dl-017): approve after amendments; no
+  blocker, three should-fix, five nits, all applied in the commit that records this note, none
+  changing a rule, so no re-review. The charter's note states format 2 supersedes its
+  Compatibility line and the triage rule replaces its interim clause save a would-be `bug`
+  without `software`; `pack-authoring`'s `checks` bullet names the review rule; spec-001's §6.5
+  and §18 quotes get two punctuation fixes, recorded in its note.
