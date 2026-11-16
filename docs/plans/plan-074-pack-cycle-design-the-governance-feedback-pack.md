@@ -302,10 +302,20 @@ approved as amended (the list parameter and its item rule; the `feedback-channel
 §6.3; the `feedback-route` tag, the directive named in the action text and its lint, the
 AGENTS.md mention).
 
+spec-003's review and re-review (its Execution Notes, 2026-11-16) changed points 2 and 5 again.
+Given on 2026-11-16, in chat, after them: points 2 and 5 are approved as amended there. Point 2:
+in a substituted YAML file, or a Markdown file's YAML frontmatter, every parameter other than an
+`integer` or a `boolean` stands inside a double-quoted scalar, save a list parameter as the only
+item of `[...]`; the composer and the lint check it. Point 5: the rule covers an entry's
+directive an agent needs at a step of the entry's workflows; a plain `agent.execute` stays
+allowed, a named directive is one in the entry's scope, required packs included; the tag is the
+pack's own choice, and a bridge is outside the rule.
+
 The rows these rulings leave, extended in `docs/owed-items.md` in the commit that records them
 (rule 4): "The fixture-element checks" (points 2, 3, 5, 10), "The packs' Memory templates"
 (point 6, `task`'s `reported_by`) and "Two feedback notes to WingFoil" (point 10, the two
-requests).
+requests); the row of the fixture-element checks extended again with the last ruling (spec-003
+§11).
 
 ## Steps
 
@@ -453,3 +463,103 @@ check runs before every commit (`repository-practice` rule 2).
   their description, so all three get the item rule; §6.5's Bridges as the precedent, the lint
   checking every `agent.execute` names a directive, the generic part named; the rulings to cite
   their rows. The fixes narrow or make explicit what the re-review accepted: no further review.
+- 2026-11-16: the plan submitted by the agent on the approver's request in chat (`draft →
+  active`, `f8f37eca`). `main` was pushed at `f8f37eca` on the approver's request, with
+  `main`'s CI on `d0cdd18f` green beforehand. Branch `pack/governance-feedback-design` starts from
+  `f8f37eca`.
+- 2026-11-16, step 1 (reads). The inputs above. `pack-authoring` repeats spec-001 §5's "a new pack
+  is written at format 2", which point 8 rules. spec-001 §6.3 and §18 are as points 3 and 9 read
+  them. The draft's `feedback-bug-item` › `bug` still held candidate (a), `'memory.add(type:
+  bug)'`, which step 2 changes as point 5 says. No point of the outline changes.
+- 2026-11-16, step 2 (dl-037 E1, E2). **The draft:** the untracked overlay of plan-073, never
+  committed, changed as follows:
+  - `pack.yaml` moves to format 2. It declares `feedback_kinds`, `feedback_targets` and
+    `feedback_outcomes` (`string`, descriptions beginning "List of", `feedback_outcomes`
+    without `bug`).
+  - `feedback-review`'s `where` reads `outcome: [{{feedback_outcomes}}]`, and
+    `feedback-bug-route`'s reads `outcome: [bug]`.
+  - `feedback-bug-item` › `bug` becomes `'agent.execute(directive: feedback-bug-route)'`, and
+    the entry's directive is tagged `feedback-route`.
+  - The `feedback` directive names the three lists and states point 5's tag rule.
+  - A fixture upstream pack `governance/feedback-upstream` (format 2, `requires: [base@^2,
+    governance/feedback@^1]`) ships `plover-vendor-channel`, tagged `feedback-channel` and
+    bound to `facilitator`.
+  - A fourth composition, `upstream`, adds `upstream:plover-vendor` to `feedback_targets` and
+    `deferred` to `feedback_outcomes`.
+  - **Validation.** `npm run validate -- --overlay <draft>` exits 0: schemas and lint 0
+    problems, overlay 23 files 0 problems, 15 compositions byte-identical, the matrix 30 runs 0
+    failed with no tolerance on 0.3.0 and 0.3.2, and `alone[+software]` skipped ("no
+    methodology"). The first two attempts failed on the fixture pack only (a missing
+    `requires_capabilities`, and its README's catalog link, spec-002 §2.5). `npm run index --
+    --check` exits 0.
+  - **The list value, against today's composer** (`npm run compose` with `--param
+    feedback_outcomes=…`).
+    - `x], status: [closed` is refused (DUPLICATE_KEY after substitution).
+    - `x], kind: [defect` exits 0 and changes the `where` to `outcome: [x], kind: [defect]`.
+    - `null, task`, the empty value (`outcome: []`) and `task, task` exit 0 too.
+    - So point 2's item rule and its composer check are needed: today only a duplicate key
+      stops a value.
+- 2026-11-16, step 2, **the run** on WingFoil 0.3.2 (`6de2e13c`, the matrix's install), in a
+  scratch repository outside this one. It was composed by `npm run compose` from the branch with
+  the draft and the `upstream` composition's parameters (fictional Plover Desk, `.example`
+  addresses).
+  - **Listing.** `workflow list` exit 0, `"diagnostics": []`. `directives list` exit 0:
+    `feedback-bug-route` with `tags: [feedback-route]` and `unassigned`;
+    `plover-vendor-channel` with `tags: [feedback-channel]`, assigned to `facilitator`;
+    `feedback` assigned to `facilitator`. The AGENTS.md region holds the pack's section.
+  - **Four items** (`memory add`, fields filled by editing and committing, since `--set` fills
+    only path and id tokens; `memory submit`, `memory approve`, each exit 0) were triaged with
+    outcomes `deferred`, `bug`, `upstream-note` (target `upstream:plover-vendor`) and `task`.
+  - **`feedback-review`** (`workflow start` exit 0): its frontier holds the `deferred`,
+    `upstream-note` and `task` items and leaves out the `bug` item. An outcome the project adds
+    is selected through the substituted `where`.
+  - **The `upstream-note` route.** A note written where the channel directive says, `resulting`
+    naming it, `workflow finalize --step feedback-item.route@…` exit 0, and `memory submit`
+    (`triaged → closed`) exit 0.
+  - **The `deferred` item** went to the decision-log fallback (`memory add --type decision-log`
+    exit 0, `resulting` naming it), with finalize and close exit 0. The `task` item was left on
+    the frontier.
+  - **`feedback-bug-route`** (`workflow start` exit 0). `workflow next` exit 0 prints
+    `agent.execute(directive: feedback-bug-route)` with its `agent execute` command line. Its
+    `directives:` line lists the `roles.yaml` directives (`feedback`, `plover-vendor-channel`,
+    …), not `feedback-bug-route`.
+  - **`agent execute --dry-run`** at that step exits 1: "no agent in dna.yaml with an adapter
+    executes as role 'facilitator'". `base`'s composed `dna.yaml` gives the agent no adapter.
+    That the bootstrap carries no step is read in the code (`dist/agent/execute.js`
+    `renderBootstrap`, as the Context says).
+  - **The bug.** `bug-ingest` was started on its own (exit 0) and `memory add --type bug
+    --workflow … --step bug-ingest.capture` exit 0. The composed `bug` template has no
+    `reported_by` (the row on the Memory templates' optional fields), so the bug's body cites
+    the item. Then `memory submit` exit 0, `resulting` naming the bug, finalize and close of the
+    item exit 0. `feedback-bug-route` is complete, and the bug waits for `bug-ingest`'s triage,
+    owned by its own run.
+  - **Findings.** None changes a point. Two facts go to spec-003:
+    - the substituted `where` works on 0.3.2;
+    - `agent execute` needs an adapter that the packs' `dna.yaml` does not give, so point 5's
+      path through the `feedback` directive and `workflow next` is the one that works on a
+      composed project.
+- 2026-11-16, step 3: spec-003 added (`memory add --type tech-spec`, the printed id
+  `spec-003-configurable-value-lists-upstream-channels-and-conditional-directives`); `tags`
+  filled by editing the draft (W-02); its sections as point 1 and step 3 list them, step 2 cited.
+- 2026-11-16: the approver asked, in chat, for a row on the engine way of working to adopt with
+  this repository's adoption (W10): the row "The engine way of working, adopted with this
+  repository's adoption" of `docs/owed-items.md`, Source "asked by the approver on 2026-11-16",
+  cited here as the plan active on `main` (dl-036 R4). It changes no point of this plan.
+- 2026-11-16: spec-003's review and re-review applied (its Execution Notes); the approver ruled
+  points 2 and 5 again as amended there ("The approver's rulings"), and the row of the
+  fixture-element checks now reads spec-003 §11.
+- 2026-11-16, step 5: the approver approved spec-003 (`pending → approved`, 6fb9219b).
+- 2026-11-16, step 6: the fold-back, from spec-003 §10. spec-001 amended in place with its
+  Execution Note (170413c5, §10.1); `pack-authoring` in a commit of its own (e44ee8af, §10.2);
+  the charter's and dl-013's Execution Notes and the root `README.md`'s list of specifications
+  (§10.3) in the commit that records this note. `pack-authoring` follows spec-001 §6.5 as
+  ruled (two required mentions and an optional tag), not §10.2's older "three paths".
+- 2026-11-16, step 6: independent review of the fold-back (dl-017): approve after amendments; no
+  blocker, three should-fix, five nits, all applied in the commit that records this note, none
+  changing a rule, so no re-review. The charter's note states format 2 supersedes its
+  Compatibility line and the triage rule replaces its interim clause save a would-be `bug`
+  without `software`; `pack-authoring`'s `checks` bullet names the review rule; spec-001's §6.5
+  and §18 quotes get two punctuation fixes, recorded in its note.
+- 2026-11-16, step 7: the design row of `docs/owed-items.md` moves to Closed, settled by spec-003
+  (plan-074), in the commit that records this note. The branch is frozen at that commit for its
+  CI.

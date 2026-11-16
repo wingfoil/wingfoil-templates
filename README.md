@@ -26,6 +26,8 @@ The first pack, `base`, is published only after WingFoil v0.3 is released.
   digest.
 - [spec-002](docs/memory/tech-spec/spec-002-pack-readme-and-catalog-index.md): the pack README and
   the catalog index.
+- [spec-003](docs/memory/tech-spec/spec-003-configurable-value-lists-upstream-channels-and-conditional-directives.md):
+  configurable value lists, upstream channels and conditional directives.
 
 ## Working in this repository
 

@@ -456,3 +456,8 @@ Through `sw-life-cycle` › `pack-delivery` › `pack-cycle`:
 - 2026-11-12: re-review of the amendment: approve, two wording nits applied (the choices proposed
   with the amendment for the approver to confirm at the ruling; dl-013 D3's `release` possibly
   not applicable). Ready for the ruling, in the order dl-012, dl-011, dl-013.
+- 2026-11-16, plan-074 (point 10): spec-003, approved,
+  `spec-003-configurable-value-lists-upstream-channels-and-conditional-directives`,
+  answers two questions this decision shares with `governance/feedback` for its `design` phase:
+  configurable value lists (§3, list parameters) and how a conditional entry's directive reaches an
+  agent (§7). Its other design questions stay its own.
