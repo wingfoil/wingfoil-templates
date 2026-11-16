@@ -528,3 +528,6 @@ check runs before every commit (`repository-practice` rule 2).
     - `agent execute` needs an adapter that the packs' `dna.yaml` does not give, so point 5's
       path through the `feedback` directive and `workflow next` is the one that works on a
       composed project.
+- 2026-11-16, step 3: spec-003 added (`memory add --type tech-spec`, the printed id
+  `spec-003-configurable-value-lists-upstream-channels-and-conditional-directives`); `tags`
+  filled by editing the draft (W-02); its sections as point 1 and step 3 list them, step 2 cited.
