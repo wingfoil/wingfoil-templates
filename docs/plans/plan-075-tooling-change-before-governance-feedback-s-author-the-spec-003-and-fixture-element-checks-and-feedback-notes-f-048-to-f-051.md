@@ -10,7 +10,7 @@ tags: ["tooling","feedback","governance","W10"]
 
 ## Context
 
-W10's order (the sequencer, "W10's order") holds `governance/feedback` after the presets. Its
+The sequencer's W10 order holds `governance/feedback` after the presets. Its
 charter (plan-073) and its design (plan-074, spec-003 approved) are done. Two rows of
 `docs/owed-items.md` are due "before `governance/feedback`'s first `author` task", each with the
 approver as owner:
@@ -21,7 +21,7 @@ approver as owner:
   defects of plan-073's run on 0.3.2, with the two requests of spec-003 S3-O1 and S3-O2.
 
 This plan delivers both through `tooling-change` v3 › `deliver`, each task through
-`tooling-delivery` v4 with `pack: ""`. The approver asked for it on 2026-11-16, after plan-074's
+`tooling-delivery` v4 with `pack: ""`, asked by the approver on 2026-11-16, after plan-074's
 close.
 
 **The tech-specs this wave builds on** (dl-020): spec-001 and spec-003, both on `main` with
@@ -35,9 +35,14 @@ and submit), `success`.
   offset), `resolveParameters` (every value type-checked before substitution), `substitute`;
 - `src/pack-files.ts` › `readPackFiles`: the lint's `parameter-default` and `parameter-scope`
   rules, walking `referencesIn` with offsets;
+- `src/compose-documents.ts` › `composeDocuments`, which calls `resolveParameters`, and
+  `readFiles`, which holds each file's raw text before `substitute`;
+- `src/workflow-rules.ts` › `workflowProblems`, run by the lint and the composer, which builds
+  each conditional entry's known directives (the pack's, its required packs', the `with` pack's
+  and its required packs', the entry's own) and walks the entry's workflows;
 - `src/tree-rules.ts` › `presetChecks` (`preset-value`), reused by `src/example-rules.ts` for
-  README examples (`example-fixture`);
-- `src/pack-rules.ts` › `conditionalProblems` (§18's conditional rules);
+  README examples (`example-fixture`); `src/preset-stand-ins.ts`, the validation's stand-ins
+  for `base`'s required parameters;
 - no helper reads a fixture project's Memory elements today; `src/frontmatter.ts` reads a
   frontmatter.
 
@@ -51,7 +56,9 @@ and submit), `success`.
    - **(B) spec-003's composer and lint checks**;
    - **(C) the fixture-element checks** (the helper and its tests).
 
-   Recommended. The alternative keeps (B) and (C) as one task, as the row reads.
+   Recommended. The alternative keeps (B) and (C) as one task, as the row reads. plan-074's
+   ruling joined the tooling checks to the row of the fixture-element checks; the split changes
+   how that one row is delivered, not that ruling.
 2. **Order and branches**, as plan-066: WIP 1, (A) → (B) → (C), each task added on `main` once
    the one before is `done` (W-14), each on its own `task/<id>-<slug>` branch merged `--no-ff`
    into `main` on the approver's OK, `main`'s CI read after each merge. (A) first, since it is
@@ -68,61 +75,79 @@ and submit), `success`.
      directive reaches the agent at its step without naming it in an action text (spec-003
      S3-O2).
 
-   Each note: the six fields by hand, `wingfoil_version: 0.3.2`, "New note (task-…).", `##
-   Observed` with 0.3.2's commit, commands, output and exit codes (for a request, what 0.3.2
-   does instead) and `## Expected`. The inbox searched for duplicates first (F-018 and F-043 are
-   close to F-050). F-048 and F-049 are reproduced in a scratch project with 0.3.2 from
+   Each note: the six fields by hand, `wingfoil_version: 0.3.2`, "New note (task-…).", `## Observed`
+   with 0.3.2's commit, commands, output and exit codes (for a request, what 0.3.2 does instead) and
+   `## Expected`. The inbox searched for duplicates first: F-043 (and F-018, which it cites) for
+   F-050; F-016 (a phase cannot declare its method) and F-026 (directives per role, one role per
+   phase) for F-051. F-048 and F-049 are reproduced in a scratch project with 0.3.2 from
    `src/matrix/wingfoil-0.3.2/`, fictional `.example` identities, no pack named beyond what WingFoil
-   alone shows; a point that does not reproduce goes to the approver. One commit per note with
-   its ledger row. The red by mutation of the inbox tests, as task-077.
-4. **(B) the composer and the lint** (spec-003 §3, §5.2, §7.2, §11; spec-001 §8.1, §8.2, §18):
+   alone shows; a point that does not reproduce goes to the approver. One commit per note with its
+   ledger row. The red by mutation of the inbox tests, as task-077.
+4. **(B) the composer and the lint** (spec-003 §3, §5.2, §7.2, §11; spec-001 §6.5, §8.1, §8.2,
+   §18):
    - **list parameter:** a `string` whose `description` begins with "List of", read in one place
      (`src/parameters.ts`);
    - **the item rule** (at least one item, unique, the regex, none of the nine words): the
      composer on every value before substitution (`resolveParameters`); the lint on defaults
      (`parameter-default`), presets (`preset-value`) and examples (`example-fixture`), under
-     those rule ids;
-   - **the placement rule:** in a substituted YAML file or a Markdown file's YAML frontmatter,
-     every `{{name}}` of a type other than `integer` and `boolean` stands inside a double-quoted
-     scalar, or, for a list parameter in the files of the pack that declares it, as the whole
-     content of a flow sequence; the lint (a new rule, `parameter-placement`, in
-     `readPackFiles`) and the composer before substitution;
+     those rule ids; no list parameter is required today, and the build checks that the
+     validation's stand-ins (`src/preset-stand-ins.ts`) pass the rule if one becomes required;
+   - **the placement rule:** in a substituted YAML file or a Markdown file's YAML frontmatter
+     (not `pack.yaml`), every `{{name}}` of a type other than `integer` and `boolean` stands
+     inside a double-quoted scalar, or, for a list parameter in the files of the pack that
+     declares it, as the whole content of a flow sequence. One lexical function in
+     `src/parameters.ts` (a token scan, since raw YAML with an unquoted `{{name}}` may not parse)
+     serves the lint (a new rule, `parameter-placement`, in `readPackFiles`) and the composer
+     (in `readFiles`, on the raw text before `substitute`);
    - **an entry's `agent.execute`:** an action of a conditional entry's workflows that names a
-     directive names one in the entry's scope (the pack's own or its required packs', the entry's
-     own, or the `with` pack's or its required packs'); a new rule, `entry-directive-scope`, next
-     to `conditionalProblems`;
+     directive names one in the entry's scope; a new rule, `entry-directive-scope`, in
+     `workflowProblems`, which already holds that scope. The composer runs `workflowProblems`
+     too, so it applies the rule as well; spec-003 §11 asks it of the lint only, and the
+     composer refusing what the lint rejects is spec-001 §18's general rule;
    - **the `feedback-channel` checks** (spec-003 §5.2): a directive tagged `feedback-channel` is
-     shipped by a pack that requires `governance/feedback`, holds one line ``Serves the target
-     `upstream:<name>`.``, and no composition holds two channels for one target; per pack in the
-     lint, and per composition where the lint composes;
+     shipped by a pack that requires `governance/feedback` and holds one line ``Serves the target
+     `upstream:<name>`.``, a lint rule per pack; no composition holds two channels for one
+     target, checked in `composeDocuments`, so in every composition `validate` makes (presets,
+     examples, the matrix) and in `npm run compose`. The pack id and the tag are constants in
+     one module, the first rule of `src/` that names a pack, as spec-003 §5.2 asks;
    - **the published packs pass unchanged:** the build checks every pack of the tree against the
      new rules first; a published pack that fails goes to the approver before any rule changes
-     (dl-019). The re-review of spec-003 found only `methodology/kanban`'s two `integer`
-     parameters unquoted, which the placement rule exempts.
-5. **(C) the fixture-element checks** (dl-012 D8, spec-003 §11), all [E], a test helper under
-   `tests/support/` reading a composed fixture project's Memory elements through
-   `src/frontmatter.ts`:
+     (dl-019). spec-003 §3.1 found only `methodology/kanban`'s two `integer` parameters
+     unquoted, which the placement rule exempts;
+   - **tests the new rules pre-empt:** the two tests of `tests/compose-documents.test.ts` that
+     place a `string` unquoted (`x: {{s}}`, `d: {{s}}`) to reach a parse failure after
+     substitution are rewritten in design, the reason recorded (dl-018), never left passing on
+     another error.
+5. **(C) the fixture-element checks** (dl-012 D8, spec-003 §11), all [E]: generic functions under
+   `tests/support/`, reading a composed fixture project's Memory elements through
+   `src/frontmatter.ts`. They name no pack: the composed `memory.yaml` declares neither allowed
+   values nor references (spec-003 §3.1, F-043), so the caller passes the bindings:
    - required fields, from the composed `memory.yaml`;
-   - allowed values: a list parameter's items, plus those a composed entry adds;
-   - references that resolve (F-043: WingFoil does not check them);
+   - allowed values: for each field, the list parameter that governs it and the items the
+     composed entries add;
+   - references that resolve, for the fields the caller names, of the three kinds of FA-5 (an
+     element id, a declared workflow and phase, a version);
    - back-references through `reported_by` or the body (spec-003 §8);
-   - `outcome` and `resulting` on a `closed` item;
-   - `bug` refused in a preset's or an example's `feedback_outcomes`.
+   - the fields a given state requires (for `governance/feedback`, `outcome` and `resulting` on
+     `closed`);
+   - an item refused in a list parameter of every preset and example (for `governance/feedback`,
+     `bug` in `feedback_outcomes`); it reads presets and `example.yaml` files, and is not a lint,
+     which would name one pack's parameter in generic code.
 
-   Its own tests run on a fixture written by the test (as `tests/support/examples.ts` does),
-   since `governance/feedback` is not written yet; the helper names no pack and reads a type's
-   fields from the composed `memory.yaml`, so the `author` phase uses it on the pack's fixtures.
+   Their tests run on a fixture written by the test (as `tests/support/examples.ts` does). The
+   bindings to `governance/feedback` are its `author` phase's tests.
 6. **Checks of every task** (dl-039): the build review and its amendments first, then once on the
    frozen commit the branch CI green, every job's duration recorded (R3, G12), and the local list
    on Node.js 22.21.0 from a clean working tree after `npm ci` and `npm run build`
    (`validate:publication`, the golden tree in publication mode, `workflow list`); (A) adds
    `node --test dist/tests/wingfoil-feedback.test.js dist/tests/feedback-note.test.js` and `npm
    run lint`.
-7. **The owed rows:** "Two feedback notes to WingFoil" moves to Closed with (A), "The
-   fixture-element checks" with (C) (or with the joint task), each in its task's close commit,
-   with the task's id.
+7. **The owed rows:** "Two feedback notes to WingFoil" moves to Closed in (A)'s close commit,
+   settled by (A); "The fixture-element checks" in (C)'s, settled by (B) and (C) (plan-075), as
+   the task-066 and task-070 row (or by the joint task).
 8. **An erratum found while building** (a rule of spec-001 or spec-003 that code cannot check as
-   written) goes to the approver when found (dl-019) and is listed at the wave close (dl-020).
+   written) goes to the approver when found (dl-019), is recorded in the tech-spec's Execution
+   Notes (dl-019 R5, dl-020 R1) and is listed at the wave close (dl-020).
 
 **Not in this plan:**
 - `governance/feedback`'s `author` phase and its fixtures;
@@ -130,7 +155,9 @@ and submit), `success`.
 - the adapter for `agent execute` (S3-O3, at the adoption);
 - a rule on a workflow's `checks` string, which is a review rule at `pack-release-cycle` ›
   `prepare` (spec-001 §18), not a lint;
-- `governance/wingfoil-dogfood`.
+- `governance/wingfoil-dogfood`;
+- the charter's FA-8 (factoring `tests/wingfoil-feedback.test.ts`'s checks) and FA-7 (a commit
+  citing the decision-log): the `author` phase's.
 
 ## Steps
 
@@ -142,9 +169,9 @@ and submit), `success`.
    OK; merged `--no-ff`, `main`'s CI read; its owed row moved to Closed.
 3. **Task (B)**, the same way, once (A) is `done`.
 4. **Task (C)**, the same way, once (B) is `done`; its owed row moved to Closed.
-5. **Close:** dl-020: the errata and rulings per tech-spec listed (none expected), the approver's
-   ruling recorded; this plan `active → done`; the CI of the close's push left to the next plan
-   (dl-038 C3).
+5. **Close:** each task's close records the privacy check of its branch's diff (rule 2); dl-020: the
+   errata and rulings per tech-spec listed (none expected), the approver's ruling recorded; this
+   plan `active → done`; the CI of the close's push left to the next plan (dl-038 C3).
 
 ## Handoff
 
@@ -163,3 +190,13 @@ and submit), `success`.
 
 - 2026-11-16: written from the two owed rows and plan-074's close. Next free numbers when
   written: plan-076, spec-004, task-092, bug-017, dl-043, F-048.
+- 2026-11-16: independent review (dl-017): approve after amendments; no blocker, eight
+  should-fix, nine nits, all applied in the commit that records this note. The composer's sites
+  named (`readFiles`, `composeDocuments`), one lexical placement function for the lint and the
+  composer; `entry-directive-scope` in `workflowProblems`, which holds the entry's scope, the
+  composer applying it too; one channel per target in `composeDocuments`, the pack id and tag as
+  constants; (C)'s functions generic, the caller passing the bindings, the refused item read from
+  presets and examples; the tests the placement rule pre-empts rewritten; F-016 and F-026 for
+  F-051's duplicate search; the fixture row settled by (B) and (C); plan-074's ruling cited;
+  nits: rule 1's phrase, spec-001 §6.5, `pack.yaml` excluded, the stand-ins, FA-5's three kinds,
+  the erratum in the tech-spec's notes, FA-7 and FA-8 out of scope, each task's privacy check.
