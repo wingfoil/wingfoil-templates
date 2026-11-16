@@ -2,7 +2,7 @@
 id: spec-003-configurable-value-lists-upstream-channels-and-conditional-directives
 type: tech-spec
 title: "Configurable value lists, upstream channels and conditional directives"
-status: draft
+status: pending
 tags: ["packs","format","feedback","governance"]
 ---
 
