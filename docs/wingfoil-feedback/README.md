@@ -77,6 +77,7 @@ sha of the commit it read (WingFoil `COLLABORATION.md` › Credit, task-271), fo
 | [F-045](F-045-workflow-status-heads-elements-waiting-at-a-gate-ungated-elements.md) | workflow status heads elements waiting at a gate "ungated elements" | request | open | |
 | [F-046](F-046-an-identity-outside-dna-yaml-team-starts-workflows-and-moves-elements.md) | An identity outside dna.yaml's team starts workflows and moves elements | request | open | |
 | [F-047](F-047-schema-2836141582da.md) | The pack schemas changed (sha256:2836141582da) | request | open | |
+| [F-048](F-048-a-second-run-of-a-self-creating-workflow-names-its-plan-after-the-open-first-run-s-element.md) | A second run of a self-creating workflow names its plan after the open first run's element | gap | open | |
 
 ## Context
 
