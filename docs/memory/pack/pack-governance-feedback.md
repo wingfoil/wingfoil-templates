@@ -97,9 +97,12 @@ applies and the run on WingFoil 0.3.2 they rest on (dl-032 E2).
 - **Items no review selects** on 0.3.2: a triaged item whose `outcome` is empty (the field is
   optional, and `approve` checks nothing, step 2), is one a project added, or is `bug` without
   `software`, matches neither `where`. Until the `design` phase settles it (Open points 1), the
-  `feedback` directive has the approver triage only an item whose `outcome` is one of the listed
-  values that the composition routes, rejecting it to `draft` otherwise; an added outcome is
-  triaged as `decision-log`, naming the added outcome in the body.
+  `feedback` directive, bound to the facilitator, has the facilitator propose only a listed
+  outcome that the composition routes: an outcome with no route in the composition (one a project
+  added, a product defect without `software`, `upstream-note` with no upstream pack composed) is
+  proposed as `decision-log`, naming what it would have been in the item's body and in the routed
+  decision-log (dl-012 D3). The approver confirms the proposal, or rejects the item to `draft`
+  when its `outcome` is empty or unlisted; the hand-off to the approver says so.
 - **The `bug` route, only with `software`** (variant (a'), plan-073 ruling 3): `software`'s
   `bug-ingest` captures and triages the bug, citing the item; `feedback-bug-item`'s `bug` step adds
   no bug and records the route. A bug added inside the pack's own step would be owned by its run,
@@ -127,7 +130,8 @@ applies and the run on WingFoil 0.3.2 they rest on (dl-032 E2).
 **Directives** (`directives/`):
 - `feedback` (unconditional): what counts as feedback; the required fields and the value lists
   (`outcome` without `bug`); the classification rules; the outcome proposed before the triage and
-  confirmed by the approver, only among the listed values (the rule above);
+  confirmed by the approver, the facilitator proposing only an outcome the composition routes
+  (the rule above);
   the routing table above, without the `bug` route; the trace both ways; who may close an item
   (the facilitator, once `resulting` is written); how `feedback-review` is started and ended;
 - `feedback-bug-route` (in the entry with `software`): `bug` added to the `outcome` list; an item
@@ -316,3 +320,9 @@ previous item, its `element` field wrong; the refusal to adopt an element anothe
   live query observed on `feedback-bug-route`, the untested adaptation marked, a `draft` item's
   deprecation, the pack's workflows, the README and CHANGELOG, CB-3 … CB-5. The triage rule and
   the directive's `outcome` list are new rules: re-review.
+- 2026-11-16: re-review: approve after amendments; no blocker, three should-fix, two nits, all
+  wording, applied: the interim rule addressed to the facilitator, whom the directive binds, the
+  approver confirming or rejecting; an outcome with no route in the composition (added, a product
+  defect without `software`, `upstream-note` with no upstream pack) proposed as `decision-log`
+  naming it in the item and in the decision-log, as dl-012 D3. Neither new rule contradicts
+  dl-012 or plan-073's rulings; both are named to the approver at the acceptance.
