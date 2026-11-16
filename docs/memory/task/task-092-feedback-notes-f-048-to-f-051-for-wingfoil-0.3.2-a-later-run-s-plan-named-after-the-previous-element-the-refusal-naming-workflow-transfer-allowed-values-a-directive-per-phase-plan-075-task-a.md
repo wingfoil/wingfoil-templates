@@ -27,9 +27,10 @@ found (plan-073 › Execution Notes, step 2), with the two requests that spec-00
   not create its element. Distinct from F-038 (which fields `workflow start` fills at all).
 - **F-049** (`defect`): `workflow adopt --element` on an element that another open run owns is
   refused with a message telling the user to "move it with workflow transfer", a command 0.3.2
-  does not have; nothing else moves the element. `workflow adopt` implements WingFoil dl-187
-  ("adopt, rekey, transfer"; spec-017 §7.11), which decided `transfer`, but 0.3.2 does not ship
-  it, so the message names a verb the user cannot run. Distinct from F-036 (no verb restructures
+  does not have; no verb moves the element while its owner stays open (only ending or
+  abandoning the owning run releases it). `workflow adopt` implements WingFoil dl-187, titled
+  "adopt, rekey, transfer" (spec-017 §7.11), so the message names a verb that 0.3.2 does not
+  ship. Distinct from F-036 (no verb restructures
   memory), which already points to dl-187 for a transfer: F-049 is the refusal's message in the
   shipped release; and from F-032 (no suspend).
 - **F-050** (`request`): an allowed-values key for a frontmatter field in `memory.yaml`, so that a
@@ -42,8 +43,9 @@ found (plan-073 › Execution Notes, step 2), with the two requests that spec-00
 - **F-051** (`request`): a directive bound to a workflow phase, so that the agent at that phase's
   step reads it without an `agent.execute` action naming it in its text; once a release has it, a
   conditional entry's workflow may bind its directive and spec-003 §7.2's first path may become
-  optional (S3-O2). Today `workflow next` lists a step's directives from its role's `roles.yaml`
-  entry only (spec-017 §6.2); an `agent.execute` naming a directive is printed as action text.
+  optional (S3-O2). Today `workflow next` lists a step's directives from `roles.yaml` only (the
+  role's entry and `global`, spec-017 §6.2); an `agent.execute` naming a directive is printed as
+  action text.
   Distinct from F-016 (a phase cannot declare its method) and F-026 (a phase has
   one role, directives per role); names both.
 
@@ -103,24 +105,27 @@ reproduction per note, each in a scratch project of its own (a fictional `.examp
 with `dna add team.members`):
 - F-048: WingFoil's own `bug-ingest` (self-creating, no `element`, the plan type's default
   `{workflow}-{phase}-plan`), no configuration written: `workflow start bug-ingest`, a bug
-  captured at `capture`, submitted and approved, no `workflow end`; `workflow start bug-ingest`
-  again, the new plan's id, `phase` and `element` read from its file, a second bug captured,
-  `workflow status`; for contrast, the same after `workflow end` of the first run.
-- F-049: `workflow start bug-ingest` first (its `capture` on the frontier, no created element);
-  then a main workflow written by hand whose step adds a bug, started, its bug added with
-  `memory add --workflow … --step …` and left open; then `workflow adopt <bug-ingest plan>
-  --element bug:<id> --reason "…"`: exit 1 and the message; `wingfoil workflow --help`, showing no
-  `transfer`. (Started the other way round, `bug-ingest`'s plan would be named after the other
-  run's bug, F-048.)
+  captured with `memory add --type bug --workflow <plan> --step <capture>` (the links that bind
+  the run to it), submitted and approved, no `workflow end`; `workflow start bug-ingest` again,
+  the new plan's id, `phase` and `element` read from its file, a second bug captured the same way,
+  `workflow status`; for contrast, the same after `workflow end` of the first run (no `element`,
+  `phase` not the first bug's).
+- F-049: `workflow start bug-ingest` first (its `capture` on the frontier, no created element); then
+  a main workflow written by hand whose step adds a bug, started, its bug added with `memory add
+  --workflow … --step …` and left open; then `workflow adopt <bug-ingest plan> --element bug:<id>
+  --reason "…"`: exit 1 and the message; `wingfoil workflow --help`, showing no `transfer`; the same
+  `adopt` after the owning run is ended or deprecated, passing that check. (Started the other way
+  round, `bug-ingest`'s plan would be named after the other run's bug, F-048.)
 - F-050: a required field and a would-be key written in `memory.yaml` (for example
-  `template.frontmatter.allowed: {<field>: [a, b]}`), accepted and ignored at load since
-  `template.frontmatter` passes unknown keys through; an element with a value outside the list,
-  `memory submit` exit 0 (what 0.3.2 does instead); the shipped schema's keys cited.
+  `template.frontmatter.allowed: {<field>: [a, b]}`), loaded since `template.frontmatter` passes
+  unknown keys through, with whatever warning the load prints recorded; an element with a value
+  outside the list, `memory submit` exit 0 (what 0.3.2 does instead); the shipped schema's keys
+  cited.
 - F-051: a directive written by hand and a workflow whose phase names it in no action; `workflow
-  next` at that step, its `directives:` line from the role's `roles.yaml` entry, without it; the
-  same with `'agent.execute(directive: <id>)'`: the action text printed, the `directives:` line
-  unchanged (what 0.3.2 offers instead: that action text, or a `roles.yaml` binding per role,
-  F-026's point).
+  next` at that step, its `directives:` line from `roles.yaml` (the role's entry and `global`),
+  without it; the same with `'agent.execute(directive: <id>)'`: the action text printed with its
+  binding `wingfoil agent execute`, the `directives:` line unchanged (what 0.3.2 offers instead:
+  that action text, or a `roles.yaml` binding per role, F-026's point).
 
 One commit per note with its ledger row. Then the build review, the checks and the notes.
 
@@ -141,3 +146,12 @@ One commit per note with its ledger row. Then the build review, the checks and t
   `directives:` line from `roles.yaml` only; the WingFoil rule per note; nits: no hand-written
   configuration for F-048, no plan-073 ids in `## Observed`. The untracked fixture draft is moved
   aside before the local checks (Acceptance 6's clean tree). A re-review follows (F-048's kind).
+- 2026-11-16: re-review of the amendments: approve after amendments, nothing blocking; three
+  should-fix and four nits. Applied in the commit that records this note: F-048's bugs captured
+  with `--workflow` and `--step` (the links that bind the run), the contrast's reading; F-049's
+  owner released only by ending or abandoning its run, dl-187 cited by its title; nits: F-050's
+  load warning recorded, F-051's `roles.yaml` (the role's entry and `global`) and the action's
+  binding. Not applied: F-048's `kind`. The re-review reads 0.3.2's `§3.5` as applying to every
+  workflow that declares no element, by design (the plan's `element` holds the context element's
+  id), and recommends `gap`; plan-075 point 3, as ruled, says `defect`, so the kind goes to the
+  approver before `submit`.
