@@ -2,7 +2,7 @@
 id: task-092-feedback-notes-f-048-to-f-051-for-wingfoil-0.3.2-a-later-run-s-plan-named-after-the-previous-element-the-refusal-naming-workflow-transfer-allowed-values-a-directive-per-phase-plan-075-task-a
 type: task
 title: "Feedback notes F-048 to F-051 for WingFoil 0.3.2: a later run's plan named after the previous element, the refusal naming workflow transfer, allowed values, a directive per phase (plan-075 task A)"
-status: in-review
+status: approved
 pack: ""            # content-only task (tooling-delivery v4, dl-039 R1), plan-075 task (A)
 depends_on: []
 tags: ["feedback","wingfoil"]
