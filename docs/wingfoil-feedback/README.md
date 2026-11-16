@@ -79,6 +79,7 @@ sha of the commit it read (WingFoil `COLLABORATION.md` › Credit, task-271), fo
 | [F-047](F-047-schema-2836141582da.md) | The pack schemas changed (sha256:2836141582da) | request | open | |
 | [F-048](F-048-a-second-run-of-a-self-creating-workflow-names-its-plan-after-the-open-first-run-s-element.md) | A second run of a self-creating workflow names its plan after the open first run's element | gap | open | |
 | [F-049](F-049-the-refusal-to-adopt-an-owned-element-names-workflow-transfer-a-command-that-does-not-exist.md) | The refusal to adopt an owned element names workflow transfer, a command that does not exist | defect | open | |
+| [F-050](F-050-a-frontmatter-field-cannot-declare-the-values-it-allows.md) | A frontmatter field cannot declare the values it allows | request | open | |
 
 ## Context
 
