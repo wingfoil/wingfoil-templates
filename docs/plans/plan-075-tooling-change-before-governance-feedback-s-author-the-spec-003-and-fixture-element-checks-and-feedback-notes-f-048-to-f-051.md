@@ -215,3 +215,9 @@ and submit), `success`.
   row for the bindings to `governance/feedback`, left to its `author` phase; nits: the
   stand-ins, the parse check kept as a defence, the refused item's source, each task's privacy
   check in its step, two lines reflowed.
+
+## The approver's rulings
+
+- 2026-11-16: the outline approved as amended by the review and the re-review, with three tasks
+  (point 1's recommendation: (A) the notes, (B) spec-003's composer and lint checks, (C) the
+  fixture-element checks), in the order A→B→C; `submit` authorised.
