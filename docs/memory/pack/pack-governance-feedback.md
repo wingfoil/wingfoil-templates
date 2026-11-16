@@ -2,7 +2,7 @@
 id: pack-governance-feedback
 type: pack
 title: "Feedback"
-status: proposed
+status: accepted
 axis: "governance"
 name: "feedback"
 slot: ""
