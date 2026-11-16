@@ -2,7 +2,7 @@
 id: task-092-feedback-notes-f-048-to-f-051-for-wingfoil-0.3.2-a-later-run-s-plan-named-after-the-previous-element-the-refusal-naming-workflow-transfer-allowed-values-a-directive-per-phase-plan-075-task-a
 type: task
 title: "Feedback notes F-048 to F-051 for WingFoil 0.3.2: a later run's plan named after the previous element, the refusal naming workflow transfer, allowed values, a directive per phase (plan-075 task A)"
-status: backlog
+status: approved
 pack: ""            # content-only task (tooling-delivery v4, dl-039 R1), plan-075 task (A)
 depends_on: []
 tags: ["feedback","wingfoil"]
@@ -158,3 +158,37 @@ One commit per note with its ledger row. Then the build review, the checks and t
   approver before `submit`.
 - 2026-11-16: the approver ruled F-048's `kind`: `gap`, as the re-review recommended (plan-075
   point 3 said `defect`; the change listed at plan-075's close).
+- 2026-11-16: started (backlog → in-progress, `f1aaad11`) on `task/task-092-feedback-notes` from
+  `main` at `3b75c055`. Each note reproduced with WingFoil 0.3.2 (`6de2e13c`) alone, in a scratch
+  project of its own (`init --template Kanban --no-interactive`, a fictional `.example` approver
+  added with `dna add team.members`), as Design lists; every point held. Deviation from Design and
+  Context, F-049: the owner is not released by ending or deprecating its run; after `workflow end`
+  of the owning run, and on a copy after `memory deprecate` of its plan, `adopt` gives the same
+  refusal (exit 1), so nothing moves the element (the first wording of Context, which the
+  re-review's amendment had narrowed); the note records what ran. F-051: the `agent.execute`
+  action's binding carries no directive (F-034 cited). F-050: no command printed a warning for the
+  would-be key. Notes: F-048 `68e6aa80`, F-049 `5babb242`, F-050 `f5bf5605`, F-051 `ff917ccb`, one
+  commit each with its ledger row. Red by mutation (dl-018 R2's exception, as task-077), each
+  mutation reverted after its run: a gap in the numbering 3 failing, a ledger cell changed 2, the
+  opening line changed 2, two fields swapped 2, `## Expected` renamed 2; `New note (task-092).`
+  once in each of the four notes; unmutated, `node --test dist/tests/wingfoil-feedback.test.js
+  dist/tests/feedback-note.test.js` 13 passing, `npm run lint` exit 0.
+- 2026-11-16: independent build review of `f003ae18`: approve after amendments, nothing blocking;
+  it reproduced the four notes on 0.3.2, F-049's deviation included. Applied in the commit that
+  records this note: F-048's commit id in the note above (`68e6aa80`, the amended one); nits: the
+  excerpt headers say a command's output may be left out, F-049's "no verb 0.3.2 lists", F-051's
+  directive not `global`. No re-review: the amendments change wording, not a request. F-049's
+  deviation from Design (ending or deprecating the owner does not release the element, which the
+  note observes and its Expected asks) goes to the approver (dl-019, Acceptance 2).
+- 2026-11-16: the approver ruled F-049's deviation: the note kept as written (the refusal after
+  `workflow end` and `memory deprecate` observed, and its Expected asking that such an element be
+  adoptable or movable).
+- 2026-11-16: checks (dl-039 R1, R2), once, on the frozen commit `53ed49c7`: the branch CI, run
+  43909214128, `success`, jobs `validate (22.12.0, 1)` 7 min 39 s, `(22.12.0, 2)` 6 min 1 s,
+  `(22.21.0, 1)` 11 min 27 s, `(22.21.0, 2)` 5 min 10 s (none over 25 minutes); from a clean
+  working tree on Node.js 22.21.0 after `npm ci` and `npm run build`: `npm run
+  validate:publication`, the golden tree in publication mode and `npm run -s wingfoil -- workflow
+  list` exit 0, `directives list --format json` with `"warnings": []`, the tree still clean. This
+  commit changes only `docs/memory`: no new run. Privacy check of the branch's diff and messages:
+  no local or scratch path, no maintainer name or email, no private project, no intermediary
+  session.
