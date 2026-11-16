@@ -180,3 +180,6 @@ One commit per note with its ledger row. Then the build review, the checks and t
   directive not `global`. No re-review: the amendments change wording, not a request. F-049's
   deviation from Design (ending or deprecating the owner does not release the element, which the
   note observes and its Expected asks) goes to the approver (dl-019, Acceptance 2).
+- 2026-11-16: the approver ruled F-049's deviation: the note kept as written (the refusal after
+  `workflow end` and `memory deprecate` observed, and its Expected asking that such an element be
+  adoptable or movable).
