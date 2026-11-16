@@ -548,3 +548,8 @@ check runs before every commit (`repository-practice` rule 2).
 - 2026-11-16: spec-003's review and re-review applied (its Execution Notes); the approver ruled
   points 2 and 5 again as amended there ("The approver's rulings"), and the row of the
   fixture-element checks now reads spec-003 §11.
+- 2026-11-16, step 5: the approver approved spec-003 (`pending → approved`, 6fb9219b).
+- 2026-11-16, step 6: the fold-back, from spec-003 §10. spec-001 amended in place with its
+  Execution Note (170413c5, §10.1); `pack-authoring` in a commit of its own (e44ee8af, §10.2);
+  the charter's and dl-013's Execution Notes and the root `README.md`'s list of specifications
+  (§10.3) in the commit that records this note.

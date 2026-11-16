@@ -333,3 +333,11 @@ previous item, its `element` field wrong; the refusal to adopt an element anothe
   approver also rejects an outcome the composition does not route; with the nits: "a would-be
   `bug`", D3's reach marked, the reject branch in the directive's bullet, Open points 1 "unrouted".
   Wording within the rule already reviewed: no further re-review.
+- 2026-11-16, plan-074 (pack-cycle › design): spec-003, approved,
+  `spec-003-configurable-value-lists-upstream-channels-and-conditional-directives`,
+  answers the Open points: 1 in §3 and §4 (list parameters, `bug` never in
+  `feedback_outcomes`), with the triage rule of §4.3 (an empty or unlisted outcome rejected to
+  `draft`); 2 in §5 (the `feedback-channel` tag); 3 in §6 (no rule on a `checks` string); 4 in §7
+  (the directive named in the action text and in the AGENTS.md section, the `feedback-route` tag);
+  5 in §8 (`reported_by`). The pack's `pack.yaml` is at format 2 (§9). The `author` phase writes
+  the pack from them; this charter's text is unchanged.
