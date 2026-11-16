@@ -61,14 +61,15 @@ therefore a convention over `string`, and no schema changes:
 - **Declaration:** a `string` parameter whose `description` **must** begin with "List of". The
   description is what marks it. A list parameter's name **should** be plural.
 - **Value:** items separated by `,`. Each item is trimmed of spaces at both ends.
-- **Use in YAML:** in a YAML file, or in a Markdown file's YAML frontmatter, a parameter of any
+- **Use in YAML:** in a substituted YAML file (spec-001 §8.2; not `pack.yaml`), or in a substituted
+  Markdown file's YAML frontmatter, a parameter of any
   type other than `integer` and `boolean` **must** stand inside a double-quoted scalar. A list
   parameter **may** also stand as the whole content of a YAML flow sequence, `[{{name}}]`, with
   spaces allowed between the brackets and the braces, and only in the files of the pack that
   declares it. Any other placement (plain, single-quoted, a block scalar, a comment) is an error.
   `integer` and `boolean` parameters stay as spec-001 §8.2 has them (`methodology/kanban`'s
   `in-progress: {{wip_in_progress}}`, the only unquoted uses in the published packs). `path`
-  and `pattern` values hold `{…}` tokens (spec-001 §8.3), which YAML reads as a flow mapping
+  and `pattern` values hold `{…}` tokens (spec-001 §8.3), which YAML can read as a flow mapping
   outside double quotes.
 - **Use in Markdown:** it **may** appear in a directive's or an AGENTS.md section's text, where it
   reads as the list.
@@ -171,8 +172,9 @@ An upstream is added by a governance pack of its own that `requires` `governance
 (dl-012 D3). That pack:
 - ships a **channel directive** tagged `feedback-channel`;
 - binds it to `facilitator` in its own `roles.yaml`, so it is in the agent's context;
-- states the target it serves on a line of its own, exactly `Serves the target
-  \`upstream:<name>\`.`, `<name>` a slug naming the upstream, which the lint reads (§11);
+- states the target it serves on a line of its own, exactly ``Serves the target
+  `upstream:<name>`.``, the backticks around the target literal, `<name>` a slug naming the
+  upstream; the lint reads that line (§11);
 - names in the directive's text:
   - where a note is written and in which format;
   - the mapping of kinds (for WingFoil, `observation` becomes `request` or is not routed,
@@ -248,13 +250,15 @@ plan-074 step 2 drove this route to `closed` on 0.3.2, the bug captured by `bug-
 
 **Scope.** The rule applies to a directive that an entry ships and that an agent needs at a step
 of that entry's workflows. Content an entry ships without such a directive is untouched:
-- a methodology's `delivery` and its sub-workflows in its entry `with: software`, whose plain
-  `agent.execute` actions need only the role's `roles.yaml` directives (spec-001 §6.5);
+- a methodology's `delivery` and its sub-workflows in its entry `with: software` (spec-001
+  §6.5), untouched while the entry ships no directive its steps need;
 - a bridge's `exit-check` directives, read by tag from an unconditional transition step
-  (spec-001 §6.5, Bridges), which is their path in the agent's context.
+  (spec-001 §6.5, Bridges), outside this rule.
 
-Such a directive reaches the agent through three paths:
-1. **The path in the agent's context.** The pack reads the directive by a tag it owns, never by
+Such a directive reaches the agent through the action text and the AGENTS.md section (paths 2
+and 3, the generic rule). `governance/feedback` adds path 1, its own choice:
+1. **The path in the agent's context** (this pack's). The pack reads the directive by a tag it
+   owns, never by
    its id, from a file the agent already has: an unconditional directive bound to a role, or an
    unconditional workflow step (as the Bridges do). This is the lookup by tag of §5.2, within
    one pack. In `governance/feedback`:
@@ -270,16 +274,17 @@ Such a directive reaches the agent through three paths:
    braces (WingFoil substitutes `{…}` as a token). For example:
    `'agent.execute(directive: feedback-bug-route)'`. `workflow next` prints it (plan-074 step
    2). A plain `agent.execute` stays allowed. An `agent.execute` that names a directive names
-   one in the entry's scope: the entry's own, the pack's unconditional ones, or one of the
-   `with` pack's. `agent.*` is a built-in token, so no binding warning can catch a wrong id
-   (`dist/workflow/bindings.js`): the lint checks it (§11).
+   one in the entry's scope (spec-001 §6.3, §8.1): the pack's own or its required packs', the
+   entry's own, or the `with` pack's or its required packs'. `agent.*` is a built-in token, so
+   no binding warning can catch a wrong id (`dist/workflow/bindings.js`): the lint checks it
+   (§11).
 3. **The AGENTS.md section** names the directive as present only with the entry's pack (spec-001
    §10 allows it). This path reaches an agent only once the project pastes the generated region,
    until WingFoil exports `AGENTS.md` (spec-001 §10, R4).
 
 The generic part goes into spec-001 §6.5, §10 and §18 (§10.1): the scope, the action text and its
-check, and the AGENTS.md mention. A request to WingFoil for a directive binding per phase is a
-feedback note of the feedback-notes task.
+check, and the AGENTS.md mention. A pack **may** add a lookup by tag of its own (§6.3). A request
+to WingFoil for a directive binding per phase is a feedback note of the feedback-notes task.
 
 ## 8. The back-reference field
 
@@ -320,13 +325,13 @@ on spec-001 naming plan-074 and this specification. The text outside the quotes 
   >   the reading pack requiring the later one.
 - **§6.5**, after the isolation bullets:
   > - **An entry's directive and the agent.** A directive an entry ships reaches no role through
-  >   `roles.yaml`. When an agent needs it at a step of the entry's workflows, the pack gives it
-  >   three paths (spec-003 §7.2): a lookup by tag (§6.3) from a file the agent already has, an
-  >   unconditional directive bound to a role or an unconditional workflow step, as the Bridges
-  >   below do; the directive named in that step's `agent.execute` action, single-quoted and
-  >   without braces; and the AGENTS.md section naming it as present only with the entry's pack
-  >   (§10). A plain `agent.execute` stays allowed; one that names a directive names one in the
-  >   entry's scope: the entry's own, the pack's unconditional ones, or one of the `with` pack's.
+  >   `roles.yaml`. When an agent needs it at a step of the entry's workflows, the pack names it
+  >   in that step's `agent.execute` action, single-quoted and without braces, and its AGENTS.md
+  >   section names it as present only with the entry's pack (§10) (spec-003 §7.2). A pack may
+  >   also let the agent read it by a tag the pack owns (§6.3); the tag is the pack's own. A
+  >   plain `agent.execute` stays allowed; one that names a directive names one in the entry's
+  >   scope (§6.3, §8.1): the pack's own or its required packs', the entry's own, or the `with`
+  >   pack's or its required packs'.
 - **§8.1**, after the types table:
   > - **List parameters.** A `string` parameter whose `description` begins with "List of" is a
   >   list parameter, its name preferably plural: items separated by `,`, each trimmed
@@ -351,15 +356,12 @@ on spec-001 naming plan-074 and this specification. The text outside the quotes 
   >   (lint and composer);
   > - an `agent.execute` action of a conditional entry's workflows that names a directive names
   >   one in the entry's scope (§6.5) (lint);
-  > - a directive tagged `feedback-channel` comes from a pack that requires
-  >   `governance/feedback`, and states its target on a "Serves the target" line; two such
-  >   directives of a composition never serve the same target (spec-003 §5.2) (lint);
   > - a pack's rule never rests on a workflow's `checks` string, which WingFoil 0.3.2 does not
   >   evaluate: a check a rule needs is a directive's, a lint's or a test's (spec-003 §6). A
   >   review rule, judged at `pack-release-cycle` › `prepare`, not a lint.
 
-  The `feedback-channel` line names this pack's tag: a pack that adds a tag of the same kind adds
-  its own line through its design.
+  The `feedback-channel` checks (§5.1, §5.2) are this pack's and stay in §11: spec-001 does not
+  name the channel (plan-074 point 1).
 - **§18**, under "Presets:":
   > - every value a preset gives a list parameter passes the item rule (§8.1).
 
@@ -422,7 +424,7 @@ Owed, in the row of the fixture-element checks (`docs/owed-items.md`, plan-074 r
   claim confirmed in its code.
   - **Blocker.** The entry-directive rule was narrowed to a directive an agent needs at an
     entry's step. A plain `agent.execute` stays allowed, a named directive is one in the entry's
-    scope, and a bridge's tag read by a transition step counts as the first path (§7.2, §10.1).
+    scope, and a bridge's tag read by a transition step is outside the rule (§7.2, §10.1).
     Without the narrowing, a methodology's `delivery` and the Bridges would have broken it.
   - **Should-fix.**
     - The tag and the reading duty stay in this pack (§7.2).
@@ -432,7 +434,9 @@ Owed, in the row of the fixture-element checks (`docs/owed-items.md`, plan-074 r
     - A machine-readable "Serves the target" line (§5.1).
     - The `feedback-channel` line written as such, the commentary marked.
     - The `checks` rule is a review rule.
-    - The traceability: the owed row extended, S3-O3 tied to the adoption row, dl-013's note.
+    - The traceability: S3-O3 tied to the adoption row, dl-013's note; the owed row of the
+      fixture-element checks is extended with the approver's ruling on points 2 and 5, in the
+      commit that records it (rule 4).
     - `pack-authoring`'s anchors and the §6.3 bullet (§10.2).
     - §7.2's reference and §3.2's claim corrected.
   - **Nits.** YAML 1.1 words; `upstream:<name>` left out of D2's default; the charter's clause
@@ -442,3 +446,12 @@ Owed, in the row of the fixture-element checks (`docs/owed-items.md`, plan-074 r
 
   The blocker and the placement rule change rules the approver ruled (plan-074 points 2 and 5):
   they go back to the approver, then to a re-review.
+- 2026-11-16: re-review: approve after amendments; one blocker, four should-fix, five nits, all
+  applied in the commit that records this note. **Blocker:** §10.1's §6.5 text made the lookup by
+  tag a spec-001 rule. Now the generic rule is the action text and the AGENTS.md mention, and a
+  tag is a pack's own choice, as plan-074 point 5 says (§7.2 path 1 labelled this pack's).
+  **Should-fix:** the entry's scope includes the required packs (§6.3, §8.1); the
+  `feedback-channel` checks kept out of spec-001 (§10.1, §11); the owed row's extension tied to
+  the ruling's commit; the "Serves the target" code span. **Nits:** the note's bridge wording,
+  the methodology bullet, "can read", the placement rule limited to substituted files, the §6.5
+  quote's punctuation (rewritten). The fixes restore the ruled scope: no rule beyond it changes.
