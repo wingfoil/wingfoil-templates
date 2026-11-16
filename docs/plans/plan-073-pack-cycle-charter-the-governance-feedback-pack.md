@@ -174,6 +174,23 @@ workflow `feedback-item` (point 2); `outcome` and `resulting` optional, the faci
 the outcome and the approver's triage confirming it (point 3); the `bug` route's candidates (a)
 and (b) left to step 2's run and a ruling then (point 5).
 
+Given on 2026-11-16, in chat, after step 2's run (dl-019), as recommended:
+
+1. **Point 2, the shape:** `feedback-item` (sub, `element: feedback`) confirmed; the entry
+   `with: software@^1` ships the main `feedback-bug-route` and its sub `feedback-bug-item`.
+2. **Point 3:** `outcome` and `resulting` optional, as WingFoil checks required fields at
+   `submit` only.
+3. **Point 5, the routes:** each route step is `agent.execute`, recorded with `workflow
+   finalize`; the `bug` route is variant (a'): `bug-ingest` captures and triages the bug, and
+   `feedback-bug-item`'s step records the route, adding no bug. `feedback-review`'s `where` lists
+   the outcomes other than `bug` by default; making it configurable is the design phase's.
+4. **The trace back:** WingFoil 0.3.2's optional `reported_by` is the candidate field for FA-6's
+   back-reference in `base`'s and `software`'s types, settled by the design phase and the pack
+   release round.
+5. **The two WingFoil defects** of step 2 (a later capture run's plan named after the previous
+   item; the refusal naming `workflow transfer`, which 0.3.2 lacks) become feedback notes in a
+   task of their own; a row of `docs/owed-items.md` until then.
+
 ## Steps
 
 On branch `pack/governance-feedback-charter`; one commit per step that writes. Before every
