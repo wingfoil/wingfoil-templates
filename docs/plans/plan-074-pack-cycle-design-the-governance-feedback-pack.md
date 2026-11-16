@@ -453,3 +453,78 @@ check runs before every commit (`repository-practice` rule 2).
   their description, so all three get the item rule; §6.5's Bridges as the precedent, the lint
   checking every `agent.execute` names a directive, the generic part named; the rulings to cite
   their rows. The fixes narrow or make explicit what the re-review accepted: no further review.
+- 2026-11-16: the plan submitted by the agent on the approver's request in chat (`draft →
+  active`, `f8f37eca`). `main` was pushed at `f8f37eca` on the approver's request, with
+  `main`'s CI on `d0cdd18f` green beforehand. Branch `pack/governance-feedback-design` starts from
+  `f8f37eca`.
+- 2026-11-16, step 1 (reads). The inputs above. `pack-authoring` repeats spec-001 §5's "a new pack
+  is written at format 2", which point 8 rules. spec-001 §6.3 and §18 are as points 3 and 9 read
+  them. The draft's `feedback-bug-item` › `bug` still held candidate (a), `'memory.add(type:
+  bug)'`, which step 2 changes as point 5 says. No point of the outline changes.
+- 2026-11-16, step 2 (dl-037 E1, E2). **The draft:** the untracked overlay of plan-073, never
+  committed, changed as follows:
+  - `pack.yaml` moves to format 2. It declares `feedback_kinds`, `feedback_targets` and
+    `feedback_outcomes` (`string`, descriptions beginning "List of", `feedback_outcomes`
+    without `bug`).
+  - `feedback-review`'s `where` reads `outcome: [{{feedback_outcomes}}]`, and
+    `feedback-bug-route`'s reads `outcome: [bug]`.
+  - `feedback-bug-item` › `bug` becomes `'agent.execute(directive: feedback-bug-route)'`, and
+    the entry's directive is tagged `feedback-route`.
+  - The `feedback` directive names the three lists and states point 5's tag rule.
+  - A fixture upstream pack `governance/feedback-upstream` (format 2, `requires: [base@^2,
+    governance/feedback@^1]`) ships `plover-vendor-channel`, tagged `feedback-channel` and
+    bound to `facilitator`.
+  - A fourth composition, `upstream`, adds `upstream:plover-vendor` to `feedback_targets` and
+    `deferred` to `feedback_outcomes`.
+  - **Validation.** `npm run validate -- --overlay <draft>` exits 0: schemas and lint 0
+    problems, overlay 23 files 0 problems, 15 compositions byte-identical, the matrix 30 runs 0
+    failed with no tolerance on 0.3.0 and 0.3.2, and `alone[+software]` skipped ("no
+    methodology"). The first two attempts failed on the fixture pack only (a missing
+    `requires_capabilities`, and its README's catalog link, spec-002 §2.5). `npm run index --
+    --check` exits 0.
+  - **The list value, against today's composer** (`npm run compose` with `--param
+    feedback_outcomes=…`).
+    - `x], status: [closed` is refused (DUPLICATE_KEY after substitution).
+    - `x], kind: [defect` exits 0 and changes the `where` to `outcome: [x], kind: [defect]`.
+    - `null, task`, the empty value (`outcome: []`) and `task, task` exit 0 too.
+    - So point 2's item rule and its composer check are needed: today only a duplicate key
+      stops a value.
+- 2026-11-16, step 2, **the run** on WingFoil 0.3.2 (`6de2e13c`, the matrix's install), in a
+  scratch repository outside this one. It was composed by `npm run compose` from the branch with
+  the draft and the `upstream` composition's parameters (fictional Plover Desk, `.example`
+  addresses).
+  - **Listing.** `workflow list` exit 0, `"diagnostics": []`. `directives list` exit 0:
+    `feedback-bug-route` with `tags: [feedback-route]` and `unassigned`;
+    `plover-vendor-channel` with `tags: [feedback-channel]`, assigned to `facilitator`;
+    `feedback` assigned to `facilitator`. The AGENTS.md region holds the pack's section.
+  - **Four items** (`memory add`, fields filled by editing and committing, since `--set` fills
+    only path and id tokens; `memory submit`, `memory approve`, each exit 0) were triaged with
+    outcomes `deferred`, `bug`, `upstream-note` (target `upstream:plover-vendor`) and `task`.
+  - **`feedback-review`** (`workflow start` exit 0): its frontier holds the `deferred`,
+    `upstream-note` and `task` items and leaves out the `bug` item. An outcome the project adds
+    is selected through the substituted `where`.
+  - **The `upstream-note` route.** A note written where the channel directive says, `resulting`
+    naming it, `workflow finalize --step feedback-item.route@…` exit 0, and `memory submit`
+    (`triaged → closed`) exit 0.
+  - **The `deferred` item** went to the decision-log fallback (`memory add --type decision-log`
+    exit 0, `resulting` naming it), with finalize and close exit 0. The `task` item was left on
+    the frontier.
+  - **`feedback-bug-route`** (`workflow start` exit 0). `workflow next` exit 0 prints
+    `agent.execute(directive: feedback-bug-route)` with its `agent execute` command line. Its
+    `directives:` line lists the `roles.yaml` directives (`feedback`, `plover-vendor-channel`,
+    …), not `feedback-bug-route`.
+  - **`agent execute --dry-run`** at that step exits 1: "no agent in dna.yaml with an adapter
+    executes as role 'facilitator'". `base`'s composed `dna.yaml` gives the agent no adapter.
+    That the bootstrap carries no step is read in the code (`dist/agent/execute.js`
+    `renderBootstrap`, as the Context says).
+  - **The bug.** `bug-ingest` was started on its own (exit 0) and `memory add --type bug
+    --workflow … --step bug-ingest.capture` exit 0. The composed `bug` template has no
+    `reported_by` (the row on the Memory templates' optional fields), so the bug's body cites
+    the item. Then `memory submit` exit 0, `resulting` naming the bug, finalize and close of the
+    item exit 0. `feedback-bug-route` is complete, and the bug waits for `bug-ingest`'s triage,
+    owned by its own run.
+  - **Findings.** None changes a point. Two facts go to spec-003:
+    - the substituted `where` works on 0.3.2;
+    - `agent execute` needs an adapter that the packs' `dna.yaml` does not give, so point 5's
+      path through the `feedback` directive and `workflow next` is the one that works on a
+      composed project.
