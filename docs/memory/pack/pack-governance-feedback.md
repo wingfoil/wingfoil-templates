@@ -99,10 +99,11 @@ applies and the run on WingFoil 0.3.2 they rest on (dl-032 E2).
   `software`, matches neither `where`. Until the `design` phase settles it (Open points 1), the
   `feedback` directive, bound to the facilitator, has the facilitator propose only a listed
   outcome that the composition routes: an outcome with no route in the composition (one a project
-  added, a product defect without `software`, `upstream-note` with no upstream pack composed) is
+  added, a would-be `bug` without `software`, `upstream-note` with no upstream pack composed) is
   proposed as `decision-log`, naming what it would have been in the item's body and in the routed
-  decision-log (dl-012 D3). The approver confirms the proposal, or rejects the item to `draft`
-  when its `outcome` is empty or unlisted; the hand-off to the approver says so.
+  decision-log (dl-012 D3; an absent upstream by extension). The approver confirms the proposal,
+  or rejects the item to `draft` when its `outcome` is empty, unlisted, or not one the composition
+  routes; the hand-off to the approver says so.
 - **The `bug` route, only with `software`** (variant (a'), plan-073 ruling 3): `software`'s
   `bug-ingest` captures and triages the bug, citing the item; `feedback-bug-item`'s `bug` step adds
   no bug and records the route. A bug added inside the pack's own step would be owned by its run,
@@ -130,7 +131,8 @@ applies and the run on WingFoil 0.3.2 they rest on (dl-032 E2).
 **Directives** (`directives/`):
 - `feedback` (unconditional): what counts as feedback; the required fields and the value lists
   (`outcome` without `bug`); the classification rules; the outcome proposed before the triage and
-  confirmed by the approver, the facilitator proposing only an outcome the composition routes
+  confirmed by the approver or rejected to `draft`, the facilitator proposing only an outcome the
+  composition routes
   (the rule above);
   the routing table above, without the `bug` route; the trace both ways; who may close an item
   (the facilitator, once `resulting` is written); how `feedback-review` is started and ended;
@@ -292,9 +294,9 @@ one, answering them for dl-012 and dl-013):
 1. **Configurable value lists:** a list type or a convention over `string`; how a preset sets it;
    who checks a value; how `outcome`'s default drops `bug` without `software`; how
    `feedback-review`'s `where` follows a project's added outcomes (today a literal list, which a
-   scalar parameter cannot hold, §8.1); a triaged item with an empty or unlisted `outcome`, which
-   no review selects (the interim triage rule above); `bug` in the unconditional directive's text,
-   today left to the entry's directive.
+   scalar parameter cannot hold, §8.1); a triaged item with an empty, unlisted or unrouted
+   `outcome`, which no review selects (the interim triage rule above); `bug` in the unconditional
+   directive's text, today left to the entry's directive.
 2. **An upstream's channel:** how an upstream pack declares it to this pack.
 3. **The entry's shape:** settled by plan-073 ruling 3 for 0.3.2 (a main and its sub, recorded
    routes); WingFoil 0.3.2 evaluates no `checks` string, so no rule rests on one.
@@ -324,5 +326,10 @@ previous item, its `element` field wrong; the refusal to adopt an element anothe
   wording, applied: the interim rule addressed to the facilitator, whom the directive binds, the
   approver confirming or rejecting; an outcome with no route in the composition (added, a product
   defect without `software`, `upstream-note` with no upstream pack) proposed as `decision-log`
-  naming it in the item and in the decision-log, as dl-012 D3. Neither new rule contradicts
-  dl-012 or plan-073's rulings; both are named to the approver at the acceptance.
+  naming it in the item and in the decision-log (dl-012 D3; an absent upstream by extension).
+  Neither new rule contradicts dl-012 or plan-073's rulings; both go to the approver with the
+  acceptance request.
+- 2026-11-16: final check of the re-review's fixes: approve after one should-fix, applied: the
+  approver also rejects an outcome the composition does not route; with the nits: "a would-be
+  `bug`", D3's reach marked, the reject branch in the directive's bullet, Open points 1 "unrouted".
+  Wording within the rule already reviewed: no further re-review.
