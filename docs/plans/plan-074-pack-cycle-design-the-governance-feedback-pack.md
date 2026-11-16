@@ -2,7 +2,7 @@
 id: plan-074-pack-cycle-design-the-governance-feedback-pack
 type: plan
 title: "pack-cycle design: the governance/feedback pack"
-status: draft
+status: active
 workflow: "pack-cycle"
 phase: "design"
 tags: ["packs","feedback","governance","spec","W10"]
