@@ -215,6 +215,12 @@ and submit), `success`.
   row for the bindings to `governance/feedback`, left to its `author` phase; nits: the
   stand-ins, the parse check kept as a defence, the refused item's source, each task's privacy
   check in its step, two lines reflowed.
+- 2026-11-16, step 2: task (A), task-092, `done`: F-048 … F-051 in the inbox with their ledger
+  rows, merged `--no-ff` at `efae8655`, closed at `5ef0aa15`; the row "Two feedback notes to
+  WingFoil" in Closed. Rulings during the task: F-048's `kind` `gap`, not point 3's `defect`;
+  F-049 kept with its observation that ending or deprecating the owner does not release the
+  element. `main`'s CI on `5ef0aa15`, run 43914265106, `success`, jobs `validate (22.12.0, 1)`
+  12 min 0 s, `(22.12.0, 2)` 5 min 41 s, `(22.21.0, 1)` 7 min 13 s, `(22.21.0, 2)` 8 min 54 s.
 
 ## The approver's rulings
 
