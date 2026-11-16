@@ -183,3 +183,12 @@ One commit per note with its ledger row. Then the build review, the checks and t
 - 2026-11-16: the approver ruled F-049's deviation: the note kept as written (the refusal after
   `workflow end` and `memory deprecate` observed, and its Expected asking that such an element be
   adoptable or movable).
+- 2026-11-16: checks (dl-039 R1, R2), once, on the frozen commit `53ed49c7`: the branch CI, run
+  43909214128, `success`, jobs `validate (22.12.0, 1)` 7 min 39 s, `(22.12.0, 2)` 6 min 1 s,
+  `(22.21.0, 1)` 11 min 27 s, `(22.21.0, 2)` 5 min 10 s (none over 25 minutes); from a clean
+  working tree on Node.js 22.21.0 after `npm ci` and `npm run build`: `npm run
+  validate:publication`, the golden tree in publication mode and `npm run -s wingfoil -- workflow
+  list` exit 0, `directives list --format json` with `"warnings": []`, the tree still clean. This
+  commit changes only `docs/memory`: no new run. Privacy check of the branch's diff and messages:
+  no local or scratch path, no maintainer name or email, no private project, no intermediary
+  session.
