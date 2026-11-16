@@ -13,18 +13,19 @@ tags: ["feedback","wingfoil"]
 plan-075 (task (A) of its outline, point 3) hosts this task, a content-only task under
 `tooling-delivery` v4 (dl-039 R1), as task-077 was. It settles the row "Two feedback notes to
 WingFoil" of `docs/owed-items.md` (plan-073 ruling 5, step 2; plan-074 rulings, point 10): the two
-WingFoil defects that plan-073's run of the `governance/feedback` workflows on WingFoil 0.3.2
+WingFoil findings that plan-073's run of the `governance/feedback` workflows on WingFoil 0.3.2
 found (plan-073 › Execution Notes, step 2), with the two requests that spec-003 leaves to WingFoil
 (spec-003 S3-O1, S3-O2):
 
-- **F-048** (`defect`): a second run of a self-creating main workflow (one that declares no
+- **F-048** (`gap`): a second run of a self-creating main workflow (one that declares no
   `element` and creates its element at a step, spec-017 §3.4), started while the first run is
   still open, takes the first run's element as its context element (spec-017 §3.5: the active
   instance's element), so its plan's id (`{phase}` of the plan type's `id_pattern`), `phase` and
   `element` name the first run's element, while `workflow status` shows the element the second run
-  is bound to (spec-017 §7.1). A defect, not a request: the plan's `element` field contradicts the
-  run's bound element in WingFoil's own output, and §3.5's context exists for a workflow that does
-  not create its element. Distinct from F-038 (which fields `workflow start` fills at all).
+  is bound to (spec-017 §7.1). A gap, not a defect: 0.3.2 follows its rule (§3.5 applies to every
+  workflow that declares no element), but the rule does not tell a self-creating run, whose bound
+  element arrives later, from one that creates none, so it names that run's plan after an
+  unrelated element. Distinct from F-038 (which fields `workflow start` fills at all).
 - **F-049** (`defect`): `workflow adopt --element` on an element that another open run owns is
   refused with a message telling the user to "move it with workflow transfer", a command 0.3.2
   does not have; no verb moves the element while its owner stays open (only ending or
@@ -155,3 +156,5 @@ One commit per note with its ledger row. Then the build review, the checks and t
   workflow that declares no element, by design (the plan's `element` holds the context element's
   id), and recommends `gap`; plan-075 point 3, as ruled, says `defect`, so the kind goes to the
   approver before `submit`.
+- 2026-11-16: the approver ruled F-048's `kind`: `gap`, as the re-review recommended (plan-075
+  point 3 said `defect`; the change listed at plan-075's close).
