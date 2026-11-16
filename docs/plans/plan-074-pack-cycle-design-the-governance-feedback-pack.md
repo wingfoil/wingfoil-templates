@@ -560,3 +560,6 @@ check runs before every commit (`repository-practice` rule 2).
   Compatibility line and the triage rule replaces its interim clause save a would-be `bug`
   without `software`; `pack-authoring`'s `checks` bullet names the review rule; spec-001's §6.5
   and §18 quotes get two punctuation fixes, recorded in its note.
+- 2026-11-16, step 7: the design row of `docs/owed-items.md` moves to Closed, settled by spec-003
+  (plan-074), in the commit that records this note. The branch is frozen at that commit for its
+  CI.
