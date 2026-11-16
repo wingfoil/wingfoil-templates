@@ -158,3 +158,18 @@ One commit per note with its ledger row. Then the build review, the checks and t
   approver before `submit`.
 - 2026-11-16: the approver ruled F-048's `kind`: `gap`, as the re-review recommended (plan-075
   point 3 said `defect`; the change listed at plan-075's close).
+- 2026-11-16: started (backlog → in-progress, `f1aaad11`) on `task/task-092-feedback-notes` from
+  `main` at `3b75c055`. Each note reproduced with WingFoil 0.3.2 (`6de2e13c`) alone, in a scratch
+  project of its own (`init --template Kanban --no-interactive`, a fictional `.example` approver
+  added with `dna add team.members`), as Design lists; every point held. Deviation from Design and
+  Context, F-049: the owner is not released by ending or deprecating its run; after `workflow end`
+  of the owning run, and on a copy after `memory deprecate` of its plan, `adopt` gives the same
+  refusal (exit 1), so nothing moves the element (the first wording of Context, which the
+  re-review's amendment had narrowed); the note records what ran. F-051: the `agent.execute`
+  action's binding carries no directive (F-034 cited). F-050: no command printed a warning for the
+  would-be key. Notes: F-048 `5d3a2b57`, F-049 `5babb242`, F-050 `f5bf5605`, F-051 `ff917ccb`, one
+  commit each with its ledger row. Red by mutation (dl-018 R2's exception, as task-077), each
+  mutation reverted after its run: a gap in the numbering 3 failing, a ledger cell changed 2, the
+  opening line changed 2, two fields swapped 2, `## Expected` renamed 2; `New note (task-092).`
+  once in each of the four notes; unmutated, `node --test dist/tests/wingfoil-feedback.test.js
+  dist/tests/feedback-note.test.js` 13 passing, `npm run lint` exit 0.
