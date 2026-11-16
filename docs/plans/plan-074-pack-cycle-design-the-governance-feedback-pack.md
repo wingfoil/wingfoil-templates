@@ -302,10 +302,20 @@ approved as amended (the list parameter and its item rule; the `feedback-channel
 §6.3; the `feedback-route` tag, the directive named in the action text and its lint, the
 AGENTS.md mention).
 
+spec-003's review and re-review (its Execution Notes, 2026-11-16) changed points 2 and 5 again.
+Given on 2026-11-16, in chat, after them: points 2 and 5 are approved as amended there. Point 2:
+in a substituted YAML file, or a Markdown file's YAML frontmatter, every parameter other than an
+`integer` or a `boolean` stands inside a double-quoted scalar, save a list parameter as the only
+item of `[...]`; the composer and the lint check it. Point 5: the rule covers an entry's
+directive an agent needs at a step of the entry's workflows; a plain `agent.execute` stays
+allowed, a named directive is one in the entry's scope, required packs included; the tag is the
+pack's own choice, and a bridge is outside the rule.
+
 The rows these rulings leave, extended in `docs/owed-items.md` in the commit that records them
 (rule 4): "The fixture-element checks" (points 2, 3, 5, 10), "The packs' Memory templates"
 (point 6, `task`'s `reported_by`) and "Two feedback notes to WingFoil" (point 10, the two
-requests).
+requests); the row of the fixture-element checks extended again with the last ruling (spec-003
+§11).
 
 ## Steps
 
@@ -535,3 +545,6 @@ check runs before every commit (`repository-practice` rule 2).
   this repository's adoption (W10): the row "The engine way of working, adopted with this
   repository's adoption" of `docs/owed-items.md`, Source "asked by the approver on 2026-11-16",
   cited here as the plan active on `main` (dl-036 R4). It changes no point of this plan.
+- 2026-11-16: spec-003's review and re-review applied (its Execution Notes); the approver ruled
+  points 2 and 5 again as amended there ("The approver's rulings"), and the row of the
+  fixture-element checks now reads spec-003 §11.
