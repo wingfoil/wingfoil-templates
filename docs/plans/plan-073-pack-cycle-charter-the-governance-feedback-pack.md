@@ -174,6 +174,23 @@ workflow `feedback-item` (point 2); `outcome` and `resulting` optional, the faci
 the outcome and the approver's triage confirming it (point 3); the `bug` route's candidates (a)
 and (b) left to step 2's run and a ruling then (point 5).
 
+Given on 2026-11-16, in chat, after step 2's run (dl-019), as recommended:
+
+1. **Point 2, the shape:** `feedback-item` (sub, `element: feedback`) confirmed; the entry
+   `with: software@^1` ships the main `feedback-bug-route` and its sub `feedback-bug-item`.
+2. **Point 3:** `outcome` and `resulting` optional, as WingFoil checks required fields at
+   `submit` only.
+3. **Point 5, the routes:** each route step is `agent.execute`, recorded with `workflow
+   finalize`; the `bug` route is variant (a'): `bug-ingest` captures and triages the bug, and
+   `feedback-bug-item`'s step records the route, adding no bug. `feedback-review`'s `where` lists
+   the outcomes other than `bug` by default; making it configurable is the design phase's.
+4. **The trace back:** WingFoil 0.3.2's optional `reported_by` is the candidate field for FA-6's
+   back-reference in `base`'s and `software`'s types, settled by the design phase and the pack
+   release round.
+5. **The two WingFoil defects** of step 2 (a later capture run's plan named after the previous
+   item; the refusal naming `workflow transfer`, which 0.3.2 lacks) become feedback notes in a
+   task of their own; a row of `docs/owed-items.md` until then.
+
 ## Steps
 
 On branch `pack/governance-feedback-charter`; one commit per step that writes. Before every
@@ -266,3 +283,111 @@ repository's adoption and pin, dl-011 and dl-013's packs.
   approver's rulings". The approver submitted the plan (`draft → active`, `637d9949`). A second
   `memory submit`, sent by mistake after it, moved the plan `active → done` (`425046c0`); reverted
   on the approver's OK (`61bc7836`), since no CLI verb moves a plan back. The plan is `active`.
+- 2026-11-14: `main` pushed at `7c823fdb` (asked by the approver on 2026-11-14), `main`'s CI on
+  `671ddf37` green beforehand; branch `pack/governance-feedback-charter` from `7c823fdb`.
+- 2026-11-14, step 1 (reads). **Names:** `feedback`, `feedback-ingest`, `feedback-review`,
+  `feedback-item`, `feedback-bug-route` and `feedback-bug-item` equal no Memory type, workflow or
+  directive of WingFoil 0.3.2: its built-in workflow directory is empty; its built-in directives
+  are `architecture`, `code-quality`, `code-review`, `documentation`, `security` and `testing`;
+  `init --template Scrum` and `init --template Kanban` write `custom/` workflows `adr-ingest`,
+  `bug-ingest`, `decision-log-ingest`, `sw-life-cycle` and `scrum-delivery` or `kanban-delivery`,
+  and `custom/` directives `determinism`, `doc-versioning`, `security-secrets`, `traceability`;
+  none of this repository's `custom/` files, nor of WingFoil Benchmark's, read at
+  `wingfoil/wingfoil-benchmark@7d95901a` (its types add `campaign`). **A field for the trace
+  back:** 0.3.2's `init` templates of `adr`, `bug`, `decision-log` and `tech-spec` carry an
+  optional `reported_by: []`, "LIST of the feedback notes this element answers, as provenance
+  only"; `base`'s and `software`'s templates lack it (the row on the Memory templates' optional
+  fields). No point of the outline changes; the field bears on FA-6's back-reference (below).
+- 2026-11-14, step 2 (dl-032 E2, dl-037 E2). **The draft:** an overlay in a directory of its own
+  under `tests/fixtures/`, untracked, never committed: `pack.yaml` format 1, `requires:
+  [base@^2]`, parameters `feedback_path` (`docs/memory/feedback/{id}.md`) and `feedback_id`
+  (`feedback-{n}-{slug}`); the type `feedback` (`required: [title, kind, target, source,
+  context]`, `sequence: [draft, pending, triaged, closed]`, `pending: { reject: draft }`) and its
+  template (`outcome`, `resulting` optional); `roles.yaml` `facilitator: [feedback]`;
+  `feedback-ingest` (main: `capture` by the facilitator, `memory.add(type: feedback)` and
+  `memory.submit`; `triage` by the approver, gate, fallback `capture`); `feedback-review` (main:
+  `review`, `iterate_over: feedback`, `where: { status: [triaged], outcome: [decision-log, task,
+  upstream-note, declined, duplicate] }`, `include: feedback-item`); `feedback-item` (sub,
+  `element: feedback`: `route`, `agent.execute`; `close`, `memory.submit`); the directive
+  `feedback`; the AGENTS.md section; one entry `with: software@^1`: `feedback-bug-route` (main,
+  `where: { status: [triaged], outcome: bug }`, `include: feedback-bug-item`), `feedback-bug-item`
+  (sub: `bug`, `memory.add(type: bug)` and `memory.submit`; `close`) and the directive
+  `feedback-bug-route`. `npm run validate -- --overlay <draft>` exit 0: compositions with `base`
+  alone, with `software` and `methodology/kanban`, with `software` and `methodology/scrum`, on
+  0.3.0 and 0.3.2, 28 runs, 0 failed, tolerance none; the leg of the first with `software` added
+  skipped ("no methodology"). The README took spec-002 §2's nine headings, §2.3's temporary note
+  and its links before the lint passed.
+- 2026-11-14, step 2, **the run** on WingFoil 0.3.2 (`6de2e13c`, the matrix's install), in two
+  scratch repositories outside this one, composed by `npm run compose` from `main` at `7c823fdb`
+  with the draft (fictional project Plover Desk, `.example` addresses), `.wingfoil/` committed;
+  `workflow list` exit 0 with `"diagnostics": []`. About 100 commands; the exit codes recorded
+  are 0 except the six named below.
+  - **The machine.** `memory submit` of an item with `kind`, `target`, `source` and `context`
+    empty exit 1 (`missing required field on submit: kind, target, source, context`); filled, exit
+    0 (`draft → pending`). `memory reject` → `draft`, the `capture` step offered again; resubmitted;
+    `memory approve` → `triaged`, `feedback-ingest` complete. **Required fields are checked at
+    `submit` only:** with `kind` emptied after `submit` and committed, `memory approve` exit 0
+    (`pending → triaged`). A second `approve` from `triaged` exit 1 (not a gate state).
+    `memory deprecate` of a `draft` item → `deprecated`, its run "abandoned".
+  - **One item per capture run.** A second `memory add` at the same run's `capture` exit 1 (`step
+    … is not on the frontier`): each run captures one item, and each `workflow start` adds a plan
+    element (`base`'s `plan_id`). From the second run on, WingFoil names the plan after the
+    previous item: `feedback-ingest-feedback-001-export-drops-accents-plan`, its `phase` and
+    `element` fields `feedback-001-…`, while `workflow status` shows the run's own element
+    (`feedback-002-…`). A WingFoil defect, not exercised before (sw-life-cycle runs once).
+  - **The review.** Five items `triaged` (outcomes `bug`, `decision-log`, `task`, `declined`,
+    `duplicate`): `feedback-review` started with four eligible, the `bug` item left out by the
+    `where`'s list. An item whose `outcome` was rewritten to `bug` left the frontier (eligible 2)
+    and came back when rewritten; an item captured and triaged while the review ran joined it
+    (eligible 4). Each route added the target outside the step (`dl-001` citing the item, `task-001`
+    and `task-002` in `draft`), wrote `resulting`, `workflow finalize --step
+    feedback-item.route@feedback:<id>` exit 0, then `memory submit` → `closed`; `declined` and
+    `duplicate` closed with the reason. A slip of the driving script closed two items with
+    `resulting` empty: the engine accepts it, so only FA-6's [E] check catches it; written after.
+    The review completed (`complete 5`).
+  - **The `bug` route (candidate (a)).** `feedback-bug-route` picked the `bug` item; the bug added
+    at `feedback-bug-item.bug` and submitted (`open`), the item closed. But that run owns the bug:
+    `workflow adopt bug-ingest-1-plan --plan` found no candidate, and `--element bug:bug-001-…`
+    exit 1, "already owned by feedback-bug-route-1-plan …; move it with workflow transfer", a
+    command 0.3.2 does not have (a second WingFoil defect). **Variant (a'):** a second `bug` item;
+    the bug captured by `bug-ingest` (`memory add --workflow bug-ingest-1-plan --step
+    bug-ingest.capture`, submitted, triaged by the approver), then `workflow finalize --step
+    feedback-bug-item.bug@feedback:<id>` exit 0 and the item closed: `bug-ingest` owns the bug's
+    capture and triage, and `feedback-bug-route` records the route. The completed
+    `feedback-bug-route` run took the new item at once (a live query), as F-039 describes.
+  - **Without `software`:** a would-be bug triaged with outcome `decision-log`, routed by
+    `feedback-review` to `dl-001` naming it, closed.
+  - **`checks`:** a `checks.post` string added to `feedback-item.close` in the second repository:
+    `workflow list` warned `W_WORKFLOW_UNBOUND_TOKEN` (no binding), and `memory submit` closed the
+    item with `resulting` empty: 0.3.2 does not evaluate a workflow's `checks` (`workflow next`
+    shows them as not evaluated), so no rule of the pack can rest on one (dl-012 D8).
+  - **The entry's directive** is not among the facilitator's directives at `feedback-bug-item`'s
+    steps (`workflow next`), as isolation requires: D8's question on how it reaches an agent
+    stands.
+  - Not exercised: an `upstream-note` route (D8: the channel's declaration); two loops of an
+    enclosing iteration (the pack has none). The findings go to the approver (dl-019).
+- 2026-11-16: the approver ruled 1 … 5 on step 2's findings, as recommended (point 5 of the
+  recommendation offered two ways; the feedback notes in a task of their own chosen, its row at
+  this plan's close).
+- 2026-11-16, step 3: `wingfoil memory add --type pack --title Feedback --set axis=governance
+  --set name=feedback` exit 0, id `pack-governance-feedback` (`1048b767`); `pack_path`, `requires`
+  and `conflicts` filled by editing the draft (W-02); the body written from the outline, rulings
+  1 … 5 and step 2 (`19260778`).
+- 2026-11-16, step 4: independent review of the charter: approve after amendments, no blocker, six
+  should-fix, four nits, all applied (`e2e9b3df`); two new rules came with them, an interim triage
+  rule for items no review selects and `bug` left to the entry's directive: re-review, approve
+  after amendments, three should-fix and two nits of wording, applied (`642c8811`); final check,
+  one should-fix and four nits, applied (`31a59545`). The charter's Execution Notes hold the
+  details. The two new rules go to the approver with the acceptance request.
+- 2026-11-16, step 4: `memory submit pack-governance-feedback` (`draft → proposed`, `a43118cc`);
+  branch pushed; CI run 43830268599 on `a43118cc`, conclusion `success`, no annotation; jobs
+  validate (22.21.0, 1) 7m25, (22.21.0, 2) 5m52, (22.12.0, 1) 7m28, (22.12.0, 2) 5m47 (dl-039
+  R3).
+- 2026-11-16, step 5: the approver accepted `pack-governance-feedback` (`proposed → accepted`,
+  `312c0507`), with the interim triage rule and `bug` left to the entry's directive.
+- 2026-11-16, step 6: the branch is text-only: `git diff main --stat` names only the charter, this
+  plan and `docs/owed-items.md`; `wingfoil workflow list` exit 0. Privacy check of the branch's
+  diff against `main`: no local or scratch path, no private repository or project, no
+  intermediary session. Owed rows added by this plan (rule 4): the `design` phase's tech-spec
+  (point 9), the fixture-element checks (point 9), and ruling 5's two feedback notes. The untracked
+  draft of step 2 stays out of the repository.
