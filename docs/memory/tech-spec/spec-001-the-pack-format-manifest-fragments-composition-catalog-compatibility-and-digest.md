@@ -306,6 +306,11 @@ tensions:
   A server's `phases` entry that names another pack's workflow is a use of that workflow: the pack
   requires the pack that ships it (§7.8, dl-024 D1, finding 4). A restriction naming another pack's
   server is not a use, and adds nothing to this list (§7.8).
+- A lookup by tag is not a use. A pack's file may name a tag, never a directive id, and let
+  the agent read every directive of the composition that carries it, when the pack owns the
+  tag, defines it in its own directive, and defines what happens when no directive carries
+  it or none serves the case (spec-003 §5.2). A later pack's directive may carry it without
+  the reading pack requiring the later one.
 
 ### 6.4 `contents`
 
@@ -373,6 +378,14 @@ conditional:                    # illustrative: a stage pack, composed after bot
     entry's files, so the parameter scope of §8.1 is checked per part (the unconditional part and
     each entry);
   - the AGENTS.md section is always composed (§10).
+- **An entry's directive and the agent.** A directive an entry ships reaches no role through
+  `roles.yaml`. When an agent needs it at a step of the entry's workflows, the pack names it
+  in that step's `agent.execute` action, single-quoted and without braces, and its AGENTS.md
+  section names it as present only with the entry's pack (§10) (spec-003 §7.2). A pack may
+  also let the agent read it by a tag the pack owns (§6.3); the tag is the pack's own. A
+  plain `agent.execute` stays allowed; one that names a directive names one in the entry's
+  scope (§6.3, §8.1): the pack's own or its required packs', the entry's own, or the `with`
+  pack's or its required packs'.
 - **Fragments are never conditional.** A pack therefore cannot tighten another pack's Memory types
   through this part (O14), and a bridge adds no Memory type and tightens none.
 - **One owner, slots.** §7.6's one-owner rule and §9's slot rule are checked on the composition with
@@ -729,6 +742,10 @@ parameters:
   | `path` | A relative POSIX path: no leading `/`, no `..` segment, no backslash. May contain WingFoil tokens (§8.3). |
   | `pattern` | An id pattern: no `/`, no whitespace. May contain WingFoil tokens (§8.3). |
 
+- **List parameters.** A `string` parameter whose `description` begins with "List of" is a
+  list parameter, its name preferably plural: items separated by `,`, each trimmed
+  (spec-003 §3). Every value of it passes §18's item rule. WingFoil checks no value of a
+  Memory field: a list parameter is the list a pack's files and directives use.
 - **No value of any type contains `{{`**, so substitution is a single pass (§8.2).
 - **Every value is validated** against the declaring pack's type before substitution: a `default`,
   a value set by a preset, and a value given at composition alike.
@@ -753,8 +770,12 @@ parameters:
 - A `{{name}}` that names no parameter in the pack's scope is an error.
 - The text `{{` followed by anything else is left as it is. Format 1 has no escape and no filters.
 - Substitution is textual, so a pack author places parameters where any allowed value keeps the
-  file valid: inside double-quoted YAML scalars, or in Markdown text. The composer parses each YAML
-  file after substitution and fails on a parse error.
+  file valid: inside double-quoted YAML scalars, or in Markdown text. In a YAML file, or in a
+  Markdown file's YAML frontmatter, a parameter of any type other than `integer` and `boolean`
+  stands inside a double-quoted scalar; a list parameter may also stand as the whole content of
+  a flow sequence (`[{{name}}]`, spaces allowed between the brackets and the braces), only in
+  the files of the pack that declares it. Any other placement is an error. The composer parses
+  each YAML file after substitution and fails on a parse error.
 
 ### 8.3 WingFoil tokens pass through
 
@@ -821,7 +842,9 @@ contributes at most one section, `agents/section.md` (R2):
   included, opens with a level-2 heading and contains no level-1 heading;
 - it is composed whether or not any of the pack's conditional entries is (§6.5): a methodology's
   section may name `delivery` as present only with `software`, and a pack's section may name what
-  an entry adds only with the entry's pack;
+  an entry adds only with the entry's pack. A section names an entry's directive this way when
+  the agent needs it (§6.5); until WingFoil exports `AGENTS.md`, this path reaches an agent only
+  once the project pastes the region (R4);
 - it contains no markers.
 
 The composer writes no `AGENTS.md`. It produces the **generated region** as a separate output:
@@ -1282,6 +1305,18 @@ check the rest, and the composer refuses what they reject.
 - asset identifiers equal their file stems (§6.1);
 - every `{{name}}` is in the pack's parameter scope (§8.1), checked per part, each entry its own
   (§6.5), and every default passes its type (§8);
+- every value of a list parameter (§8.1) has at least one item, its items unique, each
+  matching `^[a-z][a-z0-9-]*(:[a-z0-9-]+)?$` and none a word YAML 1.2's core schema or YAML
+  1.1 reads as other than a string (`null`, `true`, `false`, `yes`, `no`, `on`, `off`, `y`,
+  `n`); the lint checks every default and example, and the composer every value before
+  substitution;
+- every parameter in a YAML file or a Markdown file's frontmatter is placed as §8.2 says
+  (lint and composer);
+- an `agent.execute` action of a conditional entry's workflows that names a directive names
+  one in the entry's scope (§6.5) (lint);
+- a pack's rule never rests on a workflow's `checks` string, which WingFoil 0.3.2 does not
+  evaluate: a check a rule needs is a directive's, a lint's or a test's (spec-003 §6). A
+  review rule, judged at `pack-release-cycle` › `prepare`, not a lint.
 - a phase pack ships its slot workflow, a methodology ships `delivery` (in its conditional part, or
   in `contents` when it requires `software`) and every workflow of its own that its `delivery`
   reaches, in the same part, the same entry when conditional, and no other pack ships a slot name
@@ -1310,6 +1345,7 @@ check the rest, and the composer refuses what they reject.
   without it, at most one methodology and no phase pack; at most one pack per slot, team-mode and
   stage;
 - every parameter value passes the type of the parameter it sets (§8.1);
+- every value a preset gives a list parameter passes the item rule (§8.1);
 - a required parameter of `base` the preset does not set is composed by the validation with its
   stand-in (§15); the stand-ins are the validation's, not the composer's (§17 unchanged).
 
@@ -1565,3 +1601,10 @@ check the rest, and the composer refuses what they reject.
   composed by the validation with stand-in values (`src/preset-stand-ins.ts`), any other required
   parameter still needing a value, and §18's **Presets** a line naming them the validation's; §17
   unchanged. No schema change, so no feedback note.
+- 2026-11-16, amended in place under plan-074 (point 9), from spec-003 §10.1, the approver's
+  approval of spec-003 and the merge OK approving the text: §6.3, a lookup by tag is not a use;
+  §6.5, an entry's directive and the agent; §8.1, list parameters; §8.2, the placement of a
+  parameter in YAML and frontmatter; §10, an entry's directive named in the AGENTS.md section;
+  §18, the item rule, the placement rule, an entry's `agent.execute` naming a directive in the
+  entry's scope, no rule resting on a `checks` string, and the item rule on presets. No schema
+  change.
