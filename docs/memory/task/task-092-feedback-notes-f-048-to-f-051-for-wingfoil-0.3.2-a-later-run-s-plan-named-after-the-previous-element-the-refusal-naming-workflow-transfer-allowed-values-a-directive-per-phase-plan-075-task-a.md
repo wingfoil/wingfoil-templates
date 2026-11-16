@@ -17,27 +17,39 @@ WingFoil defects that plan-073's run of the `governance/feedback` workflows on W
 found (plan-073 › Execution Notes, step 2), with the two requests that spec-003 leaves to WingFoil
 (spec-003 S3-O1, S3-O2):
 
-- **F-048** (`defect`): a later run of a main workflow over a type whose `id_pattern` takes the
-  element's id gets a plan named after the previous run's element: id, `phase` and `element` name
-  the first element, while `workflow status` shows the run's own. Distinct from F-038 (which
-  fields `workflow start` fills at all).
-- **F-049** (`defect`): `workflow adopt --element` on an element that another run owns is refused
-  with a message telling the user to "move it with workflow transfer", a command 0.3.2 does not
-  have; nothing else moves the element. Distinct from F-036 (no verb restructures memory) and
-  F-032 (no suspend).
+- **F-048** (`defect`): a second run of a self-creating main workflow (one that declares no
+  `element` and creates its element at a step, spec-017 §3.4), started while the first run is
+  still open, takes the first run's element as its context element (spec-017 §3.5: the active
+  instance's element), so its plan's id (`{phase}` of the plan type's `id_pattern`), `phase` and
+  `element` name the first run's element, while `workflow status` shows the element the second run
+  is bound to (spec-017 §7.1). A defect, not a request: the plan's `element` field contradicts the
+  run's bound element in WingFoil's own output, and §3.5's context exists for a workflow that does
+  not create its element. Distinct from F-038 (which fields `workflow start` fills at all).
+- **F-049** (`defect`): `workflow adopt --element` on an element that another open run owns is
+  refused with a message telling the user to "move it with workflow transfer", a command 0.3.2
+  does not have; nothing else moves the element. `workflow adopt` implements WingFoil dl-187
+  ("adopt, rekey, transfer"; spec-017 §7.11), which decided `transfer`, but 0.3.2 does not ship
+  it, so the message names a verb the user cannot run. Distinct from F-036 (no verb restructures
+  memory), which already points to dl-187 for a transfer: F-049 is the refusal's message in the
+  shipped release; and from F-032 (no suspend).
 - **F-050** (`request`): an allowed-values key for a frontmatter field in `memory.yaml`, so that a
   value outside its list is refused at `memory submit`, as the required-fields check refuses an
   empty field; once a release has it, a pack may declare its list there from a list parameter
-  (spec-003 §3.3, S3-O1). Distinct from F-043 (a field as a reference to an element of a type) and
+  (spec-003 §3.3, S3-O1). It builds on the required-fields check at `memory submit` and on
+  `template.frontmatter`'s keys (`required`, `not_applicable_allowed`, `lists`, `exempt`).
+  Distinct from F-043 (a field as a reference to an element of a type) and
   F-018, which F-043 cites (`where` on `iterate_over`); names F-043.
 - **F-051** (`request`): a directive bound to a workflow phase, so that the agent at that phase's
   step reads it without an `agent.execute` action naming it in its text; once a release has it, a
   conditional entry's workflow may bind its directive and spec-003 §7.2's first path may become
-  optional (S3-O2). Distinct from F-016 (a phase cannot declare its method) and F-026 (a phase has
+  optional (S3-O2). Today `workflow next` lists a step's directives from its role's `roles.yaml`
+  entry only (spec-017 §6.2); an `agent.execute` naming a directive is printed as action text.
+  Distinct from F-016 (a phase cannot declare its method) and F-026 (a phase has
   one role, directives per role); names both.
 
 The notes name no pack beyond what WingFoil alone shows: the reproduction uses WingFoil's own
-templates and configuration written by hand, never this repository's packs.
+templates and, where a note needs it, configuration written by hand, never this repository's packs
+or the element ids of plan-073's run.
 
 ## Acceptance
 
@@ -48,11 +60,13 @@ templates and configuration written by hand, never this repository's packs.
    `status: open`, `wingfoil_version: 0.3.2`, `answered_by: []`; `wingfoil_version` written by
    hand, the governance pin being 0.2.2); a body opening with `New note (task-092).`, its origin in
    this repository (public element ids: plan-073 for F-048 and F-049, spec-003 for F-050 and
-   F-051), the WingFoil rule or command it builds on and the notes it is distinct from or names
-   (Context); then `## Observed` with WingFoil 0.3.2's version and commit (`6de2e13c`), the
-   configuration, the commands, their output (excerpts marked) and exit codes, and, for a request,
-   what 0.3.2 does instead; then `## Expected`; no `## Replies`. Before writing each, the inbox is
-   searched for a note on the same point (Context's list checked by the body's review).
+   F-051), the WingFoil rule or command it builds on (F-048: spec-017 §3.4, §3.5, §7.1; F-049:
+   spec-017 §7.11, WingFoil dl-187; F-050: the required-fields check, `template.frontmatter`'s
+   keys; F-051: spec-017 §6.2) and the notes it is distinct from or names (Context); then
+   `## Observed` with WingFoil 0.3.2's version and commit (`6de2e13c`), the configuration, the
+   commands, their output (excerpts marked) and exit codes, and, for a request, what 0.3.2 does
+   instead; then `## Expected`; no `## Replies`. Before writing each, the inbox is searched for a
+   note on the same point (Context's list checked by the body's review).
 2. **Reproduced with WingFoil alone**, each `## Observed` from a scratch project outside the
    repository (`git init`, WingFoil 0.3.2 installed with `npm ci` from `src/matrix/wingfoil-0.3.2/`,
    `wingfoil init --template <Scrum|Kanban> --no-interactive`, fictional `.example` identities,
@@ -87,19 +101,26 @@ opening line changed (`assertOpenings`), two fields swapped (`assertFields`), `#
 (`assertSections`), each failing, and a count of `New note (task-092).` once per note. The
 reproduction per note, each in a scratch project of its own (a fictional `.example` approver added
 with `dna add team.members`):
-- F-048: a main workflow written by hand over a type whose `id_pattern` takes the element's id
-  (as `bug-ingest`'s plan does); two elements; a first run started, its element captured and
-  the run completed; a second run started for the second element: the plan's id, `phase` and
-  `element` read from the file, and `workflow status`.
-- F-049: a main workflow whose step adds an element (`memory add --workflow … --step …`); then
-  `workflow adopt <other-run> --element <type>:<id>` from a second run: the exit code and message;
-  `wingfoil --help` and `wingfoil workflow --help`, showing no `transfer`.
-- F-050: a field with a fixed set of values written in `memory.yaml` (required); an element with a
-  value outside the set, `memory submit` exit 0; `wingfoil --help` or the schema showing no key for
-  allowed values (what 0.3.2 does instead).
-- F-051: a directive written by hand and a workflow whose phase does not name it in an action;
-  `workflow next` at that step, the directive not listed for the agent; the same with an
-  `agent.execute` action naming it, listed (what 0.3.2 offers instead).
+- F-048: WingFoil's own `bug-ingest` (self-creating, no `element`, the plan type's default
+  `{workflow}-{phase}-plan`), no configuration written: `workflow start bug-ingest`, a bug
+  captured at `capture`, submitted and approved, no `workflow end`; `workflow start bug-ingest`
+  again, the new plan's id, `phase` and `element` read from its file, a second bug captured,
+  `workflow status`; for contrast, the same after `workflow end` of the first run.
+- F-049: `workflow start bug-ingest` first (its `capture` on the frontier, no created element);
+  then a main workflow written by hand whose step adds a bug, started, its bug added with
+  `memory add --workflow … --step …` and left open; then `workflow adopt <bug-ingest plan>
+  --element bug:<id> --reason "…"`: exit 1 and the message; `wingfoil workflow --help`, showing no
+  `transfer`. (Started the other way round, `bug-ingest`'s plan would be named after the other
+  run's bug, F-048.)
+- F-050: a required field and a would-be key written in `memory.yaml` (for example
+  `template.frontmatter.allowed: {<field>: [a, b]}`), accepted and ignored at load since
+  `template.frontmatter` passes unknown keys through; an element with a value outside the list,
+  `memory submit` exit 0 (what 0.3.2 does instead); the shipped schema's keys cited.
+- F-051: a directive written by hand and a workflow whose phase names it in no action; `workflow
+  next` at that step, its `directives:` line from the role's `roles.yaml` entry, without it; the
+  same with `'agent.execute(directive: <id>)'`: the action text printed, the `directives:` line
+  unchanged (what 0.3.2 offers instead: that action text, or a `roles.yaml` binding per role,
+  F-026's point).
 
 One commit per note with its ledger row. Then the build review, the checks and the notes.
 
@@ -112,3 +133,11 @@ One commit per note with its ledger row. Then the build review, the checks and t
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
 - 2026-11-16: written under plan-075 (step 2), added on `main` (`5c6ab739`), no other task added
   meanwhile (W-14).
+- 2026-11-16: independent review of the body: approve after amendments, nothing blocking; six
+  should-fix and two nits, applied in the commit that records this note: F-048's mechanism (a
+  self-creating workflow, the open first run, spec-017 §3.5's context element) and its `defect`
+  argued, reproduced with WingFoil's own `bug-ingest`; F-049's command (`--reason`, the frontier
+  step, the owner left open) and WingFoil dl-187; F-050's would-be key passed through; F-051's
+  `directives:` line from `roles.yaml` only; the WingFoil rule per note; nits: no hand-written
+  configuration for F-048, no plan-073 ids in `## Observed`. The untracked fixture draft is moved
+  aside before the local checks (Acceptance 6's clean tree). A re-review follows (F-048's kind).
