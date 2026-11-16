@@ -366,3 +366,16 @@ repository's adoption and pin, dl-011 and dl-013's packs.
     stands.
   - Not exercised: an `upstream-note` route (D8: the channel's declaration); two loops of an
     enclosing iteration (the pack has none). The findings go to the approver (dl-019).
+- 2026-11-16: the approver ruled 1 … 5 on step 2's findings, as recommended (point 5 of the
+  recommendation offered two ways; the feedback notes in a task of their own chosen, its row at
+  this plan's close).
+- 2026-11-16, step 3: `wingfoil memory add --type pack --title Feedback --set axis=governance
+  --set name=feedback` exit 0, id `pack-governance-feedback` (`1048b767`); `pack_path`, `requires`
+  and `conflicts` filled by editing the draft (W-02); the body written from the outline, rulings
+  1 … 5 and step 2 (`19260778`).
+- 2026-11-16, step 4: independent review of the charter: approve after amendments, no blocker, six
+  should-fix, four nits, all applied (`e2e9b3df`); two new rules came with them, an interim triage
+  rule for items no review selects and `bug` left to the entry's directive: re-review, approve
+  after amendments, three should-fix and two nits of wording, applied (`642c8811`); final check,
+  one should-fix and four nits, applied (`31a59545`). The charter's Execution Notes hold the
+  details. The two new rules go to the approver with the acceptance request.
