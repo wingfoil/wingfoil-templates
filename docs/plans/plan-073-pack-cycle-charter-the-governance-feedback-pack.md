@@ -379,3 +379,15 @@ repository's adoption and pin, dl-011 and dl-013's packs.
   after amendments, three should-fix and two nits of wording, applied (`642c8811`); final check,
   one should-fix and four nits, applied (`31a59545`). The charter's Execution Notes hold the
   details. The two new rules go to the approver with the acceptance request.
+- 2026-11-16, step 4: `memory submit pack-governance-feedback` (`draft → proposed`, `a43118cc`);
+  branch pushed; CI run 43830268599 on `a43118cc`, conclusion `success`, no annotation; jobs
+  validate (22.21.0, 1) 7m25, (22.21.0, 2) 5m52, (22.12.0, 1) 7m28, (22.12.0, 2) 5m47 (dl-039
+  R3).
+- 2026-11-16, step 5: the approver accepted `pack-governance-feedback` (`proposed → accepted`,
+  `312c0507`), with the interim triage rule and `bug` left to the entry's directive.
+- 2026-11-16, step 6: the branch is text-only: `git diff main --stat` names only the charter, this
+  plan and `docs/owed-items.md`; `wingfoil workflow list` exit 0. Privacy check of the branch's
+  diff against `main`: no local or scratch path, no private repository or project, no
+  intermediary session. Owed rows added by this plan (rule 4): the `design` phase's tech-spec
+  (point 9), the fixture-element checks (point 9), and ruling 5's two feedback notes. The untracked
+  draft of step 2 stays out of the repository.
