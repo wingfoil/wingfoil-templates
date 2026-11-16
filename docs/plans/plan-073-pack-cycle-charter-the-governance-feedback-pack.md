@@ -391,3 +391,11 @@ repository's adoption and pin, dl-011 and dl-013's packs.
   intermediary session. Owed rows added by this plan (rule 4): the `design` phase's tech-spec
   (point 9), the fixture-element checks (point 9), and ruling 5's two feedback notes. The untracked
   draft of step 2 stays out of the repository.
+- 2026-11-16, step 6: branch CI run 43831551192 on `06fecdb0`, conclusion `success` (jobs 5m39 …
+  7m18). `main`'s CI after the push of `7c823fdb` (2026-11-14): `success`. On the approver's OK,
+  `--no-ff` merge into `main` (`40431243`), pushed; `main`'s CI run 43832641156 on `40431243`,
+  conclusion `success`, no annotation, jobs validate (22.21.0, 1) 7m24, (22.21.0, 2) 6m59,
+  (22.12.0, 1) 12m14, (22.12.0, 2) 5m49; the branch removed locally and remotely.
+  `pack-governance-feedback` is `accepted` on `main`. Next, outside this plan: the `design` phase
+  (the next plan), the fixture-element tooling task, the feedback-notes task, then `author`. This
+  plan goes `active → done`; the CI of this push is read by the next plan (dl-038 C3).
