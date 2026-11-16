@@ -10,8 +10,8 @@ tags: ["tooling","feedback","governance","W10"]
 
 ## Context
 
-The sequencer's W10 order holds `governance/feedback` after the presets. Its
-charter (plan-073) and its design (plan-074, spec-003 approved) are done. Two rows of
+The sequencer's W10 order holds `governance/feedback` after the presets. Its charter (plan-073)
+and its design (plan-074, spec-003 approved) are done. Two rows of
 `docs/owed-items.md` are due "before `governance/feedback`'s first `author` task", each with the
 approver as owner:
 - **"The fixture-element checks"** (dl-012 D8; pack-governance-feedback › Acceptance; plan-074
@@ -21,8 +21,8 @@ approver as owner:
   defects of plan-073's run on 0.3.2, with the two requests of spec-003 S3-O1 and S3-O2.
 
 This plan delivers both through `tooling-change` v3 › `deliver`, each task through
-`tooling-delivery` v4 with `pack: ""`, asked by the approver on 2026-11-16, after plan-074's
-close.
+`tooling-delivery` v4 with `pack: ""`. The approver asked for it on 2026-11-16, after
+plan-074's close.
 
 **The tech-specs this wave builds on** (dl-020): spec-001 and spec-003, both on `main` with
 plan-074's fold-back; no erratum waits to be folded back.
@@ -90,8 +90,8 @@ and submit), `success`.
    - **the item rule** (at least one item, unique, the regex, none of the nine words): the
      composer on every value before substitution (`resolveParameters`); the lint on defaults
      (`parameter-default`), presets (`preset-value`) and examples (`example-fixture`), under
-     those rule ids; no list parameter is required today, and the build checks that the
-     validation's stand-ins (`src/preset-stand-ins.ts`) pass the rule if one becomes required;
+     those rule ids; no list parameter is required today, and a required one would need its
+     own stand-in in `src/preset-stand-ins.ts`, passing the item rule, added with it;
    - **the placement rule:** in a substituted YAML file or a Markdown file's YAML frontmatter
      (not `pack.yaml`), every `{{name}}` of a type other than `integer` and `boolean` stands
      inside a double-quoted scalar, or, for a list parameter in the files of the pack that
@@ -107,9 +107,12 @@ and submit), `success`.
    - **the `feedback-channel` checks** (spec-003 §5.2): a directive tagged `feedback-channel` is
      shipped by a pack that requires `governance/feedback` and holds one line ``Serves the target
      `upstream:<name>`.``, a lint rule per pack; no composition holds two channels for one
-     target, checked in `composeDocuments`, so in every composition `validate` makes (presets,
-     examples, the matrix) and in `npm run compose`. The pack id and the tag are constants in
-     one module, the first rule of `src/` that names a pack, as spec-003 §5.2 asks;
+     target, a lint check "in a composition of the tree" (spec-003 §5.2, §11): run on the
+     compositions the lint and `validate` make (presets, examples, entries, the lint's overlay
+     combinations), not inside `composeDocuments`, so `npm run compose` does not refuse a project
+     holding two channels, the case §5.2 leaves to the facilitator and the approver. The pack id
+     and the tag are constants in one module, the first rule of `src/` that names a pack, as
+     spec-003 §10.1 and §11 keep these checks this pack's;
    - **the published packs pass unchanged:** the build checks every pack of the tree against the
      new rules first; a published pack that fails goes to the approver before any rule changes
      (dl-019). spec-003 §3.1 found only `methodology/kanban`'s two `integer` parameters
@@ -117,7 +120,7 @@ and submit), `success`.
    - **tests the new rules pre-empt:** the two tests of `tests/compose-documents.test.ts` that
      place a `string` unquoted (`x: {{s}}`, `d: {{s}}`) to reach a parse failure after
      substitution are rewritten in design, the reason recorded (dl-018), never left passing on
-     another error.
+     another error; `readFiles`' parse check after substitution is kept as a defence.
 5. **(C) the fixture-element checks** (dl-012 D8, spec-003 §11), all [E]: generic functions under
    `tests/support/`, reading a composed fixture project's Memory elements through
    `src/frontmatter.ts`. They name no pack: the composed `memory.yaml` declares neither allowed
@@ -131,11 +134,14 @@ and submit), `success`.
    - the fields a given state requires (for `governance/feedback`, `outcome` and `resulting` on
      `closed`);
    - an item refused in a list parameter of every preset and example (for `governance/feedback`,
-     `bug` in `feedback_outcomes`); it reads presets and `example.yaml` files, and is not a lint,
-     which would name one pack's parameter in generic code.
+     `bug` in `feedback_outcomes`); it reads presets and `example.yaml` files, and spec-003 §11
+     places it among the fixture-element checks [E].
 
    Their tests run on a fixture written by the test (as `tests/support/examples.ts` does). The
-   bindings to `governance/feedback` are its `author` phase's tests.
+   bindings to `governance/feedback` (its fields, `feedback_outcomes` plus the entry's `bug`,
+   `outcome` and `resulting` on `closed`, `bug` refused in `feedback_outcomes`) are its `author`
+   phase's tests: (C)'s close adds an Open row for them, trigger "`governance/feedback`'s
+   `author` task", cited by its note (rule 4).
 6. **Checks of every task** (dl-039): the build review and its amendments first, then once on the
    frozen commit the branch CI green, every job's duration recorded (R3, G12), and the local list
    on Node.js 22.21.0 from a clean working tree after `npm ci` and `npm run build`
@@ -166,12 +172,14 @@ and submit), `success`.
 2. **Task (A)** (`tooling-delivery` v4, `pack: ""`): added on `main` (`memory add --type task`,
    the printed id checked, W-14); its body reviewed; `pending → backlog` by the approver; on its
    branch, design, build, build review, checks, `in-review`; the approver's approval and merge
-   OK; merged `--no-ff`, `main`'s CI read; its owed row moved to Closed.
+   OK; merged `--no-ff`, `main`'s CI read; its close records the privacy check of its branch's
+   diff (rule 2); its owed row moved to Closed.
 3. **Task (B)**, the same way, once (A) is `done`.
-4. **Task (C)**, the same way, once (B) is `done`; its owed row moved to Closed.
-5. **Close:** each task's close records the privacy check of its branch's diff (rule 2); dl-020: the
-   errata and rulings per tech-spec listed (none expected), the approver's ruling recorded; this
-   plan `active → done`; the CI of the close's push left to the next plan (dl-038 C3).
+4. **Task (C)**, the same way, once (B) is `done`; its owed row moved to Closed, the row of the
+   bindings added (point 5).
+5. **Close:** the plan's own privacy check (rule 2); dl-020: the errata and rulings per
+   tech-spec listed (none expected), the approver's ruling recorded; this plan `active → done`;
+   the CI of the close's push left to the next plan (dl-038 C3).
 
 ## Handoff
 
@@ -200,3 +208,10 @@ and submit), `success`.
   F-051's duplicate search; the fixture row settled by (B) and (C); plan-074's ruling cited;
   nits: rule 1's phrase, spec-001 §6.5, `pack.yaml` excluded, the stand-ins, FA-5's three kinds,
   the erratum in the tech-spec's notes, FA-7 and FA-8 out of scope, each task's privacy check.
+- 2026-11-16: re-review of the amendments: approve after amendments; no blocker, three
+  should-fix, six nits, all applied in the commit that records this note. One channel per target
+  as a lint check on the compositions of the tree, not in `composeDocuments`, so a project keeps
+  §5.2's facilitator case; the constants' source as spec-003 §10.1 and §11; (C)'s close adds a
+  row for the bindings to `governance/feedback`, left to its `author` phase; nits: the
+  stand-ins, the parse check kept as a defence, the refused item's source, each task's privacy
+  check in its step, two lines reflowed.
