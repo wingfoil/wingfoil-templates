@@ -563,3 +563,15 @@ check runs before every commit (`repository-practice` rule 2).
 - 2026-11-16, step 7: the design row of `docs/owed-items.md` moves to Closed, settled by spec-003
   (plan-074), in the commit that records this note. The branch is frozen at that commit for its
   CI.
+- 2026-11-16, step 7: branch CI run 43872916082 on `ad6ee16b`, conclusion `success`, jobs
+  validate (22.12.0, 1) 9m02, (22.12.0, 2) 6m04, (22.21.0, 1) 10m55, (22.21.0, 2) 5m54.
+  `workflow list` exit 0; `git diff main --stat` named only the files of this step's list; the
+  privacy check of the branch's diff found no local or scratch path, no session and no private
+  project. `main`'s CI before the merge: run 43852479884 on `f8f37eca`, `success`. On the
+  approver's OK (which approves spec-001's and `pack-authoring`'s edited text), `--no-ff` merge
+  into `main` (`ae626d8a`), pushed; `main`'s CI run 43874991222 on `ae626d8a`, conclusion
+  `success`, no annotation, jobs validate (22.12.0, 1) 10m13, (22.12.0, 2) 5m55, (22.21.0, 1)
+  7m10, (22.21.0, 2) 5m58; the branch removed locally and remotely. spec-003 is `approved` on
+  `main`. Next, outside this plan: the fixture-element tooling task, the feedback-notes task,
+  then `governance/feedback`'s `author` phase. This plan goes `active → done`; the CI of this
+  push is read by the next plan (dl-038 C3).
