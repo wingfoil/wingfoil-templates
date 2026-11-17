@@ -336,3 +336,8 @@ body).
     the run): 69 tests, 6 failing; the two that pass there (a frontmatter that does not parse, a
     missing element file's message) characterize behaviour the fix keeps. 69 pass after; `npm
     run lint` exits 0. The fixes change behaviour: re-review.
+- 2026-11-17: re-review of the build fixes: approve; no blocker, two nits. Applied in `6607af1b`: a
+  test of `write`'s `.git` refusal after the tokens expand (an id `.git`), checked by mutation
+  (the check removed, the test fails; restored, 70 tests pass). Recorded, no change: a block's
+  indented comment after a blank line now goes with the block when its key is set, since an
+  indented line belongs to it. The code is frozen at `6607af1b`.
