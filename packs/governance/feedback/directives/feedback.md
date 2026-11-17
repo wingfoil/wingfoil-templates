@@ -40,8 +40,9 @@ issue tracker, notes, a channel) stays there until it is to be triaged.
 - `product`: about what the project makes; `governance`: about how it is governed (its workflows,
   directives, roles, Memory); `upstream:<name>`: about something an upstream owns, when the
   project composes that upstream's pack.
-- A project that adds a kind or a target defines it in a `custom/` directive of its own, bound to
-  `facilitator`, with an id other than `feedback`.
+- A project that adds a kind or a target adds it to `feedback_kinds` or `feedback_targets`, and
+  defines its meaning in a `custom/` directive of its own, bound to `facilitator`, with an id
+  other than `feedback`.
 
 ## Triage
 
