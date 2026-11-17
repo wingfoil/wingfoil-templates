@@ -15,6 +15,7 @@ import { corePack, softwarePack } from './catalog';
 import type { Catalog } from './catalog';
 import { composeDocuments } from './compose-documents';
 import { entryTargets } from './coverage';
+import { CHANNEL_TARGET_RULE, channelConflicts } from './feedback-channel';
 import { CompositionError } from './composition-error';
 import { OutputError, planOutput } from './output';
 import { placeholderOf, reachable } from './pack-files';
@@ -33,7 +34,9 @@ function ofAxis(packs: LintPack[], axis: string): LintPack[] {
 }
 
 /** The refusal of composing a request, or undefined when it composes. */
-function refusal(tree: string, catalog: Catalog, request: string[]): string | undefined {
+/** Why a request does not compose, or holds two channels for one target (spec-003 §5.2). */
+function refusal(tree: string, catalog: Catalog, request: string[]):
+{ message: string; rule?: string } | undefined {
   try {
     const given: Record<string, unknown> = {};
     for (const pack of resolve(tree, catalog, request)) {
@@ -41,11 +44,16 @@ function refusal(tree: string, catalog: Catalog, request: string[]): string | un
         if (declaration.default === undefined) given[name] = placeholderOf(declaration.type);
       }
     }
-    planOutput(composeDocuments(tree, catalog, request, given), catalog);
-    return undefined;
+    const composed = composeDocuments(tree, catalog, request, given);
+    planOutput(composed, catalog);
+    const paths = new Map(composed.packs.map((pack) => [pack.id, pack.path]));
+    const conflicts = channelConflicts(composed.files.map((file) => ({ path: file.path,
+      file: `${paths.get(file.pack) ?? file.pack}/${file.path}`, text: file.text })));
+    return conflicts.length === 0 ? undefined
+      : { message: conflicts.join('; '), rule: CHANNEL_TARGET_RULE };
   } catch (error) {
     if (error instanceof ResolveError || error instanceof CompositionError
-      || error instanceof OutputError) return error.message;
+      || error instanceof OutputError) return { message: error.message };
     throw error;
   }
 }
@@ -74,11 +82,11 @@ export function overlayProblems(context: LintContext, earlier: Problem[]): Probl
     composed.add(key);
     const ids = request.map((pack) => pack.id);
     for (const pack of request) for (const id of reachable(pack, context.packs)) reached.add(id);
-    const message = refusal(tree, catalog, ids);
-    if (message === undefined) return;
+    const refused = refusal(tree, catalog, ids);
+    if (refused === undefined) return;
     for (const pack of blamed) {
-      problems.push({ file: `${pack.path}/pack.yaml`, rule,
-        message: `${[corePack(catalog), ...ids].join(' + ')}: ${message}` });
+      problems.push({ file: `${pack.path}/pack.yaml`, rule: refused.rule ?? rule,
+        message: `${[corePack(catalog), ...ids].join(' + ')}: ${refused.message}` });
     }
   };
   const needsSoftware = (pack: LintPack): boolean =>

@@ -11,7 +11,7 @@ import { compatMessages } from './compat';
 import type { Compat } from './compat';
 import { reachable } from './pack-files';
 import type { LintPack } from './pack-files';
-import { checkValue } from './parameters';
+import { valueProblem } from './parameters';
 import type { Problem } from './problems';
 import { parseEntry } from './requirements';
 import { axesMessages } from './resolve';
@@ -203,7 +203,7 @@ export function presetChecks(context: LintContext, yaml: LoadedYaml, rule?: stri
   for (const [name, value] of Object.entries(isDoc(data['parameters']) ? data['parameters'] : {})) {
     const declaration = declared.get(name);
     const problem = declaration === undefined ? 'no pack of the preset declares it'
-      : checkValue(declaration.type, value);
+      : valueProblem(declaration, value);
     if (problem !== undefined) {
       problems.push(at(yaml, `/parameters/${name}`, valueRule,
         `${yaml.file}: parameter ${name}: ${problem}`));

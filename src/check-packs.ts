@@ -6,6 +6,7 @@ import { join } from 'node:path';
 
 import { CatalogError, loadCatalog } from './catalog';
 import { exampleProblems } from './example-rules';
+import { channelProblems } from './feedback-channel';
 import { EXAMPLES } from './examples';
 import type { Catalog } from './catalog';
 import { runCheckSchemas } from './check-schemas';
@@ -120,7 +121,7 @@ function packProblems(context: LintContext): Problem[] {
     }
     const read = readPackFiles(context.tree, pack, context.packs, slots);
     context.files.set(pack.id, read.files);
-    problems.push(...read.problems);
+    problems.push(...read.problems, ...channelProblems(pack, read.files));
   }
   return problems;
 }
