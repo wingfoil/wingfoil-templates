@@ -285,3 +285,26 @@ body).
   error line and `mapOverlayPaths`; the `realCompose` test on the extracted merged tree; the
   three overlays' output diffs recorded. The fixes make the criteria checkable, with no new
   rule: no further review.
+- 2026-11-17, design: written on the branch `task/task-095-check-runs-route-steps` from `main`
+  at `e5d0a27b`; the task submitted `backlog → in-progress`.
+- 2026-11-17, red (dl-018): the tests of criteria 1 … 9 added to `tests/runs.test.ts` against a
+  stub `src/overlay-tree.ts` (exports returning a refusal and no pairs) and today's
+  `src/runs.ts`, `9f3e522d`: `npm run build && node --test dist/tests/runs.test.js`, 64 tests,
+  13 failing (the 12 new tests of the route steps and the overlay, and the one of `realCompose`
+  on a merged tree). The null-branch test passed on its first run, as criterion 10 foresaw.
+- 2026-11-17, the null branch's mutation: `yaml`'s `Document.get` returns `undefined` for a key
+  whose value is null (`include:`, `include: null`, `include: ~`), so `includeList`'s
+  `include === null` is never reached and removing it changes nothing; a value-less `include`
+  takes the `undefined` branch, which replaces the null pair. The mutation that tells a null
+  value from an absent key, `if (!document.has('include'))`, fails the null-branch test and
+  passes the absent-key one: the test pins the behaviour. The dead comparison is left as it is
+  (criterion 11).
+- 2026-11-17, build (`c0f71539`):
+  - `src/overlay-tree.ts`: the `Overlay` interface, `mapOverlayPaths`, `openOverlay` (its
+    refusal now carries the `reason` beside `validate`'s line) and `mergeOverlay`, moved from
+    `src/validate.ts`; `validate` re-exports `mapOverlayPaths` and turns each shadowing pair into
+    its `overlay-shadow` problem as before.
+  - `src/runs.ts`: the model and checks of the Design; `hideScratch` also hides
+    `validate-overlay-…`; the overlay is opened before the compositions are listed, so a missing
+    overlay directory is exit 2, not the compositions' exit 3.
+  - The 64 tests of `tests/runs.test.ts` pass; `npm run lint` exits 0.
