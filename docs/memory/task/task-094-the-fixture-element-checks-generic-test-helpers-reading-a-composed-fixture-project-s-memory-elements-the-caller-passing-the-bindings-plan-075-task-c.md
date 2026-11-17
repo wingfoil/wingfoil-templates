@@ -224,3 +224,5 @@ characterized by `tests/parameters.test.ts`'s item-rule cases, green before and 
   reported, as 0.3.2's `listMarkdownFilesUnder` (red: 1 failing); a citation not inside a longer
   dotted id (`v0.3` in `v0.3.2`) or a longer path (red: 1 failing); then 20 passing. The code is
   frozen at `18e7990e`.
+- 2026-11-17: on the frozen code, `npm test` 1350 passing, 0 failing; `npm run check:packs` 0
+  problems; `npm run validate` and `npm run lint` exit 0.
