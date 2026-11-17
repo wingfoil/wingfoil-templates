@@ -217,3 +217,10 @@ characterized by `tests/parameters.test.ts`'s item-rule cases, green before and 
   skipped in back-references. Kept as a choice: a missing or invalid `memory.yaml`, a dangling
   link or a preset that does not parse throws rather than becoming a problem, since a fixture is
   the test's own and a throw names the file. A re-review follows: the fixes change behaviour.
+- 2026-11-17: re-review of `f1a9a7ca`: approve after amendments, nothing blocking; two should-fix
+  and two nits, applied in `18e7990e`: `GIT_CEILING_DIRECTORIES` set to the project's real parent,
+  so a project path that is a link into another repository does not climb into it (no test: it needs
+  a repository outside the fixture; the reviewer reproduced it and the fix); only a link named `.md`
+  reported, as 0.3.2's `listMarkdownFilesUnder` (red: 1 failing); a citation not inside a longer
+  dotted id (`v0.3` in `v0.3.2`) or a longer path (red: 1 failing); then 20 passing. The code is
+  frozen at `18e7990e`.
