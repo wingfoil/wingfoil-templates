@@ -327,3 +327,7 @@ every pack, preset and example of the tree; its result recorded here.
   json` with `"warnings": []`, the tree still clean. This commit changes only `docs/memory`: no
   new run. Privacy check of the branch's diff and messages: no local or scratch path, no
   maintainer name or email, no private project, no intermediary session.
+- 2026-11-17: the approver approved (in-review → approved, `a5a804cc`) and gave the merge OK;
+  merged `--no-ff` into `main` at `fa36b2be`. The row "The fixture-element checks" stays Open,
+  for task (C)'s close (plan-075 point 7). `main`'s CI after the push is read and recorded in
+  plan-075's notes.
