@@ -202,3 +202,18 @@ characterized by `tests/parameters.test.ts`'s item-rule cases, green before and 
   problems; `npm run validate` exit 0; `npx eslint --max-warnings 0 src tests` exit 0. No file
   under `packs/`, `presets/`, `catalog.yaml` or `tests/fixtures/` changed; in `src/` only
   `listItems`' export.
+- 2026-11-17: independent build review of `0aee28a9`: approve after amendments, nothing
+  blocking; five should-fix and seven nits. Applied in `f1a9a7ca`, test first (`tests/
+  fixture-elements.test.ts`'s seven review cases red, 5 failing; then 20 passing):
+  `workflow-phase` strict (no third part, own workflows only, not `constructor`); `exempt` as
+  0.3.2 (never `title`, a string id only); an id-less element no longer cited back by an empty
+  name, and a citation matched as a whole word (`fb-1` not in `fb-10`); a not-applicable value
+  that may not stand not filled for a state; the review's surviving mutants now killed (`mode:
+  some` failing, a nested `.git` skipped, the not-applicable skip in allowed values), checked by
+  re-running each mutant: 1 failing each, save the `..` guard, which `isProjectFile`'s new
+  `realpath` check makes redundant (both kept); nits: `.git` checked in subdirectories only, a
+  symbolic link reported as a problem, `git` kept to the project's repository
+  (`GIT_CEILING_DIRECTORIES`), a link out of the project not a file of it, a not-applicable value
+  skipped in back-references. Kept as a choice: a missing or invalid `memory.yaml`, a dangling
+  link or a preset that does not parse throws rather than becoming a problem, since a fixture is
+  the test's own and a throw names the file. A re-review follows: the fixes change behaviour.
