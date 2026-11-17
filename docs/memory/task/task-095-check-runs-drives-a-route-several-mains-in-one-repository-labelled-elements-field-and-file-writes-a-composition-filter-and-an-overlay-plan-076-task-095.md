@@ -22,8 +22,8 @@ route". A route touches up to three mains and two elements:
 - for `upstream-note`, a note file.
 
 plan-073 step 2 and plan-074 step 2 drove the routes by hand on WingFoil 0.3.2. Their keys
-look like `feedback-item.route@feedback:<id>`, and every target is added outside the
-pack's step.
+look like `feedback-item.route@feedback:<id>`. Every target is added outside the pack's
+workflows: outside any step, or at its own main's step (`bug-ingest.capture`).
 
 **What `check:runs` (`src/runs.ts`, task-053, task-058, task-060) has today:**
 - **Steps:** `start`, `end`, `next`, `finalize`, `commit_inside`, `commit_copy`, `add`, `submit`
@@ -57,7 +57,10 @@ At close the row narrows to `memory park`, `memory reject`, `set_state` and an e
 ## Acceptance
 
 `npm run build` precedes the commands. A scenario stays at `format: 1`: every key below is
-optional, and a scenario without them reads and runs as today.
+optional, and a scenario without them reads and runs as today. WingFoil 0.3.0 … 0.3.2 accept
+`memory add` with neither `--workflow` nor `--step`, and print `{ id, path }`, the path relative
+to the repository; an iterated step's key is `<step>@<type>:<id>` (read in their code for this
+body).
 
 1. **Several mains in one run.** A run is one of:
    - `{ main, steps }`, as today;
@@ -65,84 +68,127 @@ optional, and a scenario without them reads and runs as today.
      steps.
 
    The links run in order, in the run's one scratch repository. Each link's `start` makes its
-   own instance, and its `next`, `finalize`, `add` with a step and `end` act on that
-   instance. A failure ends the run, and its line names the link (`fail at <main>.<step>`).
-   The report's run name is the mains joined by `+`.
-2. **Labelled elements.** `add` takes an optional `label` (a plain id, unique within the run).
-   `submit` and `approve` take `added` (as today) or a label. The step writes below name their
-   element the same way. A label used before its `add`, a label added twice, or an unknown label
-   is a scenario error: exit 3, naming the file and the key, before any run.
+   own instance; its `next`, `finalize`, `add` with a step and `end` act on that instance. One
+   of those four before its link's `start` is a scenario error (exit 3). The steps that need no
+   instance (`add` with no step, `set`, `write`, `submit`, `approve`) may come anywhere.
+   - **The failure line.** A single-main run keeps `fail at <step>`, as today. A chain names
+     the link by its position: `fail at <main>[<n>].<step>`, `<n>` counted from 1.
+   - **The run's name** in the report is its optional `name` (a plain id, unique within the
+     scenario), else its main, `adopt:<template>`, or a chain's mains joined by `+`.
+2. **Labelled elements.** `add` takes an optional `label`, a plain id unique within the run. A
+   plain id here and in criterion 1 matches `^[a-z][a-z0-9-]*$`. `submit` and `approve` take
+   `added` (as today) or a label, and the writes below name their element the same way. These
+   are scenario errors, exit 3, naming the file and the key, before any run:
+   - a label, or a token of criterion 6, used before its `add` in the run's step order;
+   - a label added twice;
+   - an unknown label.
 3. **`add` with no step.** `add`'s `step` becomes optional. Without it, the command is
    `memory add --type <type> --title <title>`, with no `--workflow` and no `--step`, for a
-   target the charter adds outside a step. With it, the command is as today, on the current
-   link's instance.
+   target the charter adds outside the pack's workflows. With it, the command is as today, on
+   the current link's instance.
 4. **A field write**, `set: { element, fields, body }`:
    - `element` is `added` or a label;
-   - `fields` maps frontmatter keys to a string or a list of strings;
+   - `fields` (optional) maps frontmatter keys to a string or a list of strings;
    - `body` (optional) is a line appended to the element's body.
 
-   The element's file is the path WingFoil printed at its `add`. The fields are written into
-   its frontmatter, keeping every other key and the body as they were, and committed as the
-   agent. A missing element file, or a frontmatter that does not parse, fails the step.
+   The element's file is the path WingFoil printed at its `add`. Each field given replaces
+   that key's value, or is added after the last key. Every other line of the file stays
+   byte-identical, comments included. The change is committed as the agent. A missing element
+   file, or a frontmatter that does not parse, fails the step.
+
+   These are scenario errors (exit 3):
+   - neither `fields` nor `body` given;
+   - an empty `fields`;
+   - a value that is neither a string nor a list of strings;
+   - the key `id` or `status`. A state changes only through WingFoil's commands; `set_state`
+     stays owed.
 5. **A file write**, `write: { path, text }`: the text written at the path inside the
-   repository (directories created), committed as the agent. A path that leaves the repository
-   is a scenario error (exit 3), as `commit_copy`'s is.
+   repository (directories created), committed as the agent. A path that leaves the repository,
+   or one under `.git/`, is a scenario error (exit 3), as `commit_copy`'s is.
 6. **An element's id at run time.** In `set`'s values and body, `write`'s path and text, and
-   the keys of `next` and `finalize`, the token `${<label>}` stands for that label's element id.
-   For example: `finalize: feedback-item.route@feedback:${item}`.
-   - A token naming a label not yet added fails the step.
-   - A token naming an unknown label is a scenario error (exit 3).
-   - Any other `$` text is left as it is. The token does not clash with WingFoil's `{…}`
-     tokens, which a scenario never passes.
-7. **A composition filter**, `only: [<composition id>, …]`, on a main run, a chain or an adopt
-   run alike:
-   - The run is made only on the compositions of the folder whose id (the folder name holding
-     `example.yaml`) is listed.
-   - An id that names no composition of the folder is a scenario error (exit 3).
-   - A run left out counts in neither the total nor the failures.
-8. **An overlay**, a top-level `overlay: <dir>`, resolved on a merged tree built as
-   `validate --overlay` builds it. The code is shared with `src/validate.ts`, not copied:
-   - **The directory's rules** are `openOverlay`'s: under `tests/fixtures/`, not under
-     `tests/fixtures/examples/`. A violation is exit 3, naming the file and the key.
+   the keys of `next` and `finalize`, the token `$<label>.id` stands for that label's element
+   id. For example: `finalize: feedback-item.route@feedback:$item.id`.
+   - The outline's notation `<label>.id` is kept, with a `$` added. The token holds no `{`,
+     `}`, `[`, `]` or `,`, so it is safe in YAML flow syntax, unquoted.
+   - A token naming an unknown label is a scenario error (exit 3), and so is one before its
+     label's `add` (criterion 2).
+   - Any other `$` text is left as it is.
+7. **A composition filter**, `only: [<composition id>, …]`. It is a key beside `main` and
+   `steps`, beside `chain`, or beside `adopt` on an adopt run.
+   - **What it selects.** The run is made only on the compositions of the folder whose id (the
+     name of the folder holding `example.yaml`) is listed.
+   - **Scenario errors (exit 3):** an id that names no composition of the folder; an empty
+     list; a duplicate id.
+   - **Counts.** A run left out counts in neither the total nor the failures.
+   - **Skipped compositions.** A composition that no run of the scenario selects is neither
+     composed nor installed.
+8. **An overlay**, a top-level `overlay: <dir>`. Compositions resolve on a merged tree, built
+   as `validate --overlay` builds it.
+   - **Shared code.** The merged-tree build is extracted from `src/validate.ts` › `checkOverlay`
+     into an exported function, which `validate` and `check:runs` both use. `openOverlay`'s
+     directory rules are exported with it.
+   - **What `check:runs` does not run.** It runs none of the overlay's own checks (layout,
+     schemas, lint, secrets). The CI's `validate --overlay` steps run them.
+   - **The directory's rules** are `openOverlay`'s, with its exit codes:
+     - a directory that does not exist is exit 2;
+     - one outside `tests/fixtures/`, or under `tests/fixtures/examples/`, is exit 3;
+     - each line names the file and the key.
    - **The merged tree** holds the tree's `packs/`, `catalog.yaml` and `compat.yaml`, and the
      overlay's packs. An overlay pack that shadows a pack of the tree is a scenario error
      (exit 3).
-   - **The scenario's `compositions`** folder is then any folder of the tree, the overlay's
-     `compositions/` included.
+   - **The scenario's `compositions`** stays a path relative to the tree. It may name any
+     folder of the tree, the overlay's own included (`tests/fixtures/<overlay>/compositions`).
    - **Compose and releases.** The compositions are composed, and their releases selected, on
      the merged tree.
    - **Cleanup and report.** The merged tree is removed after the scenario, failing or not.
-     The report shows no scratch path.
-9. **Tests**, `tests/runs.test.ts`, on the stub WingFoil and the stub composer as the existing
-   tests:
+     The report shows no scratch path: neither `runs-…` nor the merged tree's.
+9. **Tests**, `tests/runs.test.ts`, on the stub WingFoil and the stub composer, as the existing
+   tests. They cover:
    - each criterion's behaviour and each of its scenario errors;
-   - a chain whose `bug` route shape (three mains, the item labelled in the first, cited in
-     the second's body, finalized in the third by a run-time key) issues the expected commands
-     in order, on one repository;
-   - an overlay scenario composing an overlay pack, with the merged tree removed afterwards;
+   - a chain shaped as the `bug` route. Its three mains are `feedback-ingest`, `bug-ingest` and
+     `feedback-bug-route`; the item is labelled in the first, cited in the second's body, and
+     finalized in the third by a run-time key. The test asserts that the expected commands are
+     issued in order, in one repository;
+   - an overlay scenario, whose `compose` receives a tree holding both the tree's packs and the
+     overlay pack, with the merged tree removed afterwards;
+   - one test of `realCompose` and `selectedReleases` on a small tree with an overlay, written
+     in a temporary directory;
+   - a failing overlay compose, whose line holds no scratch path;
    - the adoption run's `include:` with no value (the null branch), which `includeList`
      already handles;
    - the guard tests of the six scenarios under `tests/fixtures/runs/`, unchanged and passing.
-10. **Test first** (dl-018). The new tests run red against the code before the change, and the
-    Execution Notes record each red run's command and failing count. A test that passes on its
-    first run (the null branch) is checked by mutation, the mutation and its failure recorded.
+10. **Test first** (dl-018).
+    - The new tests run red against the code before the change. The Execution Notes record each
+      red run's command and its failing count.
+    - A test that passes on its first run (the null branch) is checked by mutation. The
+      mutation and its failure are recorded.
+    - `validate`'s overlay path is characterized by `tests/validate*.test.ts`, green before and
+      after the extraction.
 11. **Nothing else changes.**
-    - No file under `packs/`, `presets/`, `catalog.yaml`, `.github/` or `tests/fixtures/` changes.
-    - The file header of `src/runs.ts` and the usage line describe the new keys.
-    - `npm run check:runs` gives the same total as on `main` and exits 0. `npm run check:packs`
-      and `npm run validate` exit 0.
+    - No file under `packs/`, `presets/`, `catalog.yaml`, `.github/` or `tests/fixtures/`
+      changes.
+    - The header of `src/runs.ts` describes the new keys.
+    - `validate --overlay`'s output on the three exit overlays is unchanged.
+    - `npm run check:runs` gives the same total as on `main` and exits 0.
+    - `npm run check:packs` and `npm run validate` exit 0.
 12. **Checks** (`tooling-delivery` v4 › `review`, dl-039):
-    - first the build review and its amendments;
+    - first, the build review and its amendments;
     - then, once, on the frozen commit: the branch CI `success`, its run id and every job's
       duration recorded (a job over 25 minutes goes to the approver, R3);
     - dl-039's local list on Node.js 22.21.0, from a clean working tree after `npm ci` and
-      `npm run build`: `validate:publication`, the golden tree in publication mode and
+      `npm run build`: `validate:publication`, the golden tree in publication mode, and
       `workflow list`;
     - `npm test` and `npm run lint` exit 0.
-13. **A criterion that cannot hold as written** goes to the approver when found (dl-019). For
-    example, if WingFoil 0.3.0 or 0.3.2 does not accept `memory add` with no step, the work on
-    that criterion waits for the ruling.
-14. **At close:** the row of the full scrum and kanban runs is narrowed in
+13. **A criterion that cannot hold as written** goes to the approver when found (dl-019), and
+    the work on it waits for the ruling.
+14. **Delivery.**
+    - The work goes on the branch `task/task-095-check-runs-route-steps`, from `main`.
+    - It is merged `--no-ff` into `main` on the approver's OK, after `approve`. Then `main`'s CI
+      is read, with its run id and every job's duration recorded, and the task goes
+      `approved → done`.
+    - The untracked `tests/fixtures/feedback-draft/` of the main checkout is never staged. The
+      branch's work and its clean-tree checks run in a worktree of their own.
+15. **At close:** the row of the full scrum and kanban runs is narrowed in
     `docs/owed-items.md`, in the commit of this task's close note (`repository-practice`
     rule 4). It narrows to `memory park`, `memory reject`, `set_state` and an expected refusal,
     citing task-095. The privacy check of the branch's diff is recorded in the Execution Notes.
@@ -161,3 +207,22 @@ optional, and a scenario without them reads and runs as today.
 
 - 2026-11-17: written under plan-076 step 2, from point 2 of its outline as ruled; `pack`
   comment and `tags` filled by editing the draft (W-02).
+- 2026-11-17: independent review (dl-017): approve after amendments; no blocker, ten
+  should-fix, eight nits, all applied. WingFoil 0.3.0 … 0.3.2's `memory add` with no step, its
+  printed path, the iterated key and `workflow end`'s refusal confirmed in their code.
+  **Should-fix:**
+  - the token became `$<label>.id`, safe in YAML flow syntax, keeping the outline's notation;
+  - a token before its label's `add` became a scenario error;
+  - a run's optional `name`;
+  - the failure line of a single main kept, and a chain's link named by position;
+  - an instance step before its link's `start` became a scenario error;
+  - the overlay's scratch paths hidden;
+  - the merged-tree build named as an extraction, `validate`'s output guarded;
+  - an overlay test that checks the tree `compose` receives, and one of `realCompose`;
+  - `set`'s scenario errors (`id`, `status`) and its byte-identical lines;
+  - delivery.
+
+  **Nits:** the usage line left as it is; `only`'s place, its empty and duplicate errors, and
+  skipped compositions; the plain id's pattern; exit 2 for a missing overlay directory; no
+  `write` under `.git/`; "outside the pack's workflows"; `compositions` relative to the tree;
+  `validate`'s characterization. Criteria 1, 2, 4, 6, 7 and 8 change: re-review.
