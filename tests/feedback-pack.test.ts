@@ -11,7 +11,7 @@ import type { ComposedDocuments } from '../src/compose-documents';
 import { listItems } from '../src/parameters';
 import { loadYamlFile } from '../src/yaml-load';
 
-import { REPO_ROOT } from './support/paths';
+import { FIXTURE_CATALOG, REPO_ROOT } from './support/paths';
 
 const PACK = 'governance/feedback';
 const EXAMPLES = join(REPO_ROOT, 'tests', 'fixtures', 'examples', 'feedback');
@@ -27,7 +27,7 @@ function example(id: string): Example {
 
 function compose(id: string): ComposedDocuments {
   const data = example(id);
-  return composeDocuments(REPO_ROOT, loadCatalog(join(REPO_ROOT, 'catalog.yaml')), data.packs,
+  return composeDocuments(REPO_ROOT, loadCatalog(FIXTURE_CATALOG), data.packs,
     data.parameters);
 }
 
@@ -77,7 +77,8 @@ describe('governance/feedback on its README examples (task-096, plan-076 point 8
         const gates = isRecord(states) ? states['gates'] : undefined;
         assert.deepEqual(isRecord(gates) ? gates['pending'] : undefined, { reject: 'draft' });
         const ingest = file(composed, 'workflows/feedback-ingest.yaml')?.data;
-        const phases = isRecord(ingest) && Array.isArray(ingest['phases']) ? ingest['phases'] : [];
+        const phases: unknown[] = isRecord(ingest) && Array.isArray(ingest['phases'])
+          ? ingest['phases'] : [];
         const triage = phases.find((phase) => isRecord(phase) && phase['name'] === 'triage');
         assert.ok(isRecord(triage), 'feedback-ingest has a triage phase');
         assert.ok(Array.isArray(triage['actions']) && triage['actions'].includes('memory.approve'));
@@ -104,7 +105,8 @@ describe('governance/feedback on its README examples (task-096, plan-076 point 8
       it('FA-6: bug is never an outcome feedback-review selects or the directive lists', () => {
         const composed = compose(id);
         const review = file(composed, 'workflows/feedback-review.yaml')?.data;
-        const phases = isRecord(review) && Array.isArray(review['phases']) ? review['phases'] : [];
+        const phases: unknown[] = isRecord(review) && Array.isArray(review['phases'])
+          ? review['phases'] : [];
         const where = isRecord(phases[0]) ? phases[0]['where'] : undefined;
         const outcomes = isRecord(where) ? where['outcome'] : undefined;
         assert.ok(Array.isArray(outcomes) && outcomes.length > 0, 'where.outcome is a list');
