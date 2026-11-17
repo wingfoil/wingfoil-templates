@@ -31,15 +31,21 @@ rules come from spec-003, approved, and the spec-001 sections it amended (§6.3,
   declares it. Any other placement (plain, single-quoted, a block scalar, a comment) is an error.
 - **An entry's `agent.execute`** (§7.2, spec-001 §6.5, §18): an action of a conditional entry's
   workflows that names a directive (`'agent.execute(directive: <id>)'`) names one in the entry's
-  scope: the pack's own or its required packs', the entry's own, or the `with` pack's or its
-  required packs'. `agent.*` is a built-in token, so WingFoil's binding warning cannot catch a
-  wrong id.
+  scope, five sources: the pack's own, its directly required packs', the entry's own, the `with`
+  pack's, and the `with` pack's directly required packs' ("required" as `workflowProblems`
+  computes it, spec-001 §6.3). `agent.*` is a built-in token, so WingFoil's binding warning
+  cannot catch a wrong id.
 - **The `feedback-channel` checks** (§5.1, §5.2): a directive tagged `feedback-channel` comes from
   a pack that requires `governance/feedback` and holds one line, exactly ``Serves the target
   `upstream:<name>`.``; no composition of the tree holds two channel directives serving one target.
   §5.2 leaves that case in a project to the facilitator and the approver, so the check runs on the
   compositions the lint and `validate` make, not in `npm run compose`. The pack id and the tag are
   this pack's (§10.1, §11): one module holds them, the first rule of `src/` that names a pack.
+  "Requires" is direct, as spec-001 uses the word (§8.1 says "transitively" where it means it).
+  The lint composes two non-overlay packs together only when one reaches the other through
+  `requires`, a declared tension or a stage overlay (`src/overlay-rules.ts`); two independent
+  upstream packs serving one target are therefore caught only by a preset or README example that
+  composes both, through `validate`.
 
 **The code** (plan-075 › Context): `src/parameters.ts` (`checkValue`, `referencesIn`,
 `resolveParameters`, `substitute`); `src/pack-files.ts` › `readPackFiles` (`parameter-default`,
@@ -57,6 +63,9 @@ unquoted, which the placement rule exempts; no published pack declares a list pa
 ## Acceptance
 
 `npm run build` precedes the commands. Rule ids, as `npm run validate` prints them, in backticks.
+Tests: the lint rules in `tests/check-packs.test.ts`, the parameter functions in
+`tests/parameters.test.ts`, the composer in `tests/compose-documents.test.ts`, examples in
+`tests/example-rules.test.ts`, the per-composition check in a `tests/validate-*.test.ts`.
 
 1. **One reading of a list parameter** in `src/parameters.ts`: a function that says whether a
    declaration is a list parameter (`type: string`, `description` beginning with "List of"), and
@@ -66,7 +75,8 @@ unquoted, which the placement rule exempts; no published pack declares a list pa
    default, or a value given, as text or not) that fails the item rule, before substitution, with
    a message naming the parameter, its pack and the failure (`npm run compose` exits 1, as for
    the type rule). Each case of spec-003 §3.2 has a test: the empty value, `task, task`,
-   `x], kind: [defect`, `null, task`, `Yes`, `bug:`, `catalog/pack`, refused; `bug, task`,
+   `x], kind: [defect`, `null, task`, `yes, task`, `on`, `bug,`, `Yes`, `bug:`, `catalog/pack`,
+   refused; `bug, task`,
    ` bug , upstream:plover-vendor `, accepted.
 3. **The item rule in the lint:** a default that fails it is a `parameter-default` problem, a
    preset's value a `preset-value` problem, a README example's value an `example-fixture`
@@ -82,44 +92,55 @@ unquoted, which the placement rule exempts; no published pack declares a list pa
      (exit 1), the message naming the file, the parameter and the placement.
 
    It covers substituted `.yaml` files other than `pack.yaml` and the YAML frontmatter of `.md`
-   files, not a Markdown body. Tests, each a fixture pack: a double-quoted scalar, an `integer`
-   and a `boolean` unquoted, `[{{list}}]` and `[ {{list}} ]` in the declaring pack, accepted;
-   plain, single-quoted, a block scalar, a comment, `[{{list}}, x]`, and `[{{list}}]` in a pack
-   that does not declare it, refused.
+   files, not a Markdown body. A reference outside the scope is left to `parameter-scope` and to
+   `substitute`, with no placement problem. Tests, each a fixture pack, each case through both the
+   lint and the composer: a double-quoted scalar, `"a {{s}} b"`, an `integer` and a `boolean`
+   unquoted, `[{{list}}]` and `[ {{list}} ]` in the declaring pack, `{{s}}` in a Markdown body,
+   accepted; plain, single-quoted, a block scalar, a comment, `[{{list}}, x]`, `[{{list}}]` in a
+   pack that does not declare it, a non-list `string` as `[{{s}}]`, a plain `{{s}}` in a
+   directive's frontmatter, refused.
 5. **An entry's directive scope:** a new rule `entry-directive-scope` in `workflowProblems`: an
-   `agent.execute` action of a conditional entry's workflows that names a directive outside the
-   entry's scope (Context) is a problem at the action's line. A plain `agent.execute` and one
-   naming a directive in scope pass; the composer, which runs `workflowProblems`, refuses the
-   same (spec-001 §18's general rule). Tests: in scope through each of the four sources,
-   accepted; an id of a pack outside the scope, and an unknown id, refused.
+   action of a conditional entry's workflows of the form `agent.execute(directive: <id>)` whose
+   `<id>` is outside the entry's scope (Context's five sources) is a problem at the action's line.
+   A plain `agent.execute`, one with other arguments, and one naming a directive in scope pass; a
+   WingFoil built-in directive id is outside the scope as spec-003 §7.2 lists it. The composer,
+   which runs `workflowProblems`, refuses the same (spec-001 §18's general rule). Tests: in scope
+   through each of the five sources, accepted; an id of a pack outside the scope, another entry's
+   directive, and an unknown id, refused.
 6. **The `feedback-channel` checks:**
    - per pack, a new rule `feedback-channel`: a directive whose `tags` hold `feedback-channel`,
-     shipped by a pack that does not require `governance/feedback` (directly or transitively),
-     or whose text holds no line, or more than one, matching exactly ``Serves the target
-     `upstream:<name>`.`` (`<name>` a slug), is a problem;
+     shipped by a pack whose `requires` does not hold `governance/feedback`, or whose text holds
+     no line, or more than one, matching exactly ``Serves the target `upstream:<name>`.``
+     (`<name>` matching `[a-z0-9-]+`, the item rule's second part), is a problem;
    - per composition, a new rule `feedback-channel-target`: two `feedback-channel` directives
      serving one target in one composition of the tree is a problem naming both and the target,
-     checked on the lint's overlay combinations and on the compositions `validate` makes
-     (presets, README examples, entries); `npm run compose` of a set holding two channels for
-     one target still exits 0 (spec-003 §5.2);
+     checked on the lint's overlay combinations and on every composition `validate` composes
+     (presets and their legs, README examples, the entries given, an overlay's compositions),
+     reading the composed output since `validate` composes in a child process; on `validate`'s
+     line for a failing composition the message begins with the rule id
+     (`composition <label>: feedback-channel-target: …`); `npm run compose` of a set holding two
+     channels for one target still exits 0 (spec-003 §5.2);
    - the pack id `governance/feedback` and the tag `feedback-channel` are constants in one
      module of `src/`, which nothing else in `src/` duplicates.
 
    Tests on fixture trees: a channel in a pack requiring `governance/feedback` with one line,
    accepted; no `requires`, no line, two lines, a malformed line (no backticks, `upstream:` with
-   a `/`), refused; two packs serving one target composed together, refused by the lint and by
-   `validate`, and composed by `npm run compose`.
+   a `/`), refused; two channel packs serving one target, one requiring the other, refused by the
+   lint; two independent channel packs serving one target composed by a preset the lint never
+   composes, refused by `validate`; both sets composed by `npm run compose` (exit 0).
 7. **The published packs pass unchanged:** before any new rule is wired in, the build runs it on
    every pack of the tree and records the result; a published pack that fails goes to the
    approver (dl-019) before the rule changes. At the end, `npm run validate` and `npm run
-   check:packs` exit 0 on the tree with no file under `packs/`, `presets/` or `catalog.yaml`
-   changed.
+   check:packs` exit 0 on the tree with no file under `packs/`, `presets/`, `catalog.yaml`,
+   `tests/fixtures/examples/` or `tests/fixtures/*-exit/` changed.
 8. **Tests the placement rule pre-empts:** the two tests of `tests/compose-documents.test.ts` that
    place a `string` unquoted (`x: {{s}}`, `d: {{s}}`) to reach a parse failure after
-   substitution are rewritten in Design so that they still reach that failure (a value the type
-   rule allows that breaks the YAML inside a double-quoted scalar, or a list parameter in a flow
-   sequence), the reason recorded (dl-018); `readFiles`' parse check after substitution stays as a
-   defence.
+   substitution are rewritten in Design so that they still reach that failure through a duplicate
+   key (`"{{s}}": 1` beside `a: 2`, default `s: a`; `parseYaml` refuses duplicate keys), since the
+   type rule forbids `"`, `\` and control characters and the item rule keeps `[{{list}}]`
+   well-formed; the reason recorded (dl-018). `readFiles`' parse check after substitution stays as
+   a defence, reached after this task only through a duplicate key or a file malformed on its
+   own.
 9. **Test first** (dl-018): each new rule and each change to an existing check has a test that
    fails before the change, the red run's command and failing count in the Execution Notes.
 10. **Checks** (`tooling-delivery` v4 › `review`, dl-039): the build review and its amendments
@@ -149,3 +170,13 @@ unquoted, which the placement rule exempts; no published pack declares a list pa
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
 - 2026-11-17: written under plan-075 (step 3), added on `main` (`b749040b`) once task-092 was
   `done`, no other task added meanwhile (W-14).
+- 2026-11-17: independent review of the body: approve after amendments, nothing blocking; five
+  should-fix and five nits, applied in the commit that records this note: criterion 8's route to
+  the parse failure (a duplicate key); "requires" direct, as spec-001 uses it; the
+  per-composition check against `src/validate.ts` (every composition it composes, read from its
+  output, the rule id on its line, the lint's and `validate`'s test fixtures, the limit in
+  Context); the placement cases, through lint and composer, out-of-scope references left to
+  `parameter-scope`; the entry scope's five sources and another entry's directive; nits: the
+  target's slug, more item-rule cases, the action's exact form and built-in ids, the test files,
+  the CI's fixture trees unchanged. The review checked every published pack against the rules:
+  all pass unchanged.
