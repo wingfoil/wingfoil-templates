@@ -1,0 +1,20 @@
+format: 1
+# One triaged feedback item: routed, then closed.
+name: feedback-item
+kind: sub
+element: feedback
+description: "Route one feedback item, then close it"
+version: 1
+phases:
+  - name: route
+    description: >-
+      Route the item as the feedback directive's table says: add the target element and cite the
+      item in it, or record why it is declined or a duplicate; write resulting.
+    role: facilitator
+    actions:
+      - agent.execute
+  - name: close
+    description: "Close the item (triaged to closed) once resulting names the routed element."
+    role: facilitator
+    actions:
+      - memory.submit

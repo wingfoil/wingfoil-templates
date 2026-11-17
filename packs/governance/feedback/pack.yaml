@@ -1,0 +1,51 @@
+format: 2
+id: governance/feedback
+axis: governance
+name: feedback
+title: "Feedback"
+description: >-
+  Feedback for any project governed by WingFoil: capture each item with its source and context,
+  have the approver triage it, and route it into the governance the project already has, so that
+  it becomes input for the evolution of the project and of its governance.
+version: 1.0.0
+formats:
+  roles: 1
+  memory: 1
+  workflow: 1
+  directive: 1
+  memory-template: 1
+requires:
+  - base@^2
+requires_capabilities: [workflow-engine]
+parameters:
+  feedback_path:
+    type: path
+    default: "docs/memory/feedback/{id}.md"
+    description: "The feedback type's path; only letters, digits and . _ / { } -"
+  feedback_id:
+    type: pattern
+    default: "feedback-{n}-{slug}"
+    description: "The feedback type's id pattern"
+  feedback_kinds:
+    type: string
+    default: "defect, gap, request, observation"
+    description: "List of the allowed values of a feedback item's kind"
+  feedback_targets:
+    type: string
+    default: "product, governance"
+    description: "List of the allowed values of a feedback item's target, upstream:<name> included"
+  feedback_outcomes:
+    type: string
+    default: "decision-log, task, upstream-note, declined, duplicate"
+    description: "List of the outcomes feedback-review routes; never bug, which the software entry adds"
+contents:
+  fragments: [roles, memory]
+  directives: [feedback]
+  workflows: [feedback-ingest, feedback-review, feedback-item]
+  memory_templates: [feedback]
+  agents_section: true
+conditional:
+  - with: software@^1
+    contents:
+      workflows: [feedback-bug-route, feedback-bug-item]
+      directives: [feedback-bug-route]
