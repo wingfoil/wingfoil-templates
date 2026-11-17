@@ -190,3 +190,15 @@ characterized by `tests/parameters.test.ts`'s item-rule cases, green before and 
   record; nits: `readElements`' return and the frontmatter without `type`, not-applicable values
   as criterion 2 accepts them, `through` naming an id or a path, "filled" as criterion 2 defines
   it, `listItems` extracted, the Open row's Source.
+- 2026-11-17: Design written (`caa126a5`) and started (backlog → in-progress) on
+  `task/task-094-fixture-element-checks` from `main` at `7aa01575`.
+- 2026-11-17, build (dl-018): `tests/support/fixture-elements.ts` first as stubs returning empty
+  results; `tests/fixture-elements.test.ts` written against them, `npm run build` then `node
+  --test dist/tests/fixture-elements.test.js`: 9 failing (every failure case), 4 passing (the
+  clean ones); then each function, 13 passing. `listItems` extracted from `listItemProblem` into
+  an export of `src/parameters.ts`, characterized by `tests/parameters.test.ts` and
+  `tests/compose-documents.test.ts`'s item-rule cases, green before and after (80 passing). One
+  commit, `22b436ae`. Then `npm test` 1343 passing, 0 failing; `npm run check:packs` 0
+  problems; `npm run validate` exit 0; `npx eslint --max-warnings 0 src tests` exit 0. No file
+  under `packs/`, `presets/`, `catalog.yaml` or `tests/fixtures/` changed; in `src/` only
+  `listItems`' export.
