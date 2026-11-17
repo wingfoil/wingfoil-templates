@@ -27,7 +27,10 @@ developer change under `tests/` inside a pack task, as task-068's was.
 
 task-097 (the exit overlay `feedback-exit`, the scenarios and the fixture upstream pack),
 task-098 (the fixture projects and the bindings) and task-099 (the run by hand) build on this
-task. The draft stays untracked until task-097's merge.
+task. The draft stays untracked, and is deleted after task-097's merge.
+
+**Format 2** departs from the charter's Compatibility line (format 1). spec-003 §9 rules it, and
+the charter's Execution Note of plan-074 records it.
 
 ## Acceptance
 
@@ -62,7 +65,7 @@ task. The draft stays untracked until task-097's merge.
    `dna.yaml` fragment.
 3. **The five workflows**, as the draft has them and the charter's table states them:
    - each with `format: 1` and no key newer than WingFoil 0.3.0;
-   - each phase's `description` says what its role does;
+   - each phase's `description` says what its role does, or what it iterates and includes;
    - `feedback-review`'s `where` reads `outcome: [{{feedback_outcomes}}]`, and
      `feedback-bug-route`'s reads `outcome: [bug]`;
    - `feedback-bug-item` › `bug` holds the action `'agent.execute(directive: feedback-bug-route)'`
@@ -73,6 +76,9 @@ task. The draft stays untracked until task-097's merge.
    - **Feedback and its fields:** what counts as feedback; the required fields; the three lists
      named by their parameters (`{{feedback_kinds}}`, `{{feedback_targets}}`,
      `{{feedback_outcomes}}`); a project never adds `bug` (§4.2).
+   - **The classification rules** (the charter's Directives): how a kind and a target are chosen.
+     The agent writes only a listed value in `kind`, `target` and `outcome`; WingFoil checks no
+     value, so the directive is the check at writing time (spec-003 §3.3).
    - **The triage:** the outcome is proposed before the triage and confirmed by the approver.
      The triage rule (§4.3): an empty or not allowed outcome is rejected to `draft`, except a
      would-be `bug` without `software`, proposed as `decision-log` naming it.
@@ -89,8 +95,9 @@ task. The draft stays untracked until task-097's merge.
    - **The `feedback-route` reading duty** (§7.2, path 1): read every directive tagged
      `feedback-route` whenever an outcome is proposed and at every route step, and read the step
      with `workflow next` at a route step.
-   - **The `feedback-channel` lookup** (§5.1, §5.2): the channel directive whose "Serves the
-     target" line names the item's `target`; none, or two, handled as §5.2 says.
+   - **The `feedback-channel` lookup:** the channel directive whose "Serves the target" line names
+     the item's `target`. When none serves it, the item becomes a decision-log naming the target
+     (§5.1). When two serve one target, the facilitator raises it to the approver (§5.2).
    - **The trace both ways:** `resulting` names the routed element, which cites the item back
      through `reported_by` where its template has it, and otherwise in its body (§8).
    - **Closing and the review run:** who closes an item (the facilitator, once `resulting` is
@@ -98,16 +105,25 @@ task. The draft stays untracked until task-097's merge.
      project has reviewed (F-039).
    - **The agent** never approves, and hands the approver the command.
 
-   **`directives/feedback-bug-route.md`** (in the entry): `tags: [feedback-route]`; `bug` added
-   to the allowed outcomes; a `bug` item goes through `software`'s `bug-ingest`, started on its
-   own, the bug citing the item, and `feedback-bug-item` records it.
+   **`directives/feedback-bug-route.md`** (in the entry):
+   - `tags: [feedback-route]`;
+   - `bug` added to the allowed outcomes;
+   - a `bug` item goes through `software`'s `bug-ingest`, started on its own, and
+     `feedback-bug-item` records it;
+   - `resulting` names the bug, and the bug cites the item in its body until `software` ships
+     `reported_by` (§8);
+   - `feedback-bug-route` is started at the project's cadence and ended with `workflow end` when
+     the project has routed its bugs (F-039). Isolation keeps this out of the unconditional
+     directive.
 
    Neither directive id, and no workflow name of the pack, equals a WingFoil 0.3.2 built-in or a
-   `custom/` file of `init --template Scrum` or `--template Kanban`. This is checked by listing
+   `custom/` file of `init --template Scrum` or `--template Kanban`, or one of this
+   repository's `custom/` files. This is checked by listing
    them in this task, as task-067 did, and repeats plan-073 step 1's read.
 5. **`agents/section.md`**: a level-2 section `## Feedback`, no level-1 heading, no markers. It
    covers:
-   - capture with source and context through `feedback-ingest`, one item per run;
+   - capture with source and context through `feedback-ingest`, one item per run, the kind one of
+     `{{feedback_kinds}}`;
    - only the approver triages, and `{{agent_name}}` never approves;
    - `feedback-review` routes and closes each item, the facilitator writing `resulting`;
    - the directive `feedback-bug-route`, named as present only with `software` (§7.2, path 3).
@@ -130,10 +146,12 @@ task. The draft stays untracked until task-097's merge.
 7. **The examples** (spec-002 §2.4: fictional projects only, `.example` addresses), under
    `tests/fixtures/examples/feedback/`. Each is described in section 7 with its `Fixture:` line,
    a situation, what the project gets and how one phase runs, and each composes and validates:
-   - `defaults`: `base@^2` and `governance/feedback@^1`, every parameter on its default;
+   - `defaults`: `base@^2` and `governance/feedback@^1`, `base`'s four required parameters given
+     and every other parameter on its default;
    - `with-software`: `software@^1`, `methodology/scrum@^1` and the pack, the `bug` route
      present;
-   - `added-outcome`: `software@^1`, `methodology/kanban@^1` and the pack, with its own
+   - `added-outcome`: `software@^1`, `methodology/kanban@^1` and the pack (each example gives
+     only `base`'s four required parameters beyond its own), with its own
      `feedback_path` and `feedback_id`, and `deferred` added to `feedback_outcomes` (FA-2's
      second parameter set).
 
@@ -144,12 +162,22 @@ task. The draft stays untracked until task-097's merge.
      `target`, `source` and `context`.
    - **FA-4:** `states.gates` holds `pending: { reject: draft }`, and `feedback-ingest` ›
      `triage` holds `memory.approve` with `approval: { by_role: approver }`.
-   - **FA-6:** every workflow name in the `feedback` directive's routing table is one of
-     `base`'s workflows. The composed directive names no `bug-ingest` and no `bug` outcome:
-     the isolation lint covers the rest.
+   - **FA-6, the routing table:** the `feedback` directive holds the table under a fixed heading
+     (`## Routes`), one row per outcome, each target workflow in backticks. The set of workflow
+     names in that table is exactly `{decision-log-ingest, governance-evolution}`, each one of
+     `base`'s workflows.
+   - **FA-6, `bug` kept to the entry:**
+     - no item `bug` in the composed `feedback-review` › `where.outcome`, nor in the list the
+       directive substitutes from `{{feedback_outcomes}}`;
+     - no file of the composed `defaults` output names `bug-ingest`: fragments, workflows,
+       directives, template and AGENTS.md section. The lint's isolation checks read only
+       `include`s and `roles.yaml`, not text.
+   - **FA-1, the entry composed:** `with-software`'s composed output holds the workflows
+     `feedback-bug-route` and `feedback-bug-item` and the directive `feedback-bug-route`;
+     `defaults`' holds none of them.
 
-   Red first (dl-018): the tests run before the pack exists and fail. The red run's command and
-   failing count are recorded.
+   Red first (dl-018): the tests run before the pack exists and fail, on a composition error, as
+   task-068's did. The red run's command and failing count are recorded.
 9. **Validation:**
    - `npm run check:packs`, `npm run index -- --check` and `npm run validate` pass with no
      warning. Every new composition passes WingFoil 0.3.0's, 0.3.1's and 0.3.2's matrix
@@ -170,13 +198,14 @@ task. The draft stays untracked until task-097's merge.
     - then, once, on the frozen commit: the branch CI `success`, its run id and every job's
       duration recorded (a job over 25 minutes goes to the approver, R3);
     - dl-039's local list on Node.js 22.21.0, from a clean working tree after `npm ci` and
-      `npm run build`.
+      `npm run build`: `npm run validate:publication`, the golden tree in publication mode and
+      `npm run -s wingfoil -- workflow list`, each exit 0.
 12. **A criterion that cannot hold as written**, or a fact of the charter or spec-003 the pack
     cannot follow, goes to the approver when found (dl-019), and the work on it waits.
 13. **Delivery:**
     - the branch `task/task-096-feedback-pack` from `main`, in a worktree of its own;
     - the untracked draft is never staged;
-    - after `approve`, a `--no-ff` merge on the approver's OK, then `main`'s CI read and
+    - after `approve`, a `--no-ff` merge on the approver's OK, `main` pushed, its CI read, and
       `approved → done`;
     - the privacy check of the branch's diff recorded (`repository-practice` rule 2).
 
@@ -194,3 +223,22 @@ task. The draft stays untracked until task-097's merge.
 
 - 2026-11-17: written under plan-076 step 2, from point 3 of its outline as ruled; `pack`,
   `depends_on` and `tags` filled by editing the draft (W-02).
+- 2026-11-17: independent review (dl-017): approve after amendments; one blocker, six
+  should-fix, seven nits, all applied; format 2, the examples' parameters, the composed output's
+  reach and `entry-directive-scope` confirmed in the code.
+  - **Blocker:** the FA-6 test could not ask the directive to name no `bug`, which criterion 4
+    requires it to name (§4.2, §4.3). It now tests the item lists.
+  - **Should-fix:**
+    - no composed unconditional file names `bug-ingest`, since the lint's isolation reads no
+      text;
+    - the routing table read under a fixed heading, its set exact;
+    - the entry composed in `with-software` and absent from `defaults`;
+    - the kinds in the AGENTS.md section;
+    - the classification rules, and the agent writing only listed values (§3.3);
+    - the entry's directive: `feedback-bug-route` started and ended, `resulting` and the bug's
+      citation.
+  - **Nits:** §5.1 and §5.2 cited apart; this repository's `custom/` files in the name check;
+    `base`'s four required parameters; the iterating phases; the draft deleted after task-097;
+    format 2's departure cited; dl-039's three commands and `main` pushed.
+
+  Criteria 4, 5 and 8 change: re-review.
