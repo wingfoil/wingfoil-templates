@@ -328,3 +328,26 @@ Branch `task/task-096-feedback-pack` from `main` at `9923ba1c`, in a worktree of
   reading this repository's `catalog.yaml` (task-040): the test composes on the fixture catalog
   instead, the packs read from the tree as before. The full suite before the change: 1380 tests,
   8 failing, exactly these.
+- 2026-11-17: independent build review (dl-017): approve after amendments; no blocker, two
+  should-fix, three nits. It found `pack.yaml` differing from the draft only in its description,
+  the fragments, the template and the five workflows byte-identical, the counts adding up, no
+  unconditional file naming `bug-ingest`, and `with-software` and `added-outcome` composed
+  on WingFoil 0.3.2 with no diagnostic (`feedback-review` started, its frontier empty with no
+  triaged item). Applied in `ccdc82c0`:
+  - **Should-fix:** a project's own kind or target defined in a `custom/` directive of its own,
+    bound to `facilitator`, with an id other than `feedback` (the text told it to override
+    `feedback`, against spec-001's `custom/` rule and the charter's Adoption); the `defaults`
+    example's governance gap routed through `governance-evolution`, as the routing table says,
+    not `decision-log-ingest`.
+  - **Nits applied:** the `upstream-note` row of `## Routes` carries its fallback (a
+    decision-log naming the target); `feedback-bug-item`'s and `feedback-bug-route`'s
+    descriptions say the step records the bug route, which `bug-ingest` opens (text only).
+  - **Nit recorded, no change:** `context`'s references separated by commas and a workflow and
+    phase written `<workflow>.<phase>` are kept: they are the split and the `workflow-phase`
+    form of the fixture-element checks (task-094) that task-098 binds (plan-076 point 5, ruled).
+  - **Not verified by the reviewer:** `workflow next` printing `feedback-item` › `route` for a
+    triaged item. plan-074 step 2 drove it on the draft, whose workflows these are byte for byte;
+    task-097's scenarios and task-099's run drive it again.
+
+  `index -- --check` (8 files), `check:packs` (93 files, 0 problems) and the 10 tests pass
+  after. The directive's rule changes: re-review.
