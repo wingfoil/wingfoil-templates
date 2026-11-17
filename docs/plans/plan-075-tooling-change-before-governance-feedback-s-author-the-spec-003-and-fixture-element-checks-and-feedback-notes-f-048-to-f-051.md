@@ -2,7 +2,7 @@
 id: plan-075-tooling-change-before-governance-feedback-s-author-the-spec-003-and-fixture-element-checks-and-feedback-notes-f-048-to-f-051
 type: plan
 title: "tooling-change: before governance/feedback's author, the spec-003 and fixture-element checks and feedback notes F-048 to F-051"
-status: active
+status: done
 workflow: "tooling-change"
 phase: "deliver"
 tags: ["tooling","feedback","governance","W10"]
