@@ -2,7 +2,7 @@
 id: task-093-spec-003-s-composer-and-lint-checks-the-list-parameters-item-rule-the-placement-rule-an-entry-s-directive-scope-and-the-feedback-channel-checks-plan-075-task-b
 type: task
 title: "spec-003's composer and lint checks: the list parameters' item rule, the placement rule, an entry's directive scope and the feedback-channel checks (plan-075 task B)"
-status: backlog
+status: approved
 pack: ""            # tooling task (tooling-delivery v4), plan-075 task (B)
 depends_on: []
 tags: ["tooling","lint","composer","governance"]
@@ -167,7 +167,53 @@ Tests: the lint rules in `tests/check-packs.test.ts`, the parameter functions in
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-093-spec-003-checks` from `main` at this task's `backlog` (`ac195ca7`).
+
+**Code:**
+- `src/parameters.ts`: `isListParameter(declaration)`; `listItemProblem(value)` (the first
+  failure: no item, an empty item, an item off the regex, a YAML word, an item twice);
+  `valueProblem(declaration, value)` = `checkValue` then the item rule, used by `defaultMessage`
+  (so `parameter-default` and the composer's default check), by `resolveParameters` for a value
+  given, and by `presetChecks` (`preset-value`, `example-fixture`); `Parameter` gains `list`;
+  `misplacedReferences(text, path, inScope, ownPack)`: a token scan of a `.yaml` file (not
+  `pack.yaml`) or of a `.md` file's frontmatter, tracking double- and single-quoted scalars,
+  comments and block scalars, returning each reference of a non-`integer`, non-`boolean`
+  parameter in scope that stands outside a double-quoted scalar, unless it is a list parameter of
+  `ownPack` standing alone in `[ … ]`, with its offset and placement.
+- `src/pack-files.ts`: `scopeOf` keeps each parameter's declaring pack; `readPackFiles` adds
+  `parameter-placement` problems on the raw text.
+- `src/compose-documents.ts` › `readFiles`: the first misplaced reference refuses the composition
+  before `substitute`.
+- `src/workflow-rules.ts`: in a conditional entry's workflow files, each `agent.execute(…)` action
+  whose `directive:` argument names an id outside `known.directives` and outside
+  `BUILTIN_DIRECTIVE_IDS` is an `entry-directive-scope` problem.
+- `src/feedback-channel.ts` (new): `FEEDBACK_PACK`, `CHANNEL_TAG`; `servedTargets(text)`;
+  `channelProblems(pack, files)` per pack (rule `feedback-channel`), run from `check-packs.ts`'s
+  pack group; `channelConflicts(directives)` per composition (rule `feedback-channel-target`),
+  over `{ pack, path, text }` directive files: the lint's `src/overlay-rules.ts` › `refusal` runs
+  it on `composeDocuments`' files and reports it under that rule; `src/validate.ts` runs it in
+  `composeTwice`'s `use` callback on the output's `.wingfoil/directives/built-in/*.md` (before the
+  `compat` return, never throwing) and reports `composition <label>: feedback-channel-target: …`
+  as a failure after `composeTwice` returns.
+
+**Red steps** (dl-018), each test written and run red before its code:
+1. `tests/parameters.test.ts`: `isListParameter`, `listItemProblem` on criterion 2's cases,
+   `misplacedReferences` on criterion 4's cases (no code: they fail to import).
+2. `tests/compose-documents.test.ts`: the composer refuses a list default and a given value that
+   fail the item rule, and each misplaced reference; the two tests at 258 and 261 rewritten to a
+   duplicate key (green before and after: characterization, recorded).
+3. `tests/check-packs.test.ts`: `parameter-default` on a list default, `preset-value` on a
+   preset's value, `parameter-placement` cases, `entry-directive-scope` cases (five sources, a
+   built-in, refused ids), `feedback-channel` cases, `feedback-channel-target` through a channel
+   pack requiring the other; `tests/example-rules.test.ts`: `example-fixture` on an example's
+   value.
+4. A `tests/validate-*.test.ts` case: a preset composing two independent channel packs serving
+   one target fails `validate` with `feedback-channel-target`, and `npm run compose` of the same
+   set exits 0.
+
+**The published packs first** (criterion 7): once the functions exist and before they are wired
+in, a scratch script runs `listItemProblem`, `misplacedReferences` and the channel checks over
+every pack, preset and example of the tree; its result recorded here.
 
 ## Execution Notes
 
@@ -196,3 +242,88 @@ Tests: the lint rules in `tests/check-packs.test.ts`, the parameter functions in
   the accepted placements, the key over 1024 characters as a parse route, "each with its legs"
   and the output read as an example with `use`'s constraints, a `directive:` argument among
   others checked.
+- 2026-11-17: Design written (`400ea18b`) and started (backlog → in-progress) on
+  `task/task-093-spec-003-checks` from `main` at `ac195ca7`.
+- 2026-11-17, build (dl-018), each red run on `npm run build` then `node --test`:
+  - functions: `tests/parameters.test.ts`'s new cases first; `npm run build` failed, 4 type
+    errors (`listItemProblem`, `misplacedReferences`, `ScopedParameter` not exported); then
+    green, 38 passing (`6b018ab3`). Departure: the item rule was wired into `defaultMessage` and
+    `resolveParameters` in that commit, before its composer test; that test
+    (`compose-documents` "refuses a list default, or a value given …") passed on its first run,
+    so it was checked by mutation: both calls reverted to `checkValue`, 1 more failing; restored.
+  - the published packs first (criterion 7): before wiring the placement rule and the channel
+    checks, a scratch script ran `misplacedReferences`, `isListParameter` and a search for
+    `feedback-channel` and `agent.execute(…)` with arguments over every pack of this tree, the
+    golden tree, `software-exit`, `merge/example-1`, `merge/example-2` and `resolve/full`: 49
+    references in this tree and 7 in the golden tree, none misplaced; no list parameter, no
+    channel directive, no `agent.execute` with arguments; presets and examples set no list
+    parameter. Nothing went to the approver.
+  - composer: the two tests at `tests/compose-documents.test.ts:258`/`:261` rewritten to a
+    duplicate key (`"{{s}}": 1` beside `a: 2`), green before the placement rule (a
+    characterization, criterion 8); the placement tests red, 1 failing; green after wiring
+    `readFiles` (`a137002e`), 77 passing with `parameters`.
+  - lint: `tests/check-packs.test.ts`'s spec-003 suite red, 5 failing (`preset-value`,
+    `parameter-placement`, `entry-directive-scope`'s refusals, `feedback-channel`,
+    `feedback-channel-target`); `parameter-default` on a list default passed at once (wired
+    with the functions) and was checked by mutation (`defaultMessage` back to `checkValue`: 1
+    failing); `example-fixture`'s item-rule test in `tests/example-rules.test.ts` passed at once
+    (it shares `presetChecks`) and was checked by mutation (the item rule off in `presetChecks`:
+    1 failing); green after wiring (`a2af93df`, lines wrapped in `2e27c28a`).
+  - `validate`: `tests/validate-11-channels.test.ts` red, 1 failing; green after the check in
+    `composeTwice`'s `use` callback (`e5db7a68`). The test's new packs carry no README
+    examples, so the lint reports them too: the composition's line is the evidence, not the
+    exit code.
+  - then `npm test` 1326 passing, 0 failing; `npm run check:packs` "lint: checked 76 files, 0
+    problems"; `npx eslint --max-warnings 0
+    src tests` exit 0. No file under `packs/`, `presets/`, `catalog.yaml`,
+    `tests/fixtures/examples/` or `tests/fixtures/*-exit/` changed.
+- 2026-11-17: independent build review of `6a2b99bd`: request changes; two blockers, four
+  should-fix, six nits. Applied in `c2e2432d`:
+  - B1 (criterion 4): one case table, `tests/support/placement-cases.ts`, run through both the
+    lint and the composer; B2 (criterion 6): the lint's channel set composed by `runCompose`,
+    exit 0;
+  - S1–S3, the scanner: a quote or a block indicator opens only where a node starts (after a
+    line's sequence dashes, `: `, `[`, `{`, `,`, a tag or an anchor); a block scalar's parent is
+    its key's column, or its dash's; the frontmatter read as `src/frontmatter.ts` reads it, BOM
+    and CRLF included. Red first: 3 failing in `tests/parameters.test.ts`, then 41 passing; the
+    reviewer's probe found a tag before a quote (`!!str "{{s}}"`) too, tested and fixed;
+  - S4: the item rule's other cases and a `givenAsText` value through the composer;
+  - nits: a quoted `directive:` id read without its quotes, an unusual one refused (red: 2
+    failing); the composer's `entry-directive-scope` refusal tested; the "Serves the target"
+    line exact, not in the frontmatter or a fenced block (red: 1 failing); `validate` reports a
+    directive directory it cannot read instead of hiding it (no test: a read failure needs a
+    broken output); line checks for `parameter-default` and `preset-value`. N6 (the output's
+    label names no pack) kept: directive ids are unique in a composition.
+  - Correction of the build note above: `npm run validate -- --param project_name=X` exits 1, on
+    this branch as on `main`, because the README examples set `project_name` themselves; `npm
+    run validate`, without it, exits 0.
+  - Then `npm test` 1330 passing, 0 failing; `npm run check:packs` 0 problems; `npm run
+    validate` exit 0; eslint exit 0. A re-review follows: the fixes change behaviour.
+- 2026-11-17: re-review of `c2e2432d`: approve after amendments, nothing blocking; one should-fix,
+  four nits. Applied in `2ea81eb0`: S-1, `[`, `{` and `,` start a node only inside a flow
+  collection (a depth counter), so `a: foo, "{{s}}" bar` is refused and an unbalanced quote in
+  plain text no longer hides what follows (red: 1 failing in `tests/parameters.test.ts`); N-a, a
+  quoted key's `:` without a space inside a flow collection; N-c, a fenced block closes only on
+  its own character and run (red: 1 failing); N-d, `example-fixture`'s line checked (green at
+  once: the line was already right) and `validate`'s read-failure message says no channel was
+  checked. N-b (a plain scalar's continuation line beginning with a quote) recorded as a known
+  limit in the scanner's comment. The reviewer's four probe scripts rerun: no case wrong but
+  N-b's. A focused re-review of the scanner follows.
+- 2026-11-17: focused re-review of the scanner at `2ea81eb0`: approve after one minor amendment;
+  no regression. Applied in `2596166c`: F1, a flow collection opened by a plain continuation
+  line beginning with `[` or `{` no longer carries past it (the depth resets when a line returns
+  to the indentation the collection opened at; red: 1 failing), the known limit's comment
+  widened to it; F2, a backtick fence whose info string holds a backtick is text (red: 1
+  failing). The reviewers' six probe scripts rerun: no case wrong but the known limit's. A run of
+  `npm test` started before `2596166c` failed 51 tests because `dist/` was rebuilt while it ran;
+  rerun undisturbed on `2596166c`: 1330 passing, 0 failing; `npm run check:packs` 0 problems;
+  `npm run validate` exit 0; eslint exit 0. The code is frozen at `2596166c`.
+- 2026-11-17: checks (dl-039 R1, R2), once, on `0f6d1a08` (the code frozen at `2596166c`, the
+  commits after it `docs/memory` only): the branch CI, run 44056401671, `success`, jobs
+  `validate (22.12.0, 1)` 10 min 31 s, `(22.12.0, 2)` 5 min 14 s, `(22.21.0, 1)` 8 min 28 s,
+  `(22.21.0, 2)` 6 min 17 s (none over 25 minutes); from a clean working tree on Node.js 22.21.0
+  after `npm ci` and `npm run build`: `npm run validate:publication`, the golden tree in
+  publication mode and `npm run -s wingfoil -- workflow list` exit 0, `directives list --format
+  json` with `"warnings": []`, the tree still clean. This commit changes only `docs/memory`: no
+  new run. Privacy check of the branch's diff and messages: no local or scratch path, no
+  maintainer name or email, no private project, no intermediary session.

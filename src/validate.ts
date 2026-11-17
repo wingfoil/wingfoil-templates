@@ -15,6 +15,7 @@ import { parseArgs } from 'node:util';
 import { CatalogError, loadCatalog } from './catalog';
 import type { Catalog } from './catalog';
 import { findFiles, runCheckSchemas } from './check-schemas';
+import { CHANNEL_TARGET_RULE, channelConflicts } from './feedback-channel';
 import { lintContext, runCheckPacks } from './check-packs';
 import { CompatError, loadCompat } from './compat';
 import type { Compat } from './compat';
@@ -448,6 +449,24 @@ function checkOverlay(tree: string, overlay: Overlay): OverlayCheck {
   return { checked: all.length, problems: sortProblems(problems), files, shadowed };
 }
 
+/**
+ * The channel conflicts of a composed output (spec-003 §5.2), from its directives; a directory
+ * that cannot be read is reported as such, never thrown, since `use` must not throw
+ * (src/determinism.ts).
+ */
+function composedConflicts(output: string): string[] {
+  const dir = join(output, '.wingfoil', 'directives', 'built-in');
+  try {
+    if (!existsSync(dir)) return [];
+    return channelConflicts(readdirSync(dir).filter((name) => name.endsWith('.md')).sort()
+      .map((name) => ({ path: `directives/${name}`, file: `directives/built-in/${name}`,
+        text: readFileSync(join(dir, name), 'utf8') })));
+  } catch (error) {
+    return [`the composed directives could not be read, so no channel was checked: `
+      + messageOf(error)];
+  }
+}
+
 export function runValidate(argv: string[], options: ValidateOptions): ValidateResult {
   const mode = options.mode;
   let args: Args;
@@ -696,12 +715,15 @@ ValidateResult {
       skipped();
       return { ran: false };
     }
-    // The matrix runs inside the determinism check, on its first output.
+    // The matrix runs inside the determinism check, on its first output; spec-003 §5.2's one
+    // channel per target is read there too, from the composed directives (task-093).
     let ran = false;
+    let conflicts: string[] = [];
     const result = composeTwice({ tree: treeOf(composition), entries: composition.entries,
       params }, {
       ...options,
       use: (output) => {
+        conflicts = composedConflicts(output);
         if (compat === undefined) return;
         ran = true;
         matrix.run(composition.label, output, compat, requirements);
@@ -711,6 +733,11 @@ ValidateResult {
       fail(result.code, `${label}: ${mapped(composition, result.message)}`);
       skipped();
       return { packs, ran: false };
+    }
+    if (conflicts.length > 0) {
+      for (const conflict of conflicts) fail(1, `${label}: ${CHANNEL_TARGET_RULE}: ${conflict}`);
+      if (!ran) skipped();
+      return { packs, ran };
     }
     composed += 1;
     const dropped = composition.dropped === undefined || composition.dropped.length === 0 ? ''

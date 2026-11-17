@@ -12,8 +12,10 @@ import { readFrontmatter } from './frontmatter';
 import { checkDnaFragment, checkRoleDirectives, mergeFragments } from './merge';
 import type { Fragment } from './merge';
 import { mergeMemoryWithOwners } from './memory-merge';
-import { parameterScopes, resolveParameters, substitute } from './parameters';
-import type { PackScopes } from './parameters';
+import {
+  misplacedReferences, parameterScopes, placementMessage, resolveParameters, substitute,
+} from './parameters';
+import type { PackScopes, Parameter, ScopedParameter } from './parameters';
 import { conditionalEntries, entryFiles } from './pack-rules';
 import type { ConditionalEntry } from './pack-rules';
 import { tensionNotices } from './notices';
@@ -59,9 +61,17 @@ type FragmentKind = 'dna' | 'roles' | 'memory';
 function readFiles(
   tree: string,
   packs: ResolvedPack[],
-  values: Map<string, string | number | boolean>,
+  parameters: Map<string, Parameter>,
   scopes: Map<string, PackScopes>,
 ): ComposedFile[] {
+  const values = new Map([...parameters.values()]
+    .map((parameter) => [parameter.name, parameter.value]));
+  const scoped = (names: Set<string>): Map<string, ScopedParameter> => new Map([...names]
+    .flatMap((name) => {
+      const parameter = parameters.get(name);
+      return parameter === undefined ? []
+        : [[name, { type: parameter.type, list: parameter.list, pack: parameter.pack }]];
+    }));
   const files: ComposedFile[] = [];
   for (const pack of packs) {
     // Each active entry's files come after the pack's own and the earlier entries' (§6.5, §7.7),
@@ -77,6 +87,9 @@ function readFiles(
       part.files.map((file) => ({ path: file, scope: part.scope })))) {
       const label = `${pack.path}/${path}`;
       const raw = readFileSync(join(tree, pack.path, path), 'utf8');
+      // spec-003 §3.1, on the raw text: an unquoted value would be read as YAML of its own.
+      const [misplaced] = misplacedReferences(raw, path, scoped(scope ?? new Set()), pack.id);
+      if (misplaced !== undefined) throw new CompositionError(placementMessage(label, misplaced));
       const text = substitute(raw, values, scope ?? new Set(), label, pack.id);
       const file: ComposedFile = { pack: pack.id, path, text };
       if (path.endsWith('.yaml')) {
@@ -181,9 +194,7 @@ export function composeDocuments(
 ): ComposedDocuments {
   const packs = resolve(tree, catalog, request);
   const parameters = resolveParameters(packs, given, options);
-  const values = new Map([...parameters.values()]
-    .map((parameter) => [parameter.name, parameter.value]));
-  const files = readFiles(tree, packs, values, parameterScopes(packs, parameters));
+  const files = readFiles(tree, packs, parameters, parameterScopes(packs, parameters));
   checkWorkflows(tree, catalog, packs, files);
 
   const dna = fragmentsOf('dna', packs, files);

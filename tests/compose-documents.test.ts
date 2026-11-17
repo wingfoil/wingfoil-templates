@@ -10,6 +10,8 @@ import {
   BASE, DELIVERY, KANBAN, RELEASE_TEMPLATE, RELEASE_TYPE, SOFTWARE, subWorkflow, withPackTree,
 } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
+import { ACCEPTED, PLACEMENT_PARAMETERS, REFUSED } from './support/placement-cases';
+import type { PlacementCase } from './support/placement-cases';
 import { FIXTURES, FIXTURE_CATALOG } from './support/paths';
 import { conformingReadme } from './support/readme';
 
@@ -253,13 +255,71 @@ describe('composeDocuments: parameters (spec-001 §8)', () => {
   });
 
   it('fails on a fragment or a workflow that no longer parses after substitution', () => {
-    const p = declaring({ s: { type: 'string', description: 'x', default: 'a: b' } });
+    // A value placed in a double-quoted key that, substituted, repeats another key (task-093):
+    // the type rule forbids `"`, `\\` and control characters, so a quoted value cannot break its
+    // scalar, and the placement rule refuses an unquoted one before substitution.
+    const p = declaring({ s: { type: 'string', description: 'x', default: 'a' } });
     fails([BASE_M, SOFTWARE, KANBAN, { ...p, fragments: ['dna'],
-      extraFiles: { 'fragments/dna.yaml': 'format: 1\nx: {{s}}\n' } }],
+      extraFiles: { 'fragments/dna.yaml': 'format: 1\n"{{s}}": 1\na: 2\n' } }],
     ['methodology/kanban', 'blueprint/p'], /blueprint\/p.*fragments\/dna\.yaml/, NAME);
     fails([BASE_M, SOFTWARE, KANBAN, { ...p, workflows: ['w'],
-      extraFiles: { 'workflows/w.yaml': 'format: 1\nname: w\nd: {{s}}\n' } }],
+      extraFiles: { 'workflows/w.yaml': 'format: 1\nname: w\n"{{s}}": 1\na: 2\n' } }],
     ['methodology/kanban', 'blueprint/p'], /blueprint\/p.*workflows\/w\.yaml/, NAME);
+  });
+
+  const listOf = (value: string): Doc => ({ l: { type: 'string', description: 'List of x.',
+    default: value } });
+
+  it('refuses a list default, or a value given, that fails the item rule (spec-003 §3.2)', () => {
+    fails([BASE_M, SOFTWARE, KANBAN, declaring(listOf('task, task'))],
+      ['methodology/kanban', 'blueprint/p'], /parameter l of blueprint\/p: default .*twice/, NAME);
+    for (const value of ['', 'x], kind: [defect', 'null, task', 'yes, task', 'on', 'bug,', 'Yes',
+      'bug:', 'catalog/pack']) {
+      fails([BASE_M, SOFTWARE, KANBAN, declaring(listOf('bug'))],
+        ['methodology/kanban', 'blueprint/p'], /parameter l of blueprint\/p: .*not a valid list/,
+        { ...NAME, l: value });
+    }
+    // As the CLI gives them: text, read by the declared type (review S4).
+    withPackTree([BASE_M, SOFTWARE, KANBAN, declaring(listOf('bug'))], (root) => {
+      assert.throws(() => composeDocuments(root, CATALOG, ['methodology/kanban', 'blueprint/p'],
+        { ...NAME, l: 'task, task' }, { givenAsText: true }),
+      /parameter l of blueprint\/p: .*twice/);
+    });
+    const result = compose([BASE_M, SOFTWARE, KANBAN, { ...declaring(listOf('bug, task')),
+      fragments: ['dna'], extraFiles: { 'fragments/dna.yaml': 'format: 1\nx: [{{l}}]\n' } }],
+    ['methodology/kanban', 'blueprint/p'], { ...NAME, l: ' bug , upstream:plover-vendor ' });
+    assert.deepEqual(result.dna['x'], ['bug', 'upstream:plover-vendor']);
+  });
+
+  const placed = (each: PlacementCase): PackSpec => ({ ...declaring(PLACEMENT_PARAMETERS),
+    ...each.path === 'directives/d.md' ? { directives: ['d'] } : { fragments: ['dna'] },
+    extraFiles: { [each.path]: each.text } });
+
+  it('refuses a misplaced reference before substitution (spec-003 §3.1)', () => {
+    for (const each of REFUSED) {
+      const file = each.path.replace('.', '\\.');
+      fails([BASE_M, SOFTWARE, KANBAN, placed(each)], ['methodology/kanban', 'blueprint/p'],
+        new RegExp(`blueprint/p/${file}: \\{\\{[a-z]\\}\\} stands ${each.placement ?? ''}`),
+        NAME);
+    }
+    const user: PackSpec = { id: 'governance/u', requires: ['base@^1', 'blueprint/p@^1'],
+      fragments: ['dna'], extraFiles: { 'fragments/dna.yaml': 'format: 1\nx: [{{l}}]\n' } };
+    fails([BASE_M, SOFTWARE, KANBAN, declaring(listOf('bug')), user],
+      ['methodology/kanban', 'governance/u'],
+      /governance\/u\/fragments\/dna\.yaml: \{\{l\}\} stands in a flow sequence outside/, NAME);
+  });
+
+  it('accepts the placements spec-003 §3.1 allows', () => {
+    for (const each of ACCEPTED) {
+      compose([BASE_M, SOFTWARE, KANBAN, placed(each)], ['methodology/kanban', 'blueprint/p'],
+        NAME);
+    }
+    const result = compose([BASE_M, SOFTWARE, KANBAN, { ...declaring({
+      s: { type: 'string', description: 'x', default: 'a' },
+      n: { type: 'integer', description: 'x', default: 2 } }), fragments: ['dna'],
+    extraFiles: { 'fragments/dna.yaml': 'format: 1\nx: "{{s}} b"\n"{{s}}": {{n}}\n' } }],
+    ['methodology/kanban', 'blueprint/p'], NAME);
+    assert.deepEqual([result.dna['x'], result.dna['a']], ['a b', 2]);
   });
 });
 

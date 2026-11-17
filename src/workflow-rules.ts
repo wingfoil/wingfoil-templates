@@ -77,6 +77,19 @@ Declared {
   return sets;
 }
 
+/** The directive an `agent.execute(…)` action names in its `directive:` argument (§7.2). */
+function executedDirective(action: unknown): string | undefined {
+  if (typeof action !== 'string') return undefined;
+  const call = /^agent\.execute\((.*)\)$/s.exec(action.trim());
+  if (call === null) return undefined;
+  for (const argument of (call[1] ?? '').split(',')) {
+    const named = /^\s*directive\s*:\s*(.+?)\s*$/.exec(argument);
+    // A quoted id is the id; anything else unusual is kept, so that the scope check refuses it.
+    if (named !== null) return (named[1] ?? '').replace(/^(["'])(.*)\1$/, '$2');
+  }
+  return undefined;
+}
+
 function problemAt(file: RuleFile, pointer: string, rule: string, message: string): Problem {
   const position = file.yaml?.positionOf(pointer) ?? { line: 1, column: 1 };
   return { file: file.file, line: position.line, column: position.column, rule, message };
@@ -168,6 +181,17 @@ export function workflowProblems(
           problems.push(problemAt(file, where, 'role', `${label}: phase ${name}: role ${role} is `
             + 'not in team.roles of the pack or of a pack it requires'));
         }
+      }
+      if (part !== undefined) {
+        list(phase['actions']).forEach((action, at) => {
+          const id = executedDirective(action);
+          if (id === undefined || part.known.directives.has(id)
+            || BUILTIN_DIRECTIVE_IDS.includes(id)) return;
+          problems.push(problemAt(file, `${pointer}/actions/${at}`, 'entry-directive-scope',
+            `${label}: phase ${name}: agent.execute names directive ${id}, which is neither the `
+            + `pack's or a pack it requires, nor the entry's, nor ${part.withId}'s or a pack it `
+            + 'requires, nor built into WingFoil (spec-003 §7.2, spec-001 §6.5)'));
+        });
       }
       const iterated = phase['iterate_over'];
       if (typeof iterated === 'string' && !known.types.has(iterated)) {

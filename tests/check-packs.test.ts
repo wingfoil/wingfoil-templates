@@ -20,7 +20,10 @@ import {
   withPackTree,
 } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
+import { ACCEPTED, PLACEMENT_PARAMETERS, REFUSED } from './support/placement-cases';
+import type { PlacementCase } from './support/placement-cases';
 import { conformingReadme } from './support/readme';
+import { runCompose } from '../src/compose-cli';
 
 const KANBAN_README = conformingReadme({ id: 'methodology/kanban', title: 'kanban',
   description: 'Kanban.' });
@@ -1467,5 +1470,172 @@ describe('D6\'s coverage: the targets per entry and the pairs (spec-001 §15, §
         conditional: [{ with: 'blueprint/a@^1', directives: ['s-a'] },
           { with: 'team-mode/t@^1', directives: ['s-t'] }] }]);
     assert.equal(result.code, 0, result.lines.join('\n'));
+  });
+});
+
+// task-093: spec-003's lint checks (§3.1, §3.2, §5.1, §5.2, §7.2, §11).
+describe('spec-003: list parameters, placement, entry directives, feedback channels', () => {
+  const directive = (id: string, body = `# ${id}\n`, tags?: string[]): string =>
+    `---\nid: ${id}\nformat: 1\n${tags === undefined ? '' : `tags: ${JSON.stringify(tags)}\n`}`
+    + `---\n${body}`;
+  const of = (result: CheckPacksResult, rule: string): string[] => result.problems
+    .filter((problem) => problem.rule === rule)
+    .map((problem) => `${problem.file}:${problem.line ?? ''} ${problem.message}`);
+  const LISTS: PackSpec = { ...KANBAN, manifest: { parameters: {
+    outcomes: { type: 'string', default: 'bug, task', description: 'List of outcomes.' } } } };
+
+  it('parameter-default: a list default that fails the item rule, at its line', () => {
+    let manifest = '';
+    const result = lint([...FOUNDATION, { ...KANBAN, manifest: { parameters: {
+      outcomes: { type: 'string', default: 'task, task', description: 'List of outcomes.' } } } }],
+    (root) => {
+      manifest = readFileSync(join(root, 'packs/methodology/kanban/pack.yaml'), 'utf8');
+    });
+    assert.deepEqual(rules(result), ['parameter-default'], result.lines.join('\n'));
+    const [problem] = result.problems.filter((each) => each.rule === 'parameter-default');
+    assert.match(manifest.split('\n')[(problem?.line ?? 0) - 1] ?? '', /default: task, task/);
+    assert.equal(lint([...FOUNDATION, LISTS]).code, 0);
+  });
+
+  it('preset-value: a preset value of a list parameter that fails the item rule', () => {
+    const result = lint([...FOUNDATION, LISTS], (root) => write(root, 'presets/small.yaml',
+      `${GOLDEN_PRESET}parameters:\n  outcomes: "null, task"\n`));
+    assert.deepEqual(rules(result), ['preset-value'], result.lines.join('\n'));
+    assert.deepEqual(of(result, 'preset-value').map((each) => each.split(' ')[0]),
+      [`presets/small.yaml:${String(GOLDEN_PRESET.split('\n').length + 1)}`]);
+    assert.equal(lint([...FOUNDATION, LISTS], (root) => write(root, 'presets/small.yaml',
+      `${GOLDEN_PRESET}parameters:\n  outcomes: "bug, upstream:vendor"\n`)).code, 0);
+  });
+
+  it('parameter-placement: every misplaced reference, at its line', () => {
+    const flowFiles = (text: string): PackSpec => ({ ...LISTS, manifest: { parameters: {
+      ...(LISTS.manifest?.['parameters'] as object),
+      s: { type: 'string', default: 'a', description: 'x' } } },
+    extraFiles: { 'workflows/delivery.yaml': `${DELIVERY}${text}` } });
+    const result = lint([...FOUNDATION, flowFiles('a: {{s}}\nb: [{{outcomes}}]\nc: \'{{s}}\'\n'
+      + 'd: "{{s}}"\n')]);
+    const line = DELIVERY.split('\n').length;
+    assert.deepEqual(rules(result), ['parameter-placement'], result.lines.join('\n'));
+    assert.deepEqual(of(result, 'parameter-placement').map((each) => each.split(' ')[0]),
+      [`packs/methodology/kanban/workflows/delivery.yaml:${line}`,
+        `packs/methodology/kanban/workflows/delivery.yaml:${line + 2}`]);
+    // A list parameter as a flow sequence, in a pack that does not declare it.
+    failsWith('parameter-placement', [...FOUNDATION, LISTS, { id: 'blueprint/u',
+      requires: ['base@^1', 'methodology/kanban@^1'], fragments: ['dna'],
+      extraFiles: { 'fragments/dna.yaml': 'format: 1\nx: [{{outcomes}}]\n' } }]);
+    // A directive's frontmatter, not its body.
+    failsWith('parameter-placement', [...FOUNDATION, { ...LISTS, directives: ['d'], extraFiles: {
+      'directives/d.md': '---\nid: d\nformat: 1\ntitle: {{outcomes}}\n---\n# d\n' } }]);
+    assert.equal(lint([...FOUNDATION, { ...LISTS, directives: ['d'], extraFiles: {
+      'directives/d.md': directive('d', '# d\n\nOne of {{outcomes}}.\n') } }]).code, 0);
+  });
+
+  it('parameter-placement: every case of criterion 4, through the lint (review B1)', () => {
+    const placed = (each: PlacementCase): PackSpec => ({ ...KANBAN,
+      manifest: { parameters: PLACEMENT_PARAMETERS },
+      ...each.path === 'directives/d.md' ? { directives: ['d'] } : { fragments: ['dna'] },
+      extraFiles: { [each.path]: each.text } });
+    for (const each of ACCEPTED) {
+      const result = lint([...FOUNDATION, placed(each)]);
+      assert.equal(result.code, 0, `${each.text}\n${result.lines.join('\n')}`);
+    }
+    for (const each of REFUSED) {
+      const result = lint([...FOUNDATION, placed(each)]);
+      assert.ok(rules(result).includes('parameter-placement'),
+        `${each.text}\n${result.lines.join('\n')}`);
+      assert.match(of(result, 'parameter-placement').join('\n'),
+        new RegExp(`stands ${each.placement ?? ''}`), each.text);
+    }
+  });
+
+  describe('entry-directive-scope (§7.2)', () => {
+    const H: PackSpec = { id: 'governance/h', directives: ['h-rule'] };
+    const G2: PackSpec = { id: 'governance/g2', requires: ['base@^1', 'governance/h@^1'],
+      directives: ['g2-rule'] };
+    const Q: PackSpec = { id: 'governance/q', directives: ['q-rule'] };
+    const Z: PackSpec = { id: 'governance/z', directives: ['z-rule'] };
+    const route = (actions: string[]): string => 'format: 1\nname: x-route\nkind: sub\nphases:\n'
+      + `  - name: a\n    actions:\n${actions.map((action) => `      - '${action}'\n`).join('')}`;
+    const X = (actions: string[]): PackSpec => ({ id: 'stage/x', format: 2,
+      requires: ['base@^1', 'governance/q@^1'], directives: ['x-own'],
+      conditional: [{ with: 'governance/g2@^1', workflows: ['x-route'], directives: ['x-entry'] },
+        { with: 'software@^1', directives: ['x-sw'] }],
+      extraFiles: { 'workflows/x-route.yaml': route(actions) } });
+    const TREE = (x: PackSpec): PackSpec[] => [...CLEAN, H, G2, Q, Z, x];
+
+    it('accepts a directive of each of the five sources, a built-in, and no directive', () => {
+      const result = lint(TREE(X(['agent.execute(directive: x-own)',
+        'agent.execute(directive: q-rule)', 'agent.execute(directive: x-entry)',
+        'agent.execute(directive: g2-rule)', 'agent.execute(directive: h-rule)',
+        'agent.execute(directive: code-review)', 'agent.execute', 'agent.execute(mode: fast)',
+        'agent.execute(directive: "x-own")'])));
+      assert.equal(result.code, 0, result.lines.join('\n'));
+    });
+
+    it('refuses another entry\'s directive, a pack outside the scope, an unknown id', () => {
+      for (const id of ['x-sw', 'z-rule', 'nope', 'x-own q-rule', '"nope"']) {
+        failsWith('entry-directive-scope', TREE(X([`agent.execute(directive: ${id})`])));
+      }
+      // The composer refuses the same, through checkWorkflows (spec-001 §18; review N2).
+      withPackTree(TREE(X(['agent.execute(directive: z-rule)'])), (root) => {
+        assert.throws(() => composeDocuments(root, loadCatalog(FIXTURE_CATALOG),
+          ['methodology/kanban', 'governance/g2', 'stage/x'], {}),
+        /agent\.execute names directive z-rule/);
+      });
+      const result = lint(TREE(X(['agent.execute(mode: fast, directive: nope)'])));
+      assert.deepEqual(of(result, 'entry-directive-scope').map((each) => each.split(' ')[0]),
+        ['packs/stage/x/workflows/x-route.yaml:7'], result.lines.join('\n'));
+    });
+  });
+
+  describe('feedback-channel (§5.1, §5.2)', () => {
+    const FB: PackSpec = { id: 'governance/feedback', directives: ['feedback'] };
+    const SERVES = 'Serves the target `upstream:vendor`.\n';
+    const channel = (id: string, body: string, requires = ['base@^1',
+      'governance/feedback@^1']): PackSpec => ({ id: `governance/${id}`, requires,
+      directives: [id], extraFiles: {
+        [`directives/${id}.md`]: directive(id, `# ${id}\n\n${body}`, ['feedback-channel']) } });
+
+    it('accepts a channel of a pack requiring governance/feedback, with one target line', () => {
+      const result = lint([...CLEAN, FB, channel('up-a', SERVES)]);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      // A fenced block closes only on its own fence (re-review N-c).
+      for (const fenced of ['```\n~~~\n```\n', '~~~\n```\n~~~\n', '````\n```\n````\n',
+        '``` a`b\n']) {
+        const valid = lint([...CLEAN, FB, channel('up-a', `${fenced}${SERVES}`)]);
+        assert.equal(valid.code, 0, `${fenced}${valid.lines.join('\n')}`);
+      }
+    });
+
+    it('refuses a channel without the requirement, or without exactly one target line', () => {
+      for (const spec of [channel('up-a', SERVES, ['base@^1']), channel('up-a', 'No target.\n'),
+        channel('up-a', `${SERVES}${SERVES}`),
+        channel('up-a', 'Serves the target upstream:vendor.\n'),
+        channel('up-a', 'Serves the target `upstream:a/b`.\n'),
+        channel('up-a', 'Serves the target `downstream:vendor`.\n'),
+        channel('up-a', 'Serves the target `upstream:vendor`. \n'),
+        channel('up-a', `\`\`\`\n${SERVES}\`\`\`\n`)]) {
+        failsWith('feedback-channel', [...CLEAN, FB, spec]);
+      }
+    });
+
+    it('feedback-channel-target: two channels serving one target in one composition', () => {
+      const b = channel('up-b', SERVES, ['base@^1', 'governance/feedback@^1',
+        'governance/up-a@^1']);
+      const result = lint([...CLEAN, FB, channel('up-a', SERVES), b]);
+      assert.deepEqual(rules(result), ['feedback-channel-target'], result.lines.join('\n'));
+      assert.match(of(result, 'feedback-channel-target').join('\n'),
+        /upstream:vendor.*up-a.*up-b|upstream:vendor.*up-b.*up-a/);
+      // npm run compose composes the same set (spec-003 §5.2; review B2).
+      withPackTree([...CLEAN, FB, channel('up-a', SERVES), b], (root) => {
+        copyFileSync(FIXTURE_CATALOG, join(root, 'catalog.yaml'));
+        const composed = runCompose(['--tree', root, '--out', join(root, 'out'),
+          'methodology/kanban', 'governance/up-b']);
+        assert.equal(composed.code, 0, composed.message);
+      });
+      const other = channel('up-b', 'Serves the target `upstream:other`.\n',
+        ['base@^1', 'governance/feedback@^1', 'governance/up-a@^1']);
+      assert.equal(lint([...CLEAN, FB, channel('up-a', SERVES), other]).code, 0);
+    });
   });
 });

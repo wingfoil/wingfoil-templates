@@ -11,7 +11,9 @@ import { readFrontmatter } from './frontmatter';
 import { assetIdMessage, slotKindMessage } from './output';
 import { conditionalEntries, entryFiles, kindOf, listedFiles } from './pack-rules';
 import type { PackLike } from './pack-rules';
-import { defaultMessage, referencesIn } from './parameters';
+import {
+  defaultMessage, isListParameter, misplacedReferences, placementMessage, referencesIn,
+} from './parameters';
 import { parseEntry, reachableIds } from './requirements';
 import type { ParameterValue } from './parameters';
 import type { Problem } from './problems';
@@ -60,13 +62,13 @@ export function reachable(pack: LintPack, packs: Map<string, LintPack>): string[
  * the conditional entry naming it, which adds that pack's and the packs it requires (§8.1, §6.5).
  */
 function scopeOf(pack: LintPack, packs: Map<string, LintPack>, withPack?: string):
-Map<string, ParameterDeclaration> {
-  const scope = new Map<string, ParameterDeclaration>();
+Map<string, ParameterDeclaration & { pack: string }> {
+  const scope = new Map<string, ParameterDeclaration & { pack: string }>();
   const other = withPack === undefined ? undefined : packs.get(withPack);
   const ids = [...reachable(pack, packs), ...(other === undefined ? [] : reachable(other, packs))];
   for (const id of ids) {
     for (const [name, declaration] of Object.entries(packs.get(id)?.manifest.parameters ?? {})) {
-      if (!scope.has(name)) scope.set(name, declaration);
+      if (!scope.has(name)) scope.set(name, { ...declaration, pack: id });
     }
   }
   return scope;
@@ -185,7 +187,8 @@ export function readPackFiles(
     }
   }
   // Each part with its own scope: contents the pack's, each entry its with pack's too (§6.5).
-  const parts: { paths: string[]; scope: Map<string, ParameterDeclaration>; label: string }[] = [
+  const parts: { paths: string[]; scope: Map<string, ParameterDeclaration & { pack: string }>;
+    label: string }[] = [
     { paths: listedFiles(pack.manifest.contents), scope: scopeOf(pack, packs), label: pack.id },
     ...conditionalEntries(pack.manifest).map((entry) => ({ paths: entryFiles(entry),
       scope: scopeOf(pack, packs, withId(entry.with)),
@@ -207,6 +210,12 @@ export function readPackFiles(
         problems.push({ file, ...lineOf(raw, reference.offset), rule: 'parameter-scope',
           message: `${file}: {{${reference.name}}} names no parameter in the scope of ${label}` });
       }
+    }
+    const scoped = new Map([...scope].map(([name, declaration]) => [name,
+      { type: declaration.type, list: isListParameter(declaration), pack: declaration.pack }]));
+    for (const reference of misplacedReferences(raw, path, scoped, pack.id)) {
+      problems.push({ file, ...lineOf(raw, reference.offset), rule: 'parameter-placement',
+        message: placementMessage(file, reference) });
     }
     const text = raw.replace(/\{\{([a-z][a-z0-9_]*)\}\}/g, (_match, name: string) => {
       const declaration = scope.get(name);
