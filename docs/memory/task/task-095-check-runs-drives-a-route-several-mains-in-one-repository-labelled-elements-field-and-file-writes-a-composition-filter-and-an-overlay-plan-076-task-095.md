@@ -202,7 +202,50 @@ body).
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+- **The scenario model** (`src/runs.ts`):
+  - A main run becomes `{ kind: 'main', name?, only?, links, single }`, each link
+    `{ main, steps }`. A plain `{ main, steps }` is one link with `single: true`, so its failure
+    line stays `fail at <step>`.
+  - An adopt run gains `name?` and `only?`.
+  - The scenario gains `overlay?`.
+  - `add` gains `step?` and `label?`. `submit` and `approve` carry `element` (`added` or a
+    label). New step kinds: `set { element, fields?, body? }` and `write { path, text }`.
+- **Static checks in `loadScenario`**, exit 3 with `<file>: <key>: <what>`:
+  - one walk over each run's steps, in order, tracking the labels added so far and whether the
+    current link has started;
+  - a token or a label before its `add`, an unknown label, a label added twice, the label
+    `added`, and an instance step before its link's `start` are refused there;
+  - `only`'s ids are checked against the folder's compositions in `runRuns`, where the folder
+    is listed.
+- **Run time** (`runOne`):
+  - Each link resets `instance` at its `start`.
+  - A map holds each label's id and path, from `memory add`'s `{ id, path }`; `added` is the
+    last one.
+  - `expand(text)` replaces `\$([a-z][a-z0-9-]*)\.id(?![a-z0-9-])` with the label's id. Its
+    other `$` text is kept.
+  - `current` becomes `<main>[<n>].<step>` in a chain.
+- **`set`**, line-based, so that other lines stay byte-identical:
+  - The frontmatter is the text between the opening `---` line and the next `---` line.
+  - A top-level key's block is its `key:` line plus the indented or `- ` lines after it. That
+    block is replaced by `stringify({ key: value })` of the `yaml` package, which quotes what a
+    plain scalar would misread; a new key goes before the closing `---`.
+  - After the write, the frontmatter is parsed again, and each field must equal the value
+    given, or the step fails.
+  - `body` is appended as a line, after a newline if the file lacks a final one.
+- **The overlay.** A new module, `src/overlay-tree.ts`, takes from `src/validate.ts`:
+  - the `Overlay` interface;
+  - `openOverlay`, returning its `reason` beside the line `validate` prints;
+  - `mergeOverlay(tree, overlay)`: it builds the merged tree (the tree's `packs/`,
+    `catalog.yaml` and `compat.yaml`, then the overlay's packs that shadow none of the tree's)
+    and returns the shadowing pairs.
+
+  `checkOverlay` calls `mergeOverlay` and turns each pair into its `overlay-shadow` problem, as
+  today. `validate`'s lines are sorted afterwards, so their order holds. `check:runs` refuses
+  any pair (exit 3) and composes on the merged tree, its lines passed through `hideScratch` and
+  `mapOverlayPaths`. `hideScratch` also hides `validate-overlay-…`. The merged tree's root is
+  removed in a `finally` once the scenario's compositions are done.
+- **`only` and skipped compositions.** In `runRuns`, a composition's runs are the scenario's
+  runs whose `only` is absent or lists its id. A composition with no run is not composed.
 
 ## Execution Notes
 
