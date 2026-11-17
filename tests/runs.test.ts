@@ -4,7 +4,7 @@
 import { strict as assert } from 'node:assert';
 import { execFileSync } from 'node:child_process';
 import {
-  cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync,
+  cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -15,7 +15,8 @@ import { parse as parseYaml } from 'yaml';
 import { FIXTURES } from './support/paths';
 
 import { MatrixIoError } from '../src/matrix';
-import { runRuns, selectedReleases } from '../src/runs';
+import { mergeOverlay, openOverlay } from '../src/overlay-tree';
+import { realCompose, runRuns, selectedReleases } from '../src/runs';
 import type { Compose, Exec, RunsOptions, WingfoilOutput } from '../src/runs';
 
 const SCENARIO = [
@@ -767,6 +768,12 @@ describe('check:runs: an adoption run (task-060)', () => {
     assert.deepEqual(includesOf(kept[0] ?? ''), ['workflows/custom/bug-ingest.yaml']);
   });
 
+  it('writes an include list when the composed include has no value (the null branch)', () => {
+    const result = run(FULL_REMOVAL, adoptionCompose([], ['include:']));
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    assert.deepEqual(includesOf(kept[0] ?? ''), []);
+  });
+
   it('fails at include when the composed include is not a list', () => {
     const result = run(FULL_REMOVAL, adoptionCompose([], ['include: workflows/built-in/x.yaml']));
     assert.equal(result.code, 1);
@@ -824,5 +831,418 @@ describe('tests/fixtures/runs/adoption-kanban.yaml (task-068)', () => {
     const remove = ADOPTION_REMOVE;
     assert.deepEqual(data.runs, [{ adopt: { template: 'Scrum', remove } },
       { adopt: { template: 'Kanban', remove } }]);
+  });
+});
+
+// task-095 (plan-076 point 2): the steps that drive a route of governance/feedback.
+
+/** A fake WingFoil for the routes: `memory add` writes an element with a commented template. */
+class RouteWingfoil {
+  readonly calls: Call[] = [];
+  breaks: ((args: string[], cwd: string) => WingfoilOutput | undefined)[] = [];
+  private readonly counts = new Map<string, number>();
+
+  readonly exec: Exec = (_cli, args, cwd, env) => {
+    this.calls.push({ args, email: gitEmail(cwd, env), cwd, env });
+    for (const brk of this.breaks) {
+      const out = brk(args, cwd);
+      if (out !== undefined) return out;
+    }
+    const [group, verb] = args;
+    if (group === 'workflow' && verb === 'start') {
+      const main = args[2] ?? '';
+      const id = `${main}-1-plan`;
+      mkdirSync(join(cwd, 'docs', 'plans'), { recursive: true });
+      writeFileSync(join(cwd, 'docs', 'plans', `${id}.md`),
+        `---\nid: ${id}\ntype: plan\nstatus: active\nworkflow: "${main}"\nphase: "1"\n---\n`);
+      return ok({ instance: { id, workflow: main, planStatus: 'active' } });
+    }
+    if (group === 'memory' && verb === 'search') {
+      const dir = join(cwd, 'docs', 'plans');
+      const ids = existsSync(dir) ? readdirSync(dir).map((name) => name.slice(0, -3)) : [];
+      return ok({ matches: ids.map((id) => ({ id, path: `docs/plans/${id}.md`, type: 'plan',
+        status: 'active' })) });
+    }
+    if (group === 'memory' && verb === 'add') {
+      const type = args[args.indexOf('--type') + 1] ?? '';
+      const n = (this.counts.get(type) ?? 0) + 1;
+      this.counts.set(type, n);
+      const id = `${type}-00${n}-item`;
+      const path = `docs/memory/${type}/${id}.md`;
+      mkdirSync(join(cwd, 'docs', 'memory', type), { recursive: true });
+      writeFileSync(join(cwd, path), ['---', `id: ${id}`, `type: ${type}`, 'status: draft',
+        '# who or what produced it', 'source: ""', 'tags: ["a"]', '---', '', '## Body', '']
+        .join('\n'));
+      return ok({ id, path });
+    }
+    return ok({});
+  };
+}
+
+const routeCompose: Compose = (_tree, _entries, params, out) => {
+  mkdirSync(join(out, '.wingfoil'), { recursive: true });
+  writeFileSync(join(out, '.wingfoil', 'dna.yaml'), 'project: {}\n');
+  writeFileSync(join(out, '.wingfoil', 'workflows.yaml'), 'version: 1\ninclude: []\n');
+  return { params: { ...params }, releases: ['0.3.0'] };
+};
+
+const ROUTE_HEAD = ['format: 1', 'compositions: compositions', 'identities:',
+  '  agent: { name: "Runs Agent", email: "agent@runs.invalid" }', 'runs:'];
+
+const BUG_ROUTE = [
+  '  - chain:',
+  '      - main: feedback-ingest',
+  '        steps:',
+  '          - start',
+  '          - add: { type: feedback, title: "A crash", step: feedback-ingest.capture, '
+    + 'label: item }',
+  '          - set: { element: item, fields: { kind: defect, outcome: bug } }',
+  '          - submit: item',
+  '          - approve: item',
+  '          - end',
+  '      - main: bug-ingest',
+  '        steps:',
+  '          - start',
+  '          - add: { type: bug, title: "A crash", step: bug-ingest.capture, label: bug }',
+  '          - set: { element: bug, body: "Reported by $item.id." }',
+  '          - submit: bug',
+  '      - main: feedback-bug-route',
+  '        steps:',
+  '          - start',
+  '          - set: { element: item, fields: { resulting: $bug.id } }',
+  '          - finalize: feedback-bug-item.bug@feedback:$item.id',
+  '          - submit: item',
+  '          - end',
+];
+
+describe('check:runs: the steps of a route (task-095)', () => {
+  let tree: string;
+  let wingfoil: RouteWingfoil;
+  let options: RunsOptions;
+  /** Each element file's text when `memory submit` names it, and each repository's tracked files. */
+  let seen: Map<string, string>;
+
+  const write = (rel: string, text: string): void => {
+    mkdirSync(join(tree, rel, '..'), { recursive: true });
+    writeFileSync(join(tree, rel), text);
+  };
+  const composition = (id: string): void => {
+    write(`compositions/${id}/example.yaml`, ['format: 1', `id: ${id}`, `title: "${id}"`,
+      'description: "A fixture."', 'packs:', '  - base@^2', 'parameters:',
+      '  project_name: "Demo"', '  approver_name: "Demo Lead"',
+      '  approver_email: "lead@demo.invalid"', '  agent_name: "Demo Agent"', ''].join('\n'));
+  };
+  const scenario = (runs: string[], head: string[] = ROUTE_HEAD): string => {
+    write('tests/fixtures/runs/routes.yaml', [...head, ...runs, ''].join('\n'));
+    return join(tree, 'tests/fixtures/runs/routes.yaml');
+  };
+  const run = (runs: string[], extra: Partial<RunsOptions> = {}): ReturnType<typeof runRuns> =>
+    runRuns(['--tree', tree, scenario(runs)], { ...options, ...extra });
+  const commands = (): string[] => wingfoil.calls.map((call) => call.args.join(' '));
+  const refused = (runs: string[], pattern: RegExp): void => {
+    wingfoil.calls.length = 0;
+    const result = run(runs);
+    assert.equal(result.code, 3, result.lines.join('\n'));
+    assert.match(result.lines.join('\n'), pattern);
+    assert.deepEqual(commands(), [], 'nothing runs');
+  };
+
+  beforeEach(() => {
+    tree = mkdtempSync(join(tmpdir(), 'runs-tree-'));
+    composition('defaults');
+    wingfoil = new RouteWingfoil();
+    seen = new Map();
+    wingfoil.breaks.push((args, cwd) => {
+      if (args[0] === 'memory' && args[1] === 'submit') {
+        const dir = join(cwd, 'docs', 'memory');
+        for (const type of existsSync(dir) ? readdirSync(dir) : []) {
+          for (const name of readdirSync(join(dir, type))) {
+            seen.set(name.slice(0, -3), readFileSync(join(dir, type, name), 'utf8'));
+          }
+        }
+        const note = join(cwd, 'notes', 'feedback-001-item.md');
+        if (existsSync(note)) seen.set('note', readFileSync(note, 'utf8'));
+        seen.set('tracked', execFileSync('git', ['-C', cwd, 'ls-files'], { encoding: 'utf8' }));
+        seen.set('status', execFileSync('git', ['-C', cwd, 'status', '--porcelain'],
+          { encoding: 'utf8' }));
+      }
+      return undefined;
+    });
+    options = { compose: routeCompose, install: () => '/fake/wingfoil.js', exec: wingfoil.exec };
+  });
+  afterEach(() => rmSync(tree, { recursive: true, force: true }));
+
+  it('runs a chain of three mains in one repository, as the bug route (criteria 1, 2, 6)', () => {
+    const result = run(BUG_ROUTE);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    assert.deepEqual(result.lines, [
+      'runs compositions/defaults/example.yaml feedback-ingest+bug-ingest+feedback-bug-route '
+        + 'wingfoil@0.3.0: pass',
+      'runs: 1 run, 0 failed',
+    ]);
+    assert.deepEqual(commands().filter((c) => !c.startsWith('memory search')), [
+      'workflow start feedback-ingest --format json',
+      'memory add --type feedback --title A crash --workflow feedback-ingest-1-plan --step '
+        + 'feedback-ingest.capture',
+      'memory submit feedback-001-item',
+      'memory approve feedback-001-item --reason check:runs scenario approval',
+      'workflow end feedback-ingest-1-plan',
+      'workflow start bug-ingest --format json',
+      'memory add --type bug --title A crash --workflow bug-ingest-1-plan --step '
+        + 'bug-ingest.capture',
+      'memory submit bug-001-item',
+      'workflow start feedback-bug-route --format json',
+      'workflow finalize feedback-bug-route-1-plan --step '
+        + 'feedback-bug-item.bug@feedback:feedback-001-item',
+      'memory submit feedback-001-item',
+      'workflow end feedback-bug-route-1-plan',
+    ]);
+    assert.equal(new Set(wingfoil.calls.map((call) => call.cwd)).size, 1, 'one repository');
+    const approver = wingfoil.calls.find((call) => call.args[1] === 'approve');
+    assert.equal(approver?.email, 'lead@demo.invalid');
+    assert.match(seen.get('bug-001-item') ?? '', /\nReported by feedback-001-item\.\n$/);
+    assert.match(seen.get('feedback-001-item') ?? '', /\nresulting: bug-001-item\n/);
+    assert.equal(seen.get('status'), '', 'every write committed');
+  });
+
+  it('names a run by its name, and a chain\'s failing link by its position (criterion 1)', () => {
+    wingfoil.breaks.push((args) => (args[0] === 'workflow' && args[1] === 'end'
+      && args[2] === 'feedback-ingest-1-plan' ? failed('not complete') : undefined));
+    const chained = run(['  - name: second', ...BUG_ROUTE.slice(0, 1).map((l) => l.replace(
+      '  - chain:', '    chain:')), ...BUG_ROUTE.slice(1)]);
+    assert.equal(chained.code, 1);
+    assert.equal(chained.lines[0], 'runs compositions/defaults/example.yaml second '
+      + 'wingfoil@0.3.0: fail at feedback-ingest[1].end: wingfoil workflow end '
+      + 'feedback-ingest-1-plan exit 1: error: not complete');
+    const single = run(['  - main: feedback-ingest', '    steps: [start, end]']);
+    assert.match(single.lines[0] ?? '', /feedback-ingest wingfoil@0\.3\.0: fail at end: /);
+  });
+
+  it('adds an element outside a step, and submits it by its label (criteria 2, 3)', () => {
+    const result = run(['  - main: feedback-review', '    steps:', '      - start',
+      '      - add: { type: decision-log, title: "Route it", label: dl }',
+      '      - add: { type: task, title: "Another", label: other }',
+      '      - submit: dl', '      - approve: added']);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    const issued = commands();
+    assert.ok(issued.includes('memory add --type decision-log --title Route it'), issued.join('\n'));
+    assert.ok(issued.includes('memory submit decision-log-001-item'), issued.join('\n'));
+    assert.ok(issued.includes('memory approve task-001-item --reason check:runs scenario approval'),
+      issued.join('\n'));
+  });
+
+  it('writes fields that parse back as given, keeping every other line (criterion 4)', () => {
+    const result = run(['  - main: feedback-ingest', '    steps:', '      - start',
+      '      - add: { type: feedback, title: "T", step: feedback-ingest.capture, label: item }',
+      '      - set:', '          element: item', '          fields:',
+      '            source: "true"', '            kind: "42"', '            target: "#x"',
+      '            context: "a: b"', '            tags: [one, "null"]',
+      '          body: "A line."', '      - submit: item']);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    const text = seen.get('feedback-001-item') ?? '';
+    const [, front = ''] = text.split('---\n');
+    assert.deepEqual(parseYaml(front), { id: 'feedback-001-item', type: 'feedback',
+      status: 'draft', source: 'true', tags: ['one', 'null'], kind: '42', target: '#x',
+      context: 'a: b' });
+    for (const kept of ['---\nid: feedback-001-item\ntype: feedback\nstatus: draft\n'
+      + '# who or what produced it\n', '\n## Body\n']) assert.ok(text.includes(kept), text);
+    assert.ok(text.endsWith('\n## Body\nA line.\n'), text);
+    assert.equal(seen.get('status'), '', 'committed');
+  });
+
+  it('writes a file whose path and text name a label\'s id, and leaves other $ text (5, 6)', () => {
+    const result = run(['  - main: feedback-review', '    steps:', '      - start',
+      '      - add: { type: feedback, title: "T", label: item }',
+      '      - write: { path: notes/$item.id.md, text: "Cites $item.id, not $item.idx or $5." }',
+      '      - submit: item']);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    assert.match(seen.get('tracked') ?? '', /^notes\/feedback-001-item\.md$/m);
+    assert.equal(seen.get('note'), 'Cites feedback-001-item, not $item.idx or $5.');
+    assert.equal(seen.get('status'), '', 'committed');
+  });
+
+  it('fails a set whose element file is missing', () => {
+    wingfoil.breaks.push((args, cwd) => {
+      if (args[0] === 'memory' && args[1] === 'add') {
+        assert.ok(existsSync(cwd));
+        return ok({ id: 'feedback-009-gone', path: 'docs/memory/feedback/gone.md' });
+      }
+      return undefined;
+    });
+    const result = run(['  - main: feedback-review', '    steps:', '      - start',
+      '      - add: { type: feedback, title: "T", label: item }',
+      '      - set: { element: item, body: "x" }']);
+    assert.equal(result.code, 1);
+    assert.match(result.lines[0] ?? '', /fail at set: /);
+  });
+
+  it('refuses a scenario that misuses labels, tokens or instance steps (criteria 1, 2, 6)', () => {
+    const steps = (lines: string[]): string[] => ['  - main: feedback-review', '    steps:',
+      ...lines.map((line) => `      - ${line}`)];
+    refused(steps(['start', 'submit: item', 'add: { type: task, title: "T", label: item }']),
+      /routes\.yaml: runs\[0\]\.steps\[1\]\.submit: label item before its add/);
+    refused(steps(['start', 'submit: item']), /runs\[0\]\.steps\[1\]\.submit: unknown label item/);
+    refused(steps(['start', 'submit: added']), /runs\[0\]\.steps\[1\]\.submit: no element added before/);
+    refused(steps(['start', 'add: { type: task, title: "T" }',
+      'set: { element: added, body: "$item.id" }', 'add: { type: task, title: "U", label: item }']),
+    /runs\[0\]\.steps\[2\]\.set: label item before its add/);
+    refused(steps(['start', 'add: { type: task, title: "T", label: item }',
+      'add: { type: task, title: "U", label: item }']), /runs\[0\]\.steps\[2\]\.add\.label: label item added twice/);
+    refused(steps(['start', 'add: { type: task, title: "T", label: added }']), /add\.label: "added" names the last element added/);
+    refused(steps(['start', 'add: { type: task, title: "T", label: Bad_Id }']), /add\.label: a plain id is required/);
+    refused(steps(['next: x', 'start']), /runs\[0\]\.steps\[0\]\.next: before the link's start/);
+    refused(['  - chain:', '      - main: a', '        steps: [start]', '      - main: b',
+      '        steps: [end]'], /runs\[0\]\.chain\[1\]\.steps\[0\]\.end: before the link's start/);
+    refused(['  - chain: []'], /runs\[0\]\.chain: a non-empty list is required/);
+    refused(steps(['start', 'add: { type: task, title: "T" }', 'finalize: k@$nobody.id']), /finalize: unknown label nobody/);
+  });
+
+  it('refuses a set or a write it cannot make (criteria 4, 5)', () => {
+    const steps = (line: string): string[] => ['  - main: feedback-review', '    steps:',
+      '      - start', '      - add: { type: task, title: "T", label: item }', `      - ${line}`];
+    refused(steps('set: { element: item }'), /set: fields or body is required/);
+    refused(steps('set: { element: item, fields: {} }'), /set\.fields: a non-empty mapping is required/);
+    refused(steps('set: { element: item, fields: { kind: 1 } }'), /set\.fields\.kind: a string or a list of strings is required/);
+    refused(steps('set: { element: item, fields: { status: closed } }'), /set\.fields\.status: never written/);
+    refused(steps('set: { element: item, fields: { id: x } }'), /set\.fields\.id: never written/);
+    refused(steps('write: { path: ../x.md, text: "x" }'), /write\.path: must stay inside the repository/);
+    refused(steps('write: { path: .git/hooks/x, text: "x" }'), /write\.path: never under \.git\//);
+  });
+
+  it('runs a run only on the compositions its only lists, composing no other (criterion 7)', () => {
+    composition('other');
+    composition('third');
+    const composed: string[] = [];
+    const result = run(['  - main: feedback-ingest', '    only: [other]', '    steps: [start]',
+      '  - main: feedback-review', '    steps: [start]',
+      '  - adopt: { template: Scrum, remove: { workflows: [], directives: [] } }',
+      '    only: [other]'], { compose: (t, e, p, o) => {
+      composed.push(o);
+      return routeCompose(t, e, p, o);
+    } });
+    const lines = result.lines.filter((line) => !line.includes(' adopt:'));
+    assert.deepEqual(lines, [
+      'runs compositions/defaults/example.yaml feedback-review wingfoil@0.3.0: pass',
+      'runs compositions/other/example.yaml feedback-ingest wingfoil@0.3.0: pass',
+      'runs compositions/other/example.yaml feedback-review wingfoil@0.3.0: pass',
+      'runs compositions/third/example.yaml feedback-review wingfoil@0.3.0: pass',
+      'runs: 5 runs, 0 failed',
+    ]);
+    assert.equal(result.lines.filter((line) => line.includes(' adopt:Scrum ')).length, 1);
+    wingfoil.calls.length = 0;
+    composed.length = 0;
+    const narrow = run(['  - main: feedback-ingest', '    only: [other]', '    steps: [start]'],
+      { compose: (t, e, p, o) => {
+        composed.push(o);
+        return routeCompose(t, e, p, o);
+      } });
+    assert.equal(narrow.lines.at(-1), 'runs: 1 run, 0 failed');
+    assert.equal(composed.length, 1, 'only the composition a run selects is composed');
+    refused(['  - main: a', '    only: [nowhere]', '    steps: [start]'], /runs\[0\]\.only\[0\]: no composition nowhere under compositions/);
+    refused(['  - main: a', '    only: []', '    steps: [start]'], /runs\[0\]\.only: a non-empty list is required/);
+    refused(['  - main: a', '    only: [other, other]', '    steps: [start]'], /runs\[0\]\.only\[1\]: other given twice/);
+  });
+
+  describe('an overlay (criterion 8)', () => {
+    const overlayHead = (dir: string): string[] => ['format: 1', `overlay: ${dir}`,
+      `compositions: ${dir}/compositions`, ...ROUTE_HEAD.slice(2)];
+    const overlayRun = (dir: string, extra: Partial<RunsOptions> = {}):
+    ReturnType<typeof runRuns> => runRuns(['--tree', tree,
+      scenario(['  - main: feedback-ingest', '    steps: [start]'], overlayHead(dir))],
+    { ...options, ...extra });
+
+    beforeEach(() => {
+      write('packs/base/pack.yaml', 'id: base\n');
+      write('catalog.yaml', 'format: 1\n');
+      write('compat.yaml', 'format: 1\n');
+      write('tests/fixtures/up/packs/governance/up/pack.yaml', 'id: governance/up\n');
+      write('tests/fixtures/up/compositions/up/example.yaml', ['format: 1', 'id: up',
+        'title: "up"', 'description: "A fixture."', 'packs:', '  - governance/up@^1',
+        'parameters:', '  approver_email: "lead@demo.invalid"', ''].join('\n'));
+    });
+
+    it('composes on a merged tree holding both trees\' packs, removed afterwards', () => {
+      const trees: string[] = [];
+      const result = overlayRun('tests/fixtures/up', { compose: (t, e, p, o) => {
+        trees.push(t);
+        assert.ok(existsSync(join(t, 'packs', 'base', 'pack.yaml')), 'the tree\'s pack');
+        assert.ok(existsSync(join(t, 'packs', 'governance', 'up', 'pack.yaml')), 'the overlay\'s');
+        assert.ok(existsSync(join(t, 'catalog.yaml')) && existsSync(join(t, 'compat.yaml')));
+        return routeCompose(t, e, p, o);
+      } });
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      assert.deepEqual(result.lines, [
+        'runs tests/fixtures/up/compositions/up/example.yaml feedback-ingest wingfoil@0.3.0: pass',
+        'runs: 1 run, 0 failed',
+      ]);
+      assert.equal(trees.length, 1);
+      assert.notEqual(trees[0], tree);
+      assert.ok(!existsSync(trees[0] ?? ''), 'the merged tree removed');
+    });
+
+    it('shows no scratch path when a composition on the merged tree fails', () => {
+      let merged = '';
+      const result = overlayRun('tests/fixtures/up', { compose: (t) => {
+        merged = t;
+        throw new Error(`${t}/packs/governance/up/pack.yaml: broken, and ${t}/catalog.yaml`);
+      } });
+      assert.equal(result.code, 1);
+      const line = result.lines[0] ?? '';
+      assert.ok(merged !== '' && !line.includes(merged), line);
+      assert.ok(!line.includes(tmpdir()) && !line.includes('validate-overlay-'), line);
+      assert.match(line, /tests\/fixtures\/up\/packs\/governance\/up\/pack\.yaml: broken/);
+      assert.ok(!existsSync(merged));
+    });
+
+    it('refuses an overlay outside tests/fixtures/, under examples/, missing, or shadowing', () => {
+      write('elsewhere/packs/x/pack.yaml', 'id: x\n');
+      write('tests/fixtures/examples/o/packs/y/pack.yaml', 'id: y\n');
+      write('tests/fixtures/shadow/packs/base/pack.yaml', 'id: base\n');
+      write('tests/fixtures/shadow/compositions/s/example.yaml', 'format: 1\n');
+      write('elsewhere/compositions/e/example.yaml', 'format: 1\n');
+      write('tests/fixtures/examples/o/compositions/e/example.yaml', 'format: 1\n');
+      const outside = overlayRun('elsewhere');
+      assert.equal(outside.code, 3, outside.lines.join('\n'));
+      assert.match(outside.lines[0] ?? '', /routes\.yaml: overlay: not under tests\/fixtures\//);
+      const examples = overlayRun('tests/fixtures/examples/o');
+      assert.equal(examples.code, 3);
+      assert.match(examples.lines[0] ?? '', /routes\.yaml: overlay: under tests\/fixtures\/examples\//);
+      const missing = overlayRun('tests/fixtures/none');
+      assert.equal(missing.code, 2);
+      assert.match(missing.lines[0] ?? '', /routes\.yaml: overlay: not a directory/);
+      const shadow = overlayRun('tests/fixtures/shadow');
+      assert.equal(shadow.code, 3);
+      assert.match(shadow.lines[0] ?? '', /routes\.yaml: overlay: packs\/base shadows the tree's packs\/base/);
+      assert.deepEqual(commands(), []);
+    });
+  });
+});
+
+describe('realCompose on an overlay\'s merged tree (task-095 criterion 9)', () => {
+  it('composes an overlay pack and selects its releases on the merged tree', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'runs-overlay-test-'));
+    try {
+      const tree = join(dir, 'tree');
+      cpSync(join(FIXTURES, 'compose', 'tree'), tree, { recursive: true });
+      const flow = join(tree, 'packs', 'methodology', 'flow');
+      const target = join(tree, 'tests', 'fixtures', 'flow-overlay', 'packs', 'methodology',
+        'flow');
+      cpSync(flow, target, { recursive: true });
+      rmSync(flow, { recursive: true });
+      const overlay = openOverlay(tree, 'tests/fixtures/flow-overlay');
+      assert.ok('merged' in overlay, JSON.stringify(overlay));
+      try {
+        assert.deepEqual(mergeOverlay(tree, overlay), []);
+        const out = join(dir, 'out');
+        const composed = realCompose(overlay.merged, ['methodology/flow@^1'],
+          { project_name: 'Demo' }, out);
+        assert.ok(composed.releases.length > 0);
+        assert.ok(existsSync(join(out, '.wingfoil', 'workflows', 'built-in', 'flow-board.yaml')));
+      } finally {
+        rmSync(overlay.root, { recursive: true, force: true });
+      }
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
