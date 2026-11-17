@@ -299,3 +299,13 @@ every pack, preset and example of the tree; its result recorded here.
     run validate`, without it, exits 0.
   - Then `npm test` 1330 passing, 0 failing; `npm run check:packs` 0 problems; `npm run
     validate` exit 0; eslint exit 0. A re-review follows: the fixes change behaviour.
+- 2026-11-17: re-review of `c2e2432d`: approve after amendments, nothing blocking; one should-fix,
+  four nits. Applied in `2ea81eb0`: S-1, `[`, `{` and `,` start a node only inside a flow
+  collection (a depth counter), so `a: foo, "{{s}}" bar` is refused and an unbalanced quote in
+  plain text no longer hides what follows (red: 1 failing in `tests/parameters.test.ts`); N-a, a
+  quoted key's `:` without a space inside a flow collection; N-c, a fenced block closes only on
+  its own character and run (red: 1 failing); N-d, `example-fixture`'s line checked (green at
+  once: the line was already right) and `validate`'s read-failure message says no channel was
+  checked. N-b (a plain scalar's continuation line beginning with a quote) recorded as a known
+  limit in the scanner's comment. The reviewer's four probe scripts rerun: no case wrong but
+  N-b's. A focused re-review of the scanner follows.
