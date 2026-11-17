@@ -97,8 +97,8 @@ body).
    that key's value, or is added after the last key. Every other line of the file stays
    byte-identical, comments included. Each value is written so that the frontmatter parses
    back to exactly the given string or list, quoted where a plain scalar would not (a test
-   covers values such as `true`, `42`, `#x` and `a: b`). The change is committed as the agent. A missing element
-   file, or a frontmatter that does not parse, fails the step.
+   covers values such as `true`, `42`, `#x` and `a: b`). The change is committed as the
+   agent. A missing element file, or a frontmatter that does not parse, fails the step.
 
    These are scenario errors (exit 3):
    - neither `fields` nor `body` given;
@@ -127,8 +127,8 @@ body).
    - **Counts.** A run left out counts in neither the total nor the failures.
    - **Skipped compositions.** A composition that no run of the scenario selects is neither
      composed nor installed.
-8. **An overlay**, a top-level `overlay: <dir>`, relative to the tree as `compositions` is. Compositions resolve on a merged tree, built
-   as `validate --overlay` builds it.
+8. **An overlay**, a top-level `overlay: <dir>`, relative to the tree as `compositions` is.
+   Compositions resolve on a merged tree, built as `validate --overlay` builds it.
    - **Shared code.** The merged-tree build is extracted from `src/validate.ts` › `checkOverlay`
      into an exported function, which `validate` and `check:runs` both use. `openOverlay`'s
      directory rules are exported with it.
