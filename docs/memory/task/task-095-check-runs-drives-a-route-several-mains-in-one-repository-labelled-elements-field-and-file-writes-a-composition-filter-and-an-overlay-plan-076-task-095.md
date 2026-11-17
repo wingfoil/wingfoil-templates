@@ -308,3 +308,31 @@ body).
     `validate-overlay-…`; the overlay is opened before the compositions are listed, so a missing
     overlay directory is exit 2, not the compositions' exit 3.
   - The 64 tests of `tests/runs.test.ts` pass; `npm run lint` exits 0.
+- 2026-11-17, checks on `c0f71539`: `npm test` 1364 tests, 0 failed; `validate --overlay` on
+  `software-exit`, `scrum-exit` and `kanban-exit` exit 0, each output identical to `main`'s
+  at `e5d0a27b` (`diff`, no line differs); `check:packs` and `validate` exit 0;
+  `check:runs` `runs: 46 runs, 0 failed`, the total `main` gives (task-068).
+- 2026-11-17: independent build review (dl-017): approve after amendments; no blocker, four
+  should-fix, seven nits; `validate`'s refusals, lines and problem order confirmed unchanged by
+  the extraction, the token's global regex safe, every overlay cleaned on every path probed.
+  Applied in `2e64bd00`:
+  - **Should-fix:** `write`'s `.git` refusal on the normalized path, again after the tokens
+    expand (`./.git/config` passed); each merged tree removed once its scenario is done, not when
+    `runRuns` returns (`runScenario` split out); a key's block keeps its blank lines while an
+    indented line follows (a block scalar with a blank line could not be written); the tests
+    asked: a frontmatter that does not parse, a run's name given twice, equal to another run's
+    name or not plain, `add` with a step before `start`, `./.git/config`, the overlay removed
+    per scenario, and `setFields` exported and tested on a block list, a block scalar with a
+    blank line, a key that is a prefix of another, a new key, a body line, no frontmatter, a BOM
+    and CRLF.
+  - **Nits applied:** a BOM or CRLF named in `set`'s failure; a new key added after the last
+    key, before a trailing comment; the closing `---` found as a whole line; a run's `name`
+    refused when it equals another run's name, given or derived; `validate`'s re-export moved
+    below the imports.
+  - **Nits recorded, no change:** `submit: added` (or `approve`, `set`) before any `add` is a
+    scenario error (exit 3), an extension of criterion 2's static checks; `only` takes plain ids,
+    as every composition folder of the tree is.
+  - **Test first:** the new tests run against `c0f71539`'s code (its `setFields` exported for
+    the run): 69 tests, 6 failing; the two that pass there (a frontmatter that does not parse, a
+    missing element file's message) characterize behaviour the fix keeps. 69 pass after; `npm
+    run lint` exits 0. The fixes change behaviour: re-review.
