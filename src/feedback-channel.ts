@@ -37,7 +37,8 @@ export function servedTargets(text: string): string[] {
   const targets: string[] = [];
   for (const line of lines.slice(close + 1)) {
     const run = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
-    if (run !== null) {
+    // A backtick fence's info string holds no backtick (CommonMark): such a line is text.
+    if (run !== null && !(run[1]?.startsWith('`') === true && (run[2] ?? '').includes('`'))) {
       const [, marks = '', info = ''] = run;
       if (fence === undefined) {
         fence = marks;

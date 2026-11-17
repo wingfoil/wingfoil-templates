@@ -195,8 +195,9 @@ function blockParentOf(prefix: string): number {
  * The quoted scalars, comments and block scalars of a YAML text, by a token scan: an unquoted
  * `{{name}}` can make the raw text unparseable, so no parser reads it (spec-003 §11). A quote
  * opens a scalar, and `|` or `>` a block scalar, only where a node starts; `[`, `{` and `,` start
- * one only inside a flow collection. A plain scalar's continuation line that begins with a quote
- * is read as a quoted scalar: a known limit, as contrived as it is rare.
+ * one only inside a flow collection. A plain scalar's continuation line that begins with a quote,
+ * `[` or `{` is read as a quoted scalar or a flow collection: a known limit, as contrived as it
+ * is rare, kept to that scalar's lines by the indentation reset below.
  */
 function yamlSpans(text: string, start: number, end: number): Span[] {
   const spans: Span[] = [];
@@ -209,6 +210,8 @@ function yamlSpans(text: string, start: number, end: number): Span[] {
   let lineStart = start;
   let blockParent: number | undefined;
   let flowDepth = 0;
+  /** The indentation of the line the outermost flow collection opened on. */
+  let flowIndent = 0;
   let i = start;
   while (i < end) {
     if (i === start || text[i - 1] === '\n') {
@@ -222,6 +225,13 @@ function yamlSpans(text: string, start: number, end: number): Span[] {
           continue;
         }
         blockParent = undefined;
+      }
+      // A flow collection's lines are indented past its parent's: back at that indentation, a
+      // collection opened by mistake (a plain line beginning with `[`) has ended.
+      const lead = line.length - line.trimStart().length;
+      if (state === 'plain' && flowDepth > 0 && line.trim() !== '' && lead <= flowIndent
+        && !/^[\]}]/.test(line.trimStart())) {
+        flowDepth = 0;
       }
     }
     const c = text[i];
@@ -246,6 +256,7 @@ function yamlSpans(text: string, start: number, end: number): Span[] {
         state = 'plain';
       }
     } else if ((c === '[' || c === '{') && (nodeStart || flowDepth > 0)) {
+      if (flowDepth === 0) flowIndent = prefix.length - prefix.trimStart().length;
       flowDepth += 1;
     } else if ((c === ']' || c === '}') && flowDepth > 0) {
       flowDepth -= 1;

@@ -1600,7 +1600,8 @@ describe('spec-003: list parameters, placement, entry directives, feedback chann
       const result = lint([...CLEAN, FB, channel('up-a', SERVES)]);
       assert.equal(result.code, 0, result.lines.join('\n'));
       // A fenced block closes only on its own fence (re-review N-c).
-      for (const fenced of ['```\n~~~\n```\n', '~~~\n```\n~~~\n', '````\n```\n````\n']) {
+      for (const fenced of ['```\n~~~\n```\n', '~~~\n```\n~~~\n', '````\n```\n````\n',
+        '``` a`b\n']) {
         const valid = lint([...CLEAN, FB, channel('up-a', `${fenced}${SERVES}`)]);
         assert.equal(valid.code, 0, `${fenced}${valid.lines.join('\n')}`);
       }

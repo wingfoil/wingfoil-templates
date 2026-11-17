@@ -176,6 +176,10 @@ describe('parameters: the placement rule (spec-003 §3.1)', () => {
     assert.deepEqual(placements('a: x, "y\nb: {{s}}\nc: "z"\nd: {{s}}\n'), ['s plain', 's plain']);
     assert.deepEqual(placements('a: {"k":"{{s}}", "j": ["{{s}}"]}\n'), []);
     assert.deepEqual(placements('a: [\n  "{{s}}",\n  {{s}}\n]\n'), ['s plain']);
+    // A flow collection opened by mistake ends where its line's indentation returns (focused
+    // re-review F1): a plain continuation line beginning with `[` or `{` stays local.
+    assert.deepEqual(placements('k: foo\n  [bar\nz: b, "{{s}}"\n'), ['s plain']);
+    assert.deepEqual(placements('k: foo\n  {bar\nz: [ "{{s}}", {{s}} ]\n'), ['s plain']);
   });
 
   it("closes a block scalar at its key's sibling, after a sequence dash (review S2)", () => {
