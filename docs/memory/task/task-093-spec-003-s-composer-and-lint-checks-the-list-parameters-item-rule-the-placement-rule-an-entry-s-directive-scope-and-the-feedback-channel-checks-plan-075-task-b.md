@@ -309,3 +309,12 @@ every pack, preset and example of the tree; its result recorded here.
   checked. N-b (a plain scalar's continuation line beginning with a quote) recorded as a known
   limit in the scanner's comment. The reviewer's four probe scripts rerun: no case wrong but
   N-b's. A focused re-review of the scanner follows.
+- 2026-11-17: focused re-review of the scanner at `2ea81eb0`: approve after one minor amendment;
+  no regression. Applied in `2596166c`: F1, a flow collection opened by a plain continuation
+  line beginning with `[` or `{` no longer carries past it (the depth resets when a line returns
+  to the indentation the collection opened at; red: 1 failing), the known limit's comment
+  widened to it; F2, a backtick fence whose info string holds a backtick is text (red: 1
+  failing). The reviewers' six probe scripts rerun: no case wrong but the known limit's. A run of
+  `npm test` started before `2596166c` failed 51 tests because `dist/` was rebuilt while it ran;
+  rerun undisturbed on `2596166c`: 1330 passing, 0 failing; `npm run check:packs` 0 problems;
+  `npm run validate` exit 0; eslint exit 0. The code is frozen at `2596166c`.
