@@ -25,13 +25,21 @@ export interface DirectiveFile {
   yaml?: LoadedYaml;
 }
 
-/** The targets a directive's text states, one per matching line. */
+/**
+ * The targets a directive's body states, one per line matching exactly; a line in the frontmatter
+ * or in a fenced code block states none.
+ */
 export function servedTargets(text: string): string[] {
-  return text.replace(/\r\n?/g, '\n').split('\n')
-    .flatMap((line) => {
-      const match = SERVES.exec(line.trimEnd());
-      return match === null ? [] : [`upstream:${match[1] ?? ''}`];
-    });
+  const lines = text.replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n').split('\n');
+  const close = lines[0] === '---' ? lines.indexOf('---', 1) : -1;
+  let fenced = false;
+  const targets: string[] = [];
+  for (const line of lines.slice(close + 1)) {
+    if (/^ {0,3}(?:```|~~~)/.test(line)) fenced = !fenced;
+    const match = fenced ? null : SERVES.exec(line);
+    if (match !== null) targets.push(`upstream:${match[1] ?? ''}`);
+  }
+  return targets;
 }
 
 function frontmatterOf(file: DirectiveFile): LoadedYaml | undefined {

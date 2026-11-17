@@ -10,6 +10,8 @@ import {
   BASE, DELIVERY, KANBAN, RELEASE_TEMPLATE, RELEASE_TYPE, SOFTWARE, subWorkflow, withPackTree,
 } from './support/pack-tree';
 import type { PackSpec } from './support/pack-tree';
+import { ACCEPTED, PLACEMENT_PARAMETERS, REFUSED } from './support/placement-cases';
+import type { PlacementCase } from './support/placement-cases';
 import { FIXTURES, FIXTURE_CATALOG } from './support/paths';
 import { conformingReadme } from './support/readme';
 
@@ -271,30 +273,35 @@ describe('composeDocuments: parameters (spec-001 §8)', () => {
   it('refuses a list default, or a value given, that fails the item rule (spec-003 §3.2)', () => {
     fails([BASE_M, SOFTWARE, KANBAN, declaring(listOf('task, task'))],
       ['methodology/kanban', 'blueprint/p'], /parameter l of blueprint\/p: default .*twice/, NAME);
-    for (const value of ['', 'x], kind: [defect', 'null, task', 'bug,', 'catalog/pack']) {
+    for (const value of ['', 'x], kind: [defect', 'null, task', 'yes, task', 'on', 'bug,', 'Yes',
+      'bug:', 'catalog/pack']) {
       fails([BASE_M, SOFTWARE, KANBAN, declaring(listOf('bug'))],
         ['methodology/kanban', 'blueprint/p'], /parameter l of blueprint\/p: .*not a valid list/,
         { ...NAME, l: value });
     }
+    // As the CLI gives them: text, read by the declared type (review S4).
+    withPackTree([BASE_M, SOFTWARE, KANBAN, declaring(listOf('bug'))], (root) => {
+      assert.throws(() => composeDocuments(root, CATALOG, ['methodology/kanban', 'blueprint/p'],
+        { ...NAME, l: 'task, task' }, { givenAsText: true }),
+      /parameter l of blueprint\/p: .*twice/);
+    });
     const result = compose([BASE_M, SOFTWARE, KANBAN, { ...declaring(listOf('bug, task')),
       fragments: ['dna'], extraFiles: { 'fragments/dna.yaml': 'format: 1\nx: [{{l}}]\n' } }],
     ['methodology/kanban', 'blueprint/p'], { ...NAME, l: ' bug , upstream:plover-vendor ' });
     assert.deepEqual(result.dna['x'], ['bug', 'upstream:plover-vendor']);
   });
 
+  const placed = (each: PlacementCase): PackSpec => ({ ...declaring(PLACEMENT_PARAMETERS),
+    ...each.path === 'directives/d.md' ? { directives: ['d'] } : { fragments: ['dna'] },
+    extraFiles: { [each.path]: each.text } });
+
   it('refuses a misplaced reference before substitution (spec-003 §3.1)', () => {
-    const s = { s: { type: 'string', description: 'x', default: 'a' } };
-    for (const [text, where] of [['x: {{s}}\n', 'unquoted'], ["x: '{{s}}'\n", 'single-quoted'],
-      ['x: |\n  {{s}}\n', 'block scalar'], ['x: "y" # {{s}}\n', 'comment'],
-      ['x: [{{s}}]\n', 'unquoted']] as const) {
-      fails([BASE_M, SOFTWARE, KANBAN, { ...declaring(s), fragments: ['dna'],
-        extraFiles: { 'fragments/dna.yaml': `format: 1\n${text}` } }],
-      ['methodology/kanban', 'blueprint/p'],
-      new RegExp(`fragments/dna\\.yaml: \\{\\{s\\}\\} stands (in a )?${where}`), NAME);
+    for (const each of REFUSED) {
+      const file = each.path.replace('.', '\\.');
+      fails([BASE_M, SOFTWARE, KANBAN, placed(each)], ['methodology/kanban', 'blueprint/p'],
+        new RegExp(`blueprint/p/${file}: \\{\\{[a-z]\\}\\} stands ${each.placement ?? ''}`),
+        NAME);
     }
-    fails([BASE_M, SOFTWARE, KANBAN, { ...declaring(s), directives: ['d'], extraFiles: {
-      'directives/d.md': '---\nid: d\ntitle: {{s}}\nformat: 1\n---\n\nText.\n' } }],
-    ['methodology/kanban', 'blueprint/p'], /directives\/d\.md: \{\{s\}\} stands unquoted/, NAME);
     const user: PackSpec = { id: 'governance/u', requires: ['base@^1', 'blueprint/p@^1'],
       fragments: ['dna'], extraFiles: { 'fragments/dna.yaml': 'format: 1\nx: [{{l}}]\n' } };
     fails([BASE_M, SOFTWARE, KANBAN, declaring(listOf('bug')), user],
@@ -303,6 +310,10 @@ describe('composeDocuments: parameters (spec-001 §8)', () => {
   });
 
   it('accepts the placements spec-003 §3.1 allows', () => {
+    for (const each of ACCEPTED) {
+      compose([BASE_M, SOFTWARE, KANBAN, placed(each)], ['methodology/kanban', 'blueprint/p'],
+        NAME);
+    }
     const result = compose([BASE_M, SOFTWARE, KANBAN, { ...declaring({
       s: { type: 'string', description: 'x', default: 'a' },
       n: { type: 'integer', description: 'x', default: 2 } }), fragments: ['dna'],

@@ -451,7 +451,8 @@ function checkOverlay(tree: string, overlay: Overlay): OverlayCheck {
 
 /**
  * The channel conflicts of a composed output (spec-003 §5.2), from its directives; a directory
- * that cannot be read holds none, since `use` must not throw (src/determinism.ts).
+ * that cannot be read is reported as such, never thrown, since `use` must not throw
+ * (src/determinism.ts).
  */
 function composedConflicts(output: string): string[] {
   const dir = join(output, '.wingfoil', 'directives', 'built-in');
@@ -460,8 +461,8 @@ function composedConflicts(output: string): string[] {
     return channelConflicts(readdirSync(dir).filter((name) => name.endsWith('.md')).sort()
       .map((name) => ({ path: `directives/${name}`, file: `directives/built-in/${name}`,
         text: readFileSync(join(dir, name), 'utf8') })));
-  } catch {
-    return [];
+  } catch (error) {
+    return [`the composed directives could not be read: ${messageOf(error)}`];
   }
 }
 

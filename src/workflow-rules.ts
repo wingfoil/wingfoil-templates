@@ -83,8 +83,9 @@ function executedDirective(action: unknown): string | undefined {
   const call = /^agent\.execute\((.*)\)$/s.exec(action.trim());
   if (call === null) return undefined;
   for (const argument of (call[1] ?? '').split(',')) {
-    const named = /^\s*directive\s*:\s*(\S+?)\s*$/.exec(argument);
-    if (named !== null) return named[1];
+    const named = /^\s*directive\s*:\s*(.+?)\s*$/.exec(argument);
+    // A quoted id is the id; anything else unusual is kept, so that the scope check refuses it.
+    if (named !== null) return (named[1] ?? '').replace(/^(["'])(.*)\1$/, '$2');
   }
   return undefined;
 }

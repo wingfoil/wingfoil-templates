@@ -161,44 +161,70 @@ export function referencesIn(text: string): { name: string; offset: number }[] {
 
 type Span = { start: number; end: number; kind: string };
 
+/** A frontmatter as src/frontmatter.ts reads it, on the raw text: a BOM and CRLF allowed. */
+const RAW_FRONTMATTER = /^(\uFEFF?---\r?\n)([\s\S]*?\r?\n)?---\r?(?:\n|$)/;
+/** Before a quoted scalar or a block indicator: a line's start, after its sequence dashes. */
+const NODE_START = /^[ \t]*(?:-[ \t]+)*(?:\?[ \t]+)?$/;
+/** Before a quoted scalar or a block indicator: a value indicator, or inside a flow collection. */
+const VALUE_START = /(?::[ \t]+|[[{,][ \t]*)$/;
+
 /** The YAML a placement is read in: a `.yaml` file but pack.yaml, a `.md` file's frontmatter. */
 function yamlRegion(text: string, path: string): { start: number; end: number } | undefined {
   const name = path.slice(path.lastIndexOf('/') + 1);
   if (name === 'pack.yaml') return undefined;
   if (path.endsWith('.yaml')) return { start: 0, end: text.length };
-  if (!path.endsWith('.md') || !text.startsWith('---\n')) return undefined;
-  const close = text.indexOf('\n---', 3);
-  return { start: 4, end: close === -1 ? text.length : close + 1 };
+  if (!path.endsWith('.md')) return undefined;
+  const match = RAW_FRONTMATTER.exec(text);
+  if (match === null) return undefined;
+  const start = (match[1] ?? '').length;
+  return { start, end: start + (match[2] ?? '').length };
+}
+
+/** The column a block scalar's content must exceed: its key's, or its sequence dash's. */
+function blockParentOf(prefix: string): number {
+  const dashes = /^[ \t]*(?:-[ \t]+)*/.exec(prefix)?.[0] ?? '';
+  if (dashes.length === prefix.length && /-[ \t]+$/.test(prefix)) {
+    return prefix.trimEnd().length - 1;
+  }
+  return dashes.length;
 }
 
 /**
  * The quoted scalars, comments and block scalars of a YAML text, by a token scan: an unquoted
- * `{{name}}` can make the raw text unparseable, so no parser reads it (spec-003 §11).
+ * `{{name}}` can make the raw text unparseable, so no parser reads it (spec-003 §11). A quote
+ * opens a scalar, and `|` or `>` a block scalar, only where a node starts.
  */
 function yamlSpans(text: string, start: number, end: number): Span[] {
   const spans: Span[] = [];
+  const lineEndOf = (at: number): number => {
+    const next = text.indexOf('\n', at);
+    return next === -1 ? end : Math.min(next, end);
+  };
   let state: 'plain' | 'double' | 'single' = 'plain';
   let open = start;
-  let indent = 0;
+  let lineStart = start;
   let blockParent: number | undefined;
   let i = start;
   while (i < end) {
     if (i === start || text[i - 1] === '\n') {
-      const lineEnd = text.indexOf('\n', i) === -1 ? end : Math.min(text.indexOf('\n', i), end);
+      lineStart = i;
+      const lineEnd = lineEndOf(i);
       const line = text.slice(i, lineEnd);
-      const lead = line.length - line.trimStart().length;
       if (blockParent !== undefined) {
-        if (line.trim() === '' || lead > blockParent) {
+        if (line.trim() === '' || line.length - line.trimStart().length > blockParent) {
           spans.push({ start: i, end: lineEnd, kind: 'block scalar' });
           i = lineEnd + 1;
           continue;
         }
         blockParent = undefined;
       }
-      if (state === 'plain') indent = lead;
     }
     const c = text[i];
     const before = i === start ? '\n' : text[i - 1] ?? '\n';
+    const prefix = text.slice(lineStart, i);
+    // A tag or an anchor before a node leaves it a node start: `a: !!str "x"`.
+    const bare = prefix.replace(/(?:[!&][^\s]*[ \t]+)+$/, '');
+    const nodeStart = state === 'plain' && (NODE_START.test(bare) || VALUE_START.test(bare));
     if (state === 'double') {
       if (c === '\\') {
         i += 1;
@@ -213,21 +239,21 @@ function yamlSpans(text: string, start: number, end: number): Span[] {
         spans.push({ start: open, end: i + 1, kind: 'single-quoted' });
         state = 'plain';
       }
-    } else if (c === '"') {
+    } else if (c === '"' && nodeStart) {
       state = 'double';
       open = i;
-    } else if (c === "'" && /[\s[{,]/.test(before)) {
+    } else if (c === "'" && nodeStart) {
       state = 'single';
       open = i;
     } else if (c === '#' && /\s/.test(before)) {
-      const lineEnd = text.indexOf('\n', i) === -1 ? end : Math.min(text.indexOf('\n', i), end);
+      const lineEnd = lineEndOf(i);
       spans.push({ start: i, end: lineEnd, kind: 'comment' });
       i = lineEnd;
       continue;
-    } else if ((c === '|' || c === '>') && /\s/.test(before)) {
-      const lineEnd = text.indexOf('\n', i) === -1 ? end : Math.min(text.indexOf('\n', i), end);
+    } else if ((c === '|' || c === '>') && nodeStart) {
+      const lineEnd = lineEndOf(i);
       if (/^[|>][-+0-9]*\s*(?:#.*)?$/.test(text.slice(i, lineEnd))) {
-        blockParent = indent;
+        blockParent = blockParentOf(bare);
         i = lineEnd + 1;
         continue;
       }

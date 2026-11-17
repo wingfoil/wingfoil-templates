@@ -164,6 +164,29 @@ describe('parameters: the placement rule (spec-003 §3.1)', () => {
     assert.deepEqual(placements('a: {{s}}\n', 'README.txt'), []);
   });
 
+  it('opens a quoted scalar only where a scalar starts (review S1)', () => {
+    assert.deepEqual(placements('a: 12" screen\nb: "{{s}}"\n'), []);
+    assert.deepEqual(placements("a: the '90s style\nb: \"{{s}}\"\n"), []);
+    assert.deepEqual(placements('a: x "{{s}}" y\n'), ['s plain']);
+    assert.deepEqual(placements('- "{{s}}"\n- [ "{{s}}", { k: "{{s}}" } ]\n? "{{s}}"\n: 1\n'), []);
+    assert.deepEqual(placements('a: !!str "{{s}}"\nb: &x "{{s}}"\n'), []);
+  });
+
+  it("closes a block scalar at its key's sibling, after a sequence dash (review S2)", () => {
+    assert.deepEqual(placements('- k: >-\n    text\n  j: "{{s}}"\n'), []);
+    assert.deepEqual(placements('- k: >-\n    {{s}}\n  j: "{{s}}"\n'), ['s block scalar']);
+    assert.deepEqual(placements('- - k: |\n      {{s}}\n    j: "{{s}}"\n'), ['s block scalar']);
+  });
+
+  it('reads a frontmatter as src/frontmatter.ts does, CRLF and BOM included (review S3)', () => {
+    assert.deepEqual(placements('---\r\nt: {{s}}\r\n---\r\nText {{s}}.\r\n', 'directives/d.md'),
+      ['s plain']);
+    assert.deepEqual(placements('\uFEFF---\nt: {{s}}\n---\nText {{s}}.\n', 'directives/d.md'),
+      ['s plain']);
+    assert.deepEqual(placements('---\nt: "x"\n----\nu: {{s}}\n---\n', 'directives/d.md'),
+      ['s plain']);
+  });
+
   it("gives each misplaced reference's offset", () => {
     const [first] = misplacedReferences('a: "ok"\nb: {{s}}\n', 'w.yaml', scope, 'a/p');
     assert.equal(first?.offset, 11);
