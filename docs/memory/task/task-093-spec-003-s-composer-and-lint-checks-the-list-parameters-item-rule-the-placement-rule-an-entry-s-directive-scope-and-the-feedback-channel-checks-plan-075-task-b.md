@@ -41,7 +41,8 @@ rules come from spec-003, approved, and the spec-001 sections it amended (§6.3,
   §5.2 leaves that case in a project to the facilitator and the approver, so the check runs on the
   compositions the lint and `validate` make, not in `npm run compose`. The pack id and the tag are
   this pack's (§10.1, §11): one module holds them, the first rule of `src/` that names a pack.
-  "Requires" is direct, as spec-001 uses the word (§8.1 says "transitively" where it means it).
+  "Requires" is direct: the directive scope is direct, as spec-001 §6.3 and `workflowProblems`
+  have it; §8.1's transitive reach is the parameters' only.
   The lint composes two non-overlay packs together only when one reaches the other through
   `requires`, a declared tension or a stage overlay (`src/overlay-rules.ts`); two independent
   upstream packs serving one target are therefore caught only by a preset or README example that
@@ -94,19 +95,24 @@ Tests: the lint rules in `tests/check-packs.test.ts`, the parameter functions in
    It covers substituted `.yaml` files other than `pack.yaml` and the YAML frontmatter of `.md`
    files, not a Markdown body. A reference outside the scope is left to `parameter-scope` and to
    `substitute`, with no placement problem. Tests, each a fixture pack, each case through both the
-   lint and the composer: a double-quoted scalar, `"a {{s}} b"`, an `integer` and a `boolean`
+   lint and the composer: a double-quoted scalar, `"a {{s}} b"`, a double-quoted key
+   (`"{{s}}": 1`), an `integer` and a `boolean`
    unquoted, `[{{list}}]` and `[ {{list}} ]` in the declaring pack, `{{s}}` in a Markdown body,
    accepted; plain, single-quoted, a block scalar, a comment, `[{{list}}, x]`, `[{{list}}]` in a
    pack that does not declare it, a non-list `string` as `[{{s}}]`, a plain `{{s}}` in a
    directive's frontmatter, refused.
 5. **An entry's directive scope:** a new rule `entry-directive-scope` in `workflowProblems`: an
-   action of a conditional entry's workflows of the form `agent.execute(directive: <id>)` whose
-   `<id>` is outside the entry's scope (Context's five sources) is a problem at the action's line.
-   A plain `agent.execute`, one with other arguments, and one naming a directive in scope pass; a
-   WingFoil built-in directive id is outside the scope as spec-003 §7.2 lists it. The composer,
-   which runs `workflowProblems`, refuses the same (spec-001 §18's general rule). Tests: in scope
-   through each of the five sources, accepted; an id of a pack outside the scope, another entry's
-   directive, and an unknown id, refused.
+   `agent.execute(…)` action of a conditional entry's workflows whose `directive:` argument (alone
+   or among other arguments) names an id outside the entry's scope (Context's five sources) is a
+   problem at the action's line. A plain `agent.execute`, one with no `directive:` argument, and
+   one naming a directive in scope pass. A WingFoil built-in directive id passes: a reading of a
+   gap, since spec-003 §7.2's and spec-001 §6.5's scope lists name pack sources only, while
+   spec-001 §7.4 has a role's directive "shipped by a pack or built into WingFoil" and
+   `checkRoleDirectives` (`src/merge.ts`) and `workflowProblems`' `roles.yaml` check accept
+   `BUILTIN_DIRECTIVE_IDS`; ruled by the approver with this body. The composer, which runs
+   `workflowProblems`, refuses the same (spec-001 §18's general rule). Tests: in scope through
+   each of the five sources and a built-in id, accepted; an id of a pack outside the scope,
+   another entry's directive, and an unknown id, refused.
 6. **The `feedback-channel` checks:**
    - per pack, a new rule `feedback-channel`: a directive whose `tags` hold `feedback-channel`,
      shipped by a pack whose `requires` does not hold `governance/feedback`, or whose text holds
@@ -115,8 +121,10 @@ Tests: the lint rules in `tests/check-packs.test.ts`, the parameter functions in
    - per composition, a new rule `feedback-channel-target`: two `feedback-channel` directives
      serving one target in one composition of the tree is a problem naming both and the target,
      checked on the lint's overlay combinations and on every composition `validate` composes
-     (presets and their legs, README examples, the entries given, an overlay's compositions),
-     reading the composed output since `validate` composes in a child process; on `validate`'s
+     (presets, README examples, the entries given, an overlay's compositions, each with its
+     legs), for example by reading the composed output, since `validate` composes in a child
+     process (its `use` callback must not throw and returns early without `compat`, so the
+     problem is collected there and reported after `composeTwice`); on `validate`'s
      line for a failing composition the message begins with the rule id
      (`composition <label>: feedback-channel-target: …`); `npm run compose` of a set holding two
      channels for one target still exits 0 (spec-003 §5.2);
@@ -139,8 +147,8 @@ Tests: the lint rules in `tests/check-packs.test.ts`, the parameter functions in
    key (`"{{s}}": 1` beside `a: 2`, default `s: a`; `parseYaml` refuses duplicate keys), since the
    type rule forbids `"`, `\` and control characters and the item rule keeps `[{{list}}]`
    well-formed; the reason recorded (dl-018). `readFiles`' parse check after substitution stays as
-   a defence, reached after this task only through a duplicate key or a file malformed on its
-   own.
+   a defence, reached after this task only through a duplicate key, an implicit key over 1024
+   characters, or a file malformed on its own.
 9. **Test first** (dl-018): each new rule and each change to an existing check has a test that
    fails before the change, the red run's command and failing count in the Execution Notes.
 10. **Checks** (`tooling-delivery` v4 › `review`, dl-039): the build review and its amendments
@@ -180,3 +188,11 @@ Tests: the lint rules in `tests/check-packs.test.ts`, the parameter functions in
   target's slug, more item-rule cases, the action's exact form and built-in ids, the test files,
   the CI's fixture trees unchanged. The review checked every published pack against the rules:
   all pass unchanged.
+- 2026-11-17: re-review of the amendments: approve after amendments, nothing blocking; two
+  should-fix and four nits, applied in the commit that records this note: a built-in directive
+  id accepted in criterion 5, as a reading of a gap for the approver's ruling with this body
+  (spec-001 §7.4, `merge.ts`'s and `workflowProblems`' precedent), with its test; the Context's
+  "requires" sentence (§6.3 direct, §8.1 the parameters' only); nits: a double-quoted key among
+  the accepted placements, the key over 1024 characters as a parse route, "each with its legs"
+  and the output read as an example with `use`'s constraints, a `directive:` argument among
+  others checked.
