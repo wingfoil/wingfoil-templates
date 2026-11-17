@@ -442,3 +442,14 @@ Before every commit, the privacy check (`repository-practice` rule 2). After eve
   `bug` without it, each target added outside the step); only `decision-log-ingest` and
   `governance-evolution` were driven by neither plan. **Nit:** a ragged wrap in point 6.
   Wording only: no further review.
+- 2026-11-17: the plan submitted by the agent on the approver's request in chat (`draft →
+  active`, `5fe29262`); `main` pushed at `5fe29262` on the approver's request, `main`'s CI on
+  `c770844e` (run 44089866197) `success` beforehand.
+- 2026-11-17, step 2, task-095 (`check:runs` drives a route): body reviewed and re-reviewed,
+  accepted into the backlog by the approver; built on its branch, the build review and its
+  re-review applied; dl-039's checks on `9f830594` (branch CI 44113757047 `success`, no job over
+  25 minutes; the local list green); approved by the approver and merged `--no-ff` at
+  `ce0bf8c8` on his OK, `done` at `cf9d49dd`. The row of the full scrum and kanban runs
+  narrowed (task-095's close). `main`'s CI on `cf9d49dd`, run 44117803750, `success`: jobs
+  `validate (22.12.0, 1)` 9 min 9 s, `(22.12.0, 2)` 3 min 36 s, `(22.21.0, 1)` 8 min 45 s,
+  `(22.21.0, 2)` 5 min 31 s.
