@@ -43,9 +43,10 @@ for. Later plans own:
   15 compositions, 30 runs, tolerance none). It was then driven on 0.3.2 through three routes to
   `closed`: an added outcome (`deferred`) to its decision-log fallback, `upstream-note` through
   a fixture channel, and `bug` with `software` through `bug-ingest`; plan-074 left `task` on
-  the frontier. plan-073 had driven `task`, `declined` and `duplicate`, outside a step, on its
-  format-1 draft. Driven by neither: `decision-log` through `decision-log-ingest` or
-  `governance-evolution`, and the would-be `bug` without `software`. It sits untracked under
+  the frontier. plan-073 had driven, on its format-1 draft, `decision-log` (the target added
+  outside the step), `task`, `declined`, `duplicate`, `bug` with `software` through
+  `bug-ingest`, and the would-be `bug` without `software`. Driven by neither: `decision-log`
+  through `decision-log-ingest` or `governance-evolution`. It sits untracked under
   `tests/fixtures/feedback-draft/`, as a reference only. It holds:
   - the pack at format 2, with the three list parameters;
   - a fixture upstream pack, `governance/feedback-upstream`;
@@ -272,8 +273,8 @@ Each point has a recommendation.
      upstream pack, composed with `--tree` on a copy of `main` with `feedback-exit`'s packs
      merged in, `feedback_outcomes` holding the added outcome: `decision-log` through
      `decision-log-ingest`, a governance change through `governance-evolution` (FA-7's
-     governance path), `task`, `declined`, `duplicate`, an
-     added outcome, `bug` through `bug-ingest`, and `upstream-note`;
+     governance path), `task`, `declined`, `duplicate`, an added outcome, `bug` through
+     `bug-ingest`, and `upstream-note`;
    - **without `software`:** `base` and the pack: `decision-log`, `task`, and the would-be
      `bug` proposed as `decision-log` naming it.
 
@@ -416,10 +417,15 @@ Before every commit, the privacy check (`repository-practice` rule 2). After eve
   applied. **Blocker:** `check:runs` has no overlay, so the upstream scenario could not
   compose the fixture pack: point 2 adds an `overlay:` key. **Should-fix:** the run count
   (7 routes, 4 adoptions, about 19 per release) and the filter on adopt runs; FA-8 without
-  `assertOpenings`, which is this repository's opening; plan-073's `task`, `declined` and
-  `duplicate` in the Context; `kind` and `target` bound to their lists; point 8's [V] tests
-  listed in point 3; a labelled element's id in field values, body lines and file text.
+  `assertOpenings`, which is this repository's opening; plan-073's routes in the Context;
+  `kind` and `target` bound to their lists; point 8's [V] tests listed in point 3; a labelled element's id in field values, body lines and file text.
   **Nits:** "and dates" dropped; "no step writes given text at a given path"; point 6's
   `--tree` and added outcome; spec-003 §4.4 cited and the alternative's reach under `every`;
   the empty-frontier probe in task-097's Design. The fixes complete the ruled scope of points
   2, 4, 5 and 6 with no new decision: a final check of the fixes.
+- 2026-11-17: final check of the re-review's fixes: approve after one should-fix and one nit,
+  both applied. **Should-fix:** the Context's account of plan-073's run completed (it drove
+  `decision-log`, `task`, `declined`, `duplicate`, `bug` with `software` and the would-be
+  `bug` without it, each target added outside the step); only `decision-log-ingest` and
+  `governance-evolution` were driven by neither plan. **Nit:** a ragged wrap in point 6.
+  Wording only: no further review.
