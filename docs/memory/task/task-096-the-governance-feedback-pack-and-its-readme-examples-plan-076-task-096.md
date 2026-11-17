@@ -356,3 +356,14 @@ Branch `task/task-096-feedback-pack` from `main` at `9923ba1c`, in a worktree of
   in the project's own `custom/` directive (spec-003 §4.1, §5.3). Every other fix confirmed,
   no regression. Wording that completes the rule the re-review accepted: no further review. The
   code is frozen at `72a01892`.
+- 2026-11-17: checks (dl-039 R1, R2), once, on `c5078638` (the code frozen at its parent, the
+  commit itself `docs/memory` only): the branch CI, run 44128847928, `success`, jobs `validate
+  (22.12.0, 1)` 9 min 31 s, `(22.12.0, 2)` 5 min 31 s, `(22.21.0, 1)` 7 min 22 s, `(22.21.0, 2)`
+  6 min 44 s (none over 25 minutes); from a clean working tree on Node.js 22.21.0 after `npm ci`
+  and `npm run build`: `npm test` 1380 tests, 0 failed, `npm run lint` exit 0, `npm run
+  validate:publication` (28 runs, 0 failed, tolerance none), the golden tree in publication mode
+  and `npm run -s wingfoil -- workflow list` exit 0, `directives list --format json` with
+  `"warnings": []`, the tree still clean. This commit changes only `docs/memory`: no new run.
+  Privacy check of the branch's diff and messages: no local or scratch path, no maintainer name
+  or email, no private project, no intermediary session; the examples' projects fictional, their
+  addresses `.example`.
