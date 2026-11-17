@@ -56,8 +56,7 @@ for. Later plans own:
 No erratum is waiting to be folded back.
 
 **`main`'s CI before this plan** (dl-038 C3): run 44089866197 on `c770844e` (plan-075's close
-and submit). It is in progress while this outline is written; its result is recorded before
-`submit`.
+and submit), `success`.
 
 **Reads made for this outline** (2026-11-17, `main` at `c770844e`):
 - **`compat.yaml`** lists 0.2.2 … 0.3.2. The pack requires `workflow-engine`, so its matrix is
@@ -318,7 +317,6 @@ Before every commit, the privacy check (`repository-practice` rule 2). After eve
 1. **This plan:**
    - an independent review (dl-017), amended;
    - the outline ruled by the approver;
-   - `main`'s CI on `c770844e` recorded;
    - submitted (`draft → active`).
 2. **Each task, in point 7's order:**
    - its body written from the rulings, reviewed independently, re-reviewed when a fix changes
@@ -418,7 +416,8 @@ Before every commit, the privacy check (`repository-practice` rule 2). After eve
   compose the fixture pack: point 2 adds an `overlay:` key. **Should-fix:** the run count
   (7 routes, 4 adoptions, about 19 per release) and the filter on adopt runs; FA-8 without
   `assertOpenings`, which is this repository's opening; plan-073's routes in the Context;
-  `kind` and `target` bound to their lists; point 8's [V] tests listed in point 3; a labelled element's id in field values, body lines and file text.
+  `kind` and `target` bound to their lists; point 8's [V] tests listed in point 3;
+  a labelled element's id in field values, body lines and file text.
   **Nits:** "and dates" dropped; "no step writes given text at a given path"; point 6's
   `--tree` and added outcome; spec-003 §4.4 cited and the alternative's reach under `every`;
   the empty-frontier probe in task-097's Design. The fixes complete the ruled scope of points
