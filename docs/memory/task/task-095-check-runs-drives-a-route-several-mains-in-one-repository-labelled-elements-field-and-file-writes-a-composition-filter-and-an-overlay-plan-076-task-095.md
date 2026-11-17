@@ -2,7 +2,7 @@
 id: task-095-check-runs-drives-a-route-several-mains-in-one-repository-labelled-elements-field-and-file-writes-a-composition-filter-and-an-overlay-plan-076-task-095
 type: task
 title: "check:runs drives a route: several mains in one repository, labelled elements, field and file writes, a composition filter and an overlay (plan-076 task-095)"
-status: backlog
+status: approved
 pack: ""            # tooling task (tooling-delivery v4), plan-076 task-095
 depends_on: []
 tags: ["tooling","tests","governance"]
@@ -202,7 +202,50 @@ body).
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+- **The scenario model** (`src/runs.ts`):
+  - A main run becomes `{ kind: 'main', name?, only?, links, single }`, each link
+    `{ main, steps }`. A plain `{ main, steps }` is one link with `single: true`, so its failure
+    line stays `fail at <step>`.
+  - An adopt run gains `name?` and `only?`.
+  - The scenario gains `overlay?`.
+  - `add` gains `step?` and `label?`. `submit` and `approve` carry `element` (`added` or a
+    label). New step kinds: `set { element, fields?, body? }` and `write { path, text }`.
+- **Static checks in `loadScenario`**, exit 3 with `<file>: <key>: <what>`:
+  - one walk over each run's steps, in order, tracking the labels added so far and whether the
+    current link has started;
+  - a token or a label before its `add`, an unknown label, a label added twice, the label
+    `added`, and an instance step before its link's `start` are refused there;
+  - `only`'s ids are checked against the folder's compositions in `runRuns`, where the folder
+    is listed.
+- **Run time** (`runOne`):
+  - Each link resets `instance` at its `start`.
+  - A map holds each label's id and path, from `memory add`'s `{ id, path }`; `added` is the
+    last one.
+  - `expand(text)` replaces `\$([a-z][a-z0-9-]*)\.id(?![a-z0-9-])` with the label's id. Its
+    other `$` text is kept.
+  - `current` becomes `<main>[<n>].<step>` in a chain.
+- **`set`**, line-based, so that other lines stay byte-identical:
+  - The frontmatter is the text between the opening `---` line and the next `---` line.
+  - A top-level key's block is its `key:` line plus the indented or `- ` lines after it. That
+    block is replaced by `stringify({ key: value })` of the `yaml` package, which quotes what a
+    plain scalar would misread; a new key goes before the closing `---`.
+  - After the write, the frontmatter is parsed again, and each field must equal the value
+    given, or the step fails.
+  - `body` is appended as a line, after a newline if the file lacks a final one.
+- **The overlay.** A new module, `src/overlay-tree.ts`, takes from `src/validate.ts`:
+  - the `Overlay` interface;
+  - `openOverlay`, returning its `reason` beside the line `validate` prints;
+  - `mergeOverlay(tree, overlay)`: it builds the merged tree (the tree's `packs/`,
+    `catalog.yaml` and `compat.yaml`, then the overlay's packs that shadow none of the tree's)
+    and returns the shadowing pairs.
+
+  `checkOverlay` calls `mergeOverlay` and turns each pair into its `overlay-shadow` problem, as
+  today. `validate`'s lines are sorted afterwards, so their order holds. `check:runs` refuses
+  any pair (exit 3) and composes on the merged tree, its lines passed through `hideScratch` and
+  `mapOverlayPaths`. `hideScratch` also hides `validate-overlay-…`. The merged tree's root is
+  removed in a `finally` once the scenario's compositions are done.
+- **`only` and skipped compositions.** In `runRuns`, a composition's runs are the scenario's
+  runs whose `only` is absent or lists its id. A composition with no run is not composed.
 
 ## Execution Notes
 
@@ -242,3 +285,71 @@ body).
   error line and `mapOverlayPaths`; the `realCompose` test on the extracted merged tree; the
   three overlays' output diffs recorded. The fixes make the criteria checkable, with no new
   rule: no further review.
+- 2026-11-17, design: written on the branch `task/task-095-check-runs-route-steps` from `main`
+  at `e5d0a27b`; the task submitted `backlog → in-progress`.
+- 2026-11-17, red (dl-018): the tests of criteria 1 … 9 added to `tests/runs.test.ts` against a
+  stub `src/overlay-tree.ts` (exports returning a refusal and no pairs) and today's
+  `src/runs.ts`, `9f3e522d`: `npm run build && node --test dist/tests/runs.test.js`, 64 tests,
+  13 failing (the 12 new tests of the route steps and the overlay, and the one of `realCompose`
+  on a merged tree). The null-branch test passed on its first run, as criterion 10 foresaw.
+- 2026-11-17, the null branch's mutation: `yaml`'s `Document.get` returns `undefined` for a key
+  whose value is null (`include:`, `include: null`, `include: ~`), so `includeList`'s
+  `include === null` is never reached and removing it changes nothing; a value-less `include`
+  takes the `undefined` branch, which replaces the null pair. The mutation that tells a null
+  value from an absent key, `if (!document.has('include'))`, fails the null-branch test and
+  passes the absent-key one: the test pins the behaviour. The dead comparison is left as it is
+  (criterion 11).
+- 2026-11-17, build (`c0f71539`):
+  - `src/overlay-tree.ts`: the `Overlay` interface, `mapOverlayPaths`, `openOverlay` (its
+    refusal now carries the `reason` beside `validate`'s line) and `mergeOverlay`, moved from
+    `src/validate.ts`; `validate` re-exports `mapOverlayPaths` and turns each shadowing pair into
+    its `overlay-shadow` problem as before.
+  - `src/runs.ts`: the model and checks of the Design; `hideScratch` also hides
+    `validate-overlay-…`; the overlay is opened before the compositions are listed, so a missing
+    overlay directory is exit 2, not the compositions' exit 3.
+  - The 64 tests of `tests/runs.test.ts` pass; `npm run lint` exits 0.
+- 2026-11-17, checks on `c0f71539`: `npm test` 1364 tests, 0 failed; `validate --overlay` on
+  `software-exit`, `scrum-exit` and `kanban-exit` exit 0, each output identical to `main`'s
+  at `e5d0a27b` (`diff`, no line differs); `check:packs` and `validate` exit 0;
+  `check:runs` `runs: 46 runs, 0 failed`, the total `main` gives (task-068).
+- 2026-11-17: independent build review (dl-017): approve after amendments; no blocker, four
+  should-fix, seven nits; `validate`'s refusals, lines and problem order confirmed unchanged by
+  the extraction, the token's global regex safe, every overlay cleaned on every path probed.
+  Applied in `2e64bd00`:
+  - **Should-fix:** `write`'s `.git` refusal on the normalized path, again after the tokens
+    expand (`./.git/config` passed); each merged tree removed once its scenario is done, not when
+    `runRuns` returns (`runScenario` split out); a key's block keeps its blank lines while an
+    indented line follows (a block scalar with a blank line could not be written); the tests
+    asked: a frontmatter that does not parse, a run's name given twice, equal to another run's
+    name or not plain, `add` with a step before `start`, `./.git/config`, the overlay removed
+    per scenario, and `setFields` exported and tested on a block list, a block scalar with a
+    blank line, a key that is a prefix of another, a new key, a body line, no frontmatter, a BOM
+    and CRLF.
+  - **Nits applied:** a BOM or CRLF named in `set`'s failure; a new key added after the last
+    key, before a trailing comment; the closing `---` found as a whole line; a run's `name`
+    refused when it equals another run's name, given or derived; `validate`'s re-export moved
+    below the imports.
+  - **Nits recorded, no change:** `submit: added` (or `approve`, `set`) before any `add` is a
+    scenario error (exit 3), an extension of criterion 2's static checks; `only` takes plain ids,
+    as every composition folder of the tree is.
+  - **Test first:** the new tests run against `c0f71539`'s code (its `setFields` exported for
+    the run): 69 tests, 6 failing; the two that pass there (a frontmatter that does not parse, a
+    missing element file's message) characterize behaviour the fix keeps. 69 pass after; `npm
+    run lint` exits 0. The fixes change behaviour: re-review.
+- 2026-11-17: re-review of the build fixes: approve; no blocker, two nits. Applied in `6607af1b`: a
+  test of `write`'s `.git` refusal after the tokens expand (an id `.git`), checked by mutation
+  (the check removed, the test fails; restored, 70 tests pass). Recorded, no change: a block's
+  indented comment after a blank line now goes with the block when its key is set, since an
+  indented line belongs to it. The code is frozen at `6607af1b`.
+- 2026-11-17: checks (dl-039 R1, R2), once, on `9f830594` (the code frozen at `6607af1b`, the
+  commit after it `docs/memory` only): the branch CI, run 44113757047, `success`, jobs
+  `validate (22.12.0, 1)` 8 min 57 s, `(22.12.0, 2)` 5 min 22 s, `(22.21.0, 1)` 8 min 39 s,
+  `(22.21.0, 2)` 3 min 24 s (none over 25 minutes); from a clean working tree on Node.js 22.21.0
+  after `npm ci` and `npm run build`: `npm test` 1370 tests, 0 failed, `npm run lint` exit 0,
+  `npm run validate:publication`, the golden tree in publication mode and `npm run -s wingfoil
+  -- workflow list` exit 0, `directives list --format json` with `"warnings": []`, the tree
+  still clean. The `validate --overlay` outputs and `check:runs`' total, recorded on `c0f71539`,
+  are not touched by the fixes after it (`runScenario`'s split keeps the lines and counts; the
+  branch CI runs the three overlays and `check:runs`). This commit changes only `docs/memory`:
+  no new run. Privacy check of the branch's diff and messages: no local or scratch path, no
+  maintainer name or email, no private project, no intermediary session.
