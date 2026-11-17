@@ -341,3 +341,15 @@ body).
   (the check removed, the test fails; restored, 70 tests pass). Recorded, no change: a block's
   indented comment after a blank line now goes with the block when its key is set, since an
   indented line belongs to it. The code is frozen at `6607af1b`.
+- 2026-11-17: checks (dl-039 R1, R2), once, on `9f830594` (the code frozen at `6607af1b`, the
+  commit after it `docs/memory` only): the branch CI, run 44113757047, `success`, jobs
+  `validate (22.12.0, 1)` 8 min 57 s, `(22.12.0, 2)` 5 min 22 s, `(22.21.0, 1)` 8 min 39 s,
+  `(22.21.0, 2)` 3 min 24 s (none over 25 minutes); from a clean working tree on Node.js 22.21.0
+  after `npm ci` and `npm run build`: `npm test` 1370 tests, 0 failed, `npm run lint` exit 0,
+  `npm run validate:publication`, the golden tree in publication mode and `npm run -s wingfoil
+  -- workflow list` exit 0, `directives list --format json` with `"warnings": []`, the tree
+  still clean. The `validate --overlay` outputs and `check:runs`' total, recorded on `c0f71539`,
+  are not touched by the fixes after it (`runScenario`'s split keeps the lines and counts; the
+  branch CI runs the three overlays and `check:runs`). This commit changes only `docs/memory`:
+  no new run. Privacy check of the branch's diff and messages: no local or scratch path, no
+  maintainer name or email, no private project, no intermediary session.
