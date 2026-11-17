@@ -221,6 +221,13 @@ and submit), `success`.
   F-049 kept with its observation that ending or deprecating the owner does not release the
   element. `main`'s CI on `5ef0aa15`, run 43914265106, `success`, jobs `validate (22.12.0, 1)`
   12 min 0 s, `(22.12.0, 2)` 5 min 41 s, `(22.21.0, 1)` 7 min 13 s, `(22.21.0, 2)` 8 min 54 s.
+- 2026-11-17, step 3: task (B), task-093, `done`: spec-003's composer and lint checks (the item
+  rule, `parameter-placement`, `entry-directive-scope`, `feedback-channel`,
+  `feedback-channel-target` in the lint and `validate`), every published pack passing unchanged;
+  merged `--no-ff` at `fa36b2be`, closed at `9cb75163`. Ruling with its body: a WingFoil
+  built-in directive id accepted in an entry's `agent.execute`. `main`'s CI on `9cb75163`, run
+  44060912347, `success`, jobs `validate (22.12.0, 1)` 7 min 8 s, `(22.12.0, 2)` 5 min 31 s,
+  `(22.21.0, 1)` 10 min 40 s, `(22.21.0, 2)` 6 min 32 s.
 
 ## The approver's rulings
 
