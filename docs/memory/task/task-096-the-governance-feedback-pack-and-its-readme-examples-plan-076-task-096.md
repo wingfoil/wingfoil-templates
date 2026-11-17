@@ -82,7 +82,7 @@ the charter's Execution Note of plan-074 records it.
    - **The triage:** the outcome is proposed before the triage and confirmed by the approver.
      The triage rule (§4.3): an empty or not allowed outcome is rejected to `draft`, except a
      would-be `bug` without `software`, proposed as `decision-log` naming it.
-   - **The routing table**, without `bug`:
+   - **The routing table**, under the heading `## Routes`, without `bug`:
      - `decision-log` through `decision-log-ingest`, or a governance change through
        `governance-evolution`;
      - `task` in `draft`;
@@ -162,19 +162,20 @@ the charter's Execution Note of plan-074 records it.
      `target`, `source` and `context`.
    - **FA-4:** `states.gates` holds `pending: { reject: draft }`, and `feedback-ingest` ›
      `triage` holds `memory.approve` with `approval: { by_role: approver }`.
-   - **FA-6, the routing table:** the `feedback` directive holds the table under a fixed heading
-     (`## Routes`), one row per outcome, each target workflow in backticks. The set of workflow
-     names in that table is exactly `{decision-log-ingest, governance-evolution}`, each one of
-     `base`'s workflows.
+   - **FA-6, the routing table:** the backticked tokens under the `feedback` directive's
+     `## Routes` heading that equal a composed workflow name form exactly
+     `{decision-log-ingest, governance-evolution}`, each a composed file of pack `base`.
    - **FA-6, `bug` kept to the entry:**
-     - no item `bug` in the composed `feedback-review` › `where.outcome`, nor in the list the
-       directive substitutes from `{{feedback_outcomes}}`;
+     - no item `bug` in the composed `feedback-review` › `where.outcome`, nor in the resolved
+       `feedback_outcomes` value (the example's, else the pack's default), which appears verbatim
+       in the composed `feedback` directive;
      - no file of the composed `defaults` output names `bug-ingest`: fragments, workflows,
        directives, template and AGENTS.md section. The lint's isolation checks read only
        `include`s and `roles.yaml`, not text.
    - **FA-1, the entry composed:** `with-software`'s composed output holds the workflows
      `feedback-bug-route` and `feedback-bug-item` and the directive `feedback-bug-route`;
-     `defaults`' holds none of them.
+     `defaults`' holds no composed file `workflows/feedback-bug-route.yaml`,
+     `workflows/feedback-bug-item.yaml` or `directives/feedback-bug-route.md`.
 
    Red first (dl-018): the tests run before the pack exists and fail, on a composition error, as
    task-068's did. The red run's command and failing count are recorded.
@@ -242,3 +243,11 @@ the charter's Execution Note of plan-074 records it.
     format 2's departure cited; dl-039's three commands and `main` pushed.
 
   Criteria 4, 5 and 8 change: re-review.
+- 2026-11-17: re-review: approve after amendments; no blocker, one should-fix, three nits, all
+  applied; every first-review fix confirmed against the charter, spec-003 and the composer's
+  output (`ComposedFile` carries its pack; a README is never composed). **Should-fix:** the
+  routing table's set computed from the backticked tokens under `## Routes` that equal a composed
+  workflow name, each a file of pack `base`; the heading named in criterion 4. **Nits:** "one row
+  per outcome" dropped; the entry's absence from `defaults` checked by file, not by text; the
+  resolved `feedback_outcomes` value found verbatim in the directive. Wording that makes the
+  criteria checkable, with no new rule: no further review.
