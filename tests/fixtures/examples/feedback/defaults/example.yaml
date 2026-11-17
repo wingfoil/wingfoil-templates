@@ -1,0 +1,14 @@
+format: 1
+id: defaults
+title: "Defaults"
+description: >-
+  Plover Desk, a fictional help desk with no methodology, collects feedback on every default and
+  routes it into its governance.
+packs:
+  - base@^2
+  - governance/feedback@^1
+parameters:
+  project_name: "Plover Desk"
+  approver_name: "Plover Lead"
+  approver_email: "lead@plover-desk.example"
+  agent_name: "Plover Agent"
