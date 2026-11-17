@@ -307,6 +307,20 @@ Each point has a recommendation.
    | FA-8 [V][E] | the upstream composition validates; the note's asserts | 097, 098 |
    | Exit criterion | the run by hand; `check:runs`; no warning on every release | 097, 099 |
 
+## The approver's rulings
+
+Given on 2026-11-17, in chat: the outline is approved as recommended. Points 1 … 8 stand as
+written:
+- `base@^2` and `software@^1` as they are (point 1);
+- task-095 first, with point 2's step list (point 2);
+- task-096 with the examples `defaults`, `with-software` and `added-outcome` (point 3);
+- task-097 with two sets on `methodology/scrum` and two on `methodology/kanban`, and
+  `adoption-feedback.yaml` written in this task (point 4);
+- `context`'s mode `every`, split on `,`, and a commit counting for FA-5, recorded as an
+  Execution Note on the charter (point 5);
+- task-099 on WingFoil 0.3.2 only (point 6);
+- the order task-095 → task-096 → task-097 → task-098 → task-099 (point 7).
+
 ## Steps
 
 The plan document and the task bodies are committed on `main`: the plan as plan-075's was, and
