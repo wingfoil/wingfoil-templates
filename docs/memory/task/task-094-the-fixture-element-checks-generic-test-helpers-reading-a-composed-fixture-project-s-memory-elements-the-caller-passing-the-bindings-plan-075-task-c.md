@@ -235,3 +235,8 @@ characterized by `tests/parameters.test.ts`'s item-rule cases, green before and 
   json` with `"warnings": []`, the tree still clean. This commit changes only `docs/memory`: no
   new run. Privacy check of the branch's diff and messages: no local or scratch path, no
   maintainer name or email, no private project, no intermediary session.
+- 2026-11-17: the approver approved (in-review → approved, `73cac58b`) and gave the merge OK;
+  merged `--no-ff` into `main` at `92e538eb`. In `docs/owed-items.md` (Acceptance 13): "The
+  fixture-element checks" moved to Closed, settled by task-093, task-094 (plan-075); the Open row
+  for the bindings to `governance/feedback` added, trigger its `author` task. `main`'s CI
+  after the push is read and recorded in plan-075's notes.
