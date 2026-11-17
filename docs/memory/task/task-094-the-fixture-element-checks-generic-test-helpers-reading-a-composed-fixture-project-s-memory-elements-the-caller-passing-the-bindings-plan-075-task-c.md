@@ -142,7 +142,25 @@ charter's Execution Notes.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-094-fixture-element-checks` from `main` at this task's `backlog` (`7aa01575`).
+
+**Code:** `src/parameters.ts` exports `listItems(value)` (`value.split(',').map(trim)`), which
+`listItemProblem` uses. `tests/support/fixture-elements.ts`:
+- `FixtureElement` `{ type, id, status, file, fields, body }`, `file` project-relative;
+- `readElements(project)` `{ elements, problems }`, after 0.3.2's `staticDirPrefix` and
+  `computeMemoryContentRoots`;
+- `requiredFieldProblems(project, elements)`, after 0.3.2's `isEmptyValue`,
+  `missingRequiredFields`, `notApplicableRefusals` and `requireRequiredFields` (`exempt`); the
+  initial state is the type's `states.sequence[0]`, else `defaults.states.sequence[0]`;
+- `allowedValueProblems(project, elements, bindings)`, `referenceProblems(project, elements,
+  bindings, context)` (`context`: `{ workflows: Record<name, phases[]>, versions: string[] }`),
+  `backReferenceProblems(project, elements, bindings)`, `stateFieldProblems(project, elements,
+  bindings)`, `refusedItemProblems(tree, bindings)`; the binding types exported beside them.
+
+**Red steps** (dl-018): the module first with stubs returning empty results and `listItems` not
+yet exported; `tests/fixture-elements.test.ts` written against them, red (each failure case
+failing, the clean cases passing); then each function, green; `listItems`' extraction
+characterized by `tests/parameters.test.ts`'s item-rule cases, green before and after.
 
 ## Execution Notes
 
