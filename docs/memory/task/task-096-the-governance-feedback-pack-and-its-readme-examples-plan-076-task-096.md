@@ -212,7 +212,37 @@ the charter's Execution Note of plan-074 records it.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-096-feedback-pack` from `main` at `9923ba1c`, in a worktree of its own.
+
+- **The pack** (`packs/governance/feedback/`):
+  - **From the untracked draft** (the files run on the engine): `pack.yaml` (format 2, the five
+    parameters, its description rewritten), the two fragments, the template and the five
+    workflows, their descriptions checked against criterion 3.
+  - **Written from the charter and spec-003:** the two directives, `agents/section.md`,
+    `CHANGELOG.md` and `README.md`, as `kanban`'s are built. The README's sections are
+    hand-written; the generated ones come from `npm run index`.
+  - **The `feedback` directive's sections:** feedback and its fields; classification; triage;
+    `## Routes`; the `feedback-route` and `feedback-channel` lookups; the trace both ways;
+    closing and the review run; the agent.
+- **The examples**, fictional, with `.example` addresses:
+  - `defaults`: Plover Desk, the draft's fictional help desk;
+  - `with-software`: another fictional project on Scrum;
+  - `added-outcome`: a third, on Kanban, with `deferred`, its own path
+    `docs/feedback/{id}.md` and id pattern `fb-{n}-{slug}`.
+- **Names:** WingFoil 0.3.2's built-in workflows and directives, the `custom/` files that
+  `init --template Scrum` and `--template Kanban` write, and this repository's `custom/` files.
+  They are listed against `feedback`, `feedback-bug-route`, `feedback-ingest`,
+  `feedback-review`, `feedback-item` and `feedback-bug-item`.
+- **Checks, in order:**
+  1. `npm run index`, then `index -- --check`;
+  2. `check:packs`;
+  3. `validate`;
+  4. the three exit overlays and the golden tree;
+  5. `check:runs`;
+  6. the tests that take the counts, run first to see which move, each moved count stated;
+  7. `npm test`.
+- **Commits:** the tests (red); the pack; the examples; the moved counts; the notes. The draft
+  stays out of every commit.
 
 ## Execution Notes
 
@@ -251,3 +281,8 @@ the charter's Execution Note of plan-074 records it.
   per outcome" dropped; the entry's absence from `defaults` checked by file, not by text; the
   resolved `feedback_outcomes` value found verbatim in the directive. Wording that makes the
   criteria checkable, with no new rule: no further review.
+
+- 2026-11-17, design: written on the branch; the task submitted `backlog → in-progress`.
+- 2026-11-17, red (dl-018): `tests/feedback-pack.test.ts` before the pack exists: `npm run build
+  && node --test dist/tests/feedback-pack.test.js`, 10 tests, 10 failing (each composition fails
+  to resolve `governance/feedback`, as task-068's red did).
