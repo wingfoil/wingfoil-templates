@@ -1,7 +1,10 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
-import { checkValue, fromText, substitute } from '../src/parameters';
+import {
+  checkValue, fromText, isListParameter, listItemProblem, misplacedReferences, substitute,
+} from '../src/parameters';
+import type { ScopedParameter } from '../src/parameters';
 
 describe('parameters: value checks (spec-001 §8.1, from the pack schema)', () => {
   const cases: [string, unknown, boolean][] = [
@@ -85,5 +88,84 @@ describe('parameters: values given as text', () => {
     assert.equal(fromText('boolean', 'yes'), 'yes');
     assert.equal(fromText('string', '007'), '007');
     assert.equal(fromText('path', 'docs/x'), 'docs/x');
+  });
+});
+
+describe('parameters: list parameters (spec-003 §3.1, §3.2)', () => {
+  it('a list parameter is a string whose description begins with "List of"', () => {
+    assert.equal(isListParameter({ type: 'string', description: 'List of outcomes.' }), true);
+    assert.equal(isListParameter({ type: 'string', description: 'The outcomes.' }), false);
+    assert.equal(isListParameter({ type: 'string', description: 'A list of outcomes.' }), false);
+    assert.equal(isListParameter({ type: 'path', description: 'List of paths.' }), false);
+  });
+
+  it('the item rule refuses what spec-003 §3.2 refuses, and accepts the rest', () => {
+    for (const value of ['', '   ', 'task, task', 'x], kind: [defect', 'null, task', 'yes, task',
+      'on', 'bug,', 'Yes', 'bug:', 'catalog/pack', 'a b', '1bug', 'bug:a:b', '~']) {
+      assert.notEqual(listItemProblem(value), undefined, JSON.stringify(value));
+    }
+    for (const value of ['bug', 'bug, task', ' bug , upstream:plover-vendor ', 'a-1:b-2',
+      'nulls', 'yesterday']) {
+      assert.equal(listItemProblem(value), undefined, JSON.stringify(value));
+    }
+  });
+
+  it('names the failure', () => {
+    assert.match(listItemProblem('') ?? '', /no item/);
+    assert.match(listItemProblem('bug,') ?? '', /empty item/);
+    assert.match(listItemProblem('task, task') ?? '', /"task".*twice/);
+    assert.match(listItemProblem('null, task') ?? '', /"null"/);
+    assert.match(listItemProblem('catalog/pack') ?? '', /"catalog\/pack"/);
+  });
+});
+
+describe('parameters: the placement rule (spec-003 §3.1)', () => {
+  const scope = new Map<string, ScopedParameter>([
+    ['s', { type: 'string', list: false, pack: 'a/p' }],
+    ['n', { type: 'integer', list: false, pack: 'a/p' }],
+    ['b', { type: 'boolean', list: false, pack: 'a/p' }],
+    ['l', { type: 'string', list: true, pack: 'a/p' }],
+    ['q', { type: 'path', list: false, pack: 'a/p' }],
+  ]);
+  const placements = (text: string, path = 'workflows/w.yaml', own = 'a/p'): string[] =>
+    misplacedReferences(text, path, scope, own).map((each) => `${each.name} ${each.placement}`);
+
+  it('accepts a double-quoted scalar, an integer and a boolean, a list in its own pack', () => {
+    for (const text of ['a: "{{s}}"\n', 'a: "x {{s}} y"\n', '"{{s}}": 1\n', 'a: {{n}}\n',
+      'a: {{b}}\n', 'a: [{{l}}]\n', 'a: [ {{l}} ]\n', 'a: ["{{s}}", "{{q}}"]\n',
+      'a: { k: "{{s}}" }\n', 'a: "x \\" {{s}}"\n', 'a: "x\\\\" # {{n}}\n',
+      'a: {{unknown}}\n', "a: don't {{n}}\n", 'a: "x\n  {{s}}"\n']) {
+      assert.deepEqual(placements(text), [], text);
+    }
+  });
+
+  it('refuses every other placement', () => {
+    assert.deepEqual(placements('a: {{s}}\n'), ['s plain']);
+    assert.deepEqual(placements("a: '{{s}}'\n"), ['s single-quoted']);
+    assert.deepEqual(placements('a: |\n  {{s}}\n'), ['s block scalar']);
+    assert.deepEqual(placements('a: >-\n  x\n  {{s}}\nb: "{{s}}"\n'), ['s block scalar']);
+    assert.deepEqual(placements('- |\n  {{s}}\n- "{{s}}"\n'), ['s block scalar']);
+    assert.deepEqual(placements('a: "x" # {{s}}\n'), ['s comment']);
+    assert.deepEqual(placements('# {{q}}\n'), ['q comment']);
+    assert.deepEqual(placements('a: [{{l}}, x]\n'), ['l plain']);
+    assert.deepEqual(placements('a: [{{s}}]\n'), ['s plain']);
+    assert.deepEqual(placements('a: {{q}}\n'), ['q plain']);
+    assert.deepEqual(placements('a: [{{l}}]\n', 'workflows/w.yaml', 'b/other'),
+      ['l flow sequence outside the pack that declares it']);
+  });
+
+  it("reads a Markdown file's frontmatter only, and skips pack.yaml", () => {
+    assert.deepEqual(placements('---\nid: {{s}}\n---\n\nText {{s}}.\n', 'directives/d.md'),
+      ['s plain']);
+    assert.deepEqual(placements('---\nid: "{{s}}"\n---\n\nText {{s}}: {{q}}.\n',
+      'directives/d.md'), []);
+    assert.deepEqual(placements('# Title\n\nText {{s}}.\n', 'agents/a.md'), []);
+    assert.deepEqual(placements('a: {{s}}\n', 'pack.yaml'), []);
+    assert.deepEqual(placements('a: {{s}}\n', 'README.txt'), []);
+  });
+
+  it("gives each misplaced reference's offset", () => {
+    const [first] = misplacedReferences('a: "ok"\nb: {{s}}\n', 'w.yaml', scope, 'a/p');
+    assert.equal(first?.offset, 11);
   });
 });
