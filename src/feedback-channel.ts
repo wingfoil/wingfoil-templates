@@ -32,11 +32,23 @@ export interface DirectiveFile {
 export function servedTargets(text: string): string[] {
   const lines = text.replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n').split('\n');
   const close = lines[0] === '---' ? lines.indexOf('---', 1) : -1;
-  let fenced = false;
+  /** The open fence's run (its character, at least its length), or undefined. */
+  let fence: string | undefined;
   const targets: string[] = [];
   for (const line of lines.slice(close + 1)) {
-    if (/^ {0,3}(?:```|~~~)/.test(line)) fenced = !fenced;
-    const match = fenced ? null : SERVES.exec(line);
+    const run = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
+    if (run !== null) {
+      const [, marks = '', info = ''] = run;
+      if (fence === undefined) {
+        fence = marks;
+        continue;
+      }
+      if (marks[0] === fence[0] && marks.length >= fence.length && info.trim() === '') {
+        fence = undefined;
+        continue;
+      }
+    }
+    const match = fence !== undefined ? null : SERVES.exec(line);
     if (match !== null) targets.push(`upstream:${match[1] ?? ''}`);
   }
   return targets;

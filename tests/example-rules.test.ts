@@ -156,6 +156,15 @@ describe('examples as fixtures (task-022)', () => {
         join(root, FIXTURE),
         `${readFileSync(join(root, FIXTURE), 'utf8')}parameters:\n  outcomes: "${value}"\n`);
       fails('example-fixture', { specs: [...FOUNDATION, lists], edit: withValue('task, task') });
+      // At its line (criterion 3; re-review N-d).
+      let fixture = '';
+      const problems = lint({ specs: [...FOUNDATION, lists], edit: (root) => {
+        withValue('task, task')(root);
+        fixture = readFileSync(join(root, FIXTURE), 'utf8');
+      } }).problems.filter((problem) => problem.rule === 'example-fixture'
+        && problem.file === FIXTURE);
+      assert.match(fixture.split('\n')[(problems[0]?.line ?? 0) - 1] ?? '',
+        /outcomes: "task, task"/);
       assert.deepEqual(found({ specs: [...FOUNDATION, lists], edit: withValue('bug, task') }), []);
     });
 

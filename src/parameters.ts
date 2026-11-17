@@ -165,8 +165,10 @@ type Span = { start: number; end: number; kind: string };
 const RAW_FRONTMATTER = /^(\uFEFF?---\r?\n)([\s\S]*?\r?\n)?---\r?(?:\n|$)/;
 /** Before a quoted scalar or a block indicator: a line's start, after its sequence dashes. */
 const NODE_START = /^[ \t]*(?:-[ \t]+)*(?:\?[ \t]+)?$/;
-/** Before a quoted scalar or a block indicator: a value indicator, or inside a flow collection. */
-const VALUE_START = /(?::[ \t]+|[[{,][ \t]*)$/;
+/** Before a quoted scalar or a block indicator: a value indicator. */
+const VALUE_START = /:[ \t]+$/;
+/** Inside a flow collection, also: an opening bracket, a comma, a quoted key's `:`. */
+const FLOW_START = /(?:[[{,][ \t]*|["'][ \t]*:[ \t]*)$/;
 
 /** The YAML a placement is read in: a `.yaml` file but pack.yaml, a `.md` file's frontmatter. */
 function yamlRegion(text: string, path: string): { start: number; end: number } | undefined {
@@ -192,7 +194,9 @@ function blockParentOf(prefix: string): number {
 /**
  * The quoted scalars, comments and block scalars of a YAML text, by a token scan: an unquoted
  * `{{name}}` can make the raw text unparseable, so no parser reads it (spec-003 §11). A quote
- * opens a scalar, and `|` or `>` a block scalar, only where a node starts.
+ * opens a scalar, and `|` or `>` a block scalar, only where a node starts; `[`, `{` and `,` start
+ * one only inside a flow collection. A plain scalar's continuation line that begins with a quote
+ * is read as a quoted scalar: a known limit, as contrived as it is rare.
  */
 function yamlSpans(text: string, start: number, end: number): Span[] {
   const spans: Span[] = [];
@@ -204,6 +208,7 @@ function yamlSpans(text: string, start: number, end: number): Span[] {
   let open = start;
   let lineStart = start;
   let blockParent: number | undefined;
+  let flowDepth = 0;
   let i = start;
   while (i < end) {
     if (i === start || text[i - 1] === '\n') {
@@ -224,7 +229,8 @@ function yamlSpans(text: string, start: number, end: number): Span[] {
     const prefix = text.slice(lineStart, i);
     // A tag or an anchor before a node leaves it a node start: `a: !!str "x"`.
     const bare = prefix.replace(/(?:[!&][^\s]*[ \t]+)+$/, '');
-    const nodeStart = state === 'plain' && (NODE_START.test(bare) || VALUE_START.test(bare));
+    const nodeStart = state === 'plain' && (NODE_START.test(bare) || VALUE_START.test(bare)
+      || (flowDepth > 0 && FLOW_START.test(bare)));
     if (state === 'double') {
       if (c === '\\') {
         i += 1;
@@ -239,6 +245,10 @@ function yamlSpans(text: string, start: number, end: number): Span[] {
         spans.push({ start: open, end: i + 1, kind: 'single-quoted' });
         state = 'plain';
       }
+    } else if ((c === '[' || c === '{') && (nodeStart || flowDepth > 0)) {
+      flowDepth += 1;
+    } else if ((c === ']' || c === '}') && flowDepth > 0) {
+      flowDepth -= 1;
     } else if (c === '"' && nodeStart) {
       state = 'double';
       open = i;

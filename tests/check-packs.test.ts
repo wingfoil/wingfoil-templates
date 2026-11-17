@@ -1599,6 +1599,11 @@ describe('spec-003: list parameters, placement, entry directives, feedback chann
     it('accepts a channel of a pack requiring governance/feedback, with one target line', () => {
       const result = lint([...CLEAN, FB, channel('up-a', SERVES)]);
       assert.equal(result.code, 0, result.lines.join('\n'));
+      // A fenced block closes only on its own fence (re-review N-c).
+      for (const fenced of ['```\n~~~\n```\n', '~~~\n```\n~~~\n', '````\n```\n````\n']) {
+        const valid = lint([...CLEAN, FB, channel('up-a', `${fenced}${SERVES}`)]);
+        assert.equal(valid.code, 0, `${fenced}${valid.lines.join('\n')}`);
+      }
     });
 
     it('refuses a channel without the requirement, or without exactly one target line', () => {

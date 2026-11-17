@@ -462,7 +462,8 @@ function composedConflicts(output: string): string[] {
       .map((name) => ({ path: `directives/${name}`, file: `directives/built-in/${name}`,
         text: readFileSync(join(dir, name), 'utf8') })));
   } catch (error) {
-    return [`the composed directives could not be read: ${messageOf(error)}`];
+    return [`the composed directives could not be read, so no channel was checked: `
+      + messageOf(error)];
   }
 }
 

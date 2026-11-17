@@ -170,6 +170,12 @@ describe('parameters: the placement rule (spec-003 §3.1)', () => {
     assert.deepEqual(placements('a: x "{{s}}" y\n'), ['s plain']);
     assert.deepEqual(placements('- "{{s}}"\n- [ "{{s}}", { k: "{{s}}" } ]\n? "{{s}}"\n: 1\n'), []);
     assert.deepEqual(placements('a: !!str "{{s}}"\nb: &x "{{s}}"\n'), []);
+    // Outside a flow collection, `[`, `{` and `,` are a plain scalar's (re-review S-1, N-a).
+    assert.deepEqual(placements('a: foo, "{{s}}" bar\n'), ['s plain']);
+    assert.deepEqual(placements('a: x [ "{{s}}"\n'), ['s plain']);
+    assert.deepEqual(placements('a: x, "y\nb: {{s}}\nc: "z"\nd: {{s}}\n'), ['s plain', 's plain']);
+    assert.deepEqual(placements('a: {"k":"{{s}}", "j": ["{{s}}"]}\n'), []);
+    assert.deepEqual(placements('a: [\n  "{{s}}",\n  {{s}}\n]\n'), ['s plain']);
   });
 
   it("closes a block scalar at its key's sibling, after a sequence dash (review S2)", () => {
