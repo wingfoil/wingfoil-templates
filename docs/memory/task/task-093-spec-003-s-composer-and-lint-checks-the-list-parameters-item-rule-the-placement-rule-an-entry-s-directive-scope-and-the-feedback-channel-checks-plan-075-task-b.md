@@ -242,3 +242,38 @@ every pack, preset and example of the tree; its result recorded here.
   the accepted placements, the key over 1024 characters as a parse route, "each with its legs"
   and the output read as an example with `use`'s constraints, a `directive:` argument among
   others checked.
+- 2026-11-17: Design written (`400ea18b`) and started (backlog → in-progress) on
+  `task/task-093-spec-003-checks` from `main` at `ac195ca7`.
+- 2026-11-17, build (dl-018), each red run on `npm run build` then `node --test`:
+  - functions: `tests/parameters.test.ts`'s new cases first; `npm run build` failed, 4 type
+    errors (`listItemProblem`, `misplacedReferences`, `ScopedParameter` not exported); then
+    green, 38 passing (`6b018ab3`). Departure: the item rule was wired into `defaultMessage` and
+    `resolveParameters` in that commit, before its composer test; that test
+    (`compose-documents` "refuses a list default, or a value given …") passed on its first run,
+    so it was checked by mutation: both calls reverted to `checkValue`, 1 more failing; restored.
+  - the published packs first (criterion 7): before wiring the placement rule and the channel
+    checks, a scratch script ran `misplacedReferences`, `isListParameter` and a search for
+    `feedback-channel` and `agent.execute(…)` with arguments over every pack of this tree, the
+    golden tree, `software-exit`, `merge/example-1`, `merge/example-2` and `resolve/full`: 49
+    references in this tree and 7 in the golden tree, none misplaced; no list parameter, no
+    channel directive, no `agent.execute` with arguments; presets and examples set no list
+    parameter. Nothing went to the approver.
+  - composer: the two tests at `tests/compose-documents.test.ts:258`/`:261` rewritten to a
+    duplicate key (`"{{s}}": 1` beside `a: 2`), green before the placement rule (a
+    characterization, criterion 8); the placement tests red, 1 failing; green after wiring
+    `readFiles` (`a137002e`), 77 passing with `parameters`.
+  - lint: `tests/check-packs.test.ts`'s spec-003 suite red, 5 failing (`preset-value`,
+    `parameter-placement`, `entry-directive-scope`'s refusals, `feedback-channel`,
+    `feedback-channel-target`); `parameter-default` on a list default passed at once (wired
+    with the functions) and was checked by mutation (`defaultMessage` back to `checkValue`: 1
+    failing); `example-fixture`'s item-rule test in `tests/example-rules.test.ts` passed at once
+    (it shares `presetChecks`) and was checked by mutation (the item rule off in `presetChecks`:
+    1 failing); green after wiring (`a2af93df`, lines wrapped in `2e27c28a`).
+  - `validate`: `tests/validate-11-channels.test.ts` red, 1 failing; green after the check in
+    `composeTwice`'s `use` callback (`e5db7a68`). The test's new packs carry no README
+    examples, so the lint reports them too: the composition's line is the evidence, not the
+    exit code.
+  - then `npm test` 1326 passing, 0 failing; `npm run check:packs` "lint: checked 76 files, 0
+    problems"; `npm run validate -- --param project_name=X` exit 0; `npx eslint --max-warnings 0
+    src tests` exit 0. No file under `packs/`, `presets/`, `catalog.yaml`,
+    `tests/fixtures/examples/` or `tests/fixtures/*-exit/` changed.
