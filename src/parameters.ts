@@ -92,11 +92,16 @@ export function isListParameter(declaration: { type: string; description: string
   return declaration.type === 'string' && declaration.description.startsWith('List of');
 }
 
+/** A list parameter's items: its value split at `,`, each trimmed (spec-003 §3.1). */
+export function listItems(value: string): string[] {
+  return value.split(',').map((part) => part.trim());
+}
+
 /** The item rule's first failure for a list parameter's value, or undefined (spec-003 §3.2). */
 export function listItemProblem(value: string): string | undefined {
   if (value.trim() === '') return 'it has no item';
   const seen = new Set<string>();
-  for (const item of value.split(',').map((part) => part.trim())) {
+  for (const item of listItems(value)) {
     if (item === '') return 'it holds an empty item';
     if (!LIST_ITEM.test(item)) return `item "${item}" is not a slug, or two slugs joined by ":"`;
     if (YAML_WORDS.includes(item)) return `item "${item}" reads as other than a string in YAML`;

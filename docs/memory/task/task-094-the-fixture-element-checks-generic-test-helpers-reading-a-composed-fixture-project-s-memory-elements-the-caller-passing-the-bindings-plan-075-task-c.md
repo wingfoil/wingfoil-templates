@@ -2,7 +2,7 @@
 id: task-094-the-fixture-element-checks-generic-test-helpers-reading-a-composed-fixture-project-s-memory-elements-the-caller-passing-the-bindings-plan-075-task-c
 type: task
 title: "The fixture-element checks: generic test helpers reading a composed fixture project's Memory elements, the caller passing the bindings (plan-075 task C)"
-status: backlog
+status: approved
 pack: ""            # tooling task (tooling-delivery v4), plan-075 task (C)
 depends_on: []
 tags: ["tooling","tests","governance"]
@@ -142,7 +142,25 @@ charter's Execution Notes.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-094-fixture-element-checks` from `main` at this task's `backlog` (`7aa01575`).
+
+**Code:** `src/parameters.ts` exports `listItems(value)` (`value.split(',').map(trim)`), which
+`listItemProblem` uses. `tests/support/fixture-elements.ts`:
+- `FixtureElement` `{ type, id, status, file, fields, body }`, `file` project-relative;
+- `readElements(project)` `{ elements, problems }`, after 0.3.2's `staticDirPrefix` and
+  `computeMemoryContentRoots`;
+- `requiredFieldProblems(project, elements)`, after 0.3.2's `isEmptyValue`,
+  `missingRequiredFields`, `notApplicableRefusals` and `requireRequiredFields` (`exempt`); the
+  initial state is the type's `states.sequence[0]`, else `defaults.states.sequence[0]`;
+- `allowedValueProblems(project, elements, bindings)`, `referenceProblems(project, elements,
+  bindings, context)` (`context`: `{ workflows: Record<name, phases[]>, versions: string[] }`),
+  `backReferenceProblems(project, elements, bindings)`, `stateFieldProblems(project, elements,
+  bindings)`, `refusedItemProblems(tree, bindings)`; the binding types exported beside them.
+
+**Red steps** (dl-018): the module first with stubs returning empty results and `listItems` not
+yet exported; `tests/fixture-elements.test.ts` written against them, red (each failure case
+failing, the clean cases passing); then each function, green; `listItems`' extraction
+characterized by `tests/parameters.test.ts`'s item-rule cases, green before and after.
 
 ## Execution Notes
 
@@ -172,3 +190,48 @@ charter's Execution Notes.
   record; nits: `readElements`' return and the frontmatter without `type`, not-applicable values
   as criterion 2 accepts them, `through` naming an id or a path, "filled" as criterion 2 defines
   it, `listItems` extracted, the Open row's Source.
+- 2026-11-17: Design written (`caa126a5`) and started (backlog → in-progress) on
+  `task/task-094-fixture-element-checks` from `main` at `7aa01575`.
+- 2026-11-17, build (dl-018): `tests/support/fixture-elements.ts` first as stubs returning empty
+  results; `tests/fixture-elements.test.ts` written against them, `npm run build` then `node
+  --test dist/tests/fixture-elements.test.js`: 9 failing (every failure case), 4 passing (the
+  clean ones); then each function, 13 passing. `listItems` extracted from `listItemProblem` into
+  an export of `src/parameters.ts`, characterized by `tests/parameters.test.ts` and
+  `tests/compose-documents.test.ts`'s item-rule cases, green before and after (80 passing). One
+  commit, `22b436ae`. Then `npm test` 1343 passing, 0 failing; `npm run check:packs` 0
+  problems; `npm run validate` exit 0; `npx eslint --max-warnings 0 src tests` exit 0. No file
+  under `packs/`, `presets/`, `catalog.yaml` or `tests/fixtures/` changed; in `src/` only
+  `listItems`' export.
+- 2026-11-17: independent build review of `0aee28a9`: approve after amendments, nothing
+  blocking; five should-fix and seven nits. Applied in `f1a9a7ca`, test first (`tests/
+  fixture-elements.test.ts`'s seven review cases red, 5 failing; then 20 passing):
+  `workflow-phase` strict (no third part, own workflows only, not `constructor`); `exempt` as
+  0.3.2 (never `title`, a string id only); an id-less element no longer cited back by an empty
+  name, and a citation matched as a whole word (`fb-1` not in `fb-10`); a not-applicable value
+  that may not stand not filled for a state; the review's surviving mutants now killed (`mode:
+  some` failing, a nested `.git` skipped, the not-applicable skip in allowed values), checked by
+  re-running each mutant: 1 failing each, save the `..` guard, which `isProjectFile`'s new
+  `realpath` check makes redundant (both kept); nits: `.git` checked in subdirectories only, a
+  symbolic link reported as a problem, `git` kept to the project's repository
+  (`GIT_CEILING_DIRECTORIES`), a link out of the project not a file of it, a not-applicable value
+  skipped in back-references. Kept as a choice: a missing or invalid `memory.yaml`, a dangling
+  link or a preset that does not parse throws rather than becoming a problem, since a fixture is
+  the test's own and a throw names the file. A re-review follows: the fixes change behaviour.
+- 2026-11-17: re-review of `f1a9a7ca`: approve after amendments, nothing blocking; two should-fix
+  and two nits, applied in `18e7990e`: `GIT_CEILING_DIRECTORIES` set to the project's real parent,
+  so a project path that is a link into another repository does not climb into it (no test: it needs
+  a repository outside the fixture; the reviewer reproduced it and the fix); only a link named `.md`
+  reported, as 0.3.2's `listMarkdownFilesUnder` (red: 1 failing); a citation not inside a longer
+  dotted id (`v0.3` in `v0.3.2`) or a longer path (red: 1 failing); then 20 passing. The code is
+  frozen at `18e7990e`.
+- 2026-11-17: on the frozen code, `npm test` 1350 passing, 0 failing; `npm run check:packs` 0
+  problems; `npm run validate` and `npm run lint` exit 0.
+- 2026-11-17: checks (dl-039 R1, R2), once, on `27019540` (the code frozen at `18e7990e`, the
+  commits after it `docs/memory` only): the branch CI, run 44072186934, `success`, jobs
+  `validate (22.12.0, 1)` 9 min 1 s, `(22.12.0, 2)` 4 min 18 s, `(22.21.0, 1)` 9 min 57 s,
+  `(22.21.0, 2)` 3 min 50 s (none over 25 minutes); from a clean working tree on Node.js 22.21.0
+  after `npm ci` and `npm run build`: `npm run validate:publication`, the golden tree in
+  publication mode and `npm run -s wingfoil -- workflow list` exit 0, `directives list --format
+  json` with `"warnings": []`, the tree still clean. This commit changes only `docs/memory`: no
+  new run. Privacy check of the branch's diff and messages: no local or scratch path, no
+  maintainer name or email, no private project, no intermediary session.
