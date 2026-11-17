@@ -3,8 +3,8 @@
 // memory.yaml declares neither allowed values nor references (spec-003 §3.1, F-043, F-050), so the
 // caller passes the bindings. Each check returns its problems as `<file>: <message>`, sorted.
 import { execFileSync } from 'node:child_process';
-import { existsSync, lstatSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, relative, sep } from 'node:path';
+import { existsSync, lstatSync, readFileSync, readdirSync, realpathSync, statSync } from 'node:fs';
+import { dirname, join, relative, resolve, sep } from 'node:path';
 
 import { readFrontmatter } from '../../src/frontmatter';
 import { listItems } from '../../src/parameters';
@@ -100,13 +100,18 @@ function contentRoots(memory: MemoryYaml): string[] {
   return all.filter((dir) => !all.some((other) => other !== dir && dir.startsWith(`${other}/`)));
 }
 
-function markdownUnder(dir: string): string[] {
+/** The `.md` files under a root, as 0.3.2 walks it: a subdirectory holding `.git` skipped, a
+ * symbolic link not followed but collected in `links`. */
+function markdownUnder(dir: string, links: string[], root = true): string[] {
   if (!existsSync(dir) || !statSync(dir).isDirectory()) return [];
-  if (existsSync(join(dir, '.git'))) return [];
+  if (!root && existsSync(join(dir, '.git'))) return [];
   return readdirSync(dir).sort(byBytes).flatMap((name) => {
     const path = join(dir, name);
-    if (lstatSync(path).isSymbolicLink()) return [];
-    if (statSync(path).isDirectory()) return markdownUnder(path);
+    if (lstatSync(path).isSymbolicLink()) {
+      links.push(path);
+      return [];
+    }
+    if (statSync(path).isDirectory()) return markdownUnder(path, links, false);
     return name.endsWith('.md') ? [path] : [];
   });
 }
@@ -131,8 +136,12 @@ export function readElements(project: string): { elements: FixtureElement[]; pro
   const memory = memoryOf(project);
   const elements: FixtureElement[] = [];
   const problems: string[] = [];
+  const links: string[] = [];
   const files = [...new Set(contentRoots(memory).flatMap((root) =>
-    markdownUnder(join(project, root))))].sort(byBytes);
+    markdownUnder(join(project, root), links)))].sort(byBytes);
+  for (const link of links) {
+    problems.push(`${relativeTo(project, link)}: a symbolic link is not read as a Memory element`);
+  }
   for (const path of files) {
     const file = relativeTo(project, path);
     const text = readFileSync(path, 'utf8');
@@ -200,8 +209,11 @@ export function requiredFieldProblems(project: string, elements: FixtureElement[
     if (element.status === initialState(memory, element.type)) continue;
     const template = memory.types[element.type]?.template?.frontmatter;
     const exempt = template?.exempt ?? {};
-    const required = [...new Set(['title', ...(template?.required ?? [])])].filter((field) =>
-      !(Object.hasOwn(exempt, field) && (exempt[field] ?? []).includes(element.id)));
+    // As 0.3.2: `exempt` filters `required` before `title` is added, and only for a string id.
+    const id = element.fields['id'];
+    const required = [...new Set(['title', ...(template?.required ?? []).filter((field) =>
+      !(typeof id === 'string' && Object.hasOwn(exempt, field)
+        && (exempt[field] ?? []).includes(id)))])];
     const missing = required.filter((field) => !filled(memory, element, field));
     if (missing.length > 0) {
       problems.push(`${element.file}: missing required field: ${missing.join(', ')}`);
@@ -255,14 +267,19 @@ function isProjectFile(project: string, reference: string): boolean {
     return false;
   }
   const path = join(project, reference);
-  return existsSync(path) && statSync(path).isFile();
+  if (!existsSync(path) || !statSync(path).isFile()) return false;
+  // A symbolic link pointing outside the project is not a file of it.
+  const real = realpathSync(path);
+  return real.startsWith(`${realpathSync(project)}${sep}`);
 }
 
 function isCommit(project: string, reference: string): boolean {
   if (!/^[0-9a-f]{7,40}$/.test(reference)) return false;
   try {
+    // The project's own repository: git never climbs to an enclosing one.
     execFileSync('git', ['-C', project, 'cat-file', '-e', `${reference}^{commit}`],
-      { stdio: 'ignore' });
+      { stdio: 'ignore',
+        env: { ...process.env, GIT_CEILING_DIRECTORIES: dirname(resolve(project)) } });
     return true;
   } catch {
     return false;
@@ -278,9 +295,12 @@ function resolves(project: string, elements: FixtureElement[], kinds: ReferenceK
       case 'version': return (context.versions ?? []).includes(reference);
       case 'commit': return isCommit(project, reference);
       default: {
-        const [workflow = '', phase] = reference.split('.');
-        const phases = context.workflows?.[workflow];
-        return phases !== undefined && (phase === undefined || phases.includes(phase));
+        const parts = reference.split('.');
+        const [workflow = '', phase] = parts;
+        const workflows = context.workflows ?? {};
+        if (parts.length > 2 || !Object.hasOwn(workflows, workflow)) return false;
+        const phases = workflows[workflow] ?? [];
+        return phase === undefined || phases.includes(phase);
       }
     }
   });
@@ -322,6 +342,12 @@ function templateFields(project: string, memory: MemoryYaml, type: string): Set<
   return new Set(isDoc(data) ? Object.keys(data) : []);
 }
 
+/** Whether a text names an id or a path as a whole word: `fb-1` is not in `fb-10`. */
+function cites(text: string, name: string): boolean {
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`(?:^|[^A-Za-z0-9_-])${escaped}(?![A-Za-z0-9_-])`).test(text);
+}
+
 /** Back-references (criterion 5, FA-6, spec-003 §8). */
 export function backReferenceProblems(project: string, elements: FixtureElement[],
   bindings: BackBinding[]): string[] {
@@ -329,8 +355,10 @@ export function backReferenceProblems(project: string, elements: FixtureElement[
   const problems: string[] = [];
   for (const binding of bindings) {
     for (const element of elements.filter((each) => each.type === binding.type)) {
-      const names = [element.id, element.file];
-      for (const reference of valuesOf(element.fields[binding.field]).map((each) => each.trim())) {
+      const names = [element.id, element.file].filter((name) => name !== '');
+      const value = element.fields[binding.field];
+      if (acceptedNotApplicable(memory, element.type, binding.field, value)) continue;
+      for (const reference of valuesOf(value).map((each) => each.trim())) {
         const target = elementNamed(elements, reference);
         if (target !== undefined) {
           if (templateFields(project, memory, target.type).has(binding.through)) {
@@ -338,12 +366,12 @@ export function backReferenceProblems(project: string, elements: FixtureElement[
               problems.push(`${element.file}: ${target.file} does not cite it back in `
                 + binding.through);
             }
-          } else if (!names.some((name) => target.body.includes(name))) {
+          } else if (!names.some((name) => cites(target.body, name))) {
             problems.push(`${element.file}: ${target.file} does not cite it back in its body`);
           }
         } else if (isProjectFile(project, reference)) {
           const text = readFileSync(join(project, reference), 'utf8');
-          if (!names.some((name) => text.includes(name))) {
+          if (!names.some((name) => cites(text, name))) {
             problems.push(`${element.file}: ${reference} does not cite it back`);
           }
         } else {
@@ -364,7 +392,10 @@ export function stateFieldProblems(project: string, elements: FixtureElement[],
   for (const binding of bindings) {
     for (const element of elements.filter((each) => each.type === binding.type
       && each.status === binding.status)) {
-      const missing = binding.fields.filter((field) => !filled(memory, element, field));
+      // Filled in criterion 2's sense: a not-applicable value that may not stand is not.
+      const missing = binding.fields.filter((field) => !filled(memory, element, field)
+        || (isNotApplicable(element.fields[field])
+          && !acceptedNotApplicable(memory, element.type, field, element.fields[field])));
       if (missing.length > 0) {
         problems.push(`${element.file}: ${binding.status} requires ${missing.join(', ')}`);
       }

@@ -2,7 +2,7 @@
 // writes, with a type, field and list of its own; no published pack is read.
 import { strict as assert } from 'node:assert';
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { describe, it } from 'node:test';
@@ -318,6 +318,111 @@ describe('fixture elements: a refused item (criterion 7)', () => {
         'tests/fixtures/examples/p/one/example.yaml: parameter outcomes holds bug, which is '
           + 'refused',
       ]);
+    });
+  });
+});
+
+// The build review's cases (task-094).
+describe('fixture elements: the build review\'s cases', () => {
+  it('readElements skips a nested .git directory and reports a symbolic link', () => {
+    withProject({
+      'docs/notes/a.md': NOTE('a'),
+      'docs/notes/sub/.git/HEAD': 'ref: x\n',
+      'docs/notes/sub/b.md': NOTE('b'),
+    }, (project) => {
+      symlinkSync(join(project, 'docs/notes/a.md'), join(project, 'docs/notes/link.md'));
+      const read = readElements(project);
+      assert.deepEqual(read.elements.map((each) => each.id), ['a']);
+      assert.deepEqual(read.problems.map((line) => line.split(':')[0]), ['docs/notes/link.md']);
+    });
+  });
+
+  it('exempt never exempts title, and only a string id', () => {
+    withProject({
+      '.wingfoil/memory.yaml': MEMORY.replace('exempt: { colour: [note-009-old] }',
+        'exempt: { colour: [note-009-old, "7"], title: [note-010] }'),
+      'docs/notes/note-010.md': element({ id: 'note-010', type: 'note', status: 'open',
+        colour: 'red', source: 'x' }),
+      'docs/notes/seven.md': element({ id: 7, type: 'note', title: 'T', status: 'open',
+        source: 'x' }),
+    }, (project) => {
+      const problems = requiredFieldProblems(project, elementsOf(project));
+      assert.deepEqual(problems.map((line) => line.split(':')[0]),
+        ['docs/notes/note-010.md', 'docs/notes/seven.md'], problems.join('\n'));
+    });
+  });
+
+  it('allowed values: an accepted not-applicable value passes, a Date is a value', () => {
+    withProject({
+      'docs/notes/a.md': NOTE('a', { source: 'n/a — none' }),
+      'docs/notes/b.md': NOTE('b', { source: 'n/a' }),
+    }, (project) => {
+      const problems = allowedValueProblems(project, elementsOf(project),
+        [{ type: 'note', field: 'source', allowed: ['reader'] }]);
+      assert.deepEqual(problems.map((line) => line.split(':')[0]), ['docs/notes/b.md'],
+        problems.join('\n'));
+    });
+  });
+
+  it('references: some fails when none resolves; phases and files are strict', () => {
+    withProject({
+      'docs/notes/a.md': NOTE('a', { source: 'nothing, nobody' }),
+      'docs/notes/b.md': NOTE('b', { source: 'intake.triage.extra' }),
+      'docs/notes/c.md': NOTE('c', { source: 'constructor' }),
+      'docs/notes/d.md': NOTE('d', { source: '../outside.md' }),
+      'docs/notes/e.md': NOTE('e', { source: '/etc/hostname' }),
+    }, (project) => {
+      writeFileSync(join(project, '..', 'outside.md'), 'x\n');
+      try {
+        const problems = referenceProblems(project, elementsOf(project), [{ type: 'note',
+          field: 'source', kinds: ['element', 'file', 'workflow-phase'], split: true,
+          mode: 'some' }], { workflows: { intake: ['capture', 'triage'] } });
+        assert.deepEqual(problems.map((line) => line.split(':')[0]), ['docs/notes/a.md',
+          'docs/notes/b.md', 'docs/notes/c.md', 'docs/notes/d.md', 'docs/notes/e.md'],
+        problems.join('\n'));
+      } finally {
+        rmSync(join(project, '..', 'outside.md'), { force: true });
+      }
+    });
+  });
+
+  it('back-references: an id-less element, a file that does not cite back, a word boundary', () => {
+    withProject({
+      'docs/notes/a.md': element({ type: 'note', title: 'T', status: 'open', links: ['p'] }),
+      'docs/notes/b.md': NOTE('b', { links: ['out/note.txt'] }),
+      'docs/notes/fb-1.md': NOTE('fb-1', { links: ['q'] }),
+      'docs/plan-p.md': element({ id: 'p', type: 'plan', title: 'P', status: 'open' },
+        'Answers docs/notes/x.md.\n'),
+      'docs/plan-q.md': element({ id: 'q', type: 'plan', title: 'Q', status: 'open' },
+        'Answers fb-10.\n'),
+      'out/note.txt': 'Cites nothing.\n',
+    }, (project) => {
+      const problems = backReferenceProblems(project, elementsOf(project),
+        [{ type: 'note', field: 'links', through: 'reported_by' }]);
+      assert.deepEqual(problems.map((line) => line.split(':')[0]), ['docs/notes/a.md',
+        'docs/notes/b.md', 'docs/notes/fb-1.md'], problems.join('\n'));
+    });
+  });
+
+  it('fields per state: a not-applicable value that may not stand is not filled', () => {
+    withProject({
+      'docs/notes/a.md': NOTE('a', { status: 'closed', colour: 'n/a' }),
+      'docs/notes/b.md': NOTE('b', { status: 'closed', source: 'n/a — none' }),
+    }, (project) => {
+      const problems = stateFieldProblems(project, elementsOf(project),
+        [{ type: 'note', status: 'closed', fields: ['colour', 'source'] }]);
+      assert.deepEqual(problems.map((line) => line.split(':')[0]), ['docs/notes/a.md'],
+        problems.join('\n'));
+    });
+  });
+
+  it('a refused item: a non-string value, and a tree with no presets or examples', () => {
+    withProject({ 'presets/n.yaml': 'format: 1\nid: n\nparameters:\n  outcomes: 3\n' },
+      (tree) => {
+        assert.deepEqual(refusedItemProblems(tree, [{ parameter: 'outcomes', item: 'bug' }]), []);
+      });
+    withProject({}, (tree) => {
+      assert.deepEqual(refusedItemProblems(tree, [{ parameter: 'outcomes', item: 'bug' }]), []);
     });
   });
 });
