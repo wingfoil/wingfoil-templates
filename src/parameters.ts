@@ -200,11 +200,19 @@ function yamlSpans(text: string, start: number, end: number): Span[] {
     const c = text[i];
     const before = i === start ? '\n' : text[i - 1] ?? '\n';
     if (state === 'double') {
-      if (c === '\\') i += 1;
-      else if (c === '"') { spans.push({ start: open, end: i + 1, kind: 'double' }); state = 'plain'; }
+      if (c === '\\') {
+        i += 1;
+      } else if (c === '"') {
+        spans.push({ start: open, end: i + 1, kind: 'double' });
+        state = 'plain';
+      }
     } else if (state === 'single') {
-      if (c === "'" && text[i + 1] === "'") i += 1;
-      else if (c === "'") { spans.push({ start: open, end: i + 1, kind: 'single-quoted' }); state = 'plain'; }
+      if (c === "'" && text[i + 1] === "'") {
+        i += 1;
+      } else if (c === "'") {
+        spans.push({ start: open, end: i + 1, kind: 'single-quoted' });
+        state = 'plain';
+      }
     } else if (c === '"') {
       state = 'double';
       open = i;
@@ -258,7 +266,8 @@ export function misplacedReferences(
       && /^\s*\]/.test(text.slice(after, region.end));
     if (kind === 'plain' && parameter.list && alone) {
       if (parameter.pack === ownPack) continue;
-      misplaced.push({ ...reference, placement: 'flow sequence outside the pack that declares it' });
+      misplaced.push({ ...reference,
+        placement: 'flow sequence outside the pack that declares it' });
       continue;
     }
     misplaced.push({ ...reference, placement: kind });
