@@ -274,6 +274,28 @@ every pack, preset and example of the tree; its result recorded here.
     examples, so the lint reports them too: the composition's line is the evidence, not the
     exit code.
   - then `npm test` 1326 passing, 0 failing; `npm run check:packs` "lint: checked 76 files, 0
-    problems"; `npm run validate -- --param project_name=X` exit 0; `npx eslint --max-warnings 0
+    problems"; `npx eslint --max-warnings 0
     src tests` exit 0. No file under `packs/`, `presets/`, `catalog.yaml`,
     `tests/fixtures/examples/` or `tests/fixtures/*-exit/` changed.
+- 2026-11-17: independent build review of `6a2b99bd`: request changes; two blockers, four
+  should-fix, six nits. Applied in `c2e2432d`:
+  - B1 (criterion 4): one case table, `tests/support/placement-cases.ts`, run through both the
+    lint and the composer; B2 (criterion 6): the lint's channel set composed by `runCompose`,
+    exit 0;
+  - S1–S3, the scanner: a quote or a block indicator opens only where a node starts (after a
+    line's sequence dashes, `: `, `[`, `{`, `,`, a tag or an anchor); a block scalar's parent is
+    its key's column, or its dash's; the frontmatter read as `src/frontmatter.ts` reads it, BOM
+    and CRLF included. Red first: 3 failing in `tests/parameters.test.ts`, then 41 passing; the
+    reviewer's probe found a tag before a quote (`!!str "{{s}}"`) too, tested and fixed;
+  - S4: the item rule's other cases and a `givenAsText` value through the composer;
+  - nits: a quoted `directive:` id read without its quotes, an unusual one refused (red: 2
+    failing); the composer's `entry-directive-scope` refusal tested; the "Serves the target"
+    line exact, not in the frontmatter or a fenced block (red: 1 failing); `validate` reports a
+    directive directory it cannot read instead of hiding it (no test: a read failure needs a
+    broken output); line checks for `parameter-default` and `preset-value`. N6 (the output's
+    label names no pack) kept: directive ids are unique in a composition.
+  - Correction of the build note above: `npm run validate -- --param project_name=X` exits 1, on
+    this branch as on `main`, because the README examples set `project_name` themselves; `npm
+    run validate`, without it, exits 0.
+  - Then `npm test` 1330 passing, 0 failing; `npm run check:packs` 0 problems; `npm run
+    validate` exit 0; eslint exit 0. A re-review follows: the fixes change behaviour.
