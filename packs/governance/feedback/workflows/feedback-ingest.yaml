@@ -1,0 +1,26 @@
+format: 1
+# Capture one feedback item with its source and context, then the approver's triage.
+name: feedback-ingest
+kind: main
+description: "Capture a feedback item and have the approver triage it"
+version: 1
+phases:
+  - name: capture
+    description: >-
+      Record the feedback with its kind, target, source and context, and the proposed outcome;
+      submit it (draft to pending).
+    role: facilitator
+    actions:
+      - 'memory.add(type: feedback)'
+      - memory.submit
+    produces:
+      - { type: feedback, path: "{{feedback_path}}" }
+  - name: triage
+    description: >-
+      The approver confirms the classification and the outcome (pending to triaged); a reject
+      sends the item back to draft.
+    role: approver
+    actions:
+      - memory.approve
+    approval: { by_role: approver }
+    fallback: { step: capture }

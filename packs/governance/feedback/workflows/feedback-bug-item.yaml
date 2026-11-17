@@ -1,0 +1,18 @@
+format: 1
+# With software only: one feedback item routed to a bug, then closed.
+name: feedback-bug-item
+kind: sub
+element: feedback
+description: "Record the bug route of one feedback item, then close it"
+version: 1
+phases:
+  - name: bug
+    description: "Record the route: bug-ingest, started on its own, captures and triages the bug."
+    role: facilitator
+    actions:
+      - 'agent.execute(directive: feedback-bug-route)'
+  - name: close
+    description: "Close the item (triaged to closed) once resulting names the bug."
+    role: facilitator
+    actions:
+      - memory.submit

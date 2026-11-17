@@ -73,12 +73,12 @@ describe('npm run check:packs', () => {
     assert.equal(result.lines[0], 'lint: checked 22 files, 0 problems');
   });
 
-  it('passes this repository: catalog.yaml, compat.yaml, base, software, methodology/scrum and '
-    + 'methodology/kanban, their nine examples and the two presets (acceptance 13, task-047, '
-    + 'task-055, task-067, task-090)',
+  it('passes this repository: catalog.yaml, compat.yaml, base, software, methodology/scrum, '
+    + 'methodology/kanban and governance/feedback, their twelve examples and the two presets '
+    + '(acceptance 13, task-047, task-055, task-067, task-090, task-096)',
   () => {
     const result = runCheckPacks(REPO_ROOT);
-    assert.deepEqual(result.lines, ['lint: checked 76 files, 0 problems']);
+    assert.deepEqual(result.lines, ['lint: checked 93 files, 0 problems']);
     assert.equal(result.code, 0);
   });
 

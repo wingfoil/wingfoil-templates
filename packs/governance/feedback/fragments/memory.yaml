@@ -1,0 +1,13 @@
+format: 1
+types:
+  feedback:
+    path: "{{feedback_path}}"
+    id_pattern: "{{feedback_id}}"
+    template:
+      file: memory/templates/built-in/feedback.md
+      frontmatter:
+        required: [title, kind, target, source, context]
+    states:
+      sequence: [draft, pending, triaged, closed]
+      gates:
+        pending: { reject: draft }

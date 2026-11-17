@@ -29,20 +29,21 @@ describe('npm run validate', () => {
     assert.ok(entries.lines.some((line) => line.startsWith('composition entries: composed twice')));
   });
 
-  it('validates this repository: base, software, methodology/scrum and methodology/kanban, their '
-    + 'two presets and nine examples, on 0.3.0 and the newest release (task-039, task-047, '
-    + 'task-055, task-059, task-067, task-074, task-079, task-090)', () => {
+  it('validates this repository: base, software, methodology/scrum, methodology/kanban and '
+    + 'governance/feedback, their two presets and twelve examples, on 0.3.0 and the newest release '
+    + '(task-039, task-047, task-055, task-059, task-067, task-074, task-079, task-090, task-096)',
+  () => {
       const result = validate(['--tree', REPO_ROOT]);
       assert.equal(result.code, 0, result.lines.join('\n'));
-      assert.ok(result.lines.includes('schemas: checked 8 files, 0 problems'));
-      assert.ok(result.lines.includes('lint: checked 76 files, 0 problems'));
-      assert.ok(result.lines.includes('compositions: 11'));
+      assert.ok(result.lines.includes('schemas: checked 9 files, 0 problems'));
+      assert.ok(result.lines.includes('lint: checked 93 files, 0 problems'));
+      assert.ok(result.lines.includes('compositions: 14'));
       assert.ok(result.lines.includes(
-        'matrix: self-test, 22 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
+        'matrix: self-test, 28 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
     });
 
   it('validates software through its fixture methodology: the four governed repositories\' '
-    + 'parameter sets (task-047, task-049, task-067)', () => {
+    + 'parameter sets (task-047, task-049, task-067, task-096)', () => {
     const result = validate(['--tree', REPO_ROOT, '--overlay', 'tests/fixtures/software-exit']);
     assert.equal(result.code, 0, result.lines.join('\n'));
     for (const id of ['defaults', 'flat-releases', 'release-folders', 'release-folders-lean']) {
@@ -50,13 +51,13 @@ describe('npm run validate', () => {
         + `tests/fixtures/software-exit/compositions/${id}/example.yaml: composed twice, `)),
       `${id}\n${result.lines.join('\n')}`);
     }
-    assert.ok(result.lines.includes('compositions: 15'), result.lines.join('\n'));
+    assert.ok(result.lines.includes('compositions: 18'), result.lines.join('\n'));
     assert.ok(result.lines.includes(
-      'matrix: self-test, 30 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
+      'matrix: self-test, 36 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
   });
 
   it('validates methodology/scrum with the four governed repositories\' parameter sets (task-056, '
-    + 'task-067)',
+    + 'task-067, task-096)',
     () => {
       const result = validate(['--tree', REPO_ROOT, '--overlay', 'tests/fixtures/scrum-exit']);
       assert.equal(result.code, 0, result.lines.join('\n'));
@@ -65,12 +66,13 @@ describe('npm run validate', () => {
           + `tests/fixtures/scrum-exit/compositions/${id}/example.yaml: composed twice, `)),
         `${id}\n${result.lines.join('\n')}`);
       }
-      assert.ok(result.lines.includes('compositions: 15'), result.lines.join('\n'));
+      assert.ok(result.lines.includes('compositions: 18'), result.lines.join('\n'));
       assert.ok(result.lines.includes(
-        'matrix: self-test, 30 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
+        'matrix: self-test, 36 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
     });
 
-  it('validates methodology/kanban with the four governed repositories\' parameter sets (task-068)',
+  it('validates methodology/kanban with the four governed repositories\' parameter sets (task-068, '
+    + 'task-096)',
     () => {
       const result = validate(['--tree', REPO_ROOT, '--overlay', 'tests/fixtures/kanban-exit']);
       assert.equal(result.code, 0, result.lines.join('\n'));
@@ -79,18 +81,19 @@ describe('npm run validate', () => {
           + `tests/fixtures/kanban-exit/compositions/${id}/example.yaml: composed twice, `)),
         `${id}\n${result.lines.join('\n')}`);
       }
-      assert.ok(result.lines.includes('compositions: 15'), result.lines.join('\n'));
+      assert.ok(result.lines.includes('compositions: 18'), result.lines.join('\n'));
       assert.ok(result.lines.includes(
-        'matrix: self-test, 30 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
+        'matrix: self-test, 36 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
     });
 
-  it('passes a publication run of this repository: the two presets and nine examples on 0.3.0 and '
-    + 'the newest release (task-039, task-055, task-059, task-067, task-074, task-079, task-090)',
+  it('passes a publication run of this repository: the two presets and twelve examples on 0.3.0 '
+    + 'and the newest release (task-039, task-055, task-059, task-067, task-074, task-079, '
+    + 'task-090, task-096)',
     () => {
       const result = validate(['--tree', REPO_ROOT], { mode: 'publication' });
       assert.equal(result.code, 0, result.lines.join('\n'));
       assert.ok(result.lines.includes(
-        'matrix: publication, 22 runs, 0 failed, tolerance applied: none'),
+        'matrix: publication, 28 runs, 0 failed, tolerance applied: none'),
       result.lines.join('\n'));
     });
 

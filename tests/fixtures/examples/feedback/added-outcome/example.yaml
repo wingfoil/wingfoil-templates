@@ -1,0 +1,18 @@
+format: 1
+id: added-outcome
+title: "Added outcome"
+description: >-
+  Skua Maps, a fictional mapping tool flowing its work with Kanban, keeps its feedback under its
+  own path and id pattern and adds the outcome deferred.
+packs:
+  - software@^1
+  - methodology/kanban@^1
+  - governance/feedback@^1
+parameters:
+  project_name: "Skua Maps"
+  approver_name: "Skua Lead"
+  approver_email: "lead@skua-maps.example"
+  agent_name: "Skua Agent"
+  feedback_path: "docs/feedback/{id}.md"
+  feedback_id: "fb-{n}-{slug}"
+  feedback_outcomes: "decision-log, task, upstream-note, declined, duplicate, deferred"

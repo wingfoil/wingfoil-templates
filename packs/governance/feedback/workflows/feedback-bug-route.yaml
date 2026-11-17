@@ -1,0 +1,12 @@
+format: 1
+# With software only: route every triaged item whose outcome is bug through a bug.
+name: feedback-bug-route
+kind: main
+description: "Route each triaged feedback item whose outcome is bug, and close it"
+version: 1
+phases:
+  - name: route-bugs
+    description: "Each triaged item whose outcome is bug: record its bug route, then close it."
+    iterate_over: feedback
+    where: { status: [triaged], outcome: [bug] }
+    include: feedback-bug-item

@@ -1,0 +1,12 @@
+format: 1
+# Route every triaged item into the governance, at the project's cadence.
+name: feedback-review
+kind: main
+description: "Route each triaged feedback item and close it"
+version: 1
+phases:
+  - name: review
+    description: "Each triaged item whose outcome this pack routes: route it, then close it."
+    iterate_over: feedback
+    where: { status: [triaged], outcome: [{{feedback_outcomes}}] }
+    include: feedback-item

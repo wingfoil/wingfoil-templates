@@ -1,0 +1,15 @@
+format: 1
+id: with-software
+title: "With software"
+description: >-
+  Tern Ledger, a fictional bookkeeping service run in Sprints, routes the defects its customers
+  report to bugs through software's bug-ingest.
+packs:
+  - software@^1
+  - methodology/scrum@^1
+  - governance/feedback@^1
+parameters:
+  project_name: "Tern Ledger"
+  approver_name: "Tern Lead"
+  approver_email: "lead@tern-ledger.example"
+  agent_name: "Tern Agent"

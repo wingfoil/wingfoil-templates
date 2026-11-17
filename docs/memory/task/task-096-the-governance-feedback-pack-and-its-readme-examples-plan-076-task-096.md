@@ -2,7 +2,7 @@
 id: task-096-the-governance-feedback-pack-and-its-readme-examples-plan-076-task-096
 type: task
 title: "The governance/feedback pack and its README examples (plan-076 task-096)"
-status: backlog
+status: approved
 pack: "pack-governance-feedback"
 depends_on: ["task-095"]
 tags: ["packs","feedback","governance"]
@@ -212,7 +212,37 @@ the charter's Execution Note of plan-074 records it.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-096-feedback-pack` from `main` at `9923ba1c`, in a worktree of its own.
+
+- **The pack** (`packs/governance/feedback/`):
+  - **From the untracked draft** (the files run on the engine): `pack.yaml` (format 2, the five
+    parameters, its description rewritten), the two fragments, the template and the five
+    workflows, their descriptions checked against criterion 3.
+  - **Written from the charter and spec-003:** the two directives, `agents/section.md`,
+    `CHANGELOG.md` and `README.md`, as `kanban`'s are built. The README's sections are
+    hand-written; the generated ones come from `npm run index`.
+  - **The `feedback` directive's sections:** feedback and its fields; classification; triage;
+    `## Routes`; the `feedback-route` and `feedback-channel` lookups; the trace both ways;
+    closing and the review run; the agent.
+- **The examples**, fictional, with `.example` addresses:
+  - `defaults`: Plover Desk, the draft's fictional help desk;
+  - `with-software`: another fictional project on Scrum;
+  - `added-outcome`: a third, on Kanban, with `deferred`, its own path
+    `docs/feedback/{id}.md` and id pattern `fb-{n}-{slug}`.
+- **Names:** WingFoil 0.3.2's built-in workflows and directives, the `custom/` files that
+  `init --template Scrum` and `--template Kanban` write, and this repository's `custom/` files.
+  They are listed against `feedback`, `feedback-bug-route`, `feedback-ingest`,
+  `feedback-review`, `feedback-item` and `feedback-bug-item`.
+- **Checks, in order:**
+  1. `npm run index`, then `index -- --check`;
+  2. `check:packs`;
+  3. `validate`;
+  4. the three exit overlays and the golden tree;
+  5. `check:runs`;
+  6. the tests that take the counts, run first to see which move, each moved count stated;
+  7. `npm test`.
+- **Commits:** the tests (red); the pack; the examples; the moved counts; the notes. The draft
+  stays out of every commit.
 
 ## Execution Notes
 
@@ -251,3 +281,89 @@ the charter's Execution Note of plan-074 records it.
   per outcome" dropped; the entry's absence from `defaults` checked by file, not by text; the
   resolved `feedback_outcomes` value found verbatim in the directive. Wording that makes the
   criteria checkable, with no new rule: no further review.
+- 2026-11-17, design: written on the branch; the task submitted `backlog → in-progress`.
+- 2026-11-17, red (dl-018): `tests/feedback-pack.test.ts` before the pack exists: `npm run build
+  && node --test dist/tests/feedback-pack.test.js`, 10 tests, 10 failing (each composition fails
+  to resolve `governance/feedback`, as task-068's red did).
+- 2026-11-17, the names (criterion 4): in scratch projects made by WingFoil 0.3.2's `init
+  --template Scrum` and `--template Kanban`, `workflows/built-in/` is empty,
+  `workflows/custom/` holds `adr-ingest`, `bug-ingest`, `decision-log-ingest`,
+  `sw-life-cycle` and `scrum-delivery` or `kanban-delivery`, `directives/built-in/` holds
+  `architecture`, `code-quality`, `code-review`, `documentation`, `security` and
+  `testing`, and `directives/custom/` holds `determinism`, `doc-versioning`,
+  `security-secrets` and `traceability`; none of them, and none of this repository's
+  `custom/` workflows and directives, starts with `feedback`.
+- 2026-11-17, build: the pack (`c1f551dc`) and the examples (`1a156e05`). `pack.yaml`, the
+  fragments, the template and the workflows come from the draft, with `pack.yaml`'s description
+  rewritten; the directives, the AGENTS.md section, the CHANGELOG and the README are written from
+  the charter and spec-003, the generated sections by `npm run index`. The AGENTS.md section
+  names `feedback-bug-route` but not `bug-ingest`, which only the entry's files name.
+  `tests/feedback-pack.test.ts` passes (10 tests).
+- 2026-11-17, checks on `1a156e05` (criterion 9), each exit 0 with no warning:
+  - `index -- --check`: 8 files;
+  - `check:packs`: 93 files, 0 problems;
+  - `validate`: schemas 9, lint 93, 14 compositions, 28 runs, 0 failed, tolerance none; the
+    three examples composed twice byte-identical; `defaults[+software]` skipped (no
+    methodology), as `base`'s examples are;
+  - `validate:publication`: 28 runs, 0 failed;
+  - the overlays `software-exit`, `scrum-exit` and `kanban-exit`: 18 compositions and 36 runs
+    each, 0 failed;
+  - the golden tree: 26 runs, 0 failed;
+  - `check:runs`: 46 runs, 0 failed, unchanged;
+  - `catalog.yaml`, `CATALOG.md`, `catalog-index.json` and `llms.txt` unchanged.
+- 2026-11-17, criterion 9's WingFoil 0.3.1: the matrix runs the oldest and the newest release
+  `compat.yaml` lists in both modes (task-058), so 0.3.1 is not among its runs. Read as the
+  criterion asks, by hand: each example composed by `npm run compose` and committed in a scratch
+  repository, then WingFoil 0.3.1's `workflow list`, `dna show` and `directives list` with
+  `--format json`: each exit 0, no diagnostic, no warning, nothing on stderr. No change to the
+  matrix (its selection is task-058's).
+- 2026-11-17, the counts moved (criterion 10, `5b21b781`):
+  - `tests/check-packs.test.ts`: lint 76 → 93 files;
+  - `tests/index.test.ts`: 7 → 8 files;
+  - `tests/validate-2-run.test.ts`: schemas 8 → 9, lint 76 → 93, `validate` 11 → 14
+    compositions and 22 → 28 runs, the overlays `software-exit`, `scrum-exit` and
+    `kanban-exit` 15 → 18 compositions and 30 → 36 runs each, the publication run 22 → 28.
+
+  The titles say so. `tests/catalog-fixture.test.ts` refused `tests/feedback-pack.test.ts`
+  reading this repository's `catalog.yaml` (task-040): the test composes on the fixture catalog
+  instead, the packs read from the tree as before. The full suite before the change: 1380 tests,
+  8 failing, exactly these.
+- 2026-11-17: independent build review (dl-017): approve after amendments; no blocker, two
+  should-fix, three nits. It found `pack.yaml` differing from the draft only in its description,
+  the fragments, the template and the five workflows byte-identical, the counts adding up, no
+  unconditional file naming `bug-ingest`, and `with-software` and `added-outcome` composed
+  on WingFoil 0.3.2 with no diagnostic (`feedback-review` started, its frontier empty with no
+  triaged item). Applied in `ccdc82c0`:
+  - **Should-fix:** a project's own kind or target defined in a `custom/` directive of its own,
+    bound to `facilitator`, with an id other than `feedback` (the text told it to override
+    `feedback`, against spec-001's `custom/` rule and the charter's Adoption); the `defaults`
+    example's governance gap routed through `governance-evolution`, as the routing table says,
+    not `decision-log-ingest`.
+  - **Nits applied:** the `upstream-note` row of `## Routes` carries its fallback (a
+    decision-log naming the target); `feedback-bug-item`'s and `feedback-bug-route`'s
+    descriptions say the step records the bug route, which `bug-ingest` opens (text only).
+  - **Nit recorded, no change:** `context`'s references separated by commas and a workflow and
+    phase written `<workflow>.<phase>` are kept: they are the split and the `workflow-phase`
+    form of the fixture-element checks (task-094) that task-098 binds (plan-076 point 5, ruled).
+  - **Not verified by the reviewer:** `workflow next` printing `feedback-item` › `route` for a
+    triaged item. plan-074 step 2 drove it on the draft, whose workflows these are byte for byte;
+    task-097's scenarios and task-099's run drive it again.
+
+  `index -- --check` (8 files), `check:packs` (93 files, 0 problems) and the 10 tests pass
+  after. The directive's rule changes: re-review.
+- 2026-11-17: re-review of the build fixes: approve after one should-fix, applied in `72a01892`: an
+  added kind or target goes into `feedback_kinds` or `feedback_targets`, its meaning defined
+  in the project's own `custom/` directive (spec-003 §4.1, §5.3). Every other fix confirmed,
+  no regression. Wording that completes the rule the re-review accepted: no further review. The
+  code is frozen at `72a01892`.
+- 2026-11-17: checks (dl-039 R1, R2), once, on `c5078638` (the code frozen at its parent, the
+  commit itself `docs/memory` only): the branch CI, run 44128847928, `success`, jobs `validate
+  (22.12.0, 1)` 9 min 31 s, `(22.12.0, 2)` 5 min 31 s, `(22.21.0, 1)` 7 min 22 s, `(22.21.0, 2)`
+  6 min 44 s (none over 25 minutes); from a clean working tree on Node.js 22.21.0 after `npm ci`
+  and `npm run build`: `npm test` 1380 tests, 0 failed, `npm run lint` exit 0, `npm run
+  validate:publication` (28 runs, 0 failed, tolerance none), the golden tree in publication mode
+  and `npm run -s wingfoil -- workflow list` exit 0, `directives list --format json` with
+  `"warnings": []`, the tree still clean. This commit changes only `docs/memory`: no new run.
+  Privacy check of the branch's diff and messages: no local or scratch path, no maintainer name
+  or email, no private project, no intermediary session; the examples' projects fictional, their
+  addresses `.example`.
