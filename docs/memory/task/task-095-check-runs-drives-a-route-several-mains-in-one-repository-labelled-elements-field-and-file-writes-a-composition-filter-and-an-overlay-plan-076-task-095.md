@@ -70,7 +70,8 @@ body).
    The links run in order, in the run's one scratch repository. Each link's `start` makes its
    own instance; its `next`, `finalize`, `add` with a step and `end` act on that instance. One
    of those four before its link's `start` is a scenario error (exit 3). The steps that need no
-   instance (`add` with no step, `set`, `write`, `submit`, `approve`) may come anywhere.
+   instance (`add` with no step, `set`, `write`, `submit`, `approve`, `commit_inside`,
+   `commit_copy`) may come anywhere.
    - **The failure line.** A single-main run keeps `fail at <step>`, as today. A chain names
      the link by its position: `fail at <main>[<n>].<step>`, `<n>` counted from 1.
    - **The run's name** in the report is its optional `name` (a plain id, unique within the
@@ -81,7 +82,8 @@ body).
    are scenario errors, exit 3, naming the file and the key, before any run:
    - a label, or a token of criterion 6, used before its `add` in the run's step order;
    - a label added twice;
-   - an unknown label.
+   - an unknown label;
+   - the label `added`, which names the last element added (`$added.id` is not a token).
 3. **`add` with no step.** `add`'s `step` becomes optional. Without it, the command is
    `memory add --type <type> --title <title>`, with no `--workflow` and no `--step`, for a
    target the charter adds outside the pack's workflows. With it, the command is as today, on
@@ -93,7 +95,9 @@ body).
 
    The element's file is the path WingFoil printed at its `add`. Each field given replaces
    that key's value, or is added after the last key. Every other line of the file stays
-   byte-identical, comments included. The change is committed as the agent. A missing element
+   byte-identical, comments included. Each value is written so that the frontmatter parses
+   back to exactly the given string or list, quoted where a plain scalar would not (a test
+   covers values such as `true`, `42`, `#x` and `a: b`). The change is committed as the agent. A missing element
    file, or a frontmatter that does not parse, fails the step.
 
    These are scenario errors (exit 3):
@@ -107,7 +111,8 @@ body).
    or one under `.git/`, is a scenario error (exit 3), as `commit_copy`'s is.
 6. **An element's id at run time.** In `set`'s values and body, `write`'s path and text, and
    the keys of `next` and `finalize`, the token `$<label>.id` stands for that label's element
-   id. For example: `finalize: feedback-item.route@feedback:$item.id`.
+   id. The token is `\$([a-z][a-z0-9-]*)\.id(?![a-z0-9-])`: it ends at `.id`, and `$item.idx`
+   is not one. For example: `finalize: feedback-item.route@feedback:$item.id`.
    - The outline's notation `<label>.id` is kept, with a `$` added. The token holds no `{`,
      `}`, `[`, `]` or `,`, so it is safe in YAML flow syntax, unquoted.
    - A token naming an unknown label is a scenario error (exit 3), and so is one before its
@@ -122,7 +127,7 @@ body).
    - **Counts.** A run left out counts in neither the total nor the failures.
    - **Skipped compositions.** A composition that no run of the scenario selects is neither
      composed nor installed.
-8. **An overlay**, a top-level `overlay: <dir>`. Compositions resolve on a merged tree, built
+8. **An overlay**, a top-level `overlay: <dir>`, relative to the tree as `compositions` is. Compositions resolve on a merged tree, built
    as `validate --overlay` builds it.
    - **Shared code.** The merged-tree build is extracted from `src/validate.ts` › `checkOverlay`
      into an exported function, which `validate` and `check:runs` both use. `openOverlay`'s
@@ -132,7 +137,7 @@ body).
    - **The directory's rules** are `openOverlay`'s, with its exit codes:
      - a directory that does not exist is exit 2;
      - one outside `tests/fixtures/`, or under `tests/fixtures/examples/`, is exit 3;
-     - each line names the file and the key.
+     - each line reads `<file>: overlay: <openOverlay's reason>`.
    - **The merged tree** holds the tree's `packs/`, `catalog.yaml` and `compat.yaml`, and the
      overlay's packs. An overlay pack that shadows a pack of the tree is a scenario error
      (exit 3).
@@ -141,7 +146,8 @@ body).
    - **Compose and releases.** The compositions are composed, and their releases selected, on
      the merged tree.
    - **Cleanup and report.** The merged tree is removed after the scenario, failing or not.
-     The report shows no scratch path: neither `runs-…` nor the merged tree's.
+     The report shows no scratch path: neither `runs-…` nor the merged tree's, which
+     `mapOverlayPaths` (`src/validate.ts`) maps back to the tree's and the overlay's paths.
 9. **Tests**, `tests/runs.test.ts`, on the stub WingFoil and the stub composer, as the existing
    tests. They cover:
    - each criterion's behaviour and each of its scenario errors;
@@ -151,8 +157,8 @@ body).
      issued in order, in one repository;
    - an overlay scenario, whose `compose` receives a tree holding both the tree's packs and the
      overlay pack, with the merged tree removed afterwards;
-   - one test of `realCompose` and `selectedReleases` on a small tree with an overlay, written
-     in a temporary directory;
+   - one test of `realCompose` on the merged tree that the extracted function builds from a
+     small tree and overlay written in a temporary directory, with no signature change;
    - a failing overlay compose, whose line holds no scratch path;
    - the adoption run's `include:` with no value (the null branch), which `includeList`
      already handles;
@@ -168,7 +174,8 @@ body).
     - No file under `packs/`, `presets/`, `catalog.yaml`, `.github/` or `tests/fixtures/`
       changes.
     - The header of `src/runs.ts` describes the new keys.
-    - `validate --overlay`'s output on the three exit overlays is unchanged.
+    - `validate --overlay`'s output on `software-exit`, `scrum-exit` and `kanban-exit` is
+      unchanged: the Execution Notes record the diff of each output before and after.
     - `npm run check:runs` gives the same total as on `main` and exits 0.
     - `npm run check:packs` and `npm run validate` exit 0.
 12. **Checks** (`tooling-delivery` v4 › `review`, dl-039):
@@ -226,3 +233,12 @@ body).
   skipped compositions; the plain id's pattern; exit 2 for a missing overlay directory; no
   `write` under `.git/`; "outside the pack's workflows"; `compositions` relative to the tree;
   `validate`'s characterization. Criteria 1, 2, 4, 6, 7 and 8 change: re-review.
+- 2026-11-17: re-review: approve after amendments; no blocker, one should-fix, six nits, all
+  applied; every first-review fix checked against the code, the overlay extraction feasible
+  with `validate`'s lines unchanged (sorted), the token parsed by the repo's `yaml` in flow
+  syntax. **Should-fix:** `set` writes each value so that it parses back as given, with a test
+  of values needing quotes. **Nits:** the token's pattern and end; the label `added` refused;
+  `commit_inside` and `commit_copy` allowed anywhere; the overlay relative to the tree, its
+  error line and `mapOverlayPaths`; the `realCompose` test on the extracted merged tree; the
+  three overlays' output diffs recorded. The fixes make the criteria checkable, with no new
+  rule: no further review.
