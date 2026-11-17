@@ -2,7 +2,7 @@
 id: task-096-the-governance-feedback-pack-and-its-readme-examples-plan-076-task-096
 type: task
 title: "The governance/feedback pack and its README examples (plan-076 task-096)"
-status: in-review
+status: approved
 pack: "pack-governance-feedback"
 depends_on: ["task-095"]
 tags: ["packs","feedback","governance"]
