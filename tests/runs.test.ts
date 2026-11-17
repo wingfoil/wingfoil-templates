@@ -15,6 +15,7 @@ import { parse as parseYaml } from 'yaml';
 import { FIXTURES } from './support/paths';
 
 import { MatrixIoError } from '../src/matrix';
+import { treeLayout } from '../src/layout-rules';
 import { mergeOverlay, openOverlay } from '../src/overlay-tree';
 import { realCompose, runRuns, selectedReleases } from '../src/runs';
 import type { Compose, Exec, RunsOptions, WingfoilOutput } from '../src/runs';
@@ -1231,6 +1232,7 @@ describe('realCompose on an overlay\'s merged tree (task-095 criterion 9)', () =
       rmSync(flow, { recursive: true });
       const overlay = openOverlay(tree, 'tests/fixtures/flow-overlay');
       assert.ok('merged' in overlay, JSON.stringify(overlay));
+      overlay.packs = treeLayout(overlay.dir).packs;
       try {
         assert.deepEqual(mergeOverlay(tree, overlay), []);
         const out = join(dir, 'out');

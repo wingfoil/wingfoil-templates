@@ -4,12 +4,8 @@
 // report lines are stable: the release evidence of plan-015 task 11 reads them. With --overlay
 // (task-046, plan-046 ruling 1), the packs and compositions of a directory under tests/fixtures/
 // are composed with this tree's packs, on a merged temporary tree; never in publication mode.
-import {
-  cpSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync,
-  rmSync, statSync,
-} from 'node:fs';
-import { tmpdir } from 'node:os';
-import { isAbsolute, join, relative, sep } from 'node:path';
+import { existsSync, lstatSync, readFileSync, readdirSync, rmSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 
 import { CatalogError, loadCatalog } from './catalog';
@@ -35,6 +31,10 @@ import type { Problem } from './problems';
 import type { VersionRequirements } from './range';
 import { parseEntry } from './requirements';
 import { ResolveError, forbiddenBy, resolve } from './resolve';
+import { mapOverlayPaths, mergeOverlay, openOverlay } from './overlay-tree';
+import type { Overlay } from './overlay-tree';
+
+export { mapOverlayPaths } from './overlay-tree';
 import type { ResolvedPack } from './resolve';
 import { withStandIns } from './preset-stand-ins';
 import { repositorySchemas } from './schemas';
@@ -83,18 +83,6 @@ interface Composition {
   overlay?: boolean;
   /** One of the overlay's compositions or its leg: its packs count as reached (criterion 3). */
   reaches?: boolean;
-}
-
-/** The overlay of a run (task-046): the directory, its path in the tree, and the merged tree. */
-interface Overlay {
-  dir: string;
-  /** Relative to the tree, with `/` separators. */
-  rel: string;
-  /** Its pack paths under packs/, in byte order. */
-  packs: string[];
-  /** The temporary directory holding the merged tree; removed when the run ends. */
-  root: string;
-  merged: string;
 }
 
 /** The line of plan-046 ruling 1: an overlay never reaches a publication. */
@@ -253,58 +241,6 @@ class Matrix {
   }
 }
 
-function posix(path: string): string {
-  return path.split(sep).join('/');
-}
-
-function escapeRegExp(text: string): string {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-/**
- * A line from the merged tree, as this tree names it: the merged tree's own path becomes the
- * tree's, and `packs/<p>` of an overlay pack `<p>` becomes `<overlay>/packs/<p>`.
- */
-export function mapOverlayPaths(text: string, tree: string,
-  overlay: Pick<Overlay, 'merged' | 'packs' | 'rel'>): string {
-  const packs = [...overlay.packs].sort((a, b) => b.length - a.length);
-  // A path ends at a separator, a quote, a closing mark, or a sentence's last full stop.
-  const end = '(?=$|[/\\s\'"`):,;]|\\.(?=$|\\s))';
-  let mapped = text;
-  for (const pack of packs) {
-    mapped = mapped.replace(new RegExp(`${escapeRegExp(`${overlay.merged}/packs/${pack}`)}${end}`,
-      'g'), () => `${tree}/${overlay.rel}/packs/${pack}`);
-  }
-  mapped = mapped.split(overlay.merged).join(tree);
-  for (const pack of packs) {
-    const pattern = new RegExp(`(^|[\\s'"\`(])packs/${escapeRegExp(pack)}${end}`, 'g');
-    mapped = mapped.replace(pattern, (_match, lead: string) =>
-      `${lead}${overlay.rel}/packs/${pack}`);
-  }
-  return mapped;
-}
-
-/** The overlay `--overlay` names, or the exit code and line that refuse it (criterion 1). */
-function openOverlay(tree: string, given: string): Overlay | { code: number; line: string } {
-  const dir = isAbsolute(given) ? given : join(tree, given);
-  if (!existsSync(dir) || !statSync(dir).isDirectory()) {
-    return { code: 2, line: `${given}: not a directory` };
-  }
-  const real = realpathSync(dir);
-  const base = realpathSync(tree);
-  const declared = join(base, 'tests', 'fixtures');
-  const fixtures = existsSync(declared) ? realpathSync(declared) : declared;
-  if (!real.startsWith(`${fixtures}${sep}`)) {
-    return { code: 3, line: `--overlay ${given}: not under tests/fixtures/` };
-  }
-  if (`${real}${sep}`.startsWith(`${join(fixtures, 'examples')}${sep}`)) {
-    return { code: 3, line: `--overlay ${given}: under tests/fixtures/examples/, which the tree's `
-      + 'lint covers' };
-  }
-  const root = mkdtempSync(join(tmpdir(), 'validate-overlay-'));
-  return { dir: real, rel: posix(relative(base, real)), packs: [], root,
-    merged: join(root, 'tree') };
-}
 
 interface OverlayCheck {
   checked: number;
@@ -348,29 +284,12 @@ function checkOverlay(tree: string, overlay: Overlay): OverlayCheck {
     problems.push(...packLayoutProblems(overlay.dir, { id: pack, path: `packs/${pack}` })
       .map(inOverlay));
   }
-  const held = treeLayout(tree).packs;
   let shadowed = false;
-  mkdirSync(overlay.merged);
-  if (existsSync(join(tree, 'packs'))) {
-    cpSync(join(tree, 'packs'), join(overlay.merged, 'packs'), { recursive: true });
-  }
-  for (const file of ['catalog.yaml', 'compat.yaml']) {
-    if (existsSync(join(tree, file))) cpSync(join(tree, file), join(overlay.merged, file));
-  }
-  for (const pack of layout.packs) {
-    const shadows = held.filter((other) => other === pack || pack.startsWith(`${other}/`)
-      || other.startsWith(`${pack}/`));
-    for (const other of shadows) {
-      problems.push({ file: `${overlay.rel}/packs/${pack}`, rule: 'overlay-shadow',
-        message: `this tree's packs/ already holds packs/${other}: an overlay never shadows a `
-          + 'pack of the tree (plan-046 ruling 1)' });
-    }
-    if (shadows.length > 0) {
-      shadowed = true;
-      continue;
-    }
-    cpSync(join(overlay.dir, 'packs', pack), join(overlay.merged, 'packs', pack),
-      { recursive: true });
+  for (const { pack, other } of mergeOverlay(tree, overlay)) {
+    problems.push({ file: `${overlay.rel}/packs/${pack}`, rule: 'overlay-shadow',
+      message: `this tree's packs/ already holds packs/${other}: an overlay never shadows a `
+        + 'pack of the tree (plan-046 ruling 1)' });
+    shadowed = true;
   }
   const schemas = repositorySchemas();
   const schemaProblems = (file: string, kind: 'pack' | 'preset', data: unknown,

@@ -11,7 +11,14 @@
 // init --template` wrote and takes the composed `.wingfoil/` as the packs' READMEs say: copied over
 // the project's, `custom/` kept, the `custom/` workflows and directives it names removed, the
 // `custom/` workflows left re-included, committed; then `workflow list` and `workflow next` exit
-// 0 with no diagnostic and no stderr line. Exit 0 every run passed, 1 a run
+// 0 with no diagnostic and no stderr line. The steps that drive a route (task-095, plan-076): a
+// run may be a `chain` of mains run in order in one repository, each link's `start` making the
+// instance its steps act on; `add` may name no step and may set a `label`; `submit`, `approve` and
+// `set` name `added` or a label; `set` writes frontmatter fields and a body line of an element,
+// `write` a file, each committed; `$<label>.id` stands for a labelled element's id in those
+// texts and in the keys of `next` and `finalize`; a run's `only` lists the compositions it runs
+// on, and its `name` names it in the report; a scenario's `overlay` composes on the merged tree
+// `validate --overlay` builds (src/overlay-tree.ts). Exit 0 every run passed, 1 a run
 // failed or a composition could not be composed, 2 an I/O error, 3 bad usage or a scenario it
 // cannot read.
 import { spawnSync } from 'node:child_process';
@@ -23,7 +30,9 @@ import { tmpdir } from 'node:os';
 import { dirname, isAbsolute, join, relative, resolve as resolvePath } from 'node:path';
 import { parseArgs } from 'node:util';
 
-import { YAMLSeq, isScalar, isSeq, parseDocument } from 'yaml';
+import {
+  YAMLSeq, isScalar, isSeq, parse as parseYaml, parseDocument, stringify as stringifyYaml,
+} from 'yaml';
 import type { Document } from 'yaml';
 
 import { loadCatalog } from './catalog';
@@ -34,6 +43,9 @@ import { GitError, gitEnvironment, runGit } from './git';
 import {
   DEFAULT_CACHE, MATRIX_PINS, MatrixIoError, installRelease, selectReleases,
 } from './matrix';
+import { treeLayout } from './layout-rules';
+import { mapOverlayPaths, mergeOverlay, openOverlay } from './overlay-tree';
+import type { Overlay } from './overlay-tree';
 import { resolve } from './resolve';
 import type { ResolvedPack } from './resolve';
 import { YamlError, loadYamlFile } from './yaml-load';
@@ -119,19 +131,32 @@ type Step =
   | { kind: 'finalize'; key: string }
   | { kind: 'commit_inside'; parameter: string }
   | { kind: 'commit_copy'; from: string; to: string }
-  | { kind: 'add'; type: string; title: string; step: string }
-  | { kind: 'submit' }
-  | { kind: 'approve' };
+  | { kind: 'add'; type: string; title: string; step?: string; label?: string }
+  | { kind: 'submit'; element: string }
+  | { kind: 'approve'; element: string }
+  | { kind: 'set'; element: string; fields: [string, string | string[]][]; body?: string }
+  | { kind: 'write'; path: string; text: string };
 
-interface MainRun {
-  kind: 'main';
+/** One main of a run: its `start` makes the instance its other steps act on (task-095). */
+interface Link {
   main: string;
   steps: Step[];
+}
+
+/** A run of one main (`single`) or a chain of mains in one repository (task-095). */
+interface MainRun {
+  kind: 'main';
+  name?: string;
+  only?: string[];
+  links: Link[];
+  single: boolean;
 }
 
 /** An adoption (task-060): `init --template`, then the composed `.wingfoil/` adopted. */
 interface AdoptRun {
   kind: 'adopt';
+  name?: string;
+  only?: string[];
   template: string;
   workflows: string[];
   directives: string[];
@@ -139,14 +164,17 @@ interface AdoptRun {
 
 type Run = MainRun | AdoptRun;
 
-/** The run's name in the report: its `main`, or `adopt:<template>`. */
+/** The run's name in the report: its `name`, its mains joined by `+`, or `adopt:<template>`. */
 function runName(run: Run): string {
-  return run.kind === 'main' ? run.main : `adopt:${run.template}`;
+  if (run.name !== undefined) return run.name;
+  return run.kind === 'main' ? run.links.map((link) => link.main).join('+')
+    : `adopt:${run.template}`;
 }
 
 interface Scenario {
   label: string;
   compositions: string;
+  overlay?: string;
   agent: Identity;
   runs: Run[];
 }
@@ -199,7 +227,34 @@ function idList(value: unknown, where: string): string[] {
   });
 }
 
-function readAdopt(raw: unknown, where: string): AdoptRun {
+/** A label, a run's name or a composition id: a plain id (task-095). */
+const PLAIN_ID = /^[a-z][a-z0-9-]*$/;
+/** A labelled element's id at run time (task-095 criterion 6). */
+const TOKEN = /\$([a-z][a-z0-9-]*)\.id(?![a-z0-9-])/g;
+/** The element a step names when it names none: the last one added. */
+const ADDED = 'added';
+
+function plainId(value: unknown, where: string): string {
+  const id = text(value, where);
+  if (!PLAIN_ID.test(id)) throw new KeyProblem(where, 'a plain id is required');
+  return id;
+}
+
+/** `only`: a non-empty list of composition ids, each given once. */
+function readOnly(value: unknown, where: string): string[] {
+  if (!Array.isArray(value) || value.length === 0) {
+    throw new KeyProblem(where, 'a non-empty list is required');
+  }
+  const seen = new Set<string>();
+  return value.map((item: unknown, n) => {
+    const id = plainId(item, `${where}[${n}]`);
+    if (seen.has(id)) throw new KeyProblem(`${where}[${n}]`, `${id} given twice`);
+    seen.add(id);
+    return id;
+  });
+}
+
+function readAdopt(raw: unknown, where: string): Omit<AdoptRun, 'name' | 'only'> {
   if (!isRecord(raw)) throw new KeyProblem(where, 'a mapping is required');
   onlyKeys(raw, ['template', 'remove'], where);
   const template = text(raw['template'], `${where}.template`);
@@ -209,6 +264,45 @@ function readAdopt(raw: unknown, where: string): AdoptRun {
   return { kind: 'adopt', template,
     workflows: idList(remove['workflows'], `${where}.remove.workflows`),
     directives: idList(remove['directives'], `${where}.remove.directives`) };
+}
+
+/** `added` or a label. */
+function elementRef(value: unknown, where: string): string {
+  return value === ADDED ? ADDED : plainId(value, where);
+}
+
+/** A field's value for `set`: a string, or a list of strings. */
+function fieldValue(value: unknown, where: string): string | string[] {
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value) && value.every((item) => typeof item === 'string')) {
+    return value;
+  }
+  throw new KeyProblem(where, 'a string or a list of strings is required');
+}
+
+function readSet(value: unknown, where: string): Step {
+  if (!isRecord(value)) throw new KeyProblem(where, 'a mapping is required');
+  onlyKeys(value, ['element', 'fields', 'body'], where);
+  const element = elementRef(value['element'], `${where}.element`);
+  if (value['fields'] === undefined && value['body'] === undefined) {
+    throw new KeyProblem(where, 'fields or body is required');
+  }
+  const fields: [string, string | string[]][] = [];
+  if (value['fields'] !== undefined) {
+    const given = value['fields'];
+    if (!isRecord(given) || Object.keys(given).length === 0) {
+      throw new KeyProblem(`${where}.fields`, 'a non-empty mapping is required');
+    }
+    for (const [key, field] of Object.entries(given)) {
+      if (key === 'id' || key === 'status') {
+        throw new KeyProblem(`${where}.fields.${key}`,
+          'never written: a state changes only through WingFoil\'s commands');
+      }
+      fields.push([key, fieldValue(field, `${where}.fields.${key}`)]);
+    }
+  }
+  const body = value['body'] === undefined ? undefined : text(value['body'], `${where}.body`);
+  return { kind: 'set', element, fields, ...body === undefined ? {} : { body } };
 }
 
 function readStep(raw: unknown, where: string): Step {
@@ -225,8 +319,7 @@ function readStep(raw: unknown, where: string): Step {
       return { kind: name, parameter: text(value, `${where}.${name}`) };
     case 'submit':
     case 'approve':
-      if (value !== 'added') throw new KeyProblem(`${where}.${name}`, 'only "added" is supported');
-      return { kind: name };
+      return { kind: name, element: elementRef(value, `${where}.${name}`) };
     case 'commit_copy': {
       const copy = isRecord(value) ? value : {};
       onlyKeys(copy, ['from', 'to'], `${where}.${name}`);
@@ -235,14 +328,138 @@ function readStep(raw: unknown, where: string): Step {
     }
     case 'add': {
       const add = isRecord(value) ? value : {};
-      onlyKeys(add, ['type', 'title', 'step'], `${where}.add`);
+      onlyKeys(add, ['type', 'title', 'step', 'label'], `${where}.add`);
+      const step = add['step'] === undefined ? undefined : text(add['step'], `${where}.add.step`);
+      let label: string | undefined;
+      if (add['label'] !== undefined) {
+        if (add['label'] === ADDED) {
+          throw new KeyProblem(`${where}.add.label`, '"added" names the last element added');
+        }
+        label = plainId(add['label'], `${where}.add.label`);
+      }
       return { kind: name, type: text(add['type'], `${where}.add.type`),
         title: text(add['title'], `${where}.add.title`),
-        step: text(add['step'], `${where}.add.step`) };
+        ...step === undefined ? {} : { step }, ...label === undefined ? {} : { label } };
+    }
+    case 'set':
+      return readSet(value, `${where}.set`);
+    case 'write': {
+      const write = isRecord(value) ? value : {};
+      onlyKeys(write, ['path', 'text'], `${where}.write`);
+      const path = repoPath(write['path'], `${where}.write.path`);
+      if (path === '.git' || path.startsWith('.git/')) {
+        throw new KeyProblem(`${where}.write.path`, 'never under .git/');
+      }
+      return { kind: name, path, text: text(write['text'], `${where}.write.text`) };
     }
     default:
       throw new KeyProblem(where, `unknown step ${JSON.stringify(name)}`);
   }
+}
+
+/** The texts of a step that may hold a token. */
+function tokenTexts(step: Step): string[] {
+  switch (step.kind) {
+    case 'next':
+    case 'finalize':
+      return [step.key];
+    case 'set':
+      return [...step.fields.flatMap(([, value]) => (Array.isArray(value) ? value : [value])),
+        ...step.body === undefined ? [] : [step.body]];
+    case 'write':
+      return [step.path, step.text];
+    default:
+      return [];
+  }
+}
+
+/** The step needs its link's instance (task-095 criterion 1). */
+function needsInstance(step: Step): boolean {
+  return step.kind === 'next' || step.kind === 'finalize' || step.kind === 'end'
+    || (step.kind === 'add' && step.step !== undefined);
+}
+
+/**
+ * The static checks of a main run (task-095 criteria 1, 2, 6): in step order, an instance step
+ * before its link's start, a label or token before its add or never added, a label added twice.
+ */
+function checkLinks(links: Link[], at: (link: number, step: number) => string): void {
+  const all = new Set(links.flatMap((link) => link.steps)
+    .flatMap((step) => (step.kind === 'add' && step.label !== undefined ? [step.label] : [])));
+  const added = new Set<string>();
+  let any = false;
+  const named = (label: string, where: string): void => {
+    if (!all.has(label)) throw new KeyProblem(where, `unknown label ${label}`);
+    if (!added.has(label)) throw new KeyProblem(where, `label ${label} before its add`);
+  };
+  links.forEach((link, l) => {
+    let started = false;
+    link.steps.forEach((step, n) => {
+      const where = `${at(l, n)}.${step.kind}`;
+      if (needsInstance(step) && !started) throw new KeyProblem(where, 'before the link\'s start');
+      if (step.kind === 'start') started = true;
+      if (step.kind === 'submit' || step.kind === 'approve' || step.kind === 'set') {
+        if (step.element === ADDED) {
+          if (!any) throw new KeyProblem(where, 'no element added before');
+        } else {
+          named(step.element, where);
+        }
+      }
+      for (const value of tokenTexts(step)) {
+        for (const match of value.matchAll(TOKEN)) named(match[1] ?? '', where);
+      }
+      if (step.kind === 'add') {
+        if (step.label !== undefined) {
+          if (added.has(step.label)) {
+            throw new KeyProblem(`${where}.label`, `label ${step.label} added twice`);
+          }
+          added.add(step.label);
+        }
+        any = true;
+      }
+    });
+  });
+}
+
+function readSteps(value: unknown, where: string): Step[] {
+  if (!Array.isArray(value) || value.length === 0) {
+    throw new KeyProblem(where, 'a non-empty list is required');
+  }
+  return value.map((step: unknown, n) => readStep(step, `${where}[${n}]`));
+}
+
+function readRun(raw: unknown, r: number): Run {
+  const where = `runs[${r}]`;
+  if (!isRecord(raw)) throw new KeyProblem(where, 'a mapping is required');
+  const common = {
+    ...raw['name'] === undefined ? {} : { name: plainId(raw['name'], `${where}.name`) },
+    ...raw['only'] === undefined ? {} : { only: readOnly(raw['only'], `${where}.only`) },
+  };
+  if ('adopt' in raw) {
+    onlyKeys(raw, ['adopt', 'name', 'only'], where);
+    return { ...readAdopt(raw['adopt'], `${where}.adopt`), ...common };
+  }
+  if ('chain' in raw) {
+    onlyKeys(raw, ['chain', 'name', 'only'], where);
+    const chain = raw['chain'];
+    if (!Array.isArray(chain) || chain.length === 0) {
+      throw new KeyProblem(`${where}.chain`, 'a non-empty list is required');
+    }
+    const links = chain.map((item: unknown, l): Link => {
+      const at = `${where}.chain[${l}]`;
+      if (!isRecord(item)) throw new KeyProblem(at, 'a mapping is required');
+      onlyKeys(item, ['main', 'steps'], at);
+      return { main: text(item['main'], `${at}.main`),
+        steps: readSteps(item['steps'], `${at}.steps`) };
+    });
+    checkLinks(links, (l, n) => `${where}.chain[${l}].steps[${n}]`);
+    return { kind: 'main', ...common, links, single: false };
+  }
+  onlyKeys(raw, ['main', 'steps', 'name', 'only'], where);
+  const links = [{ main: text(raw['main'], `${where}.main`),
+    steps: readSteps(raw['steps'], `${where}.steps`) }];
+  checkLinks(links, (_l, n) => `${where}.steps[${n}]`);
+  return { kind: 'main', ...common, links, single: true };
 }
 
 function loadScenario(file: string, label: string): Scenario {
@@ -255,9 +472,11 @@ function loadScenario(file: string, label: string): Scenario {
   }
   try {
     if (!isRecord(data)) throw new KeyProblem('(root)', 'a mapping is required');
-    onlyKeys(data, ['format', 'compositions', 'identities', 'runs'], '');
+    onlyKeys(data, ['format', 'compositions', 'overlay', 'identities', 'runs'], '');
     if (data['format'] !== 1) throw new KeyProblem('format', 'must be 1');
     const compositions = repoPath(data['compositions'], 'compositions');
+    const overlay = data['overlay'] === undefined ? undefined
+      : repoPath(data['overlay'], 'overlay');
     const identities = data['identities'];
     if (identities === undefined) throw new KeyProblem('identities', 'required');
     if (!isRecord(identities)) throw new KeyProblem('identities', 'a mapping is required');
@@ -275,21 +494,14 @@ function loadScenario(file: string, label: string): Scenario {
     if (!Array.isArray(runsRaw) || runsRaw.length === 0) {
       throw new KeyProblem('runs', 'a non-empty list is required');
     }
-    const runs = runsRaw.map((raw: unknown, r): Run => {
-      if (!isRecord(raw)) throw new KeyProblem(`runs[${r}]`, 'a mapping is required');
-      if ('adopt' in raw) {
-        onlyKeys(raw, ['adopt'], `runs[${r}]`);
-        return readAdopt(raw['adopt'], `runs[${r}].adopt`);
-      }
-      onlyKeys(raw, ['main', 'steps'], `runs[${r}]`);
-      const main = text(raw['main'], `runs[${r}].main`);
-      const steps = raw['steps'];
-      if (!Array.isArray(steps) || steps.length === 0) {
-        throw new KeyProblem(`runs[${r}].steps`, 'a non-empty list is required');
-      }
-      return { kind: 'main', main, steps: steps.map((step: unknown, n) => readStep(step, `runs[${r}].steps[${n}]`)) };
+    const runs = runsRaw.map((raw: unknown, r) => readRun(raw, r));
+    const names = new Set<string>();
+    runs.forEach((run, r) => {
+      if (run.name === undefined) return;
+      if (names.has(run.name)) throw new KeyProblem(`runs[${r}].name`, `${run.name} given twice`);
+      names.add(run.name);
     });
-    return { label, compositions, agent, runs };
+    return { label, compositions, ...overlay === undefined ? {} : { overlay }, agent, runs };
   } catch (error) {
     if (error instanceof KeyProblem) throw new ScenarioError(`${label}: ${error.message}`, 3);
     throw error;
@@ -355,12 +567,15 @@ export const realExec: Exec = (cli, args, cwd, env) => {
   return { status: result.status, stdout: result.stdout, stderr: result.stderr };
 };
 
-/** Hides every scratch directory of this command: `<tmpdir>/runs-…` and its real path. */
+/** Hides every scratch directory of this command: `<tmpdir>/runs-…`, `<tmpdir>/validate-overlay-…`
+ * (an overlay's merged tree, task-095) and their real paths. */
 function hideScratch(line: string): string {
   let out = line;
   for (const base of new Set([tmpdir(), realpathSync(tmpdir())])) {
-    out = out.split(`${base}/runs-`).join('<scratch>/runs-')
-      .replace(/<scratch>\/runs-[^\s/'"]*/g, '<scratch>');
+    for (const prefix of ['runs-', 'validate-overlay-']) {
+      out = out.split(`${base}/${prefix}`).join(`<scratch>/${prefix}`)
+        .replace(new RegExp(`<scratch>/${prefix}[^\\s/'"]*`, 'g'), '<scratch>');
+    }
   }
   return out;
 }
@@ -405,7 +620,6 @@ function runOne(run: Run, composed: string, params: Record<string, string>, agen
     git(['commit', '--quiet', '--no-gpg-sign', '--allow-empty', '-m', message]);
   };
   let instance = '';
-  let added = '';
   let current = 'setup';
   const wingfoil = (args: string[]): WingfoilOutput => {
     const output = execute(cli, args, repo, env);
@@ -429,83 +643,125 @@ function runOne(run: Run, composed: string, params: Record<string, string>, agen
     git(['config', 'commit.gpgSign', 'false']);
     as(agent);
     commitAll('composed output');
-    for (const step of run.steps) {
-      current = step.kind;
-      switch (step.kind) {
-        case 'start': {
-          const data = parseJson(wingfoil(['workflow', 'start', run.main, '--format', 'json']),
-            'start');
-          const found = isRecord(data['instance']) ? data['instance'] : {};
-          instance = typeof found['id'] === 'string' ? found['id'] : '';
-          if (instance === '') throw new StepFailure('WingFoil named no instance');
-          if (found['planStatus'] !== 'active') {
-            throw new StepFailure(`plan ${instance} is ${String(found['planStatus'])}, not active`);
-          }
-          const search = parseJson(wingfoil(['memory', 'search', '--type', 'plan', '--format', 'json']), 'search');
-          const matches: unknown[] = Array.isArray(search['matches']) ? search['matches'] : [];
-          const match = matches.find((entry) => isRecord(entry) && entry['id'] === instance);
-          const path = isRecord(match) && typeof match['path'] === 'string' ? match['path'] : '';
-          if (path === '') throw new StepFailure(`plan ${instance} not found`);
-          for (const field of ['workflow', 'phase']) {
-            if (frontmatterString(join(repo, path), field) === undefined) {
-              throw new StepFailure(`plan ${instance} has an empty ${field}`);
+    const elements = new Map<string, { id: string; path: string }>();
+    const element = (ref: string): { id: string; path: string } => {
+      const found = elements.get(ref);
+      // The static checks of loadScenario make this unreachable.
+      if (found === undefined) throw new StepFailure(`no element ${ref}`);
+      return found;
+    };
+    const expand = (value: string): string => value.replace(TOKEN,
+      (_match, label: string) => element(label).id);
+    for (const [l, link] of run.links.entries()) {
+      instance = '';
+      for (const step of link.steps) {
+        current = run.single ? step.kind : `${link.main}[${l + 1}].${step.kind}`;
+        switch (step.kind) {
+          case 'start': {
+            const data = parseJson(wingfoil(['workflow', 'start', link.main, '--format', 'json']),
+              'start');
+            const found = isRecord(data['instance']) ? data['instance'] : {};
+            instance = typeof found['id'] === 'string' ? found['id'] : '';
+            if (instance === '') throw new StepFailure('WingFoil named no instance');
+            if (found['planStatus'] !== 'active') {
+              throw new StepFailure(`plan ${instance} is ${String(found['planStatus'])}, `
+                + 'not active');
             }
+            const search = parseJson(wingfoil(['memory', 'search', '--type', 'plan', '--format',
+              'json']), 'search');
+            const matches: unknown[] = Array.isArray(search['matches']) ? search['matches'] : [];
+            const match = matches.find((entry) => isRecord(entry) && entry['id'] === instance);
+            const path = isRecord(match) && typeof match['path'] === 'string' ? match['path'] : '';
+            if (path === '') throw new StepFailure(`plan ${instance} not found`);
+            for (const field of ['workflow', 'phase']) {
+              if (frontmatterString(join(repo, path), field) === undefined) {
+                throw new StepFailure(`plan ${instance} has an empty ${field}`);
+              }
+            }
+            break;
           }
-          break;
-        }
-        case 'commit_inside': {
-          const value = params[step.parameter];
-          if (value === undefined || value === '') {
-            throw new StepFailure(`no value for parameter ${step.parameter}`);
+          case 'commit_inside': {
+            const value = params[step.parameter];
+            if (value === undefined || value === '') {
+              throw new StepFailure(`no value for parameter ${step.parameter}`);
+            }
+            if (!inside(value)) throw new StepFailure(`${step.parameter} leaves the repository`);
+            const file = join(repo, value.replace(/\/+$/, ''), INVENTORY);
+            mkdirSync(dirname(file), { recursive: true });
+            writeFileSync(file, '# Inventory\n\nWritten by check:runs.\n');
+            commitAll(`inventory inside ${value}`);
+            break;
           }
-          if (!inside(value)) throw new StepFailure(`${step.parameter} leaves the repository`);
-          const file = join(repo, value.replace(/\/+$/, ''), INVENTORY);
-          mkdirSync(dirname(file), { recursive: true });
-          writeFileSync(file, '# Inventory\n\nWritten by check:runs.\n');
-          commitAll(`inventory inside ${value}`);
-          break;
-        }
-        case 'next': {
-          const nextArgs = ['workflow', 'next', instance, '--format', 'json'];
-          const data = parseJson(wingfoil(nextArgs), 'next');
-          const next = isRecord(data['next']) ? data['next'] : undefined;
-          const key = next !== undefined && typeof next['key'] === 'string' ? next['key'] : 'none';
-          if (key !== step.key) {
-            throw new StepFailure(`wingfoil ${nextArgs.join(' ')}: expected ${step.key}, `
-              + `WingFoil names ${key}`);
+          case 'next': {
+            const nextArgs = ['workflow', 'next', instance, '--format', 'json'];
+            const data = parseJson(wingfoil(nextArgs), 'next');
+            const next = isRecord(data['next']) ? data['next'] : undefined;
+            const key = next !== undefined && typeof next['key'] === 'string' ? next['key']
+              : 'none';
+            const expected = expand(step.key);
+            if (key !== expected) {
+              throw new StepFailure(`wingfoil ${nextArgs.join(' ')}: expected ${expected}, `
+                + `WingFoil names ${key}`);
+            }
+            break;
           }
-          break;
+          case 'finalize':
+            wingfoil(['workflow', 'finalize', instance, '--step', expand(step.key)]);
+            break;
+          case 'add': {
+            const data = parseJson(wingfoil(['memory', 'add', '--type', step.type, '--title',
+              step.title, ...step.step === undefined ? [] : ['--workflow', instance, '--step',
+                step.step]]), 'add');
+            const id = typeof data['id'] === 'string' ? data['id'] : '';
+            if (id === '') throw new StepFailure('WingFoil named no element');
+            const path = typeof data['path'] === 'string' ? data['path'] : '';
+            elements.set(ADDED, { id, path });
+            if (step.label !== undefined) elements.set(step.label, { id, path });
+            break;
+          }
+          case 'submit':
+            wingfoil(['memory', 'submit', element(step.element).id]);
+            break;
+          case 'approve': {
+            const approver = { name: params['approver_name'] ?? '', email: params['approver_email']
+              ?? '' };
+            if (approver.email === '') throw new StepFailure('no approver_email');
+            as(approver);
+            // A failure ends the run, whose repository is its own: the agent is restored on
+            // success.
+            wingfoil(['memory', 'approve', element(step.element).id, '--reason', APPROVAL_REASON]);
+            as(agent);
+            break;
+          }
+          case 'set': {
+            const { id, path } = element(step.element);
+            const file = join(repo, path);
+            if (path === '' || !inside(path) || !existsSync(file)) {
+              throw new StepFailure(`${path === '' ? id : path}: no element file`);
+            }
+            const fields = step.fields.map(([key, value]): [string, string | string[]] =>
+              [key, Array.isArray(value) ? value.map(expand) : expand(value)]);
+            writeFileSync(file, setFields(readFileSync(file, 'utf8'), fields,
+              step.body === undefined ? undefined : expand(step.body), path));
+            commitAll(`set ${id}`);
+            break;
+          }
+          case 'write': {
+            const path = expand(step.path);
+            if (!inside(path)) throw new StepFailure(`${path} leaves the repository`);
+            mkdirSync(dirname(join(repo, path)), { recursive: true });
+            writeFileSync(join(repo, path), expand(step.text));
+            commitAll(`write ${path}`);
+            break;
+          }
+          case 'commit_copy':
+            copyFileSync(join(repo, step.from), join(repo, step.to));
+            commitAll(`${step.to} from ${step.from}`);
+            break;
+          case 'end':
+            wingfoil(['workflow', 'end', instance]);
+            break;
         }
-        case 'finalize':
-          wingfoil(['workflow', 'finalize', instance, '--step', step.key]);
-          break;
-        case 'add': {
-          const data = parseJson(wingfoil(['memory', 'add', '--type', step.type, '--title',
-            step.title, '--workflow', instance, '--step', step.step]), 'add');
-          added = typeof data['id'] === 'string' ? data['id'] : '';
-          if (added === '') throw new StepFailure('WingFoil named no element');
-          break;
-        }
-        case 'submit':
-          wingfoil(['memory', 'submit', added]);
-          break;
-        case 'approve': {
-          const approver = { name: params['approver_name'] ?? '', email: params['approver_email']
-            ?? '' };
-          if (approver.email === '') throw new StepFailure('no approver_email');
-          as(approver);
-          // A failure ends the run, whose repository is its own: the agent is restored on success.
-          wingfoil(['memory', 'approve', added, '--reason', APPROVAL_REASON]);
-          as(agent);
-          break;
-        }
-        case 'commit_copy':
-          copyFileSync(join(repo, step.from), join(repo, step.to));
-          commitAll(`${step.to} from ${step.from}`);
-          break;
-        case 'end':
-          wingfoil(['workflow', 'end', instance]);
-          break;
       }
     }
     return undefined;
@@ -517,6 +773,54 @@ function runOne(run: Run, composed: string, params: Record<string, string>, agen
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
+}
+
+/** A frontmatter's top-level key line. */
+function keyLine(line: string, key: string): boolean {
+  return line.startsWith(`${key}:`) && /^\s|^$/.test(line.slice(key.length + 1));
+}
+
+/**
+ * `set` (task-095 criterion 4): each field's block in the frontmatter replaced, or added before
+ * the closing `---`, every other line byte-identical; the body line appended. The frontmatter
+ * must parse back to the values given.
+ */
+function setFields(text: string, fields: [string, string | string[]][], body: string | undefined,
+  path: string): string {
+  const open = text.startsWith('---\n') ? 4 : -1;
+  const close = open < 0 ? -1 : text.indexOf('\n---', open - 1);
+  const after = close < 0 ? '' : text.slice(close + 4, close + 5);
+  if (open < 0 || close < 0 || (after !== '' && after !== '\n')) {
+    throw new StepFailure(`${path}: no frontmatter`);
+  }
+  const lines = close + 1 > open ? text.slice(open, close + 1).split('\n').slice(0, -1) : [];
+  for (const [key, value] of fields) {
+    const rendered = stringifyYaml({ [key]: value }, { lineWidth: 0 }).trimEnd().split('\n');
+    const at = lines.findIndex((line) => keyLine(line, key));
+    if (at < 0) {
+      lines.push(...rendered);
+      continue;
+    }
+    let end = at + 1;
+    while (end < lines.length && /^(\s|- )/.test(lines[end] ?? '')) end += 1;
+    lines.splice(at, end - at, ...rendered);
+  }
+  const front = lines.join('\n');
+  let parsed: unknown;
+  try {
+    parsed = parseYaml(front);
+  } catch (error) {
+    throw new StepFailure(`${path}: the frontmatter does not parse: ${messageOf(error)}`);
+  }
+  for (const [key, value] of fields) {
+    const got = isRecord(parsed) ? parsed[key] : undefined;
+    if (JSON.stringify(got) !== JSON.stringify(value)) {
+      throw new StepFailure(`${path}: ${key} does not parse back as given`);
+    }
+  }
+  let out = `---\n${front}${front === '' ? '' : '\n'}${text.slice(close + 1)}`;
+  if (body !== undefined) out = `${out}${out.endsWith('\n') ? '' : '\n'}${body}\n`;
+  return out;
 }
 
 const WORKFLOWS_FILE = join('.wingfoil', 'workflows.yaml');
@@ -653,6 +957,36 @@ function isIoError(error: unknown): boolean {
   return typeof code === 'string' || code === 2;
 }
 
+/** The composition id of `<folder>/<id>/example.yaml`. */
+function compositionId(file: string): string {
+  const parts = file.split('/');
+  return parts[parts.length - 2] ?? '';
+}
+
+/** A scenario read, with its compositions and the overlay its compositions resolve on. */
+interface Loaded {
+  scenario: Scenario;
+  compositions: string[];
+  overlay?: Overlay;
+}
+
+/** Opens and merges a scenario's overlay (task-095 criterion 8), or throws its ScenarioError. */
+function scenarioOverlay(tree: string, scenario: Scenario, opened: Overlay[]): Overlay | undefined {
+  if (scenario.overlay === undefined) return undefined;
+  const overlay = openOverlay(tree, scenario.overlay);
+  if (!('merged' in overlay)) {
+    throw new ScenarioError(`${scenario.label}: overlay: ${overlay.reason}`, overlay.code);
+  }
+  opened.push(overlay);
+  overlay.packs = treeLayout(overlay.dir).packs;
+  const [shadow] = mergeOverlay(tree, overlay);
+  if (shadow !== undefined) {
+    throw new ScenarioError(`${scenario.label}: overlay: packs/${shadow.pack} shadows the tree's `
+      + `packs/${shadow.other}`, 3);
+  }
+  return overlay;
+}
+
 export function runRuns(argv: string[], options: RunsOptions = {}): RunsResult {
   let args: ReturnType<typeof parse>;
   try {
@@ -664,6 +998,17 @@ export function runRuns(argv: string[], options: RunsOptions = {}): RunsResult {
   if (!existsSync(tree) || !lstatSync(tree).isDirectory()) {
     return { code: 2, lines: [`${tree}: not a directory`] };
   }
+  const opened: Overlay[] = [];
+  try {
+    return runScenarios(args, options, opened);
+  } finally {
+    for (const overlay of opened) rmSync(overlay.root, { recursive: true, force: true });
+  }
+}
+
+function runScenarios(args: ReturnType<typeof parse>, options: RunsOptions, opened: Overlay[]):
+RunsResult {
+  const { tree } = args;
   const compose = options.compose ?? realCompose;
   const install = options.install
     ?? ((version: string, cache: string) => installRelease(version, { pins: MATRIX_PINS, cache }));
@@ -671,27 +1016,44 @@ export function runRuns(argv: string[], options: RunsOptions = {}): RunsResult {
 
   const files = args.files.length > 0 ? args.files : scenarioFiles(tree);
   if (files.length === 0) return { code: 3, lines: [`no scenario file under ${SCENARIOS}`] };
-  let scenarios: { scenario: Scenario; compositions: string[] }[];
+  let scenarios: Loaded[];
   try {
-    scenarios = files.map((file) => {
+    scenarios = files.map((file): Loaded => {
       const scenario = loadScenario(file, labelOf(tree, file));
+      const overlay = scenarioOverlay(tree, scenario, opened);
       const compositions = compositionFiles(tree, scenario.compositions);
       if (compositions.length === 0) {
         throw new ScenarioError(`${scenario.label}: compositions: no example.yaml under `
           + `${scenario.compositions}`, 3);
       }
-      return { scenario, compositions };
+      const ids = new Set(compositions.map(compositionId));
+      scenario.runs.forEach((run, r) => {
+        run.only?.forEach((id, n) => {
+          if (!ids.has(id)) {
+            throw new ScenarioError(`${scenario.label}: runs[${r}].only[${n}]: no composition `
+              + `${id} under ${scenario.compositions}`, 3);
+          }
+        });
+      });
+      return { scenario, compositions, ...overlay === undefined ? {} : { overlay } };
     });
   } catch (error) {
-    return { code: error instanceof ScenarioError ? error.code : 2, lines: [messageOf(error)] };
+    return { code: error instanceof ScenarioError ? error.code : 2,
+      lines: [hideScratch(messageOf(error))] };
   }
 
   const lines: string[] = [];
   let code = 0;
   let total = 0;
   let failed = 0;
-  for (const { scenario, compositions } of scenarios) {
+  for (const { scenario, compositions, overlay } of scenarios) {
+    const composeTree = overlay?.merged ?? tree;
+    const shown = (line: string): string => hideScratch(overlay === undefined ? line
+      : mapOverlayPaths(line, tree, overlay));
     for (const file of compositions) {
+      const id = compositionId(file);
+      const runs = scenario.runs.filter((run) => run.only === undefined || run.only.includes(id));
+      if (runs.length === 0) continue;
       let out: string | undefined;
       try {
         out = mkdtempSync(join(tmpdir(), 'runs-compose-'));
@@ -702,7 +1064,7 @@ export function runRuns(argv: string[], options: RunsOptions = {}): RunsResult {
         const given = Object.fromEntries(Object.entries(data.parameters ?? {})
           .map(([name, value]) => [name, String(value)]));
         const output = join(out, 'output');
-        const composed = compose(tree, data.packs ?? [], given, output);
+        const composed = compose(composeTree, data.packs ?? [], given, output);
         if (composed.releases.length === 0) {
           throw new NoReleaseError('no release in compat.yaml can run it');
         }
@@ -715,10 +1077,10 @@ export function runRuns(argv: string[], options: RunsOptions = {}): RunsResult {
             code = Math.max(code, isIoError(error) ? 2 : 1);
             // installRelease's messages already name the release: it is said once.
             const message = messageOf(error).replace(`wingfoil@${release}: `, '');
-            lines.push(hideScratch(`runs ${file} wingfoil@${release}: ${message}`));
+            lines.push(shown(`runs ${file} wingfoil@${release}: ${message}`));
             continue;
           }
-          for (const run of scenario.runs) {
+          for (const run of runs) {
             total += 1;
             const failure = runOne(run, output, composed.params, scenario.agent, cli, execute);
             const head = `runs ${file} ${runName(run)} wingfoil@${release}`;
@@ -727,13 +1089,13 @@ export function runRuns(argv: string[], options: RunsOptions = {}): RunsResult {
             } else {
               failed += 1;
               code = Math.max(code, 1);
-              lines.push(hideScratch(`${head}: ${failure}`));
+              lines.push(shown(`${head}: ${failure}`));
             }
           }
         }
       } catch (error) {
         code = Math.max(code, isIoError(error) ? 2 : 1);
-        lines.push(hideScratch(`runs ${file}: ${messageOf(error)}`));
+        lines.push(shown(`runs ${file}: ${messageOf(error)}`));
       } finally {
         if (out !== undefined) rmSync(out, { recursive: true, force: true });
       }
