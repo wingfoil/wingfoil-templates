@@ -331,6 +331,9 @@ describe('fixture elements: the build review\'s cases', () => {
       'docs/notes/sub/b.md': NOTE('b'),
     }, (project) => {
       symlinkSync(join(project, 'docs/notes/a.md'), join(project, 'docs/notes/link.md'));
+      // As 0.3.2: a link to a directory, or one not named .md, is skipped silently (re-review).
+      symlinkSync(join(project, 'docs/notes/sub'), join(project, 'docs/notes/dir-link'));
+      symlinkSync(join(project, 'docs/notes/a.md'), join(project, 'docs/notes/logo.png'));
       const read = readElements(project);
       assert.deepEqual(read.elements.map((each) => each.id), ['a']);
       assert.deepEqual(read.problems.map((line) => line.split(':')[0]), ['docs/notes/link.md']);
@@ -394,7 +397,7 @@ describe('fixture elements: the build review\'s cases', () => {
       'docs/plan-p.md': element({ id: 'p', type: 'plan', title: 'P', status: 'open' },
         'Answers docs/notes/x.md.\n'),
       'docs/plan-q.md': element({ id: 'q', type: 'plan', title: 'Q', status: 'open' },
-        'Answers fb-10.\n'),
+        'Answers fb-10, fb-1.2 and sub/docs/notes/fb-1.md.\n'),
       'out/note.txt': 'Cites nothing.\n',
     }, (project) => {
       const problems = backReferenceProblems(project, elementsOf(project),

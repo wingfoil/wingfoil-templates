@@ -4,7 +4,7 @@
 // caller passes the bindings. Each check returns its problems as `<file>: <message>`, sorted.
 import { execFileSync } from 'node:child_process';
 import { existsSync, lstatSync, readFileSync, readdirSync, realpathSync, statSync } from 'node:fs';
-import { dirname, join, relative, resolve, sep } from 'node:path';
+import { dirname, join, relative, sep } from 'node:path';
 
 import { readFrontmatter } from '../../src/frontmatter';
 import { listItems } from '../../src/parameters';
@@ -108,7 +108,8 @@ function markdownUnder(dir: string, links: string[], root = true): string[] {
   return readdirSync(dir).sort(byBytes).flatMap((name) => {
     const path = join(dir, name);
     if (lstatSync(path).isSymbolicLink()) {
-      links.push(path);
+      // As 0.3.2's listMarkdownFilesUnder: only a link named .md is reported.
+      if (name.endsWith('.md')) links.push(path);
       return [];
     }
     if (statSync(path).isDirectory()) return markdownUnder(path, links, false);
@@ -279,7 +280,7 @@ function isCommit(project: string, reference: string): boolean {
     // The project's own repository: git never climbs to an enclosing one.
     execFileSync('git', ['-C', project, 'cat-file', '-e', `${reference}^{commit}`],
       { stdio: 'ignore',
-        env: { ...process.env, GIT_CEILING_DIRECTORIES: dirname(resolve(project)) } });
+        env: { ...process.env, GIT_CEILING_DIRECTORIES: dirname(realpathSync(project)) } });
     return true;
   } catch {
     return false;
@@ -345,7 +346,9 @@ function templateFields(project: string, memory: MemoryYaml, type: string): Set<
 /** Whether a text names an id or a path as a whole word: `fb-1` is not in `fb-10`. */
 function cites(text: string, name: string): boolean {
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return new RegExp(`(?:^|[^A-Za-z0-9_-])${escaped}(?![A-Za-z0-9_-])`).test(text);
+  // Not inside a longer id (`fb-10`, `v0.3.2`) or path (`sub/docs/a.md`); a closing `.` is fine.
+  return new RegExp(`(?:^|[^A-Za-z0-9_/-])${escaped}(?![A-Za-z0-9_-]|\\.[A-Za-z0-9])`)
+    .test(text);
 }
 
 /** Back-references (criterion 5, FA-6, spec-003 §8). */
