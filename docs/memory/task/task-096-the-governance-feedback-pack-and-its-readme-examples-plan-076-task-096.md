@@ -351,3 +351,8 @@ Branch `task/task-096-feedback-pack` from `main` at `9923ba1c`, in a worktree of
 
   `index -- --check` (8 files), `check:packs` (93 files, 0 problems) and the 10 tests pass
   after. The directive's rule changes: re-review.
+- 2026-11-17: re-review of the build fixes: approve after one should-fix, applied in `72a01892`: an
+  added kind or target goes into `feedback_kinds` or `feedback_targets`, its meaning defined
+  in the project's own `custom/` directive (spec-003 §4.1, §5.3). Every other fix confirmed,
+  no regression. Wording that completes the rule the re-review accepted: no further review. The
+  code is frozen at `72a01892`.
