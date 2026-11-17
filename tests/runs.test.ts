@@ -1098,6 +1098,16 @@ describe('check:runs: the steps of a route (task-095)', () => {
     assert.equal(trees.length, 2);
   });
 
+  it('fails a write whose path, once its tokens expand, is under .git/', () => {
+    wingfoil.breaks.push((args) => (args[0] === 'memory' && args[1] === 'add'
+      ? ok({ id: '.git', path: 'docs/x.md' }) : undefined));
+    const result = run(['  - main: feedback-review', '    steps:', '      - start',
+      '      - add: { type: feedback, title: "T", label: item }',
+      '      - write: { path: $item.id/hooks/x, text: "x" }']);
+    assert.equal(result.code, 1);
+    assert.match(result.lines[0] ?? '', /fail at write: \.git\/hooks\/x is under \.git\/$/);
+  });
+
   it('fails a set whose element file is missing', () => {
     wingfoil.breaks.push((args, cwd) => {
       if (args[0] === 'memory' && args[1] === 'add') {
