@@ -205,8 +205,8 @@ Each point has a recommendation.
        `declined` and the added outcome on `added-outcome`; `bug` on `with-software`; the
        would-be `bug`, proposed as `decision-log` naming it, on `defaults`.
    - **`tests/fixtures/runs/feedback-upstream.yaml`**, with `overlay:
-     tests/fixtures/feedback-exit`, on its compositions filtered to the upstream one: the `upstream-note` route to `closed`, the note written
-     where the fixture channel says.
+     tests/fixtures/feedback-exit`, on its compositions filtered to the upstream one: the
+     `upstream-note` route to `closed`, the note written where the fixture channel says.
    - The guard tests of `tests/runs.test.ts` are extended, red first. `check:runs` grows by
      about 19 runs per selected release (8 starts, 7 routes, 4 adoptions); the task measures
      the final number.
@@ -214,8 +214,8 @@ Each point has a recommendation.
      `author` prepares it. *Recommended:* this task adds
      `tests/fixtures/runs/adoption-feedback.yaml` with its guard test, as
      `adoption-kanban.yaml` did, once per `init` template, on the examples that compose
-     `software`, through the filter (an `init` template writes a software project). It runs in CI from this task
-     on.
+     `software`, through the filter (an `init` template writes a software project). It runs
+     in CI from this task on.
    - **Empty frontiers.** A start of `feedback-review` or `feedback-bug-route` on a fresh
      repository has an empty frontier, and `start` requires the plan `active`: task-097's
      Design probes it on 0.3.0 and 0.3.2 before the scenarios are written.
@@ -270,8 +270,9 @@ Each point has a recommendation.
    and `.wingfoil/` committed:
    - **with `software`:** `base`, `software`, `methodology/kanban`, the pack and the fixture
      upstream pack, composed with `--tree` on a copy of `main` with `feedback-exit`'s packs
-     merged in, `feedback_outcomes` holding the added outcome: `decision-log` through `decision-log-ingest`, a governance change through
-     `governance-evolution` (FA-7's governance path), `task`, `declined`, `duplicate`, an
+     merged in, `feedback_outcomes` holding the added outcome: `decision-log` through
+     `decision-log-ingest`, a governance change through `governance-evolution` (FA-7's
+     governance path), `task`, `declined`, `duplicate`, an
      added outcome, `bug` through `bug-ingest`, and `upstream-note`;
    - **without `software`:** `base` and the pack: `decision-log`, `task`, and the would-be
      `bug` proposed as `decision-log` naming it.
