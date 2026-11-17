@@ -367,3 +367,7 @@ Branch `task/task-096-feedback-pack` from `main` at `9923ba1c`, in a worktree of
   Privacy check of the branch's diff and messages: no local or scratch path, no maintainer name
   or email, no private project, no intermediary session; the examples' projects fictional, their
   addresses `.example`.
+- 2026-11-17: the approver approved (in-review → approved, `07e22f9b`) and gave the merge OK;
+  merged `--no-ff` into `main` at `c0e482e8`. No row of `docs/owed-items.md` changes. `main`'s
+  CI after the push is read and recorded in plan-076's notes. The untracked draft stays in the
+  main checkout until task-097 moves its fixture upstream pack (plan-076 step 3).
