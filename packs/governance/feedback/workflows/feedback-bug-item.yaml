@@ -3,7 +3,7 @@ format: 1
 name: feedback-bug-item
 kind: sub
 element: feedback
-description: "Open the bug of one feedback item, then close it"
+description: "Record the bug route of one feedback item, then close it"
 version: 1
 phases:
   - name: bug

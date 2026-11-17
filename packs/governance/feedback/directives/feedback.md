@@ -40,8 +40,8 @@ issue tracker, notes, a channel) stays there until it is to be triaged.
 - `product`: about what the project makes; `governance`: about how it is governed (its workflows,
   directives, roles, Memory); `upstream:<name>`: about something an upstream owns, when the
   project composes that upstream's pack.
-- A project that adds a kind or a target defines it here, in a directive of its own that overrides
-  this one.
+- A project that adds a kind or a target defines it in a `custom/` directive of its own, bound to
+  `facilitator`, with an id other than `feedback`.
 
 ## Triage
 
@@ -62,7 +62,7 @@ or with `memory add` for a type with no workflow of its own; then the facilitato
 |---|---|
 | `decision-log` | a decision-log through `decision-log-ingest`; a change of the governance through `governance-evolution`, whose decision-log the configuration change cites |
 | `task` | a `task` in `draft`, citing the item |
-| `upstream-note` | a note through the channel that serves the item's `target` |
+| `upstream-note` | a note through the channel that serves the item's `target`; when none serves it, a decision-log naming the target |
 | `declined`, `duplicate` | closed with the reason in `resulting` (`n/a — <reason>`) and in the body |
 | any other allowed outcome | a decision-log naming the outcome |
 

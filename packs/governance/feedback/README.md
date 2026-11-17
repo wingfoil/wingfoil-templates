@@ -126,8 +126,8 @@ Plover Desk, a fictional help desk, composes `base` and `governance/feedback` on
 with no methodology and no `software`. A user's remark that the escalation rule skips the night
 shift is captured in `feedback-ingest` › `capture` as a `gap` on `governance`, its context the
 workflow and phase that missed it, and its outcome proposed as `decision-log`; once the approver
-triages it, `feedback-review` routes it to a decision-log through `decision-log-ingest`, and the
-item is closed with `resulting` naming that decision-log.
+triages it, `feedback-review` routes it to a change of the governance through `base`'s
+`governance-evolution`, and the item is closed with `resulting` naming its decision-log.
 
 ### with-software
 
