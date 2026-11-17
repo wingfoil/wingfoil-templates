@@ -167,7 +167,53 @@ Tests: the lint rules in `tests/check-packs.test.ts`, the parameter functions in
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-093-spec-003-checks` from `main` at this task's `backlog` (`ac195ca7`).
+
+**Code:**
+- `src/parameters.ts`: `isListParameter(declaration)`; `listItemProblem(value)` (the first
+  failure: no item, an empty item, an item off the regex, a YAML word, an item twice);
+  `valueProblem(declaration, value)` = `checkValue` then the item rule, used by `defaultMessage`
+  (so `parameter-default` and the composer's default check), by `resolveParameters` for a value
+  given, and by `presetChecks` (`preset-value`, `example-fixture`); `Parameter` gains `list`;
+  `misplacedReferences(text, path, inScope, ownPack)`: a token scan of a `.yaml` file (not
+  `pack.yaml`) or of a `.md` file's frontmatter, tracking double- and single-quoted scalars,
+  comments and block scalars, returning each reference of a non-`integer`, non-`boolean`
+  parameter in scope that stands outside a double-quoted scalar, unless it is a list parameter of
+  `ownPack` standing alone in `[ … ]`, with its offset and placement.
+- `src/pack-files.ts`: `scopeOf` keeps each parameter's declaring pack; `readPackFiles` adds
+  `parameter-placement` problems on the raw text.
+- `src/compose-documents.ts` › `readFiles`: the first misplaced reference refuses the composition
+  before `substitute`.
+- `src/workflow-rules.ts`: in a conditional entry's workflow files, each `agent.execute(…)` action
+  whose `directive:` argument names an id outside `known.directives` and outside
+  `BUILTIN_DIRECTIVE_IDS` is an `entry-directive-scope` problem.
+- `src/feedback-channel.ts` (new): `FEEDBACK_PACK`, `CHANNEL_TAG`; `servedTargets(text)`;
+  `channelProblems(pack, files)` per pack (rule `feedback-channel`), run from `check-packs.ts`'s
+  pack group; `channelConflicts(directives)` per composition (rule `feedback-channel-target`),
+  over `{ pack, path, text }` directive files: the lint's `src/overlay-rules.ts` › `refusal` runs
+  it on `composeDocuments`' files and reports it under that rule; `src/validate.ts` runs it in
+  `composeTwice`'s `use` callback on the output's `.wingfoil/directives/built-in/*.md` (before the
+  `compat` return, never throwing) and reports `composition <label>: feedback-channel-target: …`
+  as a failure after `composeTwice` returns.
+
+**Red steps** (dl-018), each test written and run red before its code:
+1. `tests/parameters.test.ts`: `isListParameter`, `listItemProblem` on criterion 2's cases,
+   `misplacedReferences` on criterion 4's cases (no code: they fail to import).
+2. `tests/compose-documents.test.ts`: the composer refuses a list default and a given value that
+   fail the item rule, and each misplaced reference; the two tests at 258 and 261 rewritten to a
+   duplicate key (green before and after: characterization, recorded).
+3. `tests/check-packs.test.ts`: `parameter-default` on a list default, `preset-value` on a
+   preset's value, `parameter-placement` cases, `entry-directive-scope` cases (five sources, a
+   built-in, refused ids), `feedback-channel` cases, `feedback-channel-target` through a channel
+   pack requiring the other; `tests/example-rules.test.ts`: `example-fixture` on an example's
+   value.
+4. A `tests/validate-*.test.ts` case: a preset composing two independent channel packs serving
+   one target fails `validate` with `feedback-channel-target`, and `npm run compose` of the same
+   set exits 0.
+
+**The published packs first** (criterion 7): once the functions exist and before they are wired
+in, a scratch script runs `listItemProblem`, `misplacedReferences` and the channel checks over
+every pack, preset and example of the tree; its result recorded here.
 
 ## Execution Notes
 
