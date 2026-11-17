@@ -3,31 +3,306 @@ id: plan-076-pack-cycle-author-the-governance-feedback-pack
 type: plan
 title: "pack-cycle author: the governance/feedback pack"
 status: draft
-workflow: ""
-phase: ""
+workflow: "pack-cycle"
+phase: "author"
+tags: ["packs","feedback","governance","W10"]
 ---
 
 ## Context
 
-<!-- Why this phase runs now, its preconditions, and what it produces. Keep it coherent with the
-     workflow definition's phases, roles and produces. A plan that opens a wave names the
-     tech-specs its work builds on and their errata not yet folded back; the wave starts after
-     their amendment, or after the approver rules it may start without (dl-020). -->
+This plan runs the `author` phase of `pack-cycle` (v7) for `pack-governance-feedback`. The
+charter was accepted under plan-073. The `design` phase (plan-074) produced spec-003, which is
+approved. plan-075 delivered the tooling that both rows of `docs/owed-items.md` due "before
+`governance/feedback`'s first `author` task" asked for. The approver asked for this plan on
+2026-11-17, after plan-075's close.
+
+This plan writes `packs/governance/feedback` from three sources: the charter, spec-003 and the
+untracked draft that plan-073 step 2 and plan-074 step 2 ran on the engine. It also writes the
+README examples, the exit criterion's compositions and scenarios (dl-032 E4), the fixture
+projects that the charter's [E] criteria need, and the run by hand that the exit criterion asks
+for. Later plans own:
+- publication (`first-release`);
+- `governance/wingfoil-dogfood`;
+- the next minor releases of `base` and `software`, which bring `reported_by`;
+- this repository's adoption.
+
+**Preconditions, met.**
+- **The charter** is `accepted` on `main`. Its Execution Note of plan-074 points each Open point
+  to spec-003 and records that `pack.yaml` moves to format 2 (spec-003 §9).
+- **spec-003** is `approved`, and spec-001's and `pack-authoring`'s fold-back is merged
+  (plan-074).
+- **The tooling of spec-003 §11** is on `main` (plan-075):
+  - list parameters, the item rule, the placement rule, `entry-directive-scope` and the
+    `feedback-channel` checks, in the composer and the lint (task-093);
+  - the generic fixture-element checks in `tests/support/fixture-elements.ts` (task-094).
+
+  Every published pack passes them unchanged.
+- **The packs it composes with** are published: `base` 2.0.1, `software` 1.0.0,
+  `methodology/scrum` 1.0.0 and `methodology/kanban` 1.0.0.
+- **The draft** passed `validate --overlay` on WingFoil 0.3.0 and 0.3.2 (plan-074 step 2:
+  15 compositions, 30 runs, tolerance none). It was then driven on 0.3.2 through every route:
+  `decision-log` fallback, `task`, `upstream-note`, `bug` with `software`, and an added outcome.
+  It sits untracked under `tests/fixtures/feedback-draft/`, as a reference only. It holds:
+  - the pack at format 2, with the three list parameters;
+  - a fixture upstream pack, `governance/feedback-upstream`;
+  - four compositions: `alone`, `kanban`, `scrum` and `upstream`.
+
+**The tech-specs this wave builds on** (dl-020): spec-001, spec-002 and spec-003, all on `main`.
+No erratum is waiting to be folded back.
+
+**`main`'s CI before this plan** (dl-038 C3): run 44089866197 on `c770844e` (plan-075's close
+and submit). It is in progress while this outline is written; its result is recorded before
+`submit`.
+
+**Reads made for this outline** (2026-11-17, `main` at `c770844e`):
+- **`compat.yaml`** lists 0.2.2 … 0.3.2. The pack requires `workflow-engine`, so its matrix is
+  0.3.0, 0.3.1 and 0.3.2: the oldest release is 0.3.0, the newest 0.3.2.
+- **`check:runs`** (`src/runs.ts`) has these step kinds: `start`, `end`, `next`, `finalize`,
+  `commit_inside`, `commit_copy`, `add`, `submit` and `approve`. It has one main per scenario
+  run and one scratch repository per run. It has no step that writes an element's field.
+  - A `feedback` item's `submit` needs `kind`, `target`, `source` and `context`, and its routing
+    needs `outcome`. So today `check:runs` can start each main, but cannot capture an item past
+    `draft` or drive a route.
+  - The charter asks for both things. Its exit criterion asks for scenarios *starting* every
+    main. FA-6 [V] reads "`check:runs` drives each route".
+  - The owed row "`check:runs` scenarios of the full scrum and kanban runs" (trigger: the next
+    tooling task on `runs.ts`) asks for a rewritten field among other step kinds.
+- **The exit overlays** `software-exit`, `scrum-exit` and `kanban-exit` each hold the four sets of
+  task-049. Each has a CI step in the job before `check:runs`. Fixture packs exist for:
+  - a methodology (`software-exit/packs/methodology/fixture`);
+  - `team-mode/agent-first` (`tests/fixtures/merge/`, for the merge tests only).
+
+  No fixture blueprint pack exists.
+- **The CI**: the longest job of task-094's `main` run (44076357546) took 14 m 9 s, against a
+  30-minute timeout and dl-039 R3's 25-minute line.
+
+## Proposed outline (ruled by the approver before `submit`)
+
+Each point has a recommendation.
+
+1. **`base@^2` and `software@^1` as they are.** *Recommended:* yes.
+   - The routed elements cite the item in their body until `base` and `software` ship
+     `reported_by` (spec-003 §8). That shipping is the owed row "The packs' Memory templates"
+     (trigger: their next minor release), not this plan.
+   - The fixture-element checks read the back-reference through the field where the template
+     has it, and through the body otherwise.
+   - *Alternative:* a minor release of `base` and `software` first. That would be a pack release
+     round of its own, and it would delay this pack.
+
+2. **A tooling task first, for the routes in `check:runs`** (FA-6 [V]). *Recommended:* task-095,
+   through `tooling-delivery` v4 with `pack: ""`, before the pack's tasks, as task-066 was under
+   plan-057. `src/runs.ts` gains:
+   - a step that writes frontmatter fields of the element the run added, and commits them;
+   - a step that starts a second main in the same scratch repository, so that one scenario can
+     capture and triage with `feedback-ingest`, then route and close with `feedback-review` or
+     `feedback-bug-route`;
+   - the iterated step keys that `next` and `finalize` already take (`feedback-item.route@…`),
+     named from the element.
+
+   Red first (dl-018): a test of each new step kind on the stub, and the guard tests of
+   `tests/runs.test.ts`. The row of the full scrum and kanban runs is narrowed at close: the
+   field write is settled, while park, reject and an expected refusal stay owed.
+
+   *Alternative:* `check:runs` only starts the three mains, as the exit criterion's own sentence
+   reads, and the routes are driven by the run by hand alone. That reads FA-6 [V] below its text
+   and needs the approver's reading recorded on the charter (dl-020).
+
+3. **task-096, the pack and its README examples** (`kanban-delivery`,
+   `pack: pack-governance-feedback`).
+   - **Sources.** `packs/governance/feedback` comes from the draft, which was run on the engine,
+     and from the charter and spec-003.
+   - **What is fixed here:**
+     - `pack.yaml` format 2: the five parameters and the entry `with: software@^1`;
+       `requires: [base@^2]`; `requires_capabilities: [workflow-engine]`;
+     - the `feedback` directive:
+       - the value lists named by their parameters;
+       - §4.3's triage rule, with the would-be `bug` exception;
+       - the routing table, without `bug`;
+       - the `feedback-route` reading duty (§7.2 path 1);
+       - the `feedback-channel` lookup and its fallback (§5.1);
+       - the body citation until `reported_by` exists (§8);
+       - the trace both ways; who closes an item; how `feedback-review` is started and ended;
+     - `feedback-bug-route`, tagged `feedback-route`, and named in `feedback-bug-item` › `bug` as
+       `'agent.execute(directive: feedback-bug-route)'`;
+     - `agents/section.md` (`## Feedback`), naming the entry's directive as present only with
+       `software` (§7.2 path 3);
+     - the README after spec-002 §2: "Sources and adaptations" with the charter's four
+       adaptations, and the procedure to add `upstream:<name>` (§5.3);
+     - `CHANGELOG.md`.
+   - **The examples** (spec-002 §2.4: fictional projects, `.example` addresses) go under
+     `tests/fixtures/examples/feedback/`. *Recommended:* three examples:
+     - `defaults`: `base` and the pack alone, every parameter on its default;
+     - `with-software`: `software` and `methodology/scrum`, so the `bug` route is present;
+     - `added-outcome`: `software` and `methodology/kanban`, with their own `feedback_path` and
+       `feedback_id`, and `deferred` added to `feedback_outcomes`. This is FA-2's second
+       parameter set.
+
+     Each example gives its `Fixture:` line, a situation, what the project gets, and how one
+     phase runs.
+   - **The counts** that the tooling tests take on this repository move (lint files, index
+     packs, `validate` compositions and runs, the exit overlays, the publication run). Each is
+     stated as task-067 stated them (dl-018). The task measures the final numbers.
+   - **What does not change:** no file under `src/` or `.wingfoil/`. The other packs' READMEs
+     do not change, since their examples compose no `feedback`.
+
+4. **task-097, the exit criterion's compositions and scenarios** (`kanban-delivery`; a developer
+   change under `tests/` and `.github/` inside a pack task, as task-068 was).
+   - **The overlay** `tests/fixtures/feedback-exit/` holds:
+     - the four sets of task-049, each with `governance/feedback@^1`;
+     - `alone` (`base` and the pack);
+     - FA-1's fixture packs: a `team-mode/agent-first` pack and a blueprint pack, both
+       fixtures until W11 and W12 publish them, each in a composition with the pack;
+     - the fixture upstream pack `governance/feedback-upstream`, taken from the draft, in a
+       composition adding `upstream:<name>` to `feedback_targets` (FA-8, §5.3).
+   - **The validation.** `npm run validate -- --overlay tests/fixtures/feedback-exit` gives no
+     failed run and no warning (`tolerance applied: none`). It gets a CI step after
+     `kanban-exit`'s. `tests/ci-workflow.test.ts` and a case of the `validate` tests pin its
+     counts, red first.
+   - **`tests/fixtures/runs/feedback.yaml`.** It starts `feedback-ingest`, `feedback-review` and
+     `feedback-bug-route` on the README examples, on every selected release, as `kanban.yaml`
+     does. With task-095's steps, it drives each route to `closed`:
+     - `decision-log`, `task`, `declined` and an added outcome on `added-outcome`;
+     - `bug` on `with-software`;
+     - `upstream-note` on the upstream composition.
+
+     The guard test of `tests/runs.test.ts` is extended, red first.
+   - **The adoption run, prepared.** dl-032 E3 belongs to `first-release`, and the charter says
+     `author` prepares it. *Recommended:* this task adds
+     `tests/fixtures/runs/adoption-feedback.yaml` with its guard test, as `adoption-kanban.yaml` did. It runs in CI from this task on.
+   - **Durations.** The task records the CI jobs' durations. A job over 25 minutes goes to the
+     approver (dl-039 R3).
+
+5. **task-098, the fixture projects and the fixture-element bindings** (`kanban-delivery`; FA-3
+   … FA-8 [E]; the owed row "The bindings of the fixture-element checks to
+   `governance/feedback`").
+   - **The fixture projects** sit under `tests/fixtures/feedback-elements/`. Each is composed
+     from the examples, with Memory elements written by hand:
+     - valid items in each state;
+     - one invalid item per criterion: a missing required field (FA-3), a value outside the
+       lists (FA-4), an unresolved `context` (FA-5), and a `closed` item without `resulting`
+       or without a back-reference (FA-6);
+     - FA-7's two paths: feedback → `governance-evolution`'s decision-log citing it → a
+       `custom/` change citing the decision-log; and feedback → bug, with `software`, or →
+       a decision-log naming the would-be bug, without it;
+     - FA-8's upstream note, checked by the dl-163 checks of
+       `tests/wingfoil-feedback.test.ts`, factored out to run on the fixture.
+   - **The bindings** use `tests/support/fixture-elements.ts`:
+     - the type's required fields;
+     - `feedback_outcomes`, plus the entry's `bug`;
+     - `context`'s reference kinds;
+     - `resulting` and the back-reference, through `reported_by` or the body;
+     - `outcome` and `resulting` on `closed`;
+     - `bug` refused in a preset's or an example's `feedback_outcomes`.
+
+     The row moves to Closed with them.
+   - **FA-5 and a commit.** The charter's Ships lists "a commit" among `context`'s references.
+     FA-5 lists only "an existing element id, a declared workflow and phase, or a version".
+     *Recommended:* a commit counts. It resolves through the helper's `commit` kind, against
+     the fixture project's history. The approver's reading goes on the charter as an Execution
+     Note (dl-020), with no text change, since in-place amendment is G7's (W10).
+     *Alternative:* FA-5 as written, so a `context` holding only a commit fails.
+
+6. **task-099, the run by hand** (the charter's exit criterion, dl-032 E4). The run takes place
+   in a scratch repository:
+   - `base`, `software`, `methodology/kanban` and the pack are composed from `main`, at a
+     commit the notes name;
+   - the values are fictional, and `.wingfoil/` is committed;
+   - WingFoil 0.3.2, the newest release `compat.yaml` lists, drives every route at least once,
+     with and without `software`, as plan-073 step 2 did;
+   - the `upstream-note` route uses the fixture upstream pack.
+
+   The task's Execution Notes record the commands, the exit codes and the commit composed;
+   nothing else is committed. *Recommended:* 0.3.2 only. 0.3.0 is covered by the matrix and by
+   `check:runs`, and plan-074 found no difference. *Alternative:* the same run on 0.3.0 too.
+
+   A finding that the charter's shape does not hold goes to the approver when found (dl-019).
+   A small defect of the pack is fixed in task-099; a larger one goes through this plan's gate.
+
+7. **Order.** WIP 1, in the order task-095 → task-096 → task-097 → task-098 → task-099.
+   - task-097 needs task-095 and task-096; task-098 and task-099 need task-096.
+   - Each task is added on `main` once the one before is `done`, on its own `task/<id>-<slug>`
+     branch, merged `--no-ff` on the approver's OK, with `main`'s CI read after each merge.
+   - *Alternative:* task-098 before task-097, since both depend only on task-096 for what each
+     owns.
 
 ## Steps
 
-<!-- The ordered steps, with the role of each and the artifact it produces. -->
+The plan document and the task bodies are committed on `main`: the plan as plan-075's was, and
+the bodies as `memory add` and `submit` commit them. Each task's work happens on its own branch.
+Before every commit, the privacy check (`repository-practice` rule 2). After every push to
+`main`, its CI is read (rule 3).
+
+1. **This plan:**
+   - an independent review (dl-017), amended;
+   - the outline ruled by the approver;
+   - `main`'s CI on `c770844e` recorded;
+   - submitted (`draft → active`).
+2. **Each task, in point 7's order:**
+   - its body written from the rulings, reviewed independently, re-reviewed when a fix changes
+     a decision, and submitted (`draft → pending`);
+   - the approver accepts it into the backlog;
+   - Design, red first where dl-018 asks, build, and an independent review of the build;
+   - dl-039's checks in its order: the branch CI with every job's duration, and the local list
+     on Node.js 22.21.0 from a clean tree;
+   - `in-review`, then the approver's `approve` and merge OK;
+   - a `--no-ff` merge into `main`, `main`'s CI read, and `approved → done`.
+3. **Close:**
+   - **The account per tech-spec** (dl-020): spec-001, spec-002 and spec-003, with each erratum
+     or reading recorded in the wave.
+   - **The charter's Execution Notes:**
+     - the pack written;
+     - the exit criterion's results;
+     - task-099's summary and the commit it composed;
+     - the 0.3.0 coverage;
+     - FA-5's reading;
+     - format 2 (spec-003 §9).
+   - **The owed rows:**
+     - the bindings row moved to Closed by task-098;
+     - the full-runs row narrowed by task-095;
+     - any new row, written in the commit that records the note or ruling it comes from
+       (rule 4).
+   - **The privacy check** of each task branch's diff, recorded in its task, and of this plan's
+     commits, recorded here.
+   - **The untracked draft** under `tests/fixtures/feedback-draft/` is deleted once task-097 is
+     merged. With the pack in `packs/`, an overlay run on the draft would hold two
+     `governance/feedback`. The fixture upstream pack moves into `feedback-exit` first.
+   - **The plan** goes `active → done`.
+
+**Not in this plan:**
+- `first-release`: the publication, CB-1, CB-2 and CB-6 at the first tag, the citation of the
+  adoption run, and its `prel`;
+- `governance/wingfoil-dogfood` (F4.2), whose channel follows spec-003 §5;
+- `reported_by` in `base`'s and `software`'s templates (S3-O4);
+- this repository's adoption, its pin and its inbox sync (the rows with trigger W10);
+- WingFoil's answers to F-050 and F-051.
+
+**Ids**, agreed before this plan:
+- plan-076;
+- task-095 … task-099;
+- dl-043, bug-017 and F-052, reserved for a ruling, a defect or a note this plan finds.
 
 ## Handoff
 
-<!-- What needs the approver and what the agent does alone; checkpoints and completion criteria.
-     Every element the plan creates, and the plan itself, gets an independent review before the
-     approver's gate (dl-017). -->
+- **claude** drafts for the product-owner (this plan and the task bodies). It acts as
+  pack-author of task-096 … task-099, and as developer of task-095 and of the changes under
+  `src/`, `tests/` and `.github/`.
+  - It never runs `memory approve` or `memory reject`: it hands the approver the command.
+  - No pull request; files are staged by name.
+  - The draft under `tests/fixtures/feedback-draft/` and the run logs under `.cache/` are never
+    committed.
+- **Reviewer:** an independent subagent for every element created and every build (dl-017).
+- **The approver** rules:
+  - this outline: points 1, 2, 3 (the examples), 4 (the adoption scenario), 5 (FA-5's
+    reading), 6 (the release) and 7;
+  - each task's backlog acceptance, its `approve` and its merge OK;
+  - any finding that changes a point (dl-019).
+- **Done when** all of these hold:
+  - task-095 … task-099 are `done` on `main` (or the ones the rulings keep), and pushed;
+  - `main`'s CI is `success`;
+  - the charter's notes, the privacy checks and the owed rows are recorded.
 
 ## Execution Notes
 
-<!-- Filled while the plan runs: deviations, blockers, decisions taken, WingFoil friction
-     (also recorded in docs/wingfoil-feedback/). At wave close: per tech-spec, the errata and
-     rulings recorded in the wave, and the element the approver names to fold them back, or the
-     ruling that none is needed (dl-020).
-     An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-17: written as the approver asked on 2026-11-17, after plan-075's close. `workflow`,
+  `phase` and `tags` were filled by editing the draft (W-02). `main` was at `c770844e`. Next
+  free numbers when written: plan-077, spec-004, task-095, bug-017, dl-043, F-052.
