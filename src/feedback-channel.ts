@@ -66,8 +66,9 @@ export function channelProblems(pack: { id: string; requiredIds: string[] },
     const targets = servedTargets(file.text);
     if (targets.length !== 1) {
       problems.push({ file: file.file, rule: 'feedback-channel', message: `${file.file}: a `
-        + `${CHANNEL_TAG} directive holds exactly one line "Serves the target \`upstream:<name>\`.";`
-        + ` it holds ${String(targets.length)} (spec-003 §5.1)` });
+        + `${CHANNEL_TAG} directive holds exactly one line `
+        + `"Serves the target \`upstream:<name>\`."; it holds ${String(targets.length)} `
+        + '(spec-003 §5.1)' });
     }
   }
   return problems;

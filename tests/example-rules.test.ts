@@ -152,7 +152,8 @@ describe('examples as fixtures (task-022)', () => {
     it('reports a list parameter value that fails the item rule (task-093, spec-003 §3.2)', () => {
       const lists = { ...KANBAN, manifest: { parameters: {
         outcomes: { type: 'string', default: 'bug', description: 'List of outcomes.' } } } };
-      const withValue = (value: string) => (root: string): void => writeFileSync(join(root, FIXTURE),
+      const withValue = (value: string) => (root: string): void => writeFileSync(
+        join(root, FIXTURE),
         `${readFileSync(join(root, FIXTURE), 'utf8')}parameters:\n  outcomes: "${value}"\n`);
       fails('example-fixture', { specs: [...FOUNDATION, lists], edit: withValue('task, task') });
       assert.deepEqual(found({ specs: [...FOUNDATION, lists], edit: withValue('bug, task') }), []);

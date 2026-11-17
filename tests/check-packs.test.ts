@@ -1565,7 +1565,8 @@ describe('spec-003: list parameters, placement, entry directives, feedback chann
 
     it('refuses a channel without the requirement, or without exactly one target line', () => {
       for (const spec of [channel('up-a', SERVES, ['base@^1']), channel('up-a', 'No target.\n'),
-        channel('up-a', `${SERVES}${SERVES}`), channel('up-a', 'Serves the target upstream:vendor.\n'),
+        channel('up-a', `${SERVES}${SERVES}`),
+        channel('up-a', 'Serves the target upstream:vendor.\n'),
         channel('up-a', 'Serves the target `upstream:a/b`.\n'),
         channel('up-a', 'Serves the target `downstream:vendor`.\n')]) {
         failsWith('feedback-channel', [...CLEAN, FB, spec]);

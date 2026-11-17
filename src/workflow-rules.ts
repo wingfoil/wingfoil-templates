@@ -77,7 +77,7 @@ Declared {
   return sets;
 }
 
-/** The directive an `agent.execute(…)` action names in its `directive:` argument (spec-003 §7.2). */
+/** The directive an `agent.execute(…)` action names in its `directive:` argument (§7.2). */
 function executedDirective(action: unknown): string | undefined {
   if (typeof action !== 'string') return undefined;
   const call = /^agent\.execute\((.*)\)$/s.exec(action.trim());
