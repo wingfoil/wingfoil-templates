@@ -17,7 +17,7 @@ import { FIXTURES } from './support/paths';
 import { MatrixIoError } from '../src/matrix';
 import { treeLayout } from '../src/layout-rules';
 import { mergeOverlay, openOverlay } from '../src/overlay-tree';
-import { realCompose, runRuns, selectedReleases } from '../src/runs';
+import { realCompose, runRuns, selectedReleases, setFields } from '../src/runs';
 import type { Compose, Exec, RunsOptions, WingfoilOutput } from '../src/runs';
 
 const SCENARIO = [
@@ -1062,6 +1062,42 @@ describe('check:runs: the steps of a route (task-095)', () => {
     assert.equal(seen.get('status'), '', 'committed');
   });
 
+  it('fails a set on a frontmatter that does not parse, writing nothing', () => {
+    wingfoil.breaks.push((args, cwd) => {
+      if (args[0] === 'memory' && args[1] === 'add') {
+        mkdirSync(join(cwd, 'docs'), { recursive: true });
+        writeFileSync(join(cwd, 'docs', 'bad.md'), '---\nid: bad\nkind: [open\n---\n');
+        return ok({ id: 'bad', path: 'docs/bad.md' });
+      }
+      return undefined;
+    });
+    const result = run(['  - main: feedback-review', '    steps:', '      - start',
+      '      - add: { type: feedback, title: "T", label: item }',
+      '      - set: { element: item, fields: { source: x } }']);
+    assert.equal(result.code, 1);
+    assert.match(result.lines[0] ?? '', /fail at set: docs\/bad\.md: the frontmatter does not parse/);
+  });
+
+  it('removes each overlay\'s merged tree once its scenario is done (criterion 8)', () => {
+    write('packs/base/pack.yaml', 'id: base\n');
+    for (const name of ['one', 'two']) {
+      write(`tests/fixtures/${name}/packs/governance/${name}/pack.yaml`, `id: governance/${name}\n`);
+      write(`tests/fixtures/${name}/compositions/c/example.yaml`, 'format: 1\npacks: []\n');
+      write(`tests/fixtures/runs/${name}.yaml`, ['format: 1', `overlay: tests/fixtures/${name}`,
+        `compositions: tests/fixtures/${name}/compositions`, ...ROUTE_HEAD.slice(2),
+        '  - main: a', '    steps: [start]', ''].join('\n'));
+    }
+    const trees: string[] = [];
+    const result = runRuns(['--tree', tree, join(tree, 'tests/fixtures/runs/one.yaml'),
+      join(tree, 'tests/fixtures/runs/two.yaml')], { ...options, compose: (t, e, p, o) => {
+      for (const earlier of trees) assert.ok(!existsSync(earlier), `${earlier} removed`);
+      trees.push(t);
+      return routeCompose(t, e, p, o);
+    } });
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    assert.equal(trees.length, 2);
+  });
+
   it('fails a set whose element file is missing', () => {
     wingfoil.breaks.push((args, cwd) => {
       if (args[0] === 'memory' && args[1] === 'add') {
@@ -1074,7 +1110,7 @@ describe('check:runs: the steps of a route (task-095)', () => {
       '      - add: { type: feedback, title: "T", label: item }',
       '      - set: { element: item, body: "x" }']);
     assert.equal(result.code, 1);
-    assert.match(result.lines[0] ?? '', /fail at set: /);
+    assert.match(result.lines[0] ?? '', /fail at set: docs\/memory\/feedback\/gone\.md: no element file$/);
   });
 
   it('refuses a scenario that misuses labels, tokens or instance steps (criteria 1, 2, 6)', () => {
@@ -1095,6 +1131,13 @@ describe('check:runs: the steps of a route (task-095)', () => {
     refused(['  - chain:', '      - main: a', '        steps: [start]', '      - main: b',
       '        steps: [end]'], /runs\[0\]\.chain\[1\]\.steps\[0\]\.end: before the link's start/);
     refused(['  - chain: []'], /runs\[0\]\.chain: a non-empty list is required/);
+    refused(steps(['add: { type: task, title: "T", step: s.capture }', 'start']),
+      /runs\[0\]\.steps\[0\]\.add: before the link's start/);
+    refused(['  - name: one', '    main: a', '    steps: [start]', '  - name: one', '    main: b',
+      '    steps: [start]'], /runs\[0\]\.name: one also names runs\[1\]/);
+    refused(['  - name: a', '    main: b', '    steps: [start]', '  - main: a',
+      '    steps: [start]'], /runs\[0\]\.name: a also names runs\[1\]/);
+    refused(['  - name: Not_Plain', '    main: a', '    steps: [start]'], /runs\[0\]\.name: a plain id is required/);
     refused(steps(['start', 'add: { type: task, title: "T" }', 'finalize: k@$nobody.id']), /finalize: unknown label nobody/);
   });
 
@@ -1108,6 +1151,7 @@ describe('check:runs: the steps of a route (task-095)', () => {
     refused(steps('set: { element: item, fields: { id: x } }'), /set\.fields\.id: never written/);
     refused(steps('write: { path: ../x.md, text: "x" }'), /write\.path: must stay inside the repository/);
     refused(steps('write: { path: .git/hooks/x, text: "x" }'), /write\.path: never under \.git\//);
+    refused(steps('write: { path: ./.git/config, text: "x" }'), /write\.path: never under \.git\//);
   });
 
   it('runs a run only on the compositions its only lists, composing no other (criterion 7)', () => {
@@ -1246,5 +1290,33 @@ describe('realCompose on an overlay\'s merged tree (task-095 criterion 9)', () =
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
+  });
+});
+
+describe('setFields (task-095 criterion 4)', () => {
+  const file = (front: string[], body = '\nBody.\n'): string => ['---', ...front, '---'].join('\n')
+    + `\n${body}`;
+
+  it('replaces a block list and a block scalar with a blank line, keeping a comment', () => {
+    const text = file(['id: x', 'tags:', '  - a', '- b', '# kept', 'note: |', '  one', '',
+      '  two', 'tag: t']);
+    const out = setFields(text, [['tags', ['c']], ['note', 'line\nother']], undefined, 'x.md');
+    assert.equal(out, file(['id: x', 'tags:', '  - c', '# kept', 'note: |-', '  line', '  other',
+      'tag: t']));
+  });
+
+  it('tells a key from one it is a prefix of, and adds a new key after the last one', () => {
+    const text = file(['tags: [a]', 'tag: t', '# trailing']);
+    const out = setFields(text, [['tag', 'u'], ['kind', 'defect']], 'A line.', 'x.md');
+    assert.equal(out, file(['tags: [a]', 'tag: u', 'kind: defect', '# trailing'],
+      '\nBody.\nA line.\n'));
+  });
+
+  it('refuses a file with no frontmatter, a BOM or CRLF line endings', () => {
+    assert.throws(() => setFields('# Title\n', [['a', 'b']], undefined, 'x.md'), /x\.md: no frontmatter/);
+    assert.throws(() => setFields('\uFEFF---\na: b\n---\n', [['a', 'c']], undefined, 'x.md'),
+      /a BOM or CRLF/);
+    assert.throws(() => setFields('---\r\na: b\r\n---\r\n', [['a', 'c']], undefined, 'x.md'),
+      /a BOM or CRLF/);
   });
 });

@@ -33,8 +33,6 @@ import { parseEntry } from './requirements';
 import { ResolveError, forbiddenBy, resolve } from './resolve';
 import { mapOverlayPaths, mergeOverlay, openOverlay } from './overlay-tree';
 import type { Overlay } from './overlay-tree';
-
-export { mapOverlayPaths } from './overlay-tree';
 import type { ResolvedPack } from './resolve';
 import { withStandIns } from './preset-stand-ins';
 import { repositorySchemas } from './schemas';
@@ -42,6 +40,8 @@ import { secretProblems } from './secret-rules';
 import { presetChecks } from './tree-rules';
 import { YamlError, loadYamlFile } from './yaml-load';
 import { yamlProblems } from './yaml-rules';
+
+export { mapOverlayPaths } from './overlay-tree';
 
 export interface ValidateOptions extends Omit<DeterminismOptions, 'use'> {
   /** Fixed by the entry point, never by argv or the data (dl-009); no default. */

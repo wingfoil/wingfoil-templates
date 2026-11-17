@@ -27,7 +27,7 @@ import {
   realpathSync, rmSync, writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, isAbsolute, join, relative, resolve as resolvePath } from 'node:path';
+import { dirname, isAbsolute, join, posix, relative, resolve as resolvePath } from 'node:path';
 import { parseArgs } from 'node:util';
 
 import {
@@ -347,7 +347,7 @@ function readStep(raw: unknown, where: string): Step {
       const write = isRecord(value) ? value : {};
       onlyKeys(write, ['path', 'text'], `${where}.write`);
       const path = repoPath(write['path'], `${where}.write.path`);
-      if (path === '.git' || path.startsWith('.git/')) {
+      if (underGit(path)) {
         throw new KeyProblem(`${where}.write.path`, 'never under .git/');
       }
       return { kind: name, path, text: text(write['text'], `${where}.write.text`) };
@@ -355,6 +355,12 @@ function readStep(raw: unknown, where: string): Step {
     default:
       throw new KeyProblem(where, `unknown step ${JSON.stringify(name)}`);
   }
+}
+
+/** A repository path under `.git/`, however it is spelt (`./.git/config`, `a/../.git`). */
+function underGit(path: string): boolean {
+  const normal = posix.normalize(path);
+  return normal === '.git' || normal.startsWith('.git/');
 }
 
 /** The texts of a step that may hold a token. */
@@ -495,11 +501,12 @@ function loadScenario(file: string, label: string): Scenario {
       throw new KeyProblem('runs', 'a non-empty list is required');
     }
     const runs = runsRaw.map((raw: unknown, r) => readRun(raw, r));
-    const names = new Set<string>();
     runs.forEach((run, r) => {
       if (run.name === undefined) return;
-      if (names.has(run.name)) throw new KeyProblem(`runs[${r}].name`, `${run.name} given twice`);
-      names.add(run.name);
+      const other = runs.findIndex((each, n) => n !== r && runName(each) === run.name);
+      if (other >= 0) {
+        throw new KeyProblem(`runs[${r}].name`, `${run.name} also names runs[${other}]`);
+      }
     });
     return { label, compositions, ...overlay === undefined ? {} : { overlay }, agent, runs };
   } catch (error) {
@@ -749,6 +756,7 @@ function runOne(run: Run, composed: string, params: Record<string, string>, agen
           case 'write': {
             const path = expand(step.path);
             if (!inside(path)) throw new StepFailure(`${path} leaves the repository`);
+            if (underGit(path)) throw new StepFailure(`${path} is under .git/`);
             mkdirSync(dirname(join(repo, path)), { recursive: true });
             writeFileSync(join(repo, path), expand(step.text));
             commitAll(`write ${path}`);
@@ -781,28 +789,38 @@ function keyLine(line: string, key: string): boolean {
 }
 
 /**
- * `set` (task-095 criterion 4): each field's block in the frontmatter replaced, or added before
- * the closing `---`, every other line byte-identical; the body line appended. The frontmatter
- * must parse back to the values given.
+ * `set` (task-095 criterion 4): each field's block in the frontmatter replaced, or added after
+ * the last key, every other line byte-identical; the body line appended. The frontmatter must
+ * parse back to the values given.
  */
-function setFields(text: string, fields: [string, string | string[]][], body: string | undefined,
-  path: string): string {
-  const open = text.startsWith('---\n') ? 4 : -1;
-  const close = open < 0 ? -1 : text.indexOf('\n---', open - 1);
-  const after = close < 0 ? '' : text.slice(close + 4, close + 5);
-  if (open < 0 || close < 0 || (after !== '' && after !== '\n')) {
-    throw new StepFailure(`${path}: no frontmatter`);
+export function setFields(text: string, fields: [string, string | string[]][],
+  body: string | undefined, path: string): string {
+  if (text.startsWith('\uFEFF') || text.includes('\r\n')) {
+    throw new StepFailure(`${path}: a BOM or CRLF line endings, which set does not write`);
   }
-  const lines = close + 1 > open ? text.slice(open, close + 1).split('\n').slice(0, -1) : [];
+  const all = text.split('\n');
+  const close = all[0] === '---' ? all.indexOf('---', 1) : -1;
+  if (close < 0) throw new StepFailure(`${path}: no frontmatter`);
+  const lines = all.slice(1, close);
   for (const [key, value] of fields) {
     const rendered = stringifyYaml({ [key]: value }, { lineWidth: 0 }).trimEnd().split('\n');
     const at = lines.findIndex((line) => keyLine(line, key));
     if (at < 0) {
-      lines.push(...rendered);
+      let last = lines.length - 1;
+      while (last >= 0 && ((lines[last] ?? '').trim() === '' || (lines[last] ?? '').startsWith('#'))) {
+        last -= 1;
+      }
+      lines.splice(last + 1, 0, ...rendered);
       continue;
     }
+    // The key's block: its indented or `- ` lines, blank lines kept while one of those follows.
     let end = at + 1;
-    while (end < lines.length && /^(\s|- )/.test(lines[end] ?? '')) end += 1;
+    for (let next = at + 1; next < lines.length; next += 1) {
+      const line = lines[next] ?? '';
+      if (line.trim() === '') continue;
+      if (!/^(\s|- )/.test(line)) break;
+      end = next + 1;
+    }
     lines.splice(at, end - at, ...rendered);
   }
   const front = lines.join('\n');
@@ -818,7 +836,7 @@ function setFields(text: string, fields: [string, string | string[]][], body: st
       throw new StepFailure(`${path}: ${key} does not parse back as given`);
     }
   }
-  let out = `---\n${front}${front === '' ? '' : '\n'}${text.slice(close + 1)}`;
+  let out = ['---', ...lines, ...all.slice(close)].join('\n');
   if (body !== undefined) out = `${out}${out.endsWith('\n') ? '' : '\n'}${body}\n`;
   return out;
 }
@@ -1047,62 +1065,86 @@ RunsResult {
   let total = 0;
   let failed = 0;
   for (const { scenario, compositions, overlay } of scenarios) {
-    const composeTree = overlay?.merged ?? tree;
-    const shown = (line: string): string => hideScratch(overlay === undefined ? line
-      : mapOverlayPaths(line, tree, overlay));
-    for (const file of compositions) {
-      const id = compositionId(file);
-      const runs = scenario.runs.filter((run) => run.only === undefined || run.only.includes(id));
-      if (runs.length === 0) continue;
-      let out: string | undefined;
-      try {
-        out = mkdtempSync(join(tmpdir(), 'runs-compose-'));
-        const data = loadYamlFile(join(tree, file), file).data as {
-          packs?: string[];
-          parameters?: Record<string, string | number | boolean>;
-        };
-        const given = Object.fromEntries(Object.entries(data.parameters ?? {})
-          .map(([name, value]) => [name, String(value)]));
-        const output = join(out, 'output');
-        const composed = compose(composeTree, data.packs ?? [], given, output);
-        if (composed.releases.length === 0) {
-          throw new NoReleaseError('no release in compat.yaml can run it');
-        }
-        for (const release of composed.releases) {
-          let cli: string;
-          try {
-            cli = install(release, args.cache);
-          } catch (error) {
-            // One release that cannot be installed: its line, and the other releases go on.
-            code = Math.max(code, isIoError(error) ? 2 : 1);
-            // installRelease's messages already name the release: it is said once.
-            const message = messageOf(error).replace(`wingfoil@${release}: `, '');
-            lines.push(shown(`runs ${file} wingfoil@${release}: ${message}`));
-            continue;
-          }
-          for (const run of runs) {
-            total += 1;
-            const failure = runOne(run, output, composed.params, scenario.agent, cli, execute);
-            const head = `runs ${file} ${runName(run)} wingfoil@${release}`;
-            if (failure === undefined) {
-              lines.push(`${head}: pass`);
-            } else {
-              failed += 1;
-              code = Math.max(code, 1);
-              lines.push(shown(`${head}: ${failure}`));
-            }
-          }
-        }
-      } catch (error) {
-        code = Math.max(code, isIoError(error) ? 2 : 1);
-        lines.push(shown(`runs ${file}: ${messageOf(error)}`));
-      } finally {
-        if (out !== undefined) rmSync(out, { recursive: true, force: true });
-      }
+    try {
+      ({ code, total, failed } = runScenario(scenario, compositions, overlay, args, lines,
+        { code, total, failed }, { compose, install, execute }));
+    } finally {
+      // Each merged tree goes once its scenario is done (criterion 8).
+      if (overlay !== undefined) rmSync(overlay.root, { recursive: true, force: true });
     }
   }
   lines.push(`runs: ${total} ${total === 1 ? 'run' : 'runs'}, ${failed} failed`);
   return { code, lines };
+}
+
+interface Counts {
+  code: number;
+  total: number;
+  failed: number;
+}
+
+/** The runs of one scenario on its compositions; its lines appended, the counts carried on. */
+function runScenario(scenario: Scenario, compositions: string[], overlay: Overlay | undefined,
+  args: ReturnType<typeof parse>, lines: string[], counts: Counts,
+  tools: { compose: Compose; install: (version: string, cache: string) => string; execute: Exec }):
+Counts {
+  const { tree } = args;
+  const { compose, install, execute } = tools;
+  let { code, total, failed } = counts;
+  const composeTree = overlay?.merged ?? tree;
+  const shown = (line: string): string => hideScratch(overlay === undefined ? line
+    : mapOverlayPaths(line, tree, overlay));
+  for (const file of compositions) {
+    const id = compositionId(file);
+    const runs = scenario.runs.filter((run) => run.only === undefined || run.only.includes(id));
+    if (runs.length === 0) continue;
+    let out: string | undefined;
+    try {
+      out = mkdtempSync(join(tmpdir(), 'runs-compose-'));
+      const data = loadYamlFile(join(tree, file), file).data as {
+        packs?: string[];
+        parameters?: Record<string, string | number | boolean>;
+      };
+      const given = Object.fromEntries(Object.entries(data.parameters ?? {})
+        .map(([name, value]) => [name, String(value)]));
+      const output = join(out, 'output');
+      const composed = compose(composeTree, data.packs ?? [], given, output);
+      if (composed.releases.length === 0) {
+        throw new NoReleaseError('no release in compat.yaml can run it');
+      }
+      for (const release of composed.releases) {
+        let cli: string;
+        try {
+          cli = install(release, args.cache);
+        } catch (error) {
+          // One release that cannot be installed: its line, and the other releases go on.
+          code = Math.max(code, isIoError(error) ? 2 : 1);
+          // installRelease's messages already name the release: it is said once.
+          const message = messageOf(error).replace(`wingfoil@${release}: `, '');
+          lines.push(shown(`runs ${file} wingfoil@${release}: ${message}`));
+          continue;
+        }
+        for (const run of runs) {
+          total += 1;
+          const failure = runOne(run, output, composed.params, scenario.agent, cli, execute);
+          const head = `runs ${file} ${runName(run)} wingfoil@${release}`;
+          if (failure === undefined) {
+            lines.push(`${head}: pass`);
+          } else {
+            failed += 1;
+            code = Math.max(code, 1);
+            lines.push(shown(`${head}: ${failure}`));
+          }
+        }
+      }
+    } catch (error) {
+      code = Math.max(code, isIoError(error) ? 2 : 1);
+      lines.push(shown(`runs ${file}: ${messageOf(error)}`));
+    } finally {
+      if (out !== undefined) rmSync(out, { recursive: true, force: true });
+    }
+  }
+  return { code, total, failed };
 }
 
 /** The scenario files of the tree: tests/fixtures/runs/*.yaml, in byte order. */
