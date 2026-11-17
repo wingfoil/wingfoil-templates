@@ -285,3 +285,46 @@ Branch `task/task-096-feedback-pack` from `main` at `9923ba1c`, in a worktree of
 - 2026-11-17, red (dl-018): `tests/feedback-pack.test.ts` before the pack exists: `npm run build
   && node --test dist/tests/feedback-pack.test.js`, 10 tests, 10 failing (each composition fails
   to resolve `governance/feedback`, as task-068's red did).
+- 2026-11-17, the names (criterion 4): in scratch projects made by WingFoil 0.3.2's `init
+  --template Scrum` and `--template Kanban`, `workflows/built-in/` is empty,
+  `workflows/custom/` holds `adr-ingest`, `bug-ingest`, `decision-log-ingest`,
+  `sw-life-cycle` and `scrum-delivery` or `kanban-delivery`, `directives/built-in/` holds
+  `architecture`, `code-quality`, `code-review`, `documentation`, `security` and
+  `testing`, and `directives/custom/` holds `determinism`, `doc-versioning`,
+  `security-secrets` and `traceability`; none of them, and none of this repository's
+  `custom/` workflows and directives, starts with `feedback`.
+- 2026-11-17, build: the pack (`c1f551dc`) and the examples (`1a156e05`). `pack.yaml`, the
+  fragments, the template and the workflows come from the draft, with `pack.yaml`'s description
+  rewritten; the directives, the AGENTS.md section, the CHANGELOG and the README are written from
+  the charter and spec-003, the generated sections by `npm run index`. The AGENTS.md section
+  names `feedback-bug-route` but not `bug-ingest`, which only the entry's files name.
+  `tests/feedback-pack.test.ts` passes (10 tests).
+- 2026-11-17, checks on `1a156e05` (criterion 9), each exit 0 with no warning:
+  - `index -- --check`: 8 files;
+  - `check:packs`: 93 files, 0 problems;
+  - `validate`: schemas 9, lint 93, 14 compositions, 28 runs, 0 failed, tolerance none; the
+    three examples composed twice byte-identical; `defaults[+software]` skipped (no
+    methodology), as `base`'s examples are;
+  - `validate:publication`: 28 runs, 0 failed;
+  - the overlays `software-exit`, `scrum-exit` and `kanban-exit`: 18 compositions and 36 runs
+    each, 0 failed;
+  - the golden tree: 26 runs, 0 failed;
+  - `check:runs`: 46 runs, 0 failed, unchanged;
+  - `catalog.yaml`, `CATALOG.md`, `catalog-index.json` and `llms.txt` unchanged.
+- 2026-11-17, criterion 9's WingFoil 0.3.1: the matrix runs the oldest and the newest release
+  `compat.yaml` lists in both modes (task-058), so 0.3.1 is not among its runs. Read as the
+  criterion asks, by hand: each example composed by `npm run compose` and committed in a scratch
+  repository, then WingFoil 0.3.1's `workflow list`, `dna show` and `directives list` with
+  `--format json`: each exit 0, no diagnostic, no warning, nothing on stderr. No change to the
+  matrix (its selection is task-058's).
+- 2026-11-17, the counts moved (criterion 10, `5b21b781`):
+  - `tests/check-packs.test.ts`: lint 76 → 93 files;
+  - `tests/index.test.ts`: 7 → 8 files;
+  - `tests/validate-2-run.test.ts`: schemas 8 → 9, lint 76 → 93, `validate` 11 → 14
+    compositions and 22 → 28 runs, the overlays `software-exit`, `scrum-exit` and
+    `kanban-exit` 15 → 18 compositions and 30 → 36 runs each, the publication run 22 → 28.
+
+  The titles say so. `tests/catalog-fixture.test.ts` refused `tests/feedback-pack.test.ts`
+  reading this repository's `catalog.yaml` (task-040): the test composes on the fixture catalog
+  instead, the packs read from the tree as before. The full suite before the change: 1380 tests,
+  8 failing, exactly these.
