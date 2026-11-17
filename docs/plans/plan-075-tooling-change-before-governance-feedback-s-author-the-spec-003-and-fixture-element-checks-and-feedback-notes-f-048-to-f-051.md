@@ -228,6 +228,25 @@ and submit), `success`.
   built-in directive id accepted in an entry's `agent.execute`. `main`'s CI on `9cb75163`, run
   44060912347, `success`, jobs `validate (22.12.0, 1)` 7 min 8 s, `(22.12.0, 2)` 5 min 31 s,
   `(22.21.0, 1)` 10 min 40 s, `(22.21.0, 2)` 6 min 32 s.
+- 2026-11-17, step 4: task (C), task-094, `done`: the fixture-element checks in
+  `tests/support/fixture-elements.ts`, generic, the caller passing the bindings; `listItems`
+  exported by `src/parameters.ts`; merged `--no-ff` at `92e538eb`, closed at `08637a29`; "The
+  fixture-element checks" in Closed, settled by task-093, task-094; the Open row for the bindings
+  to `governance/feedback` added, trigger its `author` task (point 5). Ruling with its body: a
+  `commit` reference kind offered generically, a departure from point 5's three kinds; whether
+  FA-5 counts a commit is ruled with the bindings. `main`'s CI on `08637a29`, run 44076357546,
+  `success`, jobs `validate (22.12.0, 1)` 14 min 9 s, `(22.12.0, 2)` 4 min 8 s, `(22.21.0, 1)`
+  8 min 42 s, `(22.21.0, 2)` 3 min 34 s.
+- 2026-11-17, step 5, close: the plan's own privacy check of its text and of every commit since
+  `2d1ca397` (no local or scratch path, no maintainer name or email, no private project, no
+  intermediary session). dl-020, the errata and rulings per tech-spec: spec-001, none; spec-003,
+  no erratum, two rulings on readings: an entry's `agent.execute` naming a WingFoil built-in
+  directive is in its scope (§7.2's list names pack sources only; task-093), and the fixture
+  checks offer a `commit` kind beside FA-5's three (§4.4 lists a commit; task-094), whose use by
+  FA-5 and the possible charter erratum wait for `governance/feedback`'s `author` task. The
+  approver's rulings during the wave: F-048 `gap`, F-049 kept as written (task-092), both
+  readings above. Both owed rows of this plan Closed; one row opened (the bindings). The CI of
+  the close's push is left to the next plan (dl-038 C3).
 
 ## The approver's rulings
 
