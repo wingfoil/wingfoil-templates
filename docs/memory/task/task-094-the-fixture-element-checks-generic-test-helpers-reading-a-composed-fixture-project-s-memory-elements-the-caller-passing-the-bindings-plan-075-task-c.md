@@ -2,7 +2,7 @@
 id: task-094-the-fixture-element-checks-generic-test-helpers-reading-a-composed-fixture-project-s-memory-elements-the-caller-passing-the-bindings-plan-075-task-c
 type: task
 title: "The fixture-element checks: generic test helpers reading a composed fixture project's Memory elements, the caller passing the bindings (plan-075 task C)"
-status: in-progress
+status: in-review
 pack: ""            # tooling task (tooling-delivery v4), plan-075 task (C)
 depends_on: []
 tags: ["tooling","tests","governance"]
