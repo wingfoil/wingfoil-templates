@@ -42,8 +42,9 @@ for. Later plans own:
 - **The draft** passed `validate --overlay` on WingFoil 0.3.0 and 0.3.2 (plan-074 step 2:
   15 compositions, 30 runs, tolerance none). It was then driven on 0.3.2 through three routes to
   `closed`: an added outcome (`deferred`) to its decision-log fallback, `upstream-note` through
-  a fixture channel, and `bug` with `software` through `bug-ingest`. Not driven by plan-073 or
-  plan-074: `task` (left on the frontier), `decision-log` through `decision-log-ingest` or
+  a fixture channel, and `bug` with `software` through `bug-ingest`; plan-074 left `task` on
+  the frontier. plan-073 had driven `task`, `declined` and `duplicate`, outside a step, on its
+  format-1 draft. Driven by neither: `decision-log` through `decision-log-ingest` or
   `governance-evolution`, and the would-be `bug` without `software`. It sits untracked under
   `tests/fixtures/feedback-draft/`, as a reference only. It holds:
   - the pack at format 2, with the three list parameters;
@@ -64,8 +65,9 @@ and submit). It is in progress while this outline is written; its result is reco
   `commit_inside`, `commit_copy`, `add`, `submit` and `approve`. It has one main per scenario
   run and one scratch repository per run. Every run of a scenario is made on every
   composition of its one `compositions` folder. `add` always names the run's step, and
-  `submit` and `approve` act on the last element added. It has no step that writes an
-  element's field or a file.
+  `submit` and `approve` act on the last element added. No step writes an element's field, or
+  given text at a given path. It has no overlay: it resolves only the tree's own
+  `catalog.yaml` and `packs/` (`src/resolve.ts`).
   - A `feedback` item's `submit` needs `kind`, `target`, `source` and `context`, and its routing
     needs `outcome`. So today `check:runs` can start each main, but cannot capture an item past
     `draft` or drive a route.
@@ -107,14 +109,18 @@ Each point has a recommendation.
      name the element by its label, not only the last one added;
    - **`add` with no step**, for a target the charter adds outside a step;
    - **a field write:** frontmatter fields of a labelled element (the item's `kind`, `target`,
-     `source`, `context`, `outcome`, `resulting`), and a body line citing another element's id,
-     committed;
+     `source`, `context`, `outcome`, `resulting`), and a body line, committed;
    - **a file write:** a file with given text at a path inside the repository, committed (the
      upstream note);
-   - **a per-run composition filter** (`only: [<composition>, …]`), so a route runs only on the
-     compositions that hold it (`feedback-bug-route` only where `software` is composed);
-   - **step keys built at run time** from a labelled element's id (`feedback-item.route@<id>`),
-     for `next` and `finalize`, which already take any key.
+   - **a per-run composition filter** (`only: [<composition>, …]`), on main runs and adopt runs
+     alike, so a run is made only on the compositions that hold what it needs
+     (`feedback-bug-route` only where `software` is composed);
+   - **a labelled element's id at run time** (`<label>.id`) in a field value, a body line, a
+     file's text and the step keys of `next` and `finalize` (`feedback-item.route@<id>`), so
+     `resulting` names the target, the target cites the item, and the note cites the item;
+   - **an overlay** (a scenario key `overlay: <dir>`), resolved on the merged tree as
+     `validate --overlay` does (task-046), so a scenario can compose a fixture pack (the
+     upstream one).
 
    Red first (dl-018): a test of each new step kind on the stub, and the guard tests of
    `tests/runs.test.ts`. The row of the full scrum and kanban runs meets its trigger: task-095
@@ -166,6 +172,11 @@ Each point has a recommendation.
    - **The counts** that the tooling tests take on this repository move (lint files, index
      packs, `validate` compositions and runs, the exit overlays, the publication run). Each is
      stated as task-067 stated them (dl-018). The task measures the final numbers.
+   - **The tests of point 8's [V] rows** (a developer change under `tests/` inside a pack task,
+     as task-068's): the four fields in the composed type's `template.frontmatter.required`
+     (FA-3); `pending: { reject: draft }` and the triage phase's approval by the approver
+     (FA-4); the `feedback` directive's routing table naming only `base`'s workflows (FA-6).
+     Red first where dl-018 asks.
    - **What does not change:** no file under `src/` or `.wingfoil/`. The other packs' READMEs
      do not change, since their examples compose no `feedback`.
 
@@ -193,18 +204,21 @@ Each point has a recommendation.
      - with task-095's steps, each route driven to `closed`: `decision-log`, `task`,
        `declined` and the added outcome on `added-outcome`; `bug` on `with-software`; the
        would-be `bug`, proposed as `decision-log` naming it, on `defaults`.
-   - **`tests/fixtures/runs/feedback-upstream.yaml`**, on `feedback-exit`'s compositions
-     filtered to the upstream one: the `upstream-note` route to `closed`, the note written
+   - **`tests/fixtures/runs/feedback-upstream.yaml`**, with `overlay:
+     tests/fixtures/feedback-exit`, on its compositions filtered to the upstream one: the `upstream-note` route to `closed`, the note written
      where the fixture channel says.
    - The guard tests of `tests/runs.test.ts` are extended, red first. `check:runs` grows by
-     about 16 runs per selected release (8 starts, 6 routes, 2 adoptions); the task measures
+     about 19 runs per selected release (8 starts, 7 routes, 4 adoptions); the task measures
      the final number.
    - **The adoption run, prepared.** dl-032 E3 belongs to `first-release`, and the charter says
      `author` prepares it. *Recommended:* this task adds
      `tests/fixtures/runs/adoption-feedback.yaml` with its guard test, as
      `adoption-kanban.yaml` did, once per `init` template, on the examples that compose
-     `software` (an `init` template writes a software project). It runs in CI from this task
+     `software`, through the filter (an `init` template writes a software project). It runs in CI from this task
      on.
+   - **Empty frontiers.** A start of `feedback-review` or `feedback-bug-route` on a fresh
+     repository has an empty frontier, and `start` requires the plan `active`: task-097's
+     Design probes it on 0.3.0 and 0.3.2 before the scenarios are written.
    - **Durations.** The task records the CI jobs' durations. A job over 25 minutes goes to the
      approver (dl-039 R3).
 
@@ -214,7 +228,7 @@ Each point has a recommendation.
    - **The fixture projects** sit under `tests/fixtures/feedback-elements/`, composed from the
      examples and from `feedback-exit`'s upstream composition, with Memory elements written by
      hand. The test copies each into a scratch git repository (`tests/support/git-repo.ts`,
-     fixed identity and dates) and commits it, so a commit reference resolves; a `context` or
+     fixed identity) and commits it, so a commit reference resolves; a `context` or
      a citation naming a commit takes the hash the test reads after that commit. A fixture
      holds:
      - valid items in each state;
@@ -224,12 +238,15 @@ Each point has a recommendation.
      - FA-7's two paths: feedback → `governance-evolution`'s decision-log citing it → a
        `custom/` change whose commit cites the decision-log; and feedback → bug, with
        `software`, or → a decision-log naming the would-be bug, without it;
-     - FA-8's upstream note, checked by the existing asserts of `tests/support/inbox.ts`
-       (`assertFields`, `assertSections`, which refuses `## Replies`, and `assertOpenings`,
-       the opening citing the feedback id); the inbox's numbering and ledger do not apply.
+     - FA-8's upstream note, checked by the existing asserts of `tests/support/inbox.ts` that
+       belong to dl-163, `assertFields` and `assertSections` (which refuses `## Replies`), on
+       a `Note` built from the fixture's file; `assertOpenings` is this repository's opening,
+       not dl-163's, and the inbox's numbering and ledger do not apply. The note's citation of
+       the item is the back-reference check's.
    - **The bindings** use `tests/support/fixture-elements.ts`:
      - the type's required fields;
-     - `feedback_outcomes`, plus the entry's `bug`;
+     - `kind` → `feedback_kinds`, `target` → `feedback_targets`, and `outcome` →
+       `feedback_outcomes`, plus the entry's `bug` only where `software` is composed;
      - `context`'s reference kinds, split on `,`, mode `every`: each reference resolves, and
        at least one is required by the field's presence; *alternative:* mode `some`, as
        FA-5's "at least one … that resolves" reads literally, which lets an unresolved second
@@ -240,18 +257,20 @@ Each point has a recommendation.
 
      The row moves to Closed with them.
    - **FA-5 and a commit.** The charter's Ships lists "a commit" among `context`'s references.
-     FA-5 lists only "an existing element id, a declared workflow and phase, or a version".
+     So does spec-003 §4.4. FA-5 lists only "an existing element id, a declared workflow and
+     phase, or a version".
      *Recommended:* a commit counts, resolving through the helper's `commit` kind. This is the
      erratum the row names: until in-place amendment exists (G7, W10), it is recorded as an
      Execution Note on the charter citing the approver's ruling (dl-020), and the charter's
-     text is unchanged. *Alternative:* FA-5 as written, so a `context` holding only a commit
-     fails.
+     text is unchanged. *Alternative:* FA-5 as written, so a `context` that holds a commit fails
+     (under mode `every`, even beside a reference that resolves).
 
 6. **task-099, the run by hand** (the charter's exit criterion, dl-032 E4). Two scratch
    repositories, each composed from `main` at a commit the notes name, with fictional values
    and `.wingfoil/` committed:
    - **with `software`:** `base`, `software`, `methodology/kanban`, the pack and the fixture
-     upstream pack: `decision-log` through `decision-log-ingest`, a governance change through
+     upstream pack, composed with `--tree` on a copy of `main` with `feedback-exit`'s packs
+     merged in, `feedback_outcomes` holding the added outcome: `decision-log` through `decision-log-ingest`, a governance change through
      `governance-evolution` (FA-7's governance path), `task`, `declined`, `duplicate`, an
      added outcome, `bug` through `bug-ingest`, and `upstream-note`;
    - **without `software`:** `base` and the pack: `decision-log`, `task`, and the would-be
@@ -392,3 +411,14 @@ Before every commit, the privacy check (`repository-practice` rule 2). After eve
     "confirmed"; the draft's deletion as a step of its own, the upstream pack re-reviewed.
 
   Points 2, 4, 5 and 6 change: re-review.
+- 2026-11-17: re-review: approve after amendments; one blocker, six should-fix, five nits, all
+  applied. **Blocker:** `check:runs` has no overlay, so the upstream scenario could not
+  compose the fixture pack: point 2 adds an `overlay:` key. **Should-fix:** the run count
+  (7 routes, 4 adoptions, about 19 per release) and the filter on adopt runs; FA-8 without
+  `assertOpenings`, which is this repository's opening; plan-073's `task`, `declined` and
+  `duplicate` in the Context; `kind` and `target` bound to their lists; point 8's [V] tests
+  listed in point 3; a labelled element's id in field values, body lines and file text.
+  **Nits:** "and dates" dropped; "no step writes given text at a given path"; point 6's
+  `--tree` and added outcome; spec-003 §4.4 cited and the alternative's reach under `every`;
+  the empty-frontier probe in task-097's Design. The fixes complete the ruled scope of points
+  2, 4, 5 and 6 with no new decision: a final check of the fixes.
