@@ -226,3 +226,12 @@ characterized by `tests/parameters.test.ts`'s item-rule cases, green before and 
   frozen at `18e7990e`.
 - 2026-11-17: on the frozen code, `npm test` 1350 passing, 0 failing; `npm run check:packs` 0
   problems; `npm run validate` and `npm run lint` exit 0.
+- 2026-11-17: checks (dl-039 R1, R2), once, on `27019540` (the code frozen at `18e7990e`, the
+  commits after it `docs/memory` only): the branch CI, run 44072186934, `success`, jobs
+  `validate (22.12.0, 1)` 9 min 1 s, `(22.12.0, 2)` 4 min 18 s, `(22.21.0, 1)` 9 min 57 s,
+  `(22.21.0, 2)` 3 min 50 s (none over 25 minutes); from a clean working tree on Node.js 22.21.0
+  after `npm ci` and `npm run build`: `npm run validate:publication`, the golden tree in
+  publication mode and `npm run -s wingfoil -- workflow list` exit 0, `directives list --format
+  json` with `"warnings": []`, the tree still clean. This commit changes only `docs/memory`: no
+  new run. Privacy check of the branch's diff and messages: no local or scratch path, no
+  maintainer name or email, no private project, no intermediary session.
