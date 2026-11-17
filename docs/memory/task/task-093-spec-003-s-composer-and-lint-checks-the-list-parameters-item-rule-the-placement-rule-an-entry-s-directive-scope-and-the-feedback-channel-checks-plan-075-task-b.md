@@ -2,7 +2,7 @@
 id: task-093-spec-003-s-composer-and-lint-checks-the-list-parameters-item-rule-the-placement-rule-an-entry-s-directive-scope-and-the-feedback-channel-checks-plan-075-task-b
 type: task
 title: "spec-003's composer and lint checks: the list parameters' item rule, the placement rule, an entry's directive scope and the feedback-channel checks (plan-075 task B)"
-status: pending
+status: backlog
 pack: ""            # tooling task (tooling-delivery v4), plan-075 task (B)
 depends_on: []
 tags: ["tooling","lint","composer","governance"]
