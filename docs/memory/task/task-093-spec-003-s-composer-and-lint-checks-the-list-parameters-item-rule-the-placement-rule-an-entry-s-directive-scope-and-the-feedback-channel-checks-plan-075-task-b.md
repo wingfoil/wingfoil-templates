@@ -318,3 +318,12 @@ every pack, preset and example of the tree; its result recorded here.
   `npm test` started before `2596166c` failed 51 tests because `dist/` was rebuilt while it ran;
   rerun undisturbed on `2596166c`: 1330 passing, 0 failing; `npm run check:packs` 0 problems;
   `npm run validate` exit 0; eslint exit 0. The code is frozen at `2596166c`.
+- 2026-11-17: checks (dl-039 R1, R2), once, on `0f6d1a08` (the code frozen at `2596166c`, the
+  commits after it `docs/memory` only): the branch CI, run 44056401671, `success`, jobs
+  `validate (22.12.0, 1)` 10 min 31 s, `(22.12.0, 2)` 5 min 14 s, `(22.21.0, 1)` 8 min 28 s,
+  `(22.21.0, 2)` 6 min 17 s (none over 25 minutes); from a clean working tree on Node.js 22.21.0
+  after `npm ci` and `npm run build`: `npm run validate:publication`, the golden tree in
+  publication mode and `npm run -s wingfoil -- workflow list` exit 0, `directives list --format
+  json` with `"warnings": []`, the tree still clean. This commit changes only `docs/memory`: no
+  new run. Privacy check of the branch's diff and messages: no local or scratch path, no
+  maintainer name or email, no private project, no intermediary session.
