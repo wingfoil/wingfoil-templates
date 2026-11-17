@@ -63,7 +63,7 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | `pack-delivery`'s selection over `accepted` packs (`charter` creates a `draft` pack) | plan-041 › Context; dl-033 O1; dl-038 D1 | W10 | the adoption |
 | `pack-semver` rule for fixes and changed defaults | plan-049, plan-052 › close; dl-038 D1 | approver | the next pack release that is a fix or changes a default |
 | This repository keeps `plan-{n}-{slug}` or takes `{workflow}-{phase}-plan` | plan-049 › close; pack-foundation-base › Adoption | W10 | the adoption |
-| `check:runs` scenarios of the full scrum and kanban runs (`memory park`, `memory reject`, a field rewritten, `set_state`, a refusal expected) and the `include:` null branch test; a tooling task of its own | plan-050 ruling 3; plan-052 › close; plan-057 ruling 5; dl-032 E5 | approver | the next tooling task on `runs.ts` |
+| `check:runs` scenarios of the full scrum and kanban runs (`memory park`, `memory reject`, `set_state`, a refusal expected); a tooling task of its own. The field write (`set`) and the `include:` null branch test are settled by task-095 | plan-050 ruling 3; plan-052 › close; plan-057 ruling 5; dl-032 E5; task-095 | approver | the next tooling task on `runs.ts` |
 | Check 0.3.1's `COLLABORATION.md` inbox text | plan-051 ruling 4; inbox README › Rules | approver | the first sync |
 | README step 3 "own entries" for Memory types and roles `init` scaffolded, in `base`'s, `software`'s and `scrum`'s READMEs (`kanban`'s answers it, task-067) | plan-052 › close (task-061's review); task-067 | approver | the next README pass |
 | W10: presets, `governance/wingfoil-dogfood`, this repository's adoption, its pin, the first inbox sync | plan-052 ruling 7 | W10 | W10 |

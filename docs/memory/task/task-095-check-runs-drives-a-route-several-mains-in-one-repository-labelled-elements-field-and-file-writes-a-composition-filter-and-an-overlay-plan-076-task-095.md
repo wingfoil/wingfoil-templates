@@ -353,3 +353,8 @@ body).
   branch CI runs the three overlays and `check:runs`). This commit changes only `docs/memory`:
   no new run. Privacy check of the branch's diff and messages: no local or scratch path, no
   maintainer name or email, no private project, no intermediary session.
+- 2026-11-17: the approver approved (in-review → approved, `bac91ab6`) and gave the merge OK;
+  merged `--no-ff` into `main` at `ce0bf8c8`. In `docs/owed-items.md` (Acceptance 15): the row
+  "`check:runs` scenarios of the full scrum and kanban runs" narrowed to `memory park`, `memory
+  reject`, `set_state` and an expected refusal, the field write and the null-branch test settled
+  by task-095. `main`'s CI after the push is read and recorded in plan-076's notes.
