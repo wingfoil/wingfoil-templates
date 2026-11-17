@@ -281,7 +281,6 @@ Branch `task/task-096-feedback-pack` from `main` at `9923ba1c`, in a worktree of
   per outcome" dropped; the entry's absence from `defaults` checked by file, not by text; the
   resolved `feedback_outcomes` value found verbatim in the directive. Wording that makes the
   criteria checkable, with no new rule: no further review.
-
 - 2026-11-17, design: written on the branch; the task submitted `backlog → in-progress`.
 - 2026-11-17, red (dl-018): `tests/feedback-pack.test.ts` before the pack exists: `npm run build
   && node --test dist/tests/feedback-pack.test.js`, 10 tests, 10 failing (each composition fails
