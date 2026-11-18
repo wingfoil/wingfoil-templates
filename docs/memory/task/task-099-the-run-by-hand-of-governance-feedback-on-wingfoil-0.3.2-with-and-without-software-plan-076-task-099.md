@@ -116,11 +116,16 @@ Branch `task/task-099-run-by-hand` from `main` at `52d125c2`, in a worktree of i
 
 - 2026-11-18, **the run**, on WingFoil 0.3.2, composed from `52d125c2`, in two scratch repositories
   (criterion 1): Sandpiper Tickets (`with-software`) and Dunlin Notes (`without-software`). All 136
-  WingFoil commands exited 0 at the first attempt, with nothing on stderr: no refusal, no warning.
+  WingFoil commands exited 0, with nothing on stderr and no diagnostic or warning in their output.
   Between the commands, the driver wrote the fields and bodies, and committed them. Each `memory
-  approve` ran under the repository's fictional approver, with the reason "run by hand, fixture
-  approval". 141 commits in `with-software`, 56 in `without-software`, each working tree clean.
-- 2026-11-18, **`with-software`, the routes** (criterion 2):
+  approve` ran under the repository's fictional approver. 141 commits in `with-software`, 56 in
+  `without-software`, each working tree clean.
+- 2026-11-18, **driven twice.** The independent review of the first run found that its custom
+  directive was bound to no role and that its upstream note named a version it was not observed on.
+  Both repositories were composed again from `52d125c2` and every route driven again. These notes
+  record the second run.
+- 2026-11-18, **`with-software`, the routes** (criterion 2). The tables leave out each command's
+  `--format json` and each approval's `--reason`.
 
   | Route | Item | Outcome | `resulting` | Final state | Cited back |
   |---|---|---|---|---|---|
@@ -145,6 +150,10 @@ Branch `task/task-099-run-by-hand` from `main` at `52d125c2`, in a worktree of i
   | upstream note | `workflow start feedback-ingest`; `memory add --type feedback --title The vendor export leaves tickets out --workflow feedback-ingest-1-8-plan --step feedback-ingest.capture`; `memory submit feedback-008-the-vendor-export-leaves-tickets-out`; `memory approve feedback-008-the-vendor-export-leaves-tickets-out`; `workflow end feedback-ingest-1-8-plan`; `workflow start feedback-review`; `workflow finalize feedback-review-1-7-plan --step feedback-item.route@feedback:feedback-008-the-vendor-export-leaves-tickets-out`; `memory submit feedback-008-the-vendor-export-leaves-tickets-out`; `workflow end feedback-review-1-7-plan` |
   | final read | `workflow list`; `directives list` |
 
+  In the governance route, two commits that are no WingFoil command fall between `memory approve` of
+  the decision-log and `workflow end`, in this order: `AGENTS.md` copied from the composed
+  `AGENTS.region.md`; then `.wingfoil/directives/custom/one-triager.md`, with `one-triager` added by
+  hand under `facilitator` in `.wingfoil/roles.yaml`.
 - 2026-11-18, **`without-software`, the routes** (criterion 3):
 
   | Route | Item | Outcome | `resulting` | Final state | Cited back |
@@ -164,12 +173,23 @@ Branch `task/task-099-run-by-hand` from `main` at `52d125c2`, in a worktree of i
   - all 11 items are `closed`, with their `outcome` and `resulting`;
   - each routed element and the upstream note cites its item; the declined and the duplicate items
     hold their reason in `resulting` and in the body;
-  - the commit of `.wingfoil/directives/custom/one-triager.md` reads "Name who triages a report, as
-    dl-002-one-person-triages-a-report decided";
+  - the commit of the `custom/` directive reads "Name who triages a report, as
+    dl-002-one-person-triages-a-report decided", and `directives list` reports that directive
+    assigned to `facilitator`;
   - in both repositories `workflow list` and `directives list` exit 0 with no diagnostic and no
     warning, and `workflow status` reports no open workflow.
-- 2026-11-18, **one observation, no finding:** `workflow status` in `with-software` lists
-  `bug-001-the-export-crashes` as `ungated` at `triaged`. `bug-ingest` owns the bug after its triage
-  and the route only records it, as the `feedback-bug-route` directive says.
-- 2026-11-18, **criterion 7:** no fact against the charter's shape, no defect of the pack and no
-  friction in WingFoil were found, so nothing under `packs/` changed and no owed row was added.
+- 2026-11-18, **one observation on the bug:** `workflow status` in `with-software` says "human
+  needed: approve or reject bug-001-the-export-crashes (bug, triaged; no open workflow carries it)".
+  `bug-ingest` owns the bug after its triage, and the feedback route only records it, as the
+  `feedback-bug-route` directive says.
+- 2026-11-18, **criterion 7:** no fact against the charter's shape and no defect of the pack, so
+  nothing under `packs/` changed. **Friction in WingFoil 0.3.2:** a `custom/` directive that no role
+  binds raises no warning, and no command assigns one, so a project edits `roles.yaml` by hand. The
+  owed row "A `custom/` directive no role binds" records it.
+- 2026-11-18, **the review of the run** (dl-017): approve after amendments; no blocker, three
+  should-fix and three nits, all applied: the re-drive above, the two commits of the governance
+  route named, the bug's status quoted, the tables' omissions stated, and stdout read for
+  diagnostics. The second run changes only the governance route's directive binding and the note's
+  version, each of which a final check of these notes covers.
+- 2026-11-18, **the privacy check** of the branch's diff (`repository-practice` rule 2): no local or
+  scratch path, no private project.
