@@ -119,6 +119,9 @@ jobs:
       - name: Validate methodology/kanban with the governed repositories' parameters (task-068)
         if: matrix.shard == 1 && github.ref_type != 'tag'
         run: npm run validate -- --overlay tests/fixtures/kanban-exit
+      - name: Validate governance/feedback with each methodology and its fixture packs (task-097)
+        if: matrix.shard == 1 && github.ref_type != 'tag'
+        run: npm run validate -- --overlay tests/fixtures/feedback-exit
       - name: Run the packs' workflows on every selected WingFoil release (task-053, task-058)
         if: matrix.shard == 1 && github.ref_type != 'tag'
         run: npm run check:runs

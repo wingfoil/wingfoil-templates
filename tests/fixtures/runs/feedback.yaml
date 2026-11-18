@@ -1,0 +1,195 @@
+# The runs of governance/feedback on its README examples (task-097, plan-076), run by
+# `npm run check:runs` and the CI on every branch push, on each selected release: a start of every
+# main the pack ships, and each route driven to `closed`. WingFoil checks neither `resulting` nor
+# the routed element's citation of the item: tests/runs.test.ts pins them. The agent below runs
+# every command but an approval, the composition's approver approving (fixture data, no governance
+# act).
+format: 1
+compositions: tests/fixtures/examples/feedback
+identities:
+  agent: { name: "Runs Agent", email: "agent@runs.invalid" }
+runs:
+  - main: feedback-ingest
+    steps: [start]
+  - main: feedback-review
+    steps: [start]
+  - main: feedback-bug-route
+    only: [with-software, added-outcome]
+    steps: [start]
+  - name: route-decision-log
+    only: [added-outcome]
+    chain:
+      - main: feedback-ingest
+        steps:
+          - start
+          - add: { type: feedback, title: "A report", step: feedback-ingest.capture, label: item }
+          - set:
+              element: item
+              fields:
+                kind: gap
+                target: "product"
+                source: "a customer"
+                context: "feedback-ingest.capture"
+                outcome: decision-log
+          - submit: item
+          - approve: item
+          - end
+      - main: decision-log-ingest
+        steps:
+          - start
+          - add:
+              type: decision-log
+              title: "A ruling"
+              step: decision-log-ingest.capture
+              label: dl
+          - set: { element: dl, body: "Cites the feedback item $item.id." }
+          - submit: dl
+          - approve: dl
+          - end
+      - main: feedback-review
+        steps:
+          - start
+          - set: { element: item, fields: { resulting: $dl.id } }
+          - finalize: feedback-item.route@feedback:$item.id
+          - submit: item
+          - end
+  - name: route-task
+    only: [added-outcome]
+    chain:
+      - main: feedback-ingest
+        steps:
+          - start
+          - add: { type: feedback, title: "A report", step: feedback-ingest.capture, label: item }
+          - set:
+              element: item
+              fields:
+                kind: gap
+                target: "product"
+                source: "a customer"
+                context: "feedback-ingest.capture"
+                outcome: task
+          - submit: item
+          - approve: item
+          - end
+      - main: feedback-review
+        steps:
+          - start
+          - add: { type: task, title: "A task", label: routed }
+          - set: { element: routed, body: "Cites the feedback item $item.id." }
+          - set: { element: item, fields: { resulting: $routed.id } }
+          - finalize: feedback-item.route@feedback:$item.id
+          - submit: item
+          - end
+  - name: route-declined
+    only: [added-outcome]
+    chain:
+      - main: feedback-ingest
+        steps:
+          - start
+          - add: { type: feedback, title: "A report", step: feedback-ingest.capture, label: item }
+          - set:
+              element: item
+              fields:
+                kind: gap
+                target: "product"
+                source: "a customer"
+                context: "feedback-ingest.capture"
+                outcome: declined
+          - submit: item
+          - approve: item
+          - end
+      - main: feedback-review
+        steps:
+          - start
+          - set: { element: item, fields: { resulting: "n/a — out of the product's scope" } }
+          - finalize: feedback-item.route@feedback:$item.id
+          - submit: item
+          - end
+  - name: route-added-outcome
+    only: [added-outcome]
+    chain:
+      - main: feedback-ingest
+        steps:
+          - start
+          - add: { type: feedback, title: "A report", step: feedback-ingest.capture, label: item }
+          - set:
+              element: item
+              fields:
+                kind: gap
+                target: "product"
+                source: "a customer"
+                context: "feedback-ingest.capture"
+                outcome: deferred
+          - submit: item
+          - approve: item
+          - end
+      - main: feedback-review
+        steps:
+          - start
+          - add: { type: decision-log, title: "Deferred", label: dl }
+          - set: { element: dl, body: "The outcome deferred, for the feedback item $item.id." }
+          - set: { element: item, fields: { resulting: $dl.id } }
+          - finalize: feedback-item.route@feedback:$item.id
+          - submit: item
+          - end
+  - name: route-bug
+    only: [with-software]
+    chain:
+      - main: feedback-ingest
+        steps:
+          - start
+          - add: { type: feedback, title: "A report", step: feedback-ingest.capture, label: item }
+          - set:
+              element: item
+              fields:
+                kind: gap
+                target: "product"
+                source: "a customer"
+                context: "feedback-ingest.capture"
+                outcome: bug
+          - submit: item
+          - approve: item
+          - end
+      - main: bug-ingest
+        steps:
+          - start
+          - add: { type: bug, title: "A crash", step: bug-ingest.capture, label: bug }
+          - set: { element: bug, body: "Reported by the feedback item $item.id." }
+          - submit: bug
+          - approve: bug
+          - end
+      - main: feedback-bug-route
+        steps:
+          - start
+          - set: { element: item, fields: { resulting: $bug.id } }
+          - finalize: feedback-bug-item.bug@feedback:$item.id
+          - submit: item
+          - end
+  - name: route-would-be-bug
+    only: [defaults]
+    chain:
+      - main: feedback-ingest
+        steps:
+          - start
+          - add: { type: feedback, title: "A report", step: feedback-ingest.capture, label: item }
+          - set:
+              element: item
+              fields:
+                kind: gap
+                target: "product"
+                source: "a customer"
+                context: "feedback-ingest.capture"
+                outcome: decision-log
+              body: "A would-be bug: this project composes no software."
+          - submit: item
+          - approve: item
+          - end
+      - main: feedback-review
+        steps:
+          - start
+          - add: { type: decision-log, title: "A would-be bug", label: dl }
+          - set: { element: dl, body: "A would-be bug, from the feedback item $item.id." }
+          - set: { element: item, fields: { resulting: $dl.id } }
+          - finalize: feedback-item.route@feedback:$item.id
+          - submit: item
+          - end

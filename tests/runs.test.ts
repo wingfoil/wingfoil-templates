@@ -1346,12 +1346,17 @@ interface FeedbackScenario { compositions: string; overlay?: string; runs: Scena
 const feedbackScenario = (file: string): FeedbackScenario =>
   parseYaml(readFileSync(join(FIXTURES, 'runs', file), 'utf8')) as FeedbackScenario;
 
+/** The values of one kind of step in a run's chain, in order. */
+function stepsOf(run: ScenarioRun | undefined, kind: string): Record<string, unknown>[] {
+  return (run?.chain ?? []).flatMap((link) => link.steps).flatMap((step) => {
+    const value = typeof step === 'string' ? undefined : step[kind];
+    return typeof value === 'object' ? [value] : [];
+  });
+}
+
 /** The `set` steps of a run on one label, in order. */
 function setsOn(run: ScenarioRun, label: string): Record<string, unknown>[] {
-  return (run.chain ?? []).flatMap((link) => link.steps).flatMap((step) => {
-    const set = typeof step === 'string' ? undefined : step['set'];
-    return typeof set === 'object' && set['element'] === label ? [set] : [];
-  });
+  return stepsOf(run, 'set').filter((set) => set['element'] === label);
 }
 
 /** The fields a run writes on one label, merged. */
@@ -1417,10 +1422,8 @@ describe('tests/fixtures/runs/feedback.yaml (task-097)', () => {
       assert.equal(fields['resulting'], `$${row.target}.id`);
       assert.ok(bodiesOn(run, row.target).some((body) => body.includes('$item.id')),
         'the routed element cites the item');
-      const added = run.chain?.flatMap((link) => link.steps).flatMap((step) =>
-        (typeof step === 'string' ? [] : [step['add']])) as Record<string, unknown>[];
-      assert.ok(added.some((add) => add['label'] === row.target && add['type'] === row.type),
-        `${row.target} is a ${row.type}`);
+      assert.ok(stepsOf(run, 'add').some((add) => add['label'] === row.target
+        && add['type'] === row.type), `${row.target} is a ${row.type}`);
       assertCloses(run, row.name === 'route-bug'
         ? 'feedback-bug-item.bug@feedback:$item.id' : ITEM_ROUTE);
     });
@@ -1450,8 +1453,7 @@ describe('tests/fixtures/runs/feedback-upstream.yaml (task-097, FA-8)', () => {
   const directive = (): string =>
     readFileSync(join(PACK, 'directives', 'plover-vendor-channel.md'), 'utf8');
   const noteStep = (): { path: string; text: string } => {
-    const steps = scenario().runs[0]?.chain?.flatMap((link) => link.steps) ?? [];
-    const found = steps.flatMap((step) => (typeof step === 'string' ? [] : [step['write']]))[0];
+    const [found] = stepsOf(scenario().runs[0], 'write');
     assert.ok(found !== undefined, 'the note is written');
     return found as unknown as { path: string; text: string };
   };

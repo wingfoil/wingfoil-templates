@@ -1,0 +1,14 @@
+format: 1
+id: blueprint/fixture
+axis: blueprint
+name: fixture
+title: "Blueprint fixture"
+description: >-
+  A test fixture, never published: an empty blueprint, standing in for the packs W12 publishes, so
+  that governance/feedback composes beside that axis.
+version: 1.0.0
+formats: {}
+requires:
+  - base@^2
+requires_capabilities: []
+contents: {}

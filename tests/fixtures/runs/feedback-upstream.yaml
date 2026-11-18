@@ -1,0 +1,55 @@
+# The upstream-note route of governance/feedback through the fixture channel of feedback-exit
+# (task-097, plan-076; FA-8), run by `npm run check:runs` and the CI on every branch push, on each
+# selected release. The note is written where the channel directive says, in its format.
+format: 1
+overlay: tests/fixtures/feedback-exit
+compositions: tests/fixtures/feedback-exit/compositions
+identities:
+  agent: { name: "Runs Agent", email: "agent@runs.invalid" }
+runs:
+  - name: route-upstream-note
+    only: [upstream]
+    chain:
+      - main: feedback-ingest
+        steps:
+          - start
+          - add: { type: feedback, title: "A report", step: feedback-ingest.capture, label: item }
+          - set:
+              element: item
+              fields:
+                kind: gap
+                target: "upstream:plover-vendor"
+                source: "a customer"
+                context: "feedback-ingest.capture"
+                outcome: upstream-note
+          - submit: item
+          - approve: item
+          - end
+      - main: feedback-review
+        steps:
+          - start
+          - write:
+              path: docs/upstream/plover/$item.id.md
+              text: |
+                ---
+                id: F-001
+                title: "A gap seen in Plover Vendor"
+                kind: gap
+                status: open
+                wingfoil_version: 1.0.0
+                answered_by: []
+                ---
+
+                From the feedback item $item.id.
+
+                ## Observed
+
+                The export leaves out the archived tickets.
+
+                ## Expected
+
+                The export holds every ticket.
+          - set: { element: item, fields: { resulting: docs/upstream/plover/$item.id.md } }
+          - finalize: feedback-item.route@feedback:$item.id
+          - submit: item
+          - end

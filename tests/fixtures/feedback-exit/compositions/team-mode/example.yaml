@@ -1,0 +1,16 @@
+format: 1
+id: team-mode
+title: "With a team mode"
+description: >-
+  Avocet Forms, a fictional forms builder run in Sprints, composes the pack beside the fixture
+  team mode.
+packs:
+  - software@^1
+  - methodology/scrum@^1
+  - governance/feedback@^1
+  - team-mode/agent-first@^1
+parameters:
+  project_name: "Avocet Forms"
+  approver_name: "Avocet Lead"
+  approver_email: "lead@avocet-forms.example"
+  agent_name: "Avocet Agent"

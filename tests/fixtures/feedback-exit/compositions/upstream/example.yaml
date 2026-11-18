@@ -1,0 +1,17 @@
+format: 1
+id: upstream
+title: "With an upstream"
+description: >-
+  Plover Desk, a fictional help desk, sends the feedback that concerns its fictional vendor
+  Plover Vendor through the fixture channel.
+packs:
+  - software@^1
+  - methodology/kanban@^1
+  - governance/feedback@^1
+  - governance/feedback-upstream@^1
+parameters:
+  project_name: "Plover Desk"
+  approver_name: "Plover Lead"
+  approver_email: "lead@plover-desk.example"
+  agent_name: "Plover Agent"
+  feedback_targets: "product, governance, upstream:plover-vendor"
