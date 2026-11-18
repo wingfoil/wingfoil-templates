@@ -101,7 +101,10 @@ runs:
       - main: feedback-review
         steps:
           - start
-          - set: { element: item, fields: { resulting: "n/a — out of the product's scope" } }
+          - set:
+              element: item
+              fields: { resulting: "n/a — out of the product's scope" }
+              body: "Declined: out of the product's scope."
           - finalize: feedback-item.route@feedback:$item.id
           - submit: item
           - end
@@ -123,11 +126,21 @@ runs:
           - submit: item
           - approve: item
           - end
+      - main: decision-log-ingest
+        steps:
+          - start
+          - add:
+              type: decision-log
+              title: "Deferred"
+              step: decision-log-ingest.capture
+              label: dl
+          - set: { element: dl, body: "The outcome deferred, for the feedback item $item.id." }
+          - submit: dl
+          - approve: dl
+          - end
       - main: feedback-review
         steps:
           - start
-          - add: { type: decision-log, title: "Deferred", label: dl }
-          - set: { element: dl, body: "The outcome deferred, for the feedback item $item.id." }
           - set: { element: item, fields: { resulting: $dl.id } }
           - finalize: feedback-item.route@feedback:$item.id
           - submit: item
@@ -184,11 +197,21 @@ runs:
           - submit: item
           - approve: item
           - end
+      - main: decision-log-ingest
+        steps:
+          - start
+          - add:
+              type: decision-log
+              title: "A would-be bug"
+              step: decision-log-ingest.capture
+              label: dl
+          - set: { element: dl, body: "A would-be bug, from the feedback item $item.id." }
+          - submit: dl
+          - approve: dl
+          - end
       - main: feedback-review
         steps:
           - start
-          - add: { type: decision-log, title: "A would-be bug", label: dl }
-          - set: { element: dl, body: "A would-be bug, from the feedback item $item.id." }
           - set: { element: item, fields: { resulting: $dl.id } }
           - finalize: feedback-item.route@feedback:$item.id
           - submit: item

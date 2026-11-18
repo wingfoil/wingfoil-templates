@@ -177,13 +177,37 @@ Branch `task/task-097-feedback-exit` from `main` at `8f68c465`, in a worktree of
   upstream note is parsed from the scenario's text into a `Note`, and `assertFields` and
   `assertSections` run on it.
 - **Commits:** the tests (red); the overlay; the scenarios; the CI step; the notes.
-- **Checks, in order:** the new tests; `validate --overlay` on `feedback-exit` and on the three other
-  overlays; the golden tree; `check:runs`, before and after; 0.3.1 by hand; lint; `npm test`.
+- **Checks, in order:** the new tests; `validate --overlay` on `feedback-exit` and on the three
+  other overlays; the golden tree; `check:runs`, before and after; 0.3.1 by hand; lint; `npm test`.
 
 ## Execution Notes
 
-<!-- Deviations, blockers, decisions taken, WingFoil friction. In a tooling task, each red run: the
-     command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
-     proposed reading and the approver's ruling with its date; the Acceptance text stays as
-     approved (dl-019).
-     An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-18, **the red run** (dl-018), on `6d69139d`, before the overlay, the CI step and the
+  scenarios existed: `node --test dist/tests/runs.test.js dist/tests/ci-workflow.test.js` gave 14
+  failing of 102, and `node --test --test-name-pattern='fixture packs'
+  dist/tests/validate-2-run.test.js` 1 failing of 1. Seven of the guards then failed for a defect of
+  their own helper, which read a step kind a step did not have; the helper was fixed in the build
+  commit.
+- 2026-11-18, **the empty frontiers** (criterion 7): the probe is in the Design. A first attempt
+  named a repository that did not exist, so its commands ran in this task's worktree: WingFoil
+  refused each one on that configuration's own errors, and nothing changed.
+- 2026-11-18, **the counts:**
+  - `validate --overlay tests/fixtures/feedback-exit`: 22 compositions, 44 runs, 0 failed,
+    `tolerance applied: none`, pinned in `tests/validate-2-run.test.ts`;
+  - `check:runs`: 46 runs before, 84 after, 0 failed: 19 more per selected release (8 starts, 7
+    routes, 4 adoptions);
+  - no other count moved.
+- 2026-11-18, **WingFoil 0.3.1** (criterion 3), which the matrix does not select: each of the eight
+  compositions composed on a copy of the tree holding the overlay's packs, committed, then
+  `workflow list`, `dna show` and `directives list` with `--format json`: every command exit 0, no
+  diagnostic, no warning, nothing on stderr.
+- 2026-11-18, **the build review** (dl-017): approve after amendments; no blocker, seven should-fix
+  and two nits, all applied. 54 of its 65 mutations were killed; the 11 survivors are now pinned.
+  - **Scenarios:** `route-declined` writes its reason in the body too; `route-added-outcome` and
+    `route-would-be-bug` go through `decision-log-ingest`, as the `feedback` directive's routes say.
+  - **Guards:** per row, the routed element's type, its step, what it names, and what is submitted
+    and approved; `route-declined` adds no element; the composition allows the upstream target;
+    the note's kind; the channel directive's kinds, citation and format lines.
+  - **The fixture's README** says to add `upstream:plover-vendor` to `feedback_targets`.
+- 2026-11-18, **the privacy check** of the branch's diff (`repository-practice` rule 2): no local or
+  scratch path, no private project, no session.

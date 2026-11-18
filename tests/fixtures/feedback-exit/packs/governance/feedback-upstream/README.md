@@ -18,7 +18,8 @@ See the [Install block][install] of the catalog.
 
 [install]: https://github.com/wingfoil/wingfoil-templates/blob/main/CATALOG.md#install
 
-It is not installed: it exists only under tests/fixtures/.
+It is not installed: it exists only under tests/fixtures/. A composition that composes it adds
+`upstream:plover-vendor` to `feedback_targets` (spec-003 §5.3).
 
 <!-- generated:begin composition -->
 ## Composition

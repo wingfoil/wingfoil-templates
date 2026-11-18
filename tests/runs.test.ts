@@ -1354,6 +1354,12 @@ function stepsOf(run: ScenarioRun | undefined, kind: string): Record<string, unk
   });
 }
 
+/** The elements one kind of step names in a run's chain (`submit`, `approve`), in order. */
+function namedBy(run: ScenarioRun, kind: string): unknown[] {
+  return (run.chain ?? []).flatMap((link) => link.steps).flatMap((step) =>
+    (typeof step === 'string' || step[kind] === undefined ? [] : [step[kind]]));
+}
+
 /** The `set` steps of a run on one label, in order. */
 function setsOn(run: ScenarioRun, label: string): Record<string, unknown>[] {
   return stepsOf(run, 'set').filter((set) => set['element'] === label);
@@ -1377,6 +1383,8 @@ function assertCloses(run: ScenarioRun, key: string): void {
 const ITEM_ROUTE = 'feedback-item.route@feedback:$item.id';
 const INGEST = 'feedback-ingest';
 const REVIEW = 'feedback-review';
+const DL_INGEST = 'decision-log-ingest';
+const DL_CAPTURE = 'decision-log-ingest.capture';
 
 describe('tests/fixtures/runs/feedback.yaml (task-097)', () => {
   const scenario = (): FeedbackScenario => feedbackScenario('feedback.yaml');
@@ -1398,15 +1406,19 @@ describe('tests/fixtures/runs/feedback.yaml (task-097)', () => {
 
   const ROUTES = [
     { name: 'route-decision-log', only: 'added-outcome', outcome: 'decision-log',
-      mains: [INGEST, 'decision-log-ingest', REVIEW], target: 'dl', type: 'decision-log' },
+      mains: [INGEST, DL_INGEST, REVIEW], target: 'dl', type: 'decision-log', step: DL_CAPTURE,
+      moved: true, names: 'the feedback item' },
     { name: 'route-task', only: 'added-outcome', outcome: 'task', mains: [INGEST, REVIEW],
-      target: 'routed', type: 'task' },
+      target: 'routed', type: 'task', step: undefined, moved: false, names: 'the feedback item' },
     { name: 'route-added-outcome', only: 'added-outcome', outcome: 'deferred',
-      mains: [INGEST, REVIEW], target: 'dl', type: 'decision-log' },
+      mains: [INGEST, DL_INGEST, REVIEW], target: 'dl', type: 'decision-log', step: DL_CAPTURE,
+      moved: true, names: 'deferred' },
     { name: 'route-bug', only: 'with-software', outcome: 'bug',
-      mains: [INGEST, 'bug-ingest', 'feedback-bug-route'], target: 'bug', type: 'bug' },
+      mains: [INGEST, 'bug-ingest', 'feedback-bug-route'], target: 'bug', type: 'bug',
+      step: 'bug-ingest.capture', moved: true, names: 'the feedback item' },
     { name: 'route-would-be-bug', only: 'defaults', outcome: 'decision-log',
-      mains: [INGEST, REVIEW], target: 'dl', type: 'decision-log' },
+      mains: [INGEST, DL_INGEST, REVIEW], target: 'dl', type: 'decision-log', step: DL_CAPTURE,
+      moved: true, names: 'would-be bug' },
   ];
 
   for (const row of ROUTES) {
@@ -1422,8 +1434,14 @@ describe('tests/fixtures/runs/feedback.yaml (task-097)', () => {
       assert.equal(fields['resulting'], `$${row.target}.id`);
       assert.ok(bodiesOn(run, row.target).some((body) => body.includes('$item.id')),
         'the routed element cites the item');
-      assert.ok(stepsOf(run, 'add').some((add) => add['label'] === row.target
-        && add['type'] === row.type), `${row.target} is a ${row.type}`);
+      const added = stepsOf(run, 'add').find((add) => add['label'] === row.target);
+      assert.equal(added?.['type'], row.type);
+      assert.equal(added?.['step'], row.step, 'added by its own main, or outside a step');
+      assert.ok(bodiesOn(run, row.target).some((body) => body.includes(row.names)), row.names);
+      // The routed element moves through its own main; a task stays in draft.
+      assert.deepEqual(namedBy(run, 'submit'),
+        row.moved ? ['item', row.target, 'item'] : ['item', 'item']);
+      assert.deepEqual(namedBy(run, 'approve'), row.moved ? ['item', row.target] : ['item']);
       assertCloses(run, row.name === 'route-bug'
         ? 'feedback-bug-item.bug@feedback:$item.id' : ITEM_ROUTE);
     });
@@ -1436,6 +1454,9 @@ describe('tests/fixtures/runs/feedback.yaml (task-097)', () => {
     const fields = fieldsOn(run, 'item');
     assert.equal(fields['outcome'], 'declined');
     assert.match(String(fields['resulting']), /^n\/a — \S/);
+    assert.ok(bodiesOn(run, 'item').some((body) => body.startsWith('Declined: ')),
+      'the reason in the body too');
+    assert.deepEqual(stepsOf(run, 'add').map((add) => add['label']), ['item']);
     assertCloses(run, ITEM_ROUTE);
   });
 
@@ -1473,6 +1494,10 @@ describe('tests/fixtures/runs/feedback-upstream.yaml (task-097, FA-8)', () => {
     assert.equal(fields['target'], 'upstream:plover-vendor');
     assert.equal(fields['resulting'], noteStep().path);
     assertCloses(run, ITEM_ROUTE);
+    const composition = parseYaml(readFileSync(join(FIXTURES, 'feedback-exit', 'compositions',
+      'upstream', 'example.yaml'), 'utf8')) as { parameters: Record<string, string> };
+    assert.ok(composition.parameters['feedback_targets']?.split(', ')
+      .includes('upstream:plover-vendor'), 'the composition allows the target (spec-003 §5.3)');
   });
 
   it('writes the note where the channel directive says, in its format, citing the item', () => {
@@ -1486,6 +1511,8 @@ describe('tests/fixtures/runs/feedback-upstream.yaml (task-097, FA-8)', () => {
     assertFields(notes);
     assertSections(notes);
     assert.ok(body.includes('$item.id'), 'the body cites the item');
+    assert.equal(fields['kind'], fieldsOn(scenario().runs[0] as ScenarioRun, 'item')['kind'],
+      'a gap maps one to one');
   });
 
   it('ships the channel as spec-003 §5.1 asks, which the lint reads only in the tree\'s packs',
@@ -1495,6 +1522,10 @@ describe('tests/fixtures/runs/feedback-upstream.yaml (task-097, FA-8)', () => {
         { tags?: string[] } | undefined;
       assert.deepEqual(data?.tags, ['feedback-channel']);
       assert.ok(text.split('\n').includes('Serves the target `upstream:plover-vendor`.'));
+      for (const stated of ['`observation` becomes `request`', 'cites the feedback id',
+        '`## Observed` and `## Expected`, and no `## Replies`']) {
+        assert.ok(text.includes(stated), stated);
+      }
       const roles = parseYaml(readFileSync(join(PACK, 'fragments', 'roles.yaml'), 'utf8')) as
         { assignments: Record<string, string[]> };
       assert.deepEqual(roles.assignments['facilitator'], ['plover-vendor-channel']);
