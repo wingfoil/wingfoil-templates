@@ -8,7 +8,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, relative, sep } from 'node:path';
+import { dirname, join, sep } from 'node:path';
 import { after, describe, it } from 'node:test';
 
 import { loadCatalog } from '../src/catalog';
@@ -89,10 +89,9 @@ function composedOutput(name: string): string {
 
 /** The files under a directory, relative to it, with `/` separators. */
 function filesUnder(dir: string): string[] {
-  return readdirSync(dir).flatMap((entry) => {
-    const path = join(dir, entry);
-    return statSync(path).isDirectory() ? filesUnder(path) : [path];
-  }).map((path) => relative(dir, path).split(sep).join('/')).sort();
+  return readdirSync(dir, { recursive: true, encoding: 'utf8' })
+    .filter((entry) => statSync(join(dir, entry)).isFile())
+    .map((entry) => entry.split(sep).join('/')).sort();
 }
 
 /** A project in a scratch repository: its elements and `cases`, committed, the commit token set. */
