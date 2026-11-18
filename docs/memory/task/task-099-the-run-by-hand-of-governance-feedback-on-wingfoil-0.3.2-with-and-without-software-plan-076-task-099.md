@@ -206,3 +206,4 @@ Branch `task/task-099-run-by-hand` from `main` at `52d125c2`, in a worktree of i
     `npm run build`: `npm run validate:publication` (28 runs, 0 failed, `tolerance applied: none`),
     the golden tree in publication mode (26 runs, 0 failed, `tolerance applied: none`) and
     `npm run -s wingfoil -- workflow list`, each exit 0; `directives list` with no warning.
+- 2026-11-18, **the close:** approved by the approver and merged `--no-ff` at `db3b6917` on his OK.
