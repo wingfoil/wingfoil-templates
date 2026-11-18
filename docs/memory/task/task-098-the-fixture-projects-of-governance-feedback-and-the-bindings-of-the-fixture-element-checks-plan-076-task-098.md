@@ -145,8 +145,19 @@ Branch `task/task-098-feedback-elements` from `main` at `b2f96119`, in a worktre
 
 ## Execution Notes
 
-<!-- Deviations, blockers, decisions taken, WingFoil friction. In a tooling task, each red run: the
-     command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
-     proposed reading and the approver's ruling with its date; the Acceptance text stays as
-     approved (dl-019).
-     An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-18, **the red run** (dl-018), on `6418f3c9`, before the fixtures existed: `node --test
+  dist/tests/feedback-elements.test.js` gave 27 failing of 29. The test changed once after it: its
+  walker of a fixture directory returned wrong paths, fixed in the fixtures' commit.
+- 2026-11-18, **the counts:** `npm test` grew by this task's tests alone; `check:runs` stays at 84
+  runs, and the overlays `software-exit`, `scrum-exit`, `kanban-exit` and `feedback-exit` at 36, 36,
+  36 and 44 runs, 0 failed.
+- 2026-11-18, **the build review** (dl-017): approve after amendments; no blocker, five should-fix
+  and three nits, all applied. It ran 101 mutations; the survivors worth pinning are now pinned.
+  - **Each case states its reason:** a case fails for the defect its name says, not for another
+    inside the same check.
+  - **Three more cases,** beyond criterion 3's table, for criterion 5's form: a `duplicate` with a
+    bare `n/a`, a hyphen for the dash, and an empty reason.
+  - **FA-6's exclusion is pinned:** only the declined and the duplicate items are left out.
+  - **FA-8's path** is read from the composed channel directive; the note's kind is the item's.
+  - **FA-7 and the routes:** the governance item's outcome and target, and each closed route's
+    target type.

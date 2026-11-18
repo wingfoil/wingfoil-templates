@@ -156,6 +156,11 @@ function declinedProblems(elements: FixtureElement[]): string[] {
   });
 }
 
+/** The elements FA-6's bindings read: all but the items closed with `n/a — <reason>`. */
+function routedOf(elements: FixtureElement[]): FixtureElement[] {
+  return elements.filter((element) => !isItem(element) || !NO_ROUTE.includes(outcomeOf(element)));
+}
+
 type Checks = Record<'read' | 'required' | 'allowed' | 'references' | 'state' | 'back' | 'declined',
   string[]>;
 
@@ -165,8 +170,7 @@ function checks(name: string, repo: TestRepo): { results: Checks; elements: Fixt
   const { elements, problems } = readElements(dir);
   const software = compositionOf(name).packs.some((pack) => pack.startsWith('software@'));
   const outcomes = [...listOf(name, 'feedback_outcomes'), ...software ? ['bug'] : []];
-  const routed = elements.filter((element) => !isItem(element)
-    || !NO_ROUTE.includes(outcomeOf(element)));
+  const routed = routedOf(elements);
   const results: Checks = {
     read: problems,
     required: requiredFieldProblems(dir, elements),
@@ -236,6 +240,31 @@ describe('the valid fixture projects of governance/feedback (task-098)', () => {
     assert.ok(contexts.some((each) => each.length > 1), 'a context holding several');
   });
 
+  it('leaves out of FA-6\'s bindings only the declined and the duplicate items', () => {
+    const left = (name: string): string[] => {
+      const { elements } = checks(name, project(name));
+      const routed = routedOf(elements);
+      return elements.filter((each) => !routed.includes(each)).map((each) => each.id);
+    };
+    assert.deepEqual(left('defaults'), ['feedback-006-out-of-scope', 'feedback-007-same-report']);
+    for (const name of ['with-software', 'added-outcome', 'upstream']) {
+      assert.deepEqual(left(name), [], name);
+    }
+  });
+
+  it('routes each closed item to an element of the type its outcome names', () => {
+    const types: Record<string, string> = { 'decision-log': 'decision-log', 'task': 'task',
+      'bug': 'bug', 'deferred': 'decision-log' };
+    for (const name of Object.keys(PROJECTS)) {
+      const { elements } = checks(name, project(name));
+      for (const item of elements.filter((each) => isItem(each) && each.status === 'closed')) {
+        const type = types[outcomeOf(item)];
+        if (type === undefined) continue;
+        assert.equal(element(elements, text(item, 'resulting')).type, type, item.file);
+      }
+    }
+  });
+
   it('routes the added outcome to a decision-log naming it (spec-003 §4.3)', () => {
     const { elements } = checks('added-outcome', project('added-outcome'));
     const item = elements.find((each) => isItem(each) && outcomeOf(each) === 'deferred');
@@ -247,36 +276,43 @@ describe('the valid fixture projects of governance/feedback (task-098)', () => {
 });
 
 describe('the invalid fixture elements (task-098, FA-3 … FA-6)', () => {
-  const CASES: [string, keyof Checks][] = [
-    ['feedback-901-no-kind.md', 'required'],
-    ['feedback-902-no-target.md', 'required'],
-    ['feedback-903-no-source.md', 'required'],
-    ['feedback-904-no-context.md', 'required'],
-    ['feedback-905-kind-outside.md', 'allowed'],
-    ['feedback-906-target-outside.md', 'allowed'],
-    ['feedback-907-outcome-outside.md', 'allowed'],
-    ['feedback-908-bug-without-software.md', 'allowed'],
-    ['feedback-909-context-unresolved.md', 'references'],
-    ['feedback-910-context-partly-unresolved.md', 'references'],
-    ['feedback-911-no-resulting.md', 'state'],
-    ['feedback-912-no-outcome.md', 'state'],
-    ['feedback-913-not-cited.md', 'back'],
-    ['feedback-914-names-nothing.md', 'back'],
-    ['feedback-915-bare-not-applicable.md', 'declined'],
-    ['feedback-916-no-reason-in-body.md', 'declined'],
+  const CASES: [string, keyof Checks, RegExp][] = [
+    ['feedback-901-no-kind.md', 'required', /: missing required field: kind$/],
+    ['feedback-902-no-target.md', 'required', /: missing required field: target$/],
+    ['feedback-903-no-source.md', 'required', /: missing required field: source$/],
+    ['feedback-904-no-context.md', 'required', /: missing required field: context$/],
+    ['feedback-905-kind-outside.md', 'allowed', /: kind holds opinion, not one of /],
+    ['feedback-906-target-outside.md', 'allowed', /: target holds sales, not one of /],
+    ['feedback-907-outcome-outside.md', 'allowed', /: outcome holds postponed, not one of /],
+    ['feedback-908-bug-without-software.md', 'allowed', /: outcome holds bug, not one of /],
+    ['feedback-909-context-unresolved.md', 'references',
+      /: context: no-such-workflow\.step does not resolve/],
+    ['feedback-910-context-partly-unresolved.md', 'references',
+      /: context: no-such-workflow\.step does not resolve/],
+    ['feedback-911-no-resulting.md', 'state', /: closed requires resulting$/],
+    ['feedback-912-no-outcome.md', 'state', /: closed requires outcome$/],
+    ['feedback-913-not-cited.md', 'back', /dl-901-cites-nothing\.md does not cite it back/],
+    ['feedback-914-names-nothing.md', 'back', /: resulting names dl-999-no-such-element, which /],
+    ['feedback-915-bare-not-applicable.md', 'declined', /: resulting is not "n\/a — <reason>"$/],
+    ['feedback-916-no-reason-in-body.md', 'declined', /: its body omits the reason$/],
+    ['feedback-917-duplicate-bare-not-applicable.md', 'declined',
+      /: resulting is not "n\/a — <reason>"$/],
+    ['feedback-918-hyphen-not-applicable.md', 'declined', /: resulting is not "n\/a — <reason>"$/],
+    ['feedback-919-empty-reason.md', 'declined', /: resulting is not "n\/a — <reason>"$/],
   ];
 
   it('covers every file under invalid/', () => {
     assert.deepEqual(filesUnder(join(ELEMENTS, 'invalid')), CASES.map(([file]) => file).sort());
   });
 
-  for (const [file, named] of CASES) {
+  for (const [file, named, reason] of CASES) {
     it(`${file}: reported by ${named} alone`, () => {
       const { results } = checks('defaults', project('defaults', [file]));
       for (const [check, problems] of Object.entries(results)) {
         if (check === named) {
           assert.equal(problems.length, 1, problems.join('\n'));
           assert.ok(problems[0]?.startsWith(`docs/memory/feedback/${file}: `), problems[0]);
+          assert.match(problems[0] ?? '', reason);
         } else {
           assert.deepEqual(problems, [], check);
         }
@@ -309,6 +345,8 @@ describe('FA-7: feedback evolves the governance and the product (task-098)', () 
     const repo = project('defaults');
     const { elements } = checks('defaults', repo);
     const item = element(elements, 'feedback-004-triage-rule');
+    assert.equal(outcomeOf(item), 'decision-log');
+    assert.equal(text(item, 'target'), 'governance');
     const log = element(elements, text(item, 'resulting'));
     assert.equal(log.type, 'decision-log');
     assert.ok(log.body.includes(item.id), 'the decision-log cites the item');
@@ -353,7 +391,14 @@ describe('FA-8: the upstream note (task-098)', () => {
     assert.ok(item !== undefined);
     assert.equal(item.status, 'closed');
     assert.equal(item.fields['target'], 'upstream:plover-vendor');
-    const file = `docs/upstream/plover/${item.id}.md`;
+    const directives = join(repo.dir, '.wingfoil', 'directives');
+    const channel = filesUnder(directives).find((each) =>
+      each.endsWith('/plover-vendor-channel.md'));
+    assert.ok(channel !== undefined, 'the channel directive is composed');
+    const stated = /`(docs\/upstream\/[^`]*<feedback id>\.md)`/.exec(
+      readFileSync(join(directives, channel), 'utf8'))?.[1];
+    assert.ok(stated !== undefined, 'the channel directive states where a note goes');
+    const file = stated.replace('<feedback id>', item.id);
     assert.equal(item.fields['resulting'], file);
     assert.ok(existsSync(join(repo.dir, file)), file);
     const note = readFileSync(join(repo.dir, file), 'utf8');
@@ -364,5 +409,6 @@ describe('FA-8: the upstream note (task-098)', () => {
     assertFields(notes);
     assertSections(notes);
     assert.ok(body.includes(item.id), 'its body cites the item');
+    assert.equal(fields['kind'], text(item, 'kind'), 'a gap maps one to one');
   });
 });
