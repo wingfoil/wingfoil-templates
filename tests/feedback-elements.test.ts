@@ -276,7 +276,8 @@ describe('the valid fixture projects of governance/feedback (task-098)', () => {
 });
 
 describe('the invalid fixture elements (task-098, FA-3 … FA-6)', () => {
-  const CASES: [string, keyof Checks, RegExp][] = [
+  /** A case's file, its check, the reason, and the text that makes the case what its name says. */
+  const CASES: [string, keyof Checks, RegExp, string?][] = [
     ['feedback-901-no-kind.md', 'required', /: missing required field: kind$/],
     ['feedback-902-no-target.md', 'required', /: missing required field: target$/],
     ['feedback-903-no-source.md', 'required', /: missing required field: source$/],
@@ -288,7 +289,8 @@ describe('the invalid fixture elements (task-098, FA-3 … FA-6)', () => {
     ['feedback-909-context-unresolved.md', 'references',
       /: context: no-such-workflow\.step does not resolve/],
     ['feedback-910-context-partly-unresolved.md', 'references',
-      /: context: no-such-workflow\.step does not resolve/],
+      /: context: no-such-workflow\.step does not resolve/,
+      'context: "feedback-ingest.capture, no-such-workflow.step"'],
     ['feedback-911-no-resulting.md', 'state', /: closed requires resulting$/],
     ['feedback-912-no-outcome.md', 'state', /: closed requires outcome$/],
     ['feedback-913-not-cited.md', 'back', /dl-901-cites-nothing\.md does not cite it back/],
@@ -296,17 +298,22 @@ describe('the invalid fixture elements (task-098, FA-3 … FA-6)', () => {
     ['feedback-915-bare-not-applicable.md', 'declined', /: resulting is not "n\/a — <reason>"$/],
     ['feedback-916-no-reason-in-body.md', 'declined', /: its body omits the reason$/],
     ['feedback-917-duplicate-bare-not-applicable.md', 'declined',
-      /: resulting is not "n\/a — <reason>"$/],
-    ['feedback-918-hyphen-not-applicable.md', 'declined', /: resulting is not "n\/a — <reason>"$/],
-    ['feedback-919-empty-reason.md', 'declined', /: resulting is not "n\/a — <reason>"$/],
+      /: resulting is not "n\/a — <reason>"$/, 'outcome: "duplicate"'],
+    ['feedback-918-hyphen-not-applicable.md', 'declined',
+      /: resulting is not "n\/a — <reason>"$/, 'resulting: "n/a - not this project"'],
+    ['feedback-919-empty-reason.md', 'declined',
+      /: resulting is not "n\/a — <reason>"$/, 'resulting: "n/a — "'],
   ];
 
   it('covers every file under invalid/', () => {
     assert.deepEqual(filesUnder(join(ELEMENTS, 'invalid')), CASES.map(([file]) => file).sort());
   });
 
-  for (const [file, named, reason] of CASES) {
+  for (const [file, named, reason, holds] of CASES) {
     it(`${file}: reported by ${named} alone`, () => {
+      if (holds !== undefined) {
+        assert.ok(readFileSync(join(ELEMENTS, 'invalid', file), 'utf8').includes(holds), holds);
+      }
       const { results } = checks('defaults', project('defaults', [file]));
       for (const [check, problems] of Object.entries(results)) {
         if (check === named) {

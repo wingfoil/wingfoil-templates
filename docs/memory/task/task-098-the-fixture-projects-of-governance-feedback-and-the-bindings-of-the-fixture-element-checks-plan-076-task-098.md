@@ -146,13 +146,14 @@ Branch `task/task-098-feedback-elements` from `main` at `b2f96119`, in a worktre
 ## Execution Notes
 
 - 2026-11-18, **the red run** (dl-018), on `6418f3c9`, before the fixtures existed: `node --test
-  dist/tests/feedback-elements.test.js` gave 27 failing of 29. The test changed once after it: its
-  walker of a fixture directory returned wrong paths, fixed in the fixtures' commit.
+  dist/tests/feedback-elements.test.js` gave 27 failing of 29. Before the build review the test
+  changed once: its walker of a fixture directory returned wrong paths, fixed in the fixtures'
+  commit.
 - 2026-11-18, **the counts:** `npm test` grew by this task's tests alone; `check:runs` stays at 84
   runs, and the overlays `software-exit`, `scrum-exit`, `kanban-exit` and `feedback-exit` at 36, 36,
   36 and 44 runs, 0 failed.
 - 2026-11-18, **the build review** (dl-017): approve after amendments; no blocker, five should-fix
-  and three nits, all applied. It ran 101 mutations; the survivors worth pinning are now pinned.
+  and three nits, all applied. The mutations that survived and were worth pinning are now pinned.
   - **Each case states its reason:** a case fails for the defect its name says, not for another
     inside the same check.
   - **Three more cases,** beyond criterion 3's table, for criterion 5's form: a `duplicate` with a
@@ -161,3 +162,8 @@ Branch `task/task-098-feedback-elements` from `main` at `b2f96119`, in a worktre
   - **FA-8's path** is read from the composed channel directive; the note's kind is the item's.
   - **FA-7 and the routes:** the governance item's outcome and target, and each closed route's
     target type.
+- 2026-11-18, **the re-review of the build**: approve after amendments; one should-fix and one nit,
+  applied. A case whose name a defect of another kind would still satisfy now also states the text
+  that makes it that case.
+- 2026-11-18, **the privacy check** of the branch's diff (`repository-practice` rule 2): no local or
+  scratch path, no private project, no session.
