@@ -167,6 +167,27 @@ Each point has a recommendation, or is proposed as written.
     change. Reserved for this plan: task-100 (point 2), prel-007; for a finding only: task-101,
     dl-043, bug-017, F-052. Unused numbers are released at the close.
 
+## The approver's rulings
+
+Given on 2026-11-18, in chat: the outline is approved as recommended. Points 1 … 12 stand as
+written:
+- `1.0.0`, class `major`, the range computed by `publish:pack`; if a newer WingFoil is published
+  before `publish`, the approver is asked, the recommendation being to publish on the releases
+  `compat.yaml` lists (point 1);
+- task-100 before `prepare`, with the intake rehearsed on its branch and on `main` (point 2);
+- `CHANGELOG.md` as it is for the tag's annotation (point 3);
+- the rehearsal in a scratch clone of `main`, after task-100, nothing pushed (point 4);
+- the Validation evidence as listed (point 5);
+- no private projects' check, prel-007 saying so (point 6);
+- the approver runs `publish:pack`, the atomic push, the charter's `memory submit` and its push;
+  claude prepares and checks, hands over the exact commands, commits the charter's note first and
+  reads the CI; its runs in a scratch clone stay its own (point 7);
+- `publish` and CB-6's live check, then `activate`, as written (points 8 and 9);
+- the pack's own `pack-cycle` retrospective in a plan right after this one, covering plan-073 …
+  this plan, its row added to `docs/owed-items.md` in this commit (point 10);
+- no notice at this tag (point 11);
+- nothing else ships, and the reserved numbers stand (point 12).
+
 ## Steps
 
 Before every commit, the privacy check (`repository-practice` rule 2). After every push to `main`,
