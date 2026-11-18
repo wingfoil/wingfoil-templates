@@ -2,7 +2,7 @@
 id: task-098-the-fixture-projects-of-governance-feedback-and-the-bindings-of-the-fixture-element-checks-plan-076-task-098
 type: task
 title: "The fixture projects of governance/feedback and the bindings of the fixture-element checks (plan-076 task-098)"
-status: draft
+status: pending
 pack: "pack-governance-feedback"
 depends_on: ["task-096", "task-097"]
 tags: ["packs","feedback","governance"]
