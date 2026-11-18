@@ -198,3 +198,11 @@ Branch `task/task-099-run-by-hand` from `main` at `52d125c2`, in a worktree of i
   version, each of which a final check of these notes covers.
 - 2026-11-18, **the privacy check** of the branch's diff (`repository-practice` rule 2): no local or
   scratch path, no private project.
+- 2026-11-18, **dl-039's checks**, once, on the frozen commit `a46d70e6`:
+  - **the branch CI**, run 44321981276, `success`: jobs `validate (22.12.0, 1)` 12 min 31 s,
+    `(22.12.0, 2)` 4 min 49 s, `(22.21.0, 1)` 12 min 11 s, `(22.21.0, 2)`
+    4 min 40 s; none over 25 minutes;
+  - **the local list** on Node.js 22.21.0, from a clean working tree after `npm ci` and
+    `npm run build`: `npm run validate:publication` (28 runs, 0 failed, `tolerance applied: none`),
+    the golden tree in publication mode (26 runs, 0 failed, `tolerance applied: none`) and
+    `npm run -s wingfoil -- workflow list`, each exit 0; `directives list` with no warning.
