@@ -495,3 +495,29 @@ Before every commit, the privacy check (`repository-practice` rule 2). After eve
   his OK, `done` at `a1a604cf`. `main`'s CI on `a1a604cf`, run 44329247197, `success`: jobs
   `validate (22.12.0, 1)` 12 min 30 s, `(22.12.0, 2)` 4 min 49 s,
   `(22.21.0, 1)` 12 min 18 s, `(22.21.0, 2)` 6 min 9 s.
+- 2026-11-18, step 4, close:
+  - **dl-020, the errata and readings per tech-spec:** spec-001, none; spec-002, none; spec-003, no
+    erratum, two readings ruled by the approver: a commit counts as a `context` reference for FA-5
+    (§4.4; 2026-11-17, point 5), and §11's back-reference and `closed` checks leave out a `declined`
+    or `duplicate` item, whose `resulting` is `n/a — <reason>` (2026-11-18, task-098). spec-001 §18
+    allows `not_applicable_allowed` only on a `required` field, and §4.4 keeps `resulting` optional,
+    so the type cannot declare it. The approver ruled on 2026-11-18 that nothing is to be folded
+    back into spec-003 (dl-020 R2): both readings stay in the charter's notes and here.
+  - **The charter's Execution Notes** record the pack written, the exit criterion's results,
+    task-099's summary and the commit it composed, the 0.3.0 coverage, FA-5's and FA-6's readings,
+    and format 2. FA-6 [V]'s reading is the approver's ruling of 2026-11-18: `check:runs` drives
+    seven routes, and `duplicate` and `decision-log` through `governance-evolution` are covered by
+    the run by hand.
+  - **The approver's other rulings during the wave:** `feedback-exit` stays out of the intake's
+    `verify` job until the pack's `first-release` (with task-097's body); the agent approves fixture
+    data in task-099's two scratch repositories only (with task-099's body).
+  - **The owed rows:** the bindings moved to Closed (task-098); the full scrum and kanban runs
+    narrowed (task-095); three opened: `feedback-exit` in the intake's `verify` job (task-097), a
+    `custom/` directive no role binds, and `base` composed without `software` (task-099).
+  - **The privacy checks:** each task branch's diff is recorded in its task; this plan's commits
+    since `c770844e`, their messages and diffs, name no local or scratch path, no private project
+    and no intermediary session. The `Approver:` trailers `memory approve` writes in its own commits
+    carry the approver's email, as WingFoil records every approval.
+  - **Left out, as planned:** `first-release`, `governance/wingfoil-dogfood`, `reported_by` in
+    `base`'s and `software`'s templates, this repository's adoption, and WingFoil's answers to F-050
+    and F-051. The CI of the close's push is left to the next plan (dl-038 C3).

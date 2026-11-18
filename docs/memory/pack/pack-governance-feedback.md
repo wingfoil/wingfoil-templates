@@ -343,3 +343,36 @@ previous item, its `element` field wrong; the refusal to adopt an element anothe
   tag); 5 in §8 (`reported_by`). The pack's `pack.yaml` is at format 2 (§9), which supersedes the
   Compatibility line's format 1. The `author` phase writes the pack from them; this charter's text
   is unchanged.
+- 2026-11-18, plan-076 (pack-cycle › author), the pack written: `packs/governance/feedback` 1.0.0,
+  unpublished, with its README examples `defaults`, `with-software` and `added-outcome` (task-096),
+  merged at `c0e482e8`. Its `pack.yaml` is at format 2 (spec-003 §9), as plan-074's note above says.
+  - **The exit criterion's results:**
+    - **The run by hand** (task-099, merged at `db3b6917`): composed from `52d125c2` and driven on
+      WingFoil 0.3.2, 11 routes reached `closed`. With `software`: `decision-log` through
+      `decision-log-ingest`, a governance change through `governance-evolution`, `task`,
+      `declined`, `duplicate`, the added outcome `deferred`, `bug` through `bug-ingest`, and
+      `upstream-note` through a fixture channel. Without it: `decision-log`, `task`, and the
+      would-be `bug` proposed as `decision-log`.
+    - **`check:runs`** (task-097, merged at `77e0140d`) starts `feedback-ingest`, `feedback-review`
+      and `feedback-bug-route` and drives seven routes to `closed`, on 0.3.0 and 0.3.2: `duplicate`
+      and `decision-log` through `governance-evolution` are driven only by the run by hand.
+    - **No warning on every compatible release:** the examples and `feedback-exit`'s eight
+      compositions validate on 0.3.0 and 0.3.2, the releases the matrix selects (`tolerance
+      applied: none`); 0.3.1, which it does not select, was read by hand: the eight compositions on
+      the final pack (task-097), the examples before task-096's last text fixes. The advice
+      `workflow start` gave in the run by hand is an owed row on `base`, not a validation warning.
+    - **Left to `first-release`:** CB-1, CB-2 and CB-6 at the first tag, and the citation of the
+      adoption run, which `adoption-feedback.yaml` prepares (task-097).
+  - **FA-5's reading, the approver's ruling of 2026-11-17 (plan-076 point 5):** a commit counts as a
+    context reference, as Ships and spec-003 §4.4 list it, though FA-5's parenthesis does not;
+    `context` is split on `,` and every reference must resolve (task-098). This charter's text is
+    unchanged until in-place amendment exists (G7, W10).
+  - **FA-6's readings, the approver's rulings of 2026-11-18:**
+    - **[V]:** "`check:runs` drives each route" holds for seven routes; `duplicate`, which shares
+      `declined`'s row of the routing table, and `decision-log` through `governance-evolution` are
+      covered by the run by hand (plan-076's close).
+    - **[E]:** the checks that a `closed` item holds `outcome` and `resulting`, and that `resulting`
+      resolves and is cited back, leave out a `declined` or `duplicate` item, whose `resulting`
+      reads `n/a — <reason>`; a check of its own asserts that form and the reason in the body
+      (task-098).
+  - **FA-7 [A]:** read by the approver at task-098's `approve`.
