@@ -2,7 +2,7 @@
 id: task-099-the-run-by-hand-of-governance-feedback-on-wingfoil-0.3.2-with-and-without-software-plan-076-task-099
 type: task
 title: "The run by hand of governance/feedback on WingFoil 0.3.2, with and without software (plan-076 task-099)"
-status: approved
+status: done
 pack: "pack-governance-feedback"
 depends_on: ["task-097", "task-098"]
 tags: ["packs","feedback","governance"]
