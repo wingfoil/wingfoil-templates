@@ -116,7 +116,8 @@ Branch `task/task-099-run-by-hand` from `main` at `52d125c2`, in a worktree of i
 
 - 2026-11-18, **the run**, on WingFoil 0.3.2, composed from `52d125c2`, in two scratch repositories
   (criterion 1): Sandpiper Tickets (`with-software`) and Dunlin Notes (`without-software`). All 136
-  WingFoil commands exited 0, with nothing on stderr and no diagnostic or warning in their output.
+  WingFoil commands exited 0, with nothing on stderr and no `diagnostics` or `warnings` entry; two
+  `workflow start` outputs carry the advice quoted under criterion 7.
   Between the commands, the driver wrote the fields and bodies, and committed them. Each `memory
   approve` ran under the repository's fictional approver. 141 commits in `with-software`, 56 in
   `without-software`, each working tree clean.
@@ -153,7 +154,7 @@ Branch `task/task-099-run-by-hand` from `main` at `52d125c2`, in a worktree of i
   In the governance route, two commits that are no WingFoil command fall between `memory approve` of
   the decision-log and `workflow end`, in this order: `AGENTS.md` copied from the composed
   `AGENTS.region.md`; then `.wingfoil/directives/custom/one-triager.md`, with `one-triager` added by
-  hand under `facilitator` in `.wingfoil/roles.yaml`.
+  hand under `facilitator` in `.wingfoil/roles.yaml`; `wingfoil directive assign` would do the same.
 - 2026-11-18, **`without-software`, the routes** (criterion 3):
 
   | Route | Item | Outcome | `resulting` | Final state | Cited back |
@@ -182,10 +183,14 @@ Branch `task/task-099-run-by-hand` from `main` at `52d125c2`, in a worktree of i
   needed: approve or reject bug-001-the-export-crashes (bug, triaged; no open workflow carries it)".
   `bug-ingest` owns the bug after its triage, and the feedback route only records it, as the
   `feedback-bug-route` directive says.
-- 2026-11-18, **criterion 7:** no fact against the charter's shape and no defect of the pack, so
-  nothing under `packs/` changed. **Friction in WingFoil 0.3.2:** a `custom/` directive that no role
-  binds raises no warning, and no command assigns one, so a project edits `roles.yaml` by hand. The
-  owed row "A `custom/` directive no role binds" records it.
+- 2026-11-18, **criterion 7:** no fact against the charter's shape and no defect of this pack, so
+  nothing under `packs/` changed. Two facts are owed, each with a row in `docs/owed-items.md`:
+  - **WingFoil 0.3.2:** a `custom/` directive that no role binds raises no warning in `directives
+    list` or `workflow list`.
+  - **`base` without `software`:** in `without-software`, `workflow start decision-log-ingest` twice
+    reports `directiveWarnings: ["no directives assigned to role 'product-owner'"]`. The role of
+    `decision-log-ingest` › `capture` has no directive when `base` is composed without `software`.
+    The run went on: the step needs none, and the advice comes from `base`, not from this pack.
 - 2026-11-18, **the review of the run** (dl-017): approve after amendments; no blocker, three
   should-fix and three nits, all applied: the re-drive above, the two commits of the governance
   route named, the bug's status quoted, the tables' omissions stated, and stdout read for
