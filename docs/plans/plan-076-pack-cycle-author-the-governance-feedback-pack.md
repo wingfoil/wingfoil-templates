@@ -475,3 +475,13 @@ Before every commit, the privacy check (`repository-practice` rule 2). After eve
   `(22.21.0, 1)` 13 min 19 s, `(22.21.0, 2)` 9 min 15 s.
 - 2026-11-18, step 3: the untracked draft under `tests/fixtures/feedback-draft/` deleted after
   task-097's merge.
+- 2026-11-18, step 2, task-098 (the fixture projects and the bindings): body reviewed and
+  re-reviewed, the approver ruling that FA-6's bindings leave `declined` and `duplicate` out, with
+  a check of their `n/a — <reason>` of its own (dl-019); accepted into the backlog by the approver;
+  built on its branch (four fixture projects, 19 invalid cases, the bindings), the build review and
+  its re-review applied; dl-039's checks on `0d5ca621` (branch CI 44302537490 `success`, no job over
+  25 minutes; the local list green); FA-7 [A] read and approved by the approver, and merged
+  `--no-ff` at `568013d4` on his OK, `done` at `d0265660`. The owed row of the bindings moved to
+  Closed. `main`'s CI on `d0265660`, run 44310504161, `success`: jobs `validate (22.12.0, 1)`
+  12 min 49 s, `(22.12.0, 2)` 7 min 7 s, `(22.21.0, 1)` 12 min 16 s,
+  `(22.21.0, 2)` 5 min 38 s.
