@@ -1468,6 +1468,24 @@ describe('tests/fixtures/runs/feedback.yaml (task-097)', () => {
   });
 });
 
+/** What the channel directive states of a note, whole: spec-003 §5.1 and dl-163's subset. */
+const NOTE_FORMAT = [
+  '- **Where:** `docs/upstream/plover/<feedback id>.md`, one file per item.',
+  '- **Frontmatter:** these six fields, in this order:',
+  '  - `id`, the note\'s id;',
+  '  - `title`, what the note is about;',
+  '  - `kind`: `defect`, `gap` or `request`;',
+  '  - `status`: `open`, `needs-info`, `captured`, `resolved`, `declined` or `duplicate`;',
+  '  - `wingfoil_version`, the version the note was observed on;',
+  '  - `answered_by`, a list of ids, empty until the upstream answers.',
+  '- **Body:** the sections `## Observed` and `## Expected`, and no `## Replies`.',
+  '- **Kinds:** `defect`, `gap` and `request` map one to one; `observation` becomes `request`.',
+  '- **Citation:** the note\'s body cites the feedback id, and the item\'s `resulting` names the '
+    + 'note\'s',
+  '  path.',
+  '',
+].join('\n');
+
 describe('tests/fixtures/runs/feedback-upstream.yaml (task-097, FA-8)', () => {
   const scenario = (): FeedbackScenario => feedbackScenario('feedback-upstream.yaml');
   const PACK = join(FIXTURES, 'feedback-exit', 'packs', 'governance', 'feedback-upstream');
@@ -1522,10 +1540,7 @@ describe('tests/fixtures/runs/feedback-upstream.yaml (task-097, FA-8)', () => {
         { tags?: string[] } | undefined;
       assert.deepEqual(data?.tags, ['feedback-channel']);
       assert.ok(text.split('\n').includes('Serves the target `upstream:plover-vendor`.'));
-      for (const stated of ['`observation` becomes `request`', 'cites the feedback id',
-        '`## Observed` and `## Expected`, and no `## Replies`']) {
-        assert.ok(text.includes(stated), stated);
-      }
+      assert.equal(text.slice(text.indexOf('- **Where:**')), NOTE_FORMAT);
       const roles = parseYaml(readFileSync(join(PACK, 'fragments', 'roles.yaml'), 'utf8')) as
         { assignments: Record<string, string[]> };
       assert.deepEqual(roles.assignments['facilitator'], ['plover-vendor-channel']);

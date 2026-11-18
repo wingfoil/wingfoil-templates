@@ -202,12 +202,16 @@ Branch `task/task-097-feedback-exit` from `main` at `8f68c465`, in a worktree of
   `workflow list`, `dna show` and `directives list` with `--format json`: every command exit 0, no
   diagnostic, no warning, nothing on stderr.
 - 2026-11-18, **the build review** (dl-017): approve after amendments; no blocker, seven should-fix
-  and two nits, all applied. 54 of its 65 mutations were killed; the 11 survivors are now pinned.
+  and two nits, all applied. The mutations that survived its guards are now pinned.
   - **Scenarios:** `route-declined` writes its reason in the body too; `route-added-outcome` and
     `route-would-be-bug` go through `decision-log-ingest`, as the `feedback` directive's routes say.
   - **Guards:** per row, the routed element's type, its step, what it names, and what is submitted
     and approved; `route-declined` adds no element; the composition allows the upstream target;
     the note's kind; the channel directive's kinds, citation and format lines.
   - **The fixture's README** says to add `upstream:plover-vendor` to `feedback_targets`.
+- 2026-11-18, **the re-review of the build**: approve after amendments; one should-fix and two
+  nits, all applied. The guard now pins the channel directive's whole statement of the note, each
+  line of which a mutation could drop unnoticed. **A deviation from the Design:** the overlay, the
+  scenarios and the CI step went into one build commit, not three.
 - 2026-11-18, **the privacy check** of the branch's diff (`repository-practice` rule 2): no local or
   scratch path, no private project, no session.
