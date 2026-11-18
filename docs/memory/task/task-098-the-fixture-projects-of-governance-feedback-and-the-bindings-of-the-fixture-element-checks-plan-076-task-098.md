@@ -167,3 +167,12 @@ Branch `task/task-098-feedback-elements` from `main` at `b2f96119`, in a worktre
   that makes it that case.
 - 2026-11-18, **the privacy check** of the branch's diff (`repository-practice` rule 2): no local or
   scratch path, no private project, no session.
+- 2026-11-18, **dl-039's checks**, once, on the frozen commit `0d5ca621`:
+  - **the branch CI**, run 44302537490, `success`: jobs `validate (22.12.0, 1)` 12 min 23 s,
+    `(22.12.0, 2)` 4 min 52 s, `(22.21.0, 1)` 12 min 3 s, `(22.21.0, 2)` 4 min 43 s; none over 25
+    minutes;
+  - **the local list** on Node.js 22.21.0, from a clean working tree after `npm ci` and
+    `npm run build`: `npm run validate:publication` (28 runs, 0 failed, `tolerance applied: none`),
+    the golden tree in publication mode (26 runs, 0 failed, `tolerance applied: none`) and
+    `npm run -s wingfoil -- workflow list`, each exit 0; `directives list` with no warning;
+    `npm test` 1428 passed, 0 failed; the lint exit 0; `check:runs` 84 runs, 0 failed.
