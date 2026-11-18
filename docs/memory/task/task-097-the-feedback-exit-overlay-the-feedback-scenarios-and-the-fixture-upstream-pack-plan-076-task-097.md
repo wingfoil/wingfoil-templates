@@ -150,7 +150,35 @@ them) and task-099 (the run by hand) build on this task.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-097-feedback-exit` from `main` at `8f68c465`, in a worktree of its own.
+
+- **The empty frontiers (criterion 7), probed on WingFoil 0.3.0 and 0.3.2** on `with-software`'s
+  composition, committed, with no feedback item. `workflow start` of `feedback-review` and of
+  `feedback-bug-route` exits 0 with the plan `active` and no next step; `workflow next` exits 0
+  with `complete: true` and no diagnostic; `workflow end` exits 0. So a bare `steps: [start]` is
+  enough, as the other scenarios' starts are, and no scenario needs a step for it.
+- **The overlay** (`tests/fixtures/feedback-exit/`):
+  - the four sets copy `kanban-exit`'s parameters, with `governance/feedback@^1` added and
+    `methodology/scrum@^1` on `defaults` and `release-folders`;
+  - `alone`, `team-mode`, `blueprint` and `upstream` use fictional projects of their own;
+  - `team-mode/agent-first` and `blueprint/fixture` are the smallest packs the lint accepts, with
+    no contents: FA-1 asks that the pack composes beside those axes;
+  - `governance/feedback-upstream` comes from the draft: `pack.yaml` and `fragments/roles.yaml`
+    with the description rewritten, and the channel directive, `README.md` and `CHANGELOG.md`
+    written again.
+- **The scenarios:**
+  - each route is a `chain` named after criterion 4's table: `feedback-ingest` captures, submits
+    and approves the item, the target is added by its own main or outside the step, and the
+    reviewing main writes `resulting`, finalizes the route step and closes the item;
+  - `feedback.yaml` and `feedback-upstream.yaml` give every field the `feedback` type requires;
+  - the note of `route-upstream-note` holds dl-163's six fields and two sections, its body citing
+    `$item.id`.
+- **The guard tests** read each scenario with `yaml` and pin criterion 8's facts per run. The
+  upstream note is parsed from the scenario's text into a `Note`, and `assertFields` and
+  `assertSections` run on it.
+- **Commits:** the tests (red); the overlay; the scenarios; the CI step; the notes.
+- **Checks, in order:** the new tests; `validate --overlay` on `feedback-exit` and on the three other
+  overlays; the golden tree; `check:runs`, before and after; 0.3.1 by hand; lint; `npm test`.
 
 ## Execution Notes
 
