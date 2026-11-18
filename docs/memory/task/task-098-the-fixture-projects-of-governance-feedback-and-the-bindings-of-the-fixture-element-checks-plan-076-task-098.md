@@ -2,7 +2,7 @@
 id: task-098-the-fixture-projects-of-governance-feedback-and-the-bindings-of-the-fixture-element-checks-plan-076-task-098
 type: task
 title: "The fixture projects of governance/feedback and the bindings of the fixture-element checks (plan-076 task-098)"
-status: backlog
+status: approved
 pack: "pack-governance-feedback"
 depends_on: ["task-096", "task-097"]
 tags: ["packs","feedback","governance"]
@@ -127,12 +127,52 @@ generic checks do not change.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-098-feedback-elements` from `main` at `b2f96119`, in a worktree of its own.
+
+- **The layout** of `tests/fixtures/feedback-elements/`: `<project>/` mirrors the paths each element
+  has in the composed project; `invalid/` holds criterion 3's cases; `defaults/custom/` holds
+  criterion 6's directive and commit message, which are not copied with the elements.
+- **The test** (`tests/feedback-elements.test.ts`):
+  - composes with `composeDocuments` on `FIXTURE_CATALOG`, `upstream` on the tree `mergeOverlay`
+    builds, writes the output to a directory of its own and copies it into a `TestRepo`;
+  - after the first commit, tags `v1.0.0`, replaces the commit token in the elements and commits
+    again;
+  - runs the named checks as one map from a check's name to its problems, so that a case can assert
+    one check reports it and the others nothing.
+- **The cases** are all added to `defaults`, which holds the two decision-logs the FA-6 cases name:
+  one citing the `closed` case with no `outcome` in advance, one citing nothing.
+- **Commits:** the test (red); the fixtures; the owed row and the notes.
 
 ## Execution Notes
 
-<!-- Deviations, blockers, decisions taken, WingFoil friction. In a tooling task, each red run: the
-     command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
-     proposed reading and the approver's ruling with its date; the Acceptance text stays as
-     approved (dl-019).
-     An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-18, **the red run** (dl-018), on `6418f3c9`, before the fixtures existed: `node --test
+  dist/tests/feedback-elements.test.js` gave 27 failing of 29. Before the build review the test
+  changed once: its walker of a fixture directory returned wrong paths, fixed in the fixtures'
+  commit.
+- 2026-11-18, **the counts:** `npm test` grew by this task's tests alone; `check:runs` stays at 84
+  runs, and the overlays `software-exit`, `scrum-exit`, `kanban-exit` and `feedback-exit` at 36, 36,
+  36 and 44 runs, 0 failed.
+- 2026-11-18, **the build review** (dl-017): approve after amendments; no blocker, five should-fix
+  and three nits, all applied. The mutations that survived and were worth pinning are now pinned.
+  - **Each case states its reason:** a case fails for the defect its name says, not for another
+    inside the same check.
+  - **Three more cases,** beyond criterion 3's table, for criterion 5's form: a `duplicate` with a
+    bare `n/a`, a hyphen for the dash, and an empty reason.
+  - **FA-6's exclusion is pinned:** only the declined and the duplicate items are left out.
+  - **FA-8's path** is read from the composed channel directive; the note's kind is the item's.
+  - **FA-7 and the routes:** the governance item's outcome and target, and each closed route's
+    target type.
+- 2026-11-18, **the re-review of the build**: approve after amendments; one should-fix and one nit,
+  applied. A case whose name a defect of another kind would still satisfy now also states the text
+  that makes it that case.
+- 2026-11-18, **the privacy check** of the branch's diff (`repository-practice` rule 2): no local or
+  scratch path, no private project, no session.
+- 2026-11-18, **dl-039's checks**, once, on the frozen commit `0d5ca621`:
+  - **the branch CI**, run 44302537490, `success`: jobs `validate (22.12.0, 1)` 12 min 23 s,
+    `(22.12.0, 2)` 4 min 52 s, `(22.21.0, 1)` 12 min 3 s, `(22.21.0, 2)` 4 min 43 s; none over 25
+    minutes;
+  - **the local list** on Node.js 22.21.0, from a clean working tree after `npm ci` and
+    `npm run build`: `npm run validate:publication` (28 runs, 0 failed, `tolerance applied: none`),
+    the golden tree in publication mode (26 runs, 0 failed, `tolerance applied: none`) and
+    `npm run -s wingfoil -- workflow list`, each exit 0; `directives list` with no warning;
+    `npm test` 1428 passed, 0 failed; the lint exit 0; `check:runs` 84 runs, 0 failed.
