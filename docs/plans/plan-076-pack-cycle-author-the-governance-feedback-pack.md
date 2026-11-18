@@ -2,7 +2,7 @@
 id: plan-076-pack-cycle-author-the-governance-feedback-pack
 type: plan
 title: "pack-cycle author: the governance/feedback pack"
-status: active
+status: done
 workflow: "pack-cycle"
 phase: "author"
 tags: ["packs","feedback","governance","W10"]
