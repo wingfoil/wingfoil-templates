@@ -133,7 +133,8 @@ describe('the CI workflow (task-013)', () => {
       'npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden',
       'npm run validate -- --overlay tests/fixtures/software-exit',
       'npm run validate -- --overlay tests/fixtures/scrum-exit',
-      'npm run validate -- --overlay tests/fixtures/kanban-exit', 'npm run check:runs']) {
+      'npm run validate -- --overlay tests/fixtures/kanban-exit',
+      'npm run validate -- --overlay tests/fixtures/feedback-exit', 'npm run check:runs']) {
       assert.equal(stepRunning(command)?.if, branch, command);
     }
     assert.equal(stepRunning('npm run validate:publication')?.if, tag);
@@ -159,6 +160,18 @@ describe('the CI workflow (task-013)', () => {
       });
     assert.ok(scrum !== undefined && kanban !== undefined && runs !== undefined);
     assert.ok(scrum < kanban && kanban < runs, `${scrum} < ${kanban} < ${runs}`);
+  });
+
+  it('validates feedback-exit after kanban-exit and before the runs (task-097)', () => {
+    const [kanban, feedback, runs] = ['npm run validate -- --overlay tests/fixtures/kanban-exit',
+      'npm run validate -- --overlay tests/fixtures/feedback-exit', 'npm run check:runs']
+      .map((command) => {
+        const step = stepRunning(command);
+        assert.ok(step !== undefined, command);
+        return steps.indexOf(step);
+      });
+    assert.ok(kanban !== undefined && feedback !== undefined && runs !== undefined);
+    assert.ok(kanban < feedback && feedback < runs, `${kanban} < ${feedback} < ${runs}`);
   });
 
   it('audits the root\'s runtime tree as a gate, and the whole tree only to warn (dl-035)', () => {
