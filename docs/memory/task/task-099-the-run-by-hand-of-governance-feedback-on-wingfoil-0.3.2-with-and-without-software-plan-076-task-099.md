@@ -114,8 +114,62 @@ Branch `task/task-099-run-by-hand` from `main` at `52d125c2`, in a worktree of i
 
 ## Execution Notes
 
-<!-- Deviations, blockers, decisions taken, WingFoil friction. In a tooling task, each red run: the
-     command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
-     proposed reading and the approver's ruling with its date; the Acceptance text stays as
-     approved (dl-019).
-     An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-18, **the run**, on WingFoil 0.3.2, composed from `52d125c2`, in two scratch repositories
+  (criterion 1): Sandpiper Tickets (`with-software`) and Dunlin Notes (`without-software`). All 136
+  WingFoil commands exited 0 at the first attempt, with nothing on stderr: no refusal, no warning.
+  Between the commands, the driver wrote the fields and bodies, and committed them. Each `memory
+  approve` ran under the repository's fictional approver, with the reason "run by hand, fixture
+  approval". 141 commits in `with-software`, 56 in `without-software`, each working tree clean.
+- 2026-11-18, **`with-software`, the routes** (criterion 2):
+
+  | Route | Item | Outcome | `resulting` | Final state | Cited back |
+  |---|---|---|---|---|---|
+  | decision | `feedback-001-keep-closed-tickets-for-a-year` | `decision-log` | `dl-001-how-long-closed-tickets-are-kept` | `closed` | yes |
+  | governance | `feedback-002-two-people-triage-one-report` | `decision-log` | `dl-002-one-person-triages-a-report` | `closed` | yes |
+  | task | `feedback-003-reply-macros` | `task` | `task-001-reply-macros` | `closed` | yes |
+  | declined | `feedback-004-a-phone-line` | `declined` | `n/a — outside the desk's scope` | `closed` | the reason, in `resulting` and the body |
+  | duplicate | `feedback-005-a-phone-line-again` | `duplicate` | `n/a — the same report as feedback-004-a-phone-line` | `closed` | the reason, in `resulting` and the body |
+  | added outcome | `feedback-006-offline-tickets` | `deferred` | `dl-003-offline-tickets-deferred` | `closed` | yes |
+  | bug | `feedback-007-the-export-crashes` | `bug` | `bug-001-the-export-crashes` | `closed` | yes |
+  | upstream note | `feedback-008-the-vendor-export-leaves-tickets-out` | `upstream-note` | `docs/upstream/plover/feedback-008-the-vendor-export-leaves-tickets-out.md` | `closed` | yes |
+
+  | Route | The WingFoil commands, in order; each exit 0 |
+  |---|---|
+  | decision | `workflow start feedback-ingest`; `memory add --type feedback --title Keep closed tickets for a year --workflow feedback-ingest-1-plan --step feedback-ingest.capture`; `memory submit feedback-001-keep-closed-tickets-for-a-year`; `memory approve feedback-001-keep-closed-tickets-for-a-year`; `workflow end feedback-ingest-1-plan`; `workflow start decision-log-ingest`; `memory add --type decision-log --title How long closed tickets are kept --workflow decision-log-ingest-1-plan --step decision-log-ingest.capture`; `memory submit dl-001-how-long-closed-tickets-are-kept`; `memory approve dl-001-how-long-closed-tickets-are-kept`; `workflow end decision-log-ingest-1-plan`; `workflow start feedback-review`; `workflow finalize feedback-review-1-plan --step feedback-item.route@feedback:feedback-001-keep-closed-tickets-for-a-year`; `memory submit feedback-001-keep-closed-tickets-for-a-year`; `workflow end feedback-review-1-plan` |
+  | governance | `workflow start feedback-ingest`; `memory add --type feedback --title Two people triage one report --workflow feedback-ingest-1-2-plan --step feedback-ingest.capture`; `memory submit feedback-002-two-people-triage-one-report`; `memory approve feedback-002-two-people-triage-one-report`; `workflow end feedback-ingest-1-2-plan`; `workflow start governance-evolution`; `workflow finalize governance-evolution-1-plan --step governance-evolution.assess`; `memory add --type decision-log --title One person triages a report --workflow governance-evolution-1-plan --step governance-evolution.propose`; `memory submit dl-002-one-person-triages-a-report`; `memory approve dl-002-one-person-triages-a-report`; `workflow end governance-evolution-1-plan`; `workflow start feedback-review`; `workflow finalize feedback-review-1-2-plan --step feedback-item.route@feedback:feedback-002-two-people-triage-one-report`; `memory submit feedback-002-two-people-triage-one-report`; `workflow end feedback-review-1-2-plan` |
+  | task | `workflow start feedback-ingest`; `memory add --type feedback --title Reply macros --workflow feedback-ingest-1-3-plan --step feedback-ingest.capture`; `memory submit feedback-003-reply-macros`; `memory approve feedback-003-reply-macros`; `workflow end feedback-ingest-1-3-plan`; `workflow start feedback-review`; `memory add --type task --title Reply macros`; `workflow finalize feedback-review-1-3-plan --step feedback-item.route@feedback:feedback-003-reply-macros`; `memory submit feedback-003-reply-macros`; `workflow end feedback-review-1-3-plan` |
+  | declined | `workflow start feedback-ingest`; `memory add --type feedback --title A phone line --workflow feedback-ingest-1-4-plan --step feedback-ingest.capture`; `memory submit feedback-004-a-phone-line`; `memory approve feedback-004-a-phone-line`; `workflow end feedback-ingest-1-4-plan`; `workflow start feedback-review`; `workflow finalize feedback-review-1-4-plan --step feedback-item.route@feedback:feedback-004-a-phone-line`; `memory submit feedback-004-a-phone-line`; `workflow end feedback-review-1-4-plan` |
+  | duplicate | `workflow start feedback-ingest`; `memory add --type feedback --title A phone line again --workflow feedback-ingest-1-5-plan --step feedback-ingest.capture`; `memory submit feedback-005-a-phone-line-again`; `memory approve feedback-005-a-phone-line-again`; `workflow end feedback-ingest-1-5-plan`; `workflow start feedback-review`; `workflow finalize feedback-review-1-5-plan --step feedback-item.route@feedback:feedback-005-a-phone-line-again`; `memory submit feedback-005-a-phone-line-again`; `workflow end feedback-review-1-5-plan` |
+  | added outcome | `workflow start feedback-ingest`; `memory add --type feedback --title Offline tickets --workflow feedback-ingest-1-6-plan --step feedback-ingest.capture`; `memory submit feedback-006-offline-tickets`; `memory approve feedback-006-offline-tickets`; `workflow end feedback-ingest-1-6-plan`; `workflow start decision-log-ingest`; `memory add --type decision-log --title Offline tickets, deferred --workflow decision-log-ingest-1-2-plan --step decision-log-ingest.capture`; `memory submit dl-003-offline-tickets-deferred`; `memory approve dl-003-offline-tickets-deferred`; `workflow end decision-log-ingest-1-2-plan`; `workflow start feedback-review`; `workflow finalize feedback-review-1-6-plan --step feedback-item.route@feedback:feedback-006-offline-tickets`; `memory submit feedback-006-offline-tickets`; `workflow end feedback-review-1-6-plan` |
+  | bug | `workflow start feedback-ingest`; `memory add --type feedback --title The export crashes --workflow feedback-ingest-1-7-plan --step feedback-ingest.capture`; `memory submit feedback-007-the-export-crashes`; `memory approve feedback-007-the-export-crashes`; `workflow end feedback-ingest-1-7-plan`; `workflow start bug-ingest`; `memory add --type bug --title The export crashes --workflow bug-ingest-1-plan --step bug-ingest.capture`; `memory submit bug-001-the-export-crashes`; `memory approve bug-001-the-export-crashes`; `workflow end bug-ingest-1-plan`; `workflow start feedback-bug-route`; `workflow finalize feedback-bug-route-1-plan --step feedback-bug-item.bug@feedback:feedback-007-the-export-crashes`; `memory submit feedback-007-the-export-crashes`; `workflow end feedback-bug-route-1-plan` |
+  | upstream note | `workflow start feedback-ingest`; `memory add --type feedback --title The vendor export leaves tickets out --workflow feedback-ingest-1-8-plan --step feedback-ingest.capture`; `memory submit feedback-008-the-vendor-export-leaves-tickets-out`; `memory approve feedback-008-the-vendor-export-leaves-tickets-out`; `workflow end feedback-ingest-1-8-plan`; `workflow start feedback-review`; `workflow finalize feedback-review-1-7-plan --step feedback-item.route@feedback:feedback-008-the-vendor-export-leaves-tickets-out`; `memory submit feedback-008-the-vendor-export-leaves-tickets-out`; `workflow end feedback-review-1-7-plan` |
+  | final read | `workflow list`; `directives list` |
+
+- 2026-11-18, **`without-software`, the routes** (criterion 3):
+
+  | Route | Item | Outcome | `resulting` | Final state | Cited back |
+  |---|---|---|---|---|---|
+  | decision | `feedback-001-keep-notes-for-a-year` | `decision-log` | `dl-001-how-long-notes-are-kept` | `closed` | yes |
+  | task | `feedback-002-note-templates` | `task` | `task-001-note-templates` | `closed` | yes |
+  | would-be bug | `feedback-003-a-note-is-saved-twice` | `decision-log` | `dl-002-a-note-saved-twice` | `closed` | yes |
+
+  | Route | The WingFoil commands, in order; each exit 0 |
+  |---|---|
+  | decision | `workflow start feedback-ingest`; `memory add --type feedback --title Keep notes for a year --workflow feedback-ingest-1-plan --step feedback-ingest.capture`; `memory submit feedback-001-keep-notes-for-a-year`; `memory approve feedback-001-keep-notes-for-a-year`; `workflow end feedback-ingest-1-plan`; `workflow start decision-log-ingest`; `memory add --type decision-log --title How long notes are kept --workflow decision-log-ingest-1-plan --step decision-log-ingest.capture`; `memory submit dl-001-how-long-notes-are-kept`; `memory approve dl-001-how-long-notes-are-kept`; `workflow end decision-log-ingest-1-plan`; `workflow start feedback-review`; `workflow finalize feedback-review-1-plan --step feedback-item.route@feedback:feedback-001-keep-notes-for-a-year`; `memory submit feedback-001-keep-notes-for-a-year`; `workflow end feedback-review-1-plan` |
+  | task | `workflow start feedback-ingest`; `memory add --type feedback --title Note templates --workflow feedback-ingest-1-2-plan --step feedback-ingest.capture`; `memory submit feedback-002-note-templates`; `memory approve feedback-002-note-templates`; `workflow end feedback-ingest-1-2-plan`; `workflow start feedback-review`; `memory add --type task --title Note templates`; `workflow finalize feedback-review-1-2-plan --step feedback-item.route@feedback:feedback-002-note-templates`; `memory submit feedback-002-note-templates`; `workflow end feedback-review-1-2-plan` |
+  | would-be bug | `workflow start feedback-ingest`; `memory add --type feedback --title A note is saved twice --workflow feedback-ingest-1-3-plan --step feedback-ingest.capture`; `memory submit feedback-003-a-note-is-saved-twice`; `memory approve feedback-003-a-note-is-saved-twice`; `workflow end feedback-ingest-1-3-plan`; `workflow start decision-log-ingest`; `memory add --type decision-log --title A note saved twice --workflow decision-log-ingest-1-2-plan --step decision-log-ingest.capture`; `memory submit dl-002-a-note-saved-twice`; `memory approve dl-002-a-note-saved-twice`; `workflow end decision-log-ingest-1-2-plan`; `workflow start feedback-review`; `workflow finalize feedback-review-1-3-plan --step feedback-item.route@feedback:feedback-003-a-note-is-saved-twice`; `memory submit feedback-003-a-note-is-saved-twice`; `workflow end feedback-review-1-3-plan` |
+  | final read | `workflow list`; `directives list` |
+
+- 2026-11-18, **what was read at the end** (criterion 5), by a script of its own over the files:
+  - all 11 items are `closed`, with their `outcome` and `resulting`;
+  - each routed element and the upstream note cites its item; the declined and the duplicate items
+    hold their reason in `resulting` and in the body;
+  - the commit of `.wingfoil/directives/custom/one-triager.md` reads "Name who triages a report, as
+    dl-002-one-person-triages-a-report decided";
+  - in both repositories `workflow list` and `directives list` exit 0 with no diagnostic and no
+    warning, and `workflow status` reports no open workflow.
+- 2026-11-18, **one observation, no finding:** `workflow status` in `with-software` lists
+  `bug-001-the-export-crashes` as `ungated` at `triaged`. `bug-ingest` owns the bug after its triage
+  and the route only records it, as the `feedback-bug-route` directive says.
+- 2026-11-18, **criterion 7:** no fact against the charter's shape, no defect of the pack and no
+  friction in WingFoil were found, so nothing under `packs/` changed and no owed row was added.
