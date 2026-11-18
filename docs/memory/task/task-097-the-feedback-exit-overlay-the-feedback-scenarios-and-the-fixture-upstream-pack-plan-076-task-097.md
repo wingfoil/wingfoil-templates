@@ -224,3 +224,6 @@ Branch `task/task-097-feedback-exit` from `main` at `8f68c465`, in a worktree of
     the golden tree in publication mode (26 runs, 0 failed, `tolerance applied: none`) and
     `npm run -s wingfoil -- workflow list`, each exit 0; `directives list` with no warning;
     `npm test` 1394 passed, 0 failed; the lint exit 0; `check:runs` 84 runs, 0 failed.
+- 2026-11-18, **the close:** approved by the approver and merged `--no-ff` at `77e0140d` on his OK. The
+  owed row "`feedback-exit` in the intake's `verify` job" stays open until the pack's
+  `first-release`.
