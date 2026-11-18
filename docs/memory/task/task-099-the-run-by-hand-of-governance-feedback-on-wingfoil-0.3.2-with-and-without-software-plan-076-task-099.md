@@ -99,7 +99,18 @@ fictional approver, on fixture data. The agent runs no `memory approve` in this 
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-099-run-by-hand` from `main` at `52d125c2`, in a worktree of its own.
+
+- **The trees:** `git archive` of `52d125c2` for `without-software`; the same tree with
+  `tests/fixtures/feedback-exit/packs/` merged into `packs/` for `with-software`.
+- **The projects,** fictional: Sandpiper Tickets (`with-software`) and Dunlin Notes
+  (`without-software`), each with a lead and an agent at a `.example` address.
+- **The driver:** a script outside the repository runs each WingFoil command in order, stops at the
+  first command that fails, and logs every command with its exit code. It sets the git identity in
+  the scratch repository only: the agent's for every command, the fictional approver's for each
+  `memory approve`. The Execution Notes are written from its log.
+- **The order:** the routes of criterion 2 and then of criterion 3, one at a time, each item's
+  reviewing main ended before the next capture.
 
 ## Execution Notes
 
