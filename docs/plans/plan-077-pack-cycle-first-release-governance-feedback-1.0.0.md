@@ -2,7 +2,7 @@
 id: plan-077-pack-cycle-first-release-governance-feedback-1.0.0
 type: plan
 title: "pack-cycle first-release: governance/feedback 1.0.0"
-status: draft
+status: active
 workflow: "pack-cycle"
 phase: "first-release"
 tags: ["packs","feedback","governance","W10"]
