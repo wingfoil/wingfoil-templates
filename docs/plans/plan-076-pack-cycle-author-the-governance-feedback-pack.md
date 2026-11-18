@@ -462,3 +462,16 @@ Before every commit, the privacy check (`repository-practice` rule 2). After eve
   the matrix does not select, was read by hand (the task's notes). `main`'s CI on `3526b4be`,
   run 44131227403, `success`: jobs `validate (22.12.0, 1)` 12 min 10 s, `(22.12.0, 2)` 5 min
   28 s, `(22.21.0, 1)` 11 min 32 s, `(22.21.0, 2)` 5 min 31 s.
+- 2026-11-18, step 2, task-097 (the exit overlay and the scenarios): body reviewed, re-reviewed and
+  checked, accepted into the backlog by the approver; built on its branch (`feedback-exit`'s eight
+  compositions and three fixture packs, `feedback.yaml`, `feedback-upstream.yaml`,
+  `adoption-feedback.yaml`, the CI step and the guards), the build review and its re-review
+  applied; dl-039's checks on `a43224ad` (branch CI 44274431167 `success`, no job over 25 minutes;
+  the local list green); approved by the approver and merged `--no-ff` at `77e0140d` on his OK,
+  `done` at `1a96ca08`. `check:runs` went from 46 to 84 runs. WingFoil 0.3.1, which the matrix does
+  not select, was read by hand (the task's notes). A new owed row holds `feedback-exit` out of the
+  intake's `verify` job until the pack's `first-release`. `main`'s CI on `1a96ca08`, run
+  44277583919, `success`: jobs `validate (22.12.0, 1)` 13 min 39 s, `(22.12.0, 2)` 7 min 26 s,
+  `(22.21.0, 1)` 13 min 19 s, `(22.21.0, 2)` 9 min 15 s.
+- 2026-11-18, step 3: the untracked draft under `tests/fixtures/feedback-draft/` deleted after
+  task-097's merge.
