@@ -127,7 +127,21 @@ generic checks do not change.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-098-feedback-elements` from `main` at `b2f96119`, in a worktree of its own.
+
+- **The layout** of `tests/fixtures/feedback-elements/`: `<project>/` mirrors the paths each element
+  has in the composed project; `invalid/` holds criterion 3's cases; `defaults/custom/` holds
+  criterion 6's directive and commit message, which are not copied with the elements.
+- **The test** (`tests/feedback-elements.test.ts`):
+  - composes with `composeDocuments` on `FIXTURE_CATALOG`, `upstream` on the tree `mergeOverlay`
+    builds, writes the output to a directory of its own and copies it into a `TestRepo`;
+  - after the first commit, tags `v1.0.0`, replaces the commit token in the elements and commits
+    again;
+  - runs the named checks as one map from a check's name to its problems, so that a case can assert
+    one check reports it and the others nothing.
+- **The cases** are all added to `defaults`, which holds the two decision-logs the FA-6 cases name:
+  one citing the `closed` case with no `outcome` in advance, one citing nothing.
+- **Commits:** the test (red); the fixtures; the owed row and the notes.
 
 ## Execution Notes
 
