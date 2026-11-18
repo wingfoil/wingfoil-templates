@@ -1,0 +1,14 @@
+format: 1
+id: team-mode/agent-first
+axis: team-mode
+name: agent-first
+title: "Agent-first fixture"
+description: >-
+  A test fixture, never published: an empty team mode, standing in for the pack W11 publishes, so
+  that governance/feedback composes beside that axis.
+version: 1.0.0
+formats: {}
+requires:
+  - base@^2
+requires_capabilities: []
+contents: {}

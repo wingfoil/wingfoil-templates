@@ -12,8 +12,10 @@ import { afterEach, beforeEach, describe, it } from 'node:test';
 
 import { parse as parseYaml } from 'yaml';
 
+import { assertFields, assertSections } from './support/inbox';
 import { FIXTURES } from './support/paths';
 
+import { readFrontmatter } from '../src/frontmatter';
 import { MatrixIoError } from '../src/matrix';
 import { treeLayout } from '../src/layout-rules';
 import { mergeOverlay, openOverlay } from '../src/overlay-tree';
@@ -1328,5 +1330,233 @@ describe('setFields (task-095 criterion 4)', () => {
       /a BOM or CRLF/);
     assert.throws(() => setFields('---\r\na: b\r\n---\r\n', [['a', 'c']], undefined, 'x.md'),
       /a BOM or CRLF/);
+  });
+});
+
+// task-097 (plan-076 point 4): the scenarios of governance/feedback. WingFoil checks neither
+// `resulting` nor a citation, so a route that drops them still passes on the real release.
+type ScenarioStep = Record<string, Record<string, unknown> | string>;
+interface ScenarioLink { main: string; steps: (ScenarioStep | string)[] }
+interface ScenarioRun {
+  name?: string; main?: string; only?: string[]; steps?: unknown[]; chain?: ScenarioLink[];
+  adopt?: unknown;
+}
+interface FeedbackScenario { compositions: string; overlay?: string; runs: ScenarioRun[] }
+
+const feedbackScenario = (file: string): FeedbackScenario =>
+  parseYaml(readFileSync(join(FIXTURES, 'runs', file), 'utf8')) as FeedbackScenario;
+
+/** The values of one kind of step in a run's chain, in order. */
+function stepsOf(run: ScenarioRun | undefined, kind: string): Record<string, unknown>[] {
+  return (run?.chain ?? []).flatMap((link) => link.steps).flatMap((step) => {
+    const value = typeof step === 'string' ? undefined : step[kind];
+    return typeof value === 'object' ? [value] : [];
+  });
+}
+
+/** The elements one kind of step names in a run's chain (`submit`, `approve`), in order. */
+function namedBy(run: ScenarioRun, kind: string): unknown[] {
+  return (run.chain ?? []).flatMap((link) => link.steps).flatMap((step) =>
+    (typeof step === 'string' || step[kind] === undefined ? [] : [step[kind]]));
+}
+
+/** The `set` steps of a run on one label, in order. */
+function setsOn(run: ScenarioRun, label: string): Record<string, unknown>[] {
+  return stepsOf(run, 'set').filter((set) => set['element'] === label);
+}
+
+/** The fields a run writes on one label, merged. */
+function fieldsOn(run: ScenarioRun, label: string): Record<string, unknown> {
+  return Object.assign({}, ...setsOn(run, label).map((set) => set['fields'] ?? {})) as
+    Record<string, unknown>;
+}
+
+const bodiesOn = (run: ScenarioRun, label: string): string[] =>
+  setsOn(run, label).flatMap((set) => (typeof set['body'] === 'string' ? [set['body']] : []));
+
+/** The route's closing steps: the route step finalized, the item submitted, the run ended. */
+function assertCloses(run: ScenarioRun, key: string): void {
+  const last = run.chain?.at(-1)?.steps ?? [];
+  assert.deepEqual(last.slice(-3), [{ finalize: key }, { submit: 'item' }, 'end'], run.name);
+}
+
+const ITEM_ROUTE = 'feedback-item.route@feedback:$item.id';
+const INGEST = 'feedback-ingest';
+const REVIEW = 'feedback-review';
+const DL_INGEST = 'decision-log-ingest';
+const DL_CAPTURE = 'decision-log-ingest.capture';
+
+describe('tests/fixtures/runs/feedback.yaml (task-097)', () => {
+  const scenario = (): FeedbackScenario => feedbackScenario('feedback.yaml');
+  const route = (name: string): ScenarioRun => {
+    const found = scenario().runs.find((run) => run.name === name);
+    assert.ok(found !== undefined, name);
+    return found;
+  };
+
+  it('starts every main the pack ships on the README examples', () => {
+    assert.equal(scenario().compositions, 'tests/fixtures/examples/feedback');
+    const starts = scenario().runs.filter((run) => run.main !== undefined);
+    assert.deepEqual(starts, [
+      { main: INGEST, steps: ['start'] },
+      { main: REVIEW, steps: ['start'] },
+      { main: 'feedback-bug-route', only: ['with-software', 'added-outcome'], steps: ['start'] },
+    ]);
+  });
+
+  const ROUTES = [
+    { name: 'route-decision-log', only: 'added-outcome', outcome: 'decision-log',
+      mains: [INGEST, DL_INGEST, REVIEW], target: 'dl', type: 'decision-log', step: DL_CAPTURE,
+      moved: true, names: 'the feedback item' },
+    { name: 'route-task', only: 'added-outcome', outcome: 'task', mains: [INGEST, REVIEW],
+      target: 'routed', type: 'task', step: undefined, moved: false, names: 'the feedback item' },
+    { name: 'route-added-outcome', only: 'added-outcome', outcome: 'deferred',
+      mains: [INGEST, DL_INGEST, REVIEW], target: 'dl', type: 'decision-log', step: DL_CAPTURE,
+      moved: true, names: 'deferred' },
+    { name: 'route-bug', only: 'with-software', outcome: 'bug',
+      mains: [INGEST, 'bug-ingest', 'feedback-bug-route'], target: 'bug', type: 'bug',
+      step: 'bug-ingest.capture', moved: true, names: 'the feedback item' },
+    { name: 'route-would-be-bug', only: 'defaults', outcome: 'decision-log',
+      mains: [INGEST, DL_INGEST, REVIEW], target: 'dl', type: 'decision-log', step: DL_CAPTURE,
+      moved: true, names: 'would-be bug' },
+  ];
+
+  for (const row of ROUTES) {
+    it(`${row.name}: the item routed to its element, which cites it, and closed`, () => {
+      const run = route(row.name);
+      assert.deepEqual(run.only, [row.only]);
+      assert.deepEqual(run.chain?.map((link) => link.main), row.mains);
+      const fields = fieldsOn(run, 'item');
+      assert.equal(fields['outcome'], row.outcome);
+      for (const key of ['kind', 'target', 'source', 'context']) {
+        assert.ok(typeof fields[key] === 'string' && fields[key] !== '', key);
+      }
+      assert.equal(fields['resulting'], `$${row.target}.id`);
+      assert.ok(bodiesOn(run, row.target).some((body) => body.includes('$item.id')),
+        'the routed element cites the item');
+      const added = stepsOf(run, 'add').find((add) => add['label'] === row.target);
+      assert.equal(added?.['type'], row.type);
+      assert.equal(added?.['step'], row.step, 'added by its own main, or outside a step');
+      assert.ok(bodiesOn(run, row.target).some((body) => body.includes(row.names)), row.names);
+      // The routed element moves through its own main; a task stays in draft.
+      assert.deepEqual(namedBy(run, 'submit'),
+        row.moved ? ['item', row.target, 'item'] : ['item', 'item']);
+      assert.deepEqual(namedBy(run, 'approve'), row.moved ? ['item', row.target] : ['item']);
+      assertCloses(run, row.name === 'route-bug'
+        ? 'feedback-bug-item.bug@feedback:$item.id' : ITEM_ROUTE);
+    });
+  }
+
+  it('route-declined: no routed element, the reason in resulting', () => {
+    const run = route('route-declined');
+    assert.deepEqual(run.only, ['added-outcome']);
+    assert.deepEqual(run.chain?.map((link) => link.main), [INGEST, REVIEW]);
+    const fields = fieldsOn(run, 'item');
+    assert.equal(fields['outcome'], 'declined');
+    assert.match(String(fields['resulting']), /^n\/a — \S/);
+    assert.ok(bodiesOn(run, 'item').some((body) => body.startsWith('Declined: ')),
+      'the reason in the body too');
+    assert.deepEqual(stepsOf(run, 'add').map((add) => add['label']), ['item']);
+    assertCloses(run, ITEM_ROUTE);
+  });
+
+  it('route-would-be-bug: the item and the decision-log both name the would-be bug', () => {
+    const run = route('route-would-be-bug');
+    for (const label of ['item', 'dl']) {
+      assert.ok(bodiesOn(run, label).some((body) => /would-be bug/.test(body)), label);
+    }
+  });
+});
+
+/** What the channel directive states of a note, whole: spec-003 §5.1 and dl-163's subset. */
+const NOTE_FORMAT = [
+  '- **Where:** `docs/upstream/plover/<feedback id>.md`, one file per item.',
+  '- **Frontmatter:** these six fields, in this order:',
+  '  - `id`, the note\'s id;',
+  '  - `title`, what the note is about;',
+  '  - `kind`: `defect`, `gap` or `request`;',
+  '  - `status`: `open`, `needs-info`, `captured`, `resolved`, `declined` or `duplicate`;',
+  '  - `wingfoil_version`, the version the note was observed on;',
+  '  - `answered_by`, a list of ids, empty until the upstream answers.',
+  '- **Body:** the sections `## Observed` and `## Expected`, and no `## Replies`.',
+  '- **Kinds:** `defect`, `gap` and `request` map one to one; `observation` becomes `request`.',
+  '- **Citation:** the note\'s body cites the feedback id, and the item\'s `resulting` names the '
+    + 'note\'s',
+  '  path.',
+  '',
+].join('\n');
+
+describe('tests/fixtures/runs/feedback-upstream.yaml (task-097, FA-8)', () => {
+  const scenario = (): FeedbackScenario => feedbackScenario('feedback-upstream.yaml');
+  const PACK = join(FIXTURES, 'feedback-exit', 'packs', 'governance', 'feedback-upstream');
+  const directive = (): string =>
+    readFileSync(join(PACK, 'directives', 'plover-vendor-channel.md'), 'utf8');
+  const noteStep = (): { path: string; text: string } => {
+    const [found] = stepsOf(scenario().runs[0], 'write');
+    assert.ok(found !== undefined, 'the note is written');
+    return found as unknown as { path: string; text: string };
+  };
+
+  it('drives route-upstream-note on the upstream composition of feedback-exit', () => {
+    const { overlay, compositions, runs } = scenario();
+    assert.equal(overlay, 'tests/fixtures/feedback-exit');
+    assert.equal(compositions, 'tests/fixtures/feedback-exit/compositions');
+    assert.equal(runs.length, 1);
+    const [run] = runs;
+    assert.ok(run !== undefined);
+    assert.equal(run.name, 'route-upstream-note');
+    assert.deepEqual(run.only, ['upstream']);
+    assert.deepEqual(run.chain?.map((link) => link.main), [INGEST, REVIEW]);
+    const fields = fieldsOn(run, 'item');
+    assert.equal(fields['outcome'], 'upstream-note');
+    assert.equal(fields['target'], 'upstream:plover-vendor');
+    assert.equal(fields['resulting'], noteStep().path);
+    assertCloses(run, ITEM_ROUTE);
+    const composition = parseYaml(readFileSync(join(FIXTURES, 'feedback-exit', 'compositions',
+      'upstream', 'example.yaml'), 'utf8')) as { parameters: Record<string, string> };
+    assert.ok(composition.parameters['feedback_targets']?.split(', ')
+      .includes('upstream:plover-vendor'), 'the composition allows the target (spec-003 §5.3)');
+  });
+
+  it('writes the note where the channel directive says, in its format, citing the item', () => {
+    const { path, text } = noteStep();
+    assert.equal(path, 'docs/upstream/plover/$item.id.md');
+    assert.ok(directive().includes('`docs/upstream/plover/<feedback id>.md`'), 'the stated path');
+    const fields = readFrontmatter(text, path)?.data as Record<string, unknown> | undefined;
+    assert.ok(fields !== undefined, 'the note has a frontmatter');
+    const body = text.slice(text.indexOf('\n---\n', 4) + 5);
+    const notes = [{ file: path, fields, body }];
+    assertFields(notes);
+    assertSections(notes);
+    assert.ok(body.includes('$item.id'), 'the body cites the item');
+    assert.equal(fields['kind'], fieldsOn(scenario().runs[0] as ScenarioRun, 'item')['kind'],
+      'a gap maps one to one');
+  });
+
+  it('ships the channel as spec-003 §5.1 asks, which the lint reads only in the tree\'s packs',
+    () => {
+      const text = directive();
+      const data = readFrontmatter(text, 'plover-vendor-channel.md')?.data as
+        { tags?: string[] } | undefined;
+      assert.deepEqual(data?.tags, ['feedback-channel']);
+      assert.ok(text.split('\n').includes('Serves the target `upstream:plover-vendor`.'));
+      assert.equal(text.slice(text.indexOf('- **Where:**')), NOTE_FORMAT);
+      const roles = parseYaml(readFileSync(join(PACK, 'fragments', 'roles.yaml'), 'utf8')) as
+        { assignments: Record<string, string[]> };
+      assert.deepEqual(roles.assignments['facilitator'], ['plover-vendor-channel']);
+      const pack = parseYaml(readFileSync(join(PACK, 'pack.yaml'), 'utf8')) as
+        { requires: string[] };
+      assert.ok(pack.requires.includes('governance/feedback@^1'));
+    });
+});
+
+describe('tests/fixtures/runs/adoption-feedback.yaml (task-097)', () => {
+  it('adopts the examples that compose software, once per init template', () => {
+    const data = feedbackScenario('adoption-feedback.yaml');
+    assert.equal(data.compositions, 'tests/fixtures/examples/feedback');
+    const only = ['with-software', 'added-outcome'];
+    const remove = ADOPTION_REMOVE;
+    assert.deepEqual(data.runs, [{ only, adopt: { template: 'Scrum', remove } },
+      { only, adopt: { template: 'Kanban', remove } }]);
   });
 });

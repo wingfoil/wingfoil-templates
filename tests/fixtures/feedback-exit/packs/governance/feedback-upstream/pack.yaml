@@ -1,0 +1,19 @@
+format: 2
+id: governance/feedback-upstream
+axis: governance
+name: feedback-upstream
+title: "Feedback upstream fixture"
+description: >-
+  A test fixture, never published: an upstream pack shipping the feedback channel of the fictional
+  vendor Plover Vendor, so that the upstream-note route of governance/feedback can be driven.
+version: 1.0.0
+formats:
+  roles: 1
+  directive: 1
+requires:
+  - base@^2
+  - governance/feedback@^1
+requires_capabilities: []
+contents:
+  fragments: [roles]
+  directives: [plover-vendor-channel]

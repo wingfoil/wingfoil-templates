@@ -2,7 +2,7 @@
 id: task-097-the-feedback-exit-overlay-the-feedback-scenarios-and-the-fixture-upstream-pack-plan-076-task-097
 type: task
 title: "The feedback-exit overlay, the feedback scenarios and the fixture upstream pack (plan-076 task-097)"
-status: backlog
+status: approved
 pack: "pack-governance-feedback"
 depends_on: ["task-095", "task-096"]
 tags: ["packs","feedback","governance"]
@@ -150,12 +150,77 @@ them) and task-099 (the run by hand) build on this task.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-097-feedback-exit` from `main` at `8f68c465`, in a worktree of its own.
+
+- **The empty frontiers (criterion 7), probed on WingFoil 0.3.0 and 0.3.2** on `with-software`'s
+  composition, committed, with no feedback item. `workflow start` of `feedback-review` and of
+  `feedback-bug-route` exits 0 with the plan `active` and no next step; `workflow next` exits 0
+  with `complete: true` and no diagnostic; `workflow end` exits 0. So a bare `steps: [start]` is
+  enough, as the other scenarios' starts are, and no scenario needs a step for it.
+- **The overlay** (`tests/fixtures/feedback-exit/`):
+  - the four sets copy `kanban-exit`'s parameters, with `governance/feedback@^1` added and
+    `methodology/scrum@^1` on `defaults` and `release-folders`;
+  - `alone`, `team-mode`, `blueprint` and `upstream` use fictional projects of their own;
+  - `team-mode/agent-first` and `blueprint/fixture` are the smallest packs the lint accepts, with
+    no contents: FA-1 asks that the pack composes beside those axes;
+  - `governance/feedback-upstream` comes from the draft: `pack.yaml` and `fragments/roles.yaml`
+    with the description rewritten, and the channel directive, `README.md` and `CHANGELOG.md`
+    written again.
+- **The scenarios:**
+  - each route is a `chain` named after criterion 4's table: `feedback-ingest` captures, submits
+    and approves the item, the target is added by its own main or outside the step, and the
+    reviewing main writes `resulting`, finalizes the route step and closes the item;
+  - `feedback.yaml` and `feedback-upstream.yaml` give every field the `feedback` type requires;
+  - the note of `route-upstream-note` holds dl-163's six fields and two sections, its body citing
+    `$item.id`.
+- **The guard tests** read each scenario with `yaml` and pin criterion 8's facts per run. The
+  upstream note is parsed from the scenario's text into a `Note`, and `assertFields` and
+  `assertSections` run on it.
+- **Commits:** the tests (red); the overlay; the scenarios; the CI step; the notes.
+- **Checks, in order:** the new tests; `validate --overlay` on `feedback-exit` and on the three
+  other overlays; the golden tree; `check:runs`, before and after; 0.3.1 by hand; lint; `npm test`.
 
 ## Execution Notes
 
-<!-- Deviations, blockers, decisions taken, WingFoil friction. In a tooling task, each red run: the
-     command and its failing count (dl-018). An Acceptance criterion that cannot hold: why, the
-     proposed reading and the approver's ruling with its date; the Acceptance text stays as
-     approved (dl-019).
-     An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-18, **the red run** (dl-018), on `6d69139d`, before the overlay, the CI step and the
+  scenarios existed: `node --test dist/tests/runs.test.js dist/tests/ci-workflow.test.js` gave 14
+  failing of 102, and `node --test --test-name-pattern='fixture packs'
+  dist/tests/validate-2-run.test.js` 1 failing of 1. Seven of the guards then failed for a defect of
+  their own helper, which read a step kind a step did not have; the helper was fixed in the build
+  commit.
+- 2026-11-18, **the empty frontiers** (criterion 7): the probe is in the Design. A first attempt
+  named a repository that did not exist, so its commands ran in this task's worktree: WingFoil
+  refused each one on that configuration's own errors, and nothing changed.
+- 2026-11-18, **the counts:**
+  - `validate --overlay tests/fixtures/feedback-exit`: 22 compositions, 44 runs, 0 failed,
+    `tolerance applied: none`, pinned in `tests/validate-2-run.test.ts`;
+  - `check:runs`: 46 runs before, 84 after, 0 failed: 19 more per selected release (8 starts, 7
+    routes, 4 adoptions);
+  - no other count moved.
+- 2026-11-18, **WingFoil 0.3.1** (criterion 3), which the matrix does not select: each of the eight
+  compositions composed on a copy of the tree holding the overlay's packs, committed, then
+  `workflow list`, `dna show` and `directives list` with `--format json`: every command exit 0, no
+  diagnostic, no warning, nothing on stderr.
+- 2026-11-18, **the build review** (dl-017): approve after amendments; no blocker, seven should-fix
+  and two nits, all applied. The mutations that survived its guards are now pinned.
+  - **Scenarios:** `route-declined` writes its reason in the body too; `route-added-outcome` and
+    `route-would-be-bug` go through `decision-log-ingest`, as the `feedback` directive's routes say.
+  - **Guards:** per row, the routed element's type, its step, what it names, and what is submitted
+    and approved; `route-declined` adds no element; the composition allows the upstream target;
+    the note's kind; the channel directive's kinds, citation and format lines.
+  - **The fixture's README** says to add `upstream:plover-vendor` to `feedback_targets`.
+- 2026-11-18, **the re-review of the build**: approve after amendments; one should-fix and two
+  nits, all applied. The guard now pins the channel directive's whole statement of the note, each
+  line of which a mutation could drop unnoticed. **A deviation from the Design:** the overlay, the
+  scenarios and the CI step went into one build commit, not three.
+- 2026-11-18, **the privacy check** of the branch's diff (`repository-practice` rule 2): no local or
+  scratch path, no private project, no session.
+- 2026-11-18, **dl-039's checks**, once, on the frozen commit `a43224ad`:
+  - **the branch CI**, run 44274431167, `success`: jobs `validate (22.12.0, 1)` 16 min 46 s,
+    `(22.12.0, 2)` 7 min 28 s, `(22.21.0, 1)` 12 min 40 s, `(22.21.0, 2)` 6 min 14 s; none over 25
+    minutes;
+  - **the local list** on Node.js 22.21.0, from a clean working tree after `npm ci` and
+    `npm run build`: `npm run validate:publication` (28 runs, 0 failed, `tolerance applied: none`),
+    the golden tree in publication mode (26 runs, 0 failed, `tolerance applied: none`) and
+    `npm run -s wingfoil -- workflow list`, each exit 0; `directives list` with no warning;
+    `npm test` 1394 passed, 0 failed; the lint exit 0; `check:runs` 84 runs, 0 failed.

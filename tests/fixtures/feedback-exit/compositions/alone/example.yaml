@@ -1,0 +1,14 @@
+format: 1
+id: alone
+title: "Alone"
+description: >-
+  Dunlin Notes, a fictional note-taking service with no methodology, composes the pack on
+  base alone.
+packs:
+  - base@^2
+  - governance/feedback@^1
+parameters:
+  project_name: "Dunlin Notes"
+  approver_name: "Dunlin Lead"
+  approver_email: "lead@dunlin-notes.example"
+  agent_name: "Dunlin Agent"

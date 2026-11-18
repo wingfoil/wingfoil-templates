@@ -1,0 +1,16 @@
+format: 1
+id: blueprint
+title: "With a blueprint"
+description: >-
+  Godwit Routes, a fictional route planner flowing its work with Kanban, composes the pack
+  beside the fixture blueprint.
+packs:
+  - software@^1
+  - methodology/kanban@^1
+  - governance/feedback@^1
+  - blueprint/fixture@^1
+parameters:
+  project_name: "Godwit Routes"
+  approver_name: "Godwit Lead"
+  approver_email: "lead@godwit-routes.example"
+  agent_name: "Godwit Agent"

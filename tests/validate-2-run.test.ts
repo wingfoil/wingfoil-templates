@@ -86,6 +86,21 @@ describe('npm run validate', () => {
         'matrix: self-test, 36 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
     });
 
+  it('validates governance/feedback with each published methodology, alone, and beside its '
+    + 'fixture packs (task-097, FA-1, FA-8)', () => {
+    const result = validate(['--tree', REPO_ROOT, '--overlay', 'tests/fixtures/feedback-exit']);
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    for (const id of ['defaults', 'flat-releases', 'release-folders', 'release-folders-lean',
+      'alone', 'team-mode', 'blueprint', 'upstream']) {
+      assert.ok(result.lines.some((line) => line.startsWith('composition '
+        + `tests/fixtures/feedback-exit/compositions/${id}/example.yaml: composed twice, `)),
+      `${id}\n${result.lines.join('\n')}`);
+    }
+    assert.ok(result.lines.includes('compositions: 22'), result.lines.join('\n'));
+    assert.ok(result.lines.includes(
+      'matrix: self-test, 44 runs, 0 failed, tolerance applied: none'), result.lines.join('\n'));
+  });
+
   it('passes a publication run of this repository: the two presets and twelve examples on 0.3.0 '
     + 'and the newest release (task-039, task-055, task-059, task-067, task-074, task-079, '
     + 'task-090, task-096)',

@@ -1,0 +1,25 @@
+# The adoption of base, software, a methodology and governance/feedback by a project that `wingfoil
+# init` wrote (task-097, plan-076; dl-032 E3, prepared for the pack's first release, which cites its
+# result), run by `npm run check:runs` and the CI on every branch push, on each selected release:
+# one run per `init` template on each README example that composes software, since a template writes
+# a software project. The removal list is bug-007's, as adoption-kanban.yaml's. The agent below runs
+# it (fixture data, no governance act).
+format: 1
+compositions: tests/fixtures/examples/feedback
+identities:
+  agent: { name: "Runs Agent", email: "agent@runs.invalid" }
+runs:
+  - only: [with-software, added-outcome]
+    adopt:
+      template: Scrum
+      remove:
+        workflows: [decision-log-ingest, sw-life-cycle, adr-ingest, bug-ingest, scrum-delivery,
+          kanban-delivery]
+        directives: [traceability, doc-versioning, security-secrets, determinism]
+  - only: [with-software, added-outcome]
+    adopt:
+      template: Kanban
+      remove:
+        workflows: [decision-log-ingest, sw-life-cycle, adr-ingest, bug-ingest, scrum-delivery,
+          kanban-delivery]
+        directives: [traceability, doc-versioning, security-secrets, determinism]
