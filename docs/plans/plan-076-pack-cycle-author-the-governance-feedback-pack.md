@@ -485,3 +485,13 @@ Before every commit, the privacy check (`repository-practice` rule 2). After eve
   Closed. `main`'s CI on `d0265660`, run 44310504161, `success`: jobs `validate (22.12.0, 1)`
   12 min 49 s, `(22.12.0, 2)` 7 min 7 s, `(22.21.0, 1)` 12 min 16 s,
   `(22.21.0, 2)` 5 min 38 s.
+- 2026-11-18, step 2, task-099 (the run by hand): body reviewed and re-reviewed, accepted into the
+  backlog by the approver, who confirmed with it that the agent approves fixture data in the two
+  scratch repositories only, under their fictional approvers. All 11 routes driven to `closed` on
+  WingFoil 0.3.2, composed from `52d125c2`; driven again after the run's review found two defects of
+  the run, none of the pack. Two new owed rows: a `custom/` directive no role binds, and `base`
+  without `software`. dl-039's checks on `a46d70e6` (branch CI 44321981276 `success`, no job over
+  25 minutes; the local list green); approved by the approver and merged `--no-ff` at `db3b6917` on
+  his OK, `done` at `a1a604cf`. `main`'s CI on `a1a604cf`, run 44329247197, `success`: jobs
+  `validate (22.12.0, 1)` 12 min 30 s, `(22.12.0, 2)` 4 min 49 s,
+  `(22.21.0, 1)` 12 min 18 s, `(22.21.0, 2)` 6 min 9 s.
