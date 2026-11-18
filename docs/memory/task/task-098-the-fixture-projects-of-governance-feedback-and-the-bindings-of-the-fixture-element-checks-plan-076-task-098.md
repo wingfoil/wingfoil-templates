@@ -176,3 +176,6 @@ Branch `task/task-098-feedback-elements` from `main` at `b2f96119`, in a worktre
     the golden tree in publication mode (26 runs, 0 failed, `tolerance applied: none`) and
     `npm run -s wingfoil -- workflow list`, each exit 0; `directives list` with no warning;
     `npm test` 1428 passed, 0 failed; the lint exit 0; `check:runs` 84 runs, 0 failed.
+- 2026-11-18, **the close:** FA-7 [A] read and the task approved by the approver, and merged
+  `--no-ff` at `568013d4` on his OK. The owed row "The bindings of the fixture-element checks to
+  `governance/feedback`" moved to Closed.
