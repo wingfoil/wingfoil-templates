@@ -121,3 +121,9 @@ Branch `task/task-100-intake-feedback-exit` from `main` at `a81a0984` (the backl
   all applied: the shard-2 refusal a guard, not red; the close and `done` as two commits, with
   `main`'s CI read; a red rehearsal on `main` stopping the close instead of returning the task;
   a Delivery criterion with the privacy check.
+- 2026-11-19, the red run (dl-018): `npm run build && node --test
+  dist/tests/intake-workflow.test.js dist/tests/intake-report.test.js`: 51 tests, 47 pass, 4 fail,
+  each on the missing `feedback-exit`: the step's `run` `undefined`; the mirror's `deepEqual`
+  missing `['feedback-exit', 'npm run validate -- --overlay tests/fixtures/feedback-exit']`;
+  `CHECK_IDS`'s index `-1` for 13; the Node.js line without `feedback-exit success`. The shard-2
+  guard passes, as criterion 3 says.
