@@ -204,9 +204,9 @@ Also, at `validate` (plan-077 step 5, point 5):
   `with-software` and `added-outcome` by a project `wingfoil init --template Scrum` and
   `--template Kanban` wrote).
 - The overlays (self-test): `software-exit`, `scrum-exit` and `kanban-exit` 36 runs each,
-  `feedback-exit` (its eight compositions) 44 runs, each 0 failed, tolerance none; the golden step (`npm run validate --
-  --tree tests/fixtures/compose/tree --param project_name=Golden`), 26 runs, 0 failed, the 0.2.2
-  tolerance of its own (dl-009).
+  `feedback-exit` (its eight compositions) 44 runs, each 0 failed, tolerance none; the golden step
+  (`npm run validate -- --tree tests/fixtures/compose/tree --param project_name=Golden`), 26 runs,
+  0 failed, the 0.2.2 tolerance of its own (dl-009).
 - The run by hand (dl-032 E4, the charter's Acceptance): task-099's run on WingFoil 0.3.2, with
   and without `software`, composed from `52d125c2`, cited, not rerun: `git diff 52d125c2
   f64436c4 -- packs/ tests/fixtures/feedback-exit tests/fixtures/examples/feedback` is empty.
