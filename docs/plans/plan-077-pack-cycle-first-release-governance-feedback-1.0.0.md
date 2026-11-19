@@ -279,3 +279,8 @@ adoption, its WingFoil pin and its inbox sync.
   digest as the rehearsal's; `main`'s CI run 44505683283 `success`), reviewed independently
   (approve after amendments; one should-fix and three nits, applied), submitted
   `validating → releasing`.
+- 2026-11-19: step 6, prel-007 approved by the approver (`releasing → released`, `84cb0858`),
+  pushed, `main`'s CI run 44525905868 `success`. Step 7, `publish`, run by the approver (ruling
+  7): the tag `governance/feedback@1.0.0` at `84cb0858`, the catalog commit `977cc087`, pushed
+  together; the CI on the tag (44531452267), on `main` (44531451955) and Pages (44531451866)
+  `success`; CB-6's live check passed; prel-007's Publication written. Next: step 8, `activate`.

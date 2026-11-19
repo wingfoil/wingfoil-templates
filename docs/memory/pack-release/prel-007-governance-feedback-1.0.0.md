@@ -231,7 +231,38 @@ Also, at `validate` (plan-077 step 5, point 5):
 
 ## Publication
 
-Recorded at `publish` (plan-077 step 7).
+- Date: 2026-11-19. Line: current. Run by the approver (plan-077 ruling 7), from the commands
+  claude handed over; claude read the results.
+- Tag: `governance/feedback@1.0.0` (annotated), at `84cb085879e09f6b4cfe3827f9a64a89ba0fe027` (the
+  approval's commit; `main`'s CI on it, run 44525905868, `success`). Annotation: the tag's name,
+  then the CHANGELOG entry's first line `- 1.0.0: first version: feedback captured, triaged by
+  the approver and routed into the governance.`
+- Catalog commit: `977cc0871671696766c8e4b789db556f4f8167e8` (the new `governance/feedback`
+  entry, `CATALOG.md`, `catalog-index.json`), by `npm run publish:pack -- --pack
+  governance/feedback` (Node.js 22.21.0, after `npm ci` and `npm run build`). The entry reads the
+  commit `84cb0858`, `status: active`, `pack_format: 2`, `conditional: [with: software@^1]`.
+- Digest: `sha256:6a43f01564c217f4ae1a31df162c262b81d7ca721155409ce7e5f8d42bd4a1f4` (as the dry
+  run and the rehearsal).
+- WingFoil range: `>=0.3.0 <=0.3.2`.
+- Pushed together: `git push --atomic origin governance/feedback@1.0.0 main` (`main` at
+  `977cc08`).
+- CI on the tag, run 44531452267 (publication mode): `success`, longest job 8 min 20 s. CI on
+  `main` at `977cc08`, run 44531451955: `success`, longest job 11 min 33 s. Pages, run
+  44531451866: `success`.
+- CB-6, live (spec-002 §6), anonymous, following `llms.txt`'s steps:
+  - `https://wingfoil.github.io/wingfoil-templates/llms.txt`: 200;
+  - `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/catalog-index.json`: 200;
+    filtered locally to `id: governance/feedback`, `status: active`, `latest: 1.0.0`, versions
+    `1.0.0`, its `wingfoil` `>=0.3.0 <=0.3.2`;
+  - the version's `readme_url`,
+    `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/governance/feedback@1.0.0/packs/governance/feedback/README.md`:
+    200, the title `# Feedback`;
+  - the version's `manifest_url`,
+    `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/governance/feedback@1.0.0/packs/governance/feedback/pack.yaml`:
+    200, `format: 2`, `version: 1.0.0`;
+  - `https://wingfoil.github.io/wingfoil-templates/catalog-index.json`: 200, `status: active`,
+    `latest: 1.0.0`, the same range and URLs.
+- No notice at this tag (plan-077 ruling 11).
 
 ## Execution Notes
 
@@ -248,3 +279,9 @@ Recorded at `publish` (plan-077 step 7).
   skip rule is task-087's ruling 3, not plan-066's) and three nits (`feedback-exit`'s eight
   compositions, `npm audit --omit=dev` in the root, the matrix cache copied), all applied.
   Submitted (`validating → releasing`).
+- 2026-11-19, `approve-publication`: approved by the approver (`releasing → released`, commit
+  `84cb0858`), pushed by claude, `main`'s CI on it read (run 44525905868, `success`).
+- 2026-11-19, `publish` (plan-077 step 7): `publish:pack` and the atomic push run by the approver;
+  the tag, the catalog commit, the three runs and CB-6's live check read by claude, recorded
+  above. The publication matrix's own output was printed in the approver's shell, not seen by
+  claude: its success is read from the command's catalog commit and the tag's CI.
