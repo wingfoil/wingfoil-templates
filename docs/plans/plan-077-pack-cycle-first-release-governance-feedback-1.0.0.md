@@ -250,3 +250,8 @@ adoption, its WingFoil pin and its inbox sync.
   applied: point 7 limited to the publication on `main`, so the scratch-clone runs stay claude's;
   `llms.txt` checked for its answer only; the evidence's output line quoted; the push after the
   activation named in Step 8 and the Handoff.
+- 2026-11-19: step 2, task-100 merged at `80358fbc`; `main`'s CI, run 44488635424, `success`
+  (longest job 18 min 5 s). The intake rehearsed on `main`, run 44488679681, all jobs `success`,
+  `feedback-exit` `success` on both Node.js versions, `rehearsal of 0.3.2 guided: 7 reasons`.
+  Step 2 read in task-100's criterion 9 order: the rehearsal on `main` before the close and
+  `done`. The owed row "`feedback-exit` in the intake's `verify` job" moved to Closed.

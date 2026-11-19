@@ -155,3 +155,11 @@ Branch `task/task-100-intake-feedback-exit` from `main` at `a81a0984` (the backl
 - 2026-11-19, criterion 5: `git diff --stat main..e0301d43` touches `.github/workflows/intake.yml`,
   `src/intake-report.ts`, `tests/intake-workflow.test.ts`, `tests/intake-report.test.ts` and this
   task. The privacy check of the diff: clean (criterion 8).
+- 2026-11-19, merged `--no-ff` into `main` at `80358fbc` on the approver's OK and pushed.
+  `main`'s CI, run 44488635424, `success`: `validate (22.12.0, 1)` 18 min 5 s, `(22.12.0, 2)`
+  4 min 1 s, `(22.21.0, 1)` 11 min 19 s, `(22.21.0, 2)` 4 min 5 s. The rehearsal of `intake.yml`
+  on `main`, run 44488679681, on `80358fbc`: `detect` 21 s, `prepare` 31 s, `verify (22.12.0, 1)`
+  14 min 51 s, `(22.21.0, 1)` 11 min 47 s, `(22.12.0, 2)` 4 min 53 s, `(22.21.0, 2)` 5 min 31 s,
+  `report` 26 s, all `success`; both shard-1 legs record `feedback-exit` `success`; the report's
+  line `rehearsal of 0.3.2 guided: 7 reasons`, as on the branch (criterion 9). The owed row
+  "`feedback-exit` in the intake's `verify` job" moves to Closed in this commit, citing that run.
