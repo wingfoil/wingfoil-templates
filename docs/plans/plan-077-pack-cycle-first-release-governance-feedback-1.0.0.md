@@ -314,3 +314,5 @@ adoption, its WingFoil pin and its inbox sync.
 - 2026-11-19: independent review of the close: approve after amendments, nothing blocking. Applied:
   the closing head's CI before `active → done`; the sequencer row's Source and a latest trigger;
   the engine way of working's row named; a note's date form.
+- 2026-11-19: `main`'s CI on the closing head `9334a581`, run 44545473204, `success` (longest job
+  11 min 32 s). `active → done`.
