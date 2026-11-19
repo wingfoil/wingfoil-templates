@@ -255,3 +255,6 @@ adoption, its WingFoil pin and its inbox sync.
   `feedback-exit` `success` on both Node.js versions, `rehearsal of 0.3.2 guided: 7 reasons`.
   Step 2 read in task-100's criterion 9 order: the rehearsal on `main` before the close and
   `done`. The owed row "`feedback-exit` in the intake's `verify` job" moved to Closed.
+- 2026-11-19: task-100 `done` (`08086737`), `main` pushed; its CI, run 44491466307, `success`:
+  jobs 11 min 27 s, 6 min 6 s, 11 min 8 s, 5 min 50 s. Next: step 3, the rehearsal of
+  `publish:pack` in a scratch clone.
