@@ -376,3 +376,16 @@ previous item, its `element` field wrong; the refusal to adopt an element anothe
       reads `n/a — <reason>`; a check of its own asserts that form and the reason in the body
       (task-098).
   - **FA-7 [A]:** read by the approver at task-098's `approve`.
+- 2026-11-19, plan-077 (`first-release`, `activate`): `governance/feedback` 1.0.0 published
+  (prel-007): the tag `governance/feedback@1.0.0` at `84cb0858`, the catalog commit `977cc087`,
+  the range `>=0.3.0 <=0.3.2`, the digest
+  `sha256:6a43f01564c217f4ae1a31df162c262b81d7ca721155409ce7e5f8d42bd4a1f4`. `activate`'s two
+  checks hold: the tag is on origin, and `catalog.yaml` on `origin/main` lists 1.0.0. At the first
+  tag: CB-1 (`check:packs`, the README lint, 93 files, 0 problems) and CB-2 (the three README
+  examples composed and run on 0.3.0 and 0.3.2 by `validate:publication`) on prel-007's
+  validated commit, the tag's CI in publication mode `success`; CB-6's live check passed
+  (prel-007 › Publication). The adoption run of dl-032 E3 cited: `adoption-feedback.yaml`, 8
+  runs, each `pass` (prel-007 › Validation). The parameters' defaults are fixed with 1.0.0, the
+  convention for new projects (Commitments to adopters). `accepted → active`, the `memory submit`
+  and its push run by the approver (plan-077 ruling 7). The retrospective is this pack's own, in
+  a plan of its own right after plan-077 (plan-077 ruling 10).
