@@ -274,3 +274,8 @@ adoption, its WingFoil pin and its inbox sync.
   temporary mark kept), reviewed independently (approve after amendments; one should-fix, the
   private projects' check stated, and three nits, applied), submitted `draft → validating` at
   `b03e5393`. Next: step 5, `validate`, on the submitted head.
+- 2026-11-19: step 5, `validate`: the evidence of point 5 on `f64436c4` recorded in prel-007
+  (clean clones on Node.js 22.21.0 and 22.12.0, every command exit 0; the dry run's tag, range and
+  digest as the rehearsal's; `main`'s CI run 44505683283 `success`), reviewed independently
+  (approve after amendments; one should-fix and three nits, applied), submitted
+  `validating → releasing`.
