@@ -284,3 +284,33 @@ adoption, its WingFoil pin and its inbox sync.
   7): the tag `governance/feedback@1.0.0` at `84cb0858`, the catalog commit `977cc087`, pushed
   together; the CI on the tag (44531452267), on `main` (44531451955) and Pages (44531451866)
   `success`; CB-6's live check passed; prel-007's Publication written. Next: step 8, `activate`.
+- 2026-11-19: step 8, `activate`: the charter's note committed first (`47d4bd43`), then
+  `pack-governance-feedback` `accepted → active` (`4a9d46fe`), the `memory submit` and its push
+  run by the approver (ruling 7); the tag on origin and `catalog.yaml` on `origin/main` listing
+  1.0.0. `main`'s CI on `4a9d46fe`, run 44542032610, `success` (longest job 11 min 24 s).
+- Step 9, the close:
+  - **The account per tech-spec (dl-020):** this plan amended neither spec-001, spec-002 nor
+    spec-003 and recorded no erratum of theirs; nothing to fold back.
+  - **The owed rows:** "`feedback-exit` in the intake's `verify` job" moved to Closed by task-100;
+    the row for this pack's own retrospective, added with the rulings, stays open until its plan
+    runs; one new row: the sequencer's W10 state, which still reads `governance/feedback` "not
+    started"; the rows "A check of the CHANGELOG's first line" (ruling 3) and "The private
+    projects' check scripted" (ruling 6) stay open, untriggered; "The engine way of working"
+    stays open, ruling 7 having applied only its part on publication and activation, early. The
+    W10 row (plan-052 ruling 7) does not name this pack and is left as it is.
+  - **Numbers:** task-100 and prel-007 used; task-101, dl-043, bug-017 and F-052, reserved for a
+    finding, unused and released.
+  - **Privacy:** every commit of this plan checked before it was made (no local or scratch path,
+    no private repository or project, no intermediary session); the request origins written
+    "asked by the approver on <date>".
+  - **The retrospective** (ruling 10): `governance/feedback`'s own `pack-cycle` retrospective,
+    covering plan-073 … plan-077, in the plan right after this one, not held as the periodic one.
+    Until it runs, `pack-cycle` › `retrospective` is open for `pack-governance-feedback`.
+  - **No notice** at this tag (ruling 11).
+  - Done: `governance/feedback@1.0.0` tagged and pushed, listed in `catalog.yaml` on `main`, the CI
+    `success` on the tag, on `main` and on Pages, CB-6's live check recorded, prel-007 `released`
+    with its Validation and Publication, the charter `active`, and the retrospective's plan named.
+  - `main`'s CI on the closing head read before `active → done`.
+- 2026-11-19: independent review of the close: approve after amendments, nothing blocking. Applied:
+  the closing head's CI before `active → done`; the sequencer row's Source and a latest trigger;
+  the engine way of working's row named; a note's date form.
