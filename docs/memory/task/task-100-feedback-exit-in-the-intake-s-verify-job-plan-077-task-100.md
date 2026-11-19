@@ -135,3 +135,23 @@ Branch `task/task-100-intake-feedback-exit` from `main` at `a81a0984` (the backl
   (the name is the step's `id` alone); a tag-only overlay in ci.yml would be asked of `verify`,
   kept as the stricter reading, no such step existing. The fix is a test's helper only, so no
   re-review.
+- 2026-11-19, frozen at `e0301d43`. The branch CI, run 44485573460, `success`:
+  `validate (22.12.0, 1)` 11 min 28 s, `(22.12.0, 2)` 3 min 52 s, `(22.21.0, 1)` 11 min 22 s,
+  `(22.21.0, 2)` 3 min 58 s; none over dl-039 R3's 25 minutes.
+- 2026-11-19, the rehearsal of `intake.yml` on the branch, run 44485593008 (`gh workflow run
+  intake.yml --ref task/task-100-intake-feedback-exit -f rehearsal=true`), on `e0301d43`:
+  `detect` `success` 24 s, `prepare` 29 s, `verify (22.12.0, 1)` 14 min 25 s, `(22.21.0, 1)`
+  13 min 51 s, `(22.12.0, 2)` 6 min 24 s, `(22.21.0, 2)` 3 min 39 s, `report` 19 s, all
+  `success`. The report's line `rehearsal of 0.3.2 guided: 7 reasons`. Its text, rebuilt by
+  `intake:report` from the run's artifacts (the job summary is not served by the API), reads
+  `Rehearsal of 0.3.2: never for intake (dl-042 I1)` and `## WingFoil 0.3.2: guided`; both
+  Node.js lines name `feedback-exit success`; the seven reasons are the CHANGELOG's, none naming
+  the prepare or verify job's result (criterion 6).
+- 2026-11-19, dl-039's local list on Node.js 22.21.0, a clean clone at `e0301d43` after `npm ci`
+  and the build: `validate:publication` 28 runs, 0 failed, `tolerance applied: none`; the golden
+  tree in publication mode 26 runs, 0 failed, `tolerance applied: none`; `workflow list` exit 0;
+  `directives list` exit 0, `warnings` empty; the tree clean. The first golden run used
+  `validate` (self-test mode) by mistake and was rerun with `validate:publication`.
+- 2026-11-19, criterion 5: `git diff --stat main..e0301d43` touches `.github/workflows/intake.yml`,
+  `src/intake-report.ts`, `tests/intake-workflow.test.ts`, `tests/intake-report.test.ts` and this
+  task. The privacy check of the diff: clean (criterion 8).
