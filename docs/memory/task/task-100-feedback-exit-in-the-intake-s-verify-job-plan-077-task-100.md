@@ -84,7 +84,26 @@ WingFoil release can be reported verified (dl-042) without the overlay of a publ
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-100-intake-feedback-exit` from `main` at `a81a0984` (the backlog approval).
+
+- **Red commit** (criteria 3, 4): tests only.
+  - `tests/intake-workflow.test.ts`: a test "runs feedback-exit after kanban-exit and before the
+    runs (task-100)", reading the `verify` steps by `id`: `feedback-exit`'s `run`, its `if`, and
+    the indexes `kanban-exit` < `feedback-exit` < `runs`. A test "mirrors ci.yml's overlays
+    (task-100)": a helper reads `.github/workflows/ci.yml` with `loadYamlFile`, takes every step
+    of its `validate` job whose `run` matches `^npm run validate -- --overlay
+    tests/fixtures/(\S+)$`, and compares, with `deepEqual`, the list of `[name, run]` pairs with
+    `verify`'s steps matching the same pattern, as `[id, run]`; ci.yml's list holds at least four.
+  - `tests/intake-report.test.ts`: in "the checks of a verify leg", a test that `CHECK_IDS`
+    holds `feedback-exit` at the index after `kanban-exit`, that `parseChecks` accepts a shard-1
+    leg naming it, and the guard that it refuses a shard-2 leg naming it; in "the checks per
+    Node.js version", a literal `feedback-exit success` in a report's Node.js line.
+- **Build commit** (criteria 1, 2): in `intake.yml`, the step after `kanban-exit`, written as
+  the three overlays before it, and `"feedback-exit"` after `"kanban-exit"` in the inline `ids`
+  list, rewrapped under 100 characters; in `src/intake-report.ts`, `'feedback-exit'` after
+  `'kanban-exit'` in `CHECK_IDS`. Nothing else changes.
+- **Checks:** the build review and its re-review if a rule changes, the freeze, the branch CI and
+  the rehearsal on the frozen commit (criteria 6, 7), dl-039's local list.
 
 ## Execution Notes
 
