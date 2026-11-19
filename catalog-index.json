@@ -154,6 +154,110 @@
       "profiles": []
     },
     {
+      "id": "governance/feedback",
+      "catalog": "official",
+      "status": "active",
+      "axis": "governance",
+      "slot": null,
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "governance/feedback@1.0.0",
+          "wingfoil": ">=0.3.0 <=0.3.2",
+          "formats": {
+            "directive": 1,
+            "memory": 1,
+            "memory-template": 1,
+            "roles": 1,
+            "workflow": 1
+          },
+          "requires_capabilities": [
+            "workflow-engine"
+          ],
+          "requires": [
+            "base@^2"
+          ],
+          "conflicts": [],
+          "conditional": [
+            {
+              "with": "software@^1"
+            }
+          ],
+          "pack_format": 2,
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/governance/feedback@1.0.0/packs/governance/feedback/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/governance/feedback@1.0.0/packs/governance/feedback/pack.yaml"
+        }
+      ],
+      "title": "Feedback",
+      "description": "Feedback for any project governed by WingFoil: capture each item with its source and context, have the approver triage it, and route it into the governance the project already has, so that it becomes input for the evolution of the project and of its governance.",
+      "workflows": [
+        "feedback-ingest",
+        "feedback-item",
+        "feedback-review"
+      ],
+      "conditional_workflows": [
+        "feedback-bug-item",
+        "feedback-bug-route"
+      ],
+      "memory_types": [
+        "feedback"
+      ],
+      "directives": [
+        "feedback"
+      ],
+      "conditional_directives": [
+        "feedback-bug-route"
+      ],
+      "conditional_parts": [
+        {
+          "with": "software@^1",
+          "workflows": [
+            "feedback-bug-item",
+            "feedback-bug-route"
+          ],
+          "directives": [
+            "feedback-bug-route"
+          ]
+        }
+      ],
+      "tensions": [],
+      "parameters": [
+        {
+          "name": "feedback_id",
+          "type": "pattern",
+          "default": "feedback-{n}-{slug}",
+          "description": "The feedback type's id pattern"
+        },
+        {
+          "name": "feedback_kinds",
+          "type": "string",
+          "default": "defect, gap, request, observation",
+          "description": "List of the allowed values of a feedback item's kind"
+        },
+        {
+          "name": "feedback_outcomes",
+          "type": "string",
+          "default": "decision-log, task, upstream-note, declined, duplicate",
+          "description": "List of the outcomes feedback-review routes; never bug, which the software entry adds"
+        },
+        {
+          "name": "feedback_path",
+          "type": "path",
+          "default": "docs/memory/feedback/{id}.md",
+          "description": "The feedback type's path; only letters, digits and . _ / { } -"
+        },
+        {
+          "name": "feedback_targets",
+          "type": "string",
+          "default": "product, governance",
+          "description": "List of the allowed values of a feedback item's target, upstream:<name> included"
+        }
+      ],
+      "excerpt": "A project governed by WingFoil, software or not, that wants feedback to become input for its own evolution composes `governance/feedback` with `base`: each item is captured with its source and context, triaged by the approver, and routed into the governance the project already has (a decision-log, a task, a change of the governance, a note to an upstream), then closed once the routed element is named. It holds the `feedback` Memory type, the workflows `feedback-ingest`, `feedback-review` and…",
+      "profiles": []
+    },
+    {
       "id": "methodology/kanban",
       "catalog": "official",
       "status": "active",

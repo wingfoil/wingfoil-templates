@@ -35,7 +35,9 @@ None published yet.
 
 ## Governance
 
-None published yet.
+| Pack | Summary | Status | Latest | WingFoil | README |
+| --- | --- | --- | --- | --- | --- |
+| <a id="pack-governance-feedback"></a>`governance/feedback` | Feedback for any project governed by WingFoil: capture each item with its source and context, have the approver triage it, and route it into the governance the project already has, so that it becomes input for the evolution of the project and of its governance. (`feedback-bug-item`, `feedback-bug-route` only with `software`) | active | 1.0.0 | >=0.3.0 <=0.3.2 | [README](https://github.com/wingfoil/wingfoil-templates/blob/governance/feedback@1.0.0/packs/governance/feedback/README.md) |
 
 ## Team mode
 

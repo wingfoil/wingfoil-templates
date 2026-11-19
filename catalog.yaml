@@ -130,6 +130,29 @@ packs:
           - software@^1
         conflicts: []
         wingfoil: ">=0.3.0 <=0.3.2"
+  - id: governance/feedback
+    path: packs/governance/feedback
+    catalog: official
+    status: active
+    versions:
+      - version: 1.0.0
+        commit: 84cb085879e09f6b4cfe3827f9a64a89ba0fe027
+        digest: sha256:6a43f01564c217f4ae1a31df162c262b81d7ca721155409ce7e5f8d42bd4a1f4
+        formats:
+          roles: 1
+          memory: 1
+          workflow: 1
+          directive: 1
+          memory-template: 1
+        requires_capabilities:
+          - workflow-engine
+        requires:
+          - base@^2
+        conflicts: []
+        wingfoil: ">=0.3.0 <=0.3.2"
+        conditional:
+          - with: software@^1
+        pack_format: 2
 transitions: []
 presets:
   - { id: classic-kanban, path: presets/classic-kanban.yaml }
