@@ -2,7 +2,7 @@
 id: task-100-feedback-exit-in-the-intake-s-verify-job-plan-077-task-100
 type: task
 title: "feedback-exit in the intake's verify job (plan-077 task-100)"
-status: backlog
+status: in-progress
 pack: ""            # tooling task (tooling-delivery v4), plan-077 task-100
 depends_on: []
 tags: ["tooling","intake","feedback"]
