@@ -270,3 +270,7 @@ adoption, its WingFoil pin and its inbox sync.
   1432 pass; `check:schemas`, `check:packs`, `index -- --check` exit 0; `validate` 28 runs,
   0 failed, `tolerance applied: none`; `check:runs` 84 runs, 0 failed; the tree clean. No
   failure from the first format-2 entry: no tooling task. Next: step 4, `prepare` (prel-007).
+- 2026-11-19: step 4, `prepare`: prel-007 added, its fields and Changes written, CB-3 checked (the
+  temporary mark kept), reviewed independently (approve after amendments; one should-fix, the
+  private projects' check stated, and three nits, applied), submitted `draft → validating` at
+  `b03e5393`. Next: step 5, `validate`, on the submitted head.
