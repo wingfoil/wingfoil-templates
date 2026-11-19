@@ -183,6 +183,37 @@ describe('the verify job (task-081)', () => {
     assert.equal(run('audit-root'), 'npm audit --omit=dev');
   });
 
+  it('runs feedback-exit after kanban-exit and before the runs (task-100)', () => {
+    const steps = job('verify').steps;
+    const at = (id: string): number => steps.findIndex((step) => step.id === id);
+    const feedback = steps[at('feedback-exit')];
+    assert.equal(feedback?.run?.trim(),
+      'npm run validate -- --overlay tests/fixtures/feedback-exit');
+    assert.equal(feedback?.if, 'matrix.shard == 1');
+    assert.equal(feedback?.['continue-on-error'], true);
+    assert.ok(at('kanban-exit') >= 0 && at('kanban-exit') < at('feedback-exit'),
+      'after kanban-exit');
+    assert.ok(at('feedback-exit') < at('runs'), 'before the runs');
+  });
+
+  it('mirrors ci.yml\'s overlays, in order, each step named by its overlay (task-100)', () => {
+    const OVERLAY = /^npm run validate -- --overlay tests\/fixtures\/(\S+)$/;
+    /** Each overlay step as `[name, run]`: the name its `id` in verify, its overlay in ci.yml. */
+    const overlays = (steps: Step[], byId: boolean): Array<[string | undefined, string]> =>
+      steps.flatMap((step) => {
+        const run = step.run?.trim() ?? '';
+        const found = OVERLAY.exec(run);
+        if (found === null) return [];
+        return [[byId ? step.id : found[1], run] as [string | undefined, string]];
+      });
+    const ciPath = join(REPO_ROOT, '.github/workflows/ci.yml');
+    const ci = loadYamlFile(ciPath, 'ci.yml').data as { jobs: Record<string, Job> };
+    const ciSteps = ci.jobs['validate']?.steps ?? [];
+    const fromCi = overlays(ciSteps, false);
+    assert.ok(fromCi.length >= 4, `ci.yml's overlays: ${JSON.stringify(fromCi)}`);
+    assert.deepEqual(overlays(job('verify').steps, true), fromCi);
+  });
+
   it('writes the outcomes, uploads them, then fails on one not green: in that order', () => {
     const steps = job('verify').steps;
     const [write, upload, fail] = steps.slice(-3);

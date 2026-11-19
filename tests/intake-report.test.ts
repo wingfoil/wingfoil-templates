@@ -208,6 +208,13 @@ describe('the checks per Node.js version, from two shards (task-089)', () => {
     assert.ok(!markdown.includes('no checks'));
   });
 
+  it('names feedback-exit in each version\'s line (task-100)', () => {
+    const { markdown } = report(input());
+    for (const node of ['22.12.0', '22.21.0']) {
+      assert.ok(nodeLine(markdown, node)?.includes(', feedback-exit success, '), node);
+    }
+  });
+
   it('shows test failure when either shard\'s tests are red', () => {
     const redOne = parseChecks(legText('22.12.0').replace('"test":"success"', '"test":"failure"'));
     assert.ok(redOne !== undefined);
@@ -263,6 +270,16 @@ describe('the checks of a verify leg (task-081)', () => {
         { ...good, shard: 2 }]) {
         assert.equal(parseChecks(JSON.stringify(bad)), undefined, JSON.stringify(bad));
       }
+    });
+
+  it('reads feedback-exit in shard 1, after kanban-exit, and refuses it in shard 2 (task-100)',
+    () => {
+      const ids: readonly string[] = CHECK_IDS;
+      assert.equal(ids.indexOf('feedback-exit'), ids.indexOf('kanban-exit') + 1);
+      const one = { node: '22.21.0', shard: 1, checks: { 'feedback-exit': 'success' } };
+      assert.deepEqual(parseChecks(JSON.stringify(one)), one);
+      // A guard, true before and after the build: shard 2 records the tests only.
+      assert.equal(parseChecks(JSON.stringify({ ...one, shard: 2 })), undefined);
     });
 
   it('refuses a node not named, an id not of the fixed set, an outcome not known, not JSON', () => {

@@ -2,7 +2,7 @@
 id: task-100-feedback-exit-in-the-intake-s-verify-job-plan-077-task-100
 type: task
 title: "feedback-exit in the intake's verify job (plan-077 task-100)"
-status: backlog
+status: approved
 pack: ""            # tooling task (tooling-delivery v4), plan-077 task-100
 depends_on: []
 tags: ["tooling","intake","feedback"]
@@ -84,7 +84,26 @@ WingFoil release can be reported verified (dl-042) without the overlay of a publ
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-100-intake-feedback-exit` from `main` at `a81a0984` (the backlog approval).
+
+- **Red commit** (criteria 3, 4): tests only.
+  - `tests/intake-workflow.test.ts`: a test "runs feedback-exit after kanban-exit and before the
+    runs (task-100)", reading the `verify` steps by `id`: `feedback-exit`'s `run`, its `if`, and
+    the indexes `kanban-exit` < `feedback-exit` < `runs`. A test "mirrors ci.yml's overlays
+    (task-100)": a helper reads `.github/workflows/ci.yml` with `loadYamlFile`, takes every step
+    of its `validate` job whose `run` matches `^npm run validate -- --overlay
+    tests/fixtures/(\S+)$`, and compares, with `deepEqual`, the list of `[name, run]` pairs with
+    `verify`'s steps matching the same pattern, as `[id, run]`; ci.yml's list holds at least four.
+  - `tests/intake-report.test.ts`: in "the checks of a verify leg", a test that `CHECK_IDS`
+    holds `feedback-exit` at the index after `kanban-exit`, that `parseChecks` accepts a shard-1
+    leg naming it, and the guard that it refuses a shard-2 leg naming it; in "the checks per
+    Node.js version", a literal `feedback-exit success` in a report's Node.js line.
+- **Build commit** (criteria 1, 2): in `intake.yml`, the step after `kanban-exit`, written as
+  the three overlays before it, and `"feedback-exit"` after `"kanban-exit"` in the inline `ids`
+  list, rewrapped under 100 characters; in `src/intake-report.ts`, `'feedback-exit'` after
+  `'kanban-exit'` in `CHECK_IDS`. Nothing else changes.
+- **Checks:** the build review and its re-review if a rule changes, the freeze, the branch CI and
+  the rehearsal on the frozen commit (criteria 6, 7), dl-039's local list.
 
 ## Execution Notes
 
@@ -102,3 +121,37 @@ WingFoil release can be reported verified (dl-042) without the overlay of a publ
   all applied: the shard-2 refusal a guard, not red; the close and `done` as two commits, with
   `main`'s CI read; a red rehearsal on `main` stopping the close instead of returning the task;
   a Delivery criterion with the privacy check.
+- 2026-11-19, the red run (dl-018): `npm run build && node --test
+  dist/tests/intake-workflow.test.js dist/tests/intake-report.test.js`: 51 tests, 47 pass, 4 fail,
+  each on the missing `feedback-exit`: the step's `run` `undefined`; the mirror's `deepEqual`
+  missing `['feedback-exit', 'npm run validate -- --overlay tests/fixtures/feedback-exit']`;
+  `CHECK_IDS`'s index `-1` for 13; the Node.js line without `feedback-exit success`. The shard-2
+  guard passes, as criterion 3 says.
+- 2026-11-19, the build: `npm run build && node --test dist/tests/intake-workflow.test.js
+  dist/tests/intake-report.test.js dist/tests/ci-workflow.test.js`: 71 tests, 71 pass; `lint`
+  clean. Build review (dl-017): approve, no blocker and no should-fix; the mirror
+  mutation-tested (a wrong id, an extra `verify` overlay, two swapped, a tag-only one in ci.yml:
+  each fails it). Two nits: a `verify` overlay step without an `id` passed the mirror, applied
+  (the name is the step's `id` alone); a tag-only overlay in ci.yml would be asked of `verify`,
+  kept as the stricter reading, no such step existing. The fix is a test's helper only, so no
+  re-review.
+- 2026-11-19, frozen at `e0301d43`. The branch CI, run 44485573460, `success`:
+  `validate (22.12.0, 1)` 11 min 28 s, `(22.12.0, 2)` 3 min 52 s, `(22.21.0, 1)` 11 min 22 s,
+  `(22.21.0, 2)` 3 min 58 s; none over dl-039 R3's 25 minutes.
+- 2026-11-19, the rehearsal of `intake.yml` on the branch, run 44485593008 (`gh workflow run
+  intake.yml --ref task/task-100-intake-feedback-exit -f rehearsal=true`), on `e0301d43`:
+  `detect` `success` 24 s, `prepare` 29 s, `verify (22.12.0, 1)` 14 min 25 s, `(22.21.0, 1)`
+  13 min 51 s, `(22.12.0, 2)` 6 min 24 s, `(22.21.0, 2)` 3 min 39 s, `report` 19 s, all
+  `success`. The report's line `rehearsal of 0.3.2 guided: 7 reasons`. Its text, rebuilt by
+  `intake:report` from the run's artifacts (the job summary is not served by the API), reads
+  `Rehearsal of 0.3.2: never for intake (dl-042 I1)` and `## WingFoil 0.3.2: guided`; both
+  Node.js lines name `feedback-exit success`; the seven reasons are the CHANGELOG's, none naming
+  the prepare or verify job's result (criterion 6).
+- 2026-11-19, dl-039's local list on Node.js 22.21.0, a clean clone at `e0301d43` after `npm ci`
+  and the build: `validate:publication` 28 runs, 0 failed, `tolerance applied: none`; the golden
+  tree in publication mode 26 runs, 0 failed, `tolerance applied: none`; `workflow list` exit 0;
+  `directives list` exit 0, `warnings` empty; the tree clean. The first golden run used
+  `validate` (self-test mode) by mistake and was rerun with `validate:publication`.
+- 2026-11-19, criterion 5: `git diff --stat main..e0301d43` touches `.github/workflows/intake.yml`,
+  `src/intake-report.ts`, `tests/intake-workflow.test.ts`, `tests/intake-report.test.ts` and this
+  task. The privacy check of the diff: clean (criterion 8).
