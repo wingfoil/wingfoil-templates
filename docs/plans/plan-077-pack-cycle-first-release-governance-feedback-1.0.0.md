@@ -258,3 +258,15 @@ adoption, its WingFoil pin and its inbox sync.
 - 2026-11-19: task-100 `done` (`08086737`), `main` pushed; its CI, run 44491466307, `success`:
   jobs 11 min 27 s, 6 min 6 s, 11 min 8 s, 5 min 50 s. Next: step 3, the rehearsal of
   `publish:pack` in a scratch clone.
+- 2026-11-19: step 3, the rehearsal (point 4), in a scratch clone of `main` at `6c252e14`, its
+  remote removed, nothing pushed, on Node.js 22.21.0 after `npm ci` and the build:
+  `npm run publish:pack -- --pack governance/feedback` exit 0, the publication matrix 28 runs,
+  0 failed, `tolerance applied: none`; the tag `governance/feedback@1.0.0` annotated at
+  `6c252e14` with the CHANGELOG's line; the catalog commit touching `catalog.yaml`,
+  `catalog-index.json` and `CATALOG.md`; the digest
+  `sha256:6a43f01564c217f4ae1a31df162c262b81d7ca721155409ce7e5f8d42bd4a1f4`, as the outline's
+  dry run; the range `>=0.3.0 <=0.3.2`; the entry `status: active`, `pack_format: 2`,
+  `conditional: [with: software@^1]`. On the result, after the build: `npm test` 1432 tests,
+  1432 pass; `check:schemas`, `check:packs`, `index -- --check` exit 0; `validate` 28 runs,
+  0 failed, `tolerance applied: none`; `check:runs` 84 runs, 0 failed; the tree clean. No
+  failure from the first format-2 entry: no tooling task. Next: step 4, `prepare` (prel-007).
