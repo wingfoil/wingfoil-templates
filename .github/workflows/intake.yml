@@ -196,6 +196,10 @@ jobs:
         if: matrix.shard == 1
         continue-on-error: true
         run: npm run validate -- --overlay tests/fixtures/kanban-exit
+      - id: feedback-exit
+        if: matrix.shard == 1
+        continue-on-error: true
+        run: npm run validate -- --overlay tests/fixtures/feedback-exit
       - id: runs
         if: matrix.shard == 1
         continue-on-error: true
@@ -215,7 +219,7 @@ jobs:
             const shard = Number(process.env.SHARD);
             const ids = shard === 2 ? ["test"] : ["test", "lint", "pins", "schemas", "packs",
               "site", "audit-root", "audit-pins", "validate", "golden", "software-exit",
-              "scrum-exit", "kanban-exit", "runs", "publication"];
+              "scrum-exit", "kanban-exit", "feedback-exit", "runs", "publication"];
             const steps = JSON.parse(process.env.STEPS);
             const checks = Object.fromEntries(
               ids.map((id) => [id, steps[id]?.outcome ?? "skipped"]));

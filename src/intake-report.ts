@@ -9,8 +9,8 @@ import { STRICT } from './intake-prepare';
 
 /** The checks of `intake.yml`'s verify job, in its order: ci.yml's self-test. */
 export const CHECK_IDS = ['test', 'lint', 'pins', 'schemas', 'packs', 'site', 'audit-root',
-  'audit-pins', 'validate', 'golden', 'software-exit', 'scrum-exit', 'kanban-exit', 'runs',
-  'publication'] as const;
+  'audit-pins', 'validate', 'golden', 'software-exit', 'scrum-exit', 'kanban-exit',
+  'feedback-exit', 'runs', 'publication'] as const;
 /** The Node.js versions verify runs on: the floor (adr-002) and the newest 22.x checked. */
 export const NODES = ['22.12.0', '22.21.0'] as const;
 const OUTCOMES = ['success', 'failure', 'cancelled', 'skipped'];
