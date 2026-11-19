@@ -198,18 +198,20 @@ describe('the verify job (task-081)', () => {
 
   it('mirrors ci.yml\'s overlays, in order, each step named by its overlay (task-100)', () => {
     const OVERLAY = /^npm run validate -- --overlay tests\/fixtures\/(\S+)$/;
-    const overlays = (steps: Step[], key: (step: Step) => string | undefined):
-      Array<[string | undefined, string]> => steps.flatMap((step) => {
-      const run = step.run?.trim() ?? '';
-      const found = OVERLAY.exec(run);
-      return found === null ? [] : [[key(step) ?? found[1], run] as [string | undefined, string]];
-    });
+    /** Each overlay step as `[name, run]`: the name its `id` in verify, its overlay in ci.yml. */
+    const overlays = (steps: Step[], byId: boolean): Array<[string | undefined, string]> =>
+      steps.flatMap((step) => {
+        const run = step.run?.trim() ?? '';
+        const found = OVERLAY.exec(run);
+        if (found === null) return [];
+        return [[byId ? step.id : found[1], run] as [string | undefined, string]];
+      });
     const ciPath = join(REPO_ROOT, '.github/workflows/ci.yml');
     const ci = loadYamlFile(ciPath, 'ci.yml').data as { jobs: Record<string, Job> };
     const ciSteps = ci.jobs['validate']?.steps ?? [];
-    const fromCi = overlays(ciSteps, () => undefined);
+    const fromCi = overlays(ciSteps, false);
     assert.ok(fromCi.length >= 4, `ci.yml's overlays: ${JSON.stringify(fromCi)}`);
-    assert.deepEqual(overlays(job('verify').steps, (step) => step.id), fromCi);
+    assert.deepEqual(overlays(job('verify').steps, true), fromCi);
   });
 
   it('writes the outcomes, uploads them, then fails on one not green: in that order', () => {

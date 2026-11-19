@@ -127,3 +127,11 @@ Branch `task/task-100-intake-feedback-exit` from `main` at `a81a0984` (the backl
   missing `['feedback-exit', 'npm run validate -- --overlay tests/fixtures/feedback-exit']`;
   `CHECK_IDS`'s index `-1` for 13; the Node.js line without `feedback-exit success`. The shard-2
   guard passes, as criterion 3 says.
+- 2026-11-19, the build: `npm run build && node --test dist/tests/intake-workflow.test.js
+  dist/tests/intake-report.test.js dist/tests/ci-workflow.test.js`: 71 tests, 71 pass; `lint`
+  clean. Build review (dl-017): approve, no blocker and no should-fix; the mirror
+  mutation-tested (a wrong id, an extra `verify` overlay, two swapped, a tag-only one in ci.yml:
+  each fails it). Two nits: a `verify` overlay step without an `id` passed the mirror, applied
+  (the name is the step's `id` alone); a tag-only overlay in ci.yml would be asked of `verify`,
+  kept as the stricter reading, no such step existing. The fix is a test's helper only, so no
+  re-review.
