@@ -170,3 +170,13 @@ One commit for the note with its ledger row. Then the build review, the checks a
   mutation of `## Expected` was a rename, standing in for Design's removal (both fail
   `assertSections`). No re-review: the request is unchanged, the amendments correct one fact and
   wording.
+- 2026-11-21: checks (dl-039 R1, R2), once, on the frozen commit `e4263873`: the branch CI, run
+  44929993996, `success`, jobs `validate (22.12.0, 1)` 16 min 3 s, `(22.12.0, 2)` 3 min 47 s,
+  `(22.21.0, 1)` 11 min 3 s, `(22.21.0, 2)` 3 min 56 s (none over 25 minutes); from a clean
+  working tree on Node.js 22.21.0 after `npm ci` and `npm run build`: `npm run
+  validate:publication`, the golden tree in publication mode and `npm run -s wingfoil -- workflow
+  list` exit 0, `directives list --format json` with `"warnings": []`, the inbox tests 13 passing,
+  `npm run lint` exit 0, the tree still clean. This commit changes only `docs/memory`: no new run.
+  Privacy check of the branch's diff and messages: no local or scratch path, no maintainer name or
+  email, no private project, no intermediary session. `main`'s CI on `23c0fcb5` (the backlog
+  approval) read: run 44928960692 `success`, longest job 13 min 24 s.
