@@ -266,6 +266,7 @@ this repository's adoption of the packs fix it?
 | GOV-3 | The 100-character rule for repository texts written in a directive and checked by a script, so a commit or push stops on it | no | a decision-log, its check a tooling task |
 | GOV-4 | A review's counts recorded in the element's Execution Notes (blockers, should-fix, nits), and a claim found false recorded as a correction, not overwritten | no: the row's "dl-017's reviewer as the checker before every gate" holds today and says nothing of the record | a decision-log |
 | GOV-5 | A charter's review checks it against the format spec-001 currently requires | no | none: one case; the charter drift row (§8) |
+| GOV-6 | The path from a pack proposal to a charter (P3) | no: neither `base` nor `software` ships a pack ingest | a decision-log (P3) |
 
 ## 8. The register
 
@@ -322,4 +323,26 @@ UI; the weekly reading of `intake.yml`'s runs; the reply's later part; the two r
 
 ## Points to analyse (additional-points)
 
-None added yet.
+Given by the approver on 2026-11-21, at the checkpoint:
+
+- **P1 — The *(unrecorded)* candidates confirmed**, all of them (§3, §4, §5.3): task-098's red
+  commit amended before its push; task-099's claims corrected; `workflow list` run with an option
+  it lacks; the floor Node.js 22.12.0 found only in a local cache; the length check that did not
+  stop the commit, the submit and the push; the network failure in a chained CI watch; the four
+  numbered commands with their outputs and a stop condition; two more approver turns than
+  plan-058, with claude's commits waiting for the approver's push. This plan is their source.
+- **P2 — GOV-1 … GOV-4 kept**, each a decision-log (§7); **WF-1 kept**, a note by task-101 (§6).
+- **P3 — No workflow ingests a new pack.** Asked by the approver: is there an ingest workflow for
+  new packs? Read for this point in `.wingfoil/workflows/custom/` and `.wingfoil/workflows.yaml`:
+  none. The ingest workflows are `adr-ingest`, `bug-ingest` and `decision-log-ingest`;
+  `pack-cycle` › `charter` starts at `memory.add(type: pack)`, the charter itself. How the packs of
+  this repository's later waves entered: a decision-log captured under `decision-log-ingest`
+  (dl-011, dl-012 and dl-013, plan-020), a vision amendment placing the feature in a wave
+  (plan-071: F4.9 in W10), then `pack-cycle` › `charter` (plan-073). Nothing writes that path
+  down, and nothing says how a pack proposed from outside (a contributor, an adopter, a feedback
+  item routed by `governance/feedback`) reaches a charter. Related: the open row "`pack-delivery`'s
+  selection over `accepted` packs (`charter` creates a `draft` pack)". The adoption (W10) does not
+  fix it: neither `base` nor `software` ships a pack ingest. **GOV-6, kept as the approver asked:**
+  a decision-log on the path from a pack proposal to a charter, either a workflow of its own
+  (`pack-ingest`: capture, triage by the approver, a decision-log or a refusal, then the wave) or a
+  rule naming the path above; its application by a dl actions plan.
