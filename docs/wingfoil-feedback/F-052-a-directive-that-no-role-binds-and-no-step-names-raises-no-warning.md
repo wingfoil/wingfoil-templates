@@ -11,13 +11,14 @@ New note (task-101). From this repository's task-099 (a run by hand of a pack's 
 and its retrospective, plan-078: a custom directive that no role binds in `roles.yaml` and that is
 not `global` reaches no step, since `workflow next` lists a step's directives from the role's entry
 and `global` only (spec-017 §6.2), and nothing says so. `directives list` already shows it as
-`"assignment": "unassigned"`, and 0.3.2 warns on the reverse case, a binding with no directive file
-(0.3.0 does not); a step warns on a role with no directive (`no directives assigned to role
-'<role>'`). The request is the missing half: a warning on a directive nothing binds. Distinct from
-F-051 (a phase cannot bind a directive), which asks for a binding, not for a warning on a missing
-one; from F-041 (a phase role that no member holds is accepted silently), its neighbour for roles;
-names F-034 (the command offered for an action drops its arguments), since an `agent.execute` naming
-a directive is read as text only.
+`"assignment": "unassigned"`, and the reverse case, a binding with no directive file, is warned of
+at the step on both releases (`workflow next`'s `directiveWarnings`) and by `directives list` on
+0.3.2; a step also warns on a role with no directive (`no directives assigned to role '<role>'`).
+The request is the missing half: a warning on a directive nothing binds. Distinct from F-051 (a
+phase cannot bind a directive), which asks for a binding, not for a warning on a missing one; from
+F-041 (a phase role that no member holds and no agent executes is accepted silently), its neighbour
+for roles; names F-034 (the command offered for a `memory.add` action drops its arguments), since an
+`agent.execute` naming a directive is likewise read as text only.
 
 ## Observed
 
@@ -41,9 +42,21 @@ $ wingfoil workflow list --format json
   "diagnostics": []
 ```
 
-Then, written by hand and committed, `.wingfoil/workflows/custom/bug-route.yaml`, a main workflow
-(`kind: main`, `format: 1`, no `element`) with one phase `route` (role `developer`, action
-`'memory.add(type: bug)'`), included in `workflows.yaml`:
+Then, written by hand and committed, `.wingfoil/workflows/custom/bug-route.yaml`, included in
+`workflows.yaml` after `bug-ingest.yaml`:
+
+```yaml
+name: bug-route
+kind: main
+format: 1
+description: "Route a bug"
+phases:
+  - name: route
+    description: "Add the bug."
+    role: developer
+    actions:
+      - 'memory.add(type: bug)'
+```
 
 ```
 $ wingfoil workflow start bug-route
@@ -65,7 +78,12 @@ committed, then reverted:
 $ wingfoil directives list --format json
   "warnings": ["directive 'ghost' bound to role 'developer' has no directive file"]   # 0.3.2
   "warnings": []                                                                      # 0.3.0
+$ wingfoil workflow next --format json
+  "directiveWarnings": ["directive 'ghost' bound to role 'developer' has no directive file"]
 ```
+
+So the step already warns on a binding with no file, on both releases; nothing warns on a file with
+no binding.
 
 A directive named in an action, the case a warning should spare: the phase's actions gain
 `'agent.execute(directive: route-rules)'` before `memory.add`, committed:

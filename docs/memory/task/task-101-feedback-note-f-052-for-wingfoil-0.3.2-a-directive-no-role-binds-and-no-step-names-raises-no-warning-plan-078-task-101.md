@@ -161,3 +161,12 @@ One commit for the note with its ledger row. Then the build review, the checks a
   fields swapped 2, `## Expected` renamed 2; `New note (task-101).` once in the note; unmutated,
   `node --test dist/tests/wingfoil-feedback.test.js dist/tests/feedback-note.test.js` 13 passing,
   `npm run lint` exit 0.
+- 2026-11-21: independent build review of `72c3f158`: approve after amendments, nothing blocking; it
+  reproduced the note on 0.3.0 and 0.3.2. One should-fix, applied: on 0.3.0 too the step warns on a
+  binding with no file (`workflow next`'s `directiveWarnings`), only `directives list` does not; so
+  Context's "absent in 0.3.0" and the note above's "on 0.3.2 only" hold for `directives list` alone,
+  both left as written (dl-019), and the note says it and shows the step's warning on both releases.
+  Nits, applied: F-034's and F-041's descriptions as their titles; the workflow's YAML shown; the
+  mutation of `## Expected` was a rename, standing in for Design's removal (both fail
+  `assertSections`). No re-review: the request is unchanged, the amendments correct one fact and
+  wording.
