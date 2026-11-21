@@ -2,7 +2,7 @@
 id: dl-047-a-review-s-record-its-counts-and-what-was-applied-and-a-claim-found-false-corrected-by-a-note
 type: decision-log
 title: "A review's record: its counts and what was applied, and a claim found false corrected by a note"
-status: draft
+status: pending
 tags: ["process","review"]
 ---
 
