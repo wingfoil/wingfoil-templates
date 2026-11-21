@@ -38,8 +38,8 @@ The points below are **proposed**; they become rulings when the approver approve
   a bug of its own."
 - **P2 — Applied after approval** by a dl actions plan: `tooling-delivery` 4 → 5 and
   `kanban-delivery` 6 → 7 together, their headers' "differ only in roles and descriptions" kept
-  true, `npm run -s wingfoil -- workflow list` and `check:runs`
-  exit 0.
+  true, `npm run -s wingfoil -- workflow list` and `check:runs` exit 0; the bumps shared with
+  dl-047's (dl-043 D3).
 
 ## Execution Notes
 <!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
@@ -47,3 +47,4 @@ The points below are **proposed**; they become rulings when the approver approve
   dl-043, as the approver kept it at the checkpoint (the inventory of 2026-11-21, P2, P3).
 - 2026-11-21: independent review: approve after amendments; one should-fix (the check only if the
   task names one) and one nit (the headers quoted, the bumps named), applied.
+- 2026-11-21: re-review: approve; two nits (a wrap; the shared bumps), applied.

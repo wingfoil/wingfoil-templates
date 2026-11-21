@@ -55,3 +55,4 @@ The points below are **proposed**; they become rulings when the approver approve
 - 2026-11-21: independent review: approve after amendments; one should-fix (the path written in
   `pack-cycle` › `charter` and `sw-life-cycle`'s header, not `pack-authoring`; the row left to its
   owner) and two nits (the bumps named; the outside route through `governance/feedback`), applied.
+- 2026-11-21: re-review: approve; one nit (the shared bumps), covered by dl-043 D3.

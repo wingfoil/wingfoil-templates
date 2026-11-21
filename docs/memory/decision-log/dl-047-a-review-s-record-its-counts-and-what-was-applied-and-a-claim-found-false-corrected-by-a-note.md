@@ -12,8 +12,9 @@ dl-017 R3, "What the notes record", already requires of each review and re-revie
 number of blocking, should-fix and nit findings, and the commit that fixed them. dl-017 placed R3
 in the `review` phase of `tooling-delivery` and `kanban-delivery` only (its configuration list),
 and those phases restate it; their `plan` phase, the body's review, does not, nor do the other
-phases that hold a review before a gate (the ingest workflows, `pack-cycle` › `charter`,
-`pack-release-cycle`). In the cycle of `governance/feedback` the plans and task-093 … task-096
+phases that hold a review before a gate (the ingest workflows' `capture`, `pack-cycle` ›
+`charter`, `pack-release-cycle` › `validate`, `sw-life-cycle`'s `inception`, `specification` and
+`sunset`). In the cycle of `governance/feedback` the plans and task-093 … task-096
 recorded each round; task-097 … task-099's body reviews recorded none (their commits say only
 "body, reviewed"): the lapse fell where R3 is not restated. A second gap is not R3's: task-099's
 notes grew by replacement, two claims later found false ("no refusal, no warning", "no command
@@ -26,9 +27,10 @@ every gate, which says nothing of the record.
 
 1. **As today.** Rejected: R3 lapsed where no phase restates it.
 2. **R3 restated in every phase that holds a review before a gate**, with "what was applied, or
-   not and why" added to its record: `plan` of both delivery loops, the phase before the approval
-   of `decision-log-ingest`, `adr-ingest` and `bug-ingest`, `pack-cycle` › `charter`,
-   `pack-release-cycle` › `prepare` and `validate`.
+   not and why" added to its record: `plan` of both delivery loops, `capture` of
+   `decision-log-ingest`, `adr-ingest` and `bug-ingest`, `pack-cycle` › `charter`,
+   `pack-release-cycle` › `validate`, `sw-life-cycle` › `inception`, `specification` and `sunset`;
+   for a plan's own review, the plan template's Handoff comment, which names R1 today, adds R3.
 3. **A correction-note rule**: a claim of an Execution Note found false is corrected by a new
    dated note naming the claim and the correction, the earlier note left as written.
 4. **R3 written a second time in `repository-practice`.** Rejected: two homes for one rule.
@@ -41,10 +43,11 @@ The points below are **proposed**; they become rulings when the approver approve
   extended with what was applied or not and why; the correction-note rule as a new rule of
   `repository-practice`, applying from its version's date; the notes already on `main` stay as
   written.
-- **P2 — Applied after approval** by a dl actions plan: the workflows option 2 lists, each bumped
-  once (shared with dl-044's, dl-045's and dl-048's bumps of the same files when approved);
-  `repository-practice` 1.2 → 1.3 with the correction-note rule, in one bump with dl-046's rule;
-  an Execution Note on dl-017 recording R3's wider placement.
+- **P2 — Applied after approval** by a dl actions plan: `decision-log-ingest` 2 → 3, `adr-ingest`
+  2 → 3, `bug-ingest` 3 → 4; shared with the other drafts (dl-043 D3): `tooling-delivery` 4 → 5,
+  `kanban-delivery` 6 → 7, `pack-cycle` 7 → 8, `pack-release-cycle` 8 → 9, `sw-life-cycle` 5 → 6;
+  the plan template's Handoff comment; `repository-practice` 1.2 → 1.3 with the correction-note
+  rule, in one bump with dl-046's rule; an Execution Note on dl-017 recording R3's wider placement.
 
 ## Execution Notes
 <!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
@@ -53,3 +56,6 @@ The points below are **proposed**; they become rulings when the approver approve
 - 2026-11-21: independent review: reject, one blocker: dl-017 R3 already requires each review's
   verdict, counts and fixing commit, placed in `review` only. Reworked: R3 restated in every phase
   with a review, its record extended; the correction-note rule as the only new rule.
+- 2026-11-21: re-review: approve after amendments; three should-fix (`validate`, not `prepare`;
+  `sw-life-cycle`'s phases added; the versions named) and one nit (a plan's own review: the
+  template's Handoff comment), applied.

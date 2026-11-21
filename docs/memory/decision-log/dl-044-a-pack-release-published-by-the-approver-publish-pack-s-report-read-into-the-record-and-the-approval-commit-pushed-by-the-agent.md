@@ -71,3 +71,4 @@ The points below are **proposed**; they become rulings when the approver approve
 - 2026-11-21: independent review: approve after amendments; three should-fix (`approve-publication`
   in P3 and the bumps named; the row extended, not noted; P2 argued against the row and ruling 7)
   and one nit (the report on a failure, its values, the dry run named), all applied.
+- 2026-11-21: re-review: approve; one nit (the shared bumps), covered by dl-043 D3.

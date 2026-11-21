@@ -67,11 +67,12 @@ Each change of governance takes effect only when its own decision-log is approve
 - **W1 —** F-052, a `request`: should `workflow list` or `directives list` warn on a directive that
   no role binds and no step names (WF-1, P2)? To be reproduced with WingFoil alone on 0.3.0 and
   0.3.2 and written by task-101, hosted by plan-078; it settles the row "A `custom/` directive no
-  role binds". WingFoil's v0.4 release planning started on 2026-11-03 (dl-040 D1) and no source
-  records it closed, so task-101 merges alone, as dl-040 D2 says: it starts from `main`, on its own
-  branch, and merges into `main` on the approver's OK, `--no-ff`. plan-078 point 6 cut it from this
-  plan's branch, which would carry the inventory and these drafts onto `main`: a deviation for the
-  approver to rule. No notice (plan-078 ruling 6).
+  role binds". WingFoil's v0.4 release planning started on 2026-11-03 (dl-040 › Context) and no
+  source records it closed, so task-101 merges alone by dl-040 D2's practice (ruled for an intake's
+  retrospective): from `main`, on its own branch, into `main` on the approver's OK, `--no-ff`
+  (plan-078 point 6). plan-078 point 6 cut it from this plan's branch, which would carry the
+  inventory and these drafts onto `main`: a deviation for the approver to rule. No notice (plan-078
+  ruling 6).
 - **W2 —** No note for WF-2 (`base`'s gap, its row kept) or WF-3 (a second `submit` moves a plan
   forward by design; checked again at the pin bump). No note for what was seen again: W-02 (§6).
 
@@ -86,8 +87,10 @@ Each change of governance takes effect only when its own decision-log is approve
   scanner). §8's third candidate, GOV-2 and GOV-4 as rows, is dropped: both are decision-logs (P2).
 - **D3 —** Five rows added at plan-078's close, one per decision-log, for its dl actions (owner
   approver, trigger its approval, a rejected one dropping out): their Sources dl-043 D3 with dl-044
-  P3, dl-045 P2, dl-046 P3, dl-047 P2 and dl-048 P2; one bump of `repository-practice` shared by
-  dl-046 and dl-047.
+  P3, dl-045 P2, dl-046 P3, dl-047 P2 and dl-048 P2. One `version` bump per file across the
+  approved ones, as dl-017 applied its own with dl-018 and dl-019: `repository-practice` (dl-046,
+  dl-047); `tooling-delivery` and `kanban-delivery` (dl-045, dl-047); `pack-release-cycle` (dl-044,
+  dl-047); `pack-cycle` (dl-044, dl-047, dl-048); `sw-life-cycle` (dl-047, dl-048).
 
 ### Observed, no change proposed
 
@@ -113,3 +116,5 @@ Each change of governance takes effect only when its own decision-log is approve
 - 2026-11-21: independent review: approve after amendments; four should-fix (W1's tense and
   task-101's base, cited to dl-040 D1 and D2; D3 one row per decision-log; D1's 44 rows, one missing
   from the inventory's list) and two nits (§8's third row dropped; N3 tied to dl-044), all applied.
+- 2026-11-21: re-review: approve after amendments; two should-fix (W1's sources: dl-040's
+  Context and D2's practice; D3's one bump per file across the drafts), applied.
