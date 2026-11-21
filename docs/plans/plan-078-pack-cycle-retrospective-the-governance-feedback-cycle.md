@@ -158,6 +158,23 @@ Each point has a recommendation.
    under `src/`, `packs/` or `.wingfoil/` (except a `wingfoil-cli` entry a kept note needs, inside
    task-101).
 
+## The approver's rulings
+
+Given on 2026-11-21, in chat: the outline is approved as recommended. Points 1 … 8 stand as
+written:
+- the scope `pack-governance-feedback`, the period 2026-11-14 … 2026-11-19, the inventory and
+  dl-043 named as written (point 1);
+- the sources as written; plan-071 not a source (point 2);
+- the candidates as the inventory's starting list, an *(unrecorded)* one kept only if the
+  approver confirms it at `additional-points` (point 3);
+- one line per open row the cycle touched, the others "not touched" and kept; the row of this
+  pack's retrospective closed at this plan's close (point 4);
+- a governance decision-log only for a candidate the adoption (W10) would not fix (point 5);
+- notes only after reproduction on 0.3.0 and 0.3.2, by task-101, its merge to `main` on its own
+  while WingFoil's v0.4 planning is open, and no notice (point 6);
+- one note on the charter citing dl-043, none on dl-006 or dl-033 (point 7);
+- this plan on `main`, the work on `retro/<YYYY-MM-DD>-pack-governance-feedback` (point 8).
+
 ## Steps
 
 Before every commit, the privacy check (`repository-practice` rule 2: no local or scratch path, no
