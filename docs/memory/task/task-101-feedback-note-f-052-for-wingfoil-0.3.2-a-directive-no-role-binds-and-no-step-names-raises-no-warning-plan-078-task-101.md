@@ -2,7 +2,7 @@
 id: task-101-feedback-note-f-052-for-wingfoil-0.3.2-a-directive-no-role-binds-and-no-step-names-raises-no-warning-plan-078-task-101
 type: task
 title: "Feedback note F-052 for WingFoil 0.3.2: a directive no role binds and no step names raises no warning (plan-078 task-101)"
-status: backlog
+status: approved
 pack: ""            # content-only task (tooling-delivery v4, dl-039 R1), plan-078 task-101
 depends_on: []
 tags: ["feedback","wingfoil"]
@@ -150,3 +150,36 @@ One commit for the note with its ledger row. Then the build review, the checks a
   nits (both releases print the argument as text, the contrast's id, the reverse case's removal
   committed), all applied. No third review: the fixes change citations and wording, not the
   request.
+- 2026-11-21: the approver accepted the task into the backlog (`23c0fcb5`); `main` pushed. Started
+  (backlog → in-progress, `5ec22c31`) on `task/task-101-feedback-note` from `main` at `23c0fcb5`.
+  Reproduced with WingFoil 0.3.0 (`cc31d7a8`) and 0.3.2 (`6de2e13c`) alone, each in a scratch
+  project of its own (`init --template Kanban --no-interactive`, a fictional `.example` member
+  added with `dna add team.members`), as Design lists; every point held on both, the reverse case
+  warning on 0.3.2 only. Deviation from Design: none. The note and its ledger row in one commit
+  (`e1add631`). Red by mutation (dl-018 R2's exception, as task-092), each reverted after its run:
+  a gap in the numbering 2 failing, a ledger cell changed 2, the opening line changed 2, two
+  fields swapped 2, `## Expected` renamed 2; `New note (task-101).` once in the note; unmutated,
+  `node --test dist/tests/wingfoil-feedback.test.js dist/tests/feedback-note.test.js` 13 passing,
+  `npm run lint` exit 0.
+- 2026-11-21: independent build review of `72c3f158`: approve after amendments, nothing blocking; it
+  reproduced the note on 0.3.0 and 0.3.2. One should-fix, applied: on 0.3.0 too the step warns on a
+  binding with no file (`workflow next`'s `directiveWarnings`), only `directives list` does not; so
+  Context's "absent in 0.3.0" and the note above's "on 0.3.2 only" hold for `directives list` alone,
+  both left as written (dl-019), and the note says it and shows the step's warning on both releases.
+  Nits, applied: F-034's and F-041's descriptions as their titles; the workflow's YAML shown; the
+  mutation of `## Expected` was a rename, standing in for Design's removal (both fail
+  `assertSections`). No re-review: the request is unchanged, the amendments correct one fact and
+  wording.
+- 2026-11-21: checks (dl-039 R1, R2), once, on the frozen commit `e4263873`: the branch CI, run
+  44929993996, `success`, jobs `validate (22.12.0, 1)` 16 min 3 s, `(22.12.0, 2)` 3 min 47 s,
+  `(22.21.0, 1)` 11 min 3 s, `(22.21.0, 2)` 3 min 56 s (none over 25 minutes); from a clean
+  working tree on Node.js 22.21.0 after `npm ci` and `npm run build`: `npm run
+  validate:publication`, the golden tree in publication mode and `npm run -s wingfoil -- workflow
+  list` exit 0, `directives list --format json` with `"warnings": []`, the inbox tests 13 passing,
+  `npm run lint` exit 0, the tree still clean. This commit changes only `docs/memory`: no new run.
+  Privacy check of the branch's diff and messages: no local or scratch path, no maintainer name or
+  email, no private project, no intermediary session. `main`'s CI on `23c0fcb5` (the backlog
+  approval) read: run 44928960692 `success`, longest job 13 min 24 s.
+- 2026-11-21: the approver approved (in-review → approved, `23b5598d`) and gave the merge OK. Close:
+  the row "A `custom/` directive no role binds" moved to Closed in `docs/owed-items.md`, settled by
+  F-052 (Acceptance 5); then the merge `--no-ff` into `main`, alone, and `main`'s CI read.
