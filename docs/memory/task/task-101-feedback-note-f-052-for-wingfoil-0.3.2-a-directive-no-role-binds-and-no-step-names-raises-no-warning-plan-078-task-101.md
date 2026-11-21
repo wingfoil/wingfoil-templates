@@ -2,7 +2,7 @@
 id: task-101-feedback-note-f-052-for-wingfoil-0.3.2-a-directive-no-role-binds-and-no-step-names-raises-no-warning-plan-078-task-101
 type: task
 title: "Feedback note F-052 for WingFoil 0.3.2: a directive no role binds and no step names raises no warning (plan-078 task-101)"
-status: pending
+status: backlog
 pack: ""            # content-only task (tooling-delivery v4, dl-039 R1), plan-078 task-101
 depends_on: []
 tags: ["feedback","wingfoil"]
