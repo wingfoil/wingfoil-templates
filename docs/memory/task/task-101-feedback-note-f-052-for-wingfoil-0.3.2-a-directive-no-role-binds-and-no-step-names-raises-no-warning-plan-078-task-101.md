@@ -150,3 +150,14 @@ One commit for the note with its ledger row. Then the build review, the checks a
   nits (both releases print the argument as text, the contrast's id, the reverse case's removal
   committed), all applied. No third review: the fixes change citations and wording, not the
   request.
+- 2026-11-21: the approver accepted the task into the backlog (`23c0fcb5`); `main` pushed. Started
+  (backlog → in-progress, `5ec22c31`) on `task/task-101-feedback-note` from `main` at `23c0fcb5`.
+  Reproduced with WingFoil 0.3.0 (`cc31d7a8`) and 0.3.2 (`6de2e13c`) alone, each in a scratch
+  project of its own (`init --template Kanban --no-interactive`, a fictional `.example` member
+  added with `dna add team.members`), as Design lists; every point held on both, the reverse case
+  warning on 0.3.2 only. Deviation from Design: none. The note and its ledger row in one commit
+  (`e1add631`). Red by mutation (dl-018 R2's exception, as task-092), each reverted after its run:
+  a gap in the numbering 2 failing, a ledger cell changed 2, the opening line changed 2, two
+  fields swapped 2, `## Expected` renamed 2; `New note (task-101).` once in the note; unmutated,
+  `node --test dist/tests/wingfoil-feedback.test.js dist/tests/feedback-note.test.js` 13 passing,
+  `npm run lint` exit 0.
