@@ -255,3 +255,13 @@ this plan captures.
   v0.4 planning and the notice ruled; the `wingfoil-cli` exception in point 8; five days, not
   six; W-14's branch clause, the red-first tasks, the probe's wording and plan-077 point 10
   cited. Not applied: a candidate on earlier texts' pronoun for the approver, left to `explore`.
+- 2026-11-21: step 1, the outline ruled by the approver, submitted (`33260fd2`); `main` pushed, its
+  CI run 44907146720 `success` (longest job 11 min 18 s).
+- 2026-11-21: step 2, `explore`, on `retro/2026-11-21-pack-governance-feedback`: three read-only
+  strands merged into the inventory
+  `docs/retrospectives/2026-11-21-pack-governance-feedback-friction-inventory.md` (`d52fb173`). Independent review: approve after amendments; no blocker, nine should-fix and seven
+  nits, all applied (`47464429`): the blockers' tally and where each was found; the durations; the
+  triage rule's day; the probes' reading; WF-1's contrast case; claims written in no element marked
+  *(unrecorded)*; the `node_modules` candidate as not observed; the W10 row and the 44 rows not
+  touched listed; the drift row's owner; the v0.4 timing; the pronoun point; GOV-2 and GOV-4 as
+  decision-logs; the marks aligned. Next: step 3, `additional-points`.
