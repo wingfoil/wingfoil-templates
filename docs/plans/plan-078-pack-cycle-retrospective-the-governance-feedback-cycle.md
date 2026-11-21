@@ -260,8 +260,9 @@ this plan captures.
 - 2026-11-21: step 2, `explore`, on `retro/2026-11-21-pack-governance-feedback`: three read-only
   strands merged into the inventory
   `docs/retrospectives/2026-11-21-pack-governance-feedback-friction-inventory.md` (`d52fb173`).
-  Independent review: approve after amendments; no blocker, nine should-fix and seven nits, all applied (`47464429`): the blockers' tally and where each was found; the durations; the
-  triage rule's day; the probes' reading; WF-1's contrast case; claims written in no element marked
+  Independent review: approve after amendments; no blocker, nine should-fix and seven nits, all
+  applied (`47464429`): the blockers' tally and where each was found; the durations; the triage
+  rule's day; the probes' reading; WF-1's contrast case; claims written in no element marked
   *(unrecorded)*; the `node_modules` candidate as not observed; the W10 row and the 44 rows not
   touched listed; the drift row's owner; the v0.4 timing; the pronoun point; GOV-2 and GOV-4 as
   decision-logs; the marks aligned. Next: step 3, `additional-points`.
