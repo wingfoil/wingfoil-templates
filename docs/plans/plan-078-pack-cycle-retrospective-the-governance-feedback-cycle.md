@@ -273,3 +273,9 @@ this plan captures.
   `main` alone on the approver's OK, `--no-ff` (dl-040 D2's practice), not from this plan's branch
   as point 6 and step 4 say, which would carry the inventory and the drafts onto `main`; listed at
   this plan's close.
+- 2026-11-21: task-101 (point 6), from `main` as ruled: body reviewed twice, accepted into the
+  backlog by the approver (`23c0fcb5`); F-052 reproduced on 0.3.0 and 0.3.2 with WingFoil alone,
+  build review applied, the branch CI (run 44929993996) and dl-039's local list green; approved by
+  the approver, merged `--no-ff` into `main` alone at `471b2d4f`, `main`'s CI run 44939637773
+  `success` (longest job 11 min 17 s); `done` (`2a525975`). The row "A `custom/` directive no role
+  binds" is Closed, settled by F-052. Next: step 5, the approver's rulings on dl-043 … dl-048.
