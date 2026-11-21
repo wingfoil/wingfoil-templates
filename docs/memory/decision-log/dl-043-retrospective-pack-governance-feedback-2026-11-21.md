@@ -71,8 +71,8 @@ Each change of governance takes effect only when its own decision-log is approve
   source records it closed, so task-101 merges alone by dl-040 D2's practice (ruled for an intake's
   retrospective): from `main`, on its own branch, into `main` on the approver's OK, `--no-ff`
   (plan-078 point 6). plan-078 point 6 cut it from this plan's branch, which would carry the
-  inventory and these drafts onto `main`: a deviation for the approver to rule. No notice (plan-078
-  ruling 6).
+  inventory and these drafts onto `main`: a deviation, ruled by the approver on 2026-11-21 (plan-078
+  › Execution Notes). No notice (plan-078 ruling 6).
 - **W2 —** No note for WF-2 (`base`'s gap, its row kept) or WF-3 (a second `submit` moves a plan
   forward by design; checked again at the pin bump). No note for what was seen again: W-02 (§6).
 
@@ -118,3 +118,5 @@ Each change of governance takes effect only when its own decision-log is approve
   from the inventory's list) and two nits (§8's third row dropped; N3 tied to dl-044), all applied.
 - 2026-11-21: re-review: approve after amendments; two should-fix (W1's sources: dl-040's
   Context and D2's practice; D3's one bump per file across the drafts), applied.
+- 2026-11-21: the approver ruled task-101's base: from `main`, as W1 proposed; W1's last clause
+  records it.

@@ -266,3 +266,10 @@ this plan captures.
   *(unrecorded)*; the `node_modules` candidate as not observed; the W10 row and the 44 rows not
   touched listed; the drift row's owner; the v0.4 timing; the pronoun point; GOV-2 and GOV-4 as
   decision-logs; the marks aligned. Next: step 3, `additional-points`.
+- 2026-11-21: step 3, the approver's points P1 … P3 added to the inventory (`930d685d`). Step 4:
+  dl-043 … dl-048 written, each reviewed (dl-047 rejected by the first review, reworked; the
+  re-review approved all six after amendments, `38c1be80`), submitted `draft → pending`.
+- 2026-11-21: the approver ruled task-101's base: from `main`, on a branch of its own, merged into
+  `main` alone on the approver's OK, `--no-ff` (dl-040 D2's practice), not from this plan's branch
+  as point 6 and step 4 say, which would carry the inventory and the drafts onto `main`; listed at
+  this plan's close.
