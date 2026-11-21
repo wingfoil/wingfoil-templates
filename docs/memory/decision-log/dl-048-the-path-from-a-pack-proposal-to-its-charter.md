@@ -2,7 +2,7 @@
 id: dl-048-the-path-from-a-pack-proposal-to-its-charter
 type: decision-log
 title: "The path from a pack proposal to its charter"
-status: draft
+status: pending
 tags: ["process","packs","workflow"]
 ---
 
