@@ -180,3 +180,6 @@ One commit for the note with its ledger row. Then the build review, the checks a
   Privacy check of the branch's diff and messages: no local or scratch path, no maintainer name or
   email, no private project, no intermediary session. `main`'s CI on `23c0fcb5` (the backlog
   approval) read: run 44928960692 `success`, longest job 13 min 24 s.
+- 2026-11-21: the approver approved (in-review → approved, `23b5598d`) and gave the merge OK. Close:
+  the row "A `custom/` directive no role binds" moved to Closed in `docs/owed-items.md`, settled by
+  F-052 (Acceptance 5); then the merge `--no-ff` into `main`, alone, and `main`'s CI read.
