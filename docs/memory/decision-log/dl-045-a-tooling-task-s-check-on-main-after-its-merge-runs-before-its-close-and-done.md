@@ -2,7 +2,7 @@
 id: dl-045-a-tooling-task-s-check-on-main-after-its-merge-runs-before-its-close-and-done
 type: decision-log
 title: "A tooling task's check on main after its merge runs before its close and done"
-status: draft
+status: pending
 tags: ["process","tooling","workflow"]
 ---
 
