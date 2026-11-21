@@ -183,3 +183,7 @@ One commit for the note with its ledger row. Then the build review, the checks a
 - 2026-11-21: the approver approved (in-review → approved, `23b5598d`) and gave the merge OK. Close:
   the row "A `custom/` directive no role binds" moved to Closed in `docs/owed-items.md`, settled by
   F-052 (Acceptance 5); then the merge `--no-ff` into `main`, alone, and `main`'s CI read.
+- 2026-11-21: merged `--no-ff` into `main` at `471b2d4f`, alone; `main`'s CI after the push, run
+  44939637773, `success`, jobs `validate (22.12.0, 1)` 11 min 17 s, `(22.12.0, 2)` 4 min 26 s,
+  `(22.21.0, 1)` 11 min 15 s, `(22.21.0, 2)` 3 min 55 s. Recorded in plan-078's notes on its
+  branch (Acceptance 7). Next: `approved → done`.
