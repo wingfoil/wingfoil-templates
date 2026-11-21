@@ -199,8 +199,9 @@ Each point cites its source as element id and section, a commit, or a CI run id.
 - `−` **A gendered pronoun for the approver in earlier texts**: "on his OK" (plan-076 › Execution
   Notes; task-098 › Execution Notes) and "in his own shell" (the row "The engine way of working").
   The approver's pronouns are stated nowhere in the repository; "the approver" reads the same
-  everywhere. Proposed: new texts write "the approver"; the texts on `main` stay as written
-  (`repository-practice` rule 1), the row's wording revisited when the row is next changed.
+  everywhere. Proposed: new texts write "the approver"; the texts on `main` stay as written (an
+  approved element is amended by notes until G7), the row's wording revisited when the row is next
+  changed.
 
 ## 5. Cross-cutting themes
 
