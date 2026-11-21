@@ -81,6 +81,7 @@ sha of the commit it read (WingFoil `COLLABORATION.md` › Credit, task-271), fo
 | [F-049](F-049-the-refusal-to-adopt-an-owned-element-names-workflow-transfer-a-command-that-does-not-exist.md) | The refusal to adopt an owned element names workflow transfer, a command that does not exist | defect | open | |
 | [F-050](F-050-a-frontmatter-field-cannot-declare-the-values-it-allows.md) | A frontmatter field cannot declare the values it allows | request | open | |
 | [F-051](F-051-a-workflow-phase-cannot-bind-a-directive.md) | A workflow phase cannot bind a directive | request | open | |
+| [F-052](F-052-a-directive-that-no-role-binds-and-no-step-names-raises-no-warning.md) | A directive that no role binds and no step names raises no warning | request | open | |
 
 ## Context
 
