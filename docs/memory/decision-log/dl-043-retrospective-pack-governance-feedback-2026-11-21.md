@@ -2,7 +2,7 @@
 id: dl-043-retrospective-pack-governance-feedback-2026-11-21
 type: decision-log
 title: "Retrospective pack-governance-feedback 2026-11-21"
-status: draft
+status: pending
 tags: ["process","retrospective","feedback"]
 ---
 
