@@ -57,19 +57,21 @@ Each change of governance takes effect only when its own decision-log is approve
   task names on `main` after the merge, before the close and `done` (§4).
 - **C3 — dl-046** (GOV-3): the 100-character rule written in `repository-practice` and checked on
   the lines a change adds by a script, in CI and before a commit (§4, §5.3).
-- **C4 — dl-047** (GOV-4): every review leaves its verdict, counts and what was applied in the
-  element's notes; a claim found false is corrected by a note (§3, §5.1, §5.2).
+- **C4 — dl-047** (GOV-4): dl-017 R3's record of each review restated in every phase that has a
+  review, with what was applied; a claim found false corrected by a note (§3, §5.1, §5.2).
 - **C5 — dl-048** (GOV-6, P3): the path from a pack proposal to its charter written down, or a
   `pack-ingest` workflow, as the approver rules there.
 
 ### Change: WingFoil-side points, as feedback notes
 
 - **W1 —** F-052, a `request`: should `workflow list` or `directives list` warn on a directive that
-  no role binds and no step names (WF-1, P2)? Written by task-101, hosted by plan-078, reproduced
-  with WingFoil alone on 0.3.0 and 0.3.2; it settles the row "A `custom/` directive no role binds".
-  WingFoil's v0.4 release planning started on 2026-11-03 (dl-040) and no source records it closed:
-  task-101's merge goes to `main` on its own, ahead of plan-078's branch, on the approver's OK,
-  `--no-ff`. No notice (plan-078 ruling 6).
+  no role binds and no step names (WF-1, P2)? To be reproduced with WingFoil alone on 0.3.0 and
+  0.3.2 and written by task-101, hosted by plan-078; it settles the row "A `custom/` directive no
+  role binds". WingFoil's v0.4 release planning started on 2026-11-03 (dl-040 D1) and no source
+  records it closed, so task-101 merges alone, as dl-040 D2 says: it starts from `main`, on its own
+  branch, and merges into `main` on the approver's OK, `--no-ff`. plan-078 point 6 cut it from this
+  plan's branch, which would carry the inventory and these drafts onto `main`: a deviation for the
+  approver to rule. No notice (plan-078 ruling 6).
 - **W2 —** No note for WF-2 (`base`'s gap, its row kept) or WF-3 (a second `submit` moves a plan
   forward by design; checked again at the pin bump). No note for what was seen again: W-02 (§6).
 
@@ -81,10 +83,11 @@ Each change of governance takes effect only when its own decision-log is approve
 - **D2 —** New rows: the charter text drift of `governance/feedback` (Compatibility's format 1,
   FA-5's parenthesis; owner W10, trigger G7); the placement scanner's known limit (a continuation
   line beginning with a quote, `[` or `{`; owner claude, trigger the next tooling task on the lint's
-  scanner).
-- **D3 —** One row added at plan-078's close: the dl actions of dl-044 … dl-048 (owner approver,
-  trigger the approval of each, a rejected one dropping out; Source dl-043 D3), with one bump of
-  `repository-practice` shared by dl-046 and dl-047.
+  scanner). §8's third candidate, GOV-2 and GOV-4 as rows, is dropped: both are decision-logs (P2).
+- **D3 —** Five rows added at plan-078's close, one per decision-log, for its dl actions (owner
+  approver, trigger its approval, a rejected one dropping out): their Sources dl-043 D3 with dl-044
+  P3, dl-045 P2, dl-046 P3, dl-047 P2 and dl-048 P2; one bump of `repository-practice` shared by
+  dl-046 and dl-047.
 
 ### Observed, no change proposed
 
@@ -96,7 +99,8 @@ Each change of governance takes effect only when its own decision-log is approve
   found only in a local cache. C3 and C4 take the record and the check; the rest are evidence, not
   a change.
 - **N3 —** A gendered pronoun for the approver in earlier texts (§4): new texts write "the
-  approver"; the texts on `main` stay as written, the row's wording revisited when it next changes.
+  approver"; the texts on `main` stay as written; the row "The engine way of working" is reworded
+  when dl-044's actions extend it.
 - **N4 —** Ruling 7's costs (§5.4): two more approver turns and commits waiting for the approver's
   push; C1 takes the record, the turns stay the rule's price.
 - **N5 —** FA-6 is scripted in part (§3): `duplicate` and the governance route by the run by hand,
@@ -106,3 +110,6 @@ Each change of governance takes effect only when its own decision-log is approve
 <!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
 - 2026-11-21: written under plan-078 (`capture`), from the inventory and the approver's points
   P1 … P3.
+- 2026-11-21: independent review: approve after amendments; four should-fix (W1's tense and
+  task-101's base, cited to dl-040 D1 and D2; D3 one row per decision-log; D1's 44 rows, one missing
+  from the inventory's list) and two nits (§8's third row dropped; N3 tied to dl-044), all applied.

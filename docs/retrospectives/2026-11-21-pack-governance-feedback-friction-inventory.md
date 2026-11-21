@@ -303,7 +303,8 @@ custom `sw-life-cycle`; `software`'s `tech-lead` holder; `pack-cycle` v6 or v7 o
 built-in directive ids compared by the matrix; F-019's facts from bug-010; dl-041 G1's later
 part; dl-041 G3 in `pack-semver`; the charter drift of `software`; `kanban`'s open points 2 and 3
 (two rows); the charter drift of `kanban`; `scrum`'s open point 2; `pack-delivery`'s selection;
-`plan-{n}-{slug}` or `{workflow}-{phase}-plan`; Check 0.3.1's `COLLABORATION.md`; README step 3
+the `pack-semver` rule for fixes and changed defaults; `plan-{n}-{slug}` or
+`{workflow}-{phase}-plan`; Check 0.3.1's `COLLABORATION.md`; README step 3
 "own entries"; the per-pack WIP rule; how tasks carry a `release`; the custom workflows sharing
 `base`'s and `software`'s names; `pack-author`'s phases under `work-item`; the notice to WingFoil
 UI; the weekly reading of `intake.yml`'s runs; the reply's later part; the two rows of the first

@@ -32,15 +32,18 @@ pack tasks, has the same `deliver`. Candidate GOV-2 of dl-043 (C2); the inventor
 The points below are **proposed**; they become rulings when the approver approves this element.
 
 - **P1 — Option 2**, in `tooling-delivery` and `kanban-delivery` alike: `deliver` reads "Merge
-  task/<id> into main with --no-ff and push; `main`'s CI read; a check the task's Acceptance
-  names on `main` runs and is read; then the close commit and approved → done. A red check stops
+  task/<id> into main with --no-ff and push; `main`'s CI read; if the task's Acceptance names a
+  check on `main`, it runs and is read; then the close commit and approved → done. A red check stops
   the close: the task stays approved, the finding goes to the approver, and its fix is a task or
   a bug of its own."
-- **P2 — Applied after approval** by a dl actions plan: the two workflows bumped together, their
-  headers' "differ only in roles" kept true, `npm run -s wingfoil -- workflow list` and `check:runs`
+- **P2 — Applied after approval** by a dl actions plan: `tooling-delivery` 4 → 5 and
+  `kanban-delivery` 6 → 7 together, their headers' "differ only in roles and descriptions" kept
+  true, `npm run -s wingfoil -- workflow list` and `check:runs`
   exit 0.
 
 ## Execution Notes
 <!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
 - 2026-11-21: written under plan-078 (`capture`, `decision-log-ingest` hosted there), cited by
   dl-043, as the approver kept it at the checkpoint (the inventory of 2026-11-21, P2, P3).
+- 2026-11-21: independent review: approve after amendments; one should-fix (the check only if the
+  task names one) and one nit (the headers quoted, the bumps named), applied.

@@ -41,21 +41,33 @@ identity; it says nothing of how the output reaches the record. Candidate GOV-1 
 The points below are **proposed**; they become rulings when the approver approves this element.
 
 - **P1 — Option 3.** `publish:pack` takes `--report <path>`: it writes the report it prints (the
-  publication matrix's lines, the tag, the commit, the digest, the range, "Not pushed") to that
-  file, refusing a path inside the repository. The commands handed to the approver include it; the
-  agent reads the file, records the matrix's summary line, the tag, the digest and the range in the
-  Publication, and checks the digest and the range against the dry run of `validate`. A missing or
-  different value stops the agent's record and goes to the approver before CB-6 is read.
+  validation's lines and the publication matrix's summary, the line, the tag and its commit, the
+  catalog commit, the digest, the transitions' digests, the range, "Not pushed") to that file, on
+  a non-zero exit too, so a failure's reason reaches the record; it refuses a path inside the
+  repository. The commands handed to the approver include it; the agent reads the file, records
+  those values in the Publication, and checks the digest and the range against `publish:pack
+  --dry-run` as the Validation recorded it. A missing or different value stops the agent's record
+  and goes to the approver before CB-6 is read.
 - **P2 — The approval commit.** When the approver approves a pack-release (`releasing →
   released`), the agent pushes that commit and reads `main`'s CI on it, before it hands over the
-  publication's commands; the push carries no tag. Ruling 7's reach stays `publish:pack`, the
-  atomic push, the activation's `memory submit` and its push.
+  publication's commands. A push makes no commit or tag: the commit is the approver's, made by the
+  approver's command, so the rule "an agent never runs a command whose commit or tag carries the
+  approver's identity" holds. The activation's push stays the approver's, because it follows the
+  approver's `memory submit` in the same hand-over and carries the agent's earlier commits with it
+  (plan-077 ruling 7). Once applied, ruling 7's split (the approver runs `publish:pack`, the atomic
+  push, the activation's `memory submit` and its push) stands for every pack-release, ahead of the
+  adoption (W10).
 - **P3 — Applied after approval** by a dl actions plan: a tooling task (`tooling-delivery`) for
-  `--report` in `src/publish.ts` and its tests, red first (dl-018); `pack-release-cycle` › `publish`
-  and `pack-cycle` › `activate` naming who runs what, as P1 and P2 say, in one version bump; an
-  Execution Note on the row "The engine way of working", which keeps the permanent rule.
+  `--report` in `src/publish.ts` and its tests, red first (dl-018); `pack-release-cycle` 8 → 9
+  (`approve-publication`: the agent pushes the approval commit and reads `main`'s CI, no tag;
+  `publish`: who runs what, as P1 says) and `pack-cycle` 7 → 8 (`activate`: who runs what); the
+  row "The engine way of working" extended (its Source with dl-044), its "in his own shell" made
+  "in the approver's own shell" in the same edit.
 
 ## Execution Notes
 <!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
 - 2026-11-21: written under plan-078 (`capture`, `decision-log-ingest` hosted there), cited by
   dl-043, as the approver kept it at the checkpoint (the inventory of 2026-11-21, P2, P3).
+- 2026-11-21: independent review: approve after amendments; three should-fix (`approve-publication`
+  in P3 and the bumps named; the row extended, not noted; P2 argued against the row and ruling 7)
+  and one nit (the report on a failure, its values, the dry run named), all applied.
