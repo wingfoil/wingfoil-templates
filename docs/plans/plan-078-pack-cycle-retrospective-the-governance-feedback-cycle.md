@@ -279,3 +279,18 @@ this plan captures.
   the approver, merged `--no-ff` into `main` alone at `471b2d4f`, `main`'s CI run 44939637773
   `success` (longest job 11 min 17 s); `done` (`2a525975`). The row "A `custom/` directive no role
   binds" is Closed, settled by F-052. Next: step 5, the approver's rulings on dl-043 … dl-048.
+- 2026-11-21: `main`'s CI on task-101's `done` (`2a525975`): run 44940825163 `success`, longest job
+  11 min 32 s.
+- 2026-11-22: step 5, the approver ruled: dl-043 approved (`60d1465d`), dl-044 … dl-047 approved
+  (`1e2ff2a0`, `60ce815a`, `6b6051dd`, `fd12412e`); dl-048 left `pending`, as step 5 allows.
+- 2026-11-22: step 6, the close, on the branch after `main` merged into it (`cdedea95`, task-101):
+  - the account per tech-spec (dl-020): none amended;
+  - the charter's note on `pack-governance-feedback` citing dl-043 (point 7); none on dl-006 or
+    dl-033;
+  - `docs/owed-items.md`: dl-043's Debts applied: the row of this pack's retrospective moved to
+    Closed (plan-078, dl-043); D2's two rows added (the charter text drift, owner W10, trigger
+    G7; the placement scanner's limit, owner claude); D3's five rows added, one per governance
+    decision-log, dl-048's trigger its approval while `pending`; the ten touched rows kept as §8
+    proposes, the custom-directive row closed by task-101 on `main`; the 44 rows not touched kept;
+  - the numbers: plan-078, dl-043 … dl-048, task-101 and F-052 used; bug-017 released, no defect of
+    this repository found; next free plan-079, dl-049, task-102, F-053, bug-017.
