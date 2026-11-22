@@ -2,7 +2,7 @@
 id: dl-046-repository-texts-lines-of-at-most-100-characters-written-in-repository-practice-and-checked-by-a-script
 type: decision-log
 title: "Repository texts: lines of at most 100 characters, written in repository-practice and checked by a script"
-status: pending
+status: approved
 tags: ["process","texts","tooling"]
 ---
 
