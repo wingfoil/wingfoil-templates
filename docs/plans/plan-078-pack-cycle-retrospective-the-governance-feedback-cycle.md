@@ -290,7 +290,14 @@ this plan captures.
   - `docs/owed-items.md`: dl-043's Debts applied: the row of this pack's retrospective moved to
     Closed (plan-078, dl-043); D2's two rows added (the charter text drift, owner W10, trigger
     G7; the placement scanner's limit, owner claude); D3's five rows added, one per governance
-    decision-log, dl-048's trigger its approval while `pending`; the ten touched rows kept as §8
-    proposes, the custom-directive row closed by task-101 on `main`; the 44 rows not touched kept;
+    decision-log, dl-048's trigger its approval while `pending`, one `version` bump per file across
+    the approved ones (D3); the other eight touched rows kept as §8 proposes; the custom-directive
+    row closed by task-101 on `main`; the 44 rows not touched kept;
+  - the deviation: task-101 from `main` and merged into `main` alone (dl-040 D2's practice), not
+    from this plan's branch as point 6 and step 4 say, ruled by the approver on 2026-11-21;
   - the numbers: plan-078, dl-043 … dl-048, task-101 and F-052 used; bug-017 released, no defect of
     this repository found; next free plan-079, dl-049, task-102, F-053, bug-017.
+- 2026-11-22: independent review of the close (`a4dc62fc`): approve after amendments; no blocker,
+  one should-fix (the deviation of task-101's base listed) and three nits (the touched rows
+  counted once; dl-047's row with R3's extended record and the note on dl-017; D3's one bump per
+  file), all applied.
