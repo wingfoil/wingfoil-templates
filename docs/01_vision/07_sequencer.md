@@ -1,7 +1,7 @@
 # Sequencer — WingFoil-Templates
 
-**Version:** 1.7
-**Date:** 2026-11-13
+**Version:** 1.8
+**Date:** 2026-11-23
 **Status:** Approved
 **Traces to:** [06_features.md](06_features.md), [05_journeys.md](05_journeys.md), [04_personas.md](04_personas.md)
 
@@ -135,10 +135,13 @@ Ordered between M3 and M4; its id comes after M4's by number, as W14 is ordered 
   joined W8 with dl-022 (1.4, plan-038), and W8 closed so (plan-046). It is kept as a recorded
   exception, not split after the fact. **W10 holds four too** (F4.3 `kanban`, F2.6, F4.9, F4.2),
   F4.9 joining it with dl-012, an exception the approver accepted on 2026-11-12.
-- **W10's order** (the approver, 2026-11-12 and 2026-11-13): the presets, `governance/feedback`,
-  `governance/wingfoil-dogfood`, then a pack release round (bug-011 … bug-015's fixes, the
-  `Precedence:` lines, the Memory templates' optional fields, the CHANGELOG's first line checked),
-  then this repository's adoption, then the periodic retrospective.
+- **W10's order** (the approver, 2026-11-12, 2026-11-13 and 2026-11-23): the presets,
+  `governance/feedback`, `governance/wingfoil-dogfood`, then a pack release round (bug-011 …
+  bug-015's fixes, the `Precedence:` lines, the Memory templates' optional fields, the CHANGELOG's
+  first line checked), then this repository's adoption, then the periodic retrospective. After the
+  `wingfoil-release-intake` that raises this repository's pin: dl-049's `rule`, `vision` and
+  `hand-off` under `pack-ingest` (dl-050 D4), then the cycles of the two pull-request packs; the
+  pin's bump stays with the adoption.
 
 ## Open questions for the sequencer review
 
@@ -178,3 +181,6 @@ on the first publication and on tooling's host corrected.
 Amendment 1.7 (2026-11-13, plan-071): F4.9 in W10 (dl-012), its four features an exception; the
 milestone M5 with W15 (F4.11, dl-013) and W16 (F4.10, dl-011); W10's order with the adoption;
 the presets done (plan-070) in the state of the waves.
+
+Amendment 1.8 (2026-11-23, plan-081): W10's order with dl-049's path under `pack-ingest` and the
+two pull-request packs' cycles, after the intake that raises the pin (the approver, 2026-11-23).
