@@ -255,3 +255,49 @@ this plan captures.
   v0.4 planning and the notice ruled; the `wingfoil-cli` exception in point 8; five days, not
   six; W-14's branch clause, the red-first tasks, the probe's wording and plan-077 point 10
   cited. Not applied: a candidate on earlier texts' pronoun for the approver, left to `explore`.
+- 2026-11-21: step 1, the outline ruled by the approver, submitted (`33260fd2`); `main` pushed, its
+  CI run 44907146720 `success` (longest job 11 min 18 s).
+- 2026-11-21: step 2, `explore`, on `retro/2026-11-21-pack-governance-feedback`: three read-only
+  strands merged into the inventory
+  `docs/retrospectives/2026-11-21-pack-governance-feedback-friction-inventory.md` (`d52fb173`).
+  Independent review: approve after amendments; no blocker, nine should-fix and seven nits, all
+  applied (`47464429`): the blockers' tally and where each was found; the durations; the triage
+  rule's day; the probes' reading; WF-1's contrast case; claims written in no element marked
+  *(unrecorded)*; the `node_modules` candidate as not observed; the W10 row and the 44 rows not
+  touched listed; the drift row's owner; the v0.4 timing; the pronoun point; GOV-2 and GOV-4 as
+  decision-logs; the marks aligned. Next: step 3, `additional-points`.
+- 2026-11-21: step 3, the approver's points P1 … P3 added to the inventory (`930d685d`). Step 4:
+  dl-043 … dl-048 written, each reviewed (dl-047 rejected by the first review, reworked; the
+  re-review approved all six after amendments, `38c1be80`), submitted `draft → pending`.
+- 2026-11-21: the approver ruled task-101's base: from `main`, on a branch of its own, merged into
+  `main` alone on the approver's OK, `--no-ff` (dl-040 D2's practice), not from this plan's branch
+  as point 6 and step 4 say, which would carry the inventory and the drafts onto `main`; listed at
+  this plan's close.
+- 2026-11-21: task-101 (point 6), from `main` as ruled: body reviewed twice, accepted into the
+  backlog by the approver (`23c0fcb5`); F-052 reproduced on 0.3.0 and 0.3.2 with WingFoil alone,
+  build review applied, the branch CI (run 44929993996) and dl-039's local list green; approved by
+  the approver, merged `--no-ff` into `main` alone at `471b2d4f`, `main`'s CI run 44939637773
+  `success` (longest job 11 min 17 s); `done` (`2a525975`). The row "A `custom/` directive no role
+  binds" is Closed, settled by F-052. Next: step 5, the approver's rulings on dl-043 … dl-048.
+- 2026-11-21: `main`'s CI on task-101's `done` (`2a525975`): run 44940825163 `success`, longest job
+  11 min 32 s.
+- 2026-11-22: step 5, the approver ruled: dl-043 approved (`60d1465d`), dl-044 … dl-047 approved
+  (`1e2ff2a0`, `60ce815a`, `6b6051dd`, `fd12412e`); dl-048 left `pending`, as step 5 allows.
+- 2026-11-22: step 6, the close, on the branch after `main` merged into it (`cdedea95`, task-101):
+  - the account per tech-spec (dl-020): none amended;
+  - the charter's note on `pack-governance-feedback` citing dl-043 (point 7); none on dl-006 or
+    dl-033;
+  - `docs/owed-items.md`: dl-043's Debts applied: the row of this pack's retrospective moved to
+    Closed (plan-078, dl-043); D2's two rows added (the charter text drift, owner W10, trigger
+    G7; the placement scanner's limit, owner claude); D3's five rows added, one per governance
+    decision-log, dl-048's trigger its approval while `pending`, one `version` bump per file across
+    the approved ones (D3); the other eight touched rows kept as §8 proposes; the custom-directive
+    row closed by task-101 on `main`; the 44 rows not touched kept;
+  - the deviation: task-101 from `main` and merged into `main` alone (dl-040 D2's practice), not
+    from this plan's branch as point 6 and step 4 say, ruled by the approver on 2026-11-21;
+  - the numbers: plan-078, dl-043 … dl-048, task-101 and F-052 used; bug-017 released, no defect of
+    this repository found; next free plan-079, dl-049, task-102, F-053, bug-017.
+- 2026-11-22: independent review of the close (`a4dc62fc`): approve after amendments; no blocker,
+  one should-fix (the deviation of task-101's base listed) and three nits (the touched rows
+  counted once; dl-047's row with R3's extended record and the note on dl-017; D3's one bump per
+  file), all applied.

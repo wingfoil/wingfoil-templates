@@ -389,3 +389,10 @@ previous item, its `element` field wrong; the refusal to adopt an element anothe
   convention for new projects (Commitments to adopters). `accepted → active`, the `memory submit`
   and its push run by the approver (plan-077 ruling 7). The retrospective is this pack's own, in
   a plan of its own right after plan-077 (plan-077 ruling 10).
+- 2026-11-22, plan-078 (`retrospective`): `pack-cycle` › `retrospective` completed for this pack by
+  its own retrospective (plan-077 ruling 10; not the periodic one): the inventory
+  `docs/retrospectives/2026-11-21-pack-governance-feedback-friction-inventory.md` and its
+  decision-log dl-043, approved on 2026-11-22, with the governance decision-logs dl-044 … dl-047
+  approved and dl-048 left `pending`, and the feedback note F-052 (task-101, a directive no role
+  binds) (plan-078 point 7). Compatibility's format 1 and FA-5's parenthesis now have a row of
+  `docs/owed-items.md` (dl-043 D2, trigger G7). The body stays as approved.
