@@ -13,9 +13,9 @@ tags: ["process","dl-actions","retrospective","workflows"]
 The `rule` phase of `decision-log-ingest` for the governance decision-logs of the
 `governance/feedback` retrospective (plan-078, dl-043) and for dl-050, all approved: their actions,
 applied here as each decision-log's last point says ("applied after approval by a dl actions
-plan"). dl-044 … dl-047 were approved on 2026-11-22; dl-048 (option 3, as reshaped by dl-050 Q1 (a)) and dl-050 (D1, D3
-and D4) on 2026-11-23 (`075e7fb3`, `8ce834d0`), both "applied by plan-081". Asked by the approver
-on 2026-11-23.
+plan"). dl-044 … dl-047 were approved on 2026-11-22; dl-048 (option 3, as reshaped by dl-050
+Q1 (a)) and dl-050 (D1, D3 and D4) on 2026-11-23 (`075e7fb3`, `8ce834d0`), both "applied by
+plan-081". Asked by the approver on 2026-11-23.
 
 - **dl-044** (P1 … P3): `publish:pack --report <path>`, a tooling task red first;
   `pack-release-cycle` 8 → 9 (`approve-publication`: the agent pushes the approval commit and
@@ -42,7 +42,8 @@ on 2026-11-23.
 One `version` bump per file across the approved decision-logs (dl-043 D3): `repository-practice`
 1.2 → 1.3 (dl-046, dl-047); `tooling-delivery` and `kanban-delivery` (dl-045, dl-047);
 `pack-release-cycle` (dl-044, dl-047); `pack-cycle` (dl-044, dl-047, dl-048 and dl-050);
-`sw-life-cycle` (dl-047, dl-048 and dl-050).
+`sw-life-cycle` (dl-047, dl-048 and dl-050); `.wingfoil/workflows.yaml` 3 → 4 (its new include,
+dl-050 D3), as `b56377c7` bumped it for `tooling-delivery`'s.
 
 **dl-049 and W10's order** (the approver, 2026-11-23). dl-049 stays `pending`; the approver rules
 it after reading this plan. Its path follows `pack-ingest` (dl-050 D4), placed in W10 after the
@@ -98,14 +99,17 @@ Each point with a recommendation.
    staged diff before every commit, beside rule 2; CI on branches against the merge base and on
    `main` on the pushed range); a rule 6, the correction-note rule of dl-047 P1 (a claim of an
    Execution Note found false is corrected by a new dated note naming the claim and the correction,
-   the earlier note left as written), applying from 1.3's date; each with its decision-log and "in
-   force since" its approval date (2026-11-22); the title extended, the tags unchanged.
+   the earlier note left as written); each with its decision-log; rule 5 "in force since" dl-046's
+   approval (2026-11-22), rule 6 from 1.3's Date (dl-047 P1: from its version's date); the title
+   extended, the tags unchanged.
 6. **dl-017 R3 restated** (dl-047 P1 option 2). Recommended: in the review's sentence of each phase
    option 2 lists (`plan` of both delivery loops; `capture` of `decision-log-ingest`, `adr-ingest`
    and `bug-ingest`; `pack-cycle` › `charter`; `pack-release-cycle` › `validate`; `sw-life-cycle`
    › `inception`, `specification` and `sunset`), and in `pack-ingest` › `capture` and `vision`,
-   born with it: "its record (dl-017 R3): the verdict, the count per severity, what was applied, or
-   not and why"; the plan template's Handoff comment naming R3 beside R1.
+   born with it: "its record (dl-017 R3): the verdict, the count per severity, the fixing commit,
+   what was applied, or not and why"; in both delivery loops `review`'s existing R3 sentence
+   extended the same way, so that each loop carries one record; the plan template's Handoff
+   comment naming dl-017 R3's record beside the review.
 7. **`pack-ingest`** (dl-050 D1, D3). Recommended: `kind: main`, version 1, four phases as D1 lists
    them, with their roles, approvals and fallbacks (`rule` back to `capture`; `vision` skipped
    when every pack already has its row, as its description, since the pinned 0.2.2 has no skip);
@@ -126,7 +130,9 @@ Each point with a recommendation.
 10. **The register.** Recommended: each of the five rows to Closed in the commit that settles it
     (dl-044's with task-103 and its workflow rows, the last of them); "The engine way of working"
     extended in `pack-ingest`'s commit; new rows only for items this plan leaves owed, in the
-    commit of the note or ruling that leaves them (dl-036 R2).
+    commit of the note or ruling that leaves them (dl-036 R2). A row closed before its task's check
+    on `main` (rows 3 and 7) stays closed if that check is red: the fix gets a new row, with the
+    task or bug that carries it.
 11. **The pushes** (rule 3, dl-039 R3). Recommended: `main` pushed at `submit` (with the two
     approvals of 2026-11-23 not yet pushed, its CI read), at the merge (its CI read with its jobs'
     durations, then each task's check on `main` and its `done`), and once at the close (`active →
@@ -139,21 +145,22 @@ Each point with a recommendation.
 ## Steps
 
 On the branch `dl/dl-044-dl-050-actions`, from `main` at the commit that submits this plan; one
-commit per row. Before every commit, the privacy check of `repository-practice` rule 2 and, from
-row 2, `npm run check:texts` on the staged diff; after every commit under `.wingfoil/` or
-`docs/memory/`, `npm run -s wingfoil -- workflow list` and `npm run lint` exit 0.
+commit per row. Before every commit, the privacy check of `repository-practice` rule 2 and, after
+row 2's merge (rows 3 … 9), `npm run check:texts` on the staged diff; after every commit under
+`.wingfoil/` or `docs/memory/`, `npm run -s wingfoil -- workflow list` and `npm run lint` exit 0,
+and after every commit under `.wingfoil/workflows/`, `npm run check:runs` too (dl-045 P2).
 
 | # | File | Change | Source |
 |---|---|---|---|
-| 1 | `.wingfoil/workflows/custom/tooling-delivery.yaml` (4 → 5) and `kanban-delivery.yaml` (6 → 7), one commit | `deliver`: dl-045 P1's text; `plan`'s review: R3's record (point 6); the two files identical but for roles and descriptions. Row "dl-045's actions" to Closed | dl-045 P1, P2; dl-047 P1, P2 |
+| 1 | `.wingfoil/workflows/custom/tooling-delivery.yaml` (4 → 5) and `kanban-delivery.yaml` (6 → 7), `docs/owed-items.md`, one commit | `deliver`: dl-045 P1's text; `plan`'s review and `review`'s existing sentence: R3's record (point 6); the two files identical but for roles and descriptions. Row "dl-045's actions" to Closed | dl-045 P1, P2; dl-047 P1, P2 |
 | 2 | `src/` (the `check:texts` script), `package.json`, `tests/`, `.github/workflows/ci.yml` | task-102 (point 3), on its own branch, merged into this one | dl-046 P2, P3 |
-| 3 | `.wingfoil/directives/custom/repository-practice.md` (1.2 → 1.3, Date) | point 5. Row "dl-046's actions" to Closed | dl-046 P1, P3; dl-047 P1, P2 |
+| 3 | `.wingfoil/directives/custom/repository-practice.md` (1.2 → 1.3, Date), `docs/owed-items.md` | point 5. Row "dl-046's actions" to Closed | dl-046 P1, P3; dl-047 P1, P2 |
 | 4 | `src/publish.ts`, `tests/` | task-103 (point 3), on its own branch, merged into this one | dl-044 P1, P3 |
 | 5 | `.wingfoil/workflows/custom/decision-log-ingest.yaml` (2 → 3), `adr-ingest.yaml` (2 → 3), `bug-ingest.yaml` (3 → 4), `.wingfoil/memory/templates/plan.md`, one commit | `capture`'s review: R3's record; the template's Handoff comment (point 6) | dl-047 P1, P2 |
 | 6 | `.wingfoil/workflows/custom/pack-release-cycle.yaml` (8 → 9) | `validate`'s review: R3's record; `approve-publication`: the agent pushes the approval commit and reads `main`'s CI, no tag, before handing over the publication's commands; `publish`: the approver runs `publish:pack` with `--report`, the agent reads the report into the Publication and checks the digest and the range against the Validation's dry run, a missing or different value to the approver before CB-6 | dl-044 P1 … P3; dl-047 P2 |
-| 7 | `.wingfoil/workflows/custom/pack-ingest.yaml` (new, 1), `.wingfoil/workflows.yaml`, `pack-cycle.yaml` (7 → 8), `sw-life-cycle.yaml` (5 → 6), `docs/owed-items.md`, one commit | point 7; `pack-cycle`: `charter`'s description naming `pack-ingest` as the path a pack's proposal took, its review with R3's record, `activate`'s who runs what (dl-044 P2); `sw-life-cycle`: its header naming `pack-ingest` as the entry of a new pack, `inception`, `specification` and `sunset` with R3's record; the row "The engine way of working" extended (dl-044, `pack-ingest`, "the approver's own shell"). Rows "dl-044's actions" and "dl-048's actions" to Closed | dl-044 P2, P3; dl-047 P2; dl-048 P2; dl-050 D1, D3 |
+| 7 | `.wingfoil/workflows/custom/pack-ingest.yaml` (new, 1), `.wingfoil/workflows.yaml` (3 → 4), `pack-cycle.yaml` (7 → 8), `sw-life-cycle.yaml` (5 → 6), `docs/owed-items.md`, one commit | point 7; `pack-cycle`: `charter`'s description naming `pack-ingest` as the path a pack's proposal took, its review with R3's record, `activate`'s who runs what (dl-044 P2); `sw-life-cycle`: its header naming `pack-ingest` as the entry of a new pack, `inception`, `specification` and `sunset` with R3's record; the row "The engine way of working" extended: its Source with dl-044 and dl-050; the approver runs `publish:pack --report` and the agent reads the report into the Publication; the agent pushes the approval commit of a pack-release, which carries no tag; `pack-ingest` among the mains whose engine runs come first (dl-050 D3); "in his own shell" made "in the approver's own shell" (dl-043 N3). Rows "dl-044's actions" and "dl-048's actions" to Closed | dl-044 P2, P3; dl-047 P2; dl-048 P2; dl-050 D1, D3 |
 | 8 | `docs/01_vision/07_sequencer.md` (1.7 → 1.8) | point 8 | the approver, 2026-11-23; dl-050 D4 |
-| 9 | dl-017; dl-044 … dl-050; plan-079, plan-080 | the Execution Notes of point 9. Row "dl-047's actions" to Closed | dl-047 P2; dl-050 D4 |
+| 9 | dl-017; dl-044 … dl-050; plan-079, plan-080; `docs/owed-items.md` | the Execution Notes of point 9. Row "dl-047's actions" to Closed | dl-047 P2; dl-050 D4 |
 
 Then, in dl-039 R2's order:
 - **Leftovers:** a grep of `.wingfoil/`, `docs/` (outside `docs/memory/` except
@@ -191,3 +198,10 @@ Then, in dl-039 R2's order:
 ## Execution Notes
 
 <!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-23: independent review of the draft (dl-017): approve after amendments; no blocker, four
+  should-fix (R3's record with the fixing commit and `review`'s sentence in both loops; the bump of
+  `.wingfoil/workflows.yaml` 3 → 4; rule 6 in force from 1.3's Date; `check:runs` after the
+  workflow commits) and six nits (the template's comment names dl-017, not R1; `check:texts` from
+  row 2's merge; `docs/owed-items.md` in rows 1, 3 and 9; the engine row's extension named; a red
+  check on `main` after a row's close gets a new row; row 8 an outline choice, kept as flagged),
+  all applied but the last, which needs no change.
