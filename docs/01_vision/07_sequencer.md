@@ -138,10 +138,10 @@ Ordered between M3 and M4; its id comes after M4's by number, as W14 is ordered 
 - **W10's order** (the approver, 2026-11-12, 2026-11-13 and 2026-11-23): the presets,
   `governance/feedback`, `governance/wingfoil-dogfood`, then a pack release round (bug-011 …
   bug-015's fixes, the `Precedence:` lines, the Memory templates' optional fields, the CHANGELOG's
-  first line checked), then this repository's adoption, then the periodic retrospective. After the
-  `wingfoil-release-intake` that raises this repository's pin: dl-049's `rule`, `vision` and
-  `hand-off` under `pack-ingest` (dl-050 D4), then the cycles of the two pull-request packs; the
-  pin's bump stays with the adoption.
+  first line checked), then this repository's adoption, then the periodic retrospective. Within
+  the adoption, after its `wingfoil-release-intake` (which raises the pin): dl-049's `rule`,
+  `vision` and `hand-off` under `pack-ingest` (dl-050 D4), then the cycles of the two pull-request
+  packs.
 
 ## Open questions for the sequencer review
 

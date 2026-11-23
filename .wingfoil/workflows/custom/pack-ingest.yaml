@@ -13,7 +13,9 @@ version: 1
 phases:
   - name: capture
     description: >-
-      Record the request as a decision-log: the packs asked for, their purpose, the options and the
+      Record the request as a decision-log (dl-050 Q1 (a)): the packs asked for (axis, name,
+      purpose, requires and conflicts as far as known), how each meets the catalog's existing packs,
+      the evidence each will need (preset, check:runs, examples), the open questions and the
       proposed ruling; an independent review, amended while pending, its record (dl-017 R3) the
       verdict, the count per severity, the fixing commit and what was applied, or not and why.
     role: facilitator
@@ -41,6 +43,9 @@ phases:
       already has its row, said in the plan (the pinned WingFoil has no skip).
     role: product-owner
     approval: { by_role: approver }
+    produces:
+      - "docs/01_vision/06_features.md"
+      - "docs/01_vision/07_sequencer.md"
   - name: hand-off
     description: >-
       One Execution Note on the decision-log naming, per accepted pack, the pack-cycle charter plan
