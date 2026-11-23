@@ -2,7 +2,7 @@
 id: task-103-publish-pack-report-the-publication-s-report-written-to-a-file-outside-the-tree-plan-081-task-103
 type: task
 title: "publish:pack --report, the publication's report written to a file outside the tree (plan-081 task-103)"
-status: backlog
+status: approved
 pack: ""            # tooling task (tooling-delivery v5), plan-081 task-103
 depends_on: []
 tags: ["tooling","publication","pack-release"]
@@ -102,7 +102,27 @@ Today the report reaches only the approver's shell (prel-007 › Execution Notes
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+**Shape.** `runPublish` becomes three steps: the arguments and the repository's top level (today's
+`checkRepository` split in two: `topLevel`, its exit 3 checks, and `checkClean`, its exit 1); then,
+with `--report`, the path checked and the file created; then today's body, unchanged, returning
+`{ code, lines }`, whose lines are written to the file before `runPublish` returns them. `parse`
+reads `report` with `multiple: true`, refusing an empty value or two.
+
+**The path check** (`reportPath`). The path resolved against the working directory; the roots: the
+top level, `--tree` as given (resolved), and both with links resolved (`realpathSync`). Inside when
+the path, as written, is a root or under one; else, when `lstat` finds a symbolic link whose target
+does not exist, refused as dangling; else the path with links resolved (itself if it exists, its
+parent's real path and its name if the parent exists) checked against the roots again. Each refusal
+a `PublishError(3, …)` naming the path and dl-044.
+
+**The writes.** The creation `writeFileSync(path, '')`, an error being `PublishError(2, …)`; the
+final write by path, `writeFileSync(path, lines joined with \n, plus a final \n)`, its error
+appending one line (`--report <path>: the report could not be written: <message>`) and turning a 0
+into 2.
+
+**Red steps.** (1) The tests of criterion 4 in `tests/publish.test.ts`, against today's code: the
+option is unknown to strict mode, so every `--report` case fails (exit 3). (2) `parse`, the split,
+the path check and the writes, until they pass; the header comment of `src/publish-cli.ts`.
 
 ## Execution Notes
 
@@ -125,3 +145,39 @@ Today the report reaches only the approver's shell (prel-007 › Execution Notes
   and tested) and four nits (a failure after the tag 1 or 2; the final write by path, so that its
   failure can be tested; criterion 1's exception named; `--tree` as given compared too), all
   applied.
+- 2026-11-23: design (`5282d0d7`), then `backlog → in-progress` on `task/task-103-…`, from
+  plan-081's branch at `c790cf25`, in a worktree.
+- 2026-11-23: red (dl-018), `97c6654f`, against today's code: `npm run build && node --test
+  dist/tests/publish.test.js`, 9 failing of 38. The tenth new test (an empty value, the option
+  twice, the option without a value: exit 3) already passed, strict mode refusing the unknown
+  option; it pins that the option, once known, keeps those cases usage errors.
+- 2026-11-23: green: `parse` with `report` (`multiple: true`), `checkRepository` split into
+  `topLevel` and `checkClean`, `reportPath`, `createReport` and `writeReport`, `runPublish`
+  wrapping today's body (`publishChecked`); 38 of 38, `npm run lint` exit 0; the header comment of
+  `src/publish-cli.ts`.
+- 2026-11-23: independent review of the build (dl-017, `1d1e1c52`): approve after one should-fix;
+  red first verified (9 failing of 38 rebuilt from `97c6654f`); no blocker; one should-fix and six
+  nits. Applied: the failure-after-the-tag test asserts the tag removed and the branch reset (the
+  state and `main` unchanged), not only the message; the doc comment names the lexical
+  normalisation of the path; the real paths by `realpathSync.native`, for a case-insensitive
+  filesystem; every message names the path as given; one `failure` helper for both catches;
+  `topLevel`'s comment; a test of `--tree` given through a symbolic link. Not applied: the final
+  write's failure test comparing its earlier lines with a run without `--report`, since a second
+  publication's tag and commit differ; that the lines are the run's own is pinned by the other
+  tests. These amendments strengthen tests and refactor without a new behaviour, so no red run;
+  39 of 39, `npm run lint` exit 0.
+- 2026-11-23: re-review of the amendments (`a45a079f`): approve; the rollback test confirmed to
+  catch a tag or a branch left behind; `realpathSync.native` with no regression on Linux, every
+  earlier probe the same; the `failure` helper equivalent for both callers; the nit not applied
+  agreed. Two nits, both applied: the `--tree`-symlink test given a path under a missing directory
+  of `--tree` as given, the one case only that root refuses; the report's path and given form kept
+  together in `runPublish`, so no condition is tested twice. 39 of 39, `npm run lint` exit 0.
+- 2026-11-23: dl-039's checks on `4325a9fb`, the frozen code. The branch CI, run 45229832511:
+  `success`; jobs (22.12.0, 1) 9 min 54 s, (22.21.0, 1) 9 min 43 s, (22.12.0, 2) 5 min 48 s,
+  (22.21.0, 2) 5 min 52 s, none over 25 minutes; its "Texts, the lines this branch adds" step
+  `success`. Locally, Node.js 22.21.0, a clean tree on `4325a9fb`: `npm ci`, `npm run build`,
+  `npm run validate:publication` (28 runs, 0 failed), the golden tree in publication mode (26 runs,
+  0 failed) and `npm run -s wingfoil -- workflow list`, each exit 0; the tree clean after them. The
+  diff from plan-081's branch touches only criterion 5's files and `package-lock.json` is
+  unchanged; the privacy check of the diff (`repository-practice` rule 2): no local path, no name
+  outside this repository. This note is documentation only: no new run.

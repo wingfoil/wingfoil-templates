@@ -1,8 +1,11 @@
 import { strict as assert } from 'node:assert';
 import { spawnSync } from 'node:child_process';
-import { appendFileSync, chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync }
-  from 'node:fs';
-import { join } from 'node:path';
+import {
+  appendFileSync, chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync,
+  writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, relative } from 'node:path';
 import { after, describe, it } from 'node:test';
 import { parse, stringify } from 'yaml';
 
@@ -661,4 +664,197 @@ describe('npm run publish:pack, the index in the catalog commit (task-020)', () 
         assert.deepEqual([state(repo), repo.git(['rev-parse', 'main'])], before);
       });
     });
+});
+
+/** A directory outside every repository, removed afterwards. */
+function withOutside(body: (dir: string) => void): void {
+  const dir = mkdtempSync(join(tmpdir(), 'publish-report-'));
+  try {
+    body(dir);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+/** The lines as the CLI prints them. */
+function printed(result: PublishResult): string {
+  return result.lines.map((line) => `${line}\n`).join('');
+}
+
+function assertReported(result: PublishResult, file: string): void {
+  assert.equal(readFileSync(file, 'utf8'), printed(result));
+}
+
+describe('npm run publish:pack --report (task-103, dl-044 P1)', () => {
+  it('writes the lines a publication prints, its Publication section included', () => {
+    withRepository((repo) => withOutside((dir) => {
+      const file = join(dir, 'report.txt');
+      const result = publish(repo, ['--pack', 'base', '--report', file, ...WITH_KANBAN]);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      assert.ok(result.lines.includes('## Publication'));
+      assertReported(result, file);
+      assert.equal(repo.git(['status', '--porcelain', '--ignored']).trim(), '');
+    }));
+  });
+
+  it('writes a dry run\'s lines, and leaves the output of a run without it unchanged', () => {
+    withRepository((repo) => withOutside((dir) => {
+      const file = join(dir, 'report.txt');
+      const plain = publish(repo, ['--pack', 'base', '--dry-run', ...WITH_KANBAN]);
+      const result = publish(repo, ['--pack', 'base', '--dry-run', '--report', file,
+        ...WITH_KANBAN]);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      assert.ok(result.lines[0]?.startsWith('Dry run'));
+      assert.deepEqual(result, plain);
+      assertReported(result, file);
+    }));
+  });
+
+  it('writes a failed validation\'s lines and message, in a run and in a dry run', () => {
+    const noisy = new StubWingfoil({ commands: { 'dna show': { stderr: ['Warning: x'] } } },
+      STUB_RELEASE);
+    try {
+      for (const dryRun of [[], ['--dry-run']]) {
+        withRepository((repo) => withOutside((dir) => {
+          const file = join(dir, 'report.txt');
+          const result = publish(repo, ['--pack', 'base', ...dryRun, '--report', file,
+            ...WITH_KANBAN], () => noisy.cli);
+          assert.equal(result.code, 1, result.lines.join('\n'));
+          assert.match(result.lines.join('\n'), /publication validation failed; no tag/);
+          assert.ok(!result.lines.some((line) => line.startsWith('Dry run')));
+          assertReported(result, file);
+        }));
+      }
+    } finally {
+      noisy.dispose();
+    }
+  });
+
+  it('writes the refusal of an existing tag and of a working tree not clean', () => {
+    withRepository((repo) => withOutside((dir) => {
+      const file = join(dir, 'report.txt');
+      published(repo, ['--pack', 'base', ...WITH_KANBAN]);
+      repo.git(['reset', '--quiet', '--hard', 'HEAD~1']);
+      const tagged = publish(repo, ['--pack', 'base', '--report', file, ...WITH_KANBAN]);
+      assert.equal(tagged.code, 1);
+      assert.match(tagged.lines.join('\n'), /already exists/);
+      assertReported(tagged, file);
+      writeFileSync(join(repo.dir, 'stray.txt'), 'x');
+      const dirty = publish(repo, ['--pack', 'base', '--report', file, ...WITH_KANBAN]);
+      assert.equal(dirty.code, 1);
+      assert.match(dirty.lines.join('\n'), /not clean/);
+      assertReported(dirty, file);
+    }));
+  });
+
+  it('writes a failure after the tag, with its rollback', () => {
+    withTwoMajors((repo) => withOutside((dir) => {
+      bump(repo, '1.0.1');
+      repo.git(['tag', '-d', 'base@2.0.0']);
+      const file = join(dir, 'report.txt');
+      const before = [state(repo), repo.git(['rev-parse', 'main'])];
+      const result = publish(repo, ['--pack', 'base', '--report', file, ...WITH_KANBAN]);
+      assert.equal(result.code, 2, result.lines.join('\n'));
+      assert.match(result.lines.join('\n'), /the tag was removed/);
+      assert.deepEqual([state(repo), repo.git(['rev-parse', 'main'])], before);
+      assertReported(result, file);
+    }));
+  });
+
+  it('refuses a path inside the repository before anything runs, whichever way it is given', () => {
+    withRepository((repo) => withOutside((dir) => {
+      mkdirSync(join(repo.dir, '.cache'), { recursive: true });
+      const target = join(repo.dir, 'new.txt');
+      symlinkSync(join(repo.dir, 'packs'), join(dir, 'to-packs'));
+      symlinkSync(join(repo.dir, 'catalog.yaml'), join(dir, 'to-catalog'));
+      symlinkSync(target, join(dir, 'dangling'));
+      const paths = [relative(process.cwd(), join(repo.dir, 'r.txt')), join(repo.dir, 'r.txt'),
+        join(repo.dir, 'packs', '..', 'r.txt'), join(repo.dir, '.cache', 'r.txt'),
+        join(repo.dir, 'missing', 'r.txt'), join(dir, 'to-packs', 'r.txt'),
+        join(dir, 'to-catalog'), join(dir, 'dangling')];
+      const before = state(repo);
+      for (const path of paths) {
+        const result = publish(repo, ['--pack', 'base', '--report', path, ...WITH_KANBAN], () => {
+          throw new Error('nothing runs');
+        });
+        assert.equal(result.code, 3, `${path}: ${result.lines.join('\n')}`);
+        assert.equal(result.lines.length, 1, path);
+        assert.match(result.lines[0] ?? '', /dl-044/);
+        assert.equal(state(repo), before, path);
+        assert.ok(!existsSync(target), path);
+      }
+      assert.ok(!existsSync(join(repo.dir, 'r.txt')));
+      assert.ok(!existsSync(join(repo.dir, 'packs', 'r.txt')));
+    }));
+  });
+
+  it('refuses a path inside --tree as given through a symbolic link', () => {
+    withRepository((repo) => withOutside((dir) => {
+      const tree = join(dir, 'tree');
+      symlinkSync(repo.dir, tree);
+      const before = state(repo);
+      for (const path of [join(tree, 'missing', 'r.txt'), join(tree, 'r.txt'),
+        join(repo.dir, 'r.txt')]) {
+        const result = runPublish(['--tree', tree, '--pack', 'base', '--report', path,
+          ...WITH_KANBAN], { install: () => { throw new Error('nothing runs'); },
+          env: { ...repo.env, ...DATES } });
+        assert.equal(result.code, 3, `${path}: ${result.lines.join('\n')}`);
+        assert.match(result.lines[0] ?? '', /dl-044/);
+        assert.equal(state(repo), before, path);
+      }
+      assert.ok(!existsSync(join(repo.dir, 'r.txt')));
+    }));
+  });
+
+  it('refuses a directory that does not exist, exit 2, before anything runs', () => {
+    withRepository((repo) => withOutside((dir) => {
+      const file = join(dir, 'nope', 'report.txt');
+      const result = publish(repo, ['--pack', 'base', '--report', file, ...WITH_KANBAN], () => {
+        throw new Error('nothing runs');
+      });
+      assert.equal(result.code, 2, result.lines.join('\n'));
+      assert.equal(repo.git(['tag', '-l']).trim(), '');
+      assert.ok(!existsSync(file));
+    }));
+  });
+
+  it('keeps the publication when the final write fails: one more line, exit 2', () => {
+    withRepository((repo) => withOutside((dir) => {
+      const file = join(dir, 'report.txt');
+      const result = publish(repo, ['--pack', 'base', '--report', file, ...WITH_KANBAN], () => {
+        rmSync(file, { force: true });
+        mkdirSync(file, { recursive: true });
+        return RELEASE.cli;
+      });
+      assert.equal(result.code, 2, result.lines.join('\n'));
+      assert.ok(result.lines.includes('## Publication'));
+      assert.match(result.lines[result.lines.length - 1] ?? '',
+        /^--report .*report\.txt: the report could not be written: /);
+      assert.equal(repo.git(['cat-file', '-t', 'refs/tags/base@1.0.0']).trim(), 'tag');
+    }));
+  });
+
+  it('overwrites an existing file', () => {
+    withRepository((repo) => withOutside((dir) => {
+      const file = join(dir, 'report.txt');
+      writeFileSync(file, 'an earlier report\n'.repeat(500));
+      const result = publish(repo, ['--pack', 'base', '--dry-run', '--report', file,
+        ...WITH_KANBAN]);
+      assert.equal(result.code, 0, result.lines.join('\n'));
+      assertReported(result, file);
+    }));
+  });
+
+  it('exits 3 on an empty value, the option twice or the option without a value', () => {
+    withRepository((repo) => withOutside((dir) => {
+      const [a, b] = [join(dir, 'a.txt'), join(dir, 'b.txt')];
+      for (const args of [['--report', ''], ['--report', a, '--report', b], ['--report']]) {
+        const result = publish(repo, ['--pack', 'base', ...WITH_KANBAN, ...args], () => {
+          throw new Error('nothing runs');
+        });
+        assert.equal(result.code, 3, `${args.join(' ')}: ${result.lines.join('\n')}`);
+        assert.ok(!existsSync(a) && !existsSync(b), args.join(' '));
+      }
+    }));
+  });
 });
