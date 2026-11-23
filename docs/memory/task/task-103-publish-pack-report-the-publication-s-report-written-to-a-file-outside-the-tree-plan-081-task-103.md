@@ -172,3 +172,12 @@ the path check and the writes, until they pass; the header comment of `src/publi
   agreed. Two nits, both applied: the `--tree`-symlink test given a path under a missing directory
   of `--tree` as given, the one case only that root refuses; the report's path and given form kept
   together in `runPublish`, so no condition is tested twice. 39 of 39, `npm run lint` exit 0.
+- 2026-11-23: dl-039's checks on `4325a9fb`, the frozen code. The branch CI, run 45229832511:
+  `success`; jobs (22.12.0, 1) 9 min 54 s, (22.21.0, 1) 9 min 43 s, (22.12.0, 2) 5 min 48 s,
+  (22.21.0, 2) 5 min 52 s, none over 25 minutes; its "Texts, the lines this branch adds" step
+  `success`. Locally, Node.js 22.21.0, a clean tree on `4325a9fb`: `npm ci`, `npm run build`,
+  `npm run validate:publication` (28 runs, 0 failed), the golden tree in publication mode (26 runs,
+  0 failed) and `npm run -s wingfoil -- workflow list`, each exit 0; the tree clean after them. The
+  diff from plan-081's branch touches only criterion 5's files and `package-lock.json` is
+  unchanged; the privacy check of the diff (`repository-practice` rule 2): no local path, no name
+  outside this repository. This note is documentation only: no new run.
