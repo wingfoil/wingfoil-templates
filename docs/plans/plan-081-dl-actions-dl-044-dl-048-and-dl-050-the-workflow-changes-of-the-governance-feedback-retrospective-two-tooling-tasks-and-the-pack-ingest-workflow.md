@@ -262,3 +262,10 @@ Then, in dl-039 R2's order:
   above; `vision`'s `produces`; this note), all applied in `c7ae3252` but the second nit, which
   needs only this note. No re-review: the amendments are texts, changing no behaviour, test or
   Acceptance (dl-017).
+- 2026-11-23: dl-039's checks on the branch's frozen head `96d4fbf8` (the amendments `c7ae3252`,
+  then this plan's notes): branch CI run 45281486969 `success`, jobs (22.12.0, 1) 9 min 58 s,
+  (22.21.0, 1) 11 min 58 s, (22.12.0, 2) 6 min 47 s, (22.21.0, 2) 8 min 3 s, the step "Texts, the
+  lines this branch adds" in shard 1 included. Locally, Node.js 22.21.0, a clean tree on
+  `96d4fbf8`: `npm ci`, `npm run build`, `npm run validate:publication` (28 runs, 0 failed), the
+  golden tree in publication mode (26 runs, 0 failed) and `npm run -s wingfoil -- workflow list`,
+  each exit 0; the tree clean after them. This note is documentation only: no new run.
