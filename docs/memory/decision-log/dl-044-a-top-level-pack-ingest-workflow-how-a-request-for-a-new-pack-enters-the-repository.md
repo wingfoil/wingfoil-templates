@@ -2,7 +2,7 @@
 id: dl-044-a-top-level-pack-ingest-workflow-how-a-request-for-a-new-pack-enters-the-repository
 type: decision-log
 title: "A top-level pack-ingest workflow: how a request for a new pack enters the repository"
-status: draft
+status: pending
 tags: ["workflow","packs","ingest"]
 ---
 
