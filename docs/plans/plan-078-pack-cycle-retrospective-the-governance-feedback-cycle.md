@@ -2,7 +2,7 @@
 id: plan-078-pack-cycle-retrospective-the-governance-feedback-cycle
 type: plan
 title: "pack-cycle retrospective: the governance/feedback cycle"
-status: active
+status: done
 workflow: "pack-cycle"
 phase: "retrospective"
 tags: ["process","retrospective","feedback","governance","W10"]
