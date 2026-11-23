@@ -504,20 +504,19 @@ function afterTag(tree: string, pack: string, tag: string, version: string,
 
 export function runPublish(argv: string[], options: PublishOptions = {}): PublishResult {
   let args: Args;
-  let path: string | undefined;
+  let report: { path: string; given: string } | undefined;
   try {
     args = parse(argv);
     const top = topLevel(args.tree);
     if (args.report !== undefined) {
-      path = reportPath(args.report, top, args.tree);
-      createReport(path, args.report);
+      report = { path: reportPath(args.report, top, args.tree), given: args.report };
+      createReport(report.path, report.given);
     }
   } catch (error) {
     return failure(error);
   }
   const result = publishChecked(args, options);
-  return path === undefined || args.report === undefined ? result
-    : writeReport(path, args.report, result);
+  return report === undefined ? result : writeReport(report.path, report.given, result);
 }
 
 /** A failure's result: its lines and exit code; any other exception is rethrown. */

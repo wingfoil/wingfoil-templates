@@ -166,3 +166,9 @@ the path check and the writes, until they pass; the header comment of `src/publi
   publication's tag and commit differ; that the lines are the run's own is pinned by the other
   tests. These amendments strengthen tests and refactor without a new behaviour, so no red run;
   39 of 39, `npm run lint` exit 0.
+- 2026-11-23: re-review of the amendments (`a45a079f`): approve; the rollback test confirmed to
+  catch a tag or a branch left behind; `realpathSync.native` with no regression on Linux, every
+  earlier probe the same; the `failure` helper equivalent for both callers; the nit not applied
+  agreed. Two nits, both applied: the `--tree`-symlink test given a path under a missing directory
+  of `--tree` as given, the one case only that root refuses; the report's path and given form kept
+  together in `runPublish`, so no condition is tested twice. 39 of 39, `npm run lint` exit 0.

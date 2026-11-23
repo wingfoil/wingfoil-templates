@@ -793,7 +793,8 @@ describe('npm run publish:pack --report (task-103, dl-044 P1)', () => {
       const tree = join(dir, 'tree');
       symlinkSync(repo.dir, tree);
       const before = state(repo);
-      for (const path of [join(tree, 'r.txt'), join(repo.dir, 'r.txt')]) {
+      for (const path of [join(tree, 'missing', 'r.txt'), join(tree, 'r.txt'),
+        join(repo.dir, 'r.txt')]) {
         const result = runPublish(['--tree', tree, '--pack', 'base', '--report', path,
           ...WITH_KANBAN], { install: () => { throw new Error('nothing runs'); },
           env: { ...repo.env, ...DATES } });
