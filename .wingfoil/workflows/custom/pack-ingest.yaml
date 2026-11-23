@@ -1,0 +1,48 @@
+# Startable entry point of a new pack: from a request for one or more packs to their charters
+# (dl-048 option 3, as reshaped by dl-050 Q1 (a); dl-050 D1, D3). One run per request; no element
+# type of its own: the request is a decision-log. A proposal from outside enters capture as a
+# feedback item routed to decision-log, once this repository adopts governance/feedback.
+# hand-off leaves one deviation: the charter plan that follows is hosted as plan-073 was (and
+# plan-041, plan-047, plan-056), since sw-life-cycle › pack-delivery selects accepted packs while
+# pack-cycle › charter creates a draft one, until the owed item on pack-delivery's selection over
+# accepted packs is settled (docs/owed-items.md).
+name: pack-ingest
+kind: main
+description: "From a request for new packs to their pack-cycle charters."
+version: 1
+phases:
+  - name: capture
+    description: >-
+      Record the request as a decision-log: the packs asked for, their purpose, the options and the
+      proposed ruling; an independent review, amended while pending, its record (dl-017 R3) the
+      verdict, the count per severity, the fixing commit and what was applied, or not and why.
+    role: facilitator
+    actions:
+      - 'memory.add(type: decision-log)'
+      - memory.submit            # draft → pending
+    produces:
+      - "docs/memory/decision-log/{id}.md"
+  - name: rule
+    description: >-
+      The approver rules the request (pending → approved); the ruling also records a pack refused
+      or deferred (dl-048 P1), so that only an accepted pack reaches vision. A reject back to
+      capture is for a text that needs rework.
+    role: product-owner
+    actions:
+      - memory.approve           # pending → approved (approver)
+    approval: { by_role: approver }
+    fallback: { step: capture }
+  - name: vision
+    description: >-
+      One row per accepted pack in docs/01_vision/06_features.md and its place in
+      docs/01_vision/07_sequencer.md, with their doc-versioning bumps; an independent review of the
+      amendment, its record (dl-017 R3) the verdict, the count per severity, the fixing commit and
+      what was applied, or not and why, before the approver's OK. Skipped when every accepted pack
+      already has its row, said in the plan (the pinned WingFoil has no skip).
+    role: product-owner
+    approval: { by_role: approver }
+  - name: hand-off
+    description: >-
+      One Execution Note on the decision-log naming, per accepted pack, the pack-cycle charter plan
+      that follows, in the order the ruling sets (hosted as the header says).
+    role: product-owner
