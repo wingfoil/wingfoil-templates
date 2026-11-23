@@ -102,7 +102,27 @@ Today the report reaches only the approver's shell (prel-007 › Execution Notes
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+**Shape.** `runPublish` becomes three steps: the arguments and the repository's top level (today's
+`checkRepository` split in two: `topLevel`, its exit 3 checks, and `checkClean`, its exit 1); then,
+with `--report`, the path checked and the file created; then today's body, unchanged, returning
+`{ code, lines }`, whose lines are written to the file before `runPublish` returns them. `parse`
+reads `report` with `multiple: true`, refusing an empty value or two.
+
+**The path check** (`reportPath`). The path resolved against the working directory; the roots: the
+top level, `--tree` as given (resolved), and both with links resolved (`realpathSync`). Inside when
+the path, as written, is a root or under one; else, when `lstat` finds a symbolic link whose target
+does not exist, refused as dangling; else the path with links resolved (itself if it exists, its
+parent's real path and its name if the parent exists) checked against the roots again. Each refusal
+a `PublishError(3, …)` naming the path and dl-044.
+
+**The writes.** The creation `writeFileSync(path, '')`, an error being `PublishError(2, …)`; the
+final write by path, `writeFileSync(path, lines joined with \n, plus a final \n)`, its error
+appending one line (`--report <path>: the report could not be written: <message>`) and turning a 0
+into 2.
+
+**Red steps.** (1) The tests of criterion 4 in `tests/publish.test.ts`, against today's code: the
+option is unknown to strict mode, so every `--report` case fails (exit 3). (2) `parse`, the split,
+the path check and the writes, until they pass; the header comment of `src/publish-cli.ts`.
 
 ## Execution Notes
 
