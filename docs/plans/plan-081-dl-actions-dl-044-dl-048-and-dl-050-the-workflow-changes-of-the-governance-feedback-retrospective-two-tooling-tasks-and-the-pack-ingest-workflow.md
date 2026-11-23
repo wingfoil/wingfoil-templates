@@ -228,3 +228,8 @@ Then, in dl-039 R2's order:
   row 9 adds the Open row for dl-007's deferred ruling, which plan-010 left without one (rule 4);
   row 5 adds to the `plan` type's comment in `.wingfoil/memory.yaml` that `phase` is never
   advanced. No feedback note: the engine's runs answer it (the row "The engine way of working").
+- 2026-11-23: independent review of `d53d8d09` (dl-017): approve; no blocker, no should-fix; five
+  nits, none applied: the Context and the outline's points 8 to 10 still name plan-080's close
+  and only this plan's owed items, left as written, since Steps and the note above rule; "the nine
+  dl actions plans" checked (plan-011, 026, 027, 030, 034, 036, 038, 062, 063); the trailer is
+  this repository's.
