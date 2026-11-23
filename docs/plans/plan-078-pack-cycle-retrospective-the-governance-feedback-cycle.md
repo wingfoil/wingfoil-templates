@@ -310,3 +310,5 @@ this plan captures.
 - 2026-11-23: merged `--no-ff` into `main` (`8f3d3b34`) on the approver's OK, no conflict; the ids
   this plan's texts cite (dl-043 … dl-048, "dl-044's bump" in dl-048 P2) point to this branch's
   elements, and dl-050 cites dl-048 and dl-043's GOV-6.
+- 2026-11-23: `main`'s CI on `3711f415` (the merge and the note above): run 45153156069, green; the
+  longest job 11 min 31 s. The plan closes `active → done`.
