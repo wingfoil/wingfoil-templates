@@ -2,7 +2,7 @@
 id: plan-080-decision-log-ingest-capture-a-top-level-pack-ingest-workflow
 type: plan
 title: "decision-log-ingest capture: a top-level pack-ingest workflow"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "capture"
 tags: ["decision-log","workflow","pack"]
