@@ -140,7 +140,20 @@ Each point with a recommendation.
 
 ## The approver's rulings
 
-<!-- Filled from the approver's ruling of the outline, before `submit`. -->
+Given by the approver on 2026-11-23: every point of the outline as recommended.
+1. **Point 1:** this plan on `main`; the work on `dl/dl-044-dl-050-actions`, one commit per row; one
+   `--no-ff` merge at the close.
+2. **Point 2:** the rows in the order of Steps.
+3. **Point 3:** task-102 and task-103, each on its own branch from this plan's, merged into it (a
+   departure from `deliver`); each `approved` until its check on `main` after this plan's merge.
+4. **Point 4:** dl-039's checks, once on each frozen commit; no clean clones.
+5. **Point 5:** `repository-practice` 1.3 with rules 5 and 6 as written.
+6. **Point 6:** R3's record restated as written.
+7. **Point 7:** `pack-ingest` 1 as written; `.wingfoil/workflows.yaml` 3 → 4.
+8. **Point 8:** the sequencer 1.8, W10's order line only.
+9. **Point 9:** the notes as written.
+10. **Point 10:** each row closed in the commit that settles it; a red check's fix gets a new row.
+11. **Point 11:** `main` pushed at `submit`, at the merge and once at the close.
 
 ## Steps
 
