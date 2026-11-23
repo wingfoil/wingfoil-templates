@@ -2,7 +2,7 @@
 id: dl-043-pull-requests-offered-as-two-optional-governance-packs-the-merge-through-a-pull-request-and-the-pull-request-as-a-conversation-with-the-agents
 type: decision-log
 title: "Pull requests offered as two optional governance packs: the merge through a pull request, and the pull request as a conversation with the agents"
-status: draft
+status: pending
 tags: ["packs","governance","pull-request","scope"]
 ---
 
