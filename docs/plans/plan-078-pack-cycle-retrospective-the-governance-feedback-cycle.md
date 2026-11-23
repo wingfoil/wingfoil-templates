@@ -301,3 +301,12 @@ this plan captures.
   one should-fix (the deviation of task-101's base listed) and three nits (the touched rows
   counted once; dl-047's row with R3's extended record and the note on dl-017; D3's one bump per
   file), all applied.
+- 2026-11-22: the branch's CI (dl-039 R1) on the frozen head `02c37c22`: run 45000104848, green;
+  the longest job 13 min 18 s, under R3's 25 min.
+- 2026-11-23: the close's next free numbers corrected (the note of 2026-11-22 stays as written):
+  an import on `main` took dl-043 and dl-044 without seeing this branch; the approver renumbered
+  them dl-049 and dl-050 on `main` (`58ef7d5e`), with plan-079 and plan-080 their capture plans.
+  dl-050 is to be ruled together with dl-048. Next free plan-081, dl-051, task-102, F-053, bug-017.
+- 2026-11-23: merged `--no-ff` into `main` (`8f3d3b34`) on the approver's OK, no conflict; the ids
+  this plan's texts cite (dl-043 … dl-048, "dl-044's bump" in dl-048 P2) point to this branch's
+  elements, and dl-050 cites dl-048 and dl-043's GOV-6.
