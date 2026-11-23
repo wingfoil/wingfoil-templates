@@ -205,3 +205,4 @@ Then, in dl-039 R2's order:
   row 2's merge; `docs/owed-items.md` in rows 1, 3 and 9; the engine row's extension named; a red
   check on `main` after a row's close gets a new row; row 8 an outline choice, kept as flagged),
   all applied but the last, which needs no change.
+- 2026-11-23: re-review of the amendments (`06924820`): approve; each finding fixed, no new finding.
