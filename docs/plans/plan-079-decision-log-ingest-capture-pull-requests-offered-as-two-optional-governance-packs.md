@@ -2,7 +2,7 @@
 id: plan-079-decision-log-ingest-capture-pull-requests-offered-as-two-optional-governance-packs
 type: plan
 title: "decision-log-ingest capture: pull requests offered as two optional governance packs"
-status: draft
+status: active
 workflow: "decision-log-ingest"
 phase: "capture"
 tags: ["decision-log","governance","pull-request"]
