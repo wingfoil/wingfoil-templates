@@ -148,9 +148,10 @@ counted); the generated regions by `MARKER`; the two paths.
 **Red steps.** (1) `tests/check-texts.test.ts`, every case of criterion 5, against a stub module
 that exports the function and fails: red. (2) The new assertions of `tests/ci-workflow.test.ts` and
 the `package.json` script: red. (3) The module, until (1) passes. (4) `ci.yml` and the script, until
-(2) passes. A known limit kept: a fence closed by the end of its quote or list item, followed at
-once by an indented code line, reads that line as fenced; `src/markdown-lines.ts` is out of the
-files this task may touch (criterion 6).
+(2) passes. A known limit kept: a fence closed by the end of its list item, followed at once by an
+indented code line of another list item, reads that line as fenced (the end of a quote is read: the
+open state is cleared when the container changes); `src/markdown-lines.ts` is out of the files
+this task may touch (criterion 6).
 
 ## Execution Notes
 
@@ -168,3 +169,13 @@ files this task may touch (criterion 6).
 - 2026-11-23: re-review of the amendments (`5edf50dc`): approve after one should-fix (the `env` as a
   block mapping, not a flow mapping that YAML would not parse) and three nits ("the first" named;
   the fence clause; a short line rewrapped), all applied.
+- 2026-11-23: design (`7a535bb4`), then `backlog → in-progress` on `task/task-102-…`, from
+  plan-081's branch at `967880a7`, in a worktree.
+- 2026-11-23: red (dl-018), `64c5b7cd`, a stub module that throws: `npm run build && node --test
+  dist/tests/check-texts.test.js`, 35 failing of 35; then `node --test
+  dist/tests/ci-workflow.test.js`, 2 failing of 22 (the two steps, the script).
+- 2026-11-23: green: the module and the CLI until the 35 pass (one fix on the way: git ends a
+  `+++` line with a tab when the name holds a space), then `ci.yml` and `package.json` until the 22
+  pass; `npm run lint` exit 0. `npm run check:texts -- --base origin/main` exit 0 on the branch;
+  `-- --range 440bf4c6~1..440bf4c6` reports plan-081's line 16, 119 characters, the long line that
+  commit added and the next one fixed.
