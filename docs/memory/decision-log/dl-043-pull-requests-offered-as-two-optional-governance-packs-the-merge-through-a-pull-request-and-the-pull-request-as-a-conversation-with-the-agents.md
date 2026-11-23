@@ -133,8 +133,8 @@ The points below are **proposed**; they become rulings when the approver approve
     WingFoil approval;
   - the merge gate's CI file (Q4), which fails unless the PR's head carries the item's
     `wf(<item>): approve … [in-review → approved]` commit and its finalize, and which makes a
-    squash or rebase merge visible, and a PR template whose `Implements:` line is the item's id, in the
-    pack README as files the project adds (spec-001 has no kind for them), with the branch
+    squash or rebase merge visible, and a PR template whose `Implements:` line is the item's id,
+    in the pack README as files the project adds (spec-001 has no kind for them), with the branch
     protection to record as a `service` element where the project has that type.
 - **D3 — The conversation pack ships**, in its first version (Q7 (a)):
   - the **projection**: the PR body, a checklist of the run's phases and the phase labels (`wf:red`,
@@ -179,9 +179,10 @@ The points below are **proposed**; they become rulings when the approver approve
   input, and a forge approval writes no commit. The fake forge covers the subset of `gh pr
   create|view|merge`, the comments and the reviews, and stores each object as a JSON file; a
   contract test checks it against recorded outputs of `gh`, so that it does not drift from the real
-  CLI; the conversation pack's example uses a fake, deterministic agent adapter. A manual live run against a sandbox GitHub
-  repository is recorded at each pack's first release (`pack-release-cycle`), never in CI. The
-  catalog says "supported" only for what these checks cover.
+  CLI; the conversation pack's example uses a fake, deterministic agent adapter. A manual live run
+  against a sandbox GitHub repository is recorded at each pack's first release
+  (`pack-release-cycle`), never in CI. The catalog says "supported" only for what these checks
+  cover.
 - **D7 — GitHub first (Q6).**
 - **D8 — Order.** The merge pack runs `pack-cycle` first; the conversation pack's charter is written
   after the merge pack's charter is accepted, since it builds on its tokens and its fake forge.
