@@ -69,10 +69,11 @@ describe('check:texts, the modes (task-102 criterion 1)', () => {
 
   it('reads --base from the merge base of the ref and HEAD to HEAD', () => {
     withRepo((repo) => {
-      commit(repo, { 'a.md': 'short\n' }, 'base');
+      commit(repo, { 'a.md': 'short\n', 'kept.md': `${long(140)}\n` }, 'base');
       repo.git(['checkout', '--quiet', '-b', 'feature']);
       commit(repo, { 'a.md': `short\n${long(101)}\n` });
       repo.git(['checkout', '--quiet', 'main']);
+      repo.git(['rm', '--quiet', 'kept.md']);
       commit(repo, { 'b.md': `${long(130)}\n` }, 'main moves on');
       repo.git(['checkout', '--quiet', 'feature']);
       assertBreaches(checkTexts(repo.dir, ['--base', 'main']), [breach('a.md', 2, 101)]);
@@ -84,7 +85,8 @@ describe('check:texts, the modes (task-102 criterion 1)', () => {
       commit(repo, { 'a.md': 'short\n' }, 'base');
       const a = commit(repo, { 'a.md': `short\n${long(101)}\n` });
       const b = commit(repo, { 'b.md': `${long(102)}\n` });
-      commit(repo, { 'c.md': `${long(103)}\n` }, 'after the range');
+      commit(repo, { 'b.md': `one\ntwo\n${long(102)}\n`, 'c.md': `${long(103)}\n` },
+        'after the range');
       assertBreaches(checkTexts(repo.dir, ['--range', `${a}..${b}`]), [breach('b.md', 1, 102)]);
     });
   });
@@ -95,6 +97,9 @@ describe('check:texts, the modes (task-102 criterion 1)', () => {
     ['two modes at once', ['--base', 'main', '--range', 'main..main']],
     ['a range with three dots', ['--range', 'main...main']],
     ['a range without two dots', ['--range', 'main']],
+    ['a range without its start', ['--range', '..main']],
+    ['a range without its end', ['--range', 'main..']],
+    ['a value that starts with a dash', ['--base', '-x']],
     ['a ref git cannot resolve', ['--base', 'nowhere']],
     ['a range end git cannot resolve', ['--range', 'main..nowhere']],
     ['an <a> of forty zeros', ['--range', `${ZEROS}..main`]],
@@ -107,9 +112,20 @@ describe('check:texts, the modes (task-102 criterion 1)', () => {
         assert.equal(result.code, 2);
         assert.deepEqual(result.out, []);
         assert.equal(result.err.length, 1, result.err.join('\n'));
+        assert.match(result.err[0] ?? '', /^check:texts: /);
       });
     });
   }
+
+  it('names a missing merge base', () => {
+    withRepo((repo) => {
+      commit(repo, { 'a.md': 'x\n' }, 'base');
+      repo.git(['checkout', '--quiet', '--orphan', 'other']);
+      commit(repo, { 'b.md': 'y\n' }, 'unrelated');
+      assert.deepEqual(checkTexts(repo.dir, ['--base', 'main']), { code: 2, out: [],
+        err: ['check:texts: no merge base of main and HEAD'] });
+    });
+  });
 
   it('exits 2 with git\'s message when git fails', () => {
     withRepo((repo) => {
@@ -141,7 +157,8 @@ describe('check:texts, what counts (task-102 criterion 2, dl-046 P1)', () => {
   });
 
   it('passes a long line already in the file that the diff does not add', () => {
-    assertPasses(added({ 'a.md': `${long(150)}\nshort\n` }, { 'a.md': `${long(150)}\nshort\nmore\n` }));
+    assertPasses(added({ 'a.md': `${long(150)}\nshort\n` },
+      { 'a.md': `${long(150)}\nshort\nmore\n` }));
   });
 
   it('reads every line of a new file and none of a deleted one', () => {
@@ -167,6 +184,24 @@ describe('check:texts, what counts (task-102 criterion 2, dl-046 P1)', () => {
       const c = repo.commitAll('a long line');
       assertBreaches(checkTexts(repo.dir, ['--range', `${a}..${c}`]),
         [breach('new.md', body.length + 2, 101)]);
+    });
+  });
+
+  it('reads only the added lines whatever the repository configures for its hunks', () => {
+    withRepo((repo) => {
+      const a = commit(repo, { 'a.md': `one\n${long(150)}\nthree\n` }, 'base');
+      repo.git(['config', 'diff.interHunkContext', '1']);
+      repo.git(['config', 'diff.context', '5']);
+      const b = commit(repo, { 'a.md': `ONE\n${long(150)}\nTHREE\n` });
+      assertPasses(checkTexts(repo.dir, ['--range', `${a}..${b}`]));
+    });
+  });
+
+  it('reads a Markdown file the attributes mark binary', () => {
+    withRepo((repo) => {
+      const a = commit(repo, { '.gitattributes': '*.md binary\n', 'a.md': 'x\n' }, 'base');
+      const b = commit(repo, { 'a.md': `x\n${long(150)}\n` });
+      assertBreaches(checkTexts(repo.dir, ['--range', `${a}..${b}`]), [breach('a.md', 2, 150)]);
     });
   });
 
@@ -196,17 +231,23 @@ describe('check:texts, the exemptions (task-102 criterion 2)', () => {
       { 'a.md': `---\ntitle: "${long(120)}"\n---\n\nbody\n` }));
   });
 
+  it('exempts nothing for a frontmatter that never closes', () => {
+    assertBreaches(added({ 'a.md': 'x\n' }, { 'a.md': `---\n${long(101)}\n` }),
+      [breach('a.md', 2, 101)]);
+  });
+
   it('opens no frontmatter with a `---` below line 1', () => {
     assertBreaches(added({ 'a.md': 'x\n' }, { 'a.md': `text\n---\n${long(101)}\n---\n` }),
       [breach('a.md', 3, 101)]);
   });
 
   it('blanks the frontmatter before it reads the fences', () => {
-    assertBreaches(added({ 'a.md': 'x\n' }, { 'a.md': `---\nx: 1\n\`\`\`\n---\n${long(101)}\n` }),
-      [breach('a.md', 5, 101)]);
+    assertBreaches(added({ 'a.md': 'x\n' },
+      { 'a.md': `---\nx: 1\n\`\`\`\n---\n${long(101)}\n` }),
+    [breach('a.md', 5, 101)]);
   });
 
-  it('exempts a table row, inside a block quote too, and not a table without a leading pipe', () => {
+  it('exempts a table row, in a block quote too, and not a table without a leading pipe', () => {
     assertBreaches(added({ 'a.md': 'x\n' }, { 'a.md': [`| ${long(120)} |`, `  | ${long(120)} |`,
       `> | ${long(120)} |`, `> > | ${long(120)} |`, `a | ${long(120)}`, ''].join('\n') }),
     [breach('a.md', 5, 124)]);
@@ -241,6 +282,19 @@ describe('check:texts, the exemptions (task-102 criterion 2)', () => {
       [breach('a.md', 4, 101)]);
   });
 
+  it('counts an indented code line right after a closing fence', () => {
+    assertBreaches(added({ 'a.md': 'x\n' },
+      { 'a.md': `\`\`\`\ncode\n\`\`\`\n    ${long(100)}\n` }),
+    [breach('a.md', 4, 104)]);
+  });
+
+  it('exempts a fence a new list item opens right after another item\'s fence', () => {
+    for (const gap of ['', '\n']) {
+      assertPasses(added({ 'a.md': 'x\n' }, { 'a.md': ['- ```', '  code', `${gap}- \`\`\``,
+        `  ${long(150)}`, '  ```', ''].join('\n') }));
+    }
+  });
+
   it('exempts a generated region, its markers included', () => {
     assertBreaches(added({ 'a.md': 'x\n' }, { 'a.md': ['<!-- generated:begin pack-list -->',
       long(150), '<!-- generated:end pack-list -->', long(101), ''].join('\n') }),
@@ -262,10 +316,16 @@ describe('check:texts, the exemptions (task-102 criterion 2)', () => {
 
 describe('check:texts, the report (task-102 criterion 3)', () => {
   it('sorts the breaches by path, then by line number', () => {
-    const lines = Array.from({ length: 12 }, (_, i) => (i === 1 || i === 9 ? long(101) : `l${i}`));
-    assertBreaches(added({ 'a.md': 'x\n' }, { 'b.md': `${lines.join('\n')}\n`,
-      'a.md': `x\n${long(105)}\n` }),
-    [breach('a.md', 2, 105), breach('b.md', 2, 101), breach('b.md', 10, 101)]);
+    const lines = Array.from({ length: 12 },
+      (_, i) => (i === 1 || i === 9 ? long(101) : `l${i}`));
+    withRepo((repo) => {
+      const a = commit(repo, { 'a.md': 'x\n' }, 'base');
+      repo.write('order', 'b.md\na.md\n');
+      repo.git(['config', 'diff.orderFile', 'order']);
+      const b = commit(repo, { 'b.md': `${lines.join('\n')}\n`, 'a.md': `x\n${long(105)}\n` });
+      assertBreaches(checkTexts(repo.dir, ['--range', `${a}..${b}`]),
+        [breach('a.md', 2, 105), breach('b.md', 2, 101), breach('b.md', 10, 101)]);
+    });
   });
 
   it('runs as npm run check:texts does, on the working directory', () => {
