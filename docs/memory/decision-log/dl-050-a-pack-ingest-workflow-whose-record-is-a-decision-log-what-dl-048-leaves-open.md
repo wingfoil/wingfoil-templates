@@ -2,7 +2,7 @@
 id: dl-050-a-pack-ingest-workflow-whose-record-is-a-decision-log-what-dl-048-leaves-open
 type: decision-log
 title: "A pack-ingest workflow whose record is a decision-log: what dl-048 leaves open"
-status: pending
+status: approved
 tags: ["workflow","packs","ingest"]
 ---
 
