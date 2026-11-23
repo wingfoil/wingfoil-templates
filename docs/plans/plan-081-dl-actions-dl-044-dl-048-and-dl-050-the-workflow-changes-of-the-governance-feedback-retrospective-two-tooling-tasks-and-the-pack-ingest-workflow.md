@@ -169,11 +169,11 @@ and after every commit under `.wingfoil/workflows/`, `npm run check:runs` too (d
 | 2 | `src/` (the `check:texts` script), `package.json`, `tests/`, `.github/workflows/ci.yml` | task-102 (point 3), on its own branch, merged into this one | dl-046 P2, P3 |
 | 3 | `.wingfoil/directives/custom/repository-practice.md` (1.2 → 1.3, Date), `docs/owed-items.md` | point 5. Row "dl-046's actions" to Closed | dl-046 P1, P3; dl-047 P1, P2 |
 | 4 | `src/publish.ts`, `tests/` | task-103 (point 3), on its own branch, merged into this one | dl-044 P1, P3 |
-| 5 | `.wingfoil/workflows/custom/decision-log-ingest.yaml` (2 → 3), `adr-ingest.yaml` (2 → 3), `bug-ingest.yaml` (3 → 4), `.wingfoil/memory/templates/plan.md`, one commit | `capture`'s review: R3's record; the template's Handoff comment (point 6) | dl-047 P1, P2 |
+| 5 | `.wingfoil/workflows/custom/decision-log-ingest.yaml` (2 → 3), `adr-ingest.yaml` (2 → 3), `bug-ingest.yaml` (3 → 4), `.wingfoil/memory/templates/plan.md`, `.wingfoil/memory.yaml`, one commit | `capture`'s review: R3's record; the template's Handoff comment (point 6); the `plan` type's comment: `phase` is the phase the plan was written for, never advanced, a later phase gets its own plan (ruling of 2026-11-23, Execution Notes) | dl-047 P1, P2 |
 | 6 | `.wingfoil/workflows/custom/pack-release-cycle.yaml` (8 → 9) | `validate`'s review: R3's record; `approve-publication`: the agent pushes the approval commit and reads `main`'s CI, no tag, before handing over the publication's commands; `publish`: the approver runs `publish:pack` with `--report`, the agent reads the report into the Publication and checks the digest and the range against the Validation's dry run, a missing or different value to the approver before CB-6 | dl-044 P1 … P3; dl-047 P2 |
 | 7 | `.wingfoil/workflows/custom/pack-ingest.yaml` (new, 1), `.wingfoil/workflows.yaml` (3 → 4), `pack-cycle.yaml` (7 → 8), `sw-life-cycle.yaml` (5 → 6), `docs/owed-items.md`, one commit | point 7; `pack-cycle`: `charter`'s description naming `pack-ingest` as the path a pack's proposal took, its review with R3's record, `activate`'s who runs what (dl-044 P2); `sw-life-cycle`: its header naming `pack-ingest` as the entry of a new pack, `inception`, `specification` and `sunset` with R3's record; the row "The engine way of working" extended: its Source with dl-044 and dl-050; the approver runs `publish:pack --report` and the agent reads the report into the Publication; the agent pushes the approval commit of a pack-release, which carries no tag; `pack-ingest` among the mains whose engine runs come first (dl-050 D3); "in his own shell" made "in the approver's own shell" (dl-043 N3). Rows "dl-044's actions" and "dl-048's actions" to Closed | dl-044 P2, P3; dl-047 P2; dl-048 P2; dl-050 D1, D3 |
-| 8 | `docs/01_vision/07_sequencer.md` (1.7 → 1.8) | point 8 | the approver, 2026-11-23; dl-050 D4 |
-| 9 | dl-017; dl-044 … dl-050; plan-079, plan-080; `docs/owed-items.md` | the Execution Notes of point 9. Row "dl-047's actions" to Closed | dl-047 P2; dl-050 D4 |
+| 8 | `docs/01_vision/07_sequencer.md` (1.7 → 1.8) | point 8, without plan-080's close (closed on 2026-11-23, Execution Notes) | the approver, 2026-11-23; dl-050 D4 |
+| 9 | dl-017; dl-044 … dl-050; plan-079; `docs/owed-items.md` | the Execution Notes of point 9, plan-080's left out (closed); row "dl-047's actions" to Closed; a new Open row for dl-007's deferred ruling (plan-010 › Execution Notes 2026-10-06), owner the approver, trigger as that note says (ruling of 2026-11-23) | dl-047 P2; dl-050 D4 |
 
 Then, in dl-039 R2's order:
 - **Leftovers:** a grep of `.wingfoil/`, `docs/` (outside `docs/memory/` except
@@ -219,3 +219,12 @@ Then, in dl-039 R2's order:
   check on `main` after a row's close gets a new row; row 8 an outline choice, kept as flagged),
   all applied but the last, which needs no change.
 - 2026-11-23: re-review of the amendments (`06924820`): approve; each finding fixed, no new finding.
+- 2026-11-23: `main`'s CI on `submit` (`549d787d`), run 45182886083: `success`, its longest job
+  14 min 29 s.
+- 2026-11-23: the approver's rulings on a check of the plans' `phase` field: plan-081 keeps
+  `decision-log-ingest` › `rule`, like the nine dl actions plans before it; plan-080 closed now
+  (`34f150ed`, `71035cfd` on `main`), out of W10's order, so row 8's line leaves out its close and
+  row 9 its note; plan-079 and plan-010 unchanged (`phase` is the phase each was written for);
+  row 9 adds the Open row for dl-007's deferred ruling, which plan-010 left without one (rule 4);
+  row 5 adds to the `plan` type's comment in `.wingfoil/memory.yaml` that `phase` is never
+  advanced. No feedback note: the engine's runs answer it (the row "The engine way of working").
