@@ -51,7 +51,7 @@ this task.
    forty zeros is a usage error: exit 2 with one line on standard error naming it. Known limits,
    accepted: a `main` force-pushed or recreated (its `before` unreachable or forty zeros) and a run
    on `main` cancelled by a later push (whose range does not read the earlier one); a red step from
-   the first is exit 2, not a breach, and goes to the approver.
+   a force-push or a recreated `main` is exit 2, not a breach, and goes to the approver.
 2. **What counts** (dl-046 P1). Only the lines the diff adds (its `+` lines) to files ending in
    `.md`, a new file reading all its lines, a deleted file none, git's `\ No newline at end of
    file` marker not a line; each line's length is its count of Unicode code points without its line
@@ -64,7 +64,8 @@ this task.
    - a link reference line: up to three spaces, then `[label]:` and a destination;
    - a `fence` line, or a `code` line between an opening and a closing `fence` line, as
      `src/markdown-lines.ts` classifies them, with the frontmatter lines blanked (their numbers
-     kept) before the scan; an indented code block is not exempt; a fence of backticks or of tildes;
+     kept) before the scan; an indented code block is not exempt; either fence character (backticks
+     or tildes) counts;
    - a line from a `<!-- generated:begin <name> -->` line to the matching `<!-- generated:end <name>
      -->` line, both included; a `begin` with no matching `end` runs to the end of the file;
    - in a file under `tests/fixtures/`, or the file `CATALOG.md` at the root.
@@ -82,7 +83,8 @@ this task.
      'tag' && github.ref != 'refs/heads/main'`, running `npm run check:texts -- --base origin/main`;
    - "Texts, the lines this push adds to main (dl-046)", `if: matrix.shard == 1 && github.ref ==
      'refs/heads/main'`, running `npm run check:texts -- --range "$BEFORE..$AFTER"` with
-     `env: { BEFORE: ${{ github.event.before }}, AFTER: ${{ github.sha }} }`.
+     `env` holding `BEFORE: ${{ github.event.before }}` and `AFTER: ${{ github.sha }}`
+     (block mapping, as the test step's `SHARD`).
 
    `package.json` gains `"check:texts": "node dist/src/check-texts-cli.js"`.
 5. **Red first** (dl-018). Before criteria 1 … 4 are built, `tests/check-texts.test.ts` and new
@@ -95,8 +97,8 @@ this task.
    them; a long line already in a file and not added passing; a new file; a rename with a long line
    it does not add passing; CRLF line endings; a file without a trailing newline; staged mode
    reading the index while the working tree differs; the report's format, line numbers, order and
-   exit codes. In `ci-workflow.test.ts`: both
-   steps, their `if`, their commands and env, their place right after the lint step.
+   exit codes. In `ci-workflow.test.ts`: both steps, their `if`, their commands and env, their place
+   right after the lint step.
 6. **The rest unchanged.** The diff from the plan's branch touches only `src/check-texts.ts`,
    `src/check-texts-cli.ts`, `package.json`, `.github/workflows/ci.yml`,
    `tests/check-texts.test.ts`, `tests/ci-workflow.test.ts`, this task and plan-081. No dependency
@@ -133,3 +135,6 @@ this task.
   three dots; the known limits on `main`; the frontmatter blanked before the fence scan, a `---`
   below line 1 and an unmatched `begin`; the table rule's narrowing stated; P2's run before a commit
   left to `repository-practice` 1.3; the env values), all applied.
+- 2026-11-23: re-review of the amendments (`5edf50dc`): approve after one should-fix (the `env` as a
+  block mapping, not a flow mapping that YAML would not parse) and three nits ("the first" named;
+  the fence clause; a short line rewrapped), all applied.
