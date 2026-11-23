@@ -247,3 +247,18 @@ Then, in dl-039 R2's order:
   (`7a38f98e`); its notes record its reviews, its red runs and dl-039's checks (branch CI
   45229832511, `success`, its longest job 9 min 54 s). `src/publish-cli.ts`, touched for its header
   comment only, is read as within row 4 (`src/publish.ts`, `tests/`), as task-103's review noted.
+- 2026-11-23: rows 5 … 9 done, each commit after `check:texts` exit 0 and the privacy check, each
+  under `.wingfoil/` or `docs/memory/` followed by `workflow list` and `npm run lint` exit 0, each
+  under `.wingfoil/workflows/` by `npm run check:runs` (84 runs, 0 failed): row 5 `d6517ab8`, row 6
+  `fb612206`, row 7 `0735c631` (`pack-ingest` listed by `workflow list` on the pinned CLI, its
+  include checked by hand, W-08), row 8 `620e3ed0`, row 9 `97703502`. Row 8 adds the ruled order
+  as a sentence within the adoption, the earlier order left as written. In row 7 the engine row's
+  Source ends with "dl-044, dl-050" while the row stays sorted as one with no element id first
+  ("asked by the approver"), its place unchanged.
+- 2026-11-23: independent review of the branch (dl-017), `549d787d..97703502`, rows 5 … 9 first:
+  approve after amendments; no blocker, two should-fix (`pack-ingest` › `capture` without dl-050
+  Q1 (a)'s contents; the dl-007 row out of the register's order by Source) and four nits (the
+  sequencer's sentence placed within the adoption; the engine row's Source holding ids, noted
+  above; `vision`'s `produces`; this note), all applied in `c7ae3252` but the second nit, which
+  needs only this note. No re-review: the amendments are texts, changing no behaviour, test or
+  Acceptance (dl-017).
