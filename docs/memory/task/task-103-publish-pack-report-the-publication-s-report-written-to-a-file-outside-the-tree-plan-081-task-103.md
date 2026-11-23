@@ -39,9 +39,10 @@ Today the report reaches only the approver's shell (prel-007 › Execution Notes
 1. **The option.** `npm run publish:pack -- --pack <id> --report <path> …` (with or without
    `--dry-run`) writes to `<path>` exactly the lines the command prints on standard output, in
    their order, each followed by `\n`, whatever the exit code once the file exists (criterion 2):
-   0, a check's 1 (a working tree not clean, the validation failed, the tag exists, a failure after
-   the tag and its rollback, …) or a git error's 2. The lines printed and the exit code are those of
-   the same run without `--report`. `runPublish` writes the file; `PublishResult` is unchanged and
+   0, a check's 1 (a working tree not clean, the validation failed, the tag exists, …), a failure
+   after the tag and its rollback (1 or 2), or a git error's 2. The lines printed and the exit code
+   are those of the same run without `--report`, except as criterion 2 says of a final write that
+   fails. `runPublish` writes the file; `PublishResult` is unchanged and
    the CLI only prints. Without `--report`, nothing changes. Out of scope: an exception
    `runPublish` does not catch today (neither `PublishError`, `GitError` nor `DigestError`), which
    stays a crash, and the CLI's own refusal of npm's `--dry-run` (exit 3 before `runPublish`), which
@@ -51,13 +52,16 @@ Today the report reaches only the approver's shell (prel-007 › Execution Notes
    --show-toplevel`, today's check that `--tree` is that top level kept); `<path>` checked; the
    file created (or emptied); then the clean-tree check and the rest, as today. `<path>` is resolved
    against the working directory and is inside the repository, at any depth and ignored or not
-   (`.cache/` included), when it is inside its top level as written or, with symbolic links
-   resolved, the path itself when it exists, otherwise its parent directory when that exists (a
-   link to a file or to a directory inside the repository counts as inside). Inside is exit 3, one
-   line naming the path and dl-044. A directory that does not exist or cannot be written, when the
+   (`.cache/` included), when it is inside its top level, or inside `--tree` as given (resolved
+   against the working directory), as written or, with symbolic links resolved, the path itself
+   when it exists, otherwise its parent directory when that exists (a link to a file or to a
+   directory inside the repository counts as inside). A path that is itself a symbolic link
+   (`lstat`) whose target does not exist is refused, exit 3. Inside is exit 3, one line naming the
+   path and dl-044. A directory that does not exist or cannot be written, when the
    path is not inside, is exit 2 with the I/O error. Every exit 3 (usage, not a repository, not its
    top level, a path inside) and that exit 2 write no file and make no tag and no commit. An
-   existing file is overwritten. If the final write fails after the file was created (a tag and a
+   existing file is overwritten; at the end it is written by its path, not through a descriptor kept
+   open since its creation. If the final write fails after the file was created (a tag and a
    commit possibly made), nothing is undone: the lines are printed as without `--report`, then one
    line naming the path and the write error, and the exit code is 2 when it would have been 0,
    otherwise unchanged.
@@ -66,18 +70,19 @@ Today the report reaches only the approver's shell (prel-007 › Execution Notes
    with `multiple: true` and more than one value refused). `--report` with no value is already a
    usage error of strict mode. The header comment of `src/publish-cli.ts` names the option.
 4. **Red first** (dl-018). Before criteria 1 … 3 are built, new tests in `tests/publish.test.ts`
-   fail and the red run's command and failing count are recorded. They cover: a publication's
-   report equal to its printed lines (the Publication section's lines included); a dry run's; a
-   failed dry run's (no "Dry run: done" line, as printed); a failed validation's (exit 1, the
-   validation's lines and the failure's message in the file); an existing tag's (exit 1); a working
-   tree not clean (exit 1, the file written); a failure after the tag (the tag removed, the branch
-   reset, the earlier lines and the message in the file), on the existing rollback fixture; a path
-   inside the repository refused, given relative, absolute, through `..`, under an ignored
-   directory, through a symbolic link to a directory inside it, and as an existing symbolic link to
-   a file inside it, each with no file written and no tag; a missing directory (exit 2, no tag); a
-   final write that fails after the file was created (the publication kept, the extra line, exit
-   2); an existing file overwritten; an empty value, the option twice and the option with no value;
-   no `--report`, unchanged output.
+   fail and the red run's command and failing count are recorded. They cover: a publication's report
+   equal to its printed lines (the Publication section's lines included); a dry run's; a failed dry
+   run's (no "Dry run: done" line, as printed); a failed validation's (exit 1, the validation's
+   lines and the failure's message in the file); an existing tag's (exit 1); a working tree not
+   clean (exit 1, the file written); a failure after the tag (the tag removed, the branch reset, the
+   earlier lines and the message in the file), on the existing rollback fixture; a path inside the
+   repository refused, given relative, absolute, through `..`, under an ignored directory, through a
+   symbolic link to a directory inside it, as an existing symbolic link to a file inside it, and as
+   a dangling symbolic link, each with no file written and no tag; a missing directory (exit 2, no
+   tag); a final write that fails after the file was created (the publication kept, the extra line,
+   exit 2; for instance the stub's `install` replacing the file with a directory during the
+   validation); an existing file overwritten; an empty value, the option twice and the option with
+   no value; no `--report`, unchanged output.
 5. **The rest unchanged.** The diff from the plan's branch touches only `src/publish.ts`,
    `src/publish-cli.ts`, `tests/publish.test.ts`, this task and plan-081. No dependency is added
    (`package-lock.json` unchanged). `npm test`, `lint` and the other checks of the CI pass, read
@@ -115,3 +120,8 @@ Today the report reaches only the approver's shell (prel-007 › Execution Notes
   README needing no change), all applied but the last, which needs none; `src/publish-cli.ts`, for
   its header comment, read as within row 4 (`src/publish.ts`, `tests/`) and named when the row is
   recorded.
+- 2026-11-23: re-review of the amendments (`3e282a0d`): approve after one should-fix (a dangling
+  symbolic link at the path, whose create would follow it into the repository: refused, exit 3,
+  and tested) and four nits (a failure after the tag 1 or 2; the final write by path, so that its
+  failure can be tested; criterion 1's exception named; `--tree` as given compared too), all
+  applied.
