@@ -181,3 +181,8 @@ the path check and the writes, until they pass; the header comment of `src/publi
   diff from plan-081's branch touches only criterion 5's files and `package-lock.json` is
   unchanged; the privacy check of the diff (`repository-practice` rule 2): no local path, no name
   outside this repository. This note is documentation only: no new run.
+- 2026-11-23: accepted by the approver (`in-review → approved`, `e5be8033`); on the approver's OK,
+  merged with `--no-ff` into plan-081's branch (`7a38f98e`), as ruled by plan-081 (ruling 3); on
+  the merge, after the build, `tests/publish.test.ts` and `tests/check-texts.test.ts` 83 of 83
+  (Node.js 24.22.3, the local default). It stays `approved` until its check on `main`
+  (criterion 8).

@@ -243,3 +243,7 @@ Then, in dl-039 R2's order:
   corrections"), since the extended one made the heading 111 characters, against rule 5 itself;
   the row "dl-046's actions" to Closed. `check:texts` on the staged diff before each commit from
   here on (rule 5).
+- 2026-11-23: row 4 done: task-103 `approved` (`e5be8033`), merged into this branch
+  (`7a38f98e`); its notes record its reviews, its red runs and dl-039's checks (branch CI
+  45229832511, `success`, its longest job 9 min 54 s). `src/publish-cli.ts`, touched for its header
+  comment only, is read as within row 4 (`src/publish.ts`, `tests/`), as task-103's review noted.
