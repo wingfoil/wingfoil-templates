@@ -120,7 +120,37 @@ this task.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+**Shape.** `src/check-texts.ts` exports `checkTexts(repo, args)`, returning the exit code and the
+lines of standard output and standard error, and the pure parts it is built from: the arguments'
+parse, the added lines of a patch, the exempt lines of a file. `src/check-texts-cli.ts` calls it on
+the working directory and writes its lines, as `runs-cli.ts` does. git runs through `runGit`
+(`src/git.ts`), in the tooling's own environment.
+
+**The diff.** One `git diff -M -U0 --full-index --no-color --no-ext-diff --no-textconv
+--no-relative --src-prefix=a/ --dst-prefix=b/`, with `--cached` (staged), `<merge base> HEAD`
+(`--base`, the merge base from `git merge-base`) or `<a> <b>` (`--range`), each ref first resolved
+with `resolveCommit`. With no context lines every hunk's new side is added lines only, so the
+added line numbers are read from the hunk headers (`+c,d`: lines `c` … `c+d-1`, `d` 1 when absent)
+and the content from the new blob, named by the full `index` line and read with `readBlobs`. The
+new path is the `+++ b/` line's, unquoted when git quotes it; `/dev/null` (a deletion) and a
+section with no hunk (a pure rename, a binary file) are skipped. The explicit options keep a
+repository's own configuration (`diff.noprefix`, `diff.relative`, `diff.external`) from changing
+what is parsed.
+
+**The exemptions,** computed once per file over its whole text (lines split on `\n`, a final `\r`
+removed, the empty piece after a trailing newline dropped): the frontmatter (lines 1 … the next
+`---`; an unclosed one exempts nothing, as `src/frontmatter.ts` reads none); table rows and link
+reference lines by their patterns; the fences by `scanMarkdown` on the text with the frontmatter
+lines blanked: a `fence` line, and a `code` line while a fence opened by a `fence` line is open
+(the open state is cleared by any line of another kind, so that an indented code block stays
+counted); the generated regions by `MARKER`; the two paths.
+
+**Red steps.** (1) `tests/check-texts.test.ts`, every case of criterion 5, against a stub module
+that exports the function and fails: red. (2) The new assertions of `tests/ci-workflow.test.ts` and
+the `package.json` script: red. (3) The module, until (1) passes. (4) `ci.yml` and the script, until
+(2) passes. A known limit kept: a fence closed by the end of its quote or list item, followed at
+once by an indented code line, reads that line as fenced; `src/markdown-lines.ts` is out of the
+files this task may touch (criterion 6).
 
 ## Execution Notes
 
