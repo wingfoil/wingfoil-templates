@@ -28,12 +28,15 @@ class UsageError extends Error {}
 /** The mode the arguments name, or a usage error. */
 export function parseArgs(args: string[]): Mode {
   if (args.length === 0) return { kind: 'staged' };
-  const [flag, value, ...rest] = args;
-  if (rest.length > 0 || value === undefined || value === '' || value.startsWith('-')) {
-    throw new UsageError(`check:texts: ${JSON.stringify(args.join(' '))}: ${USAGE}`);
+  const [flag = '', value, ...rest] = args;
+  if (flag !== '--base' && flag !== '--range') {
+    throw new UsageError(`check:texts: unknown argument ${flag}: ${USAGE}`);
+  }
+  if (rest.length > 0) throw new UsageError(`check:texts: one mode at most: ${USAGE}`);
+  if (value === undefined || value === '' || value.startsWith('-')) {
+    throw new UsageError(`check:texts: ${flag} needs a value: ${USAGE}`);
   }
   if (flag === '--base') return { kind: 'base', ref: value };
-  if (flag !== '--range') throw new UsageError(`check:texts: unknown argument ${flag}: ${USAGE}`);
   const ends = value.split('..');
   const [a, b] = ends;
   if (value.includes('...') || ends.length !== 2 || a === undefined || a === ''
@@ -55,16 +58,28 @@ function resolve(repo: string, ref: string): string {
   }
 }
 
-/** The arguments of the `git diff` the mode reads. */
+function mergeBase(repo: string, ref: string, head: string, name: string): string {
+  try {
+    return runGit(repo, ['merge-base', ref, head]).toString('utf8').trim();
+  } catch {
+    throw new GitError(`check:texts: no merge base of ${name} and HEAD`);
+  }
+}
+
+/**
+ * The arguments of the `git diff` the mode reads. Each option is explicit, so that the
+ * repository's own configuration and attributes (`diff.noprefix`, `diff.relative`,
+ * `diff.interHunkContext`, `diff.external`, a `binary` or `-diff` attribute) change nothing parsed.
+ */
 function diffArgs(repo: string, mode: Mode): string[] {
-  const options = ['diff', '-M', '-U0', '--full-index', '--no-color', '--no-ext-diff',
-    '--no-textconv', '--no-relative', '--src-prefix=a/', '--dst-prefix=b/'];
+  const options = ['diff', '-M', '-U0', '--inter-hunk-context=0', '--text', '--full-index',
+    '--no-color', '--no-ext-diff', '--no-textconv', '--no-relative', '--src-prefix=a/',
+    '--dst-prefix=b/'];
   if (mode.kind === 'staged') return [...options, '--cached'];
   if (mode.kind === 'base') {
     const ref = resolve(repo, mode.ref);
     const head = resolve(repo, 'HEAD');
-    const base = runGit(repo, ['merge-base', ref, head]).toString('utf8').trim();
-    return [...options, base, head];
+    return [...options, mergeBase(repo, ref, head, mode.ref), head];
   }
   return [...options, resolve(repo, mode.a), resolve(repo, mode.b)];
 }
@@ -82,7 +97,7 @@ const ESCAPES: Record<string, number> = { a: 7, b: 8, t: 9, n: 10, v: 11, f: 12,
 
 /** A path as git prints it: C-quoted, with octal bytes, when it holds a special character. */
 export function unquotePath(text: string): string {
-  if (!text.startsWith('"') || !text.endsWith('"') || text.length < 2) return text;
+  if (text.length < 2 || !text.startsWith('"') || !text.endsWith('"')) return text;
   const bytes: number[] = [];
   const body = text.slice(1, -1);
   for (let i = 0; i < body.length; i += 1) {
@@ -108,15 +123,16 @@ const INDEX = /^index [0-9a-f]+\.\.([0-9a-f]+)(?: \d+)?$/;
 const HUNK = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/;
 
 /**
- * The added lines of a `git diff -U0 --full-index` patch. With no context lines every hunk's new
- * side is added lines only, so their numbers come from the hunk headers. A deleted file and a
- * section with no hunk (a pure rename, a binary file) give nothing.
+ * The added lines of a `git diff --full-index` patch: in each hunk, from the new side's start in
+ * its header, a `+` line is added and a context line only counted, so that no context line is
+ * ever read as added. A deleted file and a section with no hunk (a pure rename) give nothing.
  */
 export function addedLines(patch: string): AddedLines[] {
   const files: AddedLines[] = [];
   let current: AddedLines | undefined;
   let blob: string | undefined;
   let inHunks = false;
+  let next = 0;
   for (const line of patch.split('\n')) {
     if (line.startsWith('diff --git ')) {
       current = undefined;
@@ -137,11 +153,15 @@ export function addedLines(patch: string): AddedLines[] {
       }
     }
     const hunk = HUNK.exec(line);
-    if (hunk === null) continue;
-    inHunks = true;
-    const start = Number(hunk[1]);
-    const count = hunk[2] === undefined ? 1 : Number(hunk[2]);
-    for (let n = start; n < start + count; n += 1) current?.lines.push(n);
+    if (hunk !== null) {
+      inHunks = true;
+      next = Number(hunk[1]);
+    } else if (inHunks && line.startsWith('+')) {
+      current?.lines.push(next);
+      next += 1;
+    } else if (inHunks && line.startsWith(' ')) {
+      next += 1;
+    }
   }
   return files.filter((file) => file.lines.length > 0);
 }
@@ -161,40 +181,62 @@ export function splitLines(text: string): string[] {
 const TABLE_ROW = /^[ \t]*(?:>[ \t]*)*\|/;
 const LINK_REFERENCE = /^ {0,3}\[[^\]]+\]:[ \t]*\S/;
 
-/** The 1-based numbers of the lines dl-046 P1 exempts, read from the whole file. */
-export function exemptLines(lines: string[]): Set<number> {
-  const exempt = new Set<number>();
-  let frontmatter = 0;
-  if (lines[0] === '---') {
-    const close = lines.indexOf('---', 1);
-    if (close > 0) frontmatter = close + 1;
-  }
-  for (let n = 1; n <= frontmatter; n += 1) exempt.add(n);
-  lines.forEach((line, i) => {
-    if (TABLE_ROW.test(line) || LINK_REFERENCE.test(line)) exempt.add(i + 1);
-  });
-  // Fenced code, the frontmatter blanked first. A `code` line counts as fenced only while a fence
-  // opened by a `fence` line is open, in the same container: an indented code block is not exempt.
+/** The number of frontmatter lines: line 1 `---` to the next `---`, both; 0 for none. */
+function frontmatterLength(lines: string[]): number {
+  if (lines[0] !== '---') return 0;
+  return lines.indexOf('---', 1) + 1;
+}
+
+const NEW_ITEM = /^ {0,3}(?:[-*+]|\d{1,9}[.)]) +/;
+
+/**
+ * The fence lines and the code between them, the frontmatter blanked first. A `code` line counts
+ * as fenced only while a fence opened by a `fence` line is open in the same container, so that an
+ * indented code block is not exempt; a fence line that starts a new list item opens a fence.
+ */
+function fencedLines(lines: string[], frontmatter: number): number[] {
+  const fenced: number[] = [];
   const blanked = lines.map((line, i) => (i < frontmatter ? '' : line));
   let open: string | undefined;
   for (const line of scanMarkdown(blanked.join('\n')).lines) {
     if (open !== undefined && line.container !== open) open = undefined;
     if (line.kind === 'fence') {
-      exempt.add(line.line);
-      open = open === undefined ? line.container : undefined;
+      fenced.push(line.line);
+      open = open === undefined || NEW_ITEM.test(line.raw) ? line.container : undefined;
     } else if (line.kind === 'code' && open !== undefined) {
-      exempt.add(line.line);
+      fenced.push(line.line);
     } else {
       open = undefined;
     }
   }
+  return fenced;
+}
+
+/**
+ * The generated regions' lines, markers included; a `begin` with no matching `end` runs to the
+ * end of the file. Markers are read on every line, inside a fence too, as the Acceptance reads
+ * them.
+ */
+function generatedLines(lines: string[]): number[] {
+  const generated: number[] = [];
   let region: string | undefined;
   lines.forEach((line, i) => {
     const marker = MARKER.exec(line);
     if (region === undefined && marker?.[1] === 'begin') region = marker[2];
-    if (region !== undefined) exempt.add(i + 1);
+    if (region !== undefined) generated.push(i + 1);
     if (marker?.[1] === 'end' && marker[2] === region) region = undefined;
   });
+  return generated;
+}
+
+/** The 1-based numbers of the lines dl-046 P1 exempts, read from the whole file. */
+export function exemptLines(lines: string[]): Set<number> {
+  const frontmatter = frontmatterLength(lines);
+  const exempt = new Set<number>(Array.from({ length: frontmatter }, (_, i) => i + 1));
+  lines.forEach((line, i) => {
+    if (TABLE_ROW.test(line) || LINK_REFERENCE.test(line)) exempt.add(i + 1);
+  });
+  for (const n of [...fencedLines(lines, frontmatter), ...generatedLines(lines)]) exempt.add(n);
   return exempt;
 }
 

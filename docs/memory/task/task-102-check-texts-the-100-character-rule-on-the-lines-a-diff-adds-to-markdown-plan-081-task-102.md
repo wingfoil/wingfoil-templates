@@ -126,16 +126,16 @@ parse, the added lines of a patch, the exempt lines of a file. `src/check-texts-
 the working directory and writes its lines, as `runs-cli.ts` does. git runs through `runGit`
 (`src/git.ts`), in the tooling's own environment.
 
-**The diff.** One `git diff -M -U0 --full-index --no-color --no-ext-diff --no-textconv
---no-relative --src-prefix=a/ --dst-prefix=b/`, with `--cached` (staged), `<merge base> HEAD`
-(`--base`, the merge base from `git merge-base`) or `<a> <b>` (`--range`), each ref first resolved
-with `resolveCommit`. With no context lines every hunk's new side is added lines only, so the
-added line numbers are read from the hunk headers (`+c,d`: lines `c` … `c+d-1`, `d` 1 when absent)
-and the content from the new blob, named by the full `index` line and read with `readBlobs`. The
-new path is the `+++ b/` line's, unquoted when git quotes it; `/dev/null` (a deletion) and a
-section with no hunk (a pure rename, a binary file) are skipped. The explicit options keep a
-repository's own configuration (`diff.noprefix`, `diff.relative`, `diff.external`) from changing
-what is parsed.
+**The diff.** One `git diff -M -U0 --inter-hunk-context=0 --text --full-index --no-color
+--no-ext-diff --no-textconv --no-relative --src-prefix=a/ --dst-prefix=b/`, with `--cached`
+(staged), `<merge base> HEAD` (`--base`, the merge base from `git merge-base`) or `<a> <b>`
+(`--range`), each ref first resolved with `resolveCommit`. The added line numbers are counted in
+each hunk from its header's new start (`+` lines added, context lines only counted), and the content
+is read from the new blob, named by the full `index` line and read with `readBlobs`. The new path is
+the `+++ b/` line's, unquoted when git quotes it; `/dev/null` (a deletion) and a section with no
+hunk (a pure rename) are skipped. The explicit options keep a repository's own configuration and
+attributes (`diff.noprefix`, `diff.relative`, `diff.interHunkContext`, `diff.external`, a `binary`
+or `-diff` attribute) from changing what is parsed.
 
 **The exemptions,** computed once per file over its whole text (lines split on `\n`, a final `\r`
 removed, the empty piece after a trailing newline dropped): the frontmatter (lines 1 … the next
@@ -148,10 +148,10 @@ counted); the generated regions by `MARKER`; the two paths.
 **Red steps.** (1) `tests/check-texts.test.ts`, every case of criterion 5, against a stub module
 that exports the function and fails: red. (2) The new assertions of `tests/ci-workflow.test.ts` and
 the `package.json` script: red. (3) The module, until (1) passes. (4) `ci.yml` and the script, until
-(2) passes. A known limit kept: a fence closed by the end of its list item, followed at once by an
-indented code line of another list item, reads that line as fenced (the end of a quote is read: the
-open state is cleared when the container changes); `src/markdown-lines.ts` is out of the files
-this task may touch (criterion 6).
+(2) passes. The open state is cleared when the container changes (the end of a quote), and a
+fence line that starts a new list item opens a fence. A known limit kept: a fence closed by the
+end of its list item, followed at once by an indented code line of another list item, reads that
+line as fenced; `src/markdown-lines.ts` is out of the files this task may touch (criterion 6).
 
 ## Execution Notes
 
@@ -179,3 +179,19 @@ this task may touch (criterion 6).
   pass; `npm run lint` exit 0. `npm run check:texts -- --base origin/main` exit 0 on the branch;
   `-- --range 440bf4c6~1..440bf4c6` reports plan-081's line 16, 119 characters, the long line that
   commit added and the next one fixed.
+- 2026-11-23: independent review of the build (dl-017, `8c1d4358`): approve after amendments; red
+  first verified; no blocker, five should-fix and twelve nits. Should-fix, all applied: a
+  repository's `diff.interHunkContext` read context lines as added (`--inter-hunk-context=0`, and
+  the numbers counted from the `+` lines, not the header); a fence a new list item opens right
+  after another item's fence was read as a closer; the `--base` test could not tell a merge-base
+  diff from a direct one, and the `--range` test did not prove the files are read from `<b>`
+  (both made to); an unclosed frontmatter and an indented line right after a closing fence
+  tested. Nits applied: `--text` (a `binary` attribute hid every change); a missing merge base
+  named; the two-modes and missing-value messages; the markers' reading inside a fence commented;
+  the sort made observable with `diff.orderFile`; the usage errors' content and three more cases;
+  `exemptLines` split; `unquotePath`'s guard order; the CLI's unexpected failure exit 2; two test
+  lines over 100. Not applied: an unresolvable `HEAD` in `--base` mode stays a usage error (it is
+  a ref git cannot resolve, criterion 1); the `?? ''` on a blob stays, the index type needs it.
+- 2026-11-23: red for the amendments (dl-018): the new tests at their commit against `8c1d4358`'s
+  code, `node --test dist/tests/check-texts.test.js`, 4 failing of 44; green after the fixes,
+  66 of 66 with `ci-workflow.test.js`; `npm run lint` exit 0.
