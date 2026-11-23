@@ -58,3 +58,7 @@ catalog. The `rule` phase that follows is the approver's.
   dl-050 D4.
 - 2026-11-23 — its decision-log renumbered on main from dl-043 to dl-049 by a later commit (the
   rewrite of the import's commits was refused by the repository's rules); this text cites dl-049.
+- 2026-11-23, plan-081: the next step of this plan: after the `wingfoil-release-intake` that
+  raises this repository's pin (W10, the sequencer 1.8, `620e3ed0`), it closes with its `capture`
+  done and records the move of dl-049's remaining steps to `pack-ingest` (dl-050 D4, the workflow
+  in `0735c631`); a new plan then carries dl-049's `rule`.

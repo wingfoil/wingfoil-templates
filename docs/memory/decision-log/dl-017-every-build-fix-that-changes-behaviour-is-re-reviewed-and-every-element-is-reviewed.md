@@ -67,3 +67,10 @@ file (dl-016 A2).
   `review` phase of `tooling-delivery` v3 and `kanban-delivery` v5 (`ded156e`): the build review and
   its amendments first, then the checks once on the frozen commit; a fix that changes behaviour, a
   test or an Acceptance command is still re-reviewed. The body stays as approved.
+- 2026-11-23, plan-081: R3's record placed wider by dl-047 P1, P2: the verdict, the count per
+  severity, the fixing commit and what was applied, or not and why, in the review of every phase
+  holding one before a gate: `plan` and `review` of `tooling-delivery` 5 and `kanban-delivery` 7
+  (`496af112`); `capture` of `decision-log-ingest` 3, `adr-ingest` 3 and `bug-ingest` 4, and the
+  plan template's Handoff comment (`d6517ab8`); `pack-release-cycle` 9 › `validate` (`fb612206`);
+  `pack-cycle` 8 › `charter`, `sw-life-cycle` 6 › `inception`, `specification` and `sunset`, and
+  `pack-ingest` 1 › `capture` and `vision` (`0735c631`). The body stays as approved.

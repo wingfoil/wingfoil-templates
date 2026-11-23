@@ -233,3 +233,8 @@ The points below are **proposed**; they become rulings when the approver approve
   number the retrospective's branch already held (with dl-044 … dl-048); the rewrite of those
   commits was refused by the repository's rules, so this element is dl-049 by a later commit that
   removes dl-043's file. dl-043's `wf()` commits on main record that first id.
+- 2026-11-23, plan-081: the order ruled by the approver for this element's path: after the
+  `wingfoil-release-intake` that raises this repository's pin, plan-079 closes with its `capture`
+  done and records the move (dl-050 D4), then a new plan carries this element's `rule` under
+  `pack-ingest` (`0735c631`), then its `vision` and `hand-off`, then the two pull-request packs'
+  cycles (the sequencer 1.8, `620e3ed0`). It stays `pending` until then.

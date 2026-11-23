@@ -59,3 +59,8 @@ The points below are **proposed**; they become rulings when the approver approve
 - 2026-11-21: re-review: approve after amendments; three should-fix (`validate`, not `prepare`;
   `sw-life-cycle`'s phases added; the versions named) and one nit (a plan's own review: the
   template's Handoff comment), applied.
+- 2026-11-23, plan-081: actions applied (P2): R3's record in `tooling-delivery` 5 and
+  `kanban-delivery` 7 (`496af112`); `repository-practice` 1.3, rule 6 (`25b1af51`);
+  `decision-log-ingest` 3, `adr-ingest` 3, `bug-ingest` 4 and the plan template's Handoff comment
+  (`d6517ab8`); `pack-release-cycle` 9 (`fb612206`); `pack-cycle` 8 and `sw-life-cycle` 6
+  (`0735c631`); the note on dl-017 and the row "dl-047's actions" closed with this note.
