@@ -752,9 +752,11 @@ describe('npm run publish:pack --report (task-103, dl-044 P1)', () => {
       bump(repo, '1.0.1');
       repo.git(['tag', '-d', 'base@2.0.0']);
       const file = join(dir, 'report.txt');
+      const before = [state(repo), repo.git(['rev-parse', 'main'])];
       const result = publish(repo, ['--pack', 'base', '--report', file, ...WITH_KANBAN]);
       assert.equal(result.code, 2, result.lines.join('\n'));
       assert.match(result.lines.join('\n'), /the tag was removed/);
+      assert.deepEqual([state(repo), repo.git(['rev-parse', 'main'])], before);
       assertReported(result, file);
     }));
   });
@@ -783,6 +785,23 @@ describe('npm run publish:pack --report (task-103, dl-044 P1)', () => {
       }
       assert.ok(!existsSync(join(repo.dir, 'r.txt')));
       assert.ok(!existsSync(join(repo.dir, 'packs', 'r.txt')));
+    }));
+  });
+
+  it('refuses a path inside --tree as given through a symbolic link', () => {
+    withRepository((repo) => withOutside((dir) => {
+      const tree = join(dir, 'tree');
+      symlinkSync(repo.dir, tree);
+      const before = state(repo);
+      for (const path of [join(tree, 'r.txt'), join(repo.dir, 'r.txt')]) {
+        const result = runPublish(['--tree', tree, '--pack', 'base', '--report', path,
+          ...WITH_KANBAN], { install: () => { throw new Error('nothing runs'); },
+          env: { ...repo.env, ...DATES } });
+        assert.equal(result.code, 3, `${path}: ${result.lines.join('\n')}`);
+        assert.match(result.lines[0] ?? '', /dl-044/);
+        assert.equal(state(repo), before, path);
+      }
+      assert.ok(!existsSync(join(repo.dir, 'r.txt')));
     }));
   });
 

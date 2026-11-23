@@ -155,3 +155,14 @@ the path check and the writes, until they pass; the header comment of `src/publi
   `topLevel` and `checkClean`, `reportPath`, `createReport` and `writeReport`, `runPublish`
   wrapping today's body (`publishChecked`); 38 of 38, `npm run lint` exit 0; the header comment of
   `src/publish-cli.ts`.
+- 2026-11-23: independent review of the build (dl-017, `1d1e1c52`): approve after one should-fix;
+  red first verified (9 failing of 38 rebuilt from `97c6654f`); no blocker; one should-fix and six
+  nits. Applied: the failure-after-the-tag test asserts the tag removed and the branch reset (the
+  state and `main` unchanged), not only the message; the doc comment names the lexical
+  normalisation of the path; the real paths by `realpathSync.native`, for a case-insensitive
+  filesystem; every message names the path as given; one `failure` helper for both catches;
+  `topLevel`'s comment; a test of `--tree` given through a symbolic link. Not applied: the final
+  write's failure test comparing its earlier lines with a run without `--report`, since a second
+  publication's tag and commit differ; that the lines are the run's own is pinned by the other
+  tests. These amendments strengthen tests and refactor without a new behaviour, so no red run;
+  39 of 39, `npm run lint` exit 0.

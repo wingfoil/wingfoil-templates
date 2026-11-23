@@ -102,7 +102,7 @@ function git(tree: string, args: string[], extra?: NodeJS.ProcessEnv): string {
   return runGit(tree, args, undefined, extra).toString('utf8').trim();
 }
 
-/** The tree must be the top level of a git repository: its top level. */
+/** The repository's top level; the tree must be it. */
 function topLevel(tree: string): string {
   let top: string;
   try {
@@ -132,11 +132,15 @@ function within(path: string, roots: string[]): boolean {
 /**
  * The report's path, resolved against the working directory, refused when it is inside the
  * repository: as written, or with symbolic links resolved (the path itself when it exists, else
- * its parent when that exists); a dangling symbolic link is refused too (dl-044 P1).
+ * its parent when that exists); a dangling symbolic link is refused too (dl-044 P1). The path is
+ * normalised before the filesystem reads it (a trailing `/` dropped, `..` removed lexically), and
+ * the check and the writes use that same path. The real paths are the system's
+ * (`realpathSync.native`), so that a case-insensitive filesystem gives them one spelling.
  */
 function reportPath(report: string, top: string, tree: string): string {
   const path = resolvePath(report);
-  const roots = [...new Set([top, resolvePath(tree), realpathSync(top), realpathSync(tree)])];
+  const real = realpathSync.native;
+  const roots = [...new Set([top, resolvePath(tree), real(top), real(tree)])];
   const inside = (): PublishError => new PublishError(3, `--report ${report}: inside the `
     + `repository ${top}; the report goes outside the tree (dl-044)`);
   if (within(path, roots)) throw inside();
@@ -150,32 +154,32 @@ function reportPath(report: string, top: string, tree: string): string {
     throw new PublishError(3, `--report ${report}: a symbolic link to a path that does not exist; `
       + 'the report goes to a file outside the tree (dl-044)');
   }
-  let real: string | undefined;
-  if (existsSync(path)) real = realpathSync(path);
-  else if (existsSync(dirname(path))) real = join(realpathSync(dirname(path)), basename(path));
-  if (real !== undefined && within(real, roots)) throw inside();
+  let resolved: string | undefined;
+  if (existsSync(path)) resolved = real(path);
+  else if (existsSync(dirname(path))) resolved = join(real(dirname(path)), basename(path));
+  if (resolved !== undefined && within(resolved, roots)) throw inside();
   return path;
 }
 
 /** The report created (or emptied) before anything runs, so that a bad path stops it first. */
-function createReport(path: string): void {
+function createReport(path: string, report: string): void {
   try {
     writeFileSync(path, '');
   } catch (error) {
-    throw new PublishError(2, `--report ${path}: ${error instanceof Error ? error.message
+    throw new PublishError(2, `--report ${report}: ${error instanceof Error ? error.message
       : String(error)}`);
   }
 }
 
 /** The lines written by path, as printed; a failure adds a line and makes a 0 a 2. */
-function writeReport(path: string, result: PublishResult): PublishResult {
+function writeReport(path: string, report: string, result: PublishResult): PublishResult {
   try {
     writeFileSync(path, result.lines.map((line) => `${line}\n`).join(''));
     return result;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return { code: result.code === 0 ? 2 : result.code,
-      lines: [...result.lines, `--report ${path}: the report could not be written: ${message}`] };
+      lines: [...result.lines, `--report ${report}: the report could not be written: ${message}`] };
   }
 }
 
@@ -500,21 +504,31 @@ function afterTag(tree: string, pack: string, tag: string, version: string,
 
 export function runPublish(argv: string[], options: PublishOptions = {}): PublishResult {
   let args: Args;
-  let report: string | undefined;
+  let path: string | undefined;
   try {
     args = parse(argv);
     const top = topLevel(args.tree);
     if (args.report !== undefined) {
-      report = reportPath(args.report, top, args.tree);
-      createReport(report);
+      path = reportPath(args.report, top, args.tree);
+      createReport(path, args.report);
     }
   } catch (error) {
-    if (error instanceof PublishError) return { code: error.code, lines: [error.message] };
-    if (error instanceof GitError) return { code: 2, lines: [error.message] };
-    throw error;
+    return failure(error);
   }
   const result = publishChecked(args, options);
-  return report === undefined ? result : writeReport(report, result);
+  return path === undefined || args.report === undefined ? result
+    : writeReport(path, args.report, result);
+}
+
+/** A failure's result: its lines and exit code; any other exception is rethrown. */
+function failure(error: unknown): PublishResult {
+  if (error instanceof PublishError) {
+    return { code: error.code, lines: [...error.before, error.message] };
+  }
+  if (error instanceof GitError || error instanceof DigestError) {
+    return { code: 2, lines: [error.message] };
+  }
+  throw error;
 }
 
 /** Today's publication, once the arguments, the top level and the report's path are checked. */
@@ -545,13 +559,7 @@ function publishChecked(args: Args, options: PublishOptions): PublishResult {
     return { code: 0, lines: ['Dry run: done in a temporary clone, removed afterwards; the '
       + 'repository is unchanged.', ...lines] };
   } catch (error) {
-    if (error instanceof PublishError) {
-      return { code: error.code, lines: [...error.before, error.message] };
-    }
-    if (error instanceof GitError || error instanceof DigestError) {
-      return { code: 2, lines: [error.message] };
-    }
-    throw error;
+    return failure(error);
   } finally {
     if (scratch !== undefined) rmSync(scratch, { recursive: true, force: true });
   }
