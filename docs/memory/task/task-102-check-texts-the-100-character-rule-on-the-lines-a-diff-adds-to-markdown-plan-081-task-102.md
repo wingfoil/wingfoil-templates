@@ -209,3 +209,13 @@ this repository's Markdown today). `src/markdown-lines.ts` is out of the files t
   `rev-parse`); "one mode at most" also for a stray value; the CLI's unexpected failure may span
   lines (a stack trace kept for its diagnosis); the context-line branch of `addedLines`, kept as a
   defence with no test, since the options leave no context line. No behaviour changes: no new run.
+- 2026-11-23: dl-039's checks on `2da4a0ad` (the code frozen at `9b4bbf16`, then documentation
+  only). The branch CI, run 45215122430: `success`; jobs (22.12.0, 1) 9 min 30 s, (22.21.0, 1)
+  16 min 3 s, (22.12.0, 2) 5 min 32 s, (22.21.0, 2) 8 min 25 s, none over 25 minutes; in both
+  shard-1 jobs the step "Texts, the lines this branch adds (dl-046)" `success` and the step for
+  `main` skipped. Locally, Node.js 22.21.0, a clean tree on `2da4a0ad`: `npm ci`, `npm run build`,
+  `npm run validate:publication` (28 runs, 0 failed), the golden tree in publication mode (26 runs,
+  0 failed) and `npm run -s wingfoil -- workflow list`, each exit 0; the tree clean after them.
+  The diff from plan-081's branch touches only criterion 6's files and `package-lock.json` is
+  unchanged; the privacy check of the diff (`repository-practice` rule 2): no local path, no
+  name outside this repository. This note is documentation only: no new run.
