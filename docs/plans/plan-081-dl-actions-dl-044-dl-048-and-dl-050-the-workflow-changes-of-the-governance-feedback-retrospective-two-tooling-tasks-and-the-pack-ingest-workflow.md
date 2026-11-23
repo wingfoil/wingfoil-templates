@@ -233,3 +233,13 @@ Then, in dl-039 R2's order:
   and only this plan's owed items, left as written, since Steps and the note above rule; "the nine
   dl actions plans" checked (plan-011, 026, 027, 030, 034, 036, 038, 062, 063); the trailer is
   this repository's.
+- 2026-11-23: row 2 done: task-102 `approved` (`4a298631`), merged into this branch
+  (`27240450`); its notes record its reviews, its red runs and dl-039's checks (branch CI
+  45215122430, `success`, its longest job 16 min 3 s). The register's new row on
+  `src/markdown-lines.ts` (a fence inside a nested list item), found by task-102's re-review, was
+  OK'd by the approver on 2026-11-23 and added with row 3 (`25b1af51`).
+- 2026-11-23: row 3 done (`25b1af51`): `repository-practice` 1.3, rules 5 and 6 as ruled; the title
+  shortened, not only extended ("origin, privacy, main's CI, owed items, line length,
+  corrections"), since the extended one made the heading 111 characters, against rule 5 itself;
+  the row "dl-046's actions" to Closed. `check:texts` on the staged diff before each commit from
+  here on (rule 5).

@@ -219,3 +219,8 @@ this repository's Markdown today). `src/markdown-lines.ts` is out of the files t
   The diff from plan-081's branch touches only criterion 6's files and `package-lock.json` is
   unchanged; the privacy check of the diff (`repository-practice` rule 2): no local path, no
   name outside this repository. This note is documentation only: no new run.
+- 2026-11-23: accepted by the approver (`in-review → approved`, `4a298631`); on the approver's OK,
+  merged with `--no-ff` into plan-081's branch (`27240450`), a departure from `deliver` ("into
+  main") ruled by plan-081 (ruling 3), task-064 and plan-062's task its precedents; on the merge
+  the two test files 66 of 66 and `check:texts -- --base origin/main` exit 0. It stays `approved`
+  until its check on `main` (criterion 9).
