@@ -2,7 +2,7 @@
 id: task-102-check-texts-the-100-character-rule-on-the-lines-a-diff-adds-to-markdown-plan-081-task-102
 type: task
 title: "check:texts, the 100-character rule on the lines a diff adds to Markdown (plan-081 task-102)"
-status: pending
+status: backlog
 pack: ""            # tooling task (tooling-delivery v5), plan-081 task-102
 depends_on: []
 tags: ["tooling","texts","ci"]
