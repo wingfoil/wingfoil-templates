@@ -52,3 +52,6 @@ dl-048's.
 - 2026-11-23 — its decision-log renumbered on main from dl-044 to dl-050 by a later commit (the
   rewrite of the import's commits was refused by the repository's rules), and reduced to what
   dl-048 leaves open; this plan keeps its first id and title, and its text cites dl-050.
+- 2026-11-23 — closed: capture done, dl-050 approved by the approver on 2026-11-23 (`8ce834d0`),
+  applied by plan-081. Closed now by the approver's ruling of 2026-11-23, which takes this close
+  out of W10's order (plan-081 point 8); dl-049's path stays there.
