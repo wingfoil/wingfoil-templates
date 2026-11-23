@@ -145,3 +145,13 @@ the path check and the writes, until they pass; the header comment of `src/publi
   and tested) and four nits (a failure after the tag 1 or 2; the final write by path, so that its
   failure can be tested; criterion 1's exception named; `--tree` as given compared too), all
   applied.
+- 2026-11-23: design (`5282d0d7`), then `backlog → in-progress` on `task/task-103-…`, from
+  plan-081's branch at `c790cf25`, in a worktree.
+- 2026-11-23: red (dl-018), `97c6654f`, against today's code: `npm run build && node --test
+  dist/tests/publish.test.js`, 9 failing of 38. The tenth new test (an empty value, the option
+  twice, the option without a value: exit 3) already passed, strict mode refusing the unknown
+  option; it pins that the option, once known, keeps those cases usage errors.
+- 2026-11-23: green: `parse` with `report` (`multiple: true`), `checkRepository` split into
+  `topLevel` and `checkClean`, `reportPath`, `createReport` and `writeReport`, `runPublish`
+  wrapping today's body (`publishChecked`); 38 of 38, `npm run lint` exit 0; the header comment of
+  `src/publish-cli.ts`.
