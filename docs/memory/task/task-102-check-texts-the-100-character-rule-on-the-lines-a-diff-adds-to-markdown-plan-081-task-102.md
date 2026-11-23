@@ -151,7 +151,11 @@ the `package.json` script: red. (3) The module, until (1) passes. (4) `ci.yml` a
 (2) passes. The open state is cleared when the container changes (the end of a quote), and a
 fence line that starts a new list item opens a fence. A known limit kept: a fence closed by the
 end of its list item, followed at once by an indented code line of another list item, reads that
-line as fenced; `src/markdown-lines.ts` is out of the files this task may touch (criterion 6).
+line as fenced; and a fence inside a nested list item (`  - ```` and its code indented four) is not
+read as one by `src/markdown-lines.ts`: its long lines are reported, and its closing line is read
+as an opener, exempting the indented lines after it up to the end of that list (no such fence in
+this repository's Markdown today). `src/markdown-lines.ts` is out of the files this task may touch
+(criterion 6); the scanner's fix is owed (Execution Notes).
 
 ## Execution Notes
 
@@ -195,3 +199,13 @@ line as fenced; `src/markdown-lines.ts` is out of the files this task may touch 
 - 2026-11-23: red for the amendments (dl-018): the new tests at their commit against `8c1d4358`'s
   code, `node --test dist/tests/check-texts.test.js`, 4 failing of 44; green after the fixes,
   66 of 66 with `ci-workflow.test.js`; `npm run lint` exit 0.
+- 2026-11-23: re-review of the amendments (`eb0902cc`, `9b4bbf16`): approve; the red run (4 of
+  44) reproduced, each should-fix confirmed fixed, mutants of the sort, `NEW_ITEM` and `--text`
+  each caught; the two nits not applied agreed. No blocker, no should-fix; five nits, one applied:
+  the nested list item's fence recorded in the Design's known limits, its fix in
+  `src/markdown-lines.ts` owed (a row in `docs/owed-items.md`, added by plan-081 with its next
+  register commit, since this task may not touch the file). Not applied: `mergeBase` names every
+  failure "no merge base" (`runGit` gives no exit status; a broken store fails first at
+  `rev-parse`); "one mode at most" also for a stray value; the CLI's unexpected failure may span
+  lines (a stack trace kept for its diagnosis); the context-line branch of `addedLines`, kept as a
+  defence with no test, since the options leave no context line. No behaviour changes: no new run.
