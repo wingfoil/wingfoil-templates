@@ -2,7 +2,7 @@
 id: task-102-check-texts-the-100-character-rule-on-the-lines-a-diff-adds-to-markdown-plan-081-task-102
 type: task
 title: "check:texts, the 100-character rule on the lines a diff adds to Markdown (plan-081 task-102)"
-status: backlog
+status: approved
 pack: ""            # tooling task (tooling-delivery v5), plan-081 task-102
 depends_on: []
 tags: ["tooling","texts","ci"]
@@ -120,7 +120,42 @@ this task.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+**Shape.** `src/check-texts.ts` exports `checkTexts(repo, args)`, returning the exit code and the
+lines of standard output and standard error, and the pure parts it is built from: the arguments'
+parse, the added lines of a patch, the exempt lines of a file. `src/check-texts-cli.ts` calls it on
+the working directory and writes its lines, as `runs-cli.ts` does. git runs through `runGit`
+(`src/git.ts`), in the tooling's own environment.
+
+**The diff.** One `git diff -M -U0 --inter-hunk-context=0 --text --full-index --no-color
+--no-ext-diff --no-textconv --no-relative --src-prefix=a/ --dst-prefix=b/`, with `--cached`
+(staged), `<merge base> HEAD` (`--base`, the merge base from `git merge-base`) or `<a> <b>`
+(`--range`), each ref first resolved with `resolveCommit`. The added line numbers are counted in
+each hunk from its header's new start (`+` lines added, context lines only counted), and the content
+is read from the new blob, named by the full `index` line and read with `readBlobs`. The new path is
+the `+++ b/` line's, unquoted when git quotes it; `/dev/null` (a deletion) and a section with no
+hunk (a pure rename) are skipped. The explicit options keep a repository's own configuration and
+attributes (`diff.noprefix`, `diff.relative`, `diff.interHunkContext`, `diff.external`, a `binary`
+or `-diff` attribute) from changing what is parsed.
+
+**The exemptions,** computed once per file over its whole text (lines split on `\n`, a final `\r`
+removed, the empty piece after a trailing newline dropped): the frontmatter (lines 1 … the next
+`---`; an unclosed one exempts nothing, as `src/frontmatter.ts` reads none); table rows and link
+reference lines by their patterns; the fences by `scanMarkdown` on the text with the frontmatter
+lines blanked: a `fence` line, and a `code` line while a fence opened by a `fence` line is open
+(the open state is cleared by any line of another kind, so that an indented code block stays
+counted); the generated regions by `MARKER`; the two paths.
+
+**Red steps.** (1) `tests/check-texts.test.ts`, every case of criterion 5, against a stub module
+that exports the function and fails: red. (2) The new assertions of `tests/ci-workflow.test.ts` and
+the `package.json` script: red. (3) The module, until (1) passes. (4) `ci.yml` and the script, until
+(2) passes. The open state is cleared when the container changes (the end of a quote), and a
+fence line that starts a new list item opens a fence. A known limit kept: a fence closed by the
+end of its list item, followed at once by an indented code line of another list item, reads that
+line as fenced; and a fence inside a nested list item (`  - ```` and its code indented four) is not
+read as one by `src/markdown-lines.ts`: its long lines are reported, and its closing line is read
+as an opener, exempting the indented lines after it up to the end of that list (no such fence in
+this repository's Markdown today). `src/markdown-lines.ts` is out of the files this task may touch
+(criterion 6); the scanner's fix is owed (Execution Notes).
 
 ## Execution Notes
 
@@ -138,3 +173,49 @@ this task.
 - 2026-11-23: re-review of the amendments (`5edf50dc`): approve after one should-fix (the `env` as a
   block mapping, not a flow mapping that YAML would not parse) and three nits ("the first" named;
   the fence clause; a short line rewrapped), all applied.
+- 2026-11-23: design (`7a535bb4`), then `backlog → in-progress` on `task/task-102-…`, from
+  plan-081's branch at `967880a7`, in a worktree.
+- 2026-11-23: red (dl-018), `64c5b7cd`, a stub module that throws: `npm run build && node --test
+  dist/tests/check-texts.test.js`, 35 failing of 35; then `node --test
+  dist/tests/ci-workflow.test.js`, 2 failing of 22 (the two steps, the script).
+- 2026-11-23: green: the module and the CLI until the 35 pass (one fix on the way: git ends a
+  `+++` line with a tab when the name holds a space), then `ci.yml` and `package.json` until the 22
+  pass; `npm run lint` exit 0. `npm run check:texts -- --base origin/main` exit 0 on the branch;
+  `-- --range 440bf4c6~1..440bf4c6` reports plan-081's line 16, 119 characters, the long line that
+  commit added and the next one fixed.
+- 2026-11-23: independent review of the build (dl-017, `8c1d4358`): approve after amendments; red
+  first verified; no blocker, five should-fix and twelve nits. Should-fix, all applied: a
+  repository's `diff.interHunkContext` read context lines as added (`--inter-hunk-context=0`, and
+  the numbers counted from the `+` lines, not the header); a fence a new list item opens right
+  after another item's fence was read as a closer; the `--base` test could not tell a merge-base
+  diff from a direct one, and the `--range` test did not prove the files are read from `<b>`
+  (both made to); an unclosed frontmatter and an indented line right after a closing fence
+  tested. Nits applied: `--text` (a `binary` attribute hid every change); a missing merge base
+  named; the two-modes and missing-value messages; the markers' reading inside a fence commented;
+  the sort made observable with `diff.orderFile`; the usage errors' content and three more cases;
+  `exemptLines` split; `unquotePath`'s guard order; the CLI's unexpected failure exit 2; two test
+  lines over 100. Not applied: an unresolvable `HEAD` in `--base` mode stays a usage error (it is
+  a ref git cannot resolve, criterion 1); the `?? ''` on a blob stays, the index type needs it.
+- 2026-11-23: red for the amendments (dl-018): the new tests at their commit against `8c1d4358`'s
+  code, `node --test dist/tests/check-texts.test.js`, 4 failing of 44; green after the fixes,
+  66 of 66 with `ci-workflow.test.js`; `npm run lint` exit 0.
+- 2026-11-23: re-review of the amendments (`eb0902cc`, `9b4bbf16`): approve; the red run (4 of
+  44) reproduced, each should-fix confirmed fixed, mutants of the sort, `NEW_ITEM` and `--text`
+  each caught; the two nits not applied agreed. No blocker, no should-fix; five nits, one applied:
+  the nested list item's fence recorded in the Design's known limits, its fix in
+  `src/markdown-lines.ts` owed (a row in `docs/owed-items.md`, added by plan-081 with its next
+  register commit, since this task may not touch the file). Not applied: `mergeBase` names every
+  failure "no merge base" (`runGit` gives no exit status; a broken store fails first at
+  `rev-parse`); "one mode at most" also for a stray value; the CLI's unexpected failure may span
+  lines (a stack trace kept for its diagnosis); the context-line branch of `addedLines`, kept as a
+  defence with no test, since the options leave no context line. No behaviour changes: no new run.
+- 2026-11-23: dl-039's checks on `2da4a0ad` (the code frozen at `9b4bbf16`, then documentation
+  only). The branch CI, run 45215122430: `success`; jobs (22.12.0, 1) 9 min 30 s, (22.21.0, 1)
+  16 min 3 s, (22.12.0, 2) 5 min 32 s, (22.21.0, 2) 8 min 25 s, none over 25 minutes; in both
+  shard-1 jobs the step "Texts, the lines this branch adds (dl-046)" `success` and the step for
+  `main` skipped. Locally, Node.js 22.21.0, a clean tree on `2da4a0ad`: `npm ci`, `npm run build`,
+  `npm run validate:publication` (28 runs, 0 failed), the golden tree in publication mode (26 runs,
+  0 failed) and `npm run -s wingfoil -- workflow list`, each exit 0; the tree clean after them.
+  The diff from plan-081's branch touches only criterion 6's files and `package-lock.json` is
+  unchanged; the privacy check of the diff (`repository-practice` rule 2): no local path, no
+  name outside this repository. This note is documentation only: no new run.

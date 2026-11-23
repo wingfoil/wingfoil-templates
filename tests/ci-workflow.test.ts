@@ -184,6 +184,25 @@ describe('the CI workflow (task-013)', () => {
     assert.equal(warning.if, SHARD_ONE, 'on branches and tags, in shard 1 (task-089)');
     assert.ok(!Object.hasOwn(warning, 'continue-on-error'));
   });
+
+  it('checks the lines a branch or a push to main adds to Markdown, after the lint (task-102)',
+    () => {
+      const lint = stepRunning('npm run lint');
+      assert.ok(lint !== undefined, 'the lint step');
+      const at = steps.indexOf(lint);
+      const [branch, main] = [steps[at + 1], steps[at + 2]];
+      assert.deepEqual(branch, {
+        name: 'Texts, the lines this branch adds (dl-046)',
+        if: `${SHARD_ONE} && github.ref_type != 'tag' && github.ref != 'refs/heads/main'`,
+        run: 'npm run check:texts -- --base origin/main',
+      });
+      assert.deepEqual(main, {
+        name: 'Texts, the lines this push adds to main (dl-046)',
+        if: `${SHARD_ONE} && github.ref == 'refs/heads/main'`,
+        env: { BEFORE: '${{ github.event.before }}', AFTER: '${{ github.sha }}' },
+        run: 'npm run check:texts -- --range "$BEFORE..$AFTER"',
+      });
+    });
 });
 
 const WARNING_STEP = 'Audit the whole root tree, warning only (dl-035)';
@@ -268,6 +287,10 @@ describe('the shard script (task-089)', () => {
 
   it('keeps npm test the whole suite, built first', () => {
     assert.equal(scripts['test'], `npm run build && node --test ${GLOB}`);
+  });
+
+  it('runs check:texts from the build (task-102)', () => {
+    assert.equal(scripts['check:texts'], 'node dist/src/check-texts-cli.js');
   });
 
   it('runs one shard of the same files, the option before the glob, without a build', () => {
