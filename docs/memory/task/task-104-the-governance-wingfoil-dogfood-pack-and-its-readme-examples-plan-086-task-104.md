@@ -274,3 +274,12 @@ validation of criterion 9 and the counts.
   `catalog.yaml`, `CATALOG.md`, `catalog-index.json`, `llms.txt`, `src/` and `.wingfoil/`
   unchanged (`git diff --stat main`); the exit overlays through `tests/validate-2-run.test.ts`
   (179 tests, 0 failing, above).
+- 2026-11-24: dl-039's checks (R2), after the build review and its amendments, on the frozen head
+  `73a1c452` (the code frozen at `409d3828`, the later commit documentation only): branch CI run
+  45430259230 `success`, its jobs (22.12.0, 1) 10 min 24 s, (22.21.0, 1) 10 min 25 s, (22.12.0,
+  2) 9 min 1 s, (22.21.0, 2) 8 min 57 s, none over 25 minutes, the step "Texts, the lines this
+  branch adds" `success`; locally on Node.js 22.21.0, from a clean working tree after `npm ci`
+  and `npm run build`: `npm run validate:publication` exit 0 (32 runs, 0 failed, `tolerance
+  applied: none`), the golden tree in publication mode exit 0 (26 runs, 0 failed) and `npm run
+  -s wingfoil -- workflow list` exit 0. The privacy check of the branch's diff is clean
+  (`repository-practice` rule 2). This note is documentation only: no new run.
