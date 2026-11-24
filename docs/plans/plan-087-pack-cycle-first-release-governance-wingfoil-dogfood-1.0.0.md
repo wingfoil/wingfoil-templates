@@ -29,8 +29,10 @@ this repository's adoption and the periodic retrospective, which are later plans
   2026-11-24): WD-1 … WD-7; `check:runs` 92 runs with `wingfoil-dogfood.yaml` and
   `adoption-wingfoil-dogfood.yaml`, the adoption once per `init` template (dl-032 E3); no run by
   hand (the charter: no dl-032 E4). CB-1 … CB-3 and CB-6 are the first tag's.
-- `compat.yaml` lists 0.2.2 … 0.3.2. The pack's matrix is 0.3.0 … 0.3.2 (it requires
-  `governance/feedback`, which requires `workflow-engine`); the matrix selects 0.3.0 and 0.3.2.
+- `compat.yaml` lists 0.2.2 … 0.3.2. The pack's matrix is 0.3.0 … 0.3.2 (it composes
+  `governance/feedback`, which requires `workflow-engine`); the matrix selects 0.3.0 and 0.3.2. The
+  published range's floor 0.3.0 comes from `format_key` (`src/range.ts`: 0.2.2 reads no format
+  key), the pack's own `requires_capabilities` being empty.
 - spec-001, spec-002 and spec-003 hold no open erratum: plan-086 recorded none (dl-020).
 
 **`main`'s CI before this plan** (`repository-practice` rule 3): the push of `5ca10d55`
@@ -41,15 +43,18 @@ this repository's adoption and the periodic retrospective, which are later plans
   scratch clone of `main` with its remote removed, on Node.js 22.21.0 after `npm ci` and the build,
   nothing pushed): exit 0; the publication matrix 32 runs, 0 failed, `tolerance applied: none`;
   the range `>=0.3.0 <=0.3.2`; the digest
-  `sha256:fe0b2389f27df10d7d5654e3d42ee3e2263198c9f237028b35056b92eed6ed90`.
+  `sha256:fe0b2389f27df10d7d5654e3d42ee3e2263198c9f237028b35056b92eed6ed90`, superseded by
+  point 2's commit: the rehearsal's and the Validation's dry runs are the comparison base
+  (dl-044 P1).
 - **The tag's annotation is truncated.** `src/publish.ts` annotates the tag with the first line of
   `CHANGELOG.md` that starts with `- 1.0.0`, alone. Today's entry wraps mid-sentence, so the
   annotation would read "- 1.0.0: first version: the channel that turns a feedback item routed to
   `upstream:wingfoil` into a". task-104's criterion 6 asked for a first line that is a whole
-  sentence, and its build review recorded it as one: both missed the wrap. The owed row "A check of
+  sentence; no review caught the wrap, and the task closed `done`. The owed row "A check of
   the CHANGELOG's first line" (trigger: the next `publish:pack` change) names this risk.
-- **The first published pack with no workflow,** `requires_capabilities: []`, and a required
-  parameter with no default (`wingfoil_command`); the second from a format-2 manifest.
+- **The first published pack with no workflow** and `requires_capabilities: []`; the first besides
+  `base` with a required parameter with no default (`wingfoil_command`); the second from a format-2
+  manifest.
 - **WingFoil's newest release** is 0.3.2 (npm `latest`); `intake.yml`'s last scheduled run
   (2026-11-24) is `success`.
 - **No owed row falls due** at this pack's `first-release`; the pack has no exit overlay, so the
@@ -74,12 +79,14 @@ Each point has a recommendation, or is proposed as written.
    a whole sentence within 100 characters (for example "- 1.0.0: first version: the channel back
    to WingFoil and the rules of the pinned WingFoil CLI."), the rest of the entry on the lines
    after it; a commit under `packs/` on `main`, before the rehearsal, so the digest the rehearsal
-   and the Validation record is the published one. A dated note on task-104 corrects its claim
-   (`repository-practice` rule 6). The owed row stays open: this plan changes no `publish:pack`
-   code. *Alternative:* a tooling task first, a check of the first line in `publish:pack` (the
-   row's own fix), which delays the release by a task.
+   and the Validation record is the published one. A dated note on task-104 records the unmet
+   criterion, found after its close, and its fix here. The owed row stays open, its Source citing
+   plan-087 point 2 as the risk met: this plan changes no `publish:pack` code. *Alternative:* a
+   tooling task first, a check of the first line in `publish:pack` (the row's own fix), which
+   delays the release by a task.
 
-3. **A rehearsal before `validate`,** after point 2's commit. *Recommended:* in a scratch clone of
+3. **A rehearsal before `prepare`'s `submit`,** right after point 2's commit, before prel-008
+   moves. *Recommended:* in a scratch clone of
    `main`, nothing pushed: `npm run publish:pack -- --pack governance/wingfoil-dogfood` for real,
    then `npm test`, `check:schemas`, `check:packs`, `index -- --check`, `validate` and `check:runs`
    on the result, and the tag's annotation read (`git tag -n99`). It matters for a pack with no
@@ -90,8 +97,9 @@ Each point has a recommendation, or is proposed as written.
 4. **The Validation evidence** (`pack-release-cycle` › `validate`, `pack-compatibility`, dl-032
    E3), recorded in prel-008 with commands and exit codes:
    - `npm run validate:publication -- --evidence`: both README examples on 0.3.0 and 0.3.2, each
-     composition twice byte-identical. No preset holds the pack, so its documented combinations are
-     its two README examples. The pack has no entry; the output line `matrix
+     composition twice byte-identical (CB-2, the examples as fixtures). The Validation states that
+     no preset holds the pack, so its documented combinations are its two README examples (the
+     `validate` post-check). The pack has no entry; the output line `matrix
      tests/fixtures/examples/wingfoil-dogfood/defaults/example.yaml[+software]: skipped, no
      methodology` is explained in prel-008;
    - `npm run check:runs` on the same two releases, naming the runs of `wingfoil-dogfood.yaml` and
@@ -104,7 +112,8 @@ Each point has a recommendation, or is proposed as written.
    - the clean-clone checks on Node.js 22.21.0, then 22.12.0, one after the other: `npm ci`,
      `npm test`, `lint`, `check:pins`, `check:schemas`, `check:packs`, `index -- --check`,
      `validate`, the overlays, the golden step, `workflow list`, `check:runs`, and `npm audit` in
-     the root and in every matrix folder;
+     the root and in every matrix folder; `check:packs`' README rules are CB-1's evidence, the
+     README's "Install and update" against `compat.yaml` CB-3's;
    - `main`'s CI on the submitted head, and the privacy check of the element and of the pack's
      files.
 
@@ -121,8 +130,9 @@ Each point has a recommendation, or is proposed as written.
    agent pushes the approval commit and reads `main`'s CI before it hands over the publication's
    commands, reads the report into the Publication and checks its digest and range against the
    Validation's dry run (a difference stops the record and goes to the approver), commits the
-   charter's note before the activation, and reads every CI. The agent's runs in a scratch clone,
-   nothing pushed (points 3 and 4), stay the agent's.
+   charter's note before the activation, and reads every CI. Every other commit on `main` (point
+   2's, prel-008's, this plan's notes) is the agent's, pushed by the approver, as today. The
+   agent's runs in a scratch clone, nothing pushed (points 3 and 4), stay the agent's.
 
 7. **`publish` and CB-6's live part,** proposed as written. On Node.js 22.21.0, a clean tree, HEAD
    the approval's commit, `main`'s CI `success`: `npm ci`, `npm run build`, `npm run publish:pack
@@ -142,9 +152,11 @@ Each point has a recommendation, or is proposed as written.
    `pack-cycle` retrospective in the plan right after this one, covering plan-082 … this plan
    (from `pack-ingest`'s capture to the activation), as `governance/feedback`'s was (plan-078); its
    row added to `docs/owed-items.md` in the commit that records the ruling (`repository-practice`
-   rule 4). *Alternative:* held with W10's periodic retrospective at the wave's end (dl-029 allows
-   a shared one to be the periodic one); this pack's cycle is the only one running now, so the
-   phase would stay open across the pack release round and the adoption.
+   rule 4). *Alternative:* held as W10's periodic retrospective at the wave's end (dl-033 O2's
+   last sentence, `pack-cycle` v8); O2 speaks of several packs whose cycles ran together, and this
+   pack's is the only one, so this reading departs from dl-033 and needs an Execution Note on
+   dl-033 and dl-006, as plan-077 point 10 said; the phase would stay open across the pack release
+   round and the adoption.
 
 10. **No notice and no feedback note.** No project has adopted the pack; this repository's adoption
     is its first user. No note to WingFoil for the publication (dl-021 R1, the charter).
@@ -165,23 +177,24 @@ every push to `main`, its CI is read (rule 3). Files are staged by name. The rel
 
 1. **This plan** (product-owner): an independent review (dl-017), amended; the outline ruled by the
    approver; submitted (`draft → active`).
-2. **`prepare`** (tech-lead): prel-008 added, its fields and Changes written; point 2's
-   `CHANGELOG.md` entry and task-104's note, in their own commit; the README's "Install and update"
-   checked against `compat.yaml` (CB-3: the temporary mark kept, since no release provides
-   `pack-install`); an independent review; `draft → validating`.
+2. **`prepare`, the entry** (tech-lead): point 2's `CHANGELOG.md` entry, task-104's note and the
+   owed row's Source, in their own commit on `main`.
 3. **The rehearsal** (point 3, if ruled), on `main` with point 2's commit, recorded here. A failure:
-   a tooling task first.
-4. **`validate`** (reviewer): the evidence of point 4 on the submitted head, recorded in prel-008,
+   a tooling task first, before prel-008 is added.
+4. **`prepare`, the element** (tech-lead): prel-008 added, its fields and Changes written; the
+   README's "Install and update" checked against `compat.yaml` (CB-3: the temporary mark kept,
+   since no release provides `pack-install`); an independent review; `draft → validating`.
+5. **`validate`** (reviewer): the evidence of point 4 on the submitted head, recorded in prel-008,
    reviewed independently, `validating → releasing`; `main` pushed by the approver and its CI read.
-5. **`approve-publication`:** the approver approves prel-008 (`releasing → released`), which
+6. **`approve-publication`:** the approver approves prel-008 (`releasing → released`), which
    authorizes the tag, or rejects it back to `validating`. No tag and no tag push before it. The
    agent pushes the approval's commit and reads `main`'s CI (dl-044 P2).
-6. **`publish`** (point 7), the approver running `publish:pack --report` and the atomic push; the
+7. **`publish`** (point 7), the approver running `publish:pack --report` and the atomic push; the
    agent reads the report, the CI and Pages, runs CB-6's live check, and writes prel-008's
    Publication.
-7. **`activate`** (point 8): the charter's note committed first, then the approver's `memory
+8. **`activate`** (point 8): the charter's note committed first, then the approver's `memory
    submit` and its push; the agent reads the CI.
-8. **Close:** the account per tech-spec (dl-020); the owed rows; the reserved numbers released; the
+9. **Close:** the account per tech-spec (dl-020); the owed rows; the reserved numbers released; the
    privacy checks recorded; the retrospective's plan named (point 9); `active → done`.
 
 **Not in this plan:** the retrospective itself; the pack release round; this repository's adoption,
@@ -205,3 +218,15 @@ its WingFoil pin and its inbox sync; the sequencer's stale W10 state row (its ow
 
 ## Execution Notes
 <!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-24: independent review of the outline (dl-017, `c3821d0b`): approve after amendments;
+  no blocker, four should-fix (task-104's miss stated as an unmet criterion, no review having
+  claimed it, and recorded by a dated note, not under rule 6; the "required parameter" claim
+  corrected, `base` having four; the rehearsal moved before prel-008 moves, Steps 2 … 4 split; the
+  retrospective's alternative cited to dl-033 O2 and marked a departure) and five nits (the dry
+  run's digest superseded by point 2; the range's floor from `format_key`; CB-1 … CB-3's evidence
+  named; the Validation's "no preset" line; who pushes `main`), all applied in the commit that
+  records this note, with the owed row's Source to cite point 2. The review verified the Reads'
+  other claims and the reserved numbers free on every branch.
+- 2026-11-24: no re-review: the amendments correct facts and citations and split Step 2 so that the
+  rehearsal precedes prel-008's `submit`, as point 3 already said ("before any element moves");
+  no recommendation or ruling changes.
