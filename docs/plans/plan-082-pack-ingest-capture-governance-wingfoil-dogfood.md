@@ -2,7 +2,7 @@
 id: plan-082-pack-ingest-capture-governance-wingfoil-dogfood
 type: plan
 title: "pack-ingest capture: governance/wingfoil-dogfood"
-status: active
+status: done
 workflow: "pack-ingest"
 phase: "capture"
 tags: ["dogfood","pack","governance","pack-ingest"]
