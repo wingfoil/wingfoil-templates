@@ -186,3 +186,6 @@ the path check and the writes, until they pass; the header comment of `src/publi
   the merge, after the build, `tests/publish.test.ts` and `tests/check-texts.test.ts` 83 of 83
   (Node.js 24.22.3, the local default). It stays `approved` until its check on `main`
   (criterion 8).
+- 2026-11-24 — closed: on `main` with plan-081's merge (`d1f2f2c2`, pushed by the approver);
+  criterion 8's check, `main`'s CI, run 45350160381 `success`, its longest job 15 min 21 s. Then
+  `approved → done` (dl-045).

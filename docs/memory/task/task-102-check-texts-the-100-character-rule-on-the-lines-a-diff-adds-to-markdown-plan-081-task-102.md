@@ -224,3 +224,8 @@ this repository's Markdown today). `src/markdown-lines.ts` is out of the files t
   main") ruled by plan-081 (ruling 3), task-064 and plan-062's task its precedents; on the merge
   the two test files 66 of 66 and `check:texts -- --base origin/main` exit 0. It stays `approved`
   until its check on `main` (criterion 9).
+- 2026-11-24 — closed: on `main` with plan-081's merge (`d1f2f2c2`, pushed by the approver);
+  `main`'s CI run 45350160381 `success`, its jobs (22.12.0, 1) 9 min 44 s, (22.21.0, 1) 15 min 21 s,
+  (22.12.0, 2) 5 min 48 s, (22.21.0, 2) 8 min 47 s; criterion 9's check on `main`: the step
+  "Texts, the lines this push adds to main" `success` in shard 1 of both Node.js versions, the
+  branch step skipped. Then `approved → done` (dl-045).

@@ -269,3 +269,12 @@ Then, in dl-039 R2's order:
   `96d4fbf8`: `npm ci`, `npm run build`, `npm run validate:publication` (28 runs, 0 failed), the
   golden tree in publication mode (26 runs, 0 failed) and `npm run -s wingfoil -- workflow list`,
   each exit 0; the tree clean after them. This note is documentation only: no new run.
+- 2026-11-24 — merged into `main` on the approver's OK with `--no-ff` (`d1f2f2c2`), pushed by the
+  approver; `main`'s CI run 45350160381 `success`, its jobs (22.12.0, 1) 9 min 44 s, (22.21.0, 1)
+  15 min 21 s, (22.12.0, 2) 5 min 48 s, (22.21.0, 2) 8 min 47 s; the step "Texts, the lines this
+  push adds to main" `success` (task-102's check on `main`), task-103's check being `main`'s CI;
+  Pages `success`. dl-049's place in W10 left as written (the approver, 2026-11-24).
+- 2026-11-24 — closed: rows 1 … 9 done; task-102 and task-103 `approved → done`; the register's
+  rows "dl-044's actions" … "dl-048's actions" closed, "The engine way of working" extended;
+  dl-049 stays `pending`, its path after the intake that raises the pin (W10). The run of this
+  close's push is left to the next plan (point 11).
