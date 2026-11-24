@@ -2,7 +2,7 @@
 id: plan-086-pack-cycle-author-the-governance-wingfoil-dogfood-pack
 type: plan
 title: "pack-cycle author: the governance/wingfoil-dogfood pack"
-status: active
+status: done
 workflow: "pack-cycle"
 phase: "author"
 tags: ["packs","dogfood","governance","W10"]
