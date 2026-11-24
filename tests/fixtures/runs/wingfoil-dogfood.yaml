@@ -1,0 +1,111 @@
+# The upstream-note route of governance/feedback through governance/wingfoil-dogfood's channel
+# (task-105, plan-086; WD-4, WD-5), run by `npm run check:runs` and the CI on every branch push, on
+# each selected release. The pack is composed from the tree's packs, with no overlay. One run per
+# README example, since a note's path is the example's inbox path and `write` substitutes no
+# parameter. The note is written where the channel directive says, in WingFoil's format; the
+# inbox's ledger row is the channel's text, not this scenario's.
+format: 1
+compositions: tests/fixtures/examples/wingfoil-dogfood
+identities:
+  agent: { name: "Runs Agent", email: "agent@runs.invalid" }
+runs:
+  - name: route-upstream-wingfoil-defaults
+    only: [defaults]
+    chain:
+      - main: feedback-ingest
+        steps:
+          - start
+          - add: { type: feedback, title: "A flag refused", step: feedback-ingest.capture,
+              label: item }
+          - set:
+              element: item
+              fields:
+                kind: defect
+                target: "upstream:wingfoil"
+                source: "a writer"
+                context: "feedback-ingest.capture"
+                outcome: upstream-note
+          - submit: item
+          - approve: item
+          - end
+      - main: feedback-review
+        steps:
+          - start
+          - write:
+              path: docs/wingfoil-feedback/F-001-a-flag-refused.md
+              text: |
+                ---
+                id: F-001
+                title: "A command refuses a flag its help lists"
+                kind: defect
+                status: open
+                wingfoil_version: 0.3.2
+                answered_by: []
+                ---
+
+                From the feedback item $item.id.
+
+                ## Observed
+
+                The command refuses a flag its help lists (command, output, version and commit in
+                the item's context).
+
+                ## Expected
+
+                The command accepts every flag its help lists.
+          - set:
+              element: item
+              fields: { resulting: docs/wingfoil-feedback/F-001-a-flag-refused.md }
+          - finalize: feedback-item.route@feedback:$item.id
+          - submit: item
+          - end
+  - name: route-upstream-wingfoil-with-software
+    only: [with-software]
+    chain:
+      - main: feedback-ingest
+        steps:
+          - start
+          - add: { type: feedback, title: "An unexpected listing order",
+              step: feedback-ingest.capture, label: item }
+          - set:
+              element: item
+              fields:
+                kind: observation
+                target: "upstream:wingfoil"
+                source: "the agent"
+                context: "feedback-ingest.capture"
+                outcome: upstream-note
+          - submit: item
+          - approve: item
+          - end
+      - main: feedback-review
+        steps:
+          - start
+          - write:
+              path: docs/upstream/wingfoil/F-001-an-unexpected-listing-order.md
+              text: |
+                ---
+                id: F-001
+                title: "A listing comes in an unexpected order"
+                kind: request
+                status: open
+                wingfoil_version: 0.3.2
+                answered_by: []
+                ---
+
+                From the feedback item $item.id.
+
+                ## Observed
+
+                A listing of the pinned CLI comes in an order its help does not state (command,
+                output, version and commit in the item's context).
+
+                ## Expected
+
+                The help states the listing's order.
+          - set:
+              element: item
+              fields: { resulting: docs/upstream/wingfoil/F-001-an-unexpected-listing-order.md }
+          - finalize: feedback-item.route@feedback:$item.id
+          - submit: item
+          - end
