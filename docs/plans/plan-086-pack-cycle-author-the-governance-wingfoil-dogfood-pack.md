@@ -265,3 +265,12 @@ the pack release round, this repository's adoption and pin, the sequencer's stal
   45434602086 `success`, its jobs (22.12.0, 1) 10 min 42 s, (22.21.0, 1) 10 min 14 s, (22.12.0,
   2) 5 min 42 s, (22.21.0, 2) 8 min 1 s; task-104 `done`. Its review read WD-6 (thirteen
   differences from custom 1.6, each one criterion 3 allows), the approver read it at `approve`.
+- 2026-11-24: step 3 done: task-105 merged (`641d279a`, pushed by the approver), `main`'s CI run
+  45477886787 `success`, its jobs (22.12.0, 1) 17 min 6 s, (22.21.0, 1) 10 min 42 s, (22.12.0,
+  2) 8 min 1 s, (22.21.0, 2) 5 min 37 s, none over 25 minutes; task-105 `done`; `check:runs`
+  84 → 92 runs.
+- 2026-11-24: step 4, the close: the charter's Execution Note of the author phase (the two tasks,
+  the Open points' answers, the source key's ruling and what it changes, the exit criterion's
+  evidence) and dl-051's note on the departure from Q3 (a), both in the commit that records this
+  note. No item left owed. `active → done`; the close's CI is left to the next plan. Next in W10:
+  `pack-cycle` › `first-release` of `governance/wingfoil-dogfood`, citing task-105's adoption run.

@@ -206,3 +206,24 @@ fictional projects only, run in the compatibility matrix on the releases `compat
   and the empty default's rendering; the parameters to set named; the names check and the id
   kept; dl-012 D6's knock-ons "among them"; O13 dropped), all applied in the commit that records
   this note. No re-review: the fixes state references and citations, no ruling changes.
+- 2026-11-24, plan-086 (`author`), at its close; the approver's rulings of plan-086, the body
+  unchanged:
+  - **The tasks:** two, not the four proposed: task-104 (the pack, its README and examples, WD-2's
+    and WD-3's tests; merged at `704901f3`) and task-105 (the route in `check:runs`, the note's
+    checks, the adoption run prepared; merged at `641d279a`), since the layout and the README
+    rules make a pack directory without its README fail the lint (plan-086 point 1).
+  - **Open point 1:** the parameter names stand, no clash found; **Open point 2:** no
+    `wingfoil_source_key` (plan-086 point 2, option (b)): the inbox's **Source key** line is the
+    key's one source, rule 7 reading it and doing nothing while it is empty; this changes Ships'
+    parameters, the parameters table, the descriptions sentence, the Adaptations (a fourth: the
+    key read from the inbox's line) and WD-6's list, which the approver ruled reads rule 7's
+    wording as allowed; the table's empty default is moot; **Open point 3:** the README describes
+    the CLI command, which the examples set; no preset holds the pack.
+  - **The exit criterion's evidence:** WD-1, WD-2, WD-3, WD-7 in task-104 (the examples on 0.3.0
+    and 0.3.2, no warning; `tests/wingfoil-dogfood-pack.test.ts`; presets unchanged); WD-6 read
+    by task-104's review (thirteen differences from custom 1.6, each allowed) and by the approver
+    at its `approve`; WD-4 and WD-5 in task-105 (`tests/fixtures/runs/wingfoil-dogfood.yaml` to
+    `closed` on both examples, on 0.3.0 and 0.3.2; the notes through `assertFields` and
+    `assertSections`); the adoption run of dl-032 E3 prepared
+    (`tests/fixtures/runs/adoption-wingfoil-dogfood.yaml`, Scrum and Kanban), for
+    `first-release` to cite. CB-1 … CB-3 and CB-6 are the first tag's.

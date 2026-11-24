@@ -169,3 +169,8 @@ The points below are **proposed**; they become rulings when the approver approve
 - 2026-11-24, plan-084 (`pack-ingest` › `hand-off`): the charter plan that follows is plan-085,
   `pack-cycle` › `charter` for `pack-governance-wingfoil-dogfood`, the only pack accepted (D1),
   hosted as D4 says.
+- 2026-11-24, plan-086 (`pack-cycle` › `author`): a departure from Q3 (a), ruled by the approver
+  at plan-086 point 2 (option (b)): the pack ships no parameter for the service's source key; the
+  inbox README's **Source key** line is its one source, and `wingfoil-cli` rule 7 reads it, empty
+  until WingFoil registers the project. Q3 (a)'s other values (the CLI command, the inbox path)
+  are parameters, with the known behaviours' path of Q2 (a). The pack is task-104's (`704901f3`).
