@@ -53,7 +53,8 @@ The departures from dl-051 Q3 (a) and from the charter are recorded on both at p
    - **Scope:** global, every role, human or agent, that runs the WingFoil CLI in the project.
    - **Rules 1 … 7** of custom 1.6, their content unchanged but for (charter Ships, WD-6, plan-086
      point 2):
-     - rule 1's command written as `{{wingfoil_command}}`, its "never a global `wingfoil`" kept;
+     - rule 1's command written as `{{wingfoil_command}} …`, the ` --` part of the value (as
+       `npm run -s wingfoil --`), its "never a global `wingfoil`" kept;
      - the inbox written as `{{wingfoil_inbox_path}}` in rule 3, and its README as
        `{{wingfoil_inbox_path}}/README.md` in rule 7;
      - rules 2 … 5 pointing at the entries file `{{wingfoil_known_behaviours_path}}`, not at
@@ -93,7 +94,8 @@ The departures from dl-051 Q3 (a) and from the charter are recorded on both at p
      with no WingFoil CLI command in code (CB-3, `isCliCommand`):
      - the inbox's `README.md` at the inbox path, with its skeleton: Rules naming the pack's
        `wingfoil-cli`, Ledger, Context, and the lines `**Source key:**` and `**Last sync:**` (the
-       form `assertLedger` matches), empty meaning nothing after the label;
+       form `assertLedger` matches), the **Source key** line empty (nothing after the label)
+       until WingFoil registers the project;
      - the empty entries file at the entries path;
      - `upstream:wingfoil` added to `feedback_targets`;
      - the CLI command to set, described ("the command that runs the project's pinned WingFoil
@@ -108,9 +110,9 @@ The departures from dl-051 Q3 (a) and from the charter are recorded on both at p
      a code span (`readme-command`).
 7. **The examples** (spec-002 §2.4: fictional projects only, `.example` addresses), under
    `tests/fixtures/examples/wingfoil-dogfood/`, each described in section 7 with its `Fixture:`
-   line, a situation, what the project gets and how one route runs; each composes and validates:
-   Each sets `base`'s four required parameters, `wingfoil_command` and `feedback_targets` with
-   `upstream:wingfoil`:
+   line, a situation, what the project gets and how one route runs; each composes and validates,
+   and each sets `base`'s four required parameters, `wingfoil_command` and `feedback_targets`
+   with `upstream:wingfoil`:
    - `defaults`: `base@^2`, `governance/feedback@^1` and the pack; the pack's other parameters on
      their defaults;
    - `with-software`: `software@^1` and `methodology/kanban@^1` added, and its own
@@ -122,13 +124,17 @@ The departures from dl-051 Q3 (a) and from the charter are recorded on both at p
    - **WD-2:** `wingfoil_command` has no default; no parameter default and no text of the
      composed directives holds `svc-018`; in the pack's directive files as written (before
      substitution), no code span is a command for `isCliCommand(text, false)` and no fenced line
-     one for `isCliCommand(text, true)` (`src/readme-rules.ts`), nor is a default for
-     `isCliCommand(value, false)`; the two examples' parameter values differ and both compose.
+     one for `isCliCommand(text, true)` (`src/readme-rules.ts`), nor is any parameter default
+     a command for `isCliCommand(value, false)`; the two examples' parameter values differ and
+     both compose.
    - **WD-3** (`src/feedback-channel.ts`, as `check:packs` and `validate` call it):
-     `channelProblems` on the pack's directive files, with its required ids, returns nothing;
+     `channelProblems` on the pack's directive files, with `requiredIds` the ids of its
+     `requires` (`base`, `governance/feedback`), returns nothing;
      `isChannel` holds for `wingfoil-channel.md` only, and its `servedTargets` equal
-     `['upstream:wingfoil']`; `channelConflicts` on each example's composed directives returns
-     nothing.
+     `['upstream:wingfoil']`; `channelConflicts` on each example's composed
+     `.wingfoil/directives/built-in/*.md`, each given as `path: directives/<name>.md` as
+     `validate` maps them (`src/validate.ts`), returns nothing, and at least one of them
+     `isChannel`.
    - **The bindings:** the composed `roles.yaml` holds `wingfoil-cli` in `global` and
      `wingfoil-channel` under `facilitator`.
 
@@ -188,3 +194,10 @@ The departures from dl-051 Q3 (a) and from the charter are recorded on both at p
   and `**Last sync:**` lines and "empty"; the generic install steps; no example's command quoted
   in the README; the names check over 0.3.0 … 0.3.2 and `presets/`; dl-051 D2's rulings, WD-7's
   check, the counts listed), all applied in the commit that records this note.
+- 2026-11-24: re-review of the amendments (`996dcb42`): approve after amendments; no blocker, one
+  should-fix (`channelConflicts` given the composed files as `validate` maps them, with at least
+  one channel, so the check cannot pass empty) and four nits (`requiredIds` stated; criterion 7's
+  sentence; the ` --` part of `wingfoil_command`'s value; criterion 8's missing noun), all
+  applied in the commit that records this note; "empty" kept to the **Source key** line, since
+  this repository's inbox writes `**Last sync:** none.` No further re-review: the fixes state
+  the checks' inputs, no criterion's intent changes.
