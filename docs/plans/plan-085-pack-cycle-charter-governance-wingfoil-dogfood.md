@@ -236,3 +236,5 @@ repository's adoption and pin, dl-049's path, the sequencer's stale W10 state ro
   blocker, three should-fix and six nits, applied while `draft` (the charter's Execution Notes
   record them); no re-review, no ruling changed. Point 8's "rule 8 kept in `custom/`" is read as
   under another id (one id per composition), as the charter's Adoption says.
+- 2026-11-24: step 4 done: the charter accepted by the approver (`proposed → accepted`,
+  `7b68ddef`).
