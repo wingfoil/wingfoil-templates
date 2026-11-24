@@ -2,7 +2,7 @@
 id: task-104-the-governance-wingfoil-dogfood-pack-and-its-readme-examples-plan-086-task-104
 type: task
 title: "The governance/wingfoil-dogfood pack and its README examples (plan-086 task-104)"
-status: backlog
+status: approved
 pack: "pack-governance-wingfoil-dogfood"
 depends_on: []
 tags: ["packs","dogfood","governance"]
@@ -176,7 +176,40 @@ The departures from dl-051 Q3 (a) and from the charter are recorded on both at p
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-104-wingfoil-dogfood-pack` from `main` at `3216607c` (the approve), in a
+worktree of its own.
+
+**Names (criterion 5), checked 2026-11-24:** `wingfoil-channel`, `wingfoil_command`,
+`wingfoil_inbox_path`, `wingfoil_known_behaviours_path` and `governance/wingfoil-dogfood` occur
+nowhere in `packs/`, `presets/`, `tests/fixtures/` or `src/wingfoil-builtins.ts`, nor in the
+`dist/` of WingFoil 0.3.0, 0.3.1 and 0.3.2 (whose built-in directives are the same six:
+`architecture`, `code-quality`, `code-review`, `documentation`, `security`, `testing`; `init`'s
+`custom/` files come from that `dist/`); `wingfoil-cli` occurs only in this repository's
+`.wingfoil/directives/custom/`. The charter's names stand (Open point 1).
+
+**Files:**
+- `packs/governance/wingfoil-dogfood/`: `pack.yaml`, `fragments/roles.yaml`,
+  `directives/wingfoil-cli.md`, `directives/wingfoil-channel.md`, `README.md`, `CHANGELOG.md`;
+- `tests/fixtures/examples/wingfoil-dogfood/defaults/example.yaml` (Shearwater Docs, a fictional
+  documentation site with no methodology) and `with-software/example.yaml` (Fulmar Tickets, a
+  fictional ticketing service flowing its work with Kanban, its inbox under
+  `docs/upstream/wingfoil` and its entries in `docs/upstream/wingfoil-known-behaviours.md`); each
+  `wingfoil_command` a fictional pinned script (`npm run -s wf --`), not a WingFoil command for
+  `isCliCommand`;
+- `tests/wingfoil-dogfood-pack.test.ts` (criterion 8), on the model of
+  `tests/feedback-pack.test.ts`: the examples composed with `composeDocuments`, the pack's files
+  read from `packs/`;
+- the count tests that move (criterion 10), found by running the suite after the pack lands.
+
+**The directives' text:** `wingfoil-cli`'s rules 1 … 7 copied from custom 1.6 and changed only
+as criterion 3 lists; its known-behaviours section states the entries file's form with an empty
+table header and rule 5's re-check. `wingfoil-channel`'s text follows criterion 4 and FA-8's
+fixture channel for the "Serves the target" line.
+
+**Order and red (dl-018):** the test file first, run before the pack exists: WD-2 and the
+bindings fail on a composition error (the red run's command and failing count recorded); then
+the pack, its README and the examples; then `npm run index` for the generated sections; then the
+validation of criterion 9 and the counts.
 
 ## Execution Notes
 
@@ -201,3 +234,52 @@ The departures from dl-051 Q3 (a) and from the charter are recorded on both at p
   applied in the commit that records this note; "empty" kept to the **Source key** line, since
   this repository's inbox writes `**Last sync:** none.` No further re-review: the fixes state
   the checks' inputs, no criterion's intent changes.
+- 2026-11-24: red (dl-018, `2bae0a88`): `node --test dist/tests/wingfoil-dogfood-pack.test.js`
+  before the pack existed, 8 tests, 8 failing (the pack's files and examples missing). WD-3's
+  two tests were red too, on the missing files, not on a rule: criterion 8's "green when
+  written" reads the channel's own check, which passed at its first run beside the channel.
+- 2026-11-24: build (`a2439389`): the pack, its README and CHANGELOG, the two examples, and the
+  moved counts. `npm run index` wrote the README's generated sections; the Versions section's
+  catalog link is a link reference, so that its line stays under the 100-character rule
+  (dl-046 P1 exempts a link reference line). The source key's adaptation is the README's fourth
+  bullet beside the charter's three (the rules' generalisation, the known behaviours, the inbox
+  skeleton).
+- 2026-11-24: the counts (criterion 10), measured on this branch: the lint's files 93 → 101
+  (`tests/check-packs.test.ts`, `tests/validate-2-run.test.ts`: the six pack files and the two
+  examples); the schemas 9 → 10 (one more `pack.yaml`); the index's files 8 → 9
+  (`tests/index.test.ts`: one more README); `validate`'s compositions 14 → 16 and runs 28 → 32;
+  each exit overlay +2 compositions and +4 runs (`software-exit`, `scrum-exit`, `kanban-exit`
+  18 → 20 and 36 → 40; `feedback-exit` 22 → 24 and 44 → 48); the publication run 28 → 32. No
+  other count moved: the full suite before the update had 1497 tests, 8 failing, exactly these.
+  After it the four files ran 179 tests, 0 failing. `npm run validate`: 0 failed, `tolerance
+  applied: none`, each example on 0.3.0 and 0.3.2 (`defaults[+software]` skipped, no
+  methodology). `check:packs`, `index -- --check`, `check:pins`, `check:schemas` and eslint pass.
+- 2026-11-24: build review (dl-017, `a8785db6`): approve after amendments; no blocker, two
+  should-fix (criterion 9's evidence recorded below; `with-software`'s example teaching the
+  wrong kind, now an `observation` sent as a `request`, its route told to the close) and seven
+  nits (`conflicts: []` written; the channel's evidence citing `wingfoil-cli` rule 3, with the
+  commit; rule 7's source-key clause back in a parenthesis, as custom 1.6's; the inbox's Rules
+  naming both directives; the schemas' count's test, `tests/validate-2-run.test.ts`; the WD-2
+  scan asserting it sees code spans), applied in `409d3828`; one nit not applied: "its trailing
+  `--` included" kept, as criterion 3 writes it. The review's WD-6 list: thirteen differences
+  from custom 1.6 (the heading and version line, the scope line, rules 1 … 5's parameters and
+  entries file, rule 7's source key, Last sync path and empty-key sentence, rule 8 and the
+  table's entries absent), each one criterion 3 allows; rule 6 verbatim. No re-review: the fixes
+  change the example's text and the test's guard, not a criterion or a recommendation.
+- 2026-11-24: criterion 9, on `409d3828`: `npm run check:runs` 84 runs, 0 failed, the count of
+  `main` (task-098's); the golden tree (`npm run validate -- --tree tests/fixtures/compose/tree
+  --param project_name=Golden`) 26 runs, 0 failed, the tolerance its test expects (`0.2.2`);
+  `npm run validate` 16 compositions, 32 runs, 0 failed, `tolerance applied: none`; WD-7: `git
+  diff --exit-code main -- presets/` exit 0, and `validate`'s 14 preset lines equal to `main`'s;
+  `catalog.yaml`, `CATALOG.md`, `catalog-index.json`, `llms.txt`, `src/` and `.wingfoil/`
+  unchanged (`git diff --stat main`); the exit overlays through `tests/validate-2-run.test.ts`
+  (179 tests, 0 failing, above).
+- 2026-11-24: dl-039's checks (R2), after the build review and its amendments, on the frozen head
+  `73a1c452` (the code frozen at `409d3828`, the later commit documentation only): branch CI run
+  45430259230 `success`, its jobs (22.12.0, 1) 10 min 24 s, (22.21.0, 1) 10 min 25 s, (22.12.0,
+  2) 9 min 1 s, (22.21.0, 2) 8 min 57 s, none over 25 minutes, the step "Texts, the lines this
+  branch adds" `success`; locally on Node.js 22.21.0, from a clean working tree after `npm ci`
+  and `npm run build`: `npm run validate:publication` exit 0 (32 runs, 0 failed, `tolerance
+  applied: none`), the golden tree in publication mode exit 0 (26 runs, 0 failed) and `npm run
+  -s wingfoil -- workflow list` exit 0. The privacy check of the branch's diff is clean
+  (`repository-practice` rule 2). This note is documentation only: no new run.

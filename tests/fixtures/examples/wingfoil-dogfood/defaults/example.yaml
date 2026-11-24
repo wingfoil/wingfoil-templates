@@ -1,0 +1,17 @@
+format: 1
+id: defaults
+title: "Defaults"
+description: >-
+  Shearwater Docs, a fictional documentation site with no methodology, sends its feedback about
+  WingFoil back to WingFoil through the inbox on every default path.
+packs:
+  - base@^2
+  - governance/feedback@^1
+  - governance/wingfoil-dogfood@^1
+parameters:
+  project_name: "Shearwater Docs"
+  approver_name: "Shearwater Lead"
+  approver_email: "lead@shearwater-docs.example"
+  agent_name: "Shearwater Agent"
+  feedback_targets: "product, governance, upstream:wingfoil"
+  wingfoil_command: "npm run -s wf --"

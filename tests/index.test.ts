@@ -44,10 +44,10 @@ describe('npm run index (acceptance 3)', () => {
       const result = runIndex(['--tree', tree, '--check']);
       assert.equal(result.code, 0, result.lines.join('\n'));
     }
-    // Eight: CATALOG.md, catalog-index.json, llms.txt and five READMEs (task-067: kanban's;
-    // task-096: feedback's).
+    // Nine: CATALOG.md, catalog-index.json, llms.txt and six READMEs (task-067: kanban's;
+    // task-096: feedback's; task-104: wingfoil-dogfood's).
     assert.deepEqual(runIndex(['--tree', REPO_ROOT, '--check']).lines,
-      ['index: checked 8 files, 0 not up to date']);
+      ['index: checked 9 files, 0 not up to date']);
   });
 
   it('writes the outputs, then reports them unchanged; two runs are byte-identical', () => {

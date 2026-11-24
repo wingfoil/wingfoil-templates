@@ -1,0 +1,33 @@
+format: 2
+id: governance/wingfoil-dogfood
+axis: governance
+name: wingfoil-dogfood
+title: "WingFoil dogfood"
+description: >-
+  The channel back to WingFoil for any project that uses it: a feedback item routed to
+  upstream:wingfoil becomes a note in WingFoil's format in the project's inbox, and the rules of
+  running the project's pinned WingFoil CLI and keeping its known behaviours.
+version: 1.0.0
+formats:
+  roles: 1
+  directive: 1
+requires:
+  - base@^2
+  - governance/feedback@^1
+conflicts: []
+requires_capabilities: []
+parameters:
+  wingfoil_command:
+    type: string
+    description: "The command that runs the project's pinned WingFoil CLI, its trailing -- included"
+  wingfoil_inbox_path:
+    type: path
+    default: "docs/wingfoil-feedback"
+    description: "The folder of the project's notes to WingFoil and of the inbox's README.md"
+  wingfoil_known_behaviours_path:
+    type: path
+    default: "docs/wingfoil-known-behaviours.md"
+    description: "The file of the project's known behaviours of its pinned WingFoil, outside the inbox"
+contents:
+  fragments: [roles]
+  directives: [wingfoil-cli, wingfoil-channel]
