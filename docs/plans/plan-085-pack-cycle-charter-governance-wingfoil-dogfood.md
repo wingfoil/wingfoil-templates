@@ -168,6 +168,15 @@ Each point with a recommendation.
    dl-051 Q6), not this charter's.
 9. **No feedback note** to WingFoil for this charter or the publication (dl-021 R1).
 
+## The approver's rulings
+
+Given on 2026-11-24, in chat: every point of the outline as recommended. Points 1 … 9 stand as
+written: the maintained line confirmed (point 1, dl-001 D7); the id `wingfoil-cli` kept, the
+inbox skeleton as install text, no `agents/section.md` (point 2); the entries in a project file,
+default `docs/wingfoil-known-behaviours.md` (point 3); the CLI command a required parameter,
+option (a), and the source key with a default `""`, option (a) (point 4); no `design` phase
+(point 5).
+
 ## Steps
 
 On branch `pack/governance-wingfoil-dogfood-charter`; one commit per step that writes. Before
