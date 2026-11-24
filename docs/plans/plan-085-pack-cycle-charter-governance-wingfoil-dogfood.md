@@ -223,3 +223,7 @@ repository's adoption and pin, dl-049's path, the sequencer's stale W10 state ro
   README's text names no command, and option (a)'s cost stated; the reusability criterion against
   point 4's generic path) and three nits (the empty default's description; CB-3 cited both ways;
   dl-051 Q3 (a) beside Q4), all applied in the commit that records this note.
+- 2026-11-24: `main`'s CI before `submit`: the push of `5c51323f` (plan-083 … plan-085's draft
+  and amendments), run 45365324832 `success`, its jobs (22.12.0, 1) 10 min 18 s, (22.21.0, 1)
+  14 min 30 s, (22.12.0, 2) 5 min 30 s, (22.21.0, 2) 9 min 10 s, the step "Texts, the lines this
+  push adds to main" `success`.
