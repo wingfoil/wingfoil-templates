@@ -227,3 +227,8 @@ repository's adoption and pin, dl-049's path, the sequencer's stale W10 state ro
   and amendments), run 45365324832 `success`, its jobs (22.12.0, 1) 10 min 18 s, (22.21.0, 1)
   14 min 30 s, (22.12.0, 2) 5 min 30 s, (22.21.0, 2) 9 min 10 s, the step "Texts, the lines this
   push adds to main" `success`.
+- 2026-11-24: step 1 done: the names check of point 2 found no clash (`wingfoil-channel` and
+  `governance/wingfoil-dogfood` in no WingFoil release 0.2.2 … 0.3.2, no catalog pack, no fixture;
+  `wingfoil-cli` only in this repository's `custom/`, as ruled); no finding changes a point.
+- 2026-11-24: step 2: the charter `pack-governance-wingfoil-dogfood` added and written from the
+  outline and its rulings, its body committed before `submit` (W-04).
