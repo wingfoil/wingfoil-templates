@@ -2,7 +2,7 @@
 id: task-105-the-route-through-wingfoil-channel-in-check-runs-and-the-adoption-run-prepared-plan-086-task-105
 type: task
 title: "The route through wingfoil-channel in check:runs and the adoption run prepared (plan-086 task-105)"
-status: in-progress
+status: in-review
 pack: "pack-governance-wingfoil-dogfood"
 depends_on: ["task-104"]
 tags: ["packs","dogfood","governance"]
