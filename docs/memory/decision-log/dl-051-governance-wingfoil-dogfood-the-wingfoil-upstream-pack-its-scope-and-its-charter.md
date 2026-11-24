@@ -166,3 +166,6 @@ The points below are **proposed**; they become rulings when the approver approve
 - 2026-11-24, plan-083 (`pack-ingest` › `rule`): approved by the approver (`bf29bbf2`); D1 … D5 are
   rulings. D2's notes on dl-003 and dl-012 recorded. `vision` skipped (D3): F4.2 already has its
   row in `06_features.md` and its place in W10.
+- 2026-11-24, plan-084 (`pack-ingest` › `hand-off`): the charter plan that follows is plan-085,
+  `pack-cycle` › `charter` for `pack-governance-wingfoil-dogfood`, the only pack accepted (D1),
+  hosted as D4 says.
