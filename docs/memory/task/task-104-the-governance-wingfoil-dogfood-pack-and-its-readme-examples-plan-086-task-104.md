@@ -176,7 +176,40 @@ The departures from dl-051 Q3 (a) and from the charter are recorded on both at p
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-104-wingfoil-dogfood-pack` from `main` at `3216607c` (the approve), in a
+worktree of its own.
+
+**Names (criterion 5), checked 2026-11-24:** `wingfoil-channel`, `wingfoil_command`,
+`wingfoil_inbox_path`, `wingfoil_known_behaviours_path` and `governance/wingfoil-dogfood` occur
+nowhere in `packs/`, `presets/`, `tests/fixtures/` or `src/wingfoil-builtins.ts`, nor in the
+`dist/` of WingFoil 0.3.0, 0.3.1 and 0.3.2 (whose built-in directives are the same six:
+`architecture`, `code-quality`, `code-review`, `documentation`, `security`, `testing`; `init`'s
+`custom/` files come from that `dist/`); `wingfoil-cli` occurs only in this repository's
+`.wingfoil/directives/custom/`. The charter's names stand (Open point 1).
+
+**Files:**
+- `packs/governance/wingfoil-dogfood/`: `pack.yaml`, `fragments/roles.yaml`,
+  `directives/wingfoil-cli.md`, `directives/wingfoil-channel.md`, `README.md`, `CHANGELOG.md`;
+- `tests/fixtures/examples/wingfoil-dogfood/defaults/example.yaml` (Shearwater Docs, a fictional
+  documentation site with no methodology) and `with-software/example.yaml` (Fulmar Tickets, a
+  fictional ticketing service flowing its work with Kanban, its inbox under
+  `docs/upstream/wingfoil` and its entries in `docs/upstream/wingfoil-known-behaviours.md`); each
+  `wingfoil_command` a fictional pinned script (`npm run -s wf --`), not a WingFoil command for
+  `isCliCommand`;
+- `tests/wingfoil-dogfood-pack.test.ts` (criterion 8), on the model of
+  `tests/feedback-pack.test.ts`: the examples composed with `composeDocuments`, the pack's files
+  read from `packs/`;
+- the count tests that move (criterion 10), found by running the suite after the pack lands.
+
+**The directives' text:** `wingfoil-cli`'s rules 1 … 7 copied from custom 1.6 and changed only
+as criterion 3 lists; its known-behaviours section states the entries file's form with an empty
+table header and rule 5's re-check. `wingfoil-channel`'s text follows criterion 4 and FA-8's
+fixture channel for the "Serves the target" line.
+
+**Order and red (dl-018):** the test file first, run before the pack exists: WD-2 and the
+bindings fail on a composition error (the red run's command and failing count recorded); then
+the pack, its README and the examples; then `npm run index` for the generated sections; then the
+validation of criterion 9 and the counts.
 
 ## Execution Notes
 
