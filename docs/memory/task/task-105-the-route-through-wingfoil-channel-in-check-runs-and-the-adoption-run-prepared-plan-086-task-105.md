@@ -28,9 +28,9 @@ the channel is the real pack's, composed from the tree's `packs/` with no overla
 ## Acceptance
 
 1. **`tests/fixtures/runs/wingfoil-dogfood.yaml`**, `format: 1`, `compositions:
-   tests/fixtures/examples/wingfoil-dogfood`, no `overlay`, a header comment naming task-105,
-   plan-086 and WD-4. Two runs, since `write` substitutes only `$<label>.id`, not a parameter
-   (`src/runs.ts`), and the examples' inbox paths differ:
+   tests/fixtures/examples/wingfoil-dogfood`, `identities.agent` as the models', no `overlay`, a
+   header comment naming task-105, plan-086 and WD-4. Two runs, since `write` substitutes only
+   `$<label>.id`, not a parameter (`src/runs.ts`), and the examples' inbox paths differ:
    - `route-upstream-wingfoil-defaults`, `only: [defaults]`: an item with `kind: defect`;
    - `route-upstream-wingfoil-with-software`, `only: [with-software]`: an item with `kind:
      observation`, its note's `kind: request` (the channel's mapping).
@@ -44,9 +44,12 @@ the channel is the real pack's, composed from the tree's `packs/` with no overla
    `defaults`, the pack's default; `docs/upstream/wingfoil/` for `with-software`, its parameter),
    named `F-001-<slug>.md`; dl-163 R4's six fields in order (`id: F-001`, `title`, `kind`, `status:
    open`, `wingfoil_version`, `answered_by: []`); a body citing `$item.id`, with `## Observed` and
-   `## Expected` and no `## Replies`. The inbox's ledger row is the channel's text and not WD-4's:
-   the scenario does not write it (plan-086 point 3).
-3. **`tests/fixtures/runs/adoption-wingfoil-dogfood.yaml`**, `compositions:
+   `## Expected` and no `## Replies`; `## Observed` holds a short evidence line (command, output,
+   version, commit) as the channel asks. The evidence and the `wingfoil_version` value are fixture
+   data, one literal on both releases, which WD-5 does not check. The inbox's ledger row is the
+   channel's text and not WD-4's: the scenario does not write it (plan-086 point 3).
+3. **`tests/fixtures/runs/adoption-wingfoil-dogfood.yaml`**, `format: 1`, `identities.agent` as
+   the models', `compositions:
    tests/fixtures/examples/wingfoil-dogfood`: two `adopt` runs, `template: Scrum` and `template:
    Kanban`, each `only: [with-software]` (an `init` template writes a software project), the
    removal list `adoption-feedback.yaml`'s, a header comment naming dl-032 E3 and the pack's first
@@ -68,15 +71,17 @@ the channel is the real pack's, composed from the tree's `packs/` with no overla
 5. **The runs pass:** `npm run check:runs` exit 0, its count 84 → 92 (the two route runs and the
    two adoption runs, each on 0.3.0 and 0.3.2), measured and stated in the Execution Notes, with
    any count test it moves (dl-018).
-6. **What does not change:** no file under `src/`, `.wingfoil/`, `presets/` or `packs/`;
+6. **What does not change:** no file under `src/`, `.wingfoil/`, `presets/`, `packs/` or
+   `tests/fixtures/examples/` (task-104's examples are the README's fixtures; a change needed there
+   goes to the approver, dl-019);
    `catalog.yaml` and the index outputs unchanged. A finding in the pack goes to the approver when
    found (dl-019); a change under `src/` found needed stops the task (plan-086 point 4).
 7. **Checks** (`kanban-delivery` › `review`, dl-039): the build review and its amendments; then,
-   once, on the frozen commit, the branch CI `success`, its run id and every job's duration
-   recorded (a job over 25 minutes goes to the approver, R3; `check:runs` grows); dl-039's local
-   list on Node.js 22.21.0, from a clean working tree after `npm ci` and `npm run build`: `npm run
-   validate:publication`, the golden tree in publication mode and `npm run -s wingfoil --
-   workflow list`, each exit 0.
+   once, on the frozen commit, the branch CI (`ci.yml`) `success`, its run id and every job's
+   duration recorded (a job over 25 minutes goes to the approver, R3; `check:runs` grows);
+   dl-039's local list on Node.js 22.21.0, from a clean working tree after `npm ci` and `npm run
+   build`: `npm run validate:publication`, the golden tree in publication mode and `npm run -s
+   wingfoil -- workflow list`, each exit 0.
 8. **Delivery:** the branch `task/task-105-wingfoil-dogfood-route` from `main`, in a worktree of
    its own; after `approve`, a `--no-ff` merge on the approver's OK, `main` pushed by the
    approver, its CI read, and `approved → done`; the privacy check of the branch's diff recorded
@@ -93,3 +98,10 @@ the channel is the real pack's, composed from the tree's `packs/` with no overla
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-24: independent review of the body (dl-017, `db731c14`): approve after amendments; no
+  blocker, one should-fix (task-104's examples protected in criterion 6) and three nits
+  (`format: 1` and `identities.agent` named in criteria 1 and 3; the note's evidence line and
+  version stated as fixture data; the durations named as `ci.yml`'s), all applied in the commit
+  that records this note. The review verified 84 → 92, the per-example `write` with `only`, the
+  note's fields against `assertFields`, and the adoption on `with-software` with no clash. No
+  re-review: the fixes add an exclusion and name inputs, no criterion's intent changes.
