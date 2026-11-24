@@ -89,7 +89,24 @@ the channel is the real pack's, composed from the tree's `packs/` with no overla
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+Branch `task/task-105-wingfoil-dogfood-route` from `main` at `e4690bb3` (the approve), in a
+worktree of its own.
+
+**Files:**
+- `tests/fixtures/runs/wingfoil-dogfood.yaml`: the two route runs of criterion 1, written from
+  `feedback-upstream.yaml`; the notes at `docs/wingfoil-feedback/F-001-a-flag-refused.md`
+  (`defaults`, a `defect`) and `docs/upstream/wingfoil/F-001-an-unexpected-listing-order.md`
+  (`with-software`, an `observation` sent as a `request`), each body citing `$item.id`;
+- `tests/fixtures/runs/adoption-wingfoil-dogfood.yaml`: criterion 3's two `adopt` runs,
+  `adoption-feedback.yaml`'s removal list;
+- `tests/runs.test.ts`: a `describe` per scenario after the `adoption-feedback.yaml` one, reusing
+  the helpers there (`feedbackScenario`, `stepsOf`, `fieldsOn`, `assertCloses`, `ITEM_ROUTE`,
+  `INGEST`, `REVIEW`, `ADOPTION_REMOVE`), and the pack's default inbox path read from its
+  `pack.yaml`.
+
+**Order and red (dl-018):** the guard tests first, run before the two scenario files exist (a
+read error), the red run's command and failing count recorded; then the scenarios; then
+`npm run check:runs` and the count.
 
 ## Execution Notes
 
