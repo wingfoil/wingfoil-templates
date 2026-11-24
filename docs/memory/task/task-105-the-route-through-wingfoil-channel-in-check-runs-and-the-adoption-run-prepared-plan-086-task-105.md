@@ -130,3 +130,10 @@ read error), the red run's command and failing count recorded; then the scenario
   and `adopt:Kanban` on `with-software`, each on 0.3.0 and 0.3.2); the full suite 1504 tests, 0
   failing (1497 + 7); no count test moved. Nothing under `src/`, `.wingfoil/`, `presets/`, `packs/`
   or `tests/fixtures/examples/` changed.
+- 2026-11-24: build review (dl-017, `652da57d`): approve after amendments; no blocker, one
+  should-fix (each note's `## Observed` now holds its evidence line, command, output, version
+  and commit, as the channel asks, in place of a false pointer to the item's context) and two
+  nits (the guard maps the kind through the channel's table, `KIND_MAP`, and asserts the
+  evidence line; a route on every README example folder), all applied in `d8c3a4cc`. Guards 7 of 7,
+  `npm run check:runs` 92 runs, 0 failed, after the fixes. No re-review: the fixes tighten the
+  fixture's text and the guards, no criterion changes.
