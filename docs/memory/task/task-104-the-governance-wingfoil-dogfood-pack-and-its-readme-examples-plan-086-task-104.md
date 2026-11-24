@@ -14,7 +14,7 @@ plan-086 (`pack-cycle › author` of `pack-governance-wingfoil-dogfood`), points
 rulings of 2026-11-24. This task writes `packs/governance/wingfoil-dogfood` from three sources:
 - **the charter** (accepted under plan-085): Ships, Adaptations, Commitments, Adoption,
   Acceptance, Open points;
-- **dl-051** (approved): D1 … D5, Q2 (a) and Q3 (a);
+- **dl-051** (approved): D1 … D5, D2 ruling Q1 (a) … Q4 (a);
 - **this repository's custom `wingfoil-cli`** (1.6, `.wingfoil/directives/custom/wingfoil-cli.md`):
   rules 1 … 7 and the known behaviours' table form, the source of the pack's directive.
 
@@ -45,21 +45,25 @@ The departures from dl-051 Q3 (a) and from the charter are recorded on both at p
      No default holds a project value of this repository (`svc-018`, its CLI command).
    - **Contents:** the fragment `roles` and the directives `wingfoil-cli` and
      `wingfoil-channel`; no workflow, no Memory type or template, no `agents/section.md`.
-2. **`fragments/roles.yaml`**: `global: [wingfoil-cli]` and `assignments: { facilitator:
-   [wingfoil-channel] }`, nothing else (spec-001 §7.4).
+2. **`fragments/roles.yaml`**: beside `format: 1`, `global: [wingfoil-cli]` and `assignments:
+   { facilitator: [wingfoil-channel] }`, nothing else (spec-001 §7.4).
 3. **`directives/wingfoil-cli.md`**, WingFoil 0.3.0's directive frontmatter as
-   `governance/feedback`'s directives have it (`kind: built-in`, `format: 1`), no version line:
+   `governance/feedback`'s directives have it (`kind: built-in`, `format: 1`), `tags: [wingfoil,
+   cli, governance]` (no `custom`), no version line and no version in a heading:
    - **Scope:** global, every role, human or agent, that runs the WingFoil CLI in the project.
    - **Rules 1 … 7** of custom 1.6, their content unchanged but for (charter Ships, WD-6, plan-086
      point 2):
-     - rule 1's command written as `{{wingfoil_command}}`;
-     - the inbox written as `{{wingfoil_inbox_path}}` in rules 3 and 7;
-     - rules 2 … 5 pointing at the entries file `{{wingfoil_known_behaviours_path}}`, not at "an
-       entry below", "the entry" or "this directive's version"; rule 5's bump the entries file's
-       *Checked against*;
+     - rule 1's command written as `{{wingfoil_command}}`, its "never a global `wingfoil`" kept;
+     - the inbox written as `{{wingfoil_inbox_path}}` in rule 3, and its README as
+       `{{wingfoil_inbox_path}}/README.md` in rule 7;
+     - rules 2 … 5 pointing at the entries file `{{wingfoil_known_behaviours_path}}`, not at
+       "where an entry says so", "an entry below", "the entry" or "this directive's version";
+       rule 5's bump the entries file's *Checked against*;
      - "the project" for "this repository" in the scope line and rule 7;
      - rule 7's source key read from the inbox's **Source key** line, with the clause that while
        the line is empty WingFoil has not registered the project and there is nothing to sync.
+
+     Rule 6, with "WingFoil cites a note as `<service id>/F-<nnn>@<sha>`", stays verbatim.
    - **The known behaviours:** the entries file's form (a *Checked against* line, the table `#`,
      Behaviour, How to work with it, Note, WingFoil element) and that its entries are the
      project's, for its own pin.
@@ -72,20 +76,24 @@ The departures from dl-051 Q3 (a) and from the charter are recorded on both at p
    - the note written as `F-<nnn>-<slug>.md` in `{{wingfoil_inbox_path}}` with dl-163 R4's six
      fields, `## Observed` and `## Expected`, and no `## Replies` section;
    - the feedback id cited in the note's body, the item's `resulting` naming the note's path;
-   - the note's row added to the inbox's ledger.
-5. **Names:** neither directive id nor a parameter name equals a WingFoil 0.3.2 built-in, a
-   `custom/` file of `init --template Scrum` or `--template Kanban`, or a name of the catalog's
-   packs or of `tests/fixtures/`, except `wingfoil-cli` in this repository's own `custom/`, kept
-   as ruled (charter Names). Checked by listing them in this task, as task-096 did.
+   - the note's row added to the ledger in `{{wingfoil_inbox_path}}/README.md`.
+5. **Names:** neither directive id nor a parameter name equals a built-in of WingFoil 0.3.0 …
+   0.3.2, a `custom/` file of `init --template Scrum` or `--template Kanban`, or a name of the
+   catalog's packs, of `presets/` or of `tests/fixtures/`, except `wingfoil-cli` in this
+   repository's own `custom/`, kept as ruled (charter Names). Checked by listing them in this
+   task, as task-096 did.
 6. **`CHANGELOG.md`**, whose first line is a whole sentence naming what 1.0.0 holds.
    **`README.md`**, per spec-002 §2:
    - **Generated sections** by `npm run index`.
    - **"When to use it":** a WingFoil project that sends its feedback about WingFoil back to it;
      when not to use it.
-   - **"Install and update":** §2.3's temporary mark, the catalog's install link, and as text, with
-     no WingFoil CLI command in code (CB-3, `isCliCommand`):
-     - the inbox at the inbox path, with its skeleton: Rules naming the pack's `wingfoil-cli`,
-       Ledger, Context, the **Source key** and **Last sync** lines;
+   - **"Install and update":** §2.3's temporary mark, the catalog's install link, the generic hand
+     steps as `governance/feedback`'s README has them (compose with `base` and
+     `governance/feedback`, copy `.wingfoil/`, record the adopted version; CB-3), and as text,
+     with no WingFoil CLI command in code (CB-3, `isCliCommand`):
+     - the inbox's `README.md` at the inbox path, with its skeleton: Rules naming the pack's
+       `wingfoil-cli`, Ledger, Context, and the lines `**Source key:**` and `**Last sync:**` (the
+       form `assertLedger` matches), empty meaning nothing after the label;
      - the empty entries file at the entries path;
      - `upstream:wingfoil` added to `feedback_targets`;
      - the CLI command to set, described ("the command that runs the project's pinned WingFoil
@@ -96,25 +104,31 @@ The departures from dl-051 Q3 (a) and from the charter are recorded on both at p
      fourth, rule 7's key read from the inbox's line (plan-086 point 2).
    - **Section 7** links the examples, and **section 9** links the CHANGELOG and the catalog
      entry, as `governance/feedback`'s.
-   - The README names no real adopter.
+   - The README names no real adopter, and section 7 quotes no example's `wingfoil_command` in
+     a code span (`readme-command`).
 7. **The examples** (spec-002 §2.4: fictional projects only, `.example` addresses), under
    `tests/fixtures/examples/wingfoil-dogfood/`, each described in section 7 with its `Fixture:`
    line, a situation, what the project gets and how one route runs; each composes and validates:
-   - `defaults`: `base@^2`, `governance/feedback@^1` and the pack; `base`'s four required
-     parameters, `wingfoil_command` and `feedback_targets` (with `upstream:wingfoil`) set; the
-     pack's other parameters on their defaults;
-   - `with-software`: `software@^1` and `methodology/kanban@^1` added, its own
+   Each sets `base`'s four required parameters, `wingfoil_command` and `feedback_targets` with
+   `upstream:wingfoil`:
+   - `defaults`: `base@^2`, `governance/feedback@^1` and the pack; the pack's other parameters on
+     their defaults;
+   - `with-software`: `software@^1` and `methodology/kanban@^1` added, and its own
      `wingfoil_inbox_path` and `wingfoil_known_behaviours_path`.
 
    The other packs' READMEs and examples are unchanged.
 8. **The tests**, in a new `tests/wingfoil-dogfood-pack.test.ts`, on the pack's files and the
    composed output of both examples:
    - **WD-2:** `wingfoil_command` has no default; no parameter default and no text of the
-     composed directives holds `svc-018`, and no default holds a WingFoil command as
-     `isCliCommand` (`src/readme-rules.ts`) reads one; the two examples' parameter values differ
-     and both compose.
-   - **WD-3:** the lint's `feedback-channel` checks, run on the tree with the pack, report
-     nothing, and read `wingfoil-channel` as the one channel serving `upstream:wingfoil`.
+     composed directives holds `svc-018`; in the pack's directive files as written (before
+     substitution), no code span is a command for `isCliCommand(text, false)` and no fenced line
+     one for `isCliCommand(text, true)` (`src/readme-rules.ts`), nor is a default for
+     `isCliCommand(value, false)`; the two examples' parameter values differ and both compose.
+   - **WD-3** (`src/feedback-channel.ts`, as `check:packs` and `validate` call it):
+     `channelProblems` on the pack's directive files, with its required ids, returns nothing;
+     `isChannel` holds for `wingfoil-channel.md` only, and its `servedTargets` equal
+     `['upstream:wingfoil']`; `channelConflicts` on each example's composed directives returns
+     nothing.
    - **The bindings:** the composed `roles.yaml` holds `wingfoil-cli` in `global` and
      `wingfoil-channel` under `facilitator`.
 
@@ -129,11 +143,14 @@ The departures from dl-051 Q3 (a) and from the charter are recorded on both at p
      tree, pass with 0 failed.
    - `npm run check:runs` passes, its count unchanged: no scenario names this pack's examples
      before task-105.
-   - **WD-7:** `presets/` unchanged and `npm run validate`'s preset compositions unchanged.
+   - **WD-7:** `git diff --exit-code main -- presets/` exit 0, and `npm run validate`'s preset
+     lines equal to `main`'s.
    - `catalog.yaml`, `CATALOG.md`, `catalog-index.json` and `llms.txt` unchanged (an
      unpublished pack, spec-002 §3.1).
-10. **The counts** that the tooling tests take on this repository move: each stated in the
-    Execution Notes with the test it changes (dl-018), measured, not assumed. No file under
+10. **The counts** that the tooling tests take on this repository move (the lint's files, the
+    index's files, `validate`'s compositions and runs, the exit overlays' compositions and runs,
+    the publication run): each stated in the Execution Notes with the test it changes (dl-018),
+    measured, not assumed, and any other moved count named. No file under
     `src/`, `.wingfoil/` or `presets/` changes.
 11. **Checks** (`kanban-delivery` › `review`, dl-039): first the build review and its
     amendments; then, once, on the frozen commit, the branch CI `success`, its run id and every
@@ -162,3 +179,12 @@ The departures from dl-051 Q3 (a) and from the charter are recorded on both at p
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-24: independent review of the body (dl-017, `f8964e69`): approve after amendments; no
+  blocker, four should-fix (WD-2's command check on the directive files as written, with
+  `isCliCommand`'s `codeLine` stated; both examples setting `wingfoil_command` and
+  `feedback_targets`; rule 7's and the ledger's file the inbox's `README.md`; WD-3's checks named
+  as `src/feedback-channel.ts` exports them) and eight nits (the tags and the heading's version;
+  rule 2's phrase and rule 6 kept verbatim; `format: 1` beside the roles; the `**Source key:**`
+  and `**Last sync:**` lines and "empty"; the generic install steps; no example's command quoted
+  in the README; the names check over 0.3.0 … 0.3.2 and `presets/`; dl-051 D2's rulings, WD-7's
+  check, the counts listed), all applied in the commit that records this note.
