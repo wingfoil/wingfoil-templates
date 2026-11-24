@@ -1583,11 +1583,12 @@ describe('tests/fixtures/runs/wingfoil-dogfood.yaml (task-105, WD-4, WD-5)', () 
     assert.ok(declared !== undefined, 'the pack declares a default inbox path');
     return declared;
   };
+  /** The channel's mapping of a feedback kind onto dl-163's. */
+  const KIND_MAP: Record<string, string> = { defect: 'defect', gap: 'gap', request: 'request',
+    observation: 'request' };
   const ROUTES = [
-    { name: 'route-upstream-wingfoil-defaults', id: 'defaults', kind: 'defect',
-      noteKind: 'defect' },
-    { name: 'route-upstream-wingfoil-with-software', id: 'with-software', kind: 'observation',
-      noteKind: 'request' },
+    { name: 'route-upstream-wingfoil-defaults', id: 'defaults', kind: 'defect' },
+    { name: 'route-upstream-wingfoil-with-software', id: 'with-software', kind: 'observation' },
   ];
 
   it('drives one route per README example, from the tree\'s packs with no overlay', () => {
@@ -1596,6 +1597,8 @@ describe('tests/fixtures/runs/wingfoil-dogfood.yaml (task-105, WD-4, WD-5)', () 
     assert.equal(compositions, 'tests/fixtures/examples/wingfoil-dogfood');
     assert.deepEqual(runs.map((run) => [run.name, run.only]),
       ROUTES.map((row) => [row.name, [row.id]]));
+    assert.deepEqual(readdirSync(EXAMPLES).sort(), ROUTES.map((row) => row.id).sort(),
+      'a route on every README example');
   });
 
   for (const row of ROUTES) {
@@ -1637,7 +1640,8 @@ describe('tests/fixtures/runs/wingfoil-dogfood.yaml (task-105, WD-4, WD-5)', () 
         assertFields(notes);
         assertSections(notes);
         assert.ok(body.includes('$item.id'), 'the body cites the item');
-        assert.equal(fields['kind'], row.noteKind, 'the kind mapped as the channel says');
+        assert.equal(fields['kind'], KIND_MAP[row.kind], 'the kind mapped as the channel says');
+        assert.ok(body.includes('Evidence: '), 'the note holds its evidence');
       });
     });
   }

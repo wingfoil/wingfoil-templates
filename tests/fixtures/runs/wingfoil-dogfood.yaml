@@ -47,8 +47,10 @@ runs:
 
                 ## Observed
 
-                The command refuses a flag its help lists (command, output, version and commit in
-                the item's context).
+                The command refuses a flag its help lists.
+
+                Evidence: `npm run -s wf -- memory list --since 1d` prints
+                `error: unknown option '--since'`; WingFoil 0.3.2, commit 0000000.
 
                 ## Expected
 
@@ -97,8 +99,10 @@ runs:
 
                 ## Observed
 
-                A listing of the pinned CLI comes in an order its help does not state (command,
-                output, version and commit in the item's context).
+                A listing of the pinned CLI comes in an order its help does not state.
+
+                Evidence: `npm run -s wf -- memory list` prints the elements neither by id nor by
+                date; WingFoil 0.3.2, commit 0000000.
 
                 ## Expected
 
