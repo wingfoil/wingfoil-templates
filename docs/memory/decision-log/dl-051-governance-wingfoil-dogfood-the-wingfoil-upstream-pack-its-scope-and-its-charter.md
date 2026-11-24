@@ -68,7 +68,9 @@ one version (0.2.2) and re-checked at every pin bump (rule 5); each project pins
 - (a) The pack ships the rules and the table's form (its columns, rule 5's re-check), and each
   project keeps its own entries for its own pin, in a project directive or file the README names.
   Recommended: the mechanism for the known behaviours ships, the entries stay where the pin is. It
-  refines dl-003 D6 and dl-012 D3, read as the mechanism, not the entries.
+  refines dl-003 D6 and dl-012 D3, read as the mechanism, not the entries. Rules 3 and 5 then point
+  at that entries file, not at "an entry below" or "this directive's version", and *Checked
+  against* goes with the entries, the project's pin: a change of reference, not of substance.
 - (b) The pack ships the entries for the WingFoil releases its compatibility range lists, refreshed
   by a pack release at every WingFoil release. Rejected: each release of WingFoil would force one
   of the pack, and a project pinned elsewhere would read entries of another version.
@@ -122,7 +124,7 @@ through `pack-install`, dl-021 R1) holds only for this repository, the catalog's
   §5, as dl-012 D3 already describes it;
 - the pack's name, kept as dl-003 D6 gave it unless the charter finds a reason;
 - the maintained line the official catalog asks of a pack (dl-001 D7), confirmed by the approver
-  at the charter, as dl-012 D6 left it for `governance/feedback`.
+  at the charter, as dl-012 D6 words it.
 
 ## Decision
 
@@ -133,7 +135,8 @@ The points below are **proposed**; they become rulings when the approver approve
 - **D2 — Its scope** for the charter: Q1 (a), Q2 (a), Q3 (a), Q4 (a); the evidence of Q5; Q6's
   questions answered in the charter or in a `design` phase if one is needed. Q2 (a) refines dl-003
   D6 and dl-012 D3 ("the known behaviours of the pinned CLI" read as the mechanism, the entries
-  staying with each project's pin): an Execution Note on each when this element is approved;
+  staying with each project's pin, rules 3 and 5 pointing at the project's entries file): an
+  Execution Note on each, by the plan that carries this element's `rule`, when it is approved;
   F4.2's row stays as written, read the same way.
 - **D3 — The vision** (`pack-ingest` › `vision`): skipped, since F4.2 already has its row and its
   place in W10; said in the plan that carries this element's ruling.
@@ -156,3 +159,7 @@ The points below are **proposed**; they become rulings when the approver approve
   the README's sections; "re-checked"; the maintained line of dl-001 D7; the sequencer's W10 state
   row, outside this element), all applied in the commit that records this note but the last,
   which gets its row in `docs/owed-items.md` (the next amendment of the sequencer).
+- 2026-11-24: re-review of the amendments (`5c92afc0`): approve after one should-fix (rules 3 and 5
+  point at the entries the directive no longer holds under Q2 (a)) and two nits (dl-012 D6 cited
+  without naming a pack; the carrier of D2's notes), all applied in the commit that records this
+  note; no new review needed, the fix being a reference stated, not a new option.

@@ -54,3 +54,5 @@ and its place in W10, dl-051 D3); `hand-off` names the charter plan.
 - 2026-11-24: step 4 done: the independent review of dl-051 (dl-017), approve after amendments, no
   blocker, five should-fix and seven nits, applied while pending but the sequencer's stale W10
   state row, which gets its row in `docs/owed-items.md` (dl-051's Execution Notes record it).
+- 2026-11-24: re-review of dl-051's amendments: approve after one should-fix and two nits, applied
+  while pending (dl-051's Execution Notes). Step 5 is the approver's.
