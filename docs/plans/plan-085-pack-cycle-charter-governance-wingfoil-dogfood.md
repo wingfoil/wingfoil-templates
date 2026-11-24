@@ -227,3 +227,19 @@ repository's adoption and pin, dl-049's path, the sequencer's stale W10 state ro
   and amendments), run 45365324832 `success`, its jobs (22.12.0, 1) 10 min 18 s, (22.21.0, 1)
   14 min 30 s, (22.12.0, 2) 5 min 30 s, (22.21.0, 2) 9 min 10 s, the step "Texts, the lines this
   push adds to main" `success`.
+- 2026-11-24: step 1 done: the names check of point 2 found no clash (`wingfoil-channel` and
+  `governance/wingfoil-dogfood` in no WingFoil release 0.2.2 … 0.3.2, no catalog pack, no fixture;
+  `wingfoil-cli` only in this repository's `custom/`, as ruled); no finding changes a point.
+- 2026-11-24: step 2: the charter `pack-governance-wingfoil-dogfood` added and written from the
+  outline and its rulings, its body committed before `submit` (W-04).
+- 2026-11-24: step 3: independent review of the charter (dl-017), approve after amendments, no
+  blocker, three should-fix and six nits, applied while `draft` (the charter's Execution Notes
+  record them); no re-review, no ruling changed. Point 8's "rule 8 kept in `custom/`" is read as
+  under another id (one id per composition), as the charter's Adoption says.
+- 2026-11-24: step 4 done: the charter accepted by the approver (`proposed → accepted`,
+  `7b68ddef`).
+- 2026-11-24: step 5's checks on the frozen head `0aaa2660`: branch CI run 45371475425 `success`,
+  its jobs (22.12.0, 1) 12 min 15 s, (22.21.0, 1) 15 min 9 s, (22.12.0, 2) 5 min 47 s, (22.21.0,
+  2) 6 min 59 s, the step "Texts, the lines this branch adds" `success`; `workflow list` and
+  `npm run lint` exit 0; `git diff main --stat` naming only the charter and this plan; the privacy
+  check of the branch's diff clean. This note is documentation only: no new run.
