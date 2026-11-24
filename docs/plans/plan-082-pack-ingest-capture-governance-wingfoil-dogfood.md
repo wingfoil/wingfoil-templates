@@ -56,3 +56,5 @@ and its place in W10, dl-051 D3); `hand-off` names the charter plan.
   state row, which gets its row in `docs/owed-items.md` (dl-051's Execution Notes record it).
 - 2026-11-24: re-review of dl-051's amendments: approve after one should-fix and two nits, applied
   while pending (dl-051's Execution Notes). Step 5 is the approver's.
+- 2026-11-24 — closed: capture done, dl-051 approved by the approver on 2026-11-24 (`bf29bbf2`);
+  plan-083 carries `rule` (the ruling's record and D2's notes), `vision` skipped there (dl-051 D3).
