@@ -122,3 +122,11 @@ read error), the red run's command and failing count recorded; then the scenario
   that records this note. The review verified 84 → 92, the per-example `write` with `only`, the
   note's fields against `assertFields`, and the adoption on `with-software` with no clash. No
   re-review: the fixes add an exclusion and name inputs, no criterion's intent changes.
+- 2026-11-24: red (dl-018, `23bfc97c`): `node --test --test-name-pattern=task-105
+  dist/tests/runs.test.js` before the two scenario files existed, 7 tests, 6 failing (a read
+  error); the seventh, on the channel's text, passed, since task-104 shipped the channel.
+- 2026-11-24: build (`4e0a76ad`): the two scenarios; the guards 7 of 7. `npm run check:runs` 92
+  runs, 0 failed (84 → 92: `route-upstream-wingfoil-defaults` and `-with-software`, `adopt:Scrum`
+  and `adopt:Kanban` on `with-software`, each on 0.3.0 and 0.3.2); the full suite 1504 tests, 0
+  failing (1497 + 7); no count test moved. Nothing under `src/`, `.wingfoil/`, `presets/`, `packs/`
+  or `tests/fixtures/examples/` changed.
