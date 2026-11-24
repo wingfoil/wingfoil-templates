@@ -254,3 +254,23 @@ validation of criterion 9 and the counts.
   After it the four files ran 179 tests, 0 failing. `npm run validate`: 0 failed, `tolerance
   applied: none`, each example on 0.3.0 and 0.3.2 (`defaults[+software]` skipped, no
   methodology). `check:packs`, `index -- --check`, `check:pins`, `check:schemas` and eslint pass.
+- 2026-11-24: build review (dl-017, `a8785db6`): approve after amendments; no blocker, two
+  should-fix (criterion 9's evidence recorded below; `with-software`'s example teaching the
+  wrong kind, now an `observation` sent as a `request`, its route told to the close) and seven
+  nits (`conflicts: []` written; the channel's evidence citing `wingfoil-cli` rule 3, with the
+  commit; rule 7's source-key clause back in a parenthesis, as custom 1.6's; the inbox's Rules
+  naming both directives; the schemas' count's test, `tests/validate-2-run.test.ts`; the WD-2
+  scan asserting it sees code spans), applied in `409d3828`; one nit not applied: "its trailing
+  `--` included" kept, as criterion 3 writes it. The review's WD-6 list: thirteen differences
+  from custom 1.6 (the heading and version line, the scope line, rules 1 … 5's parameters and
+  entries file, rule 7's source key, Last sync path and empty-key sentence, rule 8 and the
+  table's entries absent), each one criterion 3 allows; rule 6 verbatim. No re-review: the fixes
+  change the example's text and the test's guard, not a criterion or a recommendation.
+- 2026-11-24: criterion 9, on `409d3828`: `npm run check:runs` 84 runs, 0 failed, the count of
+  `main` (task-098's); the golden tree (`npm run validate -- --tree tests/fixtures/compose/tree
+  --param project_name=Golden`) 26 runs, 0 failed, the tolerance its test expects (`0.2.2`);
+  `npm run validate` 16 compositions, 32 runs, 0 failed, `tolerance applied: none`; WD-7: `git
+  diff --exit-code main -- presets/` exit 0, and `validate`'s 14 preset lines equal to `main`'s;
+  `catalog.yaml`, `CATALOG.md`, `catalog-index.json`, `llms.txt`, `src/` and `.wingfoil/`
+  unchanged (`git diff --stat main`); the exit overlays through `tests/validate-2-run.test.ts`
+  (179 tests, 0 failing, above).
