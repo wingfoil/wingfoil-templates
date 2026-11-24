@@ -2,7 +2,7 @@
 id: task-103-publish-pack-report-the-publication-s-report-written-to-a-file-outside-the-tree-plan-081-task-103
 type: task
 title: "publish:pack --report, the publication's report written to a file outside the tree (plan-081 task-103)"
-status: approved
+status: done
 pack: ""            # tooling task (tooling-delivery v5), plan-081 task-103
 depends_on: []
 tags: ["tooling","publication","pack-release"]
