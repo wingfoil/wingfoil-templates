@@ -49,3 +49,8 @@ and its place in W10, dl-051 D3); `hand-off` names the charter plan.
 <!-- Filled while the plan runs: deviations, blockers, decisions taken, WingFoil friction
      (also recorded in docs/wingfoil-feedback/). An owed item gets its row in docs/owed-items.md
      (repository-practice rule 4). -->
+- 2026-11-24: steps 1 … 3 done: dl-051 added (`abebce42`), its body and this plan's committed
+  (`52701fdb`), this plan `draft → active` (`9d5ec56f`), dl-051 `draft → pending` (`5e5d0da0`).
+- 2026-11-24: step 4 done: the independent review of dl-051 (dl-017), approve after amendments, no
+  blocker, five should-fix and seven nits, applied while pending but the sequencer's stale W10
+  state row, which gets its row in `docs/owed-items.md` (dl-051's Execution Notes record it).
