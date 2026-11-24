@@ -102,11 +102,23 @@ Each point has a recommendation.
      key** line is the one source, rule 7 reading "sync … under the source key on the inbox's
      **Source key** line; while it is empty, WingFoil has not registered the project and there
      is nothing to sync"; the README's install step says to fill the line once WingFoil
-     registers the project. It changes the charter's parameters table and rule 7's wording (WD-6
-     reads it as a parameter's removal, the rule's content kept): both recorded on the charter
-     as this ruling. *Alternative:* (a), the parameter kept as the charter has it, its value in
-     plain text in a sentence of its own ("This project's source key: …"), the generated table's
-     bare backticks accepted or fixed by a tooling task of its own (point 4).
+     registers the project. Nothing parses the line's value today: `assertLedger`
+     (`tests/support/inbox.ts`) asserts only that the line is present. (b) departs from an
+     approved decision and from the accepted charter, so the ruling names each place it changes:
+     - dl-051 Q3 (a), which lists the source key among the parameters (ruled by its D2);
+     - on the charter: Ships' "the source key (rule 7)" among the parameters; the parameters
+       table; the descriptions sentence ("empty: no source key"); the Adaptations, which gain a
+       fourth, rule 7's key read from the inbox's line; WD-6's closed list of differences, which
+       gains rule 7's wording (the approver rules whether WD-6 reads it as allowed); Open point
+       2's second half, moot.
+
+     The record is an Execution Note on dl-051 and on the charter at this plan's close (step 4),
+     as dl-051 D2 recorded Q2's refinement; the accepted charter's body is unchanged.
+     *Alternative:* (a), the parameter kept: it follows dl-051 Q3 (a) and WD-6 to the letter and
+     needs no record. Its costs remain: the value in plain text in a sentence of its own still
+     dangles when empty ("This project's source key: ."), the key keeps two sources, and the
+     generated table's bare backticks are accepted or fixed by a tooling task of its own
+     (point 4).
    - **`wingfoil-channel`** as the charter's Ships says, its "Serves the target" line verbatim.
    - **The examples** (spec-002 §2.4, fictional projects, `.example` addresses) under
      `tests/fixtures/examples/wingfoil-dogfood/`. *Recommended:* two, which are also WD-2's two
@@ -122,14 +134,16 @@ Each point has a recommendation.
      with, as text, the inbox skeleton at the inbox path (Rules naming the pack's `wingfoil-cli`,
      Ledger, Context, the **Source key** and **Last sync** lines), the empty entries file,
      `upstream:wingfoil` added to `feedback_targets`, the CLI command (and, under (a), the source
-     key) to set; "Sources and adaptations" with the charter's three adaptations; the adoption
+     key) to set; "Sources and adaptations" with the charter's three adaptations (under (b), a
+     fourth: rule 7's key read from the inbox's line); the adoption
      procedure, a project's own `wingfoil-cli` removed in the same change.
    - **The CLI command in the README** (Open point 3). *Recommended:* the install step describes
      the value with no code span holding a command; the examples' `example.yaml` set it (fixture
      data, not README text). No preset change and no stand-in.
    - **The tests** (under `tests/`, as task-096's): WD-2's, that `wingfoil_command` has no
-     default and that no default and no directive text holds `svc-018` or a WingFoil command
-     (no lint rule checks a default's value); WD-3's, that the lint reads the pack's channel as
+     default and that no default and no directive text holds `svc-018` or a WingFoil command as
+     `isCliCommand` (`src/readme-rules.ts`) reads one, so rule 1's bare `wingfoil` passes (no
+     lint rule checks a default's value); WD-3's, that the lint reads the pack's channel as
      serving `upstream:wingfoil` and reports nothing on the examples. Red first where dl-018
      asks; WD-3's is green when written, since the channel lands in the same task (the generic
      negatives stay task-093's).
@@ -226,3 +240,10 @@ the pack release round, this repository's adoption and pin, the sequencer's stal
   the CHANGELOG entry; the rulings section; the ledger row outside the scenario), all applied in
   the commit that records this note. The review verified the Reads' claims and found no change
   under `src/` needed.
+- 2026-11-24: re-review of the amendments (`f34ba616`): approve after amendments; no blocker, two
+  should-fix (option (b) departs from dl-051 Q3 (a) too, and its record named; every place on
+  the charter it changes listed, a fourth adaptation among them, WD-6's reading left to the
+  approver) and two nits (option (a)'s residual costs and its advantages stated; WD-2's test
+  reading a WingFoil command as `isCliCommand` does), all applied in the commit that records
+  this note. No further re-review: the fixes state what the ruling changes, not a new
+  recommendation.
