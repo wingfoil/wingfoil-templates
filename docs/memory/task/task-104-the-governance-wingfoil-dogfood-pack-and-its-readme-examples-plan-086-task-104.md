@@ -2,7 +2,7 @@
 id: task-104-the-governance-wingfoil-dogfood-pack-and-its-readme-examples-plan-086-task-104
 type: task
 title: "The governance/wingfoil-dogfood pack and its README examples (plan-086 task-104)"
-status: in-review
+status: approved
 pack: "pack-governance-wingfoil-dogfood"
 depends_on: []
 tags: ["packs","dogfood","governance"]
