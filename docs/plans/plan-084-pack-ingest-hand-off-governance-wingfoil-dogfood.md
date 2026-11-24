@@ -2,7 +2,7 @@
 id: plan-084-pack-ingest-hand-off-governance-wingfoil-dogfood
 type: plan
 title: "pack-ingest hand-off: governance/wingfoil-dogfood"
-status: active
+status: done
 workflow: "pack-ingest"
 phase: "hand-off"
 tags: ["dogfood","pack","governance","pack-ingest"]
