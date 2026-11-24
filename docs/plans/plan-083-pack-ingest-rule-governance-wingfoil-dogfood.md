@@ -39,3 +39,4 @@ approval; `hand-off` follows in its own plan.
 
 - 2026-11-24: steps 1 … 3 done: the notes on dl-003, dl-012 and dl-051 committed with this plan's
   body.
+- 2026-11-24 — closed: rule done; plan-084 carries `hand-off`.
