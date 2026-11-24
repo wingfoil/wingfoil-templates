@@ -55,8 +55,8 @@ erratum waiting.
   `feedback-ingest` › capture, `set`, `submit`, `approve`; then `feedback-review`, `write` of the
   note, `set` of `resulting`, `finalize`, `submit`. `tests/runs.test.ts` checks its note with
   `assertFields` and `assertSections`.
-- **The CI**: the longest job of `main`'s run 45388134981 took 15 min 7 s, against a 30-minute
-  timeout and dl-039 R3's 25-minute line.
+- **The CI**: the longest job of `main`'s run 45388134981 (on the merge `93a74b6f`) took
+  15 min 7 s, against a 30-minute timeout and dl-039 R3's 25-minute line.
 - **The catalog**: `catalog.yaml` gains the pack only at its publication (`first-release`), as
   `governance/feedback`'s author tasks left it.
 
@@ -69,11 +69,12 @@ Each point has a recommendation.
    (Reads) make any pack task before the README's fail the branch's lint. *Recommended:*
    - **task-104, the pack** (`kanban-delivery`, `pack: pack-governance-wingfoil-dogfood`):
      `pack.yaml`, both directives, `fragments/roles.yaml`, README with the install steps and the
-     examples as fixtures, CHANGELOG (the charter's tasks 1, 2 and 4; WD-1, WD-2, WD-6, WD-7);
+     examples as fixtures, CHANGELOG, and the tests of WD-2 and WD-3 (the charter's tasks 1, 2
+     and 4; WD-1, WD-2, WD-3, WD-6, WD-7);
    - **task-105, the route and its evidence** (`kanban-delivery`, same `pack`; a developer change
-     under `tests/` inside a pack task, as task-097's): the §11 lint's test on the real pack, the
-     `check:runs` scenario through `wingfoil-channel`, the note's checks, and the adoption run
-     prepared (the charter's task 3; WD-3, WD-4, WD-5).
+     under `tests/` inside a pack task, as task-097's): the `check:runs` scenario through
+     `wingfoil-channel`, the note's checks, and the adoption run prepared (the charter's task 3;
+     WD-4, WD-5).
 
    *Alternative:* the charter's four, task 1 writing a README that passes the rules with
    placeholder examples, rewritten by task 4. It costs a README written twice and a merge whose
@@ -81,37 +82,57 @@ Each point has a recommendation.
    plan's ruling, recorded on the charter as an Execution Note at close.
 
 2. **task-104, what it fixes.**
-   - **`pack.yaml` format 2:** `requires: [base@^2, governance/feedback@^1]`, `conflicts: []`,
-     `requires_capabilities: []`, `formats: { roles: 1, directive: 1 }`, the four parameters
-     with their descriptions (the charter's table), no entry.
-   - **The parameter names** (Open point 1): *Recommended:* the charter's four, kept, after the
-     Design's check against the parameters of `base`, `software`, both methodologies and
-     `governance/feedback` and the fixtures' (a clash renames the new one, recorded on the
-     charter).
-   - **`wingfoil-cli`**: rules 1 … 7 as WD-6 says, the known behaviours' form and rule 5's
-     re-check; the entries file named by `{{wingfoil_known_behaviours_path}}`; the version line
-     without *Checked against* (it moves to the entries file).
-   - **Rule 7 with an empty source key** (Open point 2). *Recommended:* the rule names the key
-     in a clause that reads whole when it is empty: "sync … the notes WingFoil published under
-     the source key in the inbox's **Source key** line (this project's:
-     `{{wingfoil_source_key}}`; none until WingFoil registers the project, and no sync until
-     then)"; the README's generated table prints the empty default as the generator does, the
-     description saying "empty: no source key" (the charter). *Alternative:* the parameter
-     dropped and the key read only from the inbox's line, which changes the charter's table: a
-     ruling recorded on the charter.
+   - **`pack.yaml` format 2:** `version: 1.0.0` (as `governance/feedback`'s before its
+     publication), `requires: [base@^2, governance/feedback@^1]`, `conflicts: []`,
+     `requires_capabilities: []`, `formats: { roles: 1, directive: 1 }`, the parameters with their
+     descriptions (the charter's table, less point 2's ruling on the source key), no entry;
+     `CHANGELOG.md` with its `- 1.0.0` entry.
+   - **The parameter names** (Open point 1): *Recommended:* the charter's, kept. Checked for this
+     outline: no clash in `packs/`, `tests/fixtures/` or `presets/`; the Design re-checks them
+     (a clash renames the new one, recorded on the charter).
+   - **`wingfoil-cli`** as `governance/feedback`'s directives are written (frontmatter `kind`,
+     `format`, tags; no version line, the directive's version being the pack's): rules 1 … 7 as
+     WD-6 says, the known behaviours' form and rule 5's re-check, its bump the entries file's
+     *Checked against*; the entries file named by `{{wingfoil_known_behaviours_path}}`.
+   - **The source key** (Open point 2). A parameter substituted into rule 7 reads badly when
+     empty (a code span renders as a bare pair of backticks, plain text leaves a dangling
+     clause), the README generator prints the empty default as a bare pair of backticks
+     (`readme-generate.ts`), and the key would have two sources, the parameter and the inbox's
+     **Source key** line. *Recommended:* (b), no `wingfoil_source_key`: the inbox's **Source
+     key** line is the one source, rule 7 reading "sync … under the source key on the inbox's
+     **Source key** line; while it is empty, WingFoil has not registered the project and there
+     is nothing to sync"; the README's install step says to fill the line once WingFoil
+     registers the project. It changes the charter's parameters table and rule 7's wording (WD-6
+     reads it as a parameter's removal, the rule's content kept): both recorded on the charter
+     as this ruling. *Alternative:* (a), the parameter kept as the charter has it, its value in
+     plain text in a sentence of its own ("This project's source key: …"), the generated table's
+     bare backticks accepted or fixed by a tooling task of its own (point 4).
    - **`wingfoil-channel`** as the charter's Ships says, its "Serves the target" line verbatim.
    - **The examples** (spec-002 §2.4, fictional projects, `.example` addresses) under
      `tests/fixtures/examples/wingfoil-dogfood/`. *Recommended:* two, which are also WD-2's two
      parameter sets:
-     - `defaults`: `base`, `governance/feedback` and the pack; every parameter on its default but
-       `wingfoil_command`; `feedback_targets` with `upstream:wingfoil`;
+     - `defaults`: `base`, `governance/feedback` and the pack; the pack's parameters on their
+       defaults but `wingfoil_command`, which has none; `base`'s four and `feedback_targets`
+       (with `upstream:wingfoil`) set, as every example sets them;
      - `with-software`: `software` and `methodology/kanban` added, its own inbox and entries
-       paths, a fictional source key.
+       paths.
 
      Each with its `Fixture:` line, a situation, what the project gets, and how one route runs.
+   - **The README** (spec-002 §2), as the charter's Ships and Adoption say: the install steps
+     with, as text, the inbox skeleton at the inbox path (Rules naming the pack's `wingfoil-cli`,
+     Ledger, Context, the **Source key** and **Last sync** lines), the empty entries file,
+     `upstream:wingfoil` added to `feedback_targets`, the CLI command (and, under (a), the source
+     key) to set; "Sources and adaptations" with the charter's three adaptations; the adoption
+     procedure, a project's own `wingfoil-cli` removed in the same change.
    - **The CLI command in the README** (Open point 3). *Recommended:* the install step describes
      the value with no code span holding a command; the examples' `example.yaml` set it (fixture
      data, not README text). No preset change and no stand-in.
+   - **The tests** (under `tests/`, as task-096's): WD-2's, that `wingfoil_command` has no
+     default and that no default and no directive text holds `svc-018` or a WingFoil command
+     (no lint rule checks a default's value); WD-3's, that the lint reads the pack's channel as
+     serving `upstream:wingfoil` and reports nothing on the examples. Red first where dl-018
+     asks; WD-3's is green when written, since the channel lands in the same task (the generic
+     negatives stay task-093's).
    - **The counts** that the tooling tests take on this repository move (lint files, index
      packs, `validate` compositions and runs): each stated as task-096 stated them (dl-018),
      measured by the task.
@@ -119,13 +140,15 @@ Each point has a recommendation.
      unchanged; the other packs' READMEs unchanged.
 
 3. **task-105, what it fixes.**
-   - **WD-3:** a test that the lint reads the pack's channel as serving `upstream:wingfoil` and
-     reports nothing on the examples, red first; the generic negatives stay task-093's.
-   - **WD-4:** `tests/fixtures/runs/wingfoil-dogfood.yaml`, on the examples, on every selected
-     release, no overlay: on each example, an item with `target: "upstream:wingfoil"` and
-     `outcome: upstream-note` driven to `closed`, the note written at the example's inbox path
-     as `F-001-<slug>.md`, citing the item, `resulting` naming it. Guard tests in
-     `tests/runs.test.ts`, red first.
+   - **WD-4:** `tests/fixtures/runs/wingfoil-dogfood.yaml`, on the examples, on each selected
+     release, no overlay: an item with `target: "upstream:wingfoil"` and `outcome:
+     upstream-note` driven to `closed`, the note written as `F-001-<slug>.md` citing the item,
+     `resulting` naming it. `write` substitutes only `$<label>.id`, not a parameter
+     (`src/runs.ts`), and the examples' inbox paths differ: two runs, `only: [defaults]` and
+     `only: [with-software]`, each writing at its example's literal path. The ledger's row is the
+     channel's text and not WD-4's: the scenario does not write it. Guard tests in
+     `tests/runs.test.ts` (the examples' `feedback_targets` holding `upstream:wingfoil`, as
+     FA-8's), red first.
    - **WD-5:** the note read with `assertFields` and `assertSections`, as FA-8's is.
    - **The adoption run, prepared** (dl-032 E3, `first-release`'s):
      `tests/fixtures/runs/adoption-wingfoil-dogfood.yaml`, once per `init` template on
@@ -149,16 +172,20 @@ Each point has a recommendation.
 
    | Criterion | Check | Task |
    |---|---|---|
-   | WD-1 [V] | the examples validate on every release with no warning; `requires`, `conflicts` read by the lint | 104 |
-   | WD-2 [V] | the two examples' parameter sets compose and validate; the F3.5 lint; no default holds a project value | 104 |
-   | WD-3 [V] | the lint on the real pack and its examples, a test | 105 |
-   | WD-4 [V] | `wingfoil-dogfood.yaml` to `closed` on 0.3.0 … 0.3.2 | 105 |
+   | WD-1 [V] | the examples validate on 0.3.0 and 0.3.2 (the matrix's oldest and newest; 0.3.1 by range) with no warning; `requires`, `conflicts` read by the lint | 104 |
+   | WD-2 [V] | the two examples' parameter sets compose and validate; the F3.5 lint; a test that no default or directive text holds a project value | 104 |
+   | WD-3 [V] | the lint on the real pack and its examples, a test | 104 |
+   | WD-4 [V] | `wingfoil-dogfood.yaml` to `closed` on 0.3.0 and 0.3.2 | 105 |
    | WD-5 [V] | `assertFields`, `assertSections` on the scenario's note | 105 |
    | WD-6 [A] | the rules read against custom 1.6 at task-104's review and `approve` | 104 |
    | WD-7 [V] | `presets/` unchanged; `npm run validate` on the presets | 104 |
    | Exit criterion | WD-1 … WD-7; the examples as fixtures; CB-1 … CB-3, CB-6 left to the first tag | 104, 105 |
 
 7. **No feedback note** to WingFoil (dl-021 R1).
+
+## The approver's rulings
+
+<!-- Recorded before `submit`. -->
 
 ## Steps
 
@@ -189,3 +216,13 @@ the pack release round, this repository's adoption and pin, the sequencer's stal
 
 ## Execution Notes
 <!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-24: independent review of the outline (dl-017, `97d440de`): approve after amendments;
+  no blocker, seven should-fix (rule 7's empty source key and its two sources, now point 2's
+  option (b) with (a) as the alternative; the generated table's bare backticks stated; no
+  version line in a pack directive; WD-3's test moved to task-104, green when written; WD-2's
+  project-value check given a test; `write` taking no parameter, so two route runs; the README's
+  contents listed) and seven nits (the matrix's two releases in WD-1 and WD-4; the `defaults`
+  example's wording; run 45388134981's commit; the names check's result; `version: 1.0.0` and
+  the CHANGELOG entry; the rulings section; the ledger row outside the scenario), all applied in
+  the commit that records this note. The review verified the Reads' claims and found no change
+  under `src/` needed.
