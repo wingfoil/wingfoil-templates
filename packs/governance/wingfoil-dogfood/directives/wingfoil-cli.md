@@ -29,8 +29,8 @@ Global. Applies to every role, human or agent, that runs the WingFoil CLI in the
    are set only by the sync, from what WingFoil published, never by judgement. WingFoil cites a note
    as `<service id>/F-<nnn>@<sha>`.
 7. Sync the inbox at every release planning of WingFoil and at every bump of the WingFoil pin:
-   read what WingFoil published about the project's notes under the source key on the
-   **Source key** line of `{{wingfoil_inbox_path}}/README.md`, set `status` and `answered_by` from
+   read what WingFoil published about the project's notes (under the source key on the
+   **Source key** line of `{{wingfoil_inbox_path}}/README.md`), set `status` and `answered_by` from
    it (rule 6), and record the sync under **Last sync** in `{{wingfoil_inbox_path}}/README.md`.
    While the **Source key** line is empty, WingFoil has not registered the project and there is
    nothing to sync.

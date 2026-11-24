@@ -85,6 +85,7 @@ describe('governance/wingfoil-dogfood on its files and README examples (task-104
         assert.ok(!each.text.includes(project), `${each.path} holds ${project}`);
       }
       const scan = scanMarkdown(each.text);
+      assert.ok(scan.codeSpans.length > 0, `${each.path}: the scan sees its code spans`);
       for (const span of scan.codeSpans) {
         assert.ok(!isCliCommand(span.text, false),
           `${each.path}:${String(span.line)}: a code span is a WingFoil command`);

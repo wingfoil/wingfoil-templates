@@ -25,8 +25,8 @@ to WingFoil, in WingFoil's format (WingFoil dl-163):
     (`wingfoil-cli` rule 6);
   - `wingfoil_version`, the version the note was observed on;
   - `answered_by`, a list, empty until WingFoil answers.
-- **Body:** the sections `## Observed` and `## Expected`, reproducible with WingFoil alone
-  (command, output, version), and no `## Replies`.
+- **Body:** the sections `## Observed` and `## Expected`, reproducible with WingFoil alone, with
+  the evidence of `wingfoil-cli` rule 3 (command, output, version, commit), and no `## Replies`.
 - **Kinds:** `defect`, `gap` and `request` map one to one; `observation` becomes `request`.
 - **Citation:** the note's body cites the feedback id, and the item's `resulting` names the note's
   path.

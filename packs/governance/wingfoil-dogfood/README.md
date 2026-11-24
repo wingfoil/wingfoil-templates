@@ -47,7 +47,8 @@ WingFoil release in the pack's range (see its catalog entry):
      reads and answers in its own repository;
    - a `## Rules` section: one file per note, `F-<nnn>-<slug>.md`, never deleted and never
      renumbered, in WingFoil's note format; how notes are written, when the sync runs and what
-     WingFoil cites are the rules of the pack's `wingfoil-cli` directive;
+     WingFoil cites are the rules of the pack's `wingfoil-cli` directive, and the note's format
+     and the ledger's row are its `wingfoil-channel` directive's;
    - the line `**Source key:**`, empty until WingFoil registers the project as a feedback source;
      then the `svc-NNN` id WingFoil assigns is written after the label;
    - the line `**Last sync:**`, with the date and what the sync read, or `none.`;
@@ -129,9 +130,11 @@ Fixture: tests/fixtures/examples/wingfoil-dogfood/with-software/
 Fulmar Tickets, a fictional ticketing service flowing its work with Kanban, composes `software`,
 `methodology/kanban`, `governance/feedback` and the pack, and keeps its notes to WingFoil in
 `docs/upstream/wingfoil` and its known behaviours in `docs/upstream/wingfoil-known-behaviours.md`.
-A gap found while running the pinned CLI gets an entry in the known behaviours and an
-`observation` item on `upstream:wingfoil`; the channel writes its note as a `request`, in
-`docs/upstream/wingfoil/`.
+A surprising behaviour of the pinned CLI, neither a defect nor a gap, gets an entry in the known
+behaviours and an `observation` item on `upstream:wingfoil` with the outcome `upstream-note`; once
+the approver triages it, `feedback-review` routes it through `wingfoil-channel`, which writes its
+note as a `request` in `docs/upstream/wingfoil/`, and the item is closed with `resulting` naming
+the note.
 
 ## Sources and adaptations
 
