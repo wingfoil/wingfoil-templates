@@ -163,3 +163,6 @@ The points below are **proposed**; they become rulings when the approver approve
   point at the entries the directive no longer holds under Q2 (a)) and two nits (dl-012 D6 cited
   without naming a pack; the carrier of D2's notes), all applied in the commit that records this
   note; no new review needed, the fix being a reference stated, not a new option.
+- 2026-11-24, plan-083 (`pack-ingest` › `rule`): approved by the approver (`bf29bbf2`); D1 … D5 are
+  rulings. D2's notes on dl-003 and dl-012 recorded. `vision` skipped (D3): F4.2 already has its
+  row in `06_features.md` and its place in W10.

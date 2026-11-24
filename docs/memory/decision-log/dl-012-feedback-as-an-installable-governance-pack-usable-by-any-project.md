@@ -337,3 +337,8 @@ references that resolve and back-references. It is opened as a tooling task (`pa
 - 2026-11-12: re-review of the amendment: approve, two wording nits applied (the choices proposed
   with the amendment for the approver to confirm at the ruling; dl-013 D3's `release` possibly
   not applicable). Ready for the ruling, in the order dl-012, dl-011, dl-013.
+- 2026-11-24, plan-083: **D3**'s "the known behaviours of the pinned CLI" is read as the
+  mechanism the pack ships (the rules and the table's form), the entries staying with each
+  project's pin, `wingfoil-cli`'s rules 3 and 5 pointing at the project's entries file, rules 1 … 7
+  otherwise unchanged and their project-bound values parameters (dl-051 D2, Q2 (a), Q3 (a),
+  approved on 2026-11-24). The body stays as approved.

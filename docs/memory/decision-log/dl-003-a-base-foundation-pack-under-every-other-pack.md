@@ -190,3 +190,7 @@ Configuration changes this decision implies. Each is applied after approval and 
   2026-11-13). `governance/guided-init` (dl-011) and `methodology/directive-first` (dl-013) are
   planned after the first catalog, in M5; D7's first scope is unchanged by them. The body stays as
   approved.
+- 2026-11-24, plan-083: **D6**'s "the known behaviours of the pinned CLI" is read as the
+  mechanism `governance/wingfoil-dogfood` ships (the rules and the table's form), the entries
+  staying with each project's pin, `wingfoil-cli`'s rules 3 and 5 pointing at the project's entries
+  file (dl-051 D2, Q2 (a), approved on 2026-11-24). The body stays as approved.
