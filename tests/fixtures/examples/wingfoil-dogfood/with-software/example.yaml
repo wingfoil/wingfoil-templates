@@ -1,0 +1,20 @@
+format: 1
+id: with-software
+title: "With software"
+description: >-
+  Fulmar Tickets, a fictional ticketing service flowing its work with Kanban, keeps its notes to
+  WingFoil and its known behaviours under docs/upstream/.
+packs:
+  - software@^1
+  - methodology/kanban@^1
+  - governance/feedback@^1
+  - governance/wingfoil-dogfood@^1
+parameters:
+  project_name: "Fulmar Tickets"
+  approver_name: "Fulmar Lead"
+  approver_email: "lead@fulmar-tickets.example"
+  agent_name: "Fulmar Agent"
+  feedback_targets: "product, governance, upstream:wingfoil"
+  wingfoil_command: "npm run -s wf --"
+  wingfoil_inbox_path: "docs/upstream/wingfoil"
+  wingfoil_known_behaviours_path: "docs/upstream/wingfoil-known-behaviours.md"
