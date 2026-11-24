@@ -238,3 +238,8 @@ repository's adoption and pin, dl-049's path, the sequencer's stale W10 state ro
   under another id (one id per composition), as the charter's Adoption says.
 - 2026-11-24: step 4 done: the charter accepted by the approver (`proposed → accepted`,
   `7b68ddef`).
+- 2026-11-24: step 5's checks on the frozen head `0aaa2660`: branch CI run 45371475425 `success`,
+  its jobs (22.12.0, 1) 12 min 15 s, (22.21.0, 1) 15 min 9 s, (22.12.0, 2) 5 min 47 s, (22.21.0,
+  2) 6 min 59 s, the step "Texts, the lines this branch adds" `success`; `workflow list` and
+  `npm run lint` exit 0; `git diff main --stat` naming only the charter and this plan; the privacy
+  check of the branch's diff clean. This note is documentation only: no new run.
