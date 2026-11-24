@@ -2,7 +2,7 @@
 id: dl-051-governance-wingfoil-dogfood-the-wingfoil-upstream-pack-its-scope-and-its-charter
 type: decision-log
 title: "governance/wingfoil-dogfood: the WingFoil upstream pack, its scope and its charter"
-status: pending
+status: approved
 tags: ["packs","governance","dogfood","scope"]
 ---
 
