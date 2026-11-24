@@ -105,19 +105,27 @@ Each point with a recommendation.
    but splits one rule set across two directives.
 4. **Parameters** (dl-051 Q3 (a)), each with its description:
    - the inbox path, default `docs/wingfoil-feedback`, and the known-behaviours path (point 3);
-   - **the CLI command.** dl-051 Q4 (a) assumed a default `npm run -s wingfoil --`, but the
-     README's generated Parameters table shows a default as a code span, and spec-002 §2.3 (CB-3,
-     the lint's `readme-command`) refuses any code span with a WingFoil command, a bare `wingfoil`
-     included. Options: (a) a required parameter, no default (spec-001 §8.1: the composition fails
-     without a value), the install step naming the key and the README's text the usual value;
+   - **the CLI command.** dl-051 Q3 (a) and Q4 (a) assumed a default `npm run -s wingfoil --`,
+     but the README's generated Parameters table shows a default as a code span, and spec-002 §2.3
+     (CB-3, the lint's `readme-command`) refuses a code span that starts with a WingFoil command
+     such as `npm run -s wingfoil`; README text names no command either (spec-002 §2.3). Options:
+     (a) a required parameter, no default (spec-001 §8.1: the composition fails without a value),
+     the install step naming the key and describing the value ("the command that runs the
+     project's pinned WingFoil CLI") without spelling it out; every example (CB-2) and every
+     `check:runs` composition then sets it, and a preset holding the pack would need a stand-in
+     (`src/preset-stand-ins.ts` covers `base`'s four only; no preset holds it, point 6);
      (b) an amendment of spec-002 exempting the generated table, a new mechanism, so a `design`
-     phase (point 5). Recommended: (a), the command being the project's;
+     phase (point 5); (c) a default `wingfoil`, the CLI's own name, which the lint lets pass.
+     Recommended: (a), the command being the project's; (c) rejected, since it assumes a global
+     install, against rule 1's pinned CLI;
    - **the source key** (rule 7's `svc-NNN`). dl-051 Q3 (a) lists it among the parameters with
      defaults. Options: (a) a default `""`, rule 7 reading "when a source key is set", so that a
      project not yet registered with WingFoil composes, and the examples, the matrix and the
-     scenarios need no value; (b) a required parameter, every composition setting it. Recommended:
+     scenarios need no value; its description reads "empty: no source key", and rule 7 reads well
+     with the value empty; (b) a required parameter, every composition setting it. Recommended:
      (a), within Q3 (a) as ruled.
-   No default carries a project value (spec-001 §8.1). The note format stays WingFoil's dl-163
+   No default carries a project value (spec-001 §8.1); a generic path that equals this
+   repository's (`docs/wingfoil-feedback`) is not one. The note format stays WingFoil's dl-163
    (dl-012 D3).
 5. **The design phase: not needed**, recommended (dl-051 Q6): the channel follows spec-003 §5 as
    FA-8's fixture does, the parameters are of existing types (spec-001 §8), the binding is
@@ -127,8 +135,8 @@ Each point with a recommendation.
    the validation command, the lint or a test, [E] an element check, [A] the approver):
    - the pack composes with `base` and `governance/feedback`, with and without `software` and a
      methodology, with no warning on every compatible release [V];
-   - reusable: no default carries a project value (`svc-018`, this repository's paths), and two
-     parameter sets compose [V];
+   - reusable: no default carries a project value (`svc-018`, this repository's CLI command), and
+     two parameter sets compose [V];
    - the lint of spec-003 §11 (the "Serves the target" line, one channel per target, the channel
      from a pack that requires `governance/feedback`) [V];
    - the `feedback-ingest` → `feedback-review` scenario through the pack's channel to `closed`, on
@@ -146,8 +154,8 @@ Each point with a recommendation.
      `author` [V];
    - the README's examples as fixtures under `tests/fixtures/examples/wingfoil-dogfood/`, one
      without `software`, one with `software` and a methodology (spec-002 §2.4) [V];
-   - CB-1, CB-2 and CB-6 at the first tag, CB-3 … CB-5 being the catalog index's (spec-002 §6, as
-     the model charter) [V].
+   - CB-1 … CB-3 (the README standard, examples as fixtures, install truth) and CB-6 at the first
+     tag, CB-4 and CB-5 being the catalog index's (spec-002 §6) [V].
 7. **Tasks** (`author`), proposed: (1) the `wingfoil-cli` directive, its parameters and the
    known-behaviours form; (2) the channel directive and the `roles.yaml` fragment, with the §11
    lint's fixtures; (3) the `check:runs` scenario through the channel; (4) the README with the
@@ -201,3 +209,8 @@ repository's adoption and pin, dl-049's path, the sequencer's stale W10 state ro
   the inputs; `agents/section.md`; rule 5's version inside a pack; `resulting`; the entries file
   outside the inbox; the dl-163 check named), all applied in the commit that records this note.
   The two departures from dl-051 (point 4) go to the approver with the outline.
+- 2026-11-24: re-review of the amendments (`5c51323f`): approve after amendments; no blocker,
+  three should-fix (a bare `wingfoil` passes the lint, so option (c) added and rejected; the
+  README's text names no command, and option (a)'s cost stated; the reusability criterion against
+  point 4's generic path) and three nits (the empty default's description; CB-3 cited both ways;
+  dl-051 Q3 (a) beside Q4), all applied in the commit that records this note.
