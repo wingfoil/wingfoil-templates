@@ -232,3 +232,7 @@ repository's adoption and pin, dl-049's path, the sequencer's stale W10 state ro
   `wingfoil-cli` only in this repository's `custom/`, as ruled); no finding changes a point.
 - 2026-11-24: step 2: the charter `pack-governance-wingfoil-dogfood` added and written from the
   outline and its rulings, its body committed before `submit` (W-04).
+- 2026-11-24: step 3: independent review of the charter (dl-017), approve after amendments, no
+  blocker, three should-fix and six nits, applied while `draft` (the charter's Execution Notes
+  record them); no re-review, no ruling changed. Point 8's "rule 8 kept in `custom/`" is read as
+  under another id (one id per composition), as the charter's Adoption says.

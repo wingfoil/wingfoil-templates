@@ -38,8 +38,9 @@ of a required pack's workflow, `governance/feedback` reading the channel by its 
 
 - **`wingfoil-cli`** carries rules 1 … 7 of this repository's custom directive (1.6), their
   content unchanged (dl-012 D3), their project-bound values as parameters: the CLI command
-  (rule 1), the inbox path, the source key (rule 7). Rules 3 and 5 point at the project's
-  entries file (below), not at "an entry below" or "this directive's version"; inside the pack,
+  (rule 1), the inbox path, the source key (rule 7). Rules 2 … 5 point at the project's entries
+  file (below), not at "an entry below", "the entry" or "this directive's version"; the scope line
+  and rule 7 read "the project" for "this repository"; inside the pack,
   rule 5's bump is the entries file's *Checked against*, the directive's version being the pack's
   (dl-051 Q2 (a), dl-012's note of 2026-11-24). Rule 7 applies when a source key is set. Rule 8
   (a `schema/` change produces a note) is this repository's and stays in its custom directive
@@ -53,19 +54,26 @@ of a required pack's workflow, `governance/feedback` reading the channel by its 
   mapped onto dl-163's (`defect`, `gap` and `request` one to one, `observation` to `request`,
   dl-012 D3); the note written as `F-<nnn>-<slug>.md` in the inbox with dl-163 R4's six fields,
   `## Observed` and `## Expected`; the feedback id cited in the note's body, the item's
-  `resulting` naming the note's path; the note's row added to the inbox's ledger.
+  `resulting` naming the note's path; no `## Replies` section; the note's row added to the
+  inbox's ledger.
+
+**Names.** Checked by plan-085 step 1 against WingFoil 0.2.2 … 0.3.2, the catalog's packs and
+the fixtures: no clash for `governance/wingfoil-dogfood` and `wingfoil-channel`; `wingfoil-cli` is
+kept as an id (plan-085 point 2, dl-051 Q6), held today only by this repository's `custom/`, which
+its adoption removes.
 
 **No `agents/section.md`** (spec-001 §10): `wingfoil-cli` is global and the channel is bound to
 `facilitator`, so the agents read both through their roles.
 
-**Parameters** (spec-001 §8.1), each with its description:
+**Parameters** (spec-001 §8.1); each description, written by `author`, says what the value is (the
+source key's: "empty: no source key"):
 
 | Parameter | Type | Default | Used by |
 |---|---|---|---|
 | `wingfoil_command` | string | none (required) | `wingfoil-cli` rule 1 |
 | `wingfoil_inbox_path` | path | `docs/wingfoil-feedback` | `wingfoil-cli`, `wingfoil-channel` |
 | `wingfoil_known_behaviours_path` | path | `docs/wingfoil-known-behaviours.md` | `wingfoil-cli` |
-| `wingfoil_source_key` | string | `""` (empty: no source key) | `wingfoil-cli` rule 7 |
+| `wingfoil_source_key` | string | `""` | `wingfoil-cli` rule 7 |
 
 The names are proposed for `author`'s first task. The CLI command has no default: spec-002 §2.3
 refuses a code span holding a WingFoil command, and the README's generated Parameters table shows
@@ -76,7 +84,8 @@ path equal to this repository's is not one.
 **README and CHANGELOG** (spec-002 §2). The README's install steps hold, as text and with no
 command, the inbox skeleton (Rules, Ledger, Context, the **Source key** and **Last sync** lines,
 written at the inbox path the project sets, its Rules naming the pack's `wingfoil-cli`), the empty
-entries file, `upstream:wingfoil` added to `feedback_targets`, and the two parameters to set: a
+entries file, `upstream:wingfoil` added to `feedback_targets`, and the CLI command and, once
+WingFoil registers the project, the source key to set: a
 pack ships no file outside `.wingfoil/` (spec-001 §6.1, §7.6), so dl-012 D3's "the
 `docs/wingfoil-feedback/` README skeleton" is read as this install text.
 
@@ -85,8 +94,8 @@ No workflow, no Memory type, no executable logic.
 ## Adaptations
 
 Listed in the README's "Sources and adaptations" (spec-002 §2):
-- the rules come from this repository's `wingfoil-cli` 1.6, generalised only by their parameters
-  and by rules 3 and 5's reference to the entries file;
+- the rules come from this repository's `wingfoil-cli` 1.6, generalised only by their parameters,
+  by rules 2 … 5's reference to the entries file and by "the project" for "this repository";
 - the known behaviours are the project's, not the pack's: each project pins its own WingFoil
   (dl-051 Q2 (a));
 - the inbox skeleton is install text, since a pack ships no file outside `.wingfoil/`.
@@ -110,8 +119,10 @@ own removes it in the same change (one id per composition). The README gives the
 spec-002 §2.3).
 
 **This repository** (W10, its adoption plan; not this charter's): it adopts the pack with `base`,
-`software`, `methodology/kanban` and `governance/feedback`, with dl-012 D6's knock-ons: its custom
-`wingfoil-cli` removed but for rule 8, which stays in `custom/`; the lint's and
+`software`, `methodology/kanban` and `governance/feedback`, with dl-012 D6's knock-ons, among
+them: its custom `wingfoil-cli` removed, rule 8 kept in `custom/` as a directive of another id
+(one id per composition, a custom file overriding the pack's), which the adoption plan names; the
+lint's and
 `tests/wingfoil-feedback.test.ts`'s directive paths; `docs/wingfoil-feedback/README.md`'s Rules
 naming the pack's directive; its known behaviours moved to the entries file.
 
@@ -131,7 +142,7 @@ naming the pack's directive; its known behaviours moved to the entries file.
   engine `governance/feedback` needs is its own requirement).
 - The oldest release of its matrix is WingFoil 0.3.0; the range is computed from `compat.yaml`,
   never written here.
-- Install mapping and lock: as the catalog's other packs (spec-001 O12, O13).
+- Install mapping: as the catalog's other packs (spec-001 O12, provisional).
 - No feedback note to WingFoil for the pack's publication (dl-021 R1).
 
 ## Acceptance
@@ -153,11 +164,12 @@ fictional projects only, run in the compatibility matrix on the releases `compat
   `tests/fixtures/runs/feedback-upstream.yaml` does with FA-8's fixture (dl-032 E3's `check:runs`
   evidence). The scenario writes the note itself: it shows that the route closes and the
   directives compose, not that an agent follows them.
-- **WD-5 The note [V]:** the note's format checked by the dl-163 checks factored out of
-  `tests/wingfoil-feedback.test.ts` (`tests/feedback-note.test.ts`), as FA-8 does.
+- **WD-5 The note [V]:** the note's format checked by the dl-163 checks factored into
+  `tests/support/inbox.ts` (`assertFields`, `assertSections`), run on the note as FA-8's are in
+  `tests/runs.test.ts`.
 - **WD-6 The rules [A]:** `wingfoil-cli`'s rules 1 … 7 are this repository's custom 1.6 but for
-  their parameters and rules 3 and 5's reference to the entries file (dl-012 D3), read at the
-  review.
+  their parameters, rules 2 … 5's reference to the entries file and "the project" for "this
+  repository" (dl-012 D3), read at the review.
 - **WD-7 Presets [V]:** `classic-scrum` and `classic-kanban` unchanged; the pack optional, as
   `governance/feedback` is.
 - **Exit criterion** (`pack-cycle` › `author`): WD-1 … WD-7; the README's examples as fixtures,
@@ -177,7 +189,8 @@ fictional projects only, run in the compatibility matrix on the releases `compat
 1. **The parameter names** above, proposed; `author`'s first task fixes them against the names in
    use.
 2. **Rule 7's text with an empty source key**, which must read well when the value substitutes to
-   nothing (plan-085 point 4).
+   nothing (plan-085 point 4); and how the generated Parameters table renders the empty default,
+   which the README generator prints as a bare pair of backticks.
 3. **The CLI command in the README**: the install step describes the value ("the command that runs
    the project's pinned WingFoil CLI") without spelling it out (spec-002 §2.3); every example and
    every `check:runs` composition sets it, and a preset holding the pack would need a stand-in
@@ -185,3 +198,11 @@ fictional projects only, run in the compatibility matrix on the releases `compat
 
 ## Execution Notes
 <!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-24: written under plan-085 step 2 from its outline and the approver's rulings.
+- 2026-11-24: independent review (dl-017): approve after amendments; no blocker, three should-fix
+  (WD-5's citation: the checks live in `tests/support/inbox.ts`; rule 8 kept under another id,
+  one id per composition; "this repository" read as "the project" in the scope line and rule 7,
+  and rules 2 and 4's references to the entries) and six nits (no `## Replies`; the descriptions
+  and the empty default's rendering; the parameters to set named; the names check and the id
+  kept; dl-012 D6's knock-ons "among them"; O13 dropped), all applied in the commit that records
+  this note. No re-review: the fixes state references and citations, no ruling changes.
