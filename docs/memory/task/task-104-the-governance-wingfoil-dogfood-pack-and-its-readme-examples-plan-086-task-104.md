@@ -283,3 +283,7 @@ validation of criterion 9 and the counts.
   applied: none`), the golden tree in publication mode exit 0 (26 runs, 0 failed) and `npm run
   -s wingfoil -- workflow list` exit 0. The privacy check of the branch's diff is clean
   (`repository-practice` rule 2). This note is documentation only: no new run.
+- 2026-11-24: delivered: the approver's OK, the `--no-ff` merge into `main` (`704901f3`), the push
+  by the approver; `main`'s CI run 45434602086 `success`, its jobs (22.12.0, 1) 10 min 42 s,
+  (22.21.0, 1) 10 min 14 s, (22.12.0, 2) 5 min 42 s, (22.21.0, 2) 8 min 1 s, the step "Texts, the
+  lines this push adds to main" `success`; the branch and its worktree removed. `approved → done`.

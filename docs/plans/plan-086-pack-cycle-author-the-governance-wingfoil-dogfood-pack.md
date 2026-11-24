@@ -261,3 +261,7 @@ the pack release round, this repository's adoption and pin, the sequencer's stal
   45391534375 `success`, its jobs (22.12.0, 1) 11 min 48 s, (22.21.0, 1) 9 min 50 s, (22.12.0,
   2) 5 min 39 s, (22.21.0, 2) 6 min 8 s, the step "Texts, the lines this push adds to main"
   `success`.
+- 2026-11-24: step 2 done: task-104 merged (`704901f3`, pushed by the approver), `main`'s CI run
+  45434602086 `success`, its jobs (22.12.0, 1) 10 min 42 s, (22.21.0, 1) 10 min 14 s, (22.12.0,
+  2) 5 min 42 s, (22.21.0, 2) 8 min 1 s; task-104 `done`. Its review read WD-6 (thirteen
+  differences from custom 1.6, each one criterion 3 allows), the approver read it at `approve`.
