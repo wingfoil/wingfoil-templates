@@ -4,7 +4,7 @@
 name: pack-release-cycle
 kind: sub
 description: "Classify, validate, approve and publish one pack version"
-version: 8
+version: 9
 element: pack-release
 phases:
   - name: prepare
@@ -33,14 +33,18 @@ phases:
       carries install steps, the adoption run on a composition that holds the pack, once per init
       template, as pack-compatibility requires (dl-032 E3).
       Record commands and exit codes in the Validation section. An independent review of the
-      pack-release before the approver's gate (dl-017).
+      pack-release before the approver's gate (dl-017), its record (dl-017 R3) the verdict, the
+      count per severity, the fixing commit and what was applied, or not and why.
     role: reviewer
     actions:
       - memory.submit            # validating → releasing
     checks:
       post: ["Validation section lists every WingFoil version and preset with exit code 0, and the check:runs and adoption runs with exit code 0 (dl-032 E3)"]
   - name: approve-publication
-    description: "The approver authorizes the publication (releasing → released) or sends it back."
+    description: >-
+      The approver authorizes the publication (releasing → released) or sends it back. The agent
+      pushes the approval commit (no tag) and reads main's CI on it, before it hands over the
+      publication's commands (dl-044 P2).
     role: tech-lead
     actions:
       - memory.approve           # releasing → released (approver)
@@ -52,7 +56,12 @@ phases:
       later commit, update catalog.yaml (version, commit, digest, formats, capabilities, computed
       WingFoil range) and regenerate CATALOG.md and catalog-index.json with npm run index
       (spec-002 §3); no file under packs/ changes. npm run publish:pack makes the tag and that
-      catalog commit with the regenerated index (task-020). Push the tag and the commit.
+      catalog commit with the regenerated index (task-020). The approver runs npm run publish:pack
+      with --report <path>, the path outside the repository, then the atomic push of the tag and the
+      commit, from the commands the agent hands over; the agent reads the report into the
+      pack-release's Publication and checks its digest and range against the publish:pack --dry-run
+      the Validation recorded; a missing or different value stops the record and goes to the
+      approver before CB-6 is read (dl-044 P1).
     role: tech-lead
     produces:
       - "catalog.yaml"

@@ -105,3 +105,7 @@ The points below are **proposed**; they become rulings when the approver approve
   repository's rules, so this element is dl-050 by a later commit that removes dl-044's file, and
   its text is reduced to what dl-048 leaves open. dl-044's `wf()` commits on main record that
   first id.
+- 2026-11-23, plan-081: D1 and D3 applied: `pack-ingest` 1, its include in
+  `.wingfoil/workflows.yaml` 4, `sw-life-cycle` 6 and `pack-cycle` 8, `workflow list` exit 0 with
+  `pack-ingest` listed, and the row "The engine way of working" naming it among the mains whose
+  engine runs come first (`0735c631`). D4: W10's order in the sequencer 1.8 (`620e3ed0`).

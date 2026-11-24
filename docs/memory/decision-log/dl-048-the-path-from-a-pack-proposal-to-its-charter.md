@@ -56,3 +56,7 @@ The points below are **proposed**; they become rulings when the approver approve
   `pack-cycle` › `charter` and `sw-life-cycle`'s header, not `pack-authoring`; the row left to its
   owner) and two nits (the bumps named; the outside route through `governance/feedback`), applied.
 - 2026-11-21: re-review: approve; one nit (the shared bumps), covered by dl-043 D3.
+- 2026-11-23, plan-081: actions applied (P2, under option 3 as reshaped by dl-050 Q1 (a)): the
+  workflow `pack-ingest` 1, its include, `pack-cycle` 8 › `charter` and `sw-life-cycle` 6's header
+  (`0735c631`); the row "dl-048's actions" closed there. The row "`pack-delivery`'s selection over
+  `accepted` packs" stays with its owner (W10).

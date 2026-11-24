@@ -2,12 +2,13 @@
 name: decision-log-ingest
 kind: main
 description: "Capture a decision (context, options, ruling) into Memory."
-version: 2
+version: 3
 phases:
   - name: capture
     description: >-
-      Record the question, the options and the proposed ruling; an independent review,
-      amended while pending (dl-017).
+      Record the question, the options and the proposed ruling; an independent review, amended while
+      pending, its record (dl-017 R3) the verdict, the count per severity, the fixing commit and
+      what was applied, or not and why.
     role: facilitator
     actions:
       - 'memory.add(type: decision-log)'

@@ -60,6 +60,15 @@ jobs:
       - name: Lint (ESLint)
         if: matrix.shard == 1
         run: npm run lint
+      - name: Texts, the lines this branch adds (dl-046)
+        if: matrix.shard == 1 && github.ref_type != 'tag' && github.ref != 'refs/heads/main'
+        run: npm run check:texts -- --base origin/main
+      - name: Texts, the lines this push adds to main (dl-046)
+        if: matrix.shard == 1 && github.ref == 'refs/heads/main'
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: npm run check:texts -- --range "$BEFORE..$AFTER"
       - name: Exact pins
         if: matrix.shard == 1
         run: npm run check:pins

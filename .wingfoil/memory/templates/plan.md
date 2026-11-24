@@ -22,7 +22,8 @@ phase: ""
 
 <!-- What needs the approver and what the agent does alone; checkpoints and completion criteria.
      Every element the plan creates, and the plan itself, gets an independent review before the
-     approver's gate (dl-017). -->
+     approver's gate (dl-017), and its record (dl-017 R3): the verdict, the count per severity, the
+     fixing commit, what was applied, or not and why. -->
 
 ## Execution Notes
 

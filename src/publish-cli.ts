@@ -1,6 +1,8 @@
 // `npm run publish:pack -- --pack <catalog pack id> [--tree <dir>] [--param <name>=<value>]...
-// [--dry-run] [<entry>...]` (task-014). npm reads a `--dry-run` typed without `--` as its own
-// option and never passes it on: the command would then make a real tag and commit, so it refuses.
+// [--dry-run] [--report <path outside the repository>] [<entry>...]` (task-014; --report, task-103,
+// dl-044: the printed lines also written to that file, whatever the exit code). npm reads a
+// `--dry-run` typed without `--` as its own option and never passes it on: the command would then
+// make a real tag and commit, so it refuses, and writes no report.
 import { runPublish } from './publish';
 
 function main(argv: string[]): number {

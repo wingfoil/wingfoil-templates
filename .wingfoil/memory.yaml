@@ -63,7 +63,8 @@ types:
         in-review: { reject: in-progress }
   plan:
     # Phase plan (WingFoil dl-019): the executable plan for one workflow phase, written when the phase
-    # starts, while WingFoil has no workflow engine.
+    # starts, while WingFoil has no workflow engine. Its `phase` is the phase the plan was written
+    # for, never advanced: a later phase gets its own plan (plan-081, 2026-11-23).
     path: docs/plans/{id}.md
     id_pattern: "plan-{n}-{slug}"
     template:

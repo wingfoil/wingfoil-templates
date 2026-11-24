@@ -52,3 +52,6 @@ The points below are **proposed**; they become rulings when the approver approve
   fixtures/`, `CATALOG.md` and the generated regions out) and three nits (one term for link lines;
   English dropped; the commit waits for exit 0), all applied.
 - 2026-11-21: re-review: approve; two nits (the count's scope; the shared bump), applied.
+- 2026-11-23, plan-081: actions applied (P3): `npm run check:texts` and its CI steps by task-102,
+  merged into plan-081's branch (`27240450`), `approved` until its check on `main`;
+  `repository-practice` 1.3, rule 5 (`25b1af51`); the row "dl-046's actions" closed there.

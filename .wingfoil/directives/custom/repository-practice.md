@@ -1,19 +1,19 @@
 ---
 id: repository-practice
-name: "Repository practice: a request's origin, the privacy check, main's CI, the owed items"
+name: "Repository practice: origin, privacy, main's CI, owed items, line length, corrections"
 type: directive
 kind: custom
-title: "Repository practice: a request's origin, the privacy check, main's CI, the owed items"
+title: "Repository practice: origin, privacy, main's CI, owed items, line length, corrections"
 tags: [custom, governance, privacy, ci, backlog]
 ---
 
-# Directive — Repository practice: a request's origin, the privacy check, main's CI, the owed items
+# Directive — Repository practice: origin, privacy, main's CI, owed items, line length, corrections
 
-**Version:** 1.2 · **Date:** 2026-11-05 · **Checked against:** `wingfoil@0.2.2`
+**Version:** 1.3 · **Date:** 2026-11-23 · **Checked against:** `wingfoil@0.2.2`
 
 Global. Applies to every role, human or agent, that writes text into this repository or pushes to
 it (dl-030); its rule 4, the register of owed items, to every role that leaves, settles or reads
-one (dl-031).
+one (dl-031); its rules 5 and 6 to every role that writes text into it (dl-046, dl-047).
 
 ## Rules
 1. **The origin of a request.** In a new text of this repository (a Memory element and its
@@ -64,3 +64,17 @@ one (dl-031).
    "asked by the approver on <date>" with what it concerns; the plan active on `main`, or the next
    plan if none is active, cites it in an Execution Note. In force since 2026-11-02 (dl-036 R1 …
    R4).
+5. **Lines of at most 100 characters.** A line a change adds to a Markdown file of this repository
+   is at most 100 characters, counted as Unicode characters (code points), not bytes, without its
+   line ending. Exempt: a frontmatter line; a table row (its first non-blank character, after any
+   block quote markers, is `|`); a link reference line; a fence line and the code between two
+   fences (an indented code block is not exempt); the lines from a `generated:begin` marker to its
+   `generated:end`, both included. Out of its scope: `tests/fixtures/` and `CATALOG.md`. Only the
+   lines a change adds are read: the long lines already on `main` stay as they are. The check is
+   `npm run check:texts` (task-102): before every commit, beside the privacy check (rule 2), on
+   the staged diff, and the commit waits for its exit 0; the CI runs it on every branch against
+   its merge base with `main` and, on `main`, on the pushed range. In force since 2026-11-22
+   (dl-046 P1, P2).
+6. **A claim found false.** A claim of an Execution Note found false is corrected by a new dated
+   note that names the claim and its correction; the earlier note stays as written. In force since
+   2026-11-23 (dl-047 P1).

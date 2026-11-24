@@ -169,11 +169,11 @@ and after every commit under `.wingfoil/workflows/`, `npm run check:runs` too (d
 | 2 | `src/` (the `check:texts` script), `package.json`, `tests/`, `.github/workflows/ci.yml` | task-102 (point 3), on its own branch, merged into this one | dl-046 P2, P3 |
 | 3 | `.wingfoil/directives/custom/repository-practice.md` (1.2 → 1.3, Date), `docs/owed-items.md` | point 5. Row "dl-046's actions" to Closed | dl-046 P1, P3; dl-047 P1, P2 |
 | 4 | `src/publish.ts`, `tests/` | task-103 (point 3), on its own branch, merged into this one | dl-044 P1, P3 |
-| 5 | `.wingfoil/workflows/custom/decision-log-ingest.yaml` (2 → 3), `adr-ingest.yaml` (2 → 3), `bug-ingest.yaml` (3 → 4), `.wingfoil/memory/templates/plan.md`, one commit | `capture`'s review: R3's record; the template's Handoff comment (point 6) | dl-047 P1, P2 |
+| 5 | `.wingfoil/workflows/custom/decision-log-ingest.yaml` (2 → 3), `adr-ingest.yaml` (2 → 3), `bug-ingest.yaml` (3 → 4), `.wingfoil/memory/templates/plan.md`, `.wingfoil/memory.yaml`, one commit | `capture`'s review: R3's record; the template's Handoff comment (point 6); the `plan` type's comment: `phase` is the phase the plan was written for, never advanced, a later phase gets its own plan (ruling of 2026-11-23, Execution Notes) | dl-047 P1, P2 |
 | 6 | `.wingfoil/workflows/custom/pack-release-cycle.yaml` (8 → 9) | `validate`'s review: R3's record; `approve-publication`: the agent pushes the approval commit and reads `main`'s CI, no tag, before handing over the publication's commands; `publish`: the approver runs `publish:pack` with `--report`, the agent reads the report into the Publication and checks the digest and the range against the Validation's dry run, a missing or different value to the approver before CB-6 | dl-044 P1 … P3; dl-047 P2 |
 | 7 | `.wingfoil/workflows/custom/pack-ingest.yaml` (new, 1), `.wingfoil/workflows.yaml` (3 → 4), `pack-cycle.yaml` (7 → 8), `sw-life-cycle.yaml` (5 → 6), `docs/owed-items.md`, one commit | point 7; `pack-cycle`: `charter`'s description naming `pack-ingest` as the path a pack's proposal took, its review with R3's record, `activate`'s who runs what (dl-044 P2); `sw-life-cycle`: its header naming `pack-ingest` as the entry of a new pack, `inception`, `specification` and `sunset` with R3's record; the row "The engine way of working" extended: its Source with dl-044 and dl-050; the approver runs `publish:pack --report` and the agent reads the report into the Publication; the agent pushes the approval commit of a pack-release, which carries no tag; `pack-ingest` among the mains whose engine runs come first (dl-050 D3); "in his own shell" made "in the approver's own shell" (dl-043 N3). Rows "dl-044's actions" and "dl-048's actions" to Closed | dl-044 P2, P3; dl-047 P2; dl-048 P2; dl-050 D1, D3 |
-| 8 | `docs/01_vision/07_sequencer.md` (1.7 → 1.8) | point 8 | the approver, 2026-11-23; dl-050 D4 |
-| 9 | dl-017; dl-044 … dl-050; plan-079, plan-080; `docs/owed-items.md` | the Execution Notes of point 9. Row "dl-047's actions" to Closed | dl-047 P2; dl-050 D4 |
+| 8 | `docs/01_vision/07_sequencer.md` (1.7 → 1.8) | point 8, without plan-080's close (closed on 2026-11-23, Execution Notes) | the approver, 2026-11-23; dl-050 D4 |
+| 9 | dl-017; dl-044 … dl-050; plan-079; `docs/owed-items.md` | the Execution Notes of point 9, plan-080's left out (closed); row "dl-047's actions" to Closed; a new Open row for dl-007's deferred ruling (plan-010 › Execution Notes 2026-10-06), owner the approver, trigger as that note says (ruling of 2026-11-23) | dl-047 P2; dl-050 D4 |
 
 Then, in dl-039 R2's order:
 - **Leftovers:** a grep of `.wingfoil/`, `docs/` (outside `docs/memory/` except
@@ -219,3 +219,53 @@ Then, in dl-039 R2's order:
   check on `main` after a row's close gets a new row; row 8 an outline choice, kept as flagged),
   all applied but the last, which needs no change.
 - 2026-11-23: re-review of the amendments (`06924820`): approve; each finding fixed, no new finding.
+- 2026-11-23: `main`'s CI on `submit` (`549d787d`), run 45182886083: `success`, its longest job
+  14 min 29 s.
+- 2026-11-23: the approver's rulings on a check of the plans' `phase` field: plan-081 keeps
+  `decision-log-ingest` › `rule`, like the nine dl actions plans before it; plan-080 closed now
+  (`34f150ed`, `71035cfd` on `main`), out of W10's order, so row 8's line leaves out its close and
+  row 9 its note; plan-079 and plan-010 unchanged (`phase` is the phase each was written for);
+  row 9 adds the Open row for dl-007's deferred ruling, which plan-010 left without one (rule 4);
+  row 5 adds to the `plan` type's comment in `.wingfoil/memory.yaml` that `phase` is never
+  advanced. No feedback note: the engine's runs answer it (the row "The engine way of working").
+- 2026-11-23: independent review of `d53d8d09` (dl-017): approve; no blocker, no should-fix; five
+  nits, none applied: the Context and the outline's points 8 to 10 still name plan-080's close
+  and only this plan's owed items, left as written, since Steps and the note above rule; "the nine
+  dl actions plans" checked (plan-011, 026, 027, 030, 034, 036, 038, 062, 063); the trailer is
+  this repository's.
+- 2026-11-23: row 2 done: task-102 `approved` (`4a298631`), merged into this branch
+  (`27240450`); its notes record its reviews, its red runs and dl-039's checks (branch CI
+  45215122430, `success`, its longest job 16 min 3 s). The register's new row on
+  `src/markdown-lines.ts` (a fence inside a nested list item), found by task-102's re-review, was
+  OK'd by the approver on 2026-11-23 and added with row 3 (`25b1af51`).
+- 2026-11-23: row 3 done (`25b1af51`): `repository-practice` 1.3, rules 5 and 6 as ruled; the title
+  shortened, not only extended ("origin, privacy, main's CI, owed items, line length,
+  corrections"), since the extended one made the heading 111 characters, against rule 5 itself;
+  the row "dl-046's actions" to Closed. `check:texts` on the staged diff before each commit from
+  here on (rule 5).
+- 2026-11-23: row 4 done: task-103 `approved` (`e5be8033`), merged into this branch
+  (`7a38f98e`); its notes record its reviews, its red runs and dl-039's checks (branch CI
+  45229832511, `success`, its longest job 9 min 54 s). `src/publish-cli.ts`, touched for its header
+  comment only, is read as within row 4 (`src/publish.ts`, `tests/`), as task-103's review noted.
+- 2026-11-23: rows 5 … 9 done, each commit after `check:texts` exit 0 and the privacy check, each
+  under `.wingfoil/` or `docs/memory/` followed by `workflow list` and `npm run lint` exit 0, each
+  under `.wingfoil/workflows/` by `npm run check:runs` (84 runs, 0 failed): row 5 `d6517ab8`, row 6
+  `fb612206`, row 7 `0735c631` (`pack-ingest` listed by `workflow list` on the pinned CLI, its
+  include checked by hand, W-08), row 8 `620e3ed0`, row 9 `97703502`. Row 8 adds the ruled order
+  as a sentence within the adoption, the earlier order left as written. In row 7 the engine row's
+  Source ends with "dl-044, dl-050" while the row stays sorted as one with no element id first
+  ("asked by the approver"), its place unchanged.
+- 2026-11-23: independent review of the branch (dl-017), `549d787d..97703502`, rows 5 … 9 first:
+  approve after amendments; no blocker, two should-fix (`pack-ingest` › `capture` without dl-050
+  Q1 (a)'s contents; the dl-007 row out of the register's order by Source) and four nits (the
+  sequencer's sentence placed within the adoption; the engine row's Source holding ids, noted
+  above; `vision`'s `produces`; this note), all applied in `c7ae3252` but the second nit, which
+  needs only this note. No re-review: the amendments are texts, changing no behaviour, test or
+  Acceptance (dl-017).
+- 2026-11-23: dl-039's checks on the branch's frozen head `96d4fbf8` (the amendments `c7ae3252`,
+  then this plan's notes): branch CI run 45281486969 `success`, jobs (22.12.0, 1) 9 min 58 s,
+  (22.21.0, 1) 11 min 58 s, (22.12.0, 2) 6 min 47 s, (22.21.0, 2) 8 min 3 s, the step "Texts, the
+  lines this branch adds" in shard 1 included. Locally, Node.js 22.21.0, a clean tree on
+  `96d4fbf8`: `npm ci`, `npm run build`, `npm run validate:publication` (28 runs, 0 failed), the
+  golden tree in publication mode (26 runs, 0 failed) and `npm run -s wingfoil -- workflow list`,
+  each exit 0; the tree clean after them. This note is documentation only: no new run.

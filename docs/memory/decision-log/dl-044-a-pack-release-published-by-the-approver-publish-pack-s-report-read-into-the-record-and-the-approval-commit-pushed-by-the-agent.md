@@ -72,3 +72,7 @@ The points below are **proposed**; they become rulings when the approver approve
   in P3 and the bumps named; the row extended, not noted; P2 argued against the row and ruling 7)
   and one nit (the report on a failure, its values, the dry run named), all applied.
 - 2026-11-21: re-review: approve; one nit (the shared bumps), covered by dl-043 D3.
+- 2026-11-23, plan-081: actions applied (P3): `publish:pack --report` by task-103, merged into
+  plan-081's branch (`7a38f98e`), `approved` until its check on `main`; `pack-release-cycle` 9
+  (`fb612206`); `pack-cycle` 8 › `activate` and the row "The engine way of working" extended and
+  reworded (`0735c631`); the row "dl-044's actions" closed there.

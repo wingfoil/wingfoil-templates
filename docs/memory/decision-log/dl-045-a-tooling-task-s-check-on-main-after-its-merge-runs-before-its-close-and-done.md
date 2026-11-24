@@ -48,3 +48,5 @@ The points below are **proposed**; they become rulings when the approver approve
 - 2026-11-21: independent review: approve after amendments; one should-fix (the check only if the
   task names one) and one nit (the headers quoted, the bumps named), applied.
 - 2026-11-21: re-review: approve; two nits (a wrap; the shared bumps), applied.
+- 2026-11-23, plan-081: actions applied (P2): `tooling-delivery` 5 and `kanban-delivery` 7,
+  `deliver` with the check on `main` (`496af112`); the row "dl-045's actions" closed there.

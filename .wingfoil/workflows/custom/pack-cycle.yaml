@@ -4,13 +4,15 @@
 name: pack-cycle
 kind: sub
 description: "Charter, author and first-release one pack"
-version: 7
+version: 8
 element: pack
 phases:
   - name: charter
     description: >-
       Write the pack charter (axis, slot, purpose, what it ships, requires/conflicts, formats and
-      capabilities, dl-002); an independent review, amended while proposed (dl-017); submit it; the
+      capabilities, dl-002), from the request pack-ingest ruled and handed off (dl-048, dl-050 D1);
+      an independent review, amended while proposed (dl-017), its record (dl-017 R3) the verdict,
+      the count per severity, the fixing commit and what was applied, or not and why; submit it; the
       approver accepts it (proposed → accepted) or sends it back. A charter of a pack that ships
       workflows, or fills a slot of a required pack's workflow, records in its plan a run on the
       newest WingFoil release that compat.yaml lists before it is accepted: the pack's draft
@@ -61,7 +63,8 @@ phases:
     description: >-
       First version published: the pack becomes active (accepted → active) once its tag
       `<catalog pack id>@<version>` is on origin and `catalog.yaml` on origin/main lists that
-      version.
+      version. The approver runs the activation's memory submit and its push, from the commands the
+      agent hands over, after the publication (plan-077 ruling 7, dl-044 P2).
     role: tech-lead
     actions:
       - memory.submit            # accepted → active
