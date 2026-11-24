@@ -230,3 +230,7 @@ its WingFoil pin and its inbox sync; the sequencer's stale W10 state row (its ow
 - 2026-11-24: no re-review: the amendments correct facts and citations and split Step 2 so that the
   rehearsal precedes prel-008's `submit`, as point 3 already said ("before any element moves");
   no recommendation or ruling changes.
+- 2026-11-24: `main`'s CI before `submit`: the push of `5ca10d55` (plan-086's close), run
+  45483912320 `success`, its jobs (22.12.0, 1) 10 min 27 s, (22.21.0, 1) 10 min 41 s, (22.12.0,
+  2) 9 min 16 s, (22.21.0, 2) 9 min 2 s, the step "Texts, the lines this push adds to main"
+  `success`.
