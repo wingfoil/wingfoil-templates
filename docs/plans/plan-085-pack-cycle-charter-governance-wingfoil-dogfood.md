@@ -2,7 +2,7 @@
 id: plan-085-pack-cycle-charter-governance-wingfoil-dogfood
 type: plan
 title: "pack-cycle charter: governance/wingfoil-dogfood"
-status: draft
+status: active
 workflow: "pack-cycle"
 phase: "charter"
 tags: ["packs","dogfood","governance","W10"]
