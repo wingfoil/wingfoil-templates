@@ -234,3 +234,23 @@ validation of criterion 9 and the counts.
   applied in the commit that records this note; "empty" kept to the **Source key** line, since
   this repository's inbox writes `**Last sync:** none.` No further re-review: the fixes state
   the checks' inputs, no criterion's intent changes.
+- 2026-11-24: red (dl-018, `2bae0a88`): `node --test dist/tests/wingfoil-dogfood-pack.test.js`
+  before the pack existed, 8 tests, 8 failing (the pack's files and examples missing). WD-3's
+  two tests were red too, on the missing files, not on a rule: criterion 8's "green when
+  written" reads the channel's own check, which passed at its first run beside the channel.
+- 2026-11-24: build (`a2439389`): the pack, its README and CHANGELOG, the two examples, and the
+  moved counts. `npm run index` wrote the README's generated sections; the Versions section's
+  catalog link is a link reference, so that its line stays under the 100-character rule
+  (dl-046 P1 exempts a link reference line). The source key's adaptation is the README's fourth
+  bullet beside the charter's three (the rules' generalisation, the known behaviours, the inbox
+  skeleton).
+- 2026-11-24: the counts (criterion 10), measured on this branch: the lint's files 93 → 101
+  (`tests/check-packs.test.ts`, `tests/validate-2-run.test.ts`: the six pack files and the two
+  examples); the schemas 9 → 10 (one more `pack.yaml`); the index's files 8 → 9
+  (`tests/index.test.ts`: one more README); `validate`'s compositions 14 → 16 and runs 28 → 32;
+  each exit overlay +2 compositions and +4 runs (`software-exit`, `scrum-exit`, `kanban-exit`
+  18 → 20 and 36 → 40; `feedback-exit` 22 → 24 and 44 → 48); the publication run 28 → 32. No
+  other count moved: the full suite before the update had 1497 tests, 8 failing, exactly these.
+  After it the four files ran 179 tests, 0 failing. `npm run validate`: 0 failed, `tolerance
+  applied: none`, each example on 0.3.0 and 0.3.2 (`defaults[+software]` skipped, no
+  methodology). `check:packs`, `index -- --check`, `check:pins`, `check:schemas` and eslint pass.
