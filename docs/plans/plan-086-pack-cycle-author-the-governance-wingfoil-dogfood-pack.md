@@ -247,3 +247,7 @@ the pack release round, this repository's adoption and pin, the sequencer's stal
   reading a WingFoil command as `isCliCommand` does), all applied in the commit that records
   this note. No further re-review: the fixes state what the ruling changes, not a new
   recommendation.
+- 2026-11-24: `main`'s CI before `submit`: the push of `52cc6bea` (plan-085's close), run
+  45391534375 `success`, its jobs (22.12.0, 1) 11 min 48 s, (22.21.0, 1) 9 min 50 s, (22.12.0,
+  2) 5 min 39 s, (22.21.0, 2) 6 min 8 s, the step "Texts, the lines this push adds to main"
+  `success`.
