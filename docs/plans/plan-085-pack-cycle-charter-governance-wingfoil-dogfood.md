@@ -243,3 +243,8 @@ repository's adoption and pin, dl-049's path, the sequencer's stale W10 state ro
   2) 6 min 59 s, the step "Texts, the lines this branch adds" `success`; `workflow list` and
   `npm run lint` exit 0; `git diff main --stat` naming only the charter and this plan; the privacy
   check of the branch's diff clean. This note is documentation only: no new run.
+- 2026-11-24: step 5 done: the approver's OK, the `--no-ff` merge into `main` (`93a74b6f`), the
+  push by the approver; `main`'s CI run 45388134981 `success`, its jobs (22.12.0, 1) 9 min 58 s,
+  (22.21.0, 1) 15 min 7 s, (22.12.0, 2) 5 min 48 s, (22.21.0, 2) 5 min 43 s, the step "Texts, the
+  lines this push adds to main" `success`, Pages `success`; the branch and its worktree removed.
+  No item left owed. `active → done`; the close's CI is left to the next plan.
