@@ -199,7 +199,17 @@ Each point has a recommendation.
 
 ## The approver's rulings
 
-<!-- Recorded before `submit`. -->
+Given on 2026-11-24, in chat: "tutti come raccomandato". Points 1 … 7 stand as recommended:
+- two tasks, task-104 (the pack, WD-2's and WD-3's tests with it) and task-105 (the route and its
+  evidence), the split recorded on the charter at close (point 1);
+- the charter's parameter names; the source key's option (b), no `wingfoil_source_key`, the
+  inbox's **Source key** line the one source, WD-6 reading rule 7's new wording as allowed, the
+  departures recorded on dl-051 and on the charter at close (point 2);
+- the examples `defaults` and `with-software`, the CLI command described in the README and set
+  by the examples (point 2);
+- the adoption run prepared in task-105 (point 3);
+- no run by hand, a change under `src/` a tooling task of its own (point 4);
+- the order task-104 → task-105, WIP 1 (point 5).
 
 ## Steps
 
