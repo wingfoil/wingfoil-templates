@@ -13,7 +13,7 @@ import { afterEach, beforeEach, describe, it } from 'node:test';
 import { parse as parseYaml } from 'yaml';
 
 import { assertFields, assertSections } from './support/inbox';
-import { FIXTURES } from './support/paths';
+import { FIXTURES, REPO_ROOT } from './support/paths';
 
 import { readFrontmatter } from '../src/frontmatter';
 import { MatrixIoError } from '../src/matrix';
@@ -1555,6 +1555,106 @@ describe('tests/fixtures/runs/adoption-feedback.yaml (task-097)', () => {
     const data = feedbackScenario('adoption-feedback.yaml');
     assert.equal(data.compositions, 'tests/fixtures/examples/feedback');
     const only = ['with-software', 'added-outcome'];
+    const remove = ADOPTION_REMOVE;
+    assert.deepEqual(data.runs, [{ only, adopt: { template: 'Scrum', remove } },
+      { only, adopt: { template: 'Kanban', remove } }]);
+  });
+});
+
+// task-105 (plan-086 point 3): governance/wingfoil-dogfood's route through its channel, composed
+// from the tree's packs with no overlay (WD-4), the note's format (WD-5), and the adoption run
+// prepared for the pack's first release (dl-032 E3).
+describe('tests/fixtures/runs/wingfoil-dogfood.yaml (task-105, WD-4, WD-5)', () => {
+  const scenario = (): FeedbackScenario => feedbackScenario('wingfoil-dogfood.yaml');
+  const EXAMPLES = join(FIXTURES, 'examples', 'wingfoil-dogfood');
+  const PACK = join(REPO_ROOT, 'packs', 'governance', 'wingfoil-dogfood');
+  const channel = (): string =>
+    readFileSync(join(PACK, 'directives', 'wingfoil-channel.md'), 'utf8');
+  const parameters = (id: string): Record<string, string> =>
+    (parseYaml(readFileSync(join(EXAMPLES, id, 'example.yaml'), 'utf8')) as
+      { parameters: Record<string, string> }).parameters;
+  /** The example's inbox path: its parameter, else the pack's default. */
+  const inbox = (id: string): string => {
+    const given = parameters(id)['wingfoil_inbox_path'];
+    if (given !== undefined) return given;
+    const pack = parseYaml(readFileSync(join(PACK, 'pack.yaml'), 'utf8')) as
+      { parameters: Record<string, { default?: string }> };
+    const declared = pack.parameters['wingfoil_inbox_path']?.default;
+    assert.ok(declared !== undefined, 'the pack declares a default inbox path');
+    return declared;
+  };
+  const ROUTES = [
+    { name: 'route-upstream-wingfoil-defaults', id: 'defaults', kind: 'defect',
+      noteKind: 'defect' },
+    { name: 'route-upstream-wingfoil-with-software', id: 'with-software', kind: 'observation',
+      noteKind: 'request' },
+  ];
+
+  it('drives one route per README example, from the tree\'s packs with no overlay', () => {
+    const { overlay, compositions, runs } = scenario();
+    assert.equal(overlay, undefined);
+    assert.equal(compositions, 'tests/fixtures/examples/wingfoil-dogfood');
+    assert.deepEqual(runs.map((run) => [run.name, run.only]),
+      ROUTES.map((row) => [row.name, [row.id]]));
+  });
+
+  for (const row of ROUTES) {
+    describe(row.name, () => {
+      const run = (): ScenarioRun => {
+        const found = scenario().runs.find((each) => each.name === row.name);
+        assert.ok(found !== undefined, row.name);
+        return found;
+      };
+      const noteStep = (): { path: string; text: string } => {
+        const [found] = stepsOf(run(), 'write');
+        assert.ok(found !== undefined, 'the note is written');
+        return found as unknown as { path: string; text: string };
+      };
+
+      it('routes the item to upstream:wingfoil and closes it, resulting naming the note', () => {
+        assert.deepEqual(run().chain?.map((link) => link.main), [INGEST, REVIEW]);
+        const fields = fieldsOn(run(), 'item');
+        assert.equal(fields['target'], 'upstream:wingfoil');
+        assert.equal(fields['outcome'], 'upstream-note');
+        assert.equal(fields['kind'], row.kind);
+        for (const key of ['source', 'context']) {
+          assert.ok(typeof fields[key] === 'string' && fields[key] !== '', key);
+        }
+        assert.equal(fields['resulting'], noteStep().path);
+        assertCloses(run(), ITEM_ROUTE);
+        assert.ok(parameters(row.id)['feedback_targets']?.split(', ')
+          .includes('upstream:wingfoil'), 'the example allows the target (spec-003 §5.3)');
+      });
+
+      it('writes the note in the example\'s inbox, in dl-163\'s format, citing the item', () => {
+        const { path, text } = noteStep();
+        assert.ok(path.startsWith(`${inbox(row.id)}/`), `${path} is in ${inbox(row.id)}`);
+        assert.match(path.slice(inbox(row.id).length + 1), /^F-\d{3}-[a-z0-9-]+\.md$/);
+        const fields = readFrontmatter(text, path)?.data as Record<string, unknown> | undefined;
+        assert.ok(fields !== undefined, 'the note has a frontmatter');
+        const body = text.slice(text.indexOf('\n---\n', 4) + 5);
+        const notes = [{ file: path, fields, body }];
+        assertFields(notes);
+        assertSections(notes);
+        assert.ok(body.includes('$item.id'), 'the body cites the item');
+        assert.equal(fields['kind'], row.noteKind, 'the kind mapped as the channel says');
+      });
+    });
+  }
+
+  it('relies on the channel as the pack ships it: the path form and the kinds\' mapping', () => {
+    const text = channel();
+    assert.ok(text.split('\n').includes('Serves the target `upstream:wingfoil`.'));
+    assert.ok(text.includes('`{{wingfoil_inbox_path}}/F-<nnn>-<slug>.md`'), 'the path form');
+    assert.ok(text.includes('`observation` becomes `request`'), 'the mapping');
+  });
+});
+
+describe('tests/fixtures/runs/adoption-wingfoil-dogfood.yaml (task-105)', () => {
+  it('adopts the example that composes software, once per init template', () => {
+    const data = feedbackScenario('adoption-wingfoil-dogfood.yaml');
+    assert.equal(data.compositions, 'tests/fixtures/examples/wingfoil-dogfood');
+    const only = ['with-software'];
     const remove = ADOPTION_REMOVE;
     assert.deepEqual(data.runs, [{ only, adopt: { template: 'Scrum', remove } },
       { only, adopt: { template: 'Kanban', remove } }]);
