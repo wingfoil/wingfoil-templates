@@ -2,7 +2,7 @@
 id: plan-087-pack-cycle-first-release-governance-wingfoil-dogfood-1.0.0
 type: plan
 title: "pack-cycle first-release: governance/wingfoil-dogfood 1.0.0"
-status: draft
+status: active
 workflow: "pack-cycle"
 phase: "first-release"
 tags: ["packs","dogfood","governance","W10"]
