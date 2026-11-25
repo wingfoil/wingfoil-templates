@@ -2,7 +2,7 @@
 id: dl-052-retrospective-pack-governance-wingfoil-dogfood-2026-11-25
 type: decision-log
 title: "Retrospective pack-governance-wingfoil-dogfood 2026-11-25"
-status: draft
+status: pending
 tags: ["process","retrospective","wingfoil","dogfood"]
 ---
 
