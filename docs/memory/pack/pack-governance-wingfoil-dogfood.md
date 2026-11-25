@@ -227,3 +227,19 @@ fictional projects only, run in the compatibility matrix on the releases `compat
     `assertSections`); the adoption run of dl-032 E3 prepared
     (`tests/fixtures/runs/adoption-wingfoil-dogfood.yaml`, Scrum and Kanban), for
     `first-release` to cite. CB-1 … CB-3 and CB-6 are the first tag's.
+- 2026-11-25, plan-087 (`first-release`, `activate`): `governance/wingfoil-dogfood` 1.0.0
+  published (prel-008): the tag `governance/wingfoil-dogfood@1.0.0` at `687f6899`, the catalog
+  commit `f32aa8c2`, the range `>=0.3.0 <=0.3.2`, the digest
+  `sha256:7c4b949f517d7ef9624b22e618b3247de39cb3ae861218066685e3009acfce49`. `activate`'s two
+  checks hold: the tag is on origin, and `catalog.yaml` on `origin/main` lists 1.0.0. At the first
+  tag: CB-1 (`check:packs`, the README lint, 101 files, 0 problems), CB-2 (the two README examples
+  composed twice, byte-identical, and run on 0.3.0 and 0.3.2 by `validate:publication`) and CB-3
+  (the README's "Install and update" against `compat.yaml`, the temporary mark kept) on prel-008's
+  validated commit, the tag's CI in publication mode `success`; CB-6's live check passed (prel-008
+  › Publication). The adoption run of dl-032 E3 cited: `adoption-wingfoil-dogfood.yaml`, 4 runs,
+  each `pass`, with the route `wingfoil-dogfood.yaml`, 4 runs (prel-008 › Validation). No run of
+  dl-032 E4, as the exit criterion says. The defaults of the two path parameters are fixed with
+  1.0.0, the convention for new projects; `wingfoil_command` has none (Commitments to adopters,
+  Parameters). `accepted → active`, the `memory submit` and its push run by the approver (plan-087
+  ruling 6). The retrospective is this pack's own, in the plan right after plan-087 (plan-087
+  ruling 9; its owed row).
