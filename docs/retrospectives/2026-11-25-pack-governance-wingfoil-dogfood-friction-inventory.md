@@ -40,7 +40,7 @@ submit), all on 2026-11-24: 40 minutes.
   (`ae80bc73`, 09:49) and approval (`bf29bbf2`, 10:09) inside it (plan-082 › Execution Notes).
 - `+` Capture ran as `pack-ingest` v1 and dl-050 D1 describe it: `memory add` and `submit`, the
   body committed before `submit` (W-04; plan-082 step 2), the review amended while dl-051 was
-  `pending`; dl-051 D1 records "no pack refused or deferred", as dl-048 P1 asks.
+  `pending`; dl-051 D1 records "No pack of this request is refused or deferred", as dl-048 P1 asks.
 - `+` The rest as designed: `vision` skipped and the skip said in the plan, as v1's description
   asks (plan-083 step 2); `hand-off` named plan-085 before plan-085 was opened (`0d24de03` 10:11,
   `49dc34ea` 10:20), as dl-051 D4 says; the run recorded by hand in its plans, with no
@@ -49,18 +49,19 @@ submit), all on 2026-11-24: 40 minutes.
 - `−` **dl-050 D3 and D4 do not read true after the run.** D3 names "its first run (dl-049, D4)" and
   D4 "dl-049 is its first request"; the first run to reach a charter was dl-051's. dl-049 is still
   `pending` and plan-079 `active`: dl-049's `rule`, `vision` and `hand-off` moved into the
-  adoption with the sequencer 1.8 (`07_sequencer.md` › "W10's order"; dl-051 › Context). No note
-  on dl-050 records it (GOV-5).
+  adoption with the sequencer 1.8 (`07_sequencer.md` › "W10's order"; dl-051 › Context), as
+  dl-050's note of plan-081 records ("D4: W10's order in the sequencer 1.8", `620e3ed0`); D3's
+  wording, naming dl-049's run as the first, is not corrected (GOV-5).
 - `−` **The `rule` ruling came before its plan.** The approver approved dl-051 at 10:09
   (`bf29bbf2`) while plan-082 was open; plan-083, the plan of `rule`, was written afterwards and
-  records the ruling (four commits, 10:10–10:11). plan-082 step 5 had placed the command "in the
+  records the ruling (five commits, 10:10–10:11). plan-082 step 5 had placed the command "in the
   plan of `rule`".
 - `−` plan-083's Context cited `80d42ae1` as `main`'s last CI, not the last push `ae80bc73`;
   plan-084's review caught it and plan-084 corrected it by a note (rule 6; plan-084 › Execution
   Notes 2026-11-24, second note). plan-083's close left its `check:texts` and privacy checks
   unsaid (plan-084's review, a nit).
 - `−` **`vision` is optional in prose only.** dl-050 D1 rules "Q4 optional"; `pack-ingest` v1's
-  `vision` has no `optional: true`, its description saying it is skipped "(the pinned WingFoil has
+  `vision` has no `optional` key, its description saying it is skipped "(the pinned WingFoil has
   no skip)", while `pack-cycle` v8's `design` carries `optional: true` on the same pin. No source
   records whether the 0.2.2 engine honours the key (GOV-5).
 - Observed: one run took three plans for four phases, plan-083 one minute long.
@@ -100,23 +101,24 @@ accepted at 11:05 (`7b68ddef`), the branch checks at 11:21 (`46b5920c`), merged 
 - `+` Red first in both tasks: task-104 8 tests, 8 failing (`2bae0a88`); task-105 7 tests, 6
   failing (`23bfc97c`).
 - `+` The counts measured, not assumed: lint 93 → 101, `validate` 14 → 16 compositions (task-104);
-  `check:runs` 84 → 92 (task-105). The branch CI's longest job 17 min 6 s (run 45477886787), under
-  dl-039 R3's 25 minutes.
+  `check:runs` 84 → 92 (task-105). `main`'s CI on task-105's merge, longest job 17 min 6 s (run
+  45477886787), under dl-039 R3's 25 minutes.
 - `+` The build reviews caught text errors in fixtures: the `with-software` example taught the
   wrong kind (task-104, `409d3828`); the note's `## Observed` pointed falsely at the item's context
   (task-105, `d8c3a4cc`).
 - `+` WD-6 read by the review against custom 1.6: thirteen differences, each allowed (task-104 ›
   build review).
 - `−` **task-104's Acceptance 6 unmet:** the CHANGELOG's first line ended mid-sentence ("… into
-  a"), and that line alone becomes the tag's annotation (`src/publish.ts` › `changelogEntry`). None
-  of task-104's three reviews (body `f8964e69`, re-review `996dcb42`, build `a8785db6`) checked
-  it; plan-087's outline found it after the close (task-104 › Execution Notes 2026-11-25). The
+  a"), and that line alone becomes the tag's annotation (`src/publish.ts` › `changelogEntry`). Of
+  task-104's three reviews (body `f8964e69`, re-review `996dcb42`, build `a8785db6`), only the
+  build review came after the CHANGELOG was written, and it did not check it; plan-087's outline
+  found it after the close (task-104 › Execution Notes 2026-11-25). The
   third occurrence: the inventory of 2026-10-28 §1 records it at prel-002 and prel-003, where
   review caught it (GOV-2, §8).
 - `−` **The source key ruled twice.** plan-085 ruled Open point 2 as option (a), a parameter with
-  the default `""`; plan-086 point 2 reversed it to option (b), no parameter, on reasons plan-085's
-  Open points already listed (the empty substitution, the generator's bare backticks). The
-  departure from dl-051 Q3 (a) and from the accepted charter is recorded by notes only (dl-051's
+  the default `""`; plan-086 point 2 reversed it to option (b), no parameter, on reasons the
+  charter's Open point 2 already listed (the empty substitution, the generator's bare backticks).
+  The departure from dl-051 Q3 (a) and from the accepted charter is recorded by notes only (dl-051's
   note of plan-086, the charter's note of plan-086); the charter's body, now `active`, still lists
   `wingfoil_source_key` in Parameters and says "Rule 7 applies when a source key is set" (the
   charter › Ships, Parameters) (`DEBT`, §8).
@@ -179,7 +181,7 @@ published 14:05 (`f32aa8c2`).
 Seventeen reviews: thirteen first reviews and four re-reviews; every verdict "approve after
 amendments"; one blocker (plan-085's outline, the format), 47 should-fix, 75 nits.
 
-| Element | Review (blocker / should-fix / nit) | Re-review |
+| Element | Review (blocker / should-fix / nit; the fixing commit) | Re-review |
 |---|---|---|
 | dl-051 | 0 / 5 / 7 (`5c92afc0`) | 0 / 1 / 2 (`ae80bc73`) |
 | plan-084 (with plan-082's close and plan-083) | 0 / 2 / 4, one should-fix kept (`e33daaa2`) | none |
@@ -211,16 +213,18 @@ approver's (plan-088 point 8), so each commit on `main` waits for one.
 
 ### 5.3 Scripts written per run
 
-The clean-clone evidence and the CI watch were written for this release, as for plan-077's;
-their first runs erred (§4). Nothing in the repository holds them; plan-061's G12 (branch CI
-instead of clones) is their neighbour.
+The clean-clone evidence was written for this release, as plan-077's local list was; its first
+pass erred (§4). Nothing in the repository holds it; dl-039 (R1, R2: the branch CI, then the local
+checks on a clean tree) names the checks, not a command that runs them. *(unrecorded)* The CI
+watch, too, is written per run.
 
 ### 5.4 Departures recorded by notes
 
 Three in the cycle: the source key (dl-051 Q3 (a), the accepted charter; §3), P2 (dl-044; §4),
-and dl-050 D3 and D4 read after the run (§1). Each is recorded by Execution Notes, as rule 6
-asks for a false claim; the bodies stay as they were, so the charter now `active` describes a
-parameter its pack does not ship.
+and dl-050 D3's wording after the run (§1). The first two are recorded by Execution Notes only,
+the third not at all; the bodies stay as they were, so the charter now `active` describes a
+parameter its pack does not ship. Rule 6 corrects a false claim of a note; no rule says how a
+body that a later ruling departs from is kept true.
 
 ## 6. WingFoil-side candidates (feedback notes)
 
@@ -229,7 +233,9 @@ prel-008 › `prepare`, plan-085 step 2); the body committed before `submit` (W-
 commits' subjects (W-05, F-023). The skipped `[+software]` leg in the matrix is the format's rule
 (`src/resolve.ts` › `forbiddenBy`), not WingFoil's (prel-008 › Validation). Whether the 0.2.2
 engine honours a phase's `optional: true` is not recorded (§1); it is a question for GOV-5, not a
-note. **Proposed: no note, no task-106** (plan-088 point 6).
+note. **Proposed: no note, no task-106** (plan-088 point 6). WingFoil's v0.4 release planning
+(started 2026-11-03, dl-040): no source of the period records it closed; with no note proposed,
+its state decides nothing here.
 
 ## 7. Candidate changes of governance
 
@@ -239,51 +245,52 @@ this repository's adoption of the packs fix it?
 
 | Id | Candidate | W10 fixes it? | Proposed |
 |---|---|---|---|
-| GOV-1 | Who pushes a pack-release's approval commit (dl-044 P2): the agent's push of `main` is not permitted in its environment; the approver pushes every `main` since plan-087 | no: the adoption does not change who may push `main`, and the row "The engine way of working" quotes P2 | a decision-log changing P2 (the approver pushes the approval's commit, the agent reads its CI); it settles the P2 row (§8), which falls due here (plan-088 ruling 4) |
-| GOV-2 | A check of the CHANGELOG's first line: a whole sentence within 100 characters, in `check:packs` where `author` meets it, not only in `publish:pack` | no | a decision-log, its check a tooling task; the row "A check of the CHANGELOG's first line" moved to it (three occurrences, its trigger missed by task-083 and task-103) |
-| GOV-3 | The clean-clone evidence as a committed script: the `validate` step's local list (Node.js 22.21.0 then 22.12.0, `npm ci`, the checks, the audits of `src/matrix/wingfoil-*/`) run by one command | no | a decision-log, or the approver joins it to G12 (branch CI instead of clones) as a row |
-| GOV-4 | A departure from an approved decision-log or an accepted charter: the body amended, or only a note (today, a note) | no: G7 (in-place amendment) is the adoption's row | none: the charter's drift as a row (§8), under G7 |
-| GOV-5 | `pack-ingest` v1 read against its run: `vision` marked `optional: true` as dl-050 D1 rules, and dl-050 D3 and D4 corrected (the first run dl-051's, dl-049's moved to the adoption) | no: `pack-ingest` is this repository's own (no pack ships one) | a correction note on dl-050 (rule 6) and a row for `vision`'s `optional`, trigger the next change of `pack-ingest` |
+| GOV-1 | Who pushes a pack-release's approval commit (dl-044 P2): the agent's push of `main` is not permitted in its environment; the approver pushes every `main` since plan-087 | no: the adoption does not change who may push `main`, and the row "The engine way of working" quotes P2 | a decision-log changing P2 (the approver pushes the approval's commit, the agent reads its CI); the P2 row (§8), which falls due here (plan-088 ruling 4), moves to it |
+| GOV-2 | A check of the CHANGELOG's first line: a whole sentence within 100 characters, in `check:packs` where `author` meets it, not only in `publish:pack` | no, but the pack release round before it already lists "the CHANGELOG's first line checked" (the sequencer › "W10's order") | none: the row "A check of the CHANGELOG's first line" given the round as its trigger, the round's plan ruling where the check goes (`check:packs`, so `author` meets it) (three occurrences; the row's trigger missed by task-083 and task-103) |
+| GOV-3 | The clean-clone evidence as a committed script: the `validate` step's local list (Node.js 22.21.0 then 22.12.0, `npm ci`, the checks, the audits of `src/matrix/wingfoil-*/`) run by one command | no: the adoption ships no such command, and dl-039 names the checks, not how they run | a decision-log, its script a tooling task; or a row, owner approver, trigger the next pack release |
+| GOV-4 | A departure from an approved decision-log or an accepted charter: the body amended, or only a note (today, a note) | yes: G7 (in-place amendment), owner and trigger W10 | none: the charter's drift as a row (§8), trigger G7 |
+| GOV-5 | `pack-ingest` v1 read against its run: the `vision` phase carrying the `optional` key, as dl-050 D1 rules the step optional; dl-050 D3's wording, which names dl-049's run as the first | no: `pack-ingest` is this repository's own (no pack ships one) | none now: a row, owner approver, trigger the next change of `pack-ingest` or dl-049's `rule` at the adoption, whichever first; a change of D3 then by its decision-log |
 
 Observed, not proposed: the `rule` approval before its plan (§1, one case); the charter amended
 while `draft` (§2); the atomic push not landing at first (§4, one case, the check after it worked).
 
 ## 8. The register
 
-`docs/owed-items.md` at `920a8091`, 57 open rows. Following plan-088 ruling 4 and dl-036 R1: one
+`docs/owed-items.md` at `920a8091`, 58 open rows. Following plan-088 ruling 4 and dl-036 R1: one
 line for each row this cycle touched, with its proposal; every other row "not touched", kept.
 
 | Item (short) | Proposal | Reason |
 |---|---|---|
 | `governance/wingfoil-dogfood`'s own retrospective | closed at plan-088's close | this retrospective (dl-052) |
-| dl-044 P2 not applied at prel-008 | closed at plan-088's close, settled by dl-052 handing it to GOV-1's decision-log; if GOV-1 is not kept, P2 kept with dl-052's reason | it falls due here (plan-088 ruling 4) |
-| A check of the CHANGELOG's first line | moved to GOV-2's decision-log and tooling task if kept; else its trigger "the next change of `check:packs` or `publish:pack`" | met at task-104 (§3); trigger missed twice |
+| dl-044 P2 not applied at prel-008 | ruled by dl-052: its trigger moved to GOV-1's decision-log, the row closed when that decision-log is approved | it falls due here (plan-088 ruling 4); GOV-1 changes P2 |
+| A check of the CHANGELOG's first line | its trigger "the pack release round (the sequencer › W10's order)", the check placed in `check:packs` by the round's plan (GOV-2) | met at task-104 (§3); trigger missed twice |
 | The private projects' check scripted | keep | plan-087 ruling 5; no release needed it |
 | The sequencer's W10 state | keep | extended by plan-087's close, the duplicate merged; the next sequencer update, at the latest W10's close |
 | The engine way of working | keep | it follows GOV-1's ruling on P2 |
 | W10: presets, `governance/wingfoil-dogfood`, the adoption, its pin, the first inbox sync | keep | its `governance/wingfoil-dogfood` part settled by plan-087, its presets by plan-070; the adoption, the pin and the sync remain |
 | `pack-delivery`'s selection over `accepted` packs | keep | cited by dl-051 D4, plan-084 and plan-085 as the hosting deviation; W10 |
-| Recheck W-01 … W-14 | keep, its Source extended with this inventory | the pack's `wingfoil-cli` rule 5 bumps the entries file's *Checked against*, custom 1.6's this directive's version: after the adoption the row's "rule 5" reads the pack's |
+| Recheck W-01 … W-14 | keep, its Source extended with this inventory | the row cites `wingfoil-cli` rule 5; custom 1.6's rule 5 bumps this directive's version and *Checked against*, the pack's bumps the entries file's *Checked against*; after the adoption the row reads the pack's rule |
 | *(new)* Charter text drift of `governance/wingfoil-dogfood`: Ships and Parameters still list `wingfoil_source_key` and "Rule 7 applies when a source key is set" | add: owner W10, trigger G7 (in-place amendment) | §3, GOV-4; as `governance/feedback`'s, `kanban`'s and `software`'s drift rows |
-| *(new)* `pack-ingest`'s `vision` marked `optional: true` | add if GOV-5 is kept: owner approver, trigger the next change of `pack-ingest` | §1, GOV-5 |
+| *(new)* `pack-ingest` v1 read against its run: `vision`'s `optional` key; dl-050 D3's wording | add: owner approver, trigger the next change of `pack-ingest` or dl-049's `rule` at the adoption | §1, GOV-5 |
+| *(new)* GOV-3, if kept as a row | add: owner approver, trigger the next pack release | §5.3, GOV-3 |
 
 Closed in the period, for the record: none.
 
-The other 48 open rows, not touched, kept: the `minimatch` override removed; bug-011's … bug-015's
-fixes (five rows); the `mcp` kind's tooling; the `Precedence:` lines of `base`, `software`,
-`methodology/scrum` and `methodology/kanban` (four rows); dl-025 D4's two halves; G7; G8; G9; G11;
-this repository's custom `sw-life-cycle`; `software`'s `tech-lead` holder; `pack-cycle` v6 or v7
-on the engine; the built-in directive ids compared by the matrix; F-019's facts from bug-010;
-dl-041 G1's later part; dl-041 G3 in `pack-semver`; the charter drift of `governance/feedback`;
-the placement scanner's known limit; the charter drift of `software`; `kanban`'s open points 2 and
-3 (two rows); the charter drift of `kanban`; `scrum`'s open point 2; dl-007's ruling; the
-`pack-semver` rule for fixes and changed defaults; `plan-{n}-{slug}` or `{workflow}-{phase}-plan`;
-the `check:runs` scenarios of the full scrum and kanban runs; Check 0.3.1's `COLLABORATION.md`;
-README step 3 "own entries"; the per-pack WIP rule; how tasks carry a `release`; the custom
-workflows sharing `base`'s and `software`'s names; `pack-author`'s phases under `work-item`; the
-packs' Memory templates; the notice to WingFoil UI; the weekly reading of `intake.yml`'s runs; the
-reply's later part; the two rows of the first `stage/*` charter; `base` composed without
-`software`; `src/markdown-lines.ts` reading a nested fence.
+The other 49 open rows, not touched, kept: `check:pins` covering `overrides`; the `minimatch`
+override removed; bug-011's … bug-015's fixes (five rows); the `mcp` kind's tooling; the
+`Precedence:` lines of `base`, `software`, `methodology/scrum` and `methodology/kanban` (four rows);
+dl-025 D4's two halves; G7; G8; G9; G11; this repository's custom `sw-life-cycle`; `software`'s
+`tech-lead` holder; `pack-cycle` v6 or v7 on the engine; the built-in directive ids compared by the
+matrix; F-019's facts from bug-010; dl-041 G1's later part; dl-041 G3 in `pack-semver`; the charter
+drift of `governance/feedback`; the placement scanner's known limit; the charter drift of
+`software`; `kanban`'s open points 2 and 3 (two rows); the charter drift of `kanban`; `scrum`'s open
+point 2; dl-007's ruling; the `pack-semver` rule for fixes and changed defaults; `plan-{n}-{slug}`
+or `{workflow}-{phase}-plan`; the `check:runs` scenarios of the full scrum and kanban runs; Check
+0.3.1's `COLLABORATION.md`; README step 3 "own entries"; the per-pack WIP rule; how tasks carry a
+`release`; the custom workflows sharing `base`'s and `software`'s names; `pack-author`'s phases
+under `work-item`; the packs' Memory templates; the notice to WingFoil UI; the weekly reading of
+`intake.yml`'s runs; the reply's later part; the two rows of the first `stage/*` charter; `base`
+composed without `software`; `src/markdown-lines.ts` reading a nested fence.
 
 ## 9. What went well, in short
 
@@ -294,4 +301,5 @@ reply's later part; the two rows of the first `stage/*` charter; `base` composed
   plan-087's outline, before any element moved.
 - dl-044 P1 at its first use: the report in the record, its digest and range as the dry run's.
 - Red first in both tasks; dl-039's order in both; `main` green after every push; no CI job over
-  25 minutes (the longest 16 min 36 s, run 45620253208, up from prel-007's 11 min 33 s).
+  25 minutes (the longest 17 min 6 s, `main`'s CI on task-105's merge, run 45477886787; plan-087's
+  16 min 36 s, run 45620253208, up from prel-007's 11 min 33 s).
