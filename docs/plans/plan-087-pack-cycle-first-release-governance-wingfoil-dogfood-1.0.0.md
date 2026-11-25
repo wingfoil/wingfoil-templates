@@ -248,3 +248,20 @@ its WingFoil pin and its inbox sync; the sequencer's stale W10 state row (its ow
   45483912320 `success`, its jobs (22.12.0, 1) 10 min 27 s, (22.21.0, 1) 10 min 41 s, (22.12.0,
   2) 9 min 16 s, (22.21.0, 2) 9 min 2 s, the step "Texts, the lines this push adds to main"
   `success`.
+- 2026-11-25: Step 2, `prepare`'s entry (`5e0408e6`): the first line of the 1.0.0 entry in
+  `packs/governance/wingfoil-dogfood/CHANGELOG.md` is now "- 1.0.0: first version: the channel back
+  to WingFoil and the rules of the pinned WingFoil CLI." (94 characters), the rest of the entry on
+  the lines after it; task-104's dated note records the unmet Acceptance 6; the owed row "A check
+  of the CHANGELOG's first line" stays open, its Source citing point 2.
+- 2026-11-25: Step 3, the rehearsal (point 3), in a scratch clone of `main` at `5e0408e6`, Node.js
+  22.21.0, nothing pushed. `npm ci` and `npm run build` exit 0; `npm run publish:pack -- --pack
+  governance/wingfoil-dogfood --report <path>` exit 0: the publication validation 32 runs, 0
+  failed, `tolerance applied: none`; the annotated tag `governance/wingfoil-dogfood@1.0.0` at
+  `5e0408e6`; the catalog commit (`catalog.yaml`, `catalog-index.json`, `CATALOG.md`); the digest
+  `sha256:7c4b949f517d7ef9624b22e618b3247de39cb3ae861218066685e3009acfce49`, the range `>=0.3.0
+  <=0.3.2`. `git tag -n99` reads the tag's annotation as the whole first line. The index entry is
+  `status: active`, `latest: 1.0.0`, with `workflows: []` and `requires_capabilities: []`, the first
+  such entry. On the result: `npm test` exit 0 (1504 tests, 0 failed), `check:schemas` exit 0 (10
+  files), `check:packs` exit 0 (101 files, 0 problems), `index -- --check` exit 0 (9 files),
+  `validate` exit 0 (32 runs, 0 failed) and `check:runs` exit 0 (92 runs, 0 failed). No failure,
+  so no tooling task; the clone is discarded. The digest supersedes the outline's first dry run.
