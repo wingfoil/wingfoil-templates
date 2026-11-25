@@ -47,7 +47,7 @@ and D2, approved as a backlog by dl-028 (dl-031 R4), and the row of dl-033 O4.
 | G8: dl-017 R2 for documents and configuration | dl-028 D1 (inventory §7) | W10 | W10 |
 | G9: the inbox's first line may name a plan or a decision-log; reserved gaps revisited (the inbox's contiguous numbering is this repository's own test, dl-031 R5) | dl-028 D1 (inventory §7) | W10 | W10 |
 | G11: a terminal state for a fixed bug, fixed by `software`'s `bug` type at the adoption | dl-028 D1 (inventory §7) | W10 | W10 |
-| A check of the CHANGELOG's first line, which becomes the tag annotation | dl-028 D1 (inventory §1) | approver | the next `publish:pack` change |
+| A check of the CHANGELOG's first line, which becomes the tag annotation | dl-028 D1 (inventory §1); plan-087 point 2 (the risk met at task-104, fixed by hand) | approver | the next `publish:pack` change |
 | This repository's custom `sw-life-cycle` shares its name with `software`'s (bug-007's pattern) | dl-028 D2 (inventory, P3) | W10 | the adoption |
 | `software`'s `tech-lead` needs a holder in this repository's DNA | dl-028 D2 (inventory, P3) | W10 | the adoption |
 | `pack-cycle` v6 or v7 checked on the engine: its reordered phases, and whether a pack covered by a shared retrospective can complete `retrospective` by reference | dl-033 O4; dl-037 E3; dl-038 D1 | W10 | the pin bump (W10) |

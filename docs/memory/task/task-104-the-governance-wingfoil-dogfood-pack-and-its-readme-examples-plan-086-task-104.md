@@ -287,3 +287,8 @@ validation of criterion 9 and the counts.
   by the approver; `main`'s CI run 45434602086 `success`, its jobs (22.12.0, 1) 10 min 42 s,
   (22.21.0, 1) 10 min 14 s, (22.12.0, 2) 5 min 42 s, (22.21.0, 2) 8 min 1 s, the step "Texts, the
   lines this push adds to main" `success`; the branch and its worktree removed. `approved → done`.
+- 2026-11-25: Acceptance 6 was not met, found after this task's close by plan-087's outline (point
+  2): the first line of the `CHANGELOG.md` entry ended mid-sentence ("… into a"), and that line
+  alone becomes the tag's annotation (`src/publish.ts`). No review had claimed it. Fixed at
+  plan-087's `prepare`, on `main`: the first line is now a whole sentence within 100 characters,
+  the rest of the entry on the lines after it.
