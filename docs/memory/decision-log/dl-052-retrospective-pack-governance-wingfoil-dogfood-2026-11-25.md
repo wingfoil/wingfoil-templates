@@ -68,18 +68,21 @@ Each change of governance takes effect only when its own decision-log is approve
   with their proposals; the row of this pack's retrospective moves to Closed at plan-088's close;
   the 49 rows not touched kept with their owners and triggers.
 - **D2 —** Rows changed at plan-088's close: "A check of the CHANGELOG's first line" given the
-  trigger "the pack release round (the sequencer › W10's order)", the check placed in
-  `check:packs` by that round's plan (GOV-2, P3); "Recheck W-01 … W-14", its Source extended with
-  the inventory (§8); "dl-044 P2 … not applied at prel-008", its trigger dl-053's approval, moved
-  to Closed when dl-053 is approved (C1).
+  trigger "the pack release round (the sequencer › W10's order)", where the check goes ruled by
+  that round's plan, `check:packs` recommended (§7, GOV-2, P3), its Source extended with the
+  inventory; "Recheck W-01 … W-14", its Source extended with the inventory (§8); "dl-044 P2 … not
+  applied at prel-008" settled by dl-053 (rule 4): moved to Closed at dl-053's approval, within
+  plan-088 (C1); if dl-053 is rejected, the row returns to plan-088's `capture`, where P2 is kept
+  with this element's reason or another change is captured.
 - **D3 —** New rows at plan-088's close: the charter text drift of `governance/wingfoil-dogfood`
   (Ships and Parameters still list `wingfoil_source_key`; owner W10, trigger G7; GOV-4, P3);
   `pack-ingest` v1 read against its run (`vision`'s `optional` key; dl-050 D3's wording; owner
-  approver, trigger the next change of `pack-ingest` or dl-049's `rule` at the adoption; GOV-5,
-  P3).
+  approver, trigger the next change of `pack-ingest` or dl-049's `rule` at the adoption,
+  whichever first; GOV-5, P3). §8's third candidate, GOV-3 as a row, is dropped: GOV-3 is a
+  decision-log (P2).
 - **D4 —** Two rows added at plan-088's close, one per decision-log, for its dl actions (owner
   approver, trigger its approval, a rejected one dropping out): their Sources dl-052 D4 with
-  dl-053's and dl-054's actions. One `version` bump per file across the approved ones:
+  dl-053 P2 and dl-054 P2. One `version` bump per file across the approved ones:
   `pack-release-cycle` 9 → 10 (dl-053, dl-054).
 
 ### Observed, no change proposed
@@ -97,9 +100,19 @@ Each change of governance takes effect only when its own decision-log is approve
   each commit on `main` waits for one; C1 makes the approval's push one of them, ruled.
 - **N6 —** Departures recorded by notes, the bodies left as they were (§5.4): G7 (in-place
   amendment) is their rule; the charter's drift is D3's row.
+- **N7 —** Points corrected at review or read by a note: plan-083's CI cited wrong (§1); plan-085
+  point 8 given a reading (§2); the charter's four tasks made two at `author`'s Reads (§2);
+  task-104 criterion 8 read, not met literally (§3); §5.1's two review gaps (Acceptance 6 missed,
+  the departure's row added only at the close's review). Evidence of K2, not a change.
 
 ## Execution Notes
 
 <!-- An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
 - 2026-11-25: written under plan-088 (`capture`), from the inventory and the approver's points
   P1 … P4.
+- 2026-11-25: independent review (dl-017, `89390b99`): approve after amendments; no blocker,
+  three should-fix (D2's CHANGELOG row leaving the place to the round's plan; the P2 row's one
+  closing point, dl-053's approval, and its return on a rejection; N7 for the points corrected at
+  review) and four nits (D4's sources; D3's "whichever first" and GOV-3's row dropped; the
+  CHANGELOG row's Source; the two notes on dl-044, which dl-053 P2 now separates), all applied in
+  the commit that records this note.
