@@ -63,3 +63,4 @@ The points below are **proposed**; they become rulings when the approver approve
   report's commit and Node versions, a dirty tree refused, the cache rule, the flags left to the
   task) and two nits (`ci.yml`'s tag-only `validate:publication`; both reports recorded), all
   applied in the commit that records this note.
+- 2026-11-25: re-review (dl-017, `327b6b4e`): approve; no finding.

@@ -36,11 +36,11 @@ The points below are **proposed**; they become rulings when the approver approve
 
 - **P1 — Option 2.** When the approver approves a pack-release (`releasing → released`), the
   approver pushes that commit (no tag); the agent reads `main`'s CI on it, and hands over the
-  publication's commands only after its `success`. dl-044 P2's first two sentences are replaced
-  by this (the agent pushes nothing, so the rule "an agent never runs a command whose commit or
-  tag carries the approver's identity" holds without the argument); the rest of P2 stands (the
-  activation's push the approver's; the split of plan-077 ruling 7 for every pack-release, ahead
-  of the adoption).
+  publication's commands only after its `success`. dl-044 P2's first two sentences are replaced by
+  this (the agent pushes nothing at the approval, so the rule "an agent never runs a command whose
+  commit or tag carries the approver's identity" holds without the argument); the rest of P2 stands
+  (the activation's push the approver's; the split of plan-077 ruling 7 for every pack-release,
+  ahead of the adoption).
 - **P2 — Applied after approval** by a dl actions plan: `pack-release-cycle` 9 → 10
   (`approve-publication`: the approver pushes the approval commit, the agent reads `main`'s CI on
   it), in one bump with dl-054's change of `validate`; in the row "The engine way of working",
@@ -48,7 +48,9 @@ The points below are **proposed**; they become rulings when the approver approve
   replaced by "the approver pushes a pack-release's approval commit, which carries no tag, and
   the agent reads `main`'s CI on it (dl-044 P1, dl-053 P1)", its Source extended with dl-053; a
   note on dl-044 recording the application (plan-088's close records the ruling on dl-044, and
-  closes the row "dl-044 P2 … not applied at prel-008" at this element's approval, dl-052 D2).
+  closes the row "dl-044 P2 … not applied at prel-008" at this element's approval; if this
+  element is still `pending` then, the row stays open, its trigger this element's ruling, dl-052
+  D2).
 
 ## Execution Notes
 
@@ -60,3 +62,6 @@ The points below are **proposed**; they become rulings when the approver approve
   and three nits (the inventory cited for the 1 h 33 min; plan-087 point 6 for the other pushes;
   plan-087 point 7's `publish`), all applied in the commit that records this note; the row's
   closing point aligned with dl-052 D2.
+- 2026-11-25: re-review (dl-017, `327b6b4e`): approve; one should-fix shared with dl-052 (the
+  row's case of this element still `pending` at plan-088's close) and one nit ("nothing at the
+  approval"), applied in the commit that records this note.

@@ -73,7 +73,8 @@ Each change of governance takes effect only when its own decision-log is approve
   inventory; "Recheck W-01 … W-14", its Source extended with the inventory (§8); "dl-044 P2 … not
   applied at prel-008" settled by dl-053 (rule 4): moved to Closed at dl-053's approval, within
   plan-088 (C1); if dl-053 is rejected, the row returns to plan-088's `capture`, where P2 is kept
-  with this element's reason or another change is captured.
+  with the rejection's reason or another change is captured; if dl-053 is still `pending` at
+  plan-088's close, the row stays open, its trigger dl-053's ruling.
 - **D3 —** New rows at plan-088's close: the charter text drift of `governance/wingfoil-dogfood`
   (Ships and Parameters still list `wingfoil_source_key`; owner W10, trigger G7; GOV-4, P3);
   `pack-ingest` v1 read against its run (`vision`'s `optional` key; dl-050 D3's wording; owner
@@ -116,3 +117,7 @@ Each change of governance takes effect only when its own decision-log is approve
   review) and four nits (D4's sources; D3's "whichever first" and GOV-3's row dropped; the
   CHANGELOG row's Source; the two notes on dl-044, which dl-053 P2 now separates), all applied in
   the commit that records this note.
+- 2026-11-25: re-review (dl-017, `327b6b4e`): approve after amendments; one should-fix (the P2
+  row's case of dl-053 still `pending` at plan-088's close: the row stays open, its trigger
+  dl-053's ruling) and one nit ("the rejection's reason"), applied in the commit that records
+  this note.
