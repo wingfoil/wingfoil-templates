@@ -2,7 +2,7 @@
 id: pack-governance-wingfoil-dogfood
 type: pack
 title: "WingFoil dogfood"
-status: accepted
+status: active
 axis: "governance"
 name: "wingfoil-dogfood"
 slot: ""
