@@ -258,6 +258,67 @@
       "profiles": []
     },
     {
+      "id": "governance/wingfoil-dogfood",
+      "catalog": "official",
+      "status": "active",
+      "axis": "governance",
+      "slot": null,
+      "latest": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "tag": "governance/wingfoil-dogfood@1.0.0",
+          "wingfoil": ">=0.3.0 <=0.3.2",
+          "formats": {
+            "directive": 1,
+            "roles": 1
+          },
+          "requires_capabilities": [],
+          "requires": [
+            "base@^2",
+            "governance/feedback@^1"
+          ],
+          "conflicts": [],
+          "pack_format": 2,
+          "readme_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/governance/wingfoil-dogfood@1.0.0/packs/governance/wingfoil-dogfood/README.md",
+          "manifest_url": "https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/governance/wingfoil-dogfood@1.0.0/packs/governance/wingfoil-dogfood/pack.yaml"
+        }
+      ],
+      "title": "WingFoil dogfood",
+      "description": "The channel back to WingFoil for any project that uses it: a feedback item routed to upstream:wingfoil becomes a note in WingFoil's format in the project's inbox, and the rules of running the project's pinned WingFoil CLI and keeping its known behaviours.",
+      "workflows": [],
+      "conditional_workflows": [],
+      "memory_types": [],
+      "directives": [
+        "wingfoil-channel",
+        "wingfoil-cli"
+      ],
+      "conditional_directives": [],
+      "conditional_parts": [],
+      "tensions": [],
+      "parameters": [
+        {
+          "name": "wingfoil_command",
+          "type": "string",
+          "description": "The command that runs the project's pinned WingFoil CLI, its trailing -- included"
+        },
+        {
+          "name": "wingfoil_inbox_path",
+          "type": "path",
+          "default": "docs/wingfoil-feedback",
+          "description": "The folder of the project's notes to WingFoil and of the inbox's README.md"
+        },
+        {
+          "name": "wingfoil_known_behaviours_path",
+          "type": "path",
+          "default": "docs/wingfoil-known-behaviours.md",
+          "description": "The file of the project's known behaviours of its pinned WingFoil, outside the inbox"
+        }
+      ],
+      "excerpt": "A project that uses WingFoil, software or not, and wants what it finds about WingFoil to reach WingFoil composes `governance/wingfoil-dogfood` with `base` and `governance/feedback`: a feedback item whose target is `upstream:wingfoil` and whose outcome is `upstream-note` becomes a note in WingFoil's format in the project's inbox, which WingFoil reads and answers. Its `wingfoil-cli` directive holds the rules of running the project's pinned WingFoil CLI, of keeping the known behaviours of that…",
+      "profiles": []
+    },
+    {
       "id": "methodology/kanban",
       "catalog": "official",
       "status": "active",

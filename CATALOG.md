@@ -38,6 +38,7 @@ None published yet.
 | Pack | Summary | Status | Latest | WingFoil | README |
 | --- | --- | --- | --- | --- | --- |
 | <a id="pack-governance-feedback"></a>`governance/feedback` | Feedback for any project governed by WingFoil: capture each item with its source and context, have the approver triage it, and route it into the governance the project already has, so that it becomes input for the evolution of the project and of its governance. (`feedback-bug-item`, `feedback-bug-route` only with `software`) | active | 1.0.0 | >=0.3.0 <=0.3.2 | [README](https://github.com/wingfoil/wingfoil-templates/blob/governance/feedback@1.0.0/packs/governance/feedback/README.md) |
+| <a id="pack-governance-wingfoil-dogfood"></a>`governance/wingfoil-dogfood` | The channel back to WingFoil for any project that uses it: a feedback item routed to upstream:wingfoil becomes a note in WingFoil's format in the project's inbox, and the rules of running the project's pinned WingFoil CLI and keeping its known behaviours. | active | 1.0.0 | >=0.3.0 <=0.3.2 | [README](https://github.com/wingfoil/wingfoil-templates/blob/governance/wingfoil-dogfood@1.0.0/packs/governance/wingfoil-dogfood/README.md) |
 
 ## Team mode
 

@@ -153,6 +153,24 @@ packs:
         conditional:
           - with: software@^1
         pack_format: 2
+  - id: governance/wingfoil-dogfood
+    path: packs/governance/wingfoil-dogfood
+    catalog: official
+    status: active
+    versions:
+      - version: 1.0.0
+        commit: 687f6899ee115effc9e4338c4cb23a92dd2e48aa
+        digest: sha256:7c4b949f517d7ef9624b22e618b3247de39cb3ae861218066685e3009acfce49
+        formats:
+          roles: 1
+          directive: 1
+        requires_capabilities: []
+        requires:
+          - base@^2
+          - governance/feedback@^1
+        conflicts: []
+        wingfoil: ">=0.3.0 <=0.3.2"
+        pack_format: 2
 transitions: []
 presets:
   - { id: classic-kanban, path: presets/classic-kanban.yaml }
