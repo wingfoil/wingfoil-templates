@@ -315,3 +315,16 @@ composed without `software`; `src/markdown-lines.ts` reading a nested fence.
   plan; or, if GOV-1 is declined, P2 kept with dl-052's reason, which must answer the
   environment's refusal of the agent's push.
 - **No note, no task-106** (§6).
+
+Given by the approver on 2026-11-25, at the checkpoint, in chat: "tutti come raccomandato":
+
+- **P1 — The *(unrecorded)* candidates confirmed**: the machine restart that lost task-105's
+  temporary worktree and the first rehearsal's clone, both redone from what was pushed or
+  committed (§3, §4); the lines over 100 characters after scripted edits, each stopped by
+  `check:texts` before its commit; the CI watch written per run (§5.3). This plan is their source.
+- **P2 — GOV-1 kept,** a decision-log changing dl-044 P2, captured and ruled in plan-088; it takes
+  the P2 row (§8, ruling 4). **GOV-3 kept,** a decision-log, its script a tooling task.
+- **P3 — GOV-2, GOV-4 and GOV-5 as rows**, not decision-logs, as §7 proposes: the CHANGELOG row's
+  trigger the pack release round; the charter's text drift under G7; `pack-ingest` v1's two
+  points.
+- **P4 — No note, no task-106** (§6). No point added.
