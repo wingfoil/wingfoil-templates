@@ -325,3 +325,6 @@ its WingFoil pin and its inbox sync; the sequencer's stale W10 state row (its ow
   sequencer rows merged; the W10 row of plan-052 ruling 7 named) and two nits (step 5's CI read
   recorded; the refusal worded "not permitted in its environment"), all applied in the commit that
   records this note.
+- 2026-11-25: `main`'s CI on the closing head `bec125db`, run 45684340546, `success` (longest job
+  16 min 31 s, the step "Texts, the lines this push adds to main" `success`); Pages, run
+  45684340499, `success`. `active → done`.
