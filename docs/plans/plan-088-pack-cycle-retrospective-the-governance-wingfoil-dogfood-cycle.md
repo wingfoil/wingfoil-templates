@@ -174,7 +174,22 @@ Each point has a recommendation.
 
 ## The approver's rulings
 
-<!-- Recorded before `submit`. -->
+Given on 2026-11-25, in chat: "tutti come raccomandato". Points 1 … 8 stand as recommended:
+- the scope `pack-governance-wingfoil-dogfood`, the period 2026-11-24 … 2026-11-25, the inventory
+  and dl-052 named as written (point 1);
+- the sources as written, with dl-048, dl-050 and `pack-ingest` v1; plan-080 not a source (point
+  2);
+- the candidates as the inventory's starting list, an *(unrecorded)* one kept only if the
+  approver confirms it at `additional-points` (point 3);
+- one line per open row the cycle touched, the others "not touched" and kept; the dl-044 P2 row
+  ruled by dl-052; the row of this pack's retrospective closed at this plan's close (point 4);
+- a governance decision-log only for a candidate the adoption (W10) would not fix, and for any
+  change of an approved ruling (point 5);
+- notes only after reproduction on 0.3.0 and 0.3.2, by task-106 from `main`, merged into `main` on
+  its own, and no notice (point 6);
+- the notes on the charter and on dl-044, one on dl-050 only if it changes (point 7);
+- this plan on `main`, the work on `retro/<YYYY-MM-DD>-pack-governance-wingfoil-dogfood`, every
+  push of `main` the approver's (point 8).
 
 ## Steps
 
