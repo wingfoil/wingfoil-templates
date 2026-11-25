@@ -296,3 +296,16 @@ adoption, its pin and its inbox sync; the dl actions of any decision-log this pl
   45687654016 `success`, its jobs (22.12.0, 1) 10 min 41 s, (22.21.0, 1) 10 min 29 s, (22.12.0,
   2) 5 min 42 s, (22.21.0, 2) 5 min 36 s, the step "Texts, the lines this push adds to main"
   `success`; Pages, run 45687653932, `success`.
+- 2026-11-25: step 2, `explore`, on `retro/2026-11-25-pack-governance-wingfoil-dogfood` from
+  `920a8091`: two read-only strands merged into
+  `docs/retrospectives/2026-11-25-pack-governance-wingfoil-dogfood-friction-inventory.md`
+  (`6d0510e6`). Independent review (dl-017): approve after amendments; no blocker, seven
+  should-fix (58 open rows, not 57, the `check:pins` row added; the CI watch marked
+  *(unrecorded)* and G12 replaced; the CI durations' runs named; GOV-4's W10 answer; GOV-5 made
+  a row, dl-050's note of plan-081 acknowledged, §5.4 reworded; the P2 row's trigger moved to
+  GOV-1's decision-log; GOV-2 given the pack release round of the sequencer's W10 order) and
+  eight nits, all applied (`fa66b26b`). Re-review, the proposals having changed: approve after
+  amendments; one should-fix (the release's checks named by `pack-release-cycle` › `validate`,
+  not dl-039) and three nits (GOV-2 and GOV-5 as rows the approver's choice; P2's alternative
+  shown to the approver), applied with the points for the approver (`eb1d9416`). The branch
+  pushed.
