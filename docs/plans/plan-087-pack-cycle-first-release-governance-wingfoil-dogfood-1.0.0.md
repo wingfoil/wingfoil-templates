@@ -167,7 +167,21 @@ Each point has a recommendation, or is proposed as written.
 
 ## The approver's rulings
 
-<!-- Recorded before `submit`. -->
+Given on 2026-11-25, in chat: "tutti come raccomandato". Points 1 … 11 stand as recommended or as
+written:
+- `1.0.0`, class `major`, on the releases `compat.yaml` lists; a newer WingFoil published before
+  `publish` goes to the approver (point 1);
+- the `CHANGELOG.md` entry rewritten at `prepare`, its first line a whole sentence within 100
+  characters, with task-104's dated note; the owed row "A check of the CHANGELOG's first line"
+  stays open, its Source citing this point (point 2);
+- the rehearsal of `publish:pack` in a scratch clone, before prel-008 moves (point 3);
+- the Validation evidence as listed (point 4); no private projects' check (point 5);
+- who runs what, `publish` with CB-6's live part, and `activate`, as written (points 6 … 8);
+- the pack's own `pack-cycle` retrospective in the plan right after this one, covering plan-082 …
+  this plan; its row added to `docs/owed-items.md` in the commit that records these rulings
+  (point 9);
+- no notice and no feedback note; nothing else ships, the reserved numbers as listed (points 10,
+  11).
 
 ## Steps
 
