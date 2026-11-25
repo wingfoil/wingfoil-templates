@@ -221,11 +221,12 @@ Also, at `validate` (plan-087 step 5, point 4):
   above, `defaults` (23 files) and `with-software` (46 files), each composed twice, byte-identical
   (CB-2, the examples as fixtures). The pack has no conditional part. The line `matrix
   tests/fixtures/examples/wingfoil-dogfood/defaults/example.yaml[+software]: skipped, no
-  methodology` is the coverage leg that adds `software` to `defaults`: `software` requires a
-  methodology and `defaults` holds none, so the format forbids that request and the leg is
-  skipped, not failed, as `governance/feedback`'s `defaults` leg (spec-001 §3 and §15; task-087
-  ruling 3; `src/resolve.ts` › `forbiddenBy`). `with-software` runs in the matrix above on 0.3.0
-  and 0.3.2.
+  methodology` is the coverage leg that adds `software` to `defaults`, derived from
+  `governance/feedback`'s conditional entry `with: software@^1`, which `defaults` holds: `software`
+  requires a methodology and `defaults` holds none, so the format forbids that request and the leg
+  is skipped, not failed, as `governance/feedback`'s `defaults` leg (spec-001 §3 and §15; task-087
+  ruling 3; `src/resolve.ts` › `forbiddenBy`). `with-software` runs in the matrix above on 0.3.0 and
+  0.3.2.
 - `npm run check:runs` on 0.3.0 and 0.3.2 (dl-032 E3, `pack-compatibility`): 92 runs, 0 failed,
   exit 0. `governance/wingfoil-dogfood`'s 8, each `pass`:
   `tests/fixtures/runs/wingfoil-dogfood.yaml` (4 runs: `route-upstream-wingfoil-defaults` and
@@ -286,4 +287,15 @@ Also, at `validate` (plan-087 step 5, point 4):
   build` (exit 1, no `dist/`) and audited the local matrix cache (`.cache/wingfoil-matrix/0.3.1`,
   older than its committed lockfile, hono 4.13.14: 2 moderate advisories) instead of
   `src/matrix/wingfoil-*/`, the folders the CI audits; both reran in the same clones, exit 0, as
-  recorded above. The local cache is not a published input: the matrix reads 0.3.0 and 0.3.2.
+  recorded above. The local cache is not a published input: the matrix reads 0.3.0 and 0.3.2, and
+a cached release whose stamp differs from its committed lockfile is reinstalled
+(`src/matrix.ts` › `installRelease`), so the copied cache cannot feed the matrix a stale install.
+- 2026-11-25: independent review of the Validation (dl-017, `e7d98586`): approve after
+  amendments; no blocker, one should-fix (the `[+software]` leg's origin named:
+  `governance/feedback`'s entry `with: software@^1`, which `defaults` holds) and two nits (the
+  stale cache's reinstall stated, applied; Changes' "to be confirmed by the dry run at `validate`"
+  kept, Changes being `prepare`'s record and the Validation its confirmation), applied in the
+  commit that records this note. The review verified the counts (16 compositions, 32 runs, 92 runs
+  as 84 + 8, the overlays 40/40/40/48 as prel-007's plus 4 each), the digest against the
+  rehearsal, the CI run on `b41e1589`. No re-review: the amendments explain, they change no
+  evidence. Submitted (`validating → releasing`).
