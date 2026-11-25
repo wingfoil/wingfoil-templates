@@ -265,3 +265,12 @@ its WingFoil pin and its inbox sync; the sequencer's stale W10 state row (its ow
   files), `check:packs` exit 0 (101 files, 0 problems), `index -- --check` exit 0 (9 files),
   `validate` exit 0 (32 runs, 0 failed) and `check:runs` exit 0 (92 runs, 0 failed). No failure,
   so no tooling task; the clone is discarded. The digest supersedes the outline's first dry run.
+- 2026-11-25: Step 4, `prepare`'s element: prel-008 added (`5b17c724`), prepared (`cf20743d`),
+  its review (dl-017) approve after amendments, one should-fix and four nits applied
+  (`d8391b38`), submitted (`draft → validating`, `b41e1589`); `main` pushed by the approver, its
+  CI on `b41e1589` run 45587710605 `success`, Pages run 45587710488 `success`.
+- 2026-11-25: Step 5, `validate`: point 4's evidence on `b41e1589` recorded in prel-008
+  (`e7d98586`), every command exit 0 on Node.js 22.21.0 and 22.12.0, the dry run's digest and
+  range as the rehearsal's; its review (dl-017) approve after amendments, one should-fix and two
+  nits, one kept with its reason (`fd934d77`); submitted (`validating → releasing`, `ea466bcf`).
+  `main`'s CI on the push of this note is read before the approval.
