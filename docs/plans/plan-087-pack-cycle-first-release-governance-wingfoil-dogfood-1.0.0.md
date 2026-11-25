@@ -274,3 +274,45 @@ its WingFoil pin and its inbox sync; the sequencer's stale W10 state row (its ow
   range as the rehearsal's; its review (dl-017) approve after amendments, one should-fix and two
   nits, one kept with its reason (`fd934d77`); submitted (`validating → releasing`, `ea466bcf`).
   `main`'s CI on the push of this note is read before the approval.
+- 2026-11-25: step 6, prel-008 approved by the approver (`releasing → released`, `687f6899`),
+  `main`'s CI run 45617111373 `success`. The approval's commit was pushed by the approver, not by
+  the agent as ruling 6 said: the agent's push of `main` was refused by its tool permissions
+  (recorded on prel-008). Step 7, `publish`, run by the approver (ruling 6): `publish:pack
+  --report` gave the tag `governance/wingfoil-dogfood@1.0.0` at `687f6899` and the catalog commit
+  `f32aa8c2`; the report's digest and range as the Validation's dry run; the first `push --atomic`
+  did not reach the remote, the second did. The CI on the tag (45620253148, publication mode), on
+  `main` (45620253208) and Pages (45620253490) `success`; CB-6's live check passed; prel-008's
+  Publication written (`bae27c7a`).
+- 2026-11-25: step 8, `activate`: the charter's note committed first (`f98a5cc1`), then
+  `pack-governance-wingfoil-dogfood` `accepted → active` (`561befd6`), the `memory submit` and its
+  push run by the approver (ruling 6); the tag on origin and `catalog.yaml` on `origin/main`
+  listing 1.0.0. `main`'s CI on `561befd6`, run 45680635014, `success` (longest job 14 min 13 s);
+  Pages, run 45680634913, `success`.
+- Step 9, the close:
+  - **The account per tech-spec (dl-020):** this plan amended neither spec-001, spec-002 nor
+    spec-003 and recorded no erratum of theirs; nothing to fold back.
+  - **The owed rows:** the row for this pack's own retrospective, added with the rulings, stays
+    open until its plan runs; "A check of the CHANGELOG's first line" stays open, its Source
+    citing point 2, the risk met at task-104 and fixed by hand (ruling 2); "The private projects'
+    check scripted" stays open, untriggered (ruling 5); the sequencer's W10 state row, which now
+    also reads `governance/wingfoil-dogfood` "not started", its item and Source extended with
+    this close; "The engine way of working" stays open, its trigger this repository's adoption.
+  - **A departure:** ruling 6 had the agent push the approval's commit (dl-044 P2); its push of
+    `main` was refused by its tool permissions, and the approver pushed it. The next
+    `pack-release-cycle` change, or the retrospective, decides whether P2 stands (the
+    retrospective reads this note).
+  - **Numbers:** prel-008 used; task-106, dl-052, bug-017 and F-053, reserved for a finding,
+    unused and released.
+  - **Privacy:** every commit of this plan checked before it was made (no local or scratch path,
+    no private repository or project, no intermediary session); the report's path, outside the
+    repository, written as `<path outside the repository>`.
+  - **The retrospective** (ruling 9): `governance/wingfoil-dogfood`'s own `pack-cycle`
+    retrospective, covering plan-082 … plan-087, in the plan right after this one, not held as the
+    periodic one. Until it runs, `pack-cycle` › `retrospective` is open for
+    `pack-governance-wingfoil-dogfood`.
+  - **No notice** and no note to WingFoil (ruling 10).
+  - Done: `governance/wingfoil-dogfood@1.0.0` tagged and pushed, listed in `catalog.yaml` on
+    `main`, the CI `success` on the tag, on `main` and on Pages, CB-6's live check recorded,
+    prel-008 `released` with its Validation and Publication, the charter `active`, and the
+    retrospective's plan named.
+  - `main`'s CI on the closing head read before `active → done`.
