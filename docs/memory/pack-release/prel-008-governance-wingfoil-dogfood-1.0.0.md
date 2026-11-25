@@ -2,7 +2,7 @@
 id: prel-008-governance-wingfoil-dogfood-1.0.0
 type: pack-release
 title: "governance/wingfoil-dogfood 1.0.0"
-status: releasing
+status: released
 pack: "pack-governance-wingfoil-dogfood"            # the pack element id (pack-<axis>-<name>)
 version: "1.0.0"         # the semver being published
 bump: "major"            # major | minor | patch (pack-semver directive)
