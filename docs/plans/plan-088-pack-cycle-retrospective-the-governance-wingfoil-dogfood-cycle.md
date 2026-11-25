@@ -277,3 +277,7 @@ adoption, its pin and its inbox sync; the dl actions of any decision-log this pl
   dl-050 D3 recording a run in its plan, and "the first run started under `pack-ingest`" for
   "its first run"; this note) and two nits (plan-084's final submit; the not-sources line naming
   dl-044 … dl-050's actions), all applied in the commit that records this note.
+- 2026-11-25: `main`'s CI before `submit`: the push of `e08a53ab` (plan-087's submit), run
+  45687654016 `success`, its jobs (22.12.0, 1) 10 min 41 s, (22.21.0, 1) 10 min 29 s, (22.12.0,
+  2) 5 min 42 s, (22.21.0, 2) 5 min 36 s, the step "Texts, the lines this push adds to main"
+  `success`; Pages, run 45687653932, `success`.
