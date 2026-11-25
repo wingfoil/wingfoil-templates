@@ -22,9 +22,9 @@ ruling 9; dl-033 O1, O2).
 
 The cycle: plan-082 `pack-ingest` capture, plan-083 its rule (dl-051), plan-084 its hand-off,
 plan-085 `charter`, plan-086 `author` (task-104, task-105), plan-087 `first-release` and
-`activate` (prel-008); written on 2026-11-24, closed on 2026-11-25. It is the first cycle that
-starts from `pack-ingest` (dl-050), the first pack with no workflow and an empty capability list,
-the first that serves a target of `governance/feedback`'s channel (spec-003 §5), and the first
+`activate` (prel-008); written on 2026-11-24, closed on 2026-11-25. It is the first run started
+under `pack-ingest` (dl-050), the first pack with no workflow and an empty capability list, the
+first that serves a target of `governance/feedback`'s channel (spec-003 §5), and the first
 publication with `publish:pack --report` read into the Publication (dl-044 P1).
 
 The workflow is `retrospective` v5 (`explore`, `additional-points`, `capture`, `approve`), included
@@ -75,34 +75,34 @@ Each point has a recommendation.
    - dl-051, task-104 and task-105 with their reviews, prel-008, the charter
      `pack-governance-wingfoil-dogfood` with its Execution Notes and Open points, and dl-044's
      note of 2026-11-25;
-   - the rule this cycle's first `pack-ingest` run is read against: dl-048, dl-050 (D1, D3) and
-     `.wingfoil/workflows/custom/pack-ingest.yaml` v1;
+   - the rule this cycle, the first run started under `pack-ingest`, is read against: dl-048,
+     dl-050 (D1, D3) and `.wingfoil/workflows/custom/pack-ingest.yaml` v1;
    - `docs/owed-items.md`: its rows added, changed or closed in the period, and the row "Recheck
      W-01 … W-14" against the `wingfoil-cli` rules the pack ships;
    - the git log and the public CI and intake runs of the period (the scheduled intake runs of
      2026-11-24 and 2026-11-25, `success`).
 
-   Not sources: plan-079 … plan-081 (the `pack-ingest` workflow's capture and dl-044 … dl-050's
-   actions, before this pack's capture), dl-012 (cited where a source cites it), the pack release
-   round and this repository's adoption (later plans). *Alternative:* plan-080 (the capture of the
-   `pack-ingest` workflow) as a source too.
+   Not sources: plan-079 … plan-081 (the `pack-ingest` workflow's capture and the actions of dl-044
+   … dl-050, plan-081, before this pack's capture), dl-012 (cited where a source cites it), the pack
+   release round and this repository's adoption (later plans). *Alternative:* plan-080 (the capture
+   of the `pack-ingest` workflow) as a source too.
 
 3. **The candidates** the inventory starts from (from this plan's reads; `explore` confirms,
    corrects or drops each, citing its source, and adds what it finds in plan-082 … plan-086 and
    elsewhere), what went well beside what went wrong (dl-006 R5). A candidate marked
    *(unrecorded)* was observed during the work and is written in no element: `explore` keeps it
    only if the approver confirms it at `additional-points`, citing this plan as its source:
-   - went well (`+`): `pack-ingest`'s first run, capture to hand-off on 2026-11-24 between
-     `f6d44f3b` and `0df54778`, dl-051's review, re-review and approval inside it (plan-082 …
-     plan-084); independent reviews found should-fix points before the gates they checked
-     (`explore` counts each: among them dl-051, plan-084, plan-085 with one blocker, `pack.yaml`
-     at format 1, the charter, plan-086, task-104, task-105, plan-087's outline, prel-008 twice and
-     plan-087's close; plan-083 had no review of its own); the publication rehearsal in a scratch
-     clone before prel-008 moved (plan-087 step 3), its digest equal to the dry run's and to the
-     report's; `publish:pack --report` read into the Publication with no difference (dl-044 P1's
-     first use); the first pack with no workflow published with no change under `src/`; charter
-     to published and active in about 33 hours (`4eeab360`, 2026-11-24, to `561befd6`,
-     2026-11-25);
+   - went well (`+`): the first run started under `pack-ingest`, capture to hand-off on 2026-11-24
+     between `f6d44f3b` (09:40) and `0df54778` (plan-084's final submit, 10:20), dl-051's review,
+     re-review and approval inside it (plan-082 … plan-084); independent reviews found should-fix
+     points before the gates they checked (`explore` counts each: among them dl-051, plan-084,
+     plan-085 with one blocker, `pack.yaml` at format 1, the charter, plan-086, task-104, task-105,
+     plan-087's outline, prel-008 twice and plan-087's close; plan-083 had no review of its own);
+     the publication rehearsal in a scratch clone before prel-008 moved (plan-087 step 3), its
+     digest equal to the dry run's and to the report's; `publish:pack --report` read into the
+     Publication with no difference (dl-044 P1's first use); the first pack with no workflow
+     published with no change under `src/`; charter to published and active in about 33 hours
+     (`4eeab360`, 2026-11-24, to `561befd6`, 2026-11-25);
    - friction (`−`): task-104's Acceptance 6 (the CHANGELOG's first line a whole sentence) unmet,
      found after its close by plan-087's outline, no review having claimed it (task-104's note of
      2026-11-25); the agent's push of `main` with the approval's commit not permitted in its
@@ -116,7 +116,7 @@ Each point has a recommendation.
    - WingFoil-side (`WF`): none recorded in the period; `explore` checks the notes and the
      `wingfoil-cli` rules this cycle ran against;
    - governance (`GOV`): who pushes a pack-release's approval commit (dl-044 P2's row, which falls
-     due here, point 4); `pack-ingest`'s first run against dl-050; a check of
+     due here, point 4); the first run started under `pack-ingest`, against dl-050; a check of
      the CHANGELOG's first line, now met once (its row, plan-087 point 2): in `publish:pack`, as
      the row says, or in `check:packs`, where `author` would meet it; the clean-clone evidence run
      by a script each time, with no committed form; others only as `explore` finds them.
@@ -133,8 +133,9 @@ Each point has a recommendation.
    other open row listed as "not touched", kept. The row of this pack's retrospective moves to
    Closed at this plan's close, settled by plan-088 (dl-052). dl-052 rules the table (its Debts).
    **The dl-044 P2 row falls due here** (its trigger: at the latest this retrospective): dl-052
-   rules it, not keeps it: P2 kept, changed by a governance decision-log of its own (point 5), or
-   that push handed to the approver; "The engine way of working", which quotes P2, follows the
+   rules it, not keeps it: P2 kept, with a reason in dl-052 that answers the environment's refusal
+   of the agent's push, or changed (for instance, that push handed to the approver) by a governance
+   decision-log of its own (point 5); "The engine way of working", which quotes P2, follows the
    outcome.
 
 5. **Changes of governance.** *Recommended:* the test of the inventory of 2026-10-28, P1 (dl-028
@@ -142,9 +143,9 @@ Each point has a recommendation.
    (W10) would not fix it; otherwise it is a row of the register with the trigger W10. Each kept
    candidate is one decision-log under `decision-log-ingest`, numbered after dl-052, captured and
    ruled in this plan, applied later by a dl actions plan (none applied here). The approver decides
-   at `additional-points` which candidates are kept. The dl-044 P2 row takes this test too: since
-   the adoption (W10) does not change who may push `main`, a change of P2 is a decision-log, and
-   keeping P2 as written needs a reason in dl-052.
+   at `additional-points` which candidates are kept. A change of an approved ruling, such as
+   dl-044 P2, is a decision-log in any case; the test confirms it for P2, since the adoption (W10)
+   does not change who may push `main`.
 
 6. **WingFoil-side points.** *Recommended:* only as feedback notes in the inbox, each reproduced
    with WingFoil alone on 0.3.0 and 0.3.2 before it is written; written by task-106
@@ -154,15 +155,14 @@ Each point has a recommendation.
    checkpoint. `explore` reads the state of WingFoil's v0.4 release planning again (started
    2026-11-03, dl-040; no source records it closed); while it is open, task-106's branch starts
    from `main` and merges into `main` on its own, on the approver's OK, `--no-ff` (dl-040 D2's
-   practice, as plan-078's task-101). No notice: the inbox
-   is synced at this repository's adoption (W10). *Alternative:* a note left to the next periodic
-   retrospective.
+   practice, as plan-078's task-101). No notice: the inbox is synced at this repository's adoption
+   (W10). *Alternative:* a note left to the next periodic retrospective.
 
 7. **The close's notes.** *Recommended:* one Execution Note on `pack-governance-wingfoil-dogfood`,
    added when dl-052 is approved and citing it, completing `retrospective`; one on dl-044 recording
-   how dl-052 ruled its P2 row; one on dl-050 recording its first run (plan-082 … plan-084) and
-   what dl-052 keeps or changes of it; no note on dl-006 or dl-033 (no shared retrospective, R1's
-   order followed as written).
+   how dl-052 ruled its P2 row; one on dl-050 only if dl-052 or a governance decision-log changes
+   it (dl-050 D3 records a run in its plan, and dl-033 had none for `pack-cycle`'s first run); no
+   note on dl-006 or dl-033 (no shared retrospective, R1's order followed as written).
 
 8. **Where the work runs.** *Recommended:* this plan's document on `main`; the inventory, the
    approver's points, dl-052 and any governance decision-log on the branch
@@ -269,3 +269,11 @@ adoption, its pin and its inbox sync; the dl actions of any decision-log this pl
   v5 for v4. No re-review: the amendments complete the outline and correct facts; no
   recommendation changes but point 7's dl-044 note, now unconditional, which point 4's trigger
   already required.
+- 2026-11-25: the note above's claim "No re-review: … no recommendation changes but point 7's
+  dl-044 note" found false: the amendments also changed points 4, 5, 6 and 7 (the dl-050 note).
+  Re-review (dl-017, `a37d2064`): approve after amendments; no blocker, three should-fix (point 4's
+  options aligned with point 5, a change of P2 being a decision-log, keeping it needing a reason
+  that answers the refusal; the dl-050 note made conditional, with no precedent on dl-033 and
+  dl-050 D3 recording a run in its plan, and "the first run started under `pack-ingest`" for
+  "its first run"; this note) and two nits (plan-084's final submit; the not-sources line naming
+  dl-044 … dl-050's actions), all applied in the commit that records this note.
