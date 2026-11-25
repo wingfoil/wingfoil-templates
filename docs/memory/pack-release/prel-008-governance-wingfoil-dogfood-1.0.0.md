@@ -338,7 +338,7 @@ a cached release whose stamp differs from its committed lockfile is reinstalled
   evidence. Submitted (`validating → releasing`).
 - 2026-11-25, `approve-publication`: approved by the approver (`releasing → released`, commit
   `687f6899`), `main`'s CI on it read (run 45617111373, `success`). Pushed by the approver, not by
-  claude as plan-087 ruling 6 said: claude's push of `main` was refused by its tool permissions.
+  claude as plan-087 ruling 6 said: claude's push of `main` was not permitted in its environment.
 - 2026-11-25, `publish` (plan-087 step 7): `publish:pack --report` and the atomic push run by the
   approver; the report, the tag, the catalog commit, the three runs and CB-6's live check read by
   claude, recorded above. The first `push --atomic` did not reach the remote (the remote's `main`

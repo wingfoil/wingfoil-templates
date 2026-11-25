@@ -274,9 +274,10 @@ its WingFoil pin and its inbox sync; the sequencer's stale W10 state row (its ow
   range as the rehearsal's; its review (dl-017) approve after amendments, one should-fix and two
   nits, one kept with its reason (`fd934d77`); submitted (`validating → releasing`, `ea466bcf`).
   `main`'s CI on the push of this note is read before the approval.
-- 2026-11-25: step 6, prel-008 approved by the approver (`releasing → released`, `687f6899`),
+- 2026-11-25: step 6, before the approval: `main`'s CI on `46262e7f` (step 5's note), run
+  45599335607, `success`. prel-008 approved by the approver (`releasing → released`, `687f6899`),
   `main`'s CI run 45617111373 `success`. The approval's commit was pushed by the approver, not by
-  the agent as ruling 6 said: the agent's push of `main` was refused by its tool permissions
+  the agent as ruling 6 said: the agent's push of `main` was not permitted in its environment
   (recorded on prel-008). Step 7, `publish`, run by the approver (ruling 6): `publish:pack
   --report` gave the tag `governance/wingfoil-dogfood@1.0.0` at `687f6899` and the catalog commit
   `f32aa8c2`; the report's digest and range as the Validation's dry run; the first `push --atomic`
@@ -296,11 +297,14 @@ its WingFoil pin and its inbox sync; the sequencer's stale W10 state row (its ow
     citing point 2, the risk met at task-104 and fixed by hand (ruling 2); "The private projects'
     check scripted" stays open, untriggered (ruling 5); the sequencer's W10 state row, which now
     also reads `governance/wingfoil-dogfood` "not started", its item and Source extended with
-    this close; "The engine way of working" stays open, its trigger this repository's adoption.
+    this close, and the duplicate row of dl-051's review merged into it (its Source kept); "The
+    engine way of working" stays open, its trigger this repository's adoption; the W10 row
+    (plan-052 ruling 7) stays open, its `governance/wingfoil-dogfood` part settled by this plan.
   - **A departure:** ruling 6 had the agent push the approval's commit (dl-044 P2); its push of
-    `main` was refused by its tool permissions, and the approver pushed it. The next
-    `pack-release-cycle` change, or the retrospective, decides whether P2 stands (the
-    retrospective reads this note).
+    `main` was not permitted in its environment, and the approver pushed it. The owed row "dl-044
+    P2 … not applied at prel-008" (rule 4) holds the question, P2 kept, changed or that push
+    handed to the approver, until the next `pack-release-cycle` change, at the latest this pack's
+    own retrospective; dl-044 has its note.
   - **Numbers:** prel-008 used; task-106, dl-052, bug-017 and F-053, reserved for a finding,
     unused and released.
   - **Privacy:** every commit of this plan checked before it was made (no local or scratch path,
@@ -316,3 +320,8 @@ its WingFoil pin and its inbox sync; the sequencer's stale W10 state row (its ow
     prel-008 `released` with its Validation and Publication, the charter `active`, and the
     retrospective's plan named.
   - `main`'s CI on the closing head read before `active → done`.
+- 2026-11-25: independent review of the close (dl-017, `eeeec87b`): approve after amendments; no
+  blocker, three should-fix (the departure's owed row added, with a note on dl-044; the two
+  sequencer rows merged; the W10 row of plan-052 ruling 7 named) and two nits (step 5's CI read
+  recorded; the refusal worded "not permitted in its environment"), all applied in the commit that
+  records this note.

@@ -76,3 +76,7 @@ The points below are **proposed**; they become rulings when the approver approve
   plan-081's branch (`7a38f98e`), `approved` until its check on `main`; `pack-release-cycle` 9
   (`fb612206`); `pack-cycle` 8 › `activate` and the row "The engine way of working" extended and
   reworded (`0735c631`); the row "dl-044's actions" closed there.
+- 2026-11-25, plan-087 (step 6): P2 not applied at prel-008: the agent's push of `main` with the
+  approval's commit was not permitted in its environment, and the approver pushed it; P1 applied
+  (`publish:pack --report`, read into prel-008's Publication). Whether P2 stands is the owed row
+  "dl-044 P2 … not applied at prel-008" (`docs/owed-items.md`).
