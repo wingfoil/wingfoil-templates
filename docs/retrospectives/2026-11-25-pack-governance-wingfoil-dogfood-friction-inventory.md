@@ -214,8 +214,9 @@ approver's (plan-088 point 8), so each commit on `main` waits for one.
 ### 5.3 Scripts written per run
 
 The clean-clone evidence was written for this release, as plan-077's local list was; its first
-pass erred (§4). Nothing in the repository holds it; dl-039 (R1, R2: the branch CI, then the local
-checks on a clean tree) names the checks, not a command that runs them. *(unrecorded)* The CI
+pass erred (§4). Nothing in the repository holds it; `pack-release-cycle` › `validate` and the
+records (prel-008 › Validation) name the release's checks, not a command that runs them (dl-039
+R1, R2 is the task side's counterpart). *(unrecorded)* The CI
 watch, too, is written per run.
 
 ### 5.4 Departures recorded by notes
@@ -246,10 +247,10 @@ this repository's adoption of the packs fix it?
 | Id | Candidate | W10 fixes it? | Proposed |
 |---|---|---|---|
 | GOV-1 | Who pushes a pack-release's approval commit (dl-044 P2): the agent's push of `main` is not permitted in its environment; the approver pushes every `main` since plan-087 | no: the adoption does not change who may push `main`, and the row "The engine way of working" quotes P2 | a decision-log changing P2 (the approver pushes the approval's commit, the agent reads its CI); the P2 row (§8), which falls due here (plan-088 ruling 4), moves to it |
-| GOV-2 | A check of the CHANGELOG's first line: a whole sentence within 100 characters, in `check:packs` where `author` meets it, not only in `publish:pack` | no, but the pack release round before it already lists "the CHANGELOG's first line checked" (the sequencer › "W10's order") | none: the row "A check of the CHANGELOG's first line" given the round as its trigger, the round's plan ruling where the check goes (`check:packs`, so `author` meets it) (three occurrences; the row's trigger missed by task-083 and task-103) |
-| GOV-3 | The clean-clone evidence as a committed script: the `validate` step's local list (Node.js 22.21.0 then 22.12.0, `npm ci`, the checks, the audits of `src/matrix/wingfoil-*/`) run by one command | no: the adoption ships no such command, and dl-039 names the checks, not how they run | a decision-log, its script a tooling task; or a row, owner approver, trigger the next pack release |
+| GOV-2 | A check of the CHANGELOG's first line: a whole sentence within 100 characters, in `check:packs` where `author` meets it, not only in `publish:pack` | no, but the pack release round before it already lists "the CHANGELOG's first line checked" (the sequencer › "W10's order") | none, the approver's choice at `additional-points`: the row "A check of the CHANGELOG's first line" given the round as its trigger, the round's plan ruling where the check goes (this inventory recommends `check:packs`, where `author` meets it) (three occurrences; the row's trigger missed by task-083 and task-103) |
+| GOV-3 | The clean-clone evidence as a committed script: the `validate` step's local list (Node.js 22.21.0 then 22.12.0, `npm ci`, the checks, the audits of `src/matrix/wingfoil-*/`) run by one command | no: the adoption ships no such command, and `pack-release-cycle` › `validate` names the checks, not how they run | a decision-log, its script a tooling task; or a row, owner approver, trigger the next pack release |
 | GOV-4 | A departure from an approved decision-log or an accepted charter: the body amended, or only a note (today, a note) | yes: G7 (in-place amendment), owner and trigger W10 | none: the charter's drift as a row (§8), trigger G7 |
-| GOV-5 | `pack-ingest` v1 read against its run: the `vision` phase carrying the `optional` key, as dl-050 D1 rules the step optional; dl-050 D3's wording, which names dl-049's run as the first | no: `pack-ingest` is this repository's own (no pack ships one) | none now: a row, owner approver, trigger the next change of `pack-ingest` or dl-049's `rule` at the adoption, whichever first; a change of D3 then by its decision-log |
+| GOV-5 | `pack-ingest` v1 read against its run: the `vision` phase carrying the `optional` key, as dl-050 D1 rules the step optional; dl-050 D3's wording, which names dl-049's run as the first | no: `pack-ingest` is this repository's own (no pack ships one) | none now, the approver's choice at `additional-points`: a row, owner approver, trigger the next change of `pack-ingest` or dl-049's `rule` at the adoption, whichever first; a change of D3 then by its decision-log |
 
 Observed, not proposed: the `rule` approval before its plan (§1, one case); the charter amended
 while `draft` (§2); the atomic push not landing at first (§4, one case, the check after it worked).
@@ -303,3 +304,14 @@ composed without `software`; `src/markdown-lines.ts` reading a nested fence.
 - Red first in both tasks; dl-039's order in both; `main` green after every push; no CI job over
   25 minutes (the longest 17 min 6 s, `main`'s CI on task-105's merge, run 45477886787; plan-087's
   16 min 36 s, run 45620253208, up from prel-007's 11 min 33 s).
+
+## Points for the approver (additional-points)
+
+- **The *(unrecorded)* candidates** (§3, §4, §5.3): the machine restart, the long lines after
+  scripted edits, and the CI watch written per run: confirmed or dropped.
+- **GOV-1 … GOV-5** (§7): which are kept; GOV-2 and GOV-5 proposed as rows, not decision-logs, and
+  GOV-3 as a decision-log or a row.
+- **The dl-044 P2 row** (§8, plan-088 ruling 4): GOV-1's decision-log, captured and ruled in this
+  plan; or, if GOV-1 is declined, P2 kept with dl-052's reason, which must answer the
+  environment's refusal of the agent's push.
+- **No note, no task-106** (§6).
