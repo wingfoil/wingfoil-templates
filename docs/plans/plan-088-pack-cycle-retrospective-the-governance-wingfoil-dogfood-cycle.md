@@ -2,7 +2,7 @@
 id: plan-088-pack-cycle-retrospective-the-governance-wingfoil-dogfood-cycle
 type: plan
 title: "pack-cycle retrospective: the governance/wingfoil-dogfood cycle"
-status: draft
+status: active
 workflow: "pack-cycle"
 phase: "retrospective"
 tags: ["process","retrospective","feedback","governance","wingfoil","dogfood","W10"]
