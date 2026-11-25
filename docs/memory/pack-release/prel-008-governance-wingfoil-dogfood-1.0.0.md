@@ -264,7 +264,44 @@ Also, at `validate` (plan-087 step 5, point 4):
 
 ## Publication
 
-<!-- The tag (<catalog pack id>@<version>, dl-004), the commit, the catalog.yaml digest. -->
+- Date: 2026-11-25. Line: current. Run by the approver (plan-087 ruling 6), from the commands
+  claude handed over; claude read the report and the results.
+- Tag: `governance/wingfoil-dogfood@1.0.0` (annotated), at
+  `687f6899ee115effc9e4338c4cb23a92dd2e48aa` (the approval's commit; `main`'s CI on it, run
+  45617111373, `success`). Annotation: the tag's name, then the CHANGELOG entry's first line
+  `- 1.0.0: first version: the channel back to WingFoil and the rules of the pinned WingFoil CLI.`
+- Catalog commit: `f32aa8c251c174f3408c850a5b6b1800960cb868` (the new
+  `governance/wingfoil-dogfood` entry, `CATALOG.md`, `catalog-index.json`), by `npm run
+  publish:pack -- --pack governance/wingfoil-dogfood --report <path outside the repository>`
+  (Node.js 22.21.0, after `npm ci` and `npm run build`). The entry reads the commit `687f6899`,
+  `status: active`, `pack_format: 2`, `requires_capabilities: []`.
+- The report (dl-044 P1), read by claude: the publication matrix 32 runs, 0 failed, tolerance
+  none; 16 compositions, each composed twice, byte-identical; the tag, the catalog commit, the
+  digest and the range below, checked against the Validation's dry run: no difference.
+- Digest: `sha256:7c4b949f517d7ef9624b22e618b3247de39cb3ae861218066685e3009acfce49` (as the dry
+  run and the rehearsal).
+- WingFoil range: `>=0.3.0 <=0.3.2`.
+- Pushed together: `git push --atomic origin governance/wingfoil-dogfood@1.0.0 main` (`main` at
+  `f32aa8c`).
+- CI on the tag, run 45620253148 (publication mode, the step "Validate for publication"
+  `success`): `success`, longest job 9 min 8 s. CI on `main` at `f32aa8c`, run 45620253208:
+  `success`, longest job 16 min 36 s, the step "Texts, the lines this push adds to main"
+  `success`. Pages, run 45620253490: `success`.
+- CB-6, live (spec-002 §6), anonymous, following `llms.txt`'s steps:
+  - `https://wingfoil.github.io/wingfoil-templates/llms.txt`: 200;
+  - `https://raw.githubusercontent.com/wingfoil/wingfoil-templates/main/catalog-index.json`: 200;
+    filtered locally to `id: governance/wingfoil-dogfood`, `status: active`, `latest: 1.0.0`,
+    versions `1.0.0`, its `wingfoil` `>=0.3.0 <=0.3.2`;
+  - the version's `readme_url` ([README.md at the tag][tag-readme]): 200, the title `# WingFoil
+    dogfood`;
+  - the version's `manifest_url` ([pack.yaml at the tag][tag-manifest]): 200, `format: 2`,
+    `version: 1.0.0`;
+  - `https://wingfoil.github.io/wingfoil-templates/catalog-index.json`: 200, `status: active`,
+    `latest: 1.0.0`, the same range and URLs.
+- No notice at this tag and no note to WingFoil (plan-087 ruling 10).
+
+[tag-readme]: https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/governance/wingfoil-dogfood@1.0.0/packs/governance/wingfoil-dogfood/README.md
+[tag-manifest]: https://raw.githubusercontent.com/wingfoil/wingfoil-templates/refs/tags/governance/wingfoil-dogfood@1.0.0/packs/governance/wingfoil-dogfood/pack.yaml
 
 ## Execution Notes
 
@@ -299,3 +336,10 @@ a cached release whose stamp differs from its committed lockfile is reinstalled
   as 84 + 8, the overlays 40/40/40/48 as prel-007's plus 4 each), the digest against the
   rehearsal, the CI run on `b41e1589`. No re-review: the amendments explain, they change no
   evidence. Submitted (`validating → releasing`).
+- 2026-11-25, `approve-publication`: approved by the approver (`releasing → released`, commit
+  `687f6899`), `main`'s CI on it read (run 45617111373, `success`). Pushed by the approver, not by
+  claude as plan-087 ruling 6 said: claude's push of `main` was refused by its tool permissions.
+- 2026-11-25, `publish` (plan-087 step 7): `publish:pack --report` and the atomic push run by the
+  approver; the report, the tag, the catalog commit, the three runs and CB-6's live check read by
+  claude, recorded above. The first `push --atomic` did not reach the remote (the remote's `main`
+  and tags unchanged when read); the approver ran it again and it did.
