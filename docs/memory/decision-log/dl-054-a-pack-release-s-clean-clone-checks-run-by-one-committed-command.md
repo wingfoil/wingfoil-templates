@@ -2,7 +2,7 @@
 id: dl-054-a-pack-release-s-clean-clone-checks-run-by-one-committed-command
 type: decision-log
 title: "A pack-release's clean-clone checks run by one committed command"
-status: draft
+status: pending
 tags: ["process","publication","tooling"]
 ---
 
