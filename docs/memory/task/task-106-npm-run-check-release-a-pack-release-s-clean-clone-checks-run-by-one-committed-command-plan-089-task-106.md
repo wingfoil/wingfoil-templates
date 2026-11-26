@@ -143,7 +143,39 @@ as the records wrote them.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+- **`src/report-path.ts`** (new): `within(path, roots)` and `checkReportPath(report, top, tree)`,
+  moved from `src/publish.ts` unchanged in behaviour; a refusal throws `ReportPathError` with its
+  `kind` (`inside` or `dangling`) and the path; `publish.ts` catches it and throws today's
+  `PublishError(3, …)` with today's two messages, so `tests/publish.test.ts` holds as it is.
+- **`src/check-release.ts`** (new): `runCheckRelease(argv, options)`, async, returning `{ code,
+  lines }`; `options.runner` runs one command (`(program, args, { cwd, env }) =>
+  Promise<{ code, signal, stdout, stderr }>`), by default a `spawn` that streams both streams to
+  the terminal and keeps them; `options.write` and `options.remove` (default `writeFileSync` and
+  `rmSync`) let the tests make the final write and the clean-up fail. In order: `parse`
+  (`parseArgs`, strict; `--node` and the others `multiple`, counted) → `topLevel` → each `--node`
+  holds `node` and `npm` → `checkReportPath` → the report created → the clean tree → the cache;
+  then the legs and the dry run; the report written; the clones removed.
+- **The clone** (`cloneAt`): `git clone --quiet --no-local [--branch <tree's branch>]` into
+  `<tmp>/leg-<n>` or `<tmp>/dry-run`; a detached tree's `HEAD` checked out `--detach`; its `HEAD`
+  compared with the tree's (a difference is a git error, exit 2); a local `main` from
+  `origin/main` when it has none; `git remote remove origin`; the cache copied with `cpSync`.
+  Git through `src/git.ts`'s `runGit`, so the tooling's isolated environment.
+- **The commands**, each with `program` the leg's `<bin>/npm` (or `<bin>/node` for `--version`),
+  `PATH` the leg's directory then the caller's, `npm_config_update_notifier=false`: the Context's
+  list; the audits over the clone's `src/matrix/` entries named `wingfoil-*` that are directories,
+  sorted. The report shows each as `npm …`, its directory relative to the clone.
+- **The counts' lines** (`countsOf(command, outcome)`): `npm test`, the lines `# tests`, `# pass`,
+  `# fail` of standard output; the evidence, standard output from `## Validation` to its end; any
+  other, the last line of standard output, else of standard error, among those not empty, not
+  starting with `> ` and not starting with `npm warn` or `npm notice` (any case); else `(no
+  output)`. Each written indented under its command.
+- **`src/check-release-cli.ts`**: awaits the run, prints the lines, sets the exit code;
+  `package.json` `"check:release": "node dist/src/check-release-cli.js"`; README.md one line.
+
+Red steps (dl-018): 1. `tests/check-release.test.ts` with the cases of criterion 5 against a stub
+`src/check-release.ts` exporting `runCheckRelease` that returns `{ code: 99, lines: [] }`, and
+`tests/report-path.test.ts` against the shared module's stub: red; 2. the shared module, publish's
+use of it, `tests/publish.test.ts` green; 3. the command: green; 4. the CLI, the script and README.
 
 ## Execution Notes
 
