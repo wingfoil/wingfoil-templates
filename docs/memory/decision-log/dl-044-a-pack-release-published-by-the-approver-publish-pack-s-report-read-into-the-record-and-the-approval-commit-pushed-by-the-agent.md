@@ -88,4 +88,4 @@ The points below are **proposed**; they become rulings when the approver approve
 - 2026-11-26, plan-089: dl-053's change applied: `pack-release-cycle` 10 › `approve-publication`
   (`3b844617`), the approver pushing the approval commit and the agent reading `main`'s CI on it;
   P2's first two sentences replaced there, the rest of P2 standing; the row "The engine way of
-  working" reworded and its Source extended with dl-053 (row 3).
+  working" reworded and its Source extended with dl-053 (plan-089 row 3).
