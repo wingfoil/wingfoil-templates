@@ -2,7 +2,7 @@
 id: plan-089-dl-actions-dl-053-and-dl-054-the-approval-commit-pushed-by-the-approver-and-npm-run-check-release
 type: plan
 title: "dl actions: dl-053 and dl-054, the approval commit pushed by the approver and npm run check:release"
-status: active
+status: done
 workflow: "decision-log-ingest"
 phase: "rule"
 tags: ["process","dl-actions","retrospective","workflows","tooling"]
