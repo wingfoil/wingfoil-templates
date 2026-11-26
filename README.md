@@ -43,6 +43,8 @@ After `npm ci` and `npm run build`, the main commands are:
   sections of each pack README (`--check` compares them);
 - `npm run compose`: composes packs into a `.wingfoil/` configuration;
 - `npm run site`: builds the search page from `catalog-index.json` and `llms.txt`;
+- `npm run check:release`: runs a pack-release's clean-clone checks and writes their report
+  outside the repository, at `validate` (dl-054);
 - `npm run publish:pack`: publishes a pack version, after its release is approved.
 
 The work follows the repository's own process:

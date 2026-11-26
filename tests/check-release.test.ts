@@ -155,7 +155,6 @@ describe('npm run check:release (task-106, dl-054 P1)', () => {
     repo.git(['checkout', '--quiet', '-b', 'scratch']);
     repo.write('README.md', 'scratch\n');
     const head = repo.commitAll('scratch commit').trim();
-    repo.git(['branch', '--quiet', '-D', 'main']);
     const seen = new Map<string, string>();
     const { runner } = recorder((_shown, cwd) => {
       const clone = cloneOf({ shown: '', cwd, env: {} });
