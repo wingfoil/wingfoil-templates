@@ -2,7 +2,7 @@
 id: task-106-npm-run-check-release-a-pack-release-s-clean-clone-checks-run-by-one-committed-command-plan-089-task-106
 type: task
 title: "npm run check:release, a pack-release's clean-clone checks run by one committed command (plan-089 task-106)"
-status: approved
+status: done
 pack: ""            # tooling task (tooling-delivery v5), plan-089 task-106
 depends_on: []
 tags: ["tooling","pack-release","validation"]
