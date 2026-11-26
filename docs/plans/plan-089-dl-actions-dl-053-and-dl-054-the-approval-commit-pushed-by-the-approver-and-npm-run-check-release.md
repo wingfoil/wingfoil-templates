@@ -207,3 +207,6 @@ Then, in dl-039 R2's order:
   all applied in the commit that records this note. It found the scratch 1.0.1 commit feasible: no
   earlier step of dl-054's list compares `pack.yaml`'s version with `catalog.yaml`, and the dry
   run accepts a 1.0.1 with no tag.
+- 2026-11-26: `main`'s CI after `submit`: the push of `014e77bd`, run 45811094095 `success`, its
+  jobs (22.12.0, 1) 10 min 43 s, (22.21.0, 1) 16 min 39 s, (22.12.0, 2) 5 min 42 s, (22.21.0, 2)
+  5 min 35 s; Pages, run 45811094105, `success`.
