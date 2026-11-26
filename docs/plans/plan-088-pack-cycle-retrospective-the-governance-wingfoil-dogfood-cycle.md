@@ -342,3 +342,11 @@ adoption, its pin and its inbox sync; the dl actions of any decision-log this pl
 - 2026-11-26: the branch pushed, its CI on the frozen head `d87d4f87` (dl-039 R1): run
   45796224491 `success`, its jobs (22.12.0, 1) 13 min 30 s, (22.21.0, 1) 10 min 48 s, (22.12.0,
   2) 5 min 36 s, (22.21.0, 2) 9 min 10 s, the step "Texts, the lines this branch adds" `success`.
+- 2026-11-26: on the approver's OK, `retro/2026-11-25-pack-governance-wingfoil-dogfood` merged
+  `--no-ff` into `main` (`873e16ff`), pushed by the approver; `main`'s CI on it: run 45799589287
+  `success`, its jobs (22.12.0, 1) 10 min 57 s, (22.21.0, 1) 17 min 18 s, (22.12.0, 2) 9 min
+  13 s, (22.21.0, 2) 9 min 0 s, the step "Texts, the lines this push adds to main" `success`;
+  Pages, run 45799589156, `success`. The branch removed locally and on origin. Done: the
+  inventory and dl-052 on `main`, dl-052 `approved`, its Debts applied (the dl-044 P2 row ruled by
+  dl-053), the notes of point 7 recorded, the row of this pack's retrospective in Closed. The
+  next plan: plan-089, the dl actions of dl-053 and dl-054. `active → done`.
