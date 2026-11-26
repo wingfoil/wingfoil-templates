@@ -309,3 +309,36 @@ adoption, its pin and its inbox sync; the dl actions of any decision-log this pl
   not dl-039) and three nits (GOV-2 and GOV-5 as rows the approver's choice; P2's alternative
   shown to the approver), applied with the points for the approver (`eb1d9416`). The branch
   pushed.
+- 2026-11-25: step 3, `additional-points`: the inventory shown in chat; the approver's points
+  P1 … P4 ("tutti come raccomandato"): every *(unrecorded)* candidate confirmed; GOV-1 and GOV-3
+  kept as decision-logs; GOV-2, GOV-4 and GOV-5 as rows; no note to WingFoil. Added to the
+  inventory in their own commit (`8a784b32`).
+- 2026-11-25: step 4, `capture`: dl-052 "Retrospective pack-governance-wingfoil-dogfood
+  2026-11-25" (`6214ab1e`), dl-053 (GOV-1, `251e70bf`) and dl-054 (GOV-3, `d4576cd1`) added in
+  order, each printed id checked; bodies `89390b99`. Independent review of the three (dl-017):
+  approve after amendments; no blocker, nine should-fix (dl-052 three, dl-053 two, dl-054 four)
+  and nine nits (four, three, two), all applied (`327b6b4e`). Re-review, decisions having
+  changed: dl-052 approve after amendments, dl-053 approve, one should-fix they share (the P2
+  row's case of dl-053 still `pending` at the close) and one nit each; dl-054 approve, no
+  finding; all applied (`2f37edfa`). Each element's own notes hold its record. Submitted
+  `draft → pending` (`85090c16`, `5753b3be`, `125d9f4d`). No task-106: no WingFoil-side candidate
+  (dl-052 W1).
+- 2026-11-26: step 5, `approve`: the approver approved dl-053 (`6184fb59`), dl-054 (`ce583664`)
+  and dl-052 (`f7f2d332`), on the branch.
+- 2026-11-26: step 6, close, on the branch (`d87d4f87`): dl-052's Debts applied to
+  `docs/owed-items.md` (D1 … D4): the row of this pack's retrospective moved to Closed (plan-088,
+  dl-052); the row "dl-044 P2 … not applied at prel-008" moved to Closed, settled by dl-053; the
+  CHANGELOG row's trigger set to the pack release round, its Source and the Recheck row's
+  extended; four rows added (the charter drift, `pack-ingest` v1, dl-053's and dl-054's actions).
+  The notes of point 7: on `pack-governance-wingfoil-dogfood` and on dl-044; none on dl-050,
+  unchanged. No tech-spec amended (dl-020). Released unused: task-106, F-053, bug-017. The
+  privacy check of the branch's diff and its commit messages: clean. The next plan: plan-089,
+  the dl actions of dl-053 and dl-054 (`pack-release-cycle` 9 → 10 in one bump, the tooling task
+  for `npm run check:release`, the row "The engine way of working" reworded, the note on dl-044).
+- 2026-11-26: independent review of the close (dl-017, `d87d4f87` and this plan's notes): approve
+  after amendments; no blocker, two should-fix (dl-053's re-review verdict, "approve", corrected
+  in the note above; the branch's push and its CI on the frozen head, recorded below) and one nit
+  (this record), all applied in the commit that records this note.
+- 2026-11-26: the branch pushed, its CI on the frozen head `d87d4f87` (dl-039 R1): run
+  45796224491 `success`, its jobs (22.12.0, 1) 13 min 30 s, (22.21.0, 1) 10 min 48 s, (22.12.0,
+  2) 5 min 36 s, (22.21.0, 2) 9 min 10 s, the step "Texts, the lines this branch adds" `success`.
