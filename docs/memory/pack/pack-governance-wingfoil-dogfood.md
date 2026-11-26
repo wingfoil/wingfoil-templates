@@ -243,3 +243,10 @@ fictional projects only, run in the compatibility matrix on the releases `compat
   Parameters). `accepted → active`, the `memory submit` and its push run by the approver (plan-087
   ruling 6). The retrospective is this pack's own, in the plan right after plan-087 (plan-087
   ruling 9; its owed row).
+- 2026-11-26, plan-088: `retrospective` completed: this pack's own, covering plan-082 … plan-087,
+  ruled by dl-052 (approved 2026-11-26) on the inventory of 2026-11-25
+  (`docs/retrospectives/2026-11-25-pack-governance-wingfoil-dogfood-friction-inventory.md`); two
+  changes of governance, dl-053 (the approval commit pushed by the approver) and dl-054 (the
+  clean-clone checks by one command), both approved, applied by a dl actions plan; no feedback
+  note; the drift of Ships and Parameters (`wingfoil_source_key`) given its row, trigger G7
+  (dl-052 D3). The row of this pack's retrospective moved to Closed.

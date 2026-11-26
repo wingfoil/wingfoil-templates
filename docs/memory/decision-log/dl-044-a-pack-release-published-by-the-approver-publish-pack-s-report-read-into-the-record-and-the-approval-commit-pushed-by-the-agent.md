@@ -80,3 +80,8 @@ The points below are **proposed**; they become rulings when the approver approve
   approval's commit was not permitted in its environment, and the approver pushed it; P1 applied
   (`publish:pack --report`, read into prel-008's Publication). Whether P2 stands is the owed row
   "dl-044 P2 … not applied at prel-008" (`docs/owed-items.md`).
+- 2026-11-26, plan-088 (close): P2 changed, not kept: dl-053 (approved 2026-11-26) replaces P2's
+  first two sentences; the approver pushes a pack-release's approval commit and the agent reads
+  `main`'s CI on it before handing over the publication's commands; the rest of P2 stands (dl-053
+  P1, dl-052 C1, D2). The row "dl-044 P2 … not applied at prel-008" moved to Closed; the
+  application is dl-053's actions (its row), recorded here by its own note.
