@@ -237,3 +237,8 @@ use of it, `tests/publish.test.ts` green; 3. the command: green; 4. the CLI, the
   that criterion names), applied in the commit that records this note but the third. The note
   above's claim that a refusal ends the report with its own line was false for a dirty tree
   until this commit (rule 6). The blocker goes to the approver: the reading as a ruling.
+- 2026-11-26: the approver's ruling (dl-019 R2), in chat: "sì, approvo la lettura". Criterion 4's
+  three last lines describe a run of the list; a refusal (a dirty tree, a missing cache) or an I/O
+  or git error after the report's creation ends the report with its own line, exit 1 for a
+  refusal and 2 for an error, as criteria 2 and 4 give them; the `ℹ` lines count as `npm test`'s
+  counts' lines when no `#` line is printed. The Acceptance text stays as approved.
