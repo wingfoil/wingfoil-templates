@@ -85,3 +85,7 @@ The points below are **proposed**; they become rulings when the approver approve
   `main`'s CI on it before handing over the publication's commands; the rest of P2 stands (dl-053
   P1, dl-052 C1, D2). The row "dl-044 P2 … not applied at prel-008" moved to Closed; the
   application is dl-053's actions (its row), recorded here by its own note.
+- 2026-11-26, plan-089: dl-053's change applied: `pack-release-cycle` 10 › `approve-publication`
+  (`3b844617`), the approver pushing the approval commit and the agent reading `main`'s CI on it;
+  P2's first two sentences replaced there, the rest of P2 standing; the row "The engine way of
+  working" reworded and its Source extended with dl-053 (row 3).
