@@ -210,3 +210,30 @@ Then, in dl-039 R2's order:
 - 2026-11-26: `main`'s CI after `submit`: the push of `014e77bd`, run 45811094095 `success`, its
   jobs (22.12.0, 1) 10 min 43 s, (22.21.0, 1) 16 min 39 s, (22.12.0, 2) 5 min 42 s, (22.21.0, 2)
   5 min 35 s; Pages, run 45811094105, `success`.
+- 2026-11-26: the branch `dl/dl-053-dl-054-actions` from `014e77bd`. Row 1: task-106 added on it
+  (`8dc1485c`), its body reviewed and re-reviewed (approve after amendments: seven should-fix and
+  five nits, then two should-fix and three nits, all applied), accepted into the backlog by the
+  approver (`c9fbdd37`); on its own branch, red first (15 tests failing on stubs), its build
+  reviewed and re-reviewed (three should-fix and six nits, then one blocker, one should-fix and
+  four nits, all applied but one nit, with its reason), the reading of its criterion 4 ruled by
+  the approver; rehearsed from a never-pushed scratch commit giving `governance/wingfoil-dogfood`
+  1.0.1, on Node.js 22.21.0 and 22.12.0, `check:release: pass`; dl-039's checks on `5c3bc544`
+  (run 45826368002 `success`, the local list exit 0); approved by the approver (`cf6eb0ff`); on
+  the approver's "procedi", merged `--no-ff` into this branch (`533a5d5a`). Each record is in
+  task-106's notes.
+- 2026-11-26: row 2, `pack-release-cycle` 10 (`3b844617`): `validate`'s sentence and check and
+  `approve-publication`'s text as ruled (point 4); `workflow list`, `lint` and `check:runs` (92
+  runs, 0 failed) exit 0. Row 3 (`1bd5503a`): the row "The engine way of working" reworded and its
+  Source extended with dl-053; the rows "dl-053's actions" and "dl-054's actions" to Closed; the
+  notes on dl-044, dl-053 and dl-054. Leftovers: none contradicting dl-053 or dl-054
+  (`pack-cycle` › `activate` cites the part of dl-044 P2 that stands; the delivery loops' "clean
+  clone" is dl-039's rule for tasks).
+- 2026-11-26: independent review of the branch (dl-017, `1bd5503a`): approve; no blocker, no
+  should-fix, one nit (the dl-044 note naming "plan-089 row 3"), applied (`799908b1`). dl-039's
+  checks on the frozen head `799908b1`: the branch CI, run 45849620952 `success`, its jobs
+  (22.12.0, 1) 12 min 3 s, (22.21.0, 1) 18 min 26 s, (22.12.0, 2) 5 min 28 s, (22.21.0, 2) 5 min
+  9 s, "Texts, the lines this branch adds" `success`; the local list on Node.js 22.21.0 after
+  `npm ci` and the build: `npm test` (1524 tests, 1524 passing), `lint`, `check:pins`,
+  `check:schemas`, `check:packs`, `index -- --check`, `validate`, `check:runs`, `check:texts --
+  --base origin/main`, each exit 0, the tree clean after. The privacy check of the branch's diff
+  and commit messages: clean. The branch pushed.
