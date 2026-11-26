@@ -282,3 +282,8 @@ use of it, `tests/publish.test.ts` green; 3. the command: green; 4. the CLI, the
   after it, merged `--no-ff` into plan-089's branch (`533a5d5a`), a departure from `deliver`
   ("into main"), task-102 and task-103 as precedents (plan-089 ruling 2). The task stays
   `approved` until plan-089's merge into `main` and `main`'s CI on it (criterion 10).
+- 2026-11-26: the check on `main` (criterion 10): plan-089's merge `48544a6e`, pushed by the
+  approver; `main`'s CI on it, run 45860263174 `success` (its jobs 12 min 13 s, 19 min 14 s,
+  6 min 51 s and 4 min 26 s), "Texts, the lines this push adds to main" `success`; Pages, run
+  45860262932, `success`. The task's branch removed locally and on origin. `approved → done`,
+  pushed with plan-089's close.
