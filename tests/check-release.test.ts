@@ -374,4 +374,64 @@ describe('npm run check:release (task-106, dl-054 P1)', () => {
     assert.match(result.lines.join('\n'), /could not be removed: busy/);
     assert.equal(readFileSync(report, 'utf8'), printed(result));
   }));
+  it('runs with --tree and --node given relative to the working directory', withRepo(async (repo) => {
+    const { calls, runner } = recorder();
+    const rel = (path: string): string => relative(process.cwd(), path);
+    const args = ['--tree', rel(repo.dir), '--pack', 'base', '--report', join(repo.outside, 'r.txt'),
+      ...repo.bins.flatMap((bin) => ['--node', rel(bin)])];
+    const result = await runCheckRelease(args, { runner });
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    assert.equal(calls[0]?.env['PATH']?.split(delimiter)[0], repo.bins[0]);
+  }));
+
+  it('clones a detached tree at its HEAD', withRepo(async (repo) => {
+    repo.write('README.md', 'detached\n');
+    const head = repo.commitAll('a commit');
+    repo.git(['checkout', '--quiet', '--detach', head]);
+    repo.git(['reset', '--quiet', '--hard', 'HEAD']);
+    repo.git(['branch', '--quiet', '-f', 'main', 'HEAD~1']);
+    const heads = new Set<string>();
+    const { runner } = recorder((_shown, cwd) => {
+      heads.add(execFileSync('git', ['rev-parse', 'HEAD'], { cwd: cloneOf({ shown: '', cwd,
+        env: {} }), env: repo.env }).toString('utf8').trim());
+      return undefined;
+    });
+    const result = await runCheckRelease(argv(repo, join(repo.outside, 'r.txt')), { runner });
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    assert.deepEqual([...heads], [head]);
+  }));
+
+  it('names the leg whose version command fails, with its output', withRepo(async (repo) => {
+    let legs = 0;
+    const { runner } = recorder((shown) => {
+      if (shown === 'node --version') legs += 1;
+      return shown === 'npm --version' && legs === 3 ? { code: 1, stdout: '', stderr: 'npm is broken\n' }
+        : undefined;
+    });
+    const result = await runCheckRelease(argv(repo, join(repo.outside, 'r.txt')), { runner });
+    assert.equal(result.code, 1);
+    assert.match(result.lines.join('\n'), /- leg 2: npm --version: exit 1\n {2}npm is broken/);
+    assert.equal(result.lines[result.lines.length - 1],
+      'check:release: fail at leg 2: npm --version (exit 1)');
+  }));
+
+  it('names a command that could not start, exit 2, the report written', withRepo(async (repo) => {
+    const runner = (_program: string, args: string[]): Promise<Outcome> => (args[0] === 'ci'
+      ? Promise.reject(new Error('spawn EACCES')) : Promise.resolve({ code: 0, signal: null,
+        stdout: 'v1\n', stderr: '' }));
+    const report = join(repo.outside, 'r.txt');
+    const result = await runCheckRelease(argv(repo, report), { runner });
+    assert.equal(result.code, 2);
+    assert.match(result.lines.join('\n'), /- npm ci: could not start: spawn EACCES/);
+    assert.equal(readFileSync(report, 'utf8'), printed(result));
+  }));
+
+  it('opens the report of a refused tree with its commit and pack', withRepo(async (repo) => {
+    repo.write('README.md', 'changed\n');
+    const report = join(repo.outside, 'r.txt');
+    const result = await runCheckRelease(argv(repo, report), { runner: recorder().runner });
+    assert.equal(result.code, 1);
+    assert.match(result.lines[0] ?? '', /^check:release \(dl-054\): commit [0-9a-f]{40}, pack base$/);
+    assert.ok(result.lines.every((line) => !line.includes('\n')));
+  }));
 });

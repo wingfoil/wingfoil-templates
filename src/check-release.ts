@@ -10,7 +10,7 @@ import { spawn } from 'node:child_process';
 import { cpSync, existsSync, mkdtempSync, readdirSync, realpathSync, rmSync, statSync, writeFileSync }
   from 'node:fs';
 import { tmpdir } from 'node:os';
-import { delimiter, join } from 'node:path';
+import { delimiter, join, resolve as resolvePath } from 'node:path';
 import { parseArgs } from 'node:util';
 
 import { GitError, runGit } from './git';
@@ -90,8 +90,10 @@ function parse(argv: string[]): Args {
   if (nodes.length === 0 || nodes.some((node) => node === '')) {
     throw new CheckReleaseError(3, '--node <directory of node and npm> is required, once per leg');
   }
-  return { pack: once(values.pack, 'pack'), report: once(values.report, 'report'), nodes,
-    tree: values.tree === undefined ? process.cwd() : once(values.tree, 'tree') };
+  // Resolved here: the clone and the legs run in other directories than the caller's.
+  return { pack: once(values.pack, 'pack'), report: once(values.report, 'report'),
+    nodes: nodes.map((node) => resolvePath(node)),
+    tree: resolvePath(values.tree === undefined ? process.cwd() : once(values.tree, 'tree')) };
 }
 
 function git(tree: string, args: string[]): string {
@@ -209,7 +211,9 @@ function lines(text: string): string[] {
 function countsOf(args: string[], outcome: Outcome): string[] {
   const shown = args.join(' ');
   if (shown === 'test') {
-    return lines(outcome.stdout).filter((line) => /^# (tests|pass|fail) /.test(line));
+    // TAP's lines (Node.js 22, its output not a terminal); the spec reporter's of a later Node.js.
+    const counts = lines(outcome.stdout).filter((line) => /^(#|ℹ) (tests|pass|fail) /.test(line));
+    if (counts.length > 0) return counts;
   }
   if (shown === 'run validate:publication -- --evidence') {
     const out = lines(outcome.stdout);
@@ -245,51 +249,59 @@ const spawnRunner: Runner = (program, args, options) => new Promise((resolve, re
     stdout: Buffer.concat(out).toString('utf8'), stderr: Buffer.concat(err).toString('utf8') }));
 });
 
+/** How a command ended, as the report writes it. */
+function ended(outcome: Outcome): string {
+  return outcome.code === null ? `signal ${outcome.signal ?? '?'}` : `exit ${outcome.code}`;
+}
+
 class Run {
   readonly lines: string[] = [];
   failed: string | undefined;
 
   constructor(private readonly runner: Runner) {}
 
+  /**
+   * Runs one command; its line and its counts' lines go to the report, a version's only when it
+   * fails (`quiet`); undefined when it failed, the failure named.
+   */
+  private async step(label: string, program: string, args: string[], cwd: string,
+    env: NodeJS.ProcessEnv, quiet = false): Promise<Outcome | undefined> {
+    let outcome: Outcome;
+    try {
+      outcome = await this.runner(program, args, { cwd, env });
+    } catch (error) {
+      this.lines.push(`- ${label}: could not start: ${message(error)}`);
+      throw error;
+    }
+    const failed = outcome.code !== 0;
+    if (failed || !quiet) {
+      this.lines.push(`- ${label}: ${ended(outcome)}`);
+      for (const line of countsOf(args, outcome)) this.lines.push(`  ${line}`);
+    }
+    if (!failed) return outcome;
+    this.failed = `${label} (${ended(outcome)})`;
+    return undefined;
+  }
+
   /** Runs the steps in the clone with the leg's Node.js; false at the first failure. */
   async leg(name: string, bin: string, clone: string, steps: Step[]): Promise<boolean> {
     const env: NodeJS.ProcessEnv = { ...process.env, PATH: `${bin}${delimiter}`
       + `${process.env['PATH'] ?? ''}`, npm_config_update_notifier: 'false' };
-    const version = async (program: string): Promise<string | undefined> => {
-      const outcome = await this.runner(join(bin, program), ['--version'], { cwd: clone, env });
-      if (outcome.code !== 0) {
-        this.fail(`${program} --version`, outcome);
-        return undefined;
-      }
-      return outcome.stdout.trim();
-    };
-    const node = await version('node');
-    if (node === undefined) return false;
-    const npmVersion = await version('npm');
-    if (npmVersion === undefined) return false;
-    this.lines.push(`${name}: node ${node}, npm ${npmVersion}`);
+    const versions: string[] = [];
+    for (const program of ['node', 'npm']) {
+      const outcome = await this.step(`${name}: ${program} --version`, join(bin, program),
+        ['--version'], clone, env, true);
+      if (outcome === undefined) return false;
+      versions.push(outcome.stdout.trim());
+    }
+    this.lines.push(`${name}: node ${versions[0] ?? ''}, npm ${versions[1] ?? ''}`);
     for (const step of steps) {
-      const cwd = step.where === '' ? clone : join(clone, step.where);
-      const outcome = await this.runner(join(bin, 'npm'), step.args, { cwd, env });
       const shown = `npm ${step.args.join(' ')}`;
       const label = step.where === '' ? shown : `${shown} (${step.where})`;
-      this.lines.push(`- ${label}: ${outcome.code === null ? `signal ${outcome.signal ?? '?'}`
-        : `exit ${outcome.code}`}`);
-      for (const line of countsOf(step.args, outcome)) this.lines.push(`  ${line}`);
-      if (outcome.code !== 0) {
-        this.failed = outcome.code === null ? `${label} (signal ${outcome.signal ?? '?'})`
-          : `${label} (exit ${outcome.code})`;
-        return false;
-      }
+      const cwd = step.where === '' ? clone : join(clone, step.where);
+      if (await this.step(label, join(bin, 'npm'), step.args, cwd, env) === undefined) return false;
     }
     return true;
-  }
-
-  private fail(shown: string, outcome: Outcome): void {
-    this.lines.push(`- ${shown}: ${outcome.code === null ? `signal ${outcome.signal ?? '?'}`
-      : `exit ${outcome.code}`}`);
-    this.failed = outcome.code === null ? `${shown} (signal ${outcome.signal ?? '?'})`
-      : `${shown} (exit ${outcome.code})`;
   }
 
   status(name: string, clone: string): void {
@@ -345,9 +357,9 @@ export async function runCheckRelease(argv: string[], options: CheckReleaseOptio
   const clones: string[] = [];
   let scratch: string | undefined;
   try {
-    checkTree(args.tree);
     run.lines.push(`check:release (dl-054): commit ${git(args.tree, ['rev-parse', 'HEAD'])}, `
       + `pack ${args.pack}`);
+    checkTree(args.tree);
     scratch = mkdtempSync(join(tmpdir(), 'check-release-'));
     await runLegs(args, run, clones, scratch);
     if (run.failed === undefined) run.lines.push('check:release: pass');
@@ -358,10 +370,10 @@ export async function runCheckRelease(argv: string[], options: CheckReleaseOptio
   } catch (error) {
     if (error instanceof CheckReleaseError) {
       code = error.code;
-      run.lines.push(error.message);
+      run.lines.push(...lines(error.message));
     } else if (error instanceof GitError) {
       code = 2;
-      run.lines.push(error.message);
+      run.lines.push(...lines(error.message));
     } else {
       code = 2;
       run.lines.push(`check:release: ${message(error)}`);
@@ -377,7 +389,14 @@ export async function runCheckRelease(argv: string[], options: CheckReleaseOptio
       if (code === 0) code = 2;
     }
   }
-  if (scratch !== undefined) rmSync(scratch, { recursive: true, force: true });
+  if (scratch !== undefined) {
+    try {
+      rmSync(scratch, { recursive: true, force: true });
+    } catch (error) {
+      run.lines.push(`check:release: ${scratch} could not be removed: ${message(error)}`);
+      if (code === 0) code = 2;
+    }
+  }
   const write = options.write ?? ((path: string, text: string): void => writeFileSync(path, text));
   try {
     write(report, run.lines.map((line) => `${line}\n`).join(''));

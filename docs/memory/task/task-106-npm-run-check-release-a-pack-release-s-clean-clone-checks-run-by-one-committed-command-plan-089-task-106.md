@@ -213,3 +213,16 @@ use of it, `tests/publish.test.ts` green; 3. the command: green; 4. the CLI, the
   passing, exit 0; `lint` exit 0. Node.js 24 prints the spec reporter's `ℹ tests` lines into a
   file too; the legs' Node.js 22 print TAP when not on a terminal (criterion 4), which the
   rehearsal (criterion 6) shows.
+- 2026-11-26: independent review of the build (dl-017, `a7dd7332`): approve after amendments; no
+  blocker, three should-fix (`--tree` and `--node` resolved, so that relative ones run; the
+  scratch directory's removal guarded; the commit and pack line before the tree's checks, and the
+  reading below) and six nits (the leg named on a version's failure, with its output; one
+  formatting of how a command ended; a command that could not start named; a test of a detached
+  tree; the spec reporter's `ℹ` lines of a later Node.js read too; a multi-line message split
+  into lines), all applied in the commit that records this note, with five tests: 20 of 20
+  passing. Red first checked: the one test corrected after the red run accepted.
+- 2026-11-26: reading of criterion 4 (dl-019), the Acceptance text unchanged: its three last
+  lines describe a run of the list; a refusal (a dirty tree, a missing cache) or an I/O or git
+  error after the report's creation ends the report with its own line, its exit code as criteria
+  2 and 4 give it. The `ℹ` lines are read as `npm test`'s counts' lines when no `#` line is
+  printed (a Node.js after 22), so that a later leg's report is not empty there.
