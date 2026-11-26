@@ -226,3 +226,14 @@ use of it, `tests/publish.test.ts` green; 3. the command: green; 4. the CLI, the
   error after the report's creation ends the report with its own line, its exit code as criteria
   2 and 4 give it. The `ℹ` lines are read as `npm test`'s counts' lines when no `#` line is
   printed (a Node.js after 22), so that a later leg's report is not empty there.
+- 2026-11-26: re-review (dl-017, `69888299`): approve after amendments; one blocker (the reading
+  of criterion 4 above needs the approver's ruling, criteria 2 and 4 not holding together as
+  written, dl-019 R1 … R3), one should-fix (a dirty tree's report ended with its last status
+  entry, not with the refusal's line: the entries now come first, then "the working tree is not
+  clean (N entries)", asserted by the test) and four nits (the status entries untrimmed; the
+  refused tree's report file checked; four test lines over 100 characters, not applied: the
+  rule is the Markdown prose's, and 51 lines of `src/` and `tests/publish.test.ts` are longer;
+  `tests/report-path.test.ts` outside criterion 7's list, a departure: it tests the shared module
+  that criterion names), applied in the commit that records this note but the third. The note
+  above's claim that a refusal ends the report with its own line was false for a dirty tree
+  until this commit (rule 6). The blocker goes to the approver: the reading as a ruling.

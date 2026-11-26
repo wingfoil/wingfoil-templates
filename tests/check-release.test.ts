@@ -405,8 +405,8 @@ describe('npm run check:release (task-106, dl-054 P1)', () => {
     let legs = 0;
     const { runner } = recorder((shown) => {
       if (shown === 'node --version') legs += 1;
-      return shown === 'npm --version' && legs === 3 ? { code: 1, stdout: '', stderr: 'npm is broken\n' }
-        : undefined;
+      return shown === 'npm --version' && legs === 3
+        ? { code: 1, stdout: '', stderr: 'npm is broken\n' } : undefined;
     });
     const result = await runCheckRelease(argv(repo, join(repo.outside, 'r.txt')), { runner });
     assert.equal(result.code, 1);
@@ -433,5 +433,8 @@ describe('npm run check:release (task-106, dl-054 P1)', () => {
     assert.equal(result.code, 1);
     assert.match(result.lines[0] ?? '', /^check:release \(dl-054\): commit [0-9a-f]{40}, pack base$/);
     assert.ok(result.lines.every((line) => !line.includes('\n')));
+    assert.deepEqual(result.lines.slice(1), [' M README.md',
+      'the working tree is not clean (1 entry)']);
+    assert.equal(readFileSync(report, 'utf8'), printed(result));
   }));
 });

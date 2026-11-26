@@ -137,8 +137,14 @@ function reportPath(report: string, top: string, tree: string): string {
 }
 
 function checkTree(tree: string): void {
-  const status = git(tree, ['status', '--porcelain', '--untracked-files=normal']);
-  if (status !== '') throw new CheckReleaseError(1, `the working tree is not clean:\n${status}`);
+  const status = runGit(tree, ['status', '--porcelain', '--untracked-files=normal'])
+    .toString('utf8').trimEnd();
+  if (status !== '') {
+    // The entries first, so that the report ends with the refusal's own line.
+    const entries = lines(status);
+    throw new CheckReleaseError(1, `${status}\nthe working tree is not clean (${entries.length} `
+      + `${entries.length === 1 ? 'entry' : 'entries'})`);
+  }
   if (!existsSync(join(tree, CACHE))) {
     throw new CheckReleaseError(1, `no ${CACHE} in ${tree}: the records always copied it; without `
       + 'it the matrix would install the releases from the network');
