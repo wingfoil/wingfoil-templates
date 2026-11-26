@@ -242,3 +242,39 @@ use of it, `tests/publish.test.ts` green; 3. the command: green; 4. the CLI, the
   or git error after the report's creation ends the report with its own line, exit 1 for a
   refusal and 2 for an error, as criteria 2 and 4 give them; the `ℹ` lines count as `npm test`'s
   counts' lines when no `#` line is printed. The Acceptance text stays as approved.
+- 2026-11-26: the frozen commit `5c3bc544` (the code at `29e9b9c6`, then this ruling's note).
+  The rehearsal (criterion 6), from the scratch commit `154a4ae4` over it (`pack.yaml` 1.0.1 and
+  `- 1.0.1: a rehearsal of check:release, never published.` as the CHANGELOG's first entry; no
+  other file), never pushed: `npm run check:release -- --pack governance/wingfoil-dogfood --report
+  <a path outside> --node <Node.js 22.21.0> --node <Node.js 22.12.0>` exit 0, its report's lines:
+  - `check:release (dl-054): commit 154a4ae4660aed68039e4db3ab5f560414e75260, pack
+    governance/wingfoil-dogfood`;
+  - leg 1, node v22.21.0, npm 11.6.2: `npm ci` exit 0 ("found 0 vulnerabilities"); the build
+    exit 0; `validate:publication -- --evidence` exit 0, its Validation section (the commit
+    above, mode publication, 16 compositions composed twice byte-identical, "matrix:
+    publication, 32 runs, 0 failed, tolerance applied: none"); `npm test` exit 0, "# tests 1524",
+    "# pass 1524", "# fail 0"; `lint`, `check:pins` exit 0 (no output); `check:schemas` exit 0
+    ("checked 10 files"); `check:packs` exit 0 ("lint: checked 101 files, 0 problems"); `index --
+    --check` exit 0 ("index: checked 9 files, 0 not up to date"); `validate` exit 0 ("matrix:
+    self-test, 32 runs, 0 failed"); the golden step exit 0 ("26 runs, 0 failed, tolerance
+    applied: 0.2.2"); the four overlays exit 0 (40, 40, 40 and 48 runs, 0 failed); `workflow
+    list` exit 0; `check:runs` exit 0 ("runs: 92 runs, 0 failed"); `npm audit --omit=dev` and the
+    audits of `src/matrix/wingfoil-0.2.2`, `-0.3.0`, `-0.3.1`, `-0.3.2` exit 0 ("found 0
+    vulnerabilities"); `git status --short`, 0 lines;
+  - the dry run, node v22.21.0: `npm ci`, the build and `publish:pack -- --pack
+    governance/wingfoil-dogfood --dry-run` exit 0;
+  - leg 2, node v22.12.0, npm 10.9.0: the same list, each exit 0, with the same counts' lines;
+    `git status --short`, 0 lines;
+  - `check:release: pass`.
+  The report's commit is the scratch commit, its parent the frozen commit `5c3bc544`. After the
+  run the tree was clean and no clone was left; the scratch branch deleted. Two counts' lines say
+  little, the rule followed as written: `workflow list`'s is `}` (it prints JSON) and the dry
+  run's is "- Not pushed: …".
+- 2026-11-26: dl-039's checks on `5c3bc544` (criterion 8). The branch CI, run 45826368002
+  `success`, its jobs (22.12.0, 1) 12 min 13 s, (22.21.0, 1) 12 min 6 s, (22.12.0, 2) 6 min 50 s,
+  (22.21.0, 2) 4 min 29 s, the step "Texts, the lines this branch adds" `success`. The local list
+  on Node.js 22.21.0 from a clean tree: `npm ci`, the build, `npm test` (1524 tests, 1524
+  passing), `lint`, `check:pins`, `check:schemas`, `check:packs`, `index -- --check`,
+  `validate`, `check:runs`, `check:texts -- --base origin/main`, each exit 0, the tree clean
+  after. The privacy check of the task's diff and commit messages: clean. This note's commit is
+  documentation only and needs no new run (dl-039 R2).
