@@ -122,6 +122,22 @@ Each point with a recommendation.
    durations; once at the close, carrying task-106's close and `approved → done` with this
    plan's `active → done`, its run read by the next plan. The agent pushes the branches.
 
+## The approver's rulings
+
+Given by the approver on 2026-11-26, in chat: "tutti come raccomandato". Points 1 … 7 stand as
+recommended:
+1. **Point 1:** this plan on `main`; the work on `dl/dl-053-dl-054-actions`, one commit per row;
+   one `--no-ff` merge at the close, pushed by the approver.
+2. **Point 2:** task-106 on its own branch from this plan's, merged into it (a departure from
+   `deliver`); `approved` until `main`'s CI after this plan's merge.
+3. **Point 3:** the unit tests as listed; the rehearsal on task-106's frozen commit before
+   `in-review`, from a local scratch commit giving `governance/wingfoil-dogfood` 1.0.1.
+4. **Point 4:** `pack-release-cycle` 10 with the texts as written.
+5. **Point 5:** the row "The engine way of working" reworded, the two rows to Closed, the three
+   notes.
+6. **Point 6:** dl-039's checks, once on each frozen commit; no clean clones.
+7. **Point 7:** every push of `main` the approver's; task-106's close pushed with this plan's.
+
 ## Steps
 
 On the branch `dl/dl-053-dl-054-actions`, from `main` at the commit that submits this plan; one
