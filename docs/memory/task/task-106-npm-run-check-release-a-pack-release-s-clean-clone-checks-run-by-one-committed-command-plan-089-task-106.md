@@ -200,3 +200,16 @@ use of it, `tests/publish.test.ts` green; 3. the command: green; 4. the CLI, the
   off) and three nits (the report's file that cannot be created; a clone that cannot be removed
   among the tests; dl-044 named beside dl-054 in the path's refusal), all applied in the commit
   that records this note.
+- 2026-11-26: accepted into the backlog by the approver (`c9fbdd37`); the Design (`dc727805`'s
+  parent); `backlog → in-progress` (`dc727805`).
+- 2026-11-26: red run (dl-018), `18e3b0cd`: `node --test --test-reporter=tap
+  dist/tests/check-release.test.js dist/tests/report-path.test.js` on the stubs, 15 tests, 15
+  failing. Then the shared module and `publish.ts`'s use of it, the command, the CLI, the script and
+  README.md's line (`8adc93f7`): the same run 15 of 15 passing. One test corrected on the way,
+  before the build passed it: the clone test deleted the tree's `main`, so no `origin/main` could
+  give the clone its local `main`; the tree keeps `main` and the clone is made on another branch,
+  as criterion 3 asks (the assertion unchanged).
+- 2026-11-26: `npm test` on `8adc93f7` (Node.js 24 of the developer's shell): 1519 tests, 1519
+  passing, exit 0; `lint` exit 0. Node.js 24 prints the spec reporter's `ℹ tests` lines into a
+  file too; the legs' Node.js 22 print TAP when not on a terminal (criterion 4), which the
+  rehearsal (criterion 6) shows.
