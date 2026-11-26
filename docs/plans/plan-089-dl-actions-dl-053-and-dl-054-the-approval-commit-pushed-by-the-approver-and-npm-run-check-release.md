@@ -243,7 +243,13 @@ Then, in dl-039 R2's order:
   26 s, "Texts, the lines this push adds to main" `success`; Pages, run 45860262932, `success`.
   task-106's check on `main` read, its close and `approved → done`. The branches of the plan and
   of task-106 removed locally and on origin. Released unused: bug-017. No tech-spec amended
-  (dl-020). The next plan: W10's pack release round (the sequencer's W10 order; bug-011 …
-  bug-015's fixes, the `Precedence:` lines, the Memory templates' optional fields, the
-  CHANGELOG's first line checked), the first release under `pack-release-cycle` 10 and
-  `npm run check:release`.
+  (dl-020). The next plan: plan-090, W10's pack release round (the sequencer's W10 order;
+  bug-011 … bug-015's fixes, the `Precedence:` lines, the Memory templates' optional fields, the
+  CHANGELOG's first line checked), the first release under `pack-release-cycle` 10 and `npm run
+  check:release`; next free: plan-090, task-107, bug-017.
+- 2026-11-26: independent review of the close (dl-017, `95063da5`): approve after amendments; no
+  blocker, one should-fix (task-106's two counts' lines that say little given their row in
+  `docs/owed-items.md`, "`npm run check:release`'s report: the counts' lines …", owner the
+  approver, trigger the pack release round's first report or the next retrospective) and two nits
+  (the next plan named by number with the next free ids; this note ending the close), all applied
+  in the commit that records this note. `active → done`.
