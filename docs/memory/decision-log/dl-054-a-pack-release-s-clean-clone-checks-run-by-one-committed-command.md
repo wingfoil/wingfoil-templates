@@ -64,3 +64,7 @@ The points below are **proposed**; they become rulings when the approver approve
   task) and two nits (`ci.yml`'s tag-only `validate:publication`; both reports recorded), all
   applied in the commit that records this note.
 - 2026-11-25: re-review (dl-017, `327b6b4e`): approve; no finding.
+- 2026-11-26, plan-089: actions applied (P2): `npm run check:release` by task-106, red first,
+  rehearsed on Node.js 22.21.0 and 22.12.0, merged into plan-089's branch (`533a5d5a`),
+  `approved` until its check on `main`; `pack-release-cycle` 10 › `validate` (`3b844617`), in one
+  bump with dl-053's; the row "dl-054's actions" closed.

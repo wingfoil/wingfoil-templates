@@ -65,3 +65,6 @@ The points below are **proposed**; they become rulings when the approver approve
 - 2026-11-25: re-review (dl-017, `327b6b4e`): approve; one should-fix shared with dl-052 (the
   row's case of this element still `pending` at plan-088's close) and one nit ("nothing at the
   approval"), applied in the commit that records this note.
+- 2026-11-26, plan-089: actions applied (P2): `pack-release-cycle` 10 › `approve-publication`
+  (`3b844617`), in one bump with dl-054's; the row "The engine way of working" reworded, its
+  Source extended with this element; the note on dl-044; the row "dl-053's actions" closed.
