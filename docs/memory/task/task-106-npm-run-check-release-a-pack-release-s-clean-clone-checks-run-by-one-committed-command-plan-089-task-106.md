@@ -33,7 +33,8 @@ overlays `npm run validate -- --overlay tests/fixtures/<x>` for `software-exit`,
 `kanban-exit` and `feedback-exit`; `npm run -s wingfoil -- workflow list`; `npm run check:runs`;
 `npm audit --omit=dev` in the root; `npm audit` in each `src/matrix/wingfoil-*/`; on each Node.js
 given. On the first only: `npm run validate:publication -- --evidence` after the build, and
-`npm run publish:pack -- --pack <id> --dry-run` in a clone of its own.
+`npm run publish:pack -- --pack <id> --dry-run` in a clone of its own. The commands are written
+as the records wrote them.
 
 **What exists today** (the plan's branch at `8dc1485c`):
 - `src/publish.ts`: `reportPath` (not exported) refuses a report path inside the repository, as
@@ -49,58 +50,77 @@ given. On the first only: `npm run validate:publication -- --evidence` after the
 
 1. **The command.** `npm run check:release -- --pack <id> --report <path> --node <bin> [--node
    <bin> …] [--tree <dir>]` (`src/check-release-cli.ts` over `src/check-release.ts`, the script in
-   `package.json`). `--pack` and `--report` are required, given once; `--node` names the directory
-   holding a Node.js's `node` and `npm`, given once or more, the legs in the order given; `--tree`
-   defaults to the working directory and must be a repository's top level. A missing, empty or
-   repeated `--pack` or `--report`, no `--node`, an unknown option: exit 3 before anything runs.
+   `package.json`, one line in README.md's main commands). `--pack` and `--report` are required,
+   given once; `--node` names the directory holding a Node.js's `node` and `npm`, given once or
+   more, the legs in the order given; `--tree` defaults to the working directory and must be a
+   repository's top level (a linked worktree's included). A missing, empty or repeated `--pack` or
+   `--report`, no `--node`, an unknown option: exit 3 before anything runs.
 2. **The refusals,** before any clone, in this order after the arguments: `--tree` not a
-   repository's top level, exit 3; the report's path inside the repository, by the rule of
-   `publish:pack --report` (dl-044 P1: as written or through symbolic links, a dangling link
-   refused), exit 3, one line naming the path and dl-054; a working tree not clean (`git status
-   --porcelain` not empty), exit 1; a `--node` directory with no `node` in it, exit 3; no
-   `.cache/wingfoil-matrix` in the tree, exit 1. None writes a report but the dirty tree's and the
-   missing cache's, which the report's file, created after the path check, receives. The rule is
-   one function both commands use (`publish:pack`'s behaviour and tests unchanged).
-3. **The runs.** For each leg, in order: a clone of the tree's `HEAD` into a new temporary
-   directory outside the tree, its remote removed, the matrix cache copied into its `.cache/`; then
-   the list in the order of the Context, each command run in the clone with the leg's directory
-   first on `PATH`; on the first leg, `validate:publication -- --evidence` right after `npm run
-   build`. After the first leg's list, the dry run: a second clone as above, `npm ci`, `npm run
-   build`, `npm run publish:pack -- --pack <id> --dry-run`. The run stops at the first non-zero
-   exit; the clones are removed at the end, on a failure too. The tree's working tree, `HEAD`,
-   branches and tags are as before the run.
+   repository's top level, exit 3; a `--node` directory with no `node` or no `npm` in it, exit 3;
+   the report's path inside the repository, by the rule of `publish:pack --report` (dl-044 P1: as
+   written or through symbolic links, a dangling link refused), exit 3, one line naming the path
+   and dl-054; then the report's file created; a working tree not clean (`git status --porcelain`
+   not empty), exit 1; no `.cache/wingfoil-matrix` in the tree, exit 1 (the records always copied
+   it; without it the matrix would install the releases from the network). Only the last two
+   write a report. The rule of the path moves, with `within`, to a module that throws a neutral
+   error carrying the path; `publish:pack` maps it to today's `PublishError`, its lines and exit
+   codes byte-identical, `tests/publish.test.ts` not in the diff.
+3. **The runs.** For each leg, in order: a full clone of the tree (every branch's history and every
+   tag) into a new temporary directory outside the tree, its `HEAD` checked out at the tree's
+   `HEAD` commit and checked equal to it, its remote removed, the tree's matrix cache copied into
+   its `.cache/` (the same cache for every leg); then the list in the order of the Context, each
+   command run in the clone with the leg's directory first on `PATH`; on the first leg,
+   `validate:publication -- --evidence` right after `npm run build`. After the first leg's list,
+   the dry run: a second clone as above, `npm ci`, `npm run build`, `npm run publish:pack -- --pack
+   <id> --dry-run` (`publish:pack` clones again, and its matrix installs into that clone). Each
+   command's output (its standard output and standard error) is streamed to the terminal as it
+   runs and kept in full for the report, with no size limit and no timeout. The run stops at the
+   first non-zero exit or the first command ended by a signal; the clones are removed at the end,
+   on a failure too. The tree's working tree, `HEAD`, branches and tags are as before the run.
 4. **The report,** written to the path on every exit after its creation, and its lines printed:
    the tree's commit (`HEAD`, full) and the pack; per leg, `node --version` and `npm --version`,
    then one line per command (the command as run, its directory when not the clone's root, its
-   exit code), followed by its counts' lines: for `npm test`, its `# tests`, `# pass` and `# fail`
-   lines; for every other command, its last non-empty output line; and per leg, after the list,
-   `git status --short`'s line count in the clone. The last line is `check:release: pass` or
-   `check:release: fail at <command> (exit <n>)`. The exit code is 0 on a pass, 1 when a command of
-   the list fails, 2 on an I/O or git error of the command itself.
+   exit code), followed by its counts' lines, read from its output (standard output and standard
+   error): for `npm test`, its `# tests`, `# pass` and `# fail` lines (the TAP reporter's, its
+   output not a terminal); for `validate:publication -- --evidence`, the whole `## Validation`
+   section it prints; for every other command, its last non-empty line after npm's own `> …`
+   header lines, or `(no output)`; and per leg, after the list, `git status --short`'s line count in
+   the clone. The last line is `check:release: pass`, `check:release: fail at <command> (exit
+   <n>)` or `check:release: fail at <command> (signal <name>)`. The exit code is 0 on a pass, 1 when
+   a command of the list fails or is ended by a signal, 2 on an I/O or git error of the command
+   itself. If the report's final write fails, one line names the I/O error and a 0 becomes a 2
+   (a 1 stays a 1); a clone that cannot be removed is named in a line, and a 0 becomes a 2.
 5. **Red first** (dl-018). Before criteria 1 … 4 are built, new tests in
    `tests/check-release.test.ts` fail and the red run's command and failing count are recorded.
-   They run `src/check-release.ts` with an injected runner (no real clone, install or WingFoil in
-   `npm test`) and cover: the commands and their order on one leg and on two, the first leg's
-   evidence right after the build and its dry run in a clone of its own; the golden step's and the
-   overlays' exact arguments; the audits in each `src/matrix/wingfoil-*/` of the clone, not
-   `.cache/`; each leg's `PATH`; the stop at the first non-zero exit, the failing command named; the
-   report written on a pass and on a failure, with the fields of criterion 4; each refusal of
-   criteria 1 and 2 (the report's path relative, absolute, through `..` and through a symbolic link
-   inside the repository; a dirty tree; a missing cache; a `--node` with no `node`); the clones
-   removed and the tree unchanged after a pass and after a failure, on a test repository.
-6. **The rehearsal** (plan-089 ruling 3), on the frozen commit, before `in-review`: from a local
-   commit on a scratch branch over it, never pushed, that gives `governance/wingfoil-dogfood`
-   the version 1.0.1 (`pack.yaml`, and `- 1.0.1: …` as the CHANGELOG's first entry; no change to
+   No real install, no network and no WingFoil in `npm test`: git runs for real on a small test
+   repository the test makes (as in `tests/publish.test.ts`), and an injected runner replaces every
+   `npm` and `node` command. They cover: the commands and their order on one leg and on two, the
+   first leg's evidence right after the build and its dry run in a clone of its own; the golden
+   step's and the overlays' exact arguments; the audits in each `src/matrix/wingfoil-*/` of the
+   clone, not `.cache/`; each leg's `PATH`; the clone at the tree's `HEAD` with every tag and no
+   remote; the stop at the first non-zero exit and at a signal, the failing command named; the
+   report written on a pass and on a failure, with the fields of criterion 4, a command with no
+   output and the evidence's section included; a failing final write; each refusal of criteria 1
+   and 2 (the report's path relative, absolute, through `..` and through a symbolic link inside the
+   repository; a dirty tree; a missing cache; a `--node` with no `node`, and one with no `npm`), the
+   report written only where criterion 2 says; the clones removed and the tree unchanged after a
+   pass and after a failure.
+6. **The rehearsal** (plan-089 ruling 3), on the frozen commit, before `in-review`, the task
+   worktree's `.cache/wingfoil-matrix` populated first by criterion 8's local list: from a local
+   commit on a scratch branch over it, never pushed, that gives `governance/wingfoil-dogfood` the
+   version 1.0.1 (`pack.yaml`, and `- 1.0.1: …` as the CHANGELOG's first entry; no change to
    `catalog.yaml` or the index); `npm run check:release -- --pack governance/wingfoil-dogfood
-   --report <path outside> --node <22.21.0> --node <22.12.0>` exits 0; the report's lines in this
-   task's notes, its commit the scratch commit and its parent the frozen commit, both recorded; the
-   scratch branch deleted after the run.
+   --report <a path outside the repository> --node <the directory of Node.js 22.21.0> --node <the
+   directory of Node.js 22.12.0>` exits 0; the report's lines in this task's notes, its commit the
+   scratch commit and its parent the frozen commit, both recorded; the scratch branch deleted after
+   the run.
 7. **The rest unchanged.** The diff from the plan's branch touches only `src/check-release.ts`,
    `src/check-release-cli.ts`, the shared report-path module and `src/publish.ts`'s use of it,
-   `package.json`'s `scripts`, `tests/check-release.test.ts`, this task and plan-089. No dependency
-   is added (`package-lock.json` unchanged). `npm test`, `lint` and the other checks of the CI pass,
-   read from the branch CI's jobs and dl-039's local list (criterion 8), not run a second time;
-   `npm run check:texts -- --base origin/main` exits 0 on the task's branch.
+   `package.json`'s `scripts`, README.md's main commands, `tests/check-release.test.ts`, this task
+   and plan-089. No dependency is added (`package-lock.json` unchanged). `npm test`, `lint` and the
+   other checks of the CI pass, read from the branch CI's jobs and dl-039's local list (criterion
+   8), not run a second time; `npm run check:texts -- --base origin/main` exits 0 on the task's
+   branch.
 8. **dl-039's checks** on the frozen commit: the branch CI once, every job's duration recorded, and
    the local list on Node.js 22.21.0 from a clean tree after `npm ci` and the build.
 9. **Delivery** (plan-089 ruling 2). The branch `task/task-106-…` from plan-089's branch, in a
@@ -125,3 +145,12 @@ given. On the first only: `npm run validate:publication -- --evidence` after the
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-26: independent review of the body (dl-017, `f88fec22`): approve after amendments; no
+  blocker, seven should-fix (a full clone with every tag, at the tree's `HEAD`; the `--node`
+  check, with `npm`, before the report's path; the counts' lines read from both streams after
+  npm's header, `(no output)`, the evidence's section, the TAP lines; output streamed and kept in
+  full, a signal a failure, no timeout; the final write's and the clean-up's failures; the shared
+  module's neutral error, `publish:pack` byte-identical; criterion 5's real git on a test
+  repository and its new cases) and five nits (the cache's reason and its one copy; criterion 6's
+  placeholders and the cache populated first; the dry run's own clone; the Context's commands as
+  the records wrote them; README.md's line), all applied in the commit that records this note.
