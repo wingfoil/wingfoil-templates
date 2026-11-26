@@ -119,8 +119,8 @@ Each point with a recommendation.
    `custom/` directives declare their class; escalation by `decision-log-ingest`). No lint in this
    round. The governance packs' four directives without the line: `pack-authoring` asks review to
    check the line "for every pack version prepared after 2026-11-05", and prel-007 and prel-008
-   were, so their reviews missed it; a dated note on prel-007 and prel-008 records the miss
-   (`repository-practice` rule 6), and a new Open row carries the fix (owner approver, trigger each
+   were, so their reviews (and the authoring tasks' reviews) missed it; a dated note on prel-007
+   and prel-008 records the miss, and a new Open row carries the fix (owner approver, trigger each
    governance pack's next release). *Alternative:* their releases joined to this round
    (`governance/feedback` 1.1.0, `governance/wingfoil-dogfood` 1.1.0).
 5. **The Memory templates' fields** (plan-074 point 6; the register's row). Recommended: the
@@ -138,10 +138,14 @@ Each point with a recommendation.
    that first line, which `publish:pack` reads alone into the tag annotation (`changelogEntry`), is
    a whole sentence ending with `.` within 100 characters, the rest of the entry indented on the
    lines after it (the risk met at task-104, plan-087 point 2). Stricter than `changelogEntry`,
-   which takes the first matching line anywhere in the file. A pack with no `CHANGELOG.md`
-   (`layout-rules` allows it, does not require it) fails the check only when its version is not yet
-   in the catalog. Red first on fixtures: another version first; a first line wrapped mid-sentence.
-   It runs in CI with `check:packs`, so the first release it meets is this round's.
+   which takes the first matching line anywhere in the file. A pack with no `CHANGELOG.md`, or one
+   with no entry, fails (`pack-authoring` requires the file in every pack, and every published pack
+   has one). All six published CHANGELOGs pass it today. Red first on fixtures: another version
+   first; a first line wrapped mid-sentence; an empty file. task-107 also updates the fixture trees'
+   CHANGELOGs (the golden tree's are a bare `- 1.0.0`, and `tests/check-packs.test.ts` expects it
+   to pass; the empty ones of `merge/example-1`, `merge/example-2` and `resolve/full`), a sentence
+   entry for each pack, and re-records any digest or index expectation the edit changes. It runs
+   in CI with `check:packs`, so the first release it meets is this round's.
 7. **`check:release`'s counts' lines** (task-107; plan-089's close). Recommended: an informative
    line for each: for `workflow list`, the number of workflows its JSON lists (`workflows: <n>`);
    for the dry run, the tag and the catalog commit it would make, read from its output; the rest of
@@ -152,12 +156,14 @@ Each point with a recommendation.
    after it, one at a time in `prel`'s order (each body reviewed, accepted into the backlog by the
    approver, built, reviewed, `in-review` approved by the approver, merged on the approver's OK,
    `main` pushed by the approver and its CI read); then the rehearsal of the publication, as
-   plan-052 step 3: on a scratch clone, a simulated `prepare` commit for the four, the four
-   `publish:pack` runs in order, nothing pushed, then the whole suite, `check:packs`, `index --
-   --check` and `validate` (`check:release`'s dry run covers one pack on an unchanged catalog, not
-   the catalog entries the earlier ones add); a failure becomes a tooling task before `prepare`;
-   then `prepare` of the four in order (version,
-   `formats`, `requires_capabilities`, the computed range, the CHANGELOG entry, the README's
+   plan-052 step 3: on a scratch clone with a fictional local git identity (no commit or tag in it
+   carries the approver's), a simulated `prepare` commit for the four, the four `publish:pack` runs
+   in order, each tag's annotation read with `git tag -n99` (point 6's purpose), nothing pushed,
+   then the whole suite, `check:packs`, `index -- --check`, `validate` and `check:runs`, the clone
+   deleted after (`check:release`'s dry run covers one pack on an unchanged catalog, not the
+   catalog entries the earlier ones add); a failure becomes a tooling task before `prepare`; then
+   `prepare` of the four in order (version, `formats`, `requires_capabilities`, the computed
+   range, the CHANGELOG entry, the README's
    "Install and update" against `compat.yaml`); then `validate` of each, its independent review
    and `submit` (`validating → releasing`); then `approve-publication` and `publish` of each.
    *Alternative:* the four pack tasks in parallel (separate files; four gates open at once).
@@ -222,8 +228,10 @@ list` and `npm run lint` exit 0. Files staged by name.
   `prepare` and `publish`):** every step except the approvals, the pushes of `main`, the merge OKs,
   `publish:pack` and the notice's sending. It never runs `memory approve` or `memory reject`, nor
   `publish:pack`: it gives the approver the commands, with `cd`, `--reason` and the full id (the
-  pinned 0.2.2 resolves no short reference). No pull request. Repository texts follow
-  `repository-practice`.
+  pinned 0.2.2 resolves no short reference). The one exception: the rehearsal's `publish:pack`
+  runs (point 8), in a scratch clone with a fictional local identity, nothing pushed, the clone
+  deleted after, as plan-087's rehearsal (stated here, where plan-087 did not). No pull request.
+  Repository texts follow `repository-practice`.
 - **Reviewers (subagents):** this plan; each task's body and build; each pack-release at
   `validate`; the close; each re-review a fix that changes a decision needs (dl-017), each record
   (dl-017 R3) the verdict, the count per severity, the fixing commit, what was applied, or not and
@@ -244,7 +252,7 @@ list` and `npm run lint` exit 0. Files staged by name.
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
 
 - 2026-11-26: independent review of the plan (dl-017): approve after amendments; no blocker, eight
-  should-fix, six nits. Applied (this commit): point 6's check covers the first line's wrap (a
+  should-fix, six nits. Applied (`e0c619b3`): point 6's check covers the first line's wrap (a
   whole sentence within 100 characters), the heading and a pack with no CHANGELOG, stricter than
   `changelogEntry`; point 10 reads `main`'s CI on each catalog commit before the next pack's
   `publish:pack`, one push per pack (GitHub's three-tag limit); point 8 gains plan-052 step 3's
@@ -256,3 +264,11 @@ list` and `npm run lint` exit 0. Files staged by name.
   tasks; prel-007's and prel-008's missed line recorded by notes (point 4). Nits applied:
   `kanban-delivery` v7, point 13's sources, `check:release`'s flags, `check:packs` in the
   Acceptance, the sequencer's W10 row under "Not in this round" with its trigger.
+- 2026-11-26: re-review: approve after amendments; no blocker, two should-fix, two nits, all
+  applied in the next commit. **Should-fix:** point 6's rule would turn the golden tree red (its
+  CHANGELOGs a bare `- 1.0.0`): task-107 updates the fixture trees' CHANGELOGs, an empty file
+  fails, and the file is required in every pack (`pack-authoring`), the catalog exemption dropped;
+  the rehearsal's `publish:pack` runs conflicted with the Handoff: stated as its one exception, in
+  a scratch clone with a fictional local identity, nothing pushed. **Nits:** the rehearsal reads
+  each tag's annotation with `git tag -n99` and runs `check:runs`; point 4's rule 6 citation
+  dropped (prel-007 and prel-008 make no claim about the line), the authoring tasks' reviews named.
