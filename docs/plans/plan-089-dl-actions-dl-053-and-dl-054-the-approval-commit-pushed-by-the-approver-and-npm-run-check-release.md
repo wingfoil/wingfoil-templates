@@ -88,11 +88,14 @@ Each point with a recommendation.
    project_name=Golden`). One rehearsal of the real command on task-106's frozen commit, before
    `in-review`, on Node.js 22.21.0 then 22.12.0: no pack has an unpublished version (a published
    one's dry run fails, its tag existing), so the rehearsal runs from a local commit on a scratch
-   branch that gives `governance/wingfoil-dogfood` a version 1.0.1 (`pack.yaml` and a CHANGELOG
-   line), never pushed and deleted after the run, as plan-087 step 3 rehearsed in a scratch clone;
-   its report's lines in task-106's notes, its exit codes in the review's record (dl-054's records
-   start at the next release). *Alternative:* the rehearsal on a published pack, the dry run's
-   expected failure recorded and the steps after it run by hand.
+   branch that gives `governance/wingfoil-dogfood` a version 1.0.1 (`pack.yaml`, and a CHANGELOG
+   line `- 1.0.1: …` as its first entry; no change to `catalog.yaml` or the index, a 1.0.1 entry
+   with no tag failing `check:packs` and `index -- --check`), never pushed and deleted after the
+   run, the report's commit the scratch commit, its parent task-106's frozen commit, both recorded,
+   as plan-087 step 3 rehearsed in a scratch clone; its report's lines in task-106's notes, its exit
+   codes in the review's record (dl-054's records start at the next release). *Alternative:* the
+   rehearsal on a published pack, the dry run's expected failure recorded and the steps after it run
+   by hand.
 4. **`pack-release-cycle` 10** (row 2, after task-106's merge, so that the workflow names a
    command that exists). Recommended: `validate`: a sentence after "(dl-032 E3).": "The
    clean-clone checks run by npm run check:release from the submitted head; its report, written
@@ -182,3 +185,9 @@ Then, in dl-039 R2's order:
   nits (`validate`'s sentence placed and written as the YAML's; `approve-publication`'s push
   "on approval"; `validate`'s check extended with the report; "dl-044 P2" in the Leftovers' grep;
   task-106's close pushed with this plan's), all applied in the commit that records this note.
+- 2026-11-26: re-review (dl-017, `e2af0d00`), the recommendations of points 3 and 4 having
+  changed: approve; no blocker, no should-fix, three nits (the report's commit the scratch commit,
+  its parent recorded; no change to `catalog.yaml` or the index in it; the CHANGELOG line's form),
+  all applied in the commit that records this note. It found the scratch 1.0.1 commit feasible: no
+  earlier step of dl-054's list compares `pack.yaml`'s version with `catalog.yaml`, and the dry
+  run accepts a 1.0.1 with no tag.
