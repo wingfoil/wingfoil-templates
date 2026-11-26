@@ -59,7 +59,8 @@ spec-001 §10.1), and no lint checks it.
 **Not in this round:** `governance/feedback` and `governance/wingfoil-dogfood` (no row names their
 next release; their four directives carry no `Precedence:` line either, point 4); this repository's
 adoption and its pin upgrade (next in W10); "The private projects' check scripted" (its trigger is a
-release that needs a private check, and `pack-release-cycle` 10 asks for none, point 9).
+release that needs a private check, and `pack-release-cycle` 10 asks for none, point 9); the
+sequencer's W10 state (its row's trigger, the next sequencer update, at the latest W10's close).
 
 ## Proposed outline (ruled by the approver before `submit`)
 
@@ -70,58 +71,77 @@ Each point with a recommendation.
    1.1.0, `prel-012` `methodology/kanban` 1.1.0, numbered and prepared in that order (`requires`'
    order, `base` first). One outline, one close, one notice. *Alternative:* one `pack-release` plan
    per pack (four outlines and closes, the tooling task in the first).
-2. **The classes: `minor` for all four.** Recommended: each release adds a line to every directive
-   (`Precedence:`), which the register's rows call "the next minor release"; `base` and `software`
-   also add optional template fields, an addition. The bug fixes ride in the minors: bug-011 relaxes
-   a `security` rule (spec-001 §10.1) and bug-012 … bug-015 change a generated section or a phase's
-   text, none a patch's wording-only change (`pack-semver`); `minor`, the higher class, settles
-   them, as plan-049 ruling 2 settled its doubt, and no rule for fixes is needed to classify them.
-   The row "`pack-semver` rule for fixes and changed defaults" stays Open, its trigger reworded "the
-   next pack release that carries fixes only". No `requires` changes: a minor of `base` and
-   `software` stays inside `base@^2` and `software@^1`. The WingFoil range is computed from
-   `compat.yaml` at `prepare` (dl-002), expected `>=0.3.0 <=0.3.2` as today.
+2. **The classes: `minor` for all four.** Recommended: the four packs published before 2026-11-05
+   "carry it [the `Precedence:` line] from their next minor release, classed minor"
+   (`pack-authoring`, plan-063 ruling 6); `base` and `software` also add optional template fields,
+   "something added" (`pack-semver`'s minor). The bug fixes ride in the minors, and their own class
+   (bug-011's note proposed a patch: wording only) is moot; no rule for fixes is needed to classify
+   them. The row "`pack-semver` rule for fixes and changed defaults" stays Open, its trigger
+   reworded "the next pack release that carries fixes only, or changes a default". No `requires`
+   changes: a minor of `base` and `software` stays inside `base@^2` and `software@^1`. The WingFoil
+   range is computed from `compat.yaml` at `prepare` (dl-002), expected `>=0.3.0 <=0.3.2` as today.
 3. **Five tasks, split by kind and by pack** (plan-049 ruling 4's split), each added with `memory
    add` on `main`:
    - **task-107, tooling** (`tooling-delivery` v5, developer, `pack: ""`): the CHANGELOG check in
      `check:packs` (point 6) and `check:release`'s two counts' lines (point 7); red first (dl-018).
-   - **task-108, `base`** (`kanban-delivery`, pack-author, `pack: pack-foundation-base`): bug-011,
-     bug-014, the `Precedence:` lines and the AGENTS.md section's table (point 4), `decision-log`'s
-     and `task`'s fields (point 5), and the row "`base` composed without `software`", settled in its
-     Design with both options, the reading recommended there and ruled at its backlog gate.
-   - **task-109, `software`** (`kanban-delivery`, `pack: pack-foundation-software`): bug-012, the
-     `Precedence:` line, `adr`'s, `bug`'s, `tech-spec`'s and `release`'s fields.
-   - **task-110, `methodology/scrum`** (`kanban-delivery`, `pack: pack-methodology-scrum`):
+   - **task-108, `base`** (`kanban-delivery` v7, pack-author, `pack: pack-foundation-base`):
+     bug-011, bug-014, the `Precedence:` lines and the AGENTS.md section's table (point 4),
+     `decision-log`'s and `task`'s fields (point 5), and the row "`base` composed without
+     `software`": its two options (a directive for `product-owner`, or a reading that the advice
+     stands) in the task's body, with a recommendation, ruled at its backlog gate (`plan`, `pending
+     → backlog`, comes before `design`).
+   - **task-109, `software`** (`kanban-delivery` v7, `pack: pack-foundation-software`): bug-012,
+     the `Precedence:` line, `adr`'s, `bug`'s, `tech-spec`'s and `release`'s fields.
+   - **task-110, `methodology/scrum`** (`kanban-delivery` v7, `pack: pack-methodology-scrum`):
      bug-013, bug-015, the `Precedence:` lines.
-   - **task-111, `methodology/kanban`** (`kanban-delivery`, `pack: pack-methodology-kanban`): the
-     `Precedence:` lines.
+   - **task-111, `methodology/kanban`** (`kanban-delivery` v7, `pack: pack-methodology-kanban`):
+     the `Precedence:` lines.
 
    Each task on `task/task-<n>-<slug>` from `main`, merged into `main` with `--no-ff` at its
    `deliver` on the approver's OK (no plan branch: a pack-release's elements and approvals live on
-   `main`, as plan-087's). Each pack task's Acceptance names its README's lines, its CHANGELOG left
-   to `prepare`, and the lint, the compositions and the matrix on its branch. *Alternative:* one
-   pack task for the four packs (`kanban-delivery`'s `pack` names one charter, so it departs from
-   the workflow).
+   `main`, as plan-087's). Each pack task's Acceptance names, besides its fixes:
+   - its README: the lines its fixes change; an "Updating from 2.0.1" (`base`) or "Updating from
+     1.0.0" paragraph, as `base`'s README carries one per previous version: recompose, regenerate
+     the AGENTS.md region and paste it again (bug-012 … bug-014 and the precedence table change
+     it), and the optional fields reach a project only through its copied templates; and, in
+     `base`'s, `software`'s and `methodology/scrum`'s, the row "README step 3 'own entries'" (its
+     trigger "the next README pass" is this one), as `methodology/kanban`'s answers it (task-067);
+   - its CHANGELOG left to `prepare`;
+   - `npm run check:packs`, the compositions, the matrix and `check:runs` on its branch.
+
+   *Alternative:* one pack task for the four packs (`kanban-delivery`'s `pack` names one charter,
+   so it departs from the workflow).
 4. **The `Precedence:` classes** (spec-001 §10.1). Recommended: `base`'s `security-secrets`
    `security`, its `claim-sources`, `doc-versioning` and `traceability` `foundation`; `software`'s
    `determinism` `foundation`; `methodology/scrum`'s `definition-of-done` and `scrum` and
    `methodology/kanban`'s `definition-of-workflow` and `kanban` `method`. `base`'s AGENTS.md
    section states §10.1's table and its rules (the stricter rule wins; ties by class; a project's
    `custom/` directives declare their class; escalation by `decision-log-ingest`). No lint in this
-   round. The governance packs' four directives without the line get a new Open row (owner
-   approver, trigger each governance pack's next release). *Alternative:* their releases joined to
-   this round (`governance/feedback` 1.1.0, `governance/wingfoil-dogfood` 1.1.0).
-5. **The Memory templates' fields** (plan-074 point 6; the register's row). Recommended: copied
-   from WingFoil 0.3.2's `init` templates, names, types and comments, each optional (not in
-   `frontmatter.required`); `reported_by` an optional list whose values are feedback ids or feedback
-   note paths, provenance only (plan-074 point 6); `release`'s `## Scope changes` section as 0.3.2
-   writes it. Each task's Design lists the fields against 0.3.2's files, and a composition of each
-   template is checked by `npm run lint` and the matrix (no `unknown field` warning on 0.3.0 …
-   0.3.2).
+   round. The governance packs' four directives without the line: `pack-authoring` asks review to
+   check the line "for every pack version prepared after 2026-11-05", and prel-007 and prel-008
+   were, so their reviews missed it; a dated note on prel-007 and prel-008 records the miss
+   (`repository-practice` rule 6), and a new Open row carries the fix (owner approver, trigger each
+   governance pack's next release). *Alternative:* their releases joined to this round
+   (`governance/feedback` 1.1.0, `governance/wingfoil-dogfood` 1.1.0).
+5. **The Memory templates' fields** (plan-074 point 6; the register's row). Recommended: the
+   fields only, copied from WingFoil 0.3.2's `init` templates with their names and types, each
+   optional (not in `frontmatter.required`), and not 0.3.2's `id: ""` and `status:` lines (a
+   `release` template declaring `id` meets the kanban open point 3 row); `reported_by` an optional
+   list whose values are feedback ids or feedback note paths, provenance only (plan-074 point 6),
+   its comment adapted (0.3.2's names the notes only); `release`'s `## Scope changes` section as
+   0.3.2 writes it. Each task's Design lists the fields against 0.3.2's files; `check:packs` and
+   `check:runs` (whose `memory add` steps create an element of each changed type on 0.3.0 and
+   0.3.2) check them, the scenarios extended where a changed type has no `memory add` yet.
 6. **The CHANGELOG check** (task-107; dl-028 D1, dl-052 D2). Recommended: in `check:packs`, where
-   `author` and `prepare` meet it: a pack's `CHANGELOG.md` has as its first entry `- <version>`,
-   alone or followed by `:` or a space, equal to `pack.yaml`'s `version` (the line `publish:pack`
-   reads into the tag annotation, `changelogEntry`). Red first on a fixture whose first entry names
-   another version. It runs in CI with `check:packs`, so the first release it meets is this round's.
+   `author` and `prepare` meet it, for a pack's `CHANGELOG.md` (a heading `# …` skipped): its first
+   entry starts `- <version>`, followed by `:` or a space, equal to `pack.yaml`'s `version`; and
+   that first line, which `publish:pack` reads alone into the tag annotation (`changelogEntry`), is
+   a whole sentence ending with `.` within 100 characters, the rest of the entry indented on the
+   lines after it (the risk met at task-104, plan-087 point 2). Stricter than `changelogEntry`,
+   which takes the first matching line anywhere in the file. A pack with no `CHANGELOG.md`
+   (`layout-rules` allows it, does not require it) fails the check only when its version is not yet
+   in the catalog. Red first on fixtures: another version first; a first line wrapped mid-sentence.
+   It runs in CI with `check:packs`, so the first release it meets is this round's.
 7. **`check:release`'s counts' lines** (task-107; plan-089's close). Recommended: an informative
    line for each: for `workflow list`, the number of workflows its JSON lists (`workflows: <n>`);
    for the dry run, the tag and the catalog commit it would make, read from its output; the rest of
@@ -131,7 +151,12 @@ Each point with a recommendation.
    CHANGELOG entries `prepare` writes, and its counts' lines the first report); the four pack tasks
    after it, one at a time in `prel`'s order (each body reviewed, accepted into the backlog by the
    approver, built, reviewed, `in-review` approved by the approver, merged on the approver's OK,
-   `main` pushed by the approver and its CI read); then `prepare` of the four in order (version,
+   `main` pushed by the approver and its CI read); then the rehearsal of the publication, as
+   plan-052 step 3: on a scratch clone, a simulated `prepare` commit for the four, the four
+   `publish:pack` runs in order, nothing pushed, then the whole suite, `check:packs`, `index --
+   --check` and `validate` (`check:release`'s dry run covers one pack on an unchanged catalog, not
+   the catalog entries the earlier ones add); a failure becomes a tooling task before `prepare`;
+   then `prepare` of the four in order (version,
    `formats`, `requires_capabilities`, the computed range, the CHANGELOG entry, the README's
    "Install and update" against `compat.yaml`); then `validate` of each, its independent review
    and `submit` (`validating → releasing`); then `approve-publication` and `publish` of each.
@@ -139,27 +164,35 @@ Each point with a recommendation.
 9. **`validate`** (`pack-release-cycle` 10). Recommended, for each pack-release: the matrix (every
    preset and documented combination holding the pack, on 0.3.0 and 0.3.2), `check:runs` on both,
    the adoption run once per `init` template for a pack whose README carries install steps (dl-032
-   E3), and `npm run check:release -- --pack <pack>` from the submitted head on Node.js 22.21.0 and
-   22.12.0, its report written outside the repository and read into the Validation (a failed run's
-   report beside the rerun's). No private projects' check: the row stays Open.
+   E3), and `npm run check:release -- --pack <id> --report <path outside the repository> --node
+   <22.21.0's bin> --node <22.12.0's bin>` from the submitted head, its report read into the
+   Validation (a failed run's report beside the rerun's). No private projects' check: the row stays
+   Open.
 10. **`approve-publication` and `publish`** (dl-053 P1, dl-044 P1). Recommended: the approver
     approves the four (`releasing → released`) with the commands the agent hands over, then pushes
-    `main` once; the agent reads `main`'s CI on the last approval commit and, after its `success`,
-    hands over `publish:pack --report <path>` and the atomic push for each pack in `prel`'s order;
-    the agent reads each report into the pack-release's Publication, checks its digest and range
-    against the dry run the Validation recorded, checks the tag with `git ls-remote` (plan-087's
-    silent push), and runs CB-6 live. *Alternative:* one push after each approval.
+    `main` once; the agent reads `main`'s CI on the last approval commit. Then, one pack at a time
+    in `prel`'s order, the agent hands over `publish:pack --report <path>` and the atomic push of
+    its tag and `main`; after each push, the agent checks the tag with `git ls-remote` (plan-087's
+    silent push) and reads `main`'s CI on that catalog commit before handing over the next pack's
+    commands (only `base@2.1.0` lands on the approval commit; each later tag lands on the previous
+    pack's catalog commit, and dl-053 rejected tagging a commit whose CI was not read). One push
+    per pack, so GitHub's limit of three tags per push (plan-052 step 10) is never met. The agent
+    reads each report into the pack-release's Publication, checks its digest and range against the
+    dry run the Validation recorded, and runs CB-6 live. *Alternative:* one push after each
+    approval.
 11. **The records after the tags.** Recommended: an Execution Note on each charter (the version, the
     tag, the catalog commit) and on bug-011 … bug-015 (fixed in, published at); the notice to
     WingFoil UI drafted, its text shown to the approver, sent only on the approver's OK, then its
-    row Closed; the register's rows of this round to Closed in the close's commit.
+    row Closed; the notes on prel-007 and prel-008 and the governance packs' new row (point 4);
+    the register's rows of this round to Closed, or re-triggered as ruled, in the close's commit.
 12. **Checks** (dl-039 R1 … R3). Recommended: for each task, the build review and its amendments,
     then once on its frozen commit its branch CI and the local list on Node.js 22.21.0; for the
     pack-releases, `validate`'s list (point 9), whose `check:release` replaces the clean clones; a
     job over 25 minutes goes to the approver.
-13. **The pushes** (rule 3). Recommended: every push of `main` the approver's; `main` pushed at this
-    plan's `submit`, after each task's merge and close, after the approvals (point 10), and at the
-    close, its run read by the next plan. The agent pushes the task branches.
+13. **The pushes** (plan-088 point 8; dl-053). Recommended: every push of `main` the approver's;
+    `main` pushed at this plan's `submit`, after each task's merge and close, after the approvals
+    and with each tag (point 10), and at the close, its run read by the next plan. The agent pushes
+    the task branches.
 
 ## Steps
 
@@ -172,14 +205,15 @@ list` and `npm run lint` exit 0. Files staged by name.
    approver, then submitted (`draft → active`), `main` pushed by the approver.
 2. **task-107** (tooling, points 6, 7), through `tooling-delivery` v5 to `done`.
 3. **task-108 … task-111** (`base`, `software`, `methodology/scrum`, `methodology/kanban`), each
-   through `kanban-delivery` to `done`, in that order (point 8).
-4. **`prepare`** (tech-lead): `prel-009` … `prel-012` added and filled in order, each submitted
+   through `kanban-delivery` v7 to `done`, in that order (point 8).
+4. **Rehearsal of the publication** (tech-lead, point 8), on a scratch clone, nothing pushed.
+5. **`prepare`** (tech-lead): `prel-009` … `prel-012` added and filled in order, each submitted
    (`draft → validating`).
-5. **`validate`** (reviewer): point 9 for each, its independent review recorded, then submitted
+6. **`validate`** (reviewer): point 9 for each, its independent review recorded, then submitted
    (`validating → releasing`).
-6. **`approve-publication`** (approver) and **`publish`** (tech-lead): point 10.
-7. **Records:** point 11.
-8. **Close:** the account per tech-spec (dl-020); the register's rows; `active → done`; the next
+7. **`approve-publication`** (approver) and **`publish`** (tech-lead): point 10.
+8. **Records:** point 11.
+9. **Close:** the account per tech-spec (dl-020); the register's rows; `active → done`; the next
    plan named (this repository's adoption, its `wingfoil-release-intake` first).
 
 ## Handoff
@@ -208,3 +242,17 @@ list` and `npm run lint` exit 0. Files staged by name.
      rulings recorded in the wave, and the element the approver names to fold them back, or the
      ruling that none is needed (dl-020).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+
+- 2026-11-26: independent review of the plan (dl-017): approve after amendments; no blocker, eight
+  should-fix, six nits. Applied (this commit): point 6's check covers the first line's wrap (a
+  whole sentence within 100 characters), the heading and a pack with no CHANGELOG, stricter than
+  `changelogEntry`; point 10 reads `main`'s CI on each catalog commit before the next pack's
+  `publish:pack`, one push per pack (GitHub's three-tag limit); point 8 gains plan-052 step 3's
+  rehearsal (Steps 4); task-108's two options in its body, ruled at the backlog gate (`plan` comes
+  before `design`); point 2 grounded in `pack-authoring`'s "classed minor" and `pack-semver`'s
+  "something added", the trigger keeping "changes a default"; point 5 names `check:packs` and
+  `check:runs` (`lint` and the matrix read no template), the fields only, `reported_by`'s comment
+  adapted; the "Updating from" paragraphs and the row "README step 3 'own entries'" in the pack
+  tasks; prel-007's and prel-008's missed line recorded by notes (point 4). Nits applied:
+  `kanban-delivery` v7, point 13's sources, `check:release`'s flags, `check:packs` in the
+  Acceptance, the sequencer's W10 row under "Not in this round" with its trigger.
