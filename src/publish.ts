@@ -8,11 +8,10 @@
 // temporary clone and leaves the repository as it was. With --report <path> it also writes the
 // lines it prints to that file, outside the repository, whatever its exit code (dl-044 P1).
 import {
-  existsSync, lstatSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync,
-  writeFileSync,
+  existsSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { basename, dirname, join, resolve as resolvePath, sep } from 'node:path';
+import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { gte, valid } from 'semver';
 
@@ -30,6 +29,7 @@ import { atCommit, overlay, workingTree } from './index-source';
 import { LineError, decideLine, isMaintenanceBranch, lineName } from './lines';
 import type { Line, LineInput, PublishedVersion } from './lines';
 import { computeRange } from './range';
+import { ReportPathError, checkReportPath } from './report-path';
 import { ResolveError, resolve } from './resolve';
 import type { PackManifest } from './resolve';
 import { runValidate } from './validate';
@@ -124,41 +124,19 @@ function checkClean(tree: string): void {
   }
 }
 
-function within(path: string, roots: string[]): boolean {
-  return roots.some((root) => path === root || path.startsWith(root.endsWith(sep) ? root
-    : `${root}${sep}`));
-}
-
-/**
- * The report's path, resolved against the working directory, refused when it is inside the
- * repository: as written, or with symbolic links resolved (the path itself when it exists, else
- * its parent when that exists); a dangling symbolic link is refused too (dl-044 P1). The path is
- * normalised before the filesystem reads it (a trailing `/` dropped, `..` removed lexically), and
- * the check and the writes use that same path. The real paths are the system's
- * (`realpathSync.native`), so that a case-insensitive filesystem gives them one spelling.
- */
+/** The report's path (`src/report-path.ts`), its refusals worded as before (dl-044 P1). */
 function reportPath(report: string, top: string, tree: string): string {
-  const path = resolvePath(report);
-  const real = realpathSync.native;
-  const roots = [...new Set([top, resolvePath(tree), real(top), real(tree)])];
-  const inside = (): PublishError => new PublishError(3, `--report ${report}: inside the `
-    + `repository ${top}; the report goes outside the tree (dl-044)`);
-  if (within(path, roots)) throw inside();
-  let link = false;
   try {
-    link = lstatSync(path).isSymbolicLink();
-  } catch {
-    // No such path: its parent is read below.
+    return checkReportPath(report, top, tree);
+  } catch (error) {
+    if (!(error instanceof ReportPathError)) throw error;
+    if (error.kind === 'dangling') {
+      throw new PublishError(3, `--report ${report}: a symbolic link to a path that does not `
+        + 'exist; the report goes to a file outside the tree (dl-044)');
+    }
+    throw new PublishError(3, `--report ${report}: inside the repository ${top}; the report goes `
+      + 'outside the tree (dl-044)');
   }
-  if (link && !existsSync(path)) {
-    throw new PublishError(3, `--report ${report}: a symbolic link to a path that does not exist; `
-      + 'the report goes to a file outside the tree (dl-044)');
-  }
-  let resolved: string | undefined;
-  if (existsSync(path)) resolved = real(path);
-  else if (existsSync(dirname(path))) resolved = join(real(dirname(path)), basename(path));
-  if (resolved !== undefined && within(resolved, roots)) throw inside();
-  return path;
 }
 
 /** The report created (or emptied) before anything runs, so that a bad path stops it first. */

@@ -2,7 +2,7 @@
 id: task-106-npm-run-check-release-a-pack-release-s-clean-clone-checks-run-by-one-committed-command-plan-089-task-106
 type: task
 title: "npm run check:release, a pack-release's clean-clone checks run by one committed command (plan-089 task-106)"
-status: backlog
+status: approved
 pack: ""            # tooling task (tooling-delivery v5), plan-089 task-106
 depends_on: []
 tags: ["tooling","pack-release","validation"]
@@ -143,7 +143,39 @@ as the records wrote them.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+- **`src/report-path.ts`** (new): `within(path, roots)` and `checkReportPath(report, top, tree)`,
+  moved from `src/publish.ts` unchanged in behaviour; a refusal throws `ReportPathError` with its
+  `kind` (`inside` or `dangling`) and the path; `publish.ts` catches it and throws today's
+  `PublishError(3, …)` with today's two messages, so `tests/publish.test.ts` holds as it is.
+- **`src/check-release.ts`** (new): `runCheckRelease(argv, options)`, async, returning `{ code,
+  lines }`; `options.runner` runs one command (`(program, args, { cwd, env }) =>
+  Promise<{ code, signal, stdout, stderr }>`), by default a `spawn` that streams both streams to
+  the terminal and keeps them; `options.write` and `options.remove` (default `writeFileSync` and
+  `rmSync`) let the tests make the final write and the clean-up fail. In order: `parse`
+  (`parseArgs`, strict; `--node` and the others `multiple`, counted) → `topLevel` → each `--node`
+  holds `node` and `npm` → `checkReportPath` → the report created → the clean tree → the cache;
+  then the legs and the dry run; the report written; the clones removed.
+- **The clone** (`cloneAt`): `git clone --quiet --no-local [--branch <tree's branch>]` into
+  `<tmp>/leg-<n>` or `<tmp>/dry-run`; a detached tree's `HEAD` checked out `--detach`; its `HEAD`
+  compared with the tree's (a difference is a git error, exit 2); a local `main` from
+  `origin/main` when it has none; `git remote remove origin`; the cache copied with `cpSync`.
+  Git through `src/git.ts`'s `runGit`, so the tooling's isolated environment.
+- **The commands**, each with `program` the leg's `<bin>/npm` (or `<bin>/node` for `--version`),
+  `PATH` the leg's directory then the caller's, `npm_config_update_notifier=false`: the Context's
+  list; the audits over the clone's `src/matrix/` entries named `wingfoil-*` that are directories,
+  sorted. The report shows each as `npm …`, its directory relative to the clone.
+- **The counts' lines** (`countsOf(command, outcome)`): `npm test`, the lines `# tests`, `# pass`,
+  `# fail` of standard output; the evidence, standard output from `## Validation` to its end; any
+  other, the last line of standard output, else of standard error, among those not empty, not
+  starting with `> ` and not starting with `npm warn` or `npm notice` (any case); else `(no
+  output)`. Each written indented under its command.
+- **`src/check-release-cli.ts`**: awaits the run, prints the lines, sets the exit code;
+  `package.json` `"check:release": "node dist/src/check-release-cli.js"`; README.md one line.
+
+Red steps (dl-018): 1. `tests/check-release.test.ts` with the cases of criterion 5 against a stub
+`src/check-release.ts` exporting `runCheckRelease` that returns `{ code: 99, lines: [] }`, and
+`tests/report-path.test.ts` against the shared module's stub: red; 2. the shared module, publish's
+use of it, `tests/publish.test.ts` green; 3. the command: green; 4. the CLI, the script and README.
 
 ## Execution Notes
 
@@ -168,3 +200,81 @@ as the records wrote them.
   off) and three nits (the report's file that cannot be created; a clone that cannot be removed
   among the tests; dl-044 named beside dl-054 in the path's refusal), all applied in the commit
   that records this note.
+- 2026-11-26: accepted into the backlog by the approver (`c9fbdd37`); the Design (`dc727805`'s
+  parent); `backlog → in-progress` (`dc727805`).
+- 2026-11-26: red run (dl-018), `18e3b0cd`: `node --test --test-reporter=tap
+  dist/tests/check-release.test.js dist/tests/report-path.test.js` on the stubs, 15 tests, 15
+  failing. Then the shared module and `publish.ts`'s use of it, the command, the CLI, the script and
+  README.md's line (`8adc93f7`): the same run 15 of 15 passing. One test corrected on the way,
+  before the build passed it: the clone test deleted the tree's `main`, so no `origin/main` could
+  give the clone its local `main`; the tree keeps `main` and the clone is made on another branch,
+  as criterion 3 asks (the assertion unchanged).
+- 2026-11-26: `npm test` on `8adc93f7` (Node.js 24 of the developer's shell): 1519 tests, 1519
+  passing, exit 0; `lint` exit 0. Node.js 24 prints the spec reporter's `ℹ tests` lines into a
+  file too; the legs' Node.js 22 print TAP when not on a terminal (criterion 4), which the
+  rehearsal (criterion 6) shows.
+- 2026-11-26: independent review of the build (dl-017, `a7dd7332`): approve after amendments; no
+  blocker, three should-fix (`--tree` and `--node` resolved, so that relative ones run; the
+  scratch directory's removal guarded; the commit and pack line before the tree's checks, and the
+  reading below) and six nits (the leg named on a version's failure, with its output; one
+  formatting of how a command ended; a command that could not start named; a test of a detached
+  tree; the spec reporter's `ℹ` lines of a later Node.js read too; a multi-line message split
+  into lines), all applied in the commit that records this note, with five tests: 20 of 20
+  passing. Red first checked: the one test corrected after the red run accepted.
+- 2026-11-26: reading of criterion 4 (dl-019), the Acceptance text unchanged: its three last
+  lines describe a run of the list; a refusal (a dirty tree, a missing cache) or an I/O or git
+  error after the report's creation ends the report with its own line, its exit code as criteria
+  2 and 4 give it. The `ℹ` lines are read as `npm test`'s counts' lines when no `#` line is
+  printed (a Node.js after 22), so that a later leg's report is not empty there.
+- 2026-11-26: re-review (dl-017, `69888299`): approve after amendments; one blocker (the reading
+  of criterion 4 above needs the approver's ruling, criteria 2 and 4 not holding together as
+  written, dl-019 R1 … R3), one should-fix (a dirty tree's report ended with its last status
+  entry, not with the refusal's line: the entries now come first, then "the working tree is not
+  clean (N entries)", asserted by the test) and four nits (the status entries untrimmed; the
+  refused tree's report file checked; four test lines over 100 characters, not applied: the
+  rule is the Markdown prose's, and 51 lines of `src/` and `tests/publish.test.ts` are longer;
+  `tests/report-path.test.ts` outside criterion 7's list, a departure: it tests the shared module
+  that criterion names), applied in the commit that records this note but the third. The note
+  above's claim that a refusal ends the report with its own line was false for a dirty tree
+  until this commit (rule 6). The blocker goes to the approver: the reading as a ruling.
+- 2026-11-26: the approver's ruling (dl-019 R2), in chat: "sì, approvo la lettura". Criterion 4's
+  three last lines describe a run of the list; a refusal (a dirty tree, a missing cache) or an I/O
+  or git error after the report's creation ends the report with its own line, exit 1 for a
+  refusal and 2 for an error, as criteria 2 and 4 give them; the `ℹ` lines count as `npm test`'s
+  counts' lines when no `#` line is printed. The Acceptance text stays as approved.
+- 2026-11-26: the frozen commit `5c3bc544` (the code at `29e9b9c6`, then this ruling's note).
+  The rehearsal (criterion 6), from the scratch commit `154a4ae4` over it (`pack.yaml` 1.0.1 and
+  `- 1.0.1: a rehearsal of check:release, never published.` as the CHANGELOG's first entry; no
+  other file), never pushed: `npm run check:release -- --pack governance/wingfoil-dogfood --report
+  <a path outside> --node <Node.js 22.21.0> --node <Node.js 22.12.0>` exit 0, its report's lines:
+  - `check:release (dl-054): commit 154a4ae4660aed68039e4db3ab5f560414e75260, pack
+    governance/wingfoil-dogfood`;
+  - leg 1, node v22.21.0, npm 11.6.2: `npm ci` exit 0 ("found 0 vulnerabilities"); the build
+    exit 0; `validate:publication -- --evidence` exit 0, its Validation section (the commit
+    above, mode publication, 16 compositions composed twice byte-identical, "matrix:
+    publication, 32 runs, 0 failed, tolerance applied: none"); `npm test` exit 0, "# tests 1524",
+    "# pass 1524", "# fail 0"; `lint`, `check:pins` exit 0 (no output); `check:schemas` exit 0
+    ("checked 10 files"); `check:packs` exit 0 ("lint: checked 101 files, 0 problems"); `index --
+    --check` exit 0 ("index: checked 9 files, 0 not up to date"); `validate` exit 0 ("matrix:
+    self-test, 32 runs, 0 failed"); the golden step exit 0 ("26 runs, 0 failed, tolerance
+    applied: 0.2.2"); the four overlays exit 0 (40, 40, 40 and 48 runs, 0 failed); `workflow
+    list` exit 0; `check:runs` exit 0 ("runs: 92 runs, 0 failed"); `npm audit --omit=dev` and the
+    audits of `src/matrix/wingfoil-0.2.2`, `-0.3.0`, `-0.3.1`, `-0.3.2` exit 0 ("found 0
+    vulnerabilities"); `git status --short`, 0 lines;
+  - the dry run, node v22.21.0: `npm ci`, the build and `publish:pack -- --pack
+    governance/wingfoil-dogfood --dry-run` exit 0;
+  - leg 2, node v22.12.0, npm 10.9.0: the same list, each exit 0, with the same counts' lines;
+    `git status --short`, 0 lines;
+  - `check:release: pass`.
+  The report's commit is the scratch commit, its parent the frozen commit `5c3bc544`. After the
+  run the tree was clean and no clone was left; the scratch branch deleted. Two counts' lines say
+  little, the rule followed as written: `workflow list`'s is `}` (it prints JSON) and the dry
+  run's is "- Not pushed: …".
+- 2026-11-26: dl-039's checks on `5c3bc544` (criterion 8). The branch CI, run 45826368002
+  `success`, its jobs (22.12.0, 1) 12 min 13 s, (22.21.0, 1) 12 min 6 s, (22.12.0, 2) 6 min 50 s,
+  (22.21.0, 2) 4 min 29 s, the step "Texts, the lines this branch adds" `success`. The local list
+  on Node.js 22.21.0 from a clean tree: `npm ci`, the build, `npm test` (1524 tests, 1524
+  passing), `lint`, `check:pins`, `check:schemas`, `check:packs`, `index -- --check`,
+  `validate`, `check:runs`, `check:texts -- --base origin/main`, each exit 0, the tree clean
+  after. The privacy check of the task's diff and commit messages: clean. This note's commit is
+  documentation only and needs no new run (dl-039 R2).
