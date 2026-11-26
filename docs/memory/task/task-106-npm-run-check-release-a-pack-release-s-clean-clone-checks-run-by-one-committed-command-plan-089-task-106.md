@@ -278,3 +278,7 @@ use of it, `tests/publish.test.ts` green; 3. the command: green; 4. the CLI, the
   `validate`, `check:runs`, `check:texts -- --base origin/main`, each exit 0, the tree clean
   after. The privacy check of the task's diff and commit messages: clean. This note's commit is
   documentation only and needs no new run (dl-039 R2).
+- 2026-11-26: `in-review → approved` by the approver (`cf6eb0ff`). On the approver's "procedi"
+  after it, merged `--no-ff` into plan-089's branch (`533a5d5a`), a departure from `deliver`
+  ("into main"), task-102 and task-103 as precedents (plan-089 ruling 2). The task stays
+  `approved` until plan-089's merge into `main` and `main`'s CI on it (criterion 10).
