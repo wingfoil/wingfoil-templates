@@ -204,3 +204,35 @@ counts (criterion 10).
   `core-records` (the other examples' `task_path` holds `{release}`), so the existing run's
   `submit: added` and `approve: added` keep their element; the fields read on `core-records`.
   **Nit:** only the `product-owner` warning goes.
+- 2026-11-27: Design (`9b25b793`), `backlog → in-progress` (`62331117`), on `task/task-108-…`
+  from `main` at `401efd3d`.
+- 2026-11-27: the red (criteria 5, 6), with the real WingFoil 0.3.0 and 0.3.2 of the matrix cache:
+  each of `base`'s three README examples composed by `compose-cli` from the tree, into a scratch
+  repository committed under the example's approver; `workflow start decision-log-ingest --format
+  json`: `next.directiveWarnings` `["no directives assigned to role 'product-owner'"]` on all six;
+  on `core-records`, `memory add --type decision-log` and `--type task`: no `contributor`,
+  `credit` or `reported_by` in either element's frontmatter. The new `check:runs` run passes
+  before the change too (the fields optional), recorded as such.
+- 2026-11-27: build (`ee198ebe`). The four directives' first lines after the title (criterion 3):
+  `claim-sources` `Precedence: foundation`, `doc-versioning` `Precedence: foundation`,
+  `security-secrets` `Precedence: security`, `traceability` `Precedence: foundation`. The same
+  checks after it: `next.directiveWarnings` `[]` on all six; on 0.3.0 and 0.3.2, the added
+  `decision-log` carries `contributor: ""`, `credit: ""` and `reported_by: []` and the `task`
+  `reported_by: []`, each with its comment kept (criterion 5).
+- 2026-11-27: a consequence beyond the Design: with `reported_by` declared by `base`'s templates,
+  the fixture-element check of `governance/feedback` (FA-6, `tests/support/fixture-elements.ts`)
+  reads a back-reference from that field instead of the body, and 21 tests of
+  `tests/feedback-elements.test.ts` failed (the valid projects `defaults`, `added-outcome`, and the
+  invalid elements checked against `defaults`). The five target elements of
+  `tests/fixtures/feedback-elements/` (`dl-001`, `dl-002`, `dl-900`, `task-001` of `defaults`;
+  `dl-1-offline-maps` of `added-outcome`) gain `reported_by: [<the feedback id>]`, their body's
+  citation kept; `dl-901` (cites nothing) unchanged. The check is the pack's FA-6 working as
+  meant; no file under `src/` changed.
+- 2026-11-27: validation (criterion 9), Node.js 24.22.3: `npm test` 1537 tests, 0 failing;
+  eslint, `check:texts -- --base main`, `check:packs` (101 files, 0 problems), `index -- --check`,
+  `validate` (32 runs, `tolerance applied: none`), the golden step (26 runs), the four overlays
+  (40, 40, 40, 48 runs), each exit 0; `check:runs` 94 runs, 0 failed (`base-task-template` on
+  `core-records`, 0.3.0 and 0.3.2). `npm run index` regenerated `packs/base/README.md`'s "What it
+  adds" (`traceability`: `facilitator`, `product-owner`). Catalog files unchanged.
+- 2026-11-27: the counts (criterion 10): `check:runs` 92 → 94 runs (no test asserts it); the lint's
+  files (101), the index's (9), `validate`'s runs and the tests' count (1537) unchanged.
