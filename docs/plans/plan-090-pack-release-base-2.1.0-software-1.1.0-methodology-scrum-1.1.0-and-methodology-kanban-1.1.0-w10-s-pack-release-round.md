@@ -293,3 +293,8 @@ list` and `npm run lint` exit 0. Files staged by name.
   a scratch clone with a fictional local identity, nothing pushed. **Nits:** the rehearsal reads
   each tag's annotation with `git tag -n99` and runs `check:runs`; point 4's rule 6 citation
   dropped (prel-007 and prel-008 make no claim about the line), the authoring tasks' reviews named.
+- 2026-11-27: the approver's rulings recorded (`cc9f826f`), the plan submitted `draft → active`
+  (`f897c64d`), `main` pushed by the approver; its CI read: CI 45968507128 `success` (its four
+  `validate` jobs) and Pages 45968507183 `success`. Steps 2: task-107 added (`4a7aab6b`), its body
+  reviewed and re-reviewed (task-107 › Execution Notes), submitted `draft → pending`
+  (`ba110496`).
