@@ -2,7 +2,7 @@
 id: task-108-base-s-next-minor-bug-011-and-bug-014-fixed-the-precedence-lines-the-optional-template-fields-plan-090-task-108
 type: task
 title: "base's next minor: bug-011 and bug-014 fixed, the Precedence lines, the optional template fields (plan-090 task-108)"
-status: backlog
+status: in-progress
 pack: "pack-foundation-base"
 depends_on: []
 tags: ["packs","base"]
