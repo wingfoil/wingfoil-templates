@@ -2,7 +2,7 @@
 id: task-107-check-packs-checks-a-pack-s-changelog-first-entry-and-check-release-s-counts-lines-carry-a-count-plan-090-task-107
 type: task
 title: "check:packs checks a pack's CHANGELOG first entry, and check:release's counts' lines carry a count (plan-090 task-107)"
-status: approved
+status: done
 pack: ""            # tooling task (tooling-delivery v5), plan-090 task-107
 depends_on: []
 tags: ["tooling","pack-release","validation"]
