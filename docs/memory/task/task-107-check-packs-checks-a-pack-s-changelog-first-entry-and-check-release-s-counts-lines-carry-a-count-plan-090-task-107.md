@@ -2,7 +2,7 @@
 id: task-107-check-packs-checks-a-pack-s-changelog-first-entry-and-check-release-s-counts-lines-carry-a-count-plan-090-task-107
 type: task
 title: "check:packs checks a pack's CHANGELOG first entry, and check:release's counts' lines carry a count (plan-090 task-107)"
-status: draft
+status: pending
 pack: ""            # tooling task (tooling-delivery v5), plan-090 task-107
 depends_on: []
 tags: ["tooling","pack-release","validation"]
@@ -83,10 +83,11 @@ round's first `check:release` report.
    - `merge/example-1`, `merge/example-2`, `resolve/full`: an entry added to each pack (no test
      lints them; plan-090 point 6 asks for it);
    - `software-exit` and `feedback-exit`: already passing, unchanged;
-   - `writePack` (`tests/support/pack-tree.ts`): `# <id>`, then `- <version>: <a sentence>.`;
-     `tests/publish.test.ts`'s `bump()` writes the new version's entry first, and its
-     `repository()`'s append is dropped or kept as the Design says, the tests still passing;
-     any other helper that writes a CHANGELOG likewise;
+   - `writePack` (`tests/support/pack-tree.ts`): `# <id>`, then `- <version>: first version.`
+     (the line `tests/publish.test.ts` expects in the tag annotation); `tests/publish.test.ts`'s
+     `bump()` writes the new version's entry first; the appends of `- 1.0.0: first version.` in
+     `tests/publish.test.ts`'s `repository()` and in `tests/feedback-note.test.ts` dropped as
+     redundant;
    - `intake/report`: not a pack, unchanged.
 
    A test that expects a tree to fail for another reason keeps failing for that reason only. Any
@@ -109,8 +110,8 @@ round's first `check:release` report.
    are not part of its failing count.
 6. **The rest unchanged.** The diff touches only the rule's module and `src/check-packs.ts`'s
    use of it, `src/check-release.ts`, their tests, the fixture CHANGELOGs, the test helpers of
-   criterion 3 (`tests/support/pack-tree.ts`, `tests/publish.test.ts`, any other that writes a
-   CHANGELOG) and the expectations it lists, spec-001, this task and plan-090. No workflow or
+   criterion 3 (`tests/support/pack-tree.ts`, `tests/publish.test.ts`,
+   `tests/feedback-note.test.ts`) and the expectations it lists, spec-001, this task and plan-090. No workflow or
    directive text changes (`pack-release-cycle` › `prepare` says "write the CHANGELOG.md entry";
    the rule's message teaches the shape). No dependency is added (`package-lock.json` unchanged).
    `npm test`, `lint` and the other checks of the CI pass, read from the branch CI's jobs and
@@ -150,3 +151,8 @@ round's first `check:release` report.
   its count. **Nits:** the fixture counts and the five bare entries; code points, the `- `
   included; `#` headings, dl-028 D1 as source, line 1; standard output as JSON; ruling 13 in
   criterion 8; no workflow or directive text changes.
+- 2026-11-27: re-review: approve after amendments; one should-fix, one nit, both applied in the
+  next commit. **Should-fix:** `writePack`'s line fixed as `- <version>: first version.`, the
+  line `tests/publish.test.ts` expects in the tag annotation (`changelogEntry` takes the first
+  match), the redundant appends dropped. **Nit:** `tests/feedback-note.test.ts` named in
+  criterion 6.
