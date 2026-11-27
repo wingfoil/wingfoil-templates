@@ -150,7 +150,42 @@ gains a run for `adr`, `bug` and `tech-spec`, and the `release` is read by hand 
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+On `task/task-109-…`, from `main` at `632eb8b0` (the backlog approval).
+
+- **`agents/section.md`** (criteria 1, 2): the bullet "**{{agent_name}} acts as developer, reviewer,
+  qa and architect** …" becomes "**{{agent_name}} acts in the roles `dna.yaml` › `team.agents`
+  gives it** (its `executes_as`), and never approves: it hands the approver the exact command. A
+  `bug` moves through the gates `memory.yaml` declares for it, including one parked back by its
+  `returns`, only by the approver's `approve`." A new bullet, **The release approvals**, states G1:
+  until a WingFoil release in the pack's range binds a gate's approval to the phase that owns it,
+  the approvals stay in `release-submit` › `approve-release` and `release-publishing` › `publish`;
+  a project not running the engine follows those steps by hand, the approver's OK recorded at
+  `approve-release` (in `releasing`, before the release commit) and at `publish` (before the tag),
+  and a release never moves past `releasing` by `submit` alone. "A WingFoil release that
+  `compat.yaml` lists" reads, in a text a project carries, as "in the pack's range": the range is
+  computed from `compat.yaml` (dl-002), and a project has no `compat.yaml`. The other bullets stay.
+- **`directives/determinism.md`** (criterion 3): its lines after the frontmatter become `#
+  Determinism`, a blank line, `Precedence: foundation`, a blank line, then the text unchanged.
+- **`memory-templates/`** (criterion 4): `adr.md`, `bug.md` and `tech-spec.md` gain, after `title:
+  ""`, the three lines of `base`'s `decision-log.md`, byte for byte; `release.md` gains, after
+  `release-line: ""`, 0.3.2's two `RELEASE_TEMPLATE_FIELDS` lines byte for byte, and after `##
+  Scope`'s comment a blank line and 0.3.2's `## Scope changes`: the heading, its comment reflowed
+  within 100 characters (words unchanged), a blank line and the two table lines. `check:packs`'
+  `releaseFields` (`src/workflow-rules.ts`) adds every key of `release.md`, so `backlog_committed`
+  and `waves` become keys a methodology's `where` may name; no pack's `where` names them today, and
+  nothing fails.
+- **`README.md`** (criteria 2, 5): step 3 reworded as `base`'s 2.1.0 step 3 (only what the project
+  wrote itself, never what `init` scaffolded); after "Who holds `tech-lead`", a paragraph **"The
+  release approvals."** with G1; after it, **"Updating from 1.0.0."** as criterion 5 lists.
+- **Tests and fixtures** (criterion 7): `tests/fixtures/runs/software.yaml` gains a run
+  `software-templates` (main `adr-ingest`; `start`; `add` of an `adr` at `adr-ingest.capture`, a
+  `bug` and a `tech-spec`), on both examples; `bug-001-export-crash` of the `with-software`
+  feedback fixture gains `reported_by: [feedback-001-export-crash]`. Other tests that move are
+  found by the suite and recorded with their counts (criterion 8).
+- **The hand reading** (criterion 4): a script on the composed `defaults` example, in a scratch
+  repository per release, running `memory add` for the four types (the `release` with `--set
+  version=1.0.0 --set release-line=rl-1.0.0`), then `workflow list --format json`; it prints each
+  element's frontmatter lines for the fields and the `release`'s `## Scope changes`.
 
 ## Execution Notes
 
@@ -170,3 +205,5 @@ gains a run for `adr`, `bug` and `tech-spec`, and the `release` is read by hand 
   three amended lines over 100 characters reflowed; not applied: naming `src/workflow-rules.ts` (the
   Design names it) and an FA-6 assertion on `reported_by` (`backReferenceProblems` already enforces
   it once the template declares the field).
+- 2026-11-27: `pending → backlog` by the approver (`632eb8b0`), the departure from plan-090 ruling 5
+  accepted with it (a `release` read by hand instead of a `check:runs` run).
