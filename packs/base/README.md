@@ -69,11 +69,14 @@ already given never change. Then it recomposes
 
 **Updating from 2.0.1.** The project recomposes `base` and copies the `.wingfoil/` files as in
 steps 2 and 3, then regenerates the AGENTS.md region and pastes it again: the region now states
-the precedence of directives, and `product-owner` is assigned `traceability`. The changed
-directives (`security-secrets` names its exceptions, each directive its `Precedence:` line) and
-`governance-evolution` › `apply` reach the project only by that copy. The optional fields of
+the precedence of directives. The changed directives (`security-secrets` names its exceptions,
+each directive its `Precedence:` line), `governance-evolution` › `apply` and `product-owner`
+assigned `traceability` (`roles.yaml`) reach the project only by that copy. The optional fields of
 `decision-log` (`contributor`, `credit`, `reported_by`) and `task` (`reported_by`) reach it only
-through its copied templates: elements already written are not changed.
+through its copied templates: elements already written are not changed. With
+`governance/feedback`, a decision-log or a task routed from then on cites the feedback item in its
+`reported_by` field instead of its body, as that pack's rule says for a template that has the
+field.
 
 <!-- generated:begin composition -->
 ## Composition
