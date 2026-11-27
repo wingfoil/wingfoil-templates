@@ -260,3 +260,6 @@ order, when both are there; otherwise the last-line rule.
 - 2026-11-27: `in-review → approved` by the approver (`7faf8255`); on the approver's OK, merged
   `--no-ff` into `main` (`09a4af7d`); `main` pushed by the approver (plan-090 ruling 13). The task
   stays `approved` until `main`'s CI on the merge (criterion 9).
+- 2026-11-27: the check on `main` (criterion 9): `main`'s CI on `cadca35d` (the merge `09a4af7d`
+  and its note) 45996180999 `success`, its four `validate` jobs running `npm run check:packs`;
+  Pages 45996181122 `success`. Closed: `approved → done`.

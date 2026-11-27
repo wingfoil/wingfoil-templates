@@ -302,3 +302,6 @@ list` and `npm run lint` exit 0. Files staged by name.
   dl-039's checks on `7e4aca8e` (branch CI 45985749222 `success`, longest job 16m42s; the local
   list on 22.21.0 exit 0), `in-review → approved` (`7faf8255`), merged into `main` on the
   approver's OK (`09a4af7d`).
+- 2026-11-27: `main` pushed by the approver; its CI on `cadca35d` 45996180999 `success` and Pages
+  45996181122 `success`; task-107 `approved → done`. Steps 3: task-108 added (`6668e0e4`), its
+  body reviewed and re-reviewed, submitted `draft → pending` (`b975b31a`).
