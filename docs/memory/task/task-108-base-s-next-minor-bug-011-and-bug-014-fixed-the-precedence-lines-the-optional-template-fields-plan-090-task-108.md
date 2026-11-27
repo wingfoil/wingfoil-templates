@@ -236,11 +236,12 @@ counts (criterion 10).
   adds" (`traceability`: `facilitator`, `product-owner`). Catalog files unchanged.
 - 2026-11-27: the counts (criterion 10): `check:runs` 92 → 94 runs (no test asserts it); the lint's
   files (101), the index's (9), `validate`'s runs and the tests' count (1537) unchanged.
-- 2026-11-27: the command of criterion 6, as run for each example `<x>` and release `<v>`: `npm run
-  compose -- --tree . --out <dir> <the example's --param values> base`, the composed `.wingfoil/`
-  committed in a scratch repository, then `.cache/wingfoil-matrix/<v>/node_modules/.bin/ wingfoil
-  workflow start decision-log-ingest --format json`, its `next.directiveWarnings` read: before,
-  `["no directives assigned to role 'product-owner'"]`; after, `[]`.
+- 2026-11-27: the command of criterion 6, as run for each example `<x>` and release `<v>`:
+  `node dist/src/compose-cli.js --tree . --out <dir> <the example's --param values> base`, the
+  composed `.wingfoil/` committed in a scratch repository, then
+  `.cache/wingfoil-matrix/<v>/node_modules/.bin/wingfoil workflow start decision-log-ingest
+  --format json`, its `next.directiveWarnings` read: before, `["no directives assigned to role
+  'product-owner'"]`; after, `[]`.
 - 2026-11-27: independent review of the build (dl-017): approve after amendments; no blocker,
   three should-fix, six nits, all applied in `7d6e846d`. **Should-fix:** "Updating from 2.0.1"
   said the region carries the assignment: the region states the precedence, the assignment
@@ -257,3 +258,10 @@ counts (criterion 10).
   message pinned to the field's branch; `apply`'s text reflowed; "bridge directive" glossed; the
   gloss of "not comparable by strictness" kept; criterion 6's command written out above;
   `security-secrets` names the author and committer headers.
+- 2026-11-27: re-review: approve; three nits, applied in the next commit: this note's command
+  rewritten (one name, the path whole); 913's case line broken; and a departure from criterion 1
+  recorded: criterion 1 names "the git identity's email in a commit's author header", and the
+  directive names "author and committer headers", since git writes the identity's email in both
+  and naming only the author header would leave every commit's committer header in breach; the
+  "nowhere else" list is unchanged. For the approver to read at `approve` (dl-019); the
+  Acceptance's text stays as approved.
