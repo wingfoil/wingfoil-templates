@@ -111,9 +111,10 @@ round's first `check:release` report.
 6. **The rest unchanged.** The diff touches only the rule's module and `src/check-packs.ts`'s
    use of it, `src/check-release.ts`, their tests, the fixture CHANGELOGs, the test helpers of
    criterion 3 (`tests/support/pack-tree.ts`, `tests/publish.test.ts`,
-   `tests/feedback-note.test.ts`) and the expectations it lists, spec-001, this task and plan-090. No workflow or
-   directive text changes (`pack-release-cycle` › `prepare` says "write the CHANGELOG.md entry";
-   the rule's message teaches the shape). No dependency is added (`package-lock.json` unchanged).
+   `tests/feedback-note.test.ts`) and the expectations it lists, spec-001, this task and plan-090.
+   No workflow or directive text changes (`pack-release-cycle` › `prepare` says "write the
+   CHANGELOG.md entry"; the rule's message teaches the shape). No dependency is added
+   (`package-lock.json` unchanged).
    `npm test`, `lint` and the other checks of the CI pass, read from the branch CI's jobs and
    dl-039's local list (criterion 7), not run a second time; `npm run check:texts -- --base
    origin/main` exits 0 on the task's branch.
@@ -152,7 +153,11 @@ round's first `check:release` report.
   included; `#` headings, dl-028 D1 as source, line 1; standard output as JSON; ruling 13 in
   criterion 8; no workflow or directive text changes.
 - 2026-11-27: re-review: approve after amendments; one should-fix, one nit, both applied in the
-  next commit. **Should-fix:** `writePack`'s line fixed as `- <version>: first version.`, the
-  line `tests/publish.test.ts` expects in the tag annotation (`changelogEntry` takes the first
-  match), the redundant appends dropped. **Nit:** `tests/feedback-note.test.ts` named in
-  criterion 6.
+  submit's commit (`ba110496`). **Should-fix:** `writePack`'s line fixed as `- <version>: first
+  version.`, the line `tests/publish.test.ts` expects in the tag annotation (`changelogEntry`
+  takes the first match), the redundant appends dropped. **Nit:** `tests/feedback-note.test.ts`
+  named in criterion 6.
+- 2026-11-27: correction: the re-review's amendment was meant for a commit of its own before
+  `submit`; its `check:texts` failed (one line of 113 characters in criterion 6), and the `memory
+  submit` that followed committed the amendment with that line in `ba110496` (`draft → pending`).
+  The line is reflowed in the next commit; the Acceptance's text is unchanged.
