@@ -36,8 +36,9 @@ pack's range (see its catalog entry):
    moves.
 3. Copy the composed `.wingfoil/` files into the project's `.wingfoil/`, keeping its `custom/`
    folders, then re-add to `dna.yaml`, `memory.yaml`, `roles.yaml` and `workflows.yaml` the
-   project's own entries (its members, modules, stacks, Memory types and the `include` entries of
-   the `custom/` workflows the project wrote itself); copy the generated AGENTS.md region into its
+   project's own entries: only what the project wrote itself (its members, modules, stacks, Memory
+   types and the `include` entries of the `custom/` workflows it wrote), never the Memory types,
+   roles or workflows WingFoil's `init` scaffolded; copy the generated AGENTS.md region into its
    `AGENTS.md`.
 4. Remove what WingFoil's `init` scaffolded under `custom/` and a composition replaces:
    - the directives with the ids of `base`'s directives (`traceability`, `doc-versioning`,
@@ -65,6 +66,14 @@ already given never change. Then it recomposes
 
 **Updating from 2.0.0.** Nothing to recompose. A project that kept and re-included the workflows
 `init` scaffolded removes them with their `include` entries, as step 4 says.
+
+**Updating from 2.0.1.** The project recomposes `base` and copies the `.wingfoil/` files as in
+steps 2 and 3, then regenerates the AGENTS.md region and pastes it again: the region now states
+the precedence of directives, and `product-owner` is assigned `traceability`. The changed
+directives (`security-secrets` names its exceptions, each directive its `Precedence:` line) and
+`governance-evolution` › `apply` reach the project only by that copy. The optional fields of
+`decision-log` (`contributor`, `credit`, `reported_by`) and `task` (`reported_by`) reach it only
+through its copied templates: elements already written are not changed.
 
 <!-- generated:begin composition -->
 ## Composition
@@ -107,7 +116,7 @@ already given never change. Then it recomposes
 - `claim-sources`: global
 - `doc-versioning`: global
 - `security-secrets`: global
-- `traceability`: `facilitator`
+- `traceability`: `facilitator`, `product-owner`
 
 ### Fragments
 

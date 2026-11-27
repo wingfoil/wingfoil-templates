@@ -10,6 +10,14 @@ identities:
 runs:
   - main: decision-log-ingest
     steps: [start]
+  # The optional fields of base's task template (task-108): a task added on core-records, whose
+  # task_path has no {release} token (the other two examples' has, which nothing in base fills).
+  - main: decision-log-ingest
+    only: [core-records]
+    name: base-task-template
+    steps:
+      - start
+      - add: { type: task, title: "Tune the piano" }
   - main: retrospective-periodic
     steps:
       - start

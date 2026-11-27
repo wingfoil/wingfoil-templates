@@ -9,6 +9,8 @@ title: "Traceability"
 
 # Traceability
 
+Precedence: foundation
+
 Every change of {{project_name}} can be followed back to the decision it comes from.
 
 - Each element names, in its Context, the element it comes from: the decision, the plan, the
