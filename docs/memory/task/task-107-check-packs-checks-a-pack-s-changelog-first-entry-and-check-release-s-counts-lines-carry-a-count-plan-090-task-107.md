@@ -131,7 +131,67 @@ round's first `check:release` report.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+**The rule** (criterion 1): a new module `src/changelog-rules.ts`, `changelogProblems(tree,
+pack)`, called in `packProblems` (`src/check-packs.ts`) beside `packLayoutProblems`, for each
+pack `loadPacks` kept (its `pack.yaml` passing its schema). It reads `<pack.path>/CHANGELOG.md`
+only when `lstat` finds a regular file (missing, a link or a directory: the layout rule's
+problem, none here). Lines split on `\r?\n`; a final empty line ignored.
+- Before the first entry: a blank line or one starting `#` is skipped; any other line not
+  starting `- ` is a problem on that line ("text before the first entry").
+- No line starting `- `: a problem on line 1 ("no entry").
+- The first entry's first line: `^- (\S+?)(:| |$)`; the token not equal to `manifest.version`, a
+  problem ("names <token>, pack.yaml's version is <version>"); then, unless it ends with `.`
+  (after `trimEnd`) and is at most 100 code points (`[...line].length`), a problem ("the first
+  line becomes the tag annotation: a whole sentence ending with `.`, at most 100 characters").
+  A bare `- <version>` fails the second test only.
+- The entry's later lines, up to the next line starting `- `: each blank or starting with two
+  spaces; the first other line, a problem on that line ("not indented").
+
+Each problem: `rule: 'changelog'`, `file: <pack.path>/CHANGELOG.md`, its line, the message
+`<pack id>: CHANGELOG.md <what> (dl-028 D1)`. At most one problem per test; the version and the
+sentence tests are independent, so one line can give both.
+
+**spec-001 §18** (criterion 2), under "`pack.yaml` and the pack directory", one bullet:
+"`CHANGELOG.md`'s first entry (blank lines and headings before it) starts `- <version>`, the
+version `pack.yaml`'s, and its first line, which `publish:pack` reads into the tag annotation, is
+a sentence ending with `.`, at most 100 characters; its later lines are indented. The composer
+does not apply it: a CHANGELOG is never composed (task-107, dl-028 D1)." A dated Execution Note on
+spec-001 records the in-place amendment (plan-090 point 6, ruling 6; the backlog OK and the
+merge OK).
+
+**The test trees** (criterion 3; every pack fixture's version is `1.0.0`):
+- `compose/tree`: `methodology/kanban`, `stage/production`, `team-mode/agent-first`,
+  `blueprint/web-service`, `phase/inception/lean` get `- 1.0.0: golden fixture.`, as the others.
+- `merge/example-1`, `merge/example-2` (five packs each), `resolve/full` (eleven): after the
+  heading, a blank line and `- 1.0.0: test fixture.`.
+- `tests/support/pack-tree.ts` `writePack`: `# <id>\n\n- <version>: first version.\n`.
+- `tests/publish.test.ts`: `repository()`'s append dropped; `bump()` inserts `- <version>:
+  next.` as the first entry (after the heading) instead of appending it. The test "refuses a
+  missing CHANGELOG entry" writes `# base`: `publish:pack` reads the entry (`changelogEntry`)
+  before its validation, so its message stays; kept as is.
+- `tests/feedback-note.test.ts` line 122: the append dropped.
+
+Expectations re-recorded: none expected (no digest, index or golden output covers a CHANGELOG);
+any the build meets is listed in the Execution Notes.
+
+**The counts' lines** (criterion 4), in `countsOf`: for `run -s wingfoil -- workflow list`, its
+standard output parsed with `JSON.parse` inside `try`; an object whose `workflows` is an array
+gives `workflows: <n>`; otherwise the last-line rule. For `run publish:pack -- --pack <id>
+--dry-run`, its standard output's lines starting `- Tag: ` and `- Catalog commit: `, in that
+order, when both are there; otherwise the last-line rule.
+
+**Red steps** (criterion 5), in this order, each recorded with its command and failing count:
+1. `tests/changelog-rules.test.ts`: `changelogProblems` on packs written with `withPackTree` and
+   a CHANGELOG set per case (another version; no final `.`; 101 code points; empty; a heading only;
+   text before the entry; a bare `- 1.0.0`; a later line not indented), plus the guards (heading
+   and none, passing; the file missing: the layout rule's problem only, through `runCheckPacks`).
+   Red: the module does not exist.
+2. `tests/check-release.test.ts`: the stub's `workflow list` returns JSON (`workflows: 2`) and the
+   dry run returns the Publication's lines (`- Tag: …` and `- Catalog commit: …`); the fallbacks
+   (non-JSON output; a dry run with no `- Tag:`). Red: the last-line rule gives `}` and "- Not
+   pushed".
+3. The rule wired into `check:packs` before the trees are fixed: `npm test` red on the trees of
+   criterion 3 (the count recorded), then the trees fixed, green.
 
 ## Execution Notes
 
