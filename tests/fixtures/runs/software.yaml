@@ -1,6 +1,6 @@
-# The start of sw-life-cycle on the README examples of software (task-058, plan-051), run
-# by `npm run check:runs` and the CI on every branch push, on each selected release. Each run
-# starts sw-life-cycle in its own scratch repository holding a README example's composition,
+# The scripted run of software's workflows on WingFoil (task-058, plan-051; task-109), run by
+# `npm run check:runs` and the CI on every branch push, on each selected release. Each run starts
+# one main of software in its own scratch repository holding a README example's composition,
 # committed; the agent below runs it (fixture data, no governance act).
 format: 1
 compositions: tests/fixtures/examples/software

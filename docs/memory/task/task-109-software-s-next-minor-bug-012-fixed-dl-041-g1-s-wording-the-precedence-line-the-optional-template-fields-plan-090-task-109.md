@@ -221,3 +221,14 @@ On `task/task-109-…`, from `main` at `632eb8b0` (the backlog approval).
   fields and their comments byte for byte (`backlog_committed:` with no value), and the `release`
   its `## Scope changes` with the comment and the table header; `workflow list --format json`
   then exits 0 with no diagnostic on both.
+- 2026-11-27: build review: approve (1 major, for the approver; 0 minor; 2 nits). Applied: the
+  nits (`section.md`'s "the approvals stay in"; `tests/fixtures/runs/software.yaml`'s header, as
+  `base.yaml`'s). The major, an Acceptance deviation (dl-019), the Acceptance text unchanged:
+  criterion 2 quotes dl-041 G1's "at `publish` (before the tag)", while `release-publishing` runs
+  `release-commit`, `staging-rehearsal`, `tag`, `publish`, `mark-released`, and the section's own
+  first paragraph says so (commit, rehearsal, tag, publication): the OK at `publish` comes after
+  the tag, before the publication. The build keeps G1's words until the approver rules; proposed
+  (i) "at `publish` (after the tag, before the publication)" in the section and the README, with a
+  dated note on dl-041 at plan-090 point 11 recording the erratum; the alternatives: (ii) move
+  `publish`'s approval before `tag` (a workflow change, another task), (iii) keep "before the
+  tag", a project by hand asking the OK before `tag`.

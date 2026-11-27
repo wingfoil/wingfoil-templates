@@ -14,7 +14,7 @@ checks, `releasing`, the approval), then `publishing` (commit, rehearsal, tag, p
   `memory.yaml` declares for it, including one parked back by its `returns`, only by the
   approver's `approve`.
 - **The release approvals:** until a WingFoil release in the pack's range binds a gate's approval
-  to the phase that owns it, they stay in `release-submit` › `approve-release` and
+  to the phase that owns it, the approvals stay in `release-submit` › `approve-release` and
   `release-publishing` › `publish`. A project not running the engine follows those steps by hand:
   the approver's OK is recorded at `approve-release` (in `releasing`, before the release commit)
   and at `publish` (before the tag), and a release never moves past `releasing` by `submit` alone.
