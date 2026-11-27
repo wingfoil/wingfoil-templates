@@ -9,6 +9,8 @@ title: "Determinism"
 
 # Determinism
 
+Precedence: foundation
+
 The same inputs give the same outputs, wherever and whenever the project is built or run.
 
 - Do not depend on the clock, the locale, the time zone, random values, the host or the order a

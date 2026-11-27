@@ -38,8 +38,9 @@ methodology, with a WingFoil release in the pack's range (see its catalog entry)
    already governed, its current values of the path and id parameters, so that no file moves.
 3. Copy the composed `.wingfoil/` files into the project's `.wingfoil/`, keeping its `custom/`
    folders, then re-add to `dna.yaml`, `memory.yaml`, `roles.yaml` and `workflows.yaml` the
-   project's own entries, among them the `include` entries of the `custom/` workflows the project
-   wrote itself; copy the generated AGENTS.md region into its `AGENTS.md`.
+   project's own entries: only what the project wrote itself (among them the `include` entries of
+   the `custom/` workflows it wrote), never the Memory types, roles or workflows WingFoil's `init`
+   scaffolded; copy the generated AGENTS.md region into its `AGENTS.md`.
 4. Remove what WingFoil's `init` scaffolded under `custom/` and the composition replaces: the
    `determinism` directive, since a `custom/` file wins over the pack's, and the workflows
    `sw-life-cycle`, `adr-ingest` and `bug-ingest`, which `software` ships, each with its `include`
@@ -59,6 +60,23 @@ approver, and the agent's `executes_as` lists `base`'s `facilitator` and `produc
 and `mark-released`; `end-of-life` › `deprecate` and `archive`; and `bug-ingest` › `triage`. A
 project adds `tech-lead` to a member's `roles` under `team.members` in its `dna.yaml`, or to its
 agent's `executes_as` under `team.agents`.
+
+**The release approvals.** Until a WingFoil release in the pack's range binds a gate's approval to
+the phase that owns it, `software`'s release approvals stay in `release-submit` ›
+`approve-release` and `release-publishing` › `publish`. A project not running the engine follows
+those steps by hand: the approver's OK is recorded at `approve-release` (in `releasing`, before the
+release commit) and at `publish` (before the tag), and a release never moves past `releasing` by
+`submit` alone.
+
+**Updating from 1.0.0.** The project recomposes `software` and copies the `.wingfoil/` files as in
+steps 2 and 3, then regenerates the AGENTS.md region and pastes it again: the region now names the
+agent's roles and the `bug` gates by reference to `dna.yaml` and `memory.yaml`, and states the
+release approvals. The `determinism` directive's `Precedence:` line reaches the project only by
+that copy. The optional fields of `adr`, `bug` and `tech-spec` (`contributor`, `credit`,
+`reported_by`) and of `release` (`backlog_committed`, `waves`, with its `## Scope changes` section)
+reach it only through its copied templates: elements already written are not changed. With
+`governance/feedback`, a `bug` routed from then on cites the feedback item in its `reported_by`
+field instead of its body, as that pack's rule says for a template that has the field.
 
 <!-- generated:begin composition -->
 ## Composition

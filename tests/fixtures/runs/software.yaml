@@ -9,3 +9,12 @@ identities:
 runs:
   - main: sw-life-cycle
     steps: [start]
+  # The optional fields of software's adr, bug and tech-spec templates (task-109): one element of
+  # each added; a release needs version and release-line, which the runner's add does not set.
+  - main: adr-ingest
+    name: software-templates
+    steps:
+      - start
+      - add: { type: adr, title: "Store amounts as integers", step: adr-ingest.capture }
+      - add: { type: bug, title: "The total rounds down" }
+      - add: { type: tech-spec, title: "The ledger export" }
