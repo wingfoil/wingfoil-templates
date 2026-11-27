@@ -221,3 +221,18 @@ order, when both are there; otherwise the last-line rule.
   `submit`; its `check:texts` failed (one line of 113 characters in criterion 6), and the `memory
   submit` that followed committed the amendment with that line in `ba110496` (`draft → pending`).
   The line is reflowed in the next commit; the Acceptance's text is unchanged.
+- 2026-11-27: Design (`5691c788`), then `backlog → in-progress` (`17ca985b`), on the branch
+  `task/task-107-…` from `main` at `7dfac6cf`.
+- 2026-11-27: red first (dl-018), on Node.js 24.22.3, the tests committed in `7ae43c6e`:
+  - steps 1 and 2: `npm run build` failed on `tests/changelog-rules.test.ts` (TS2307, the module
+    `src/changelog-rules` missing); `node --test dist/tests/check-release.test.js`: 22 tests, 2
+    failing (the two new counts' lines tests: `}` and "- Not pushed" given);
+  - step 3, the rule wired into `check:packs`, the trees not yet fixed: `npm test`, 1534 tests,
+    186 failing.
+- 2026-11-27: build (`3d2dd967`): `npm test` 1534 tests, 0 failing; `npm run check:packs`
+  (`lint: checked 101 files, 0 problems`) and the golden step exit 0. Two test edits beyond the
+  Design, both from the CHANGELOG entry now written with the tree: `tests/feedback-note.test.ts`
+  expects the commit message `inbox and schemas` (its changelog append dropped); and
+  `tests/publish.test.ts`'s "no descent" case branched from `base@1.0.0~1`, which no longer exists
+  (`repository()`'s commit dropped, the tag on the tree's only commit), now from that commit
+  amended, a commit beside the tag's. No digest, index or golden output re-recorded.
