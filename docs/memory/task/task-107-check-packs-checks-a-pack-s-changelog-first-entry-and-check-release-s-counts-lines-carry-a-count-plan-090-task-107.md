@@ -246,3 +246,14 @@ order, when both are there; otherwise the last-line rule.
 - 2026-11-27: re-review: approve; no blocker, no should-fix. Its optional nit (the no-version test
   pinning both problems with `deepEqual`) not applied: cosmetic, the code frozen for dl-039's
   checks.
+- 2026-11-27: dl-039's checks (criterion 7), once, on the frozen commit `7e4aca8e`:
+  - the branch CI 45985749222 `success`: `validate (22.21.0, 1)` 16m42s, `validate (22.12.0, 1)`
+    11m00s, `validate (22.21.0, 2)` 8m23s, `validate (22.12.0, 2)` 8m00s;
+  - the local list on Node.js 22.21.0, a clean tree, after `npm ci` and `npm run build`, every
+    command exit 0: `npm test` (1537 tests, 0 failing), `lint`, `check:pins`, `check:schemas`
+    (10 files), `check:packs` (101 files, 0 problems), `index -- --check`, `validate` (32 runs),
+    the golden step (26 runs), the four overlays (40, 40, 40, 48 runs), `workflow list`,
+    `check:runs` (92 runs, 0 failed), `npm audit --omit=dev` and `npm audit` in each
+    `src/matrix/wingfoil-*/`; the tree clean after.
+  - The privacy check of the branch's diff and its commit messages (`repository-practice` rule 2):
+    no local path, no session or transcript, no project outside this repository's named.
