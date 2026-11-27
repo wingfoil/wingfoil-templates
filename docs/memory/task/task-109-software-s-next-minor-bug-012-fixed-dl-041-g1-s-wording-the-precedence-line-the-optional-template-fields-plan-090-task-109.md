@@ -51,14 +51,15 @@ task-108 (`base`'s minor, merged at `0be6a781`), whose shapes it reuses where th
 `fragments/dna.yaml` (`executes_as: [developer, reviewer, qa, architect]`), `fragments/roles.yaml`
 (`determinism` for `developer`, `reviewer`, `architect`), `fragments/memory.yaml` (the `release`
 type requires `title`, `version` and `release-line`; by default its path and id carry
-`{release-line}` and `{version}`), `memory-templates/` (`adr`, `bug`, `release`, `release-line`, `tech-spec`, none with
-an optional field), and a `README.md` with no "Updating from" paragraph. WingFoil 0.3.2's `init`
-writes, on its `adr`, `bug`, `decision-log` and `tech-spec` templates, `contributor: ""`, `credit:
-""` and `reported_by: []`; on its `release` template, `backlog_committed:` (no value) and `waves:
-[]`, each with an `# optional — …` comment, and a `## Scope changes` section (a comment and a
-table header: Task, From, Admitted at, Count vs backlog_committed) after the body.
-`tests/fixtures/runs/software.yaml` only starts `sw-life-cycle`: no run adds a `software` type
-except `governance/feedback`'s `route-bug` (a `bug`, on `with-software`).
+`{release-line}` and `{version}`), `memory-templates/` (`adr`, `bug`, `release`, `release-line`,
+`tech-spec`, none with an optional field), and a `README.md` with no "Updating from" paragraph.
+WingFoil 0.3.2's `init` writes, on its `adr`, `bug`, `decision-log` and `tech-spec` templates,
+`contributor: ""`, `credit: ""` and `reported_by: []`; on its `release` template,
+`backlog_committed:` (no value) and `waves: []`, each with an `# optional — …` comment, and a `##
+Scope changes` section (a comment and a table header: Task, From, Admitted at, Count vs
+backlog_committed) after the body. `tests/fixtures/runs/software.yaml` only starts `sw-life-cycle`:
+no run adds a `software` type except `governance/feedback`'s `route-bug` (a `bug`, on
+`with-software`).
 
 **A departure from plan-090 ruling 5,** for the approver to rule at the backlog gate: the ruling
 has the fields checked by `check:packs` and `check:runs`, the scenarios extended where a changed
@@ -73,8 +74,8 @@ gains a run for `adr`, `bug` and `tech-spec`, and the `release` is read by hand 
 1. **bug-012, by reference:** `agents/section.md` names the agent's roles as those `dna.yaml` ›
    `team.agents` gives `{{agent_name}}` (its `executes_as`), and says it never approves and hands
    the approver the exact command, as today; a `bug` moves through the gates `memory.yaml` declares
-   for it, including one parked back by its `returns`, only by the approver's `approve`. The
-   section names no role of the agent and no `bug` state by value. No parameter is added (bug-012's other
+   for it, including one parked back by its `returns`, only by the approver's `approve`. The section
+   names no role of the agent and no `bug` state by value. No parameter is added (bug-012's other
    option): a reference follows the project's own files with nothing for it to set. The README's
    "Who holds `tech-lead`" paragraph, which describes the composed DNA's defaults, stays.
 2. **dl-041 G1's wording:** the section and the README state G1 as ruled: the approvals stay in
@@ -85,8 +86,9 @@ gains a run for `adr`, `bug` and `tech-spec`, and the `release` is read by hand 
    tag); a release never moves past `releasing` by `submit` alone. In the README, a paragraph of
    "Install and update" after "Who holds `tech-lead`".
 3. **The `Precedence:` line:** `determinism` `Precedence: foundation`, after the `# ` title and a
-   blank line, followed by a blank line, as `base`'s `security-secrets.md`; the rest of the directive unchanged. No lint checks it
-   (plan-090 point 4): the Design lists its first line, and the build review reads it.
+   blank line, followed by a blank line, as `base`'s `security-secrets.md`; the rest of the
+   directive unchanged. No lint checks it (plan-090 point 4): the Design lists its first line, and
+   the build review reads it.
 4. **The template fields:** `adr.md`, `bug.md` and `tech-spec.md` gain `contributor: ""`, `credit:
    ""` and `reported_by: []` with the comments `base`'s `decision-log.md` carries since task-108
    (`reported_by`'s: "list of the feedback ids or feedback note paths this element answers, as
@@ -164,3 +166,7 @@ gains a run for `adr`, `bug` and `tech-spec`, and the `release` is read by hand 
   the FA-6 fixture `bug` and `route-bug` left as is; the fields' position; G1's place in the README;
   the `Precedence:` line's position; "by default" on the `release` path; "no role of the agent";
   `releaseFields` widened, for the Design.
+- 2026-11-27: re-review of the amendments: approve after amendments (1 minor, 2 nits); applied:
+  three amended lines over 100 characters reflowed; not applied: naming `src/workflow-rules.ts` (the
+  Design names it) and an FA-6 assertion on `reported_by` (`backReferenceProblems` already enforces
+  it once the template declares the field).
