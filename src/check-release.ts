@@ -230,6 +230,22 @@ function countsOf(args: string[], outcome: Outcome): string[] {
       return section;
     }
   }
+  if (shown === 'run -s wingfoil -- workflow list') {
+    // Its JSON's workflows, counted (task-107); not its JSON: the last line.
+    try {
+      const listed = (JSON.parse(outcome.stdout) as { workflows?: unknown }).workflows;
+      if (Array.isArray(listed)) return [`workflows: ${String(listed.length)}`];
+    } catch {
+      // the last-line rule below
+    }
+  }
+  if (/^run publish:pack -- --pack \S+ --dry-run$/.test(shown)) {
+    // The tag and the catalog commit the dry run would make (task-107); either missing: last line.
+    const out = lines(outcome.stdout);
+    const tag = out.find((line) => line.startsWith('- Tag: '));
+    const commit = out.find((line) => line.startsWith('- Catalog commit: '));
+    if (tag !== undefined && commit !== undefined) return [tag, commit];
+  }
   const last = (text: string): string | undefined => lines(text).map((line) => line.trimEnd())
     .filter((line) => line.trim() !== '' && !line.startsWith('> ')
       && !/^npm (warn|notice)\b/i.test(line)).pop();

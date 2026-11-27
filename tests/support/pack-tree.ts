@@ -140,10 +140,12 @@ export function writePack(root: string, spec: PackSpec): void {
     mkdirSync(dirname(join(dir, path)), { recursive: true });
     writeFileSync(join(dir, path), text);
   };
-  write('pack.yaml', stringify(manifestFor(spec)));
+  const manifest = manifestFor(spec);
+  write('pack.yaml', stringify(manifest));
   write('README.md', conformingReadme({ id: spec.id, title: spec.id,
     description: `Test pack ${spec.id}.` }));
-  write('CHANGELOG.md', `# ${spec.id}\n`);
+  // A first entry for the version, as the changelog rule asks (task-107).
+  write('CHANGELOG.md', `# ${spec.id}\n\n- ${String(manifest['version'])}: first version.\n`);
   for (const file of contentFiles(spec)) {
     if (!(spec.omitFiles ?? []).includes(file)) write(file, placeholder(file));
   }

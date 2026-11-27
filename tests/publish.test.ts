@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { spawnSync } from 'node:child_process';
 import {
-  appendFileSync, chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync,
+  chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -34,15 +34,10 @@ const INDEXED = ['CATALOG.md', 'catalog-index.json', 'catalog.yaml'];
 const DATES = { GIT_AUTHOR_DATE: '2026-10-10T12:00:00Z', GIT_COMMITTER_DATE: '2026-10-10T12:00:00Z' };
 const WITH_KANBAN = ['methodology/kanban'];
 
-/** A repository whose packs carry a CHANGELOG entry for 1.0.0, committed. */
+/** A repository whose packs carry a CHANGELOG entry for their version (writePack's, task-107). */
 function repository(specs: PackSpec[] = [...FOUNDATION, KANBAN],
   release = STUB_RELEASE, examples = true): TestRepo {
-  const repo = treeRepo(specs, release, { examples });
-  for (const spec of specs) {
-    appendFileSync(join(repo.dir, 'packs', spec.id, 'CHANGELOG.md'), '\n- 1.0.0: first version.\n');
-  }
-  repo.commitAll('changelogs');
-  return repo;
+  return treeRepo(specs, release, { examples });
 }
 
 function publish(repo: TestRepo, args: string[], install = INSTALL): PublishResult {
@@ -365,7 +360,10 @@ function bump(repo: TestRepo, version: string, formats?: Record<string, number>)
   editManifest(repo, 'methodology/kanban', (manifest) => {
     manifest['requires'] = [`base@^${major}`, 'software@^1'];
   });
-  appendFileSync(join(repo.dir, 'packs', 'base', 'CHANGELOG.md'), `- ${version}: next.\n`);
+  // The new version's entry first, after the heading, as the changelog rule asks (task-107).
+  const changelog = join(repo.dir, 'packs', 'base', 'CHANGELOG.md');
+  writeFileSync(changelog, readFileSync(changelog, 'utf8').replace(/^(#[^\n]*\n\n)?/,
+    (heading: string) => `${heading}- ${version}: next.\n`));
   // base's example follows its major, as an author's does (task-022).
   const example = join(repo.dir, 'tests', 'fixtures', 'examples', 'base', 'basic', 'example.yaml');
   if (existsSync(example)) {
@@ -495,7 +493,10 @@ describe('npm run publish:pack, the lines (task-016, F5.3)', () => {
       bump(repo, '1.0.1', { dna: 1, roles: 1, memory: 1, workflow: 2 });
       refused(repo, /format move/);
       repo.git(['reset', '--quiet', '--hard', 'HEAD~1']);
-      repo.git(['checkout', '--quiet', '-b', 'maint/base/1.x-old', 'base@1.0.0~1']);
+      // A commit beside the tag's, not descending from it: the tree's only commit amended
+      // (task-107: the CHANGELOG entry is written with the tree, so the tag has no parent).
+      repo.git(['checkout', '--quiet', '-b', 'maint/base/1.x-old', 'base@1.0.0']);
+      repo.git(['commit', '--quiet', '--amend', '--no-edit', '-m', 'the tree, again']);
       repo.git(['branch', '--quiet', '-D', 'maint/base/1.x']);
       repo.git(['checkout', '--quiet', '-b', 'maint/base/1.x']);
       bump(repo, '1.0.1');

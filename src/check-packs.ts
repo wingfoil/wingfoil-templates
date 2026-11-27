@@ -5,6 +5,7 @@ import { existsSync, lstatSync, readFileSync, readdirSync, statSync } from 'node
 import { join } from 'node:path';
 
 import { CatalogError, loadCatalog } from './catalog';
+import { changelogProblems } from './changelog-rules';
 import { exampleProblems } from './example-rules';
 import { channelProblems } from './feedback-channel';
 import { EXAMPLES } from './examples';
@@ -112,6 +113,7 @@ function packProblems(context: LintContext): Problem[] {
   for (const pack of context.packs.values()) {
     problems.push(...manifestProblems(pack), ...inventoryProblems(context.tree, pack),
       ...formatKindsProblems(pack), ...packLayoutProblems(context.tree, pack),
+      ...changelogProblems(context.tree, pack),
       ...readmeProblems(context.tree, pack, listed), ...mcpProblems(pack),
       ...conditionalProblems(context.catalog, pack, context.packDirs));
     if (context.catalog !== undefined) {
