@@ -236,3 +236,24 @@ counts (criterion 10).
   adds" (`traceability`: `facilitator`, `product-owner`). Catalog files unchanged.
 - 2026-11-27: the counts (criterion 10): `check:runs` 92 → 94 runs (no test asserts it); the lint's
   files (101), the index's (9), `validate`'s runs and the tests' count (1537) unchanged.
+- 2026-11-27: the command of criterion 6, as run for each example `<x>` and release `<v>`: `npm run
+  compose -- --tree . --out <dir> <the example's --param values> base`, the composed `.wingfoil/`
+  committed in a scratch repository, then `.cache/wingfoil-matrix/<v>/node_modules/.bin/ wingfoil
+  workflow start decision-log-ingest --format json`, its `next.directiveWarnings` read: before,
+  `["no directives assigned to role 'product-owner'"]`; after, `[]`.
+- 2026-11-27: independent review of the build (dl-017): approve after amendments; no blocker,
+  three should-fix, six nits, all applied in `7d6e846d`. **Should-fix:** "Updating from 2.0.1"
+  said the region carries the assignment: the region states the precedence, the assignment
+  reaches the project by the copied `roles.yaml`; the section gains §10.1's rules it had dropped
+  (a class-1 or class-2 directive names its law or standard; a ruling that becomes a `custom/`
+  directive is applied through `governance-evolution`; §10.1's sentence that precedence is not the
+  composition order left out, the composition order being the composer's, not an agent's
+  concern); the `governance/feedback` consequence: with `base` 2.1.0 a decision-log or task routed
+  by that pack cites the item in `reported_by`, not its body, as the pack's own rule says for a
+  template that has the field. Still a minor (`pack-semver`): the field is optional, nothing fails
+  validation, and it is the outcome `governance/feedback` expected (plan-074 point 6); "Updating
+  from 2.0.1" says it, and an Open row carries `governance/feedback`'s README sentence that
+  becomes half-stale, owner approver, trigger that pack's next release. **Nits:** 913's expected
+  message pinned to the field's branch; `apply`'s text reflowed; "bridge directive" glossed; the
+  gloss of "not comparable by strictness" kept; criterion 6's command written out above;
+  `security-secrets` names the author and committer headers.
