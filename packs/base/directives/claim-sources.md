@@ -9,6 +9,8 @@ title: "Sources of claims"
 
 # Sources of claims
 
+Precedence: foundation
+
 A claim names what establishes it.
 
 - A statement of fact in an element, a report or a message names its source: the element, the

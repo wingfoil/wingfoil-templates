@@ -4,6 +4,7 @@ type: task
 format: 1
 title: "Reply macros"
 status: draft
+reported_by: [feedback-008-macro-request]
 ---
 
 From the feedback item feedback-008-macro-request.

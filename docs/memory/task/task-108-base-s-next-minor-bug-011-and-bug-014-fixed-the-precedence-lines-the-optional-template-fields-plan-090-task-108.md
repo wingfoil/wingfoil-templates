@@ -2,7 +2,7 @@
 id: task-108-base-s-next-minor-bug-011-and-bug-014-fixed-the-precedence-lines-the-optional-template-fields-plan-090-task-108
 type: task
 title: "base's next minor: bug-011 and bug-014 fixed, the Precedence lines, the optional template fields (plan-090 task-108)"
-status: backlog
+status: approved
 pack: "pack-foundation-base"
 depends_on: []
 tags: ["packs","base"]
@@ -145,7 +145,39 @@ optional — …` comment), none on `task`.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+The approver's rulings at the backlog gate (`401efd3d`, 2026-11-27): option (a); bug-011's third
+exception.
+
+**Files** (all under `packs/base/` except the scenario):
+- `directives/security-secrets.md`: the rule's bullet rewritten with the three exceptions
+  (criterion 1); `Precedence: security` after the title.
+- `directives/claim-sources.md`, `doc-versioning.md`, `traceability.md`: `Precedence:
+  foundation` after the title. The four first lines listed in the Execution Notes (criterion 3).
+- `workflows/governance-evolution.yaml`: `apply`'s description (criterion 2); `version: 2 → 3`.
+- `agents/section.md`: "this file outside its generated region"; a "Precedence of directives"
+  block after the workflows' list: the rule that the stricter wins, the table of §10.1's seven
+  classes, then the rules of criterion 4, one bullet each.
+- `fragments/roles.yaml`: `product-owner: [traceability]` beside `facilitator` (option (a)).
+- `memory-templates/decision-log.md`, `task.md`: the fields of criterion 5, between `title` and
+  the closing `---`, each with its comment.
+- `README.md`: step 3 (criterion 7), the "Updating from 2.0.1." paragraph after 2.0.0's;
+  the generated regions by `npm run index`.
+- `tests/fixtures/runs/base.yaml`: a run `main: decision-log-ingest`, `only: [core-records]`,
+  `name` naming it, steps `start` then `add: { type: task, title: … }` (no step named, as
+  `src/runs.ts` allows).
+
+**The checks with the real WingFoil** (criteria 5, 6), a script outside the repository, on 0.3.0
+and 0.3.2 from the matrix cache: each of `base`'s three README examples composed with `npm run
+compose`, into a scratch repository (`git init`, the composed `.wingfoil/` and the AGENTS region
+committed, a fictional identity); `workflow start decision-log-ingest --format json`, its
+`directiveWarnings` read; on `core-records`, `memory add` of a `decision-log` and a `task`, their
+frontmatter read. Before the change (the red), the start's warning is expected on each example;
+after it, none. The commands and outputs recorded in the Execution Notes.
+
+**The steps:** 1. the red: the script on `main`'s `base`, and `check:runs` with the new run (it
+passes before the change, the fields being optional: recorded as such, no red for it); 2. the
+changes; 3. the script again, `npm test`, `check:runs` and the list of criterion 9; 4. the
+counts (criterion 10).
 
 ## Execution Notes
 
@@ -172,3 +204,77 @@ optional — …` comment), none on `task`.
   `core-records` (the other examples' `task_path` holds `{release}`), so the existing run's
   `submit: added` and `approve: added` keep their element; the fields read on `core-records`.
   **Nit:** only the `product-owner` warning goes.
+- 2026-11-27: Design (`9b25b793`), `backlog → in-progress` (`62331117`), on `task/task-108-…`
+  from `main` at `401efd3d`.
+- 2026-11-27: the red (criteria 5, 6), with the real WingFoil 0.3.0 and 0.3.2 of the matrix cache:
+  each of `base`'s three README examples composed by `compose-cli` from the tree, into a scratch
+  repository committed under the example's approver; `workflow start decision-log-ingest --format
+  json`: `next.directiveWarnings` `["no directives assigned to role 'product-owner'"]` on all six;
+  on `core-records`, `memory add --type decision-log` and `--type task`: no `contributor`,
+  `credit` or `reported_by` in either element's frontmatter. The new `check:runs` run passes
+  before the change too (the fields optional), recorded as such.
+- 2026-11-27: build (`ee198ebe`). The four directives' first lines after the title (criterion 3):
+  `claim-sources` `Precedence: foundation`, `doc-versioning` `Precedence: foundation`,
+  `security-secrets` `Precedence: security`, `traceability` `Precedence: foundation`. The same
+  checks after it: `next.directiveWarnings` `[]` on all six; on 0.3.0 and 0.3.2, the added
+  `decision-log` carries `contributor: ""`, `credit: ""` and `reported_by: []` and the `task`
+  `reported_by: []`, each with its comment kept (criterion 5).
+- 2026-11-27: a consequence beyond the Design: with `reported_by` declared by `base`'s templates,
+  the fixture-element check of `governance/feedback` (FA-6, `tests/support/fixture-elements.ts`)
+  reads a back-reference from that field instead of the body, and 21 tests of
+  `tests/feedback-elements.test.ts` failed (the valid projects `defaults`, `added-outcome`, and the
+  invalid elements checked against `defaults`). The five target elements of
+  `tests/fixtures/feedback-elements/` (`dl-001`, `dl-002`, `dl-900`, `task-001` of `defaults`;
+  `dl-1-offline-maps` of `added-outcome`) gain `reported_by: [<the feedback id>]`, their body's
+  citation kept; `dl-901` (cites nothing) unchanged. The check is the pack's FA-6 working as
+  meant; no file under `src/` changed.
+- 2026-11-27: validation (criterion 9), Node.js 24.22.3: `npm test` 1537 tests, 0 failing;
+  eslint, `check:texts -- --base main`, `check:packs` (101 files, 0 problems), `index -- --check`,
+  `validate` (32 runs, `tolerance applied: none`), the golden step (26 runs), the four overlays
+  (40, 40, 40, 48 runs), each exit 0; `check:runs` 94 runs, 0 failed (`base-task-template` on
+  `core-records`, 0.3.0 and 0.3.2). `npm run index` regenerated `packs/base/README.md`'s "What it
+  adds" (`traceability`: `facilitator`, `product-owner`). Catalog files unchanged.
+- 2026-11-27: the counts (criterion 10): `check:runs` 92 → 94 runs (no test asserts it); the lint's
+  files (101), the index's (9), `validate`'s runs and the tests' count (1537) unchanged.
+- 2026-11-27: the command of criterion 6, as run for each example `<x>` and release `<v>`:
+  `node dist/src/compose-cli.js --tree . --out <dir> <the example's --param values> base`, the
+  composed `.wingfoil/` committed in a scratch repository, then
+  `.cache/wingfoil-matrix/<v>/node_modules/.bin/wingfoil workflow start decision-log-ingest
+  --format json`, its `next.directiveWarnings` read: before, `["no directives assigned to role
+  'product-owner'"]`; after, `[]`.
+- 2026-11-27: independent review of the build (dl-017): approve after amendments; no blocker,
+  three should-fix, six nits, all applied in `7d6e846d`. **Should-fix:** "Updating from 2.0.1"
+  said the region carries the assignment: the region states the precedence, the assignment
+  reaches the project by the copied `roles.yaml`; the section gains §10.1's rules it had dropped
+  (a class-1 or class-2 directive names its law or standard; a ruling that becomes a `custom/`
+  directive is applied through `governance-evolution`; §10.1's sentence that precedence is not the
+  composition order left out, the composition order being the composer's, not an agent's
+  concern); the `governance/feedback` consequence: with `base` 2.1.0 a decision-log or task routed
+  by that pack cites the item in `reported_by`, not its body, as the pack's own rule says for a
+  template that has the field. Still a minor (`pack-semver`): the field is optional, nothing fails
+  validation, and it is the outcome `governance/feedback` expected (plan-074 point 6); "Updating
+  from 2.0.1" says it, and an Open row carries `governance/feedback`'s README sentence that
+  becomes half-stale, owner approver, trigger that pack's next release. **Nits:** 913's expected
+  message pinned to the field's branch; `apply`'s text reflowed; "bridge directive" glossed; the
+  gloss of "not comparable by strictness" kept; criterion 6's command written out above;
+  `security-secrets` names the author and committer headers.
+- 2026-11-27: re-review: approve; three nits, applied in the next commit: this note's command
+  rewritten (one name, the path whole); 913's case line broken; and a departure from criterion 1
+  recorded: criterion 1 names "the git identity's email in a commit's author header", and the
+  directive names "author and committer headers", since git writes the identity's email in both
+  and naming only the author header would leave every commit's committer header in breach; the
+  "nowhere else" list is unchanged. For the approver to read at `approve` (dl-019); the
+  Acceptance's text stays as approved.
+- 2026-11-27: dl-039's checks (criterion 11), once, on the frozen commit `44b10c2b`:
+  - the branch CI 46012186819 `success`: `validate (22.21.0, 1)` 14m50s, `validate (22.12.0, 1)`
+    11m08s, `validate (22.12.0, 2)` 5m24s, `validate (22.21.0, 2)` 5m13s;
+  - the local list on Node.js 22.21.0, a clean tree, after `npm ci` and `npm run build`, every
+    command exit 0: `npm test` (1537 tests, 0 failing), `lint`, `check:pins`, `check:schemas`,
+    `check:packs` (101 files, 0 problems), `index -- --check`, `validate` (32 runs), the golden step
+    (26 runs), the four overlays (40, 40, 40, 48 runs), `workflow list`, `check:runs` (94 runs, 0
+    failed), `npm audit --omit=dev` and `npm audit` in each `src/matrix/wingfoil-*/`; the tree clean
+    after.
+  - The privacy check of the branch's diff and its commit messages (`repository-practice` rule 2):
+    no local path, no session or transcript of this work, no project outside this repository's
+    named (the directive's existing "a message to another session" is the pack's own wording,
+    unchanged).

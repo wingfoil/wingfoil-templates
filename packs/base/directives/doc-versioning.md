@@ -9,6 +9,8 @@ title: "Documentation versioning"
 
 # Documentation versioning
 
+Precedence: foundation
+
 A document that carries a **Version** and a **Date** keeps them true.
 
 - Bump the version once, on the first edit after the document was committed, and set the date then.

@@ -1,4 +1,5 @@
 format: 1
 assignments:
   facilitator: [traceability]
+  product-owner: [traceability]
 global: [doc-versioning, security-secrets, claim-sources]
