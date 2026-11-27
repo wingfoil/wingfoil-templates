@@ -47,10 +47,11 @@ the CHANGELOG entry, the version and the range are `prepare`'s, not this task's.
   and `methodology/kanban` assign it (`[scrum]`, `[kanban]`). Two options, ruled at this task's
   backlog gate (plan-090 point 3):
   - **(a) recommended:** `base` assigns `product-owner: [traceability]`, the directive that asks a
-    captured decision to name where it comes from; `assignments.<role>` is a set merged across
-    packs (spec-001 §7.4), so with a methodology the role gets `[traceability, scrum]` or
-    `[traceability, kanban]`; the warning goes in every composition. The agent already reads
-    `traceability` as facilitator (`executes_as: [facilitator, product-owner]`).
+    captured decision to name where it comes from; `assignments.<role>` is a set merged across packs
+    (spec-001 §7.4), so with a methodology the role gets `[traceability, scrum]` or `[traceability,
+    kanban]`; the `product-owner` warning goes in every composition (the `approver` role of the
+    approve phases has no assignment in any pack, and `workflow next` still warns there). The agent
+    already reads `traceability` as facilitator (`executes_as: [facilitator, product-owner]`).
   - **(b):** the reading that the advice stands: the `global` directives apply to every role, the
     warning is WingFoil's advice; a note on this task, the row Closed at plan-090's close citing it.
 - **README step 3 "own entries"** (plan-052 › close, task-067; trigger the next README pass,
@@ -99,9 +100,9 @@ optional — …` comment), none on `task`.
    0.3.2's, `reported_by`'s adapted: "list of the feedback ids or feedback note paths this element
    answers, as provenance only; restate each in this element, never copy it" (0.3.2's second half
    kept). Neither template gains `id` or `status`; no type's `frontmatter.required` changes. On
-   0.3.0 and 0.3.2, the frontmatter of the decision-log and the task the scenario of criterion 9
-   adds is read, and whether the fields and their comments are kept is recorded in the Execution
-   Notes.
+   0.3.0 and 0.3.2, on `core-records`, the frontmatter of the decision-log and the task the
+   scenarios of criterion 9 add is read, and whether the fields and their comments are kept is
+   recorded in the Execution Notes.
 6. **"`base` composed without `software`":** as ruled at the backlog gate: (a)
    `fragments/roles.yaml` assigns `product-owner: [traceability]`, and `workflow start
    decision-log-ingest --format json` on each of `base`'s README examples, on 0.3.0 and 0.3.2,
@@ -120,13 +121,16 @@ optional — …` comment), none on `task`.
    bug-011 and bug-014, which are plan-090 point 11's, after the tag; no file under `src/`,
    `.wingfoil/`, `presets/` or another pack changes; a change found needed there stops the task and
    goes to the approver (dl-019).
-9. **Validation:** `npm test`, `npm run lint`, `npm run check:packs`, `npm run index -- --check`
-   and `npm run validate` pass with no warning, `tolerance applied: none`; the overlays
-   `software-exit`, `scrum-exit`, `kanban-exit` and `feedback-exit` and the golden tree pass; `npm
-   run check:runs` passes, with an `add: { type: task, … }` step added to
-   `tests/fixtures/runs/base.yaml` beside its `decision-log` add (read by `tests/runs.test.ts`), on
-   0.3.0 and 0.3.2. `catalog.yaml`, `CATALOG.md`, `catalog-index.json` and `llms.txt` unchanged
-   until `prepare`. Tests that read `base`'s files updated where their expectations change.
+9. **Validation:** `npm test`, `npm run lint`, `npm run check:packs`, `npm run index -- --check` and
+   `npm run validate` pass with no warning, `tolerance applied: none`; the overlays `software-exit`,
+   `scrum-exit`, `kanban-exit` and `feedback-exit` and the golden tree pass; `npm run check:runs`
+   passes, with a run of its own added to `tests/fixtures/runs/base.yaml` (read by
+   `tests/runs.test.ts`), limited by its `only` to `core-records` (the other two examples set a
+   `task_path` with `{release}`, which nothing in `base` fills and the runner's `add` cannot give),
+   that adds a `task`, on 0.3.0 and 0.3.2; the existing `governance-evolution` run, whose `submit:
+   added` and `approve: added` act on the last element added, unchanged. `catalog.yaml`,
+   `CATALOG.md`, `catalog-index.json` and `llms.txt` unchanged until `prepare`. Tests that read
+   `base`'s files updated where their expectations change.
 10. **The counts** the tooling tests take on this repository (the lint's files, the index's, the
     compositions and runs): each that moves stated in the Execution Notes with the test it changes,
     measured, not assumed.
@@ -163,3 +167,8 @@ optional — …` comment), none on `task`.
   text for the section. **Nits:** the overlays and `npm test` named; the catalog files unchanged;
   the first lines listed in the Design (no lint); the charter's and the bugs' notes plan-090 point
   11's; criterion 4 checkable.
+- 2026-11-27: re-review: approve after amendments; no blocker, one should-fix, one nit, both
+  applied in the next commit. **Should-fix:** the `task` add in a run of its own, limited to
+  `core-records` (the other examples' `task_path` holds `{release}`), so the existing run's
+  `submit: added` and `approve: added` keep their element; the fields read on `core-records`.
+  **Nit:** only the `product-owner` warning goes.
