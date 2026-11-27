@@ -257,3 +257,6 @@ order, when both are there; otherwise the last-line rule.
     `src/matrix/wingfoil-*/`; the tree clean after.
   - The privacy check of the branch's diff and its commit messages (`repository-practice` rule 2):
     no local path, no session or transcript, no project outside this repository's named.
+- 2026-11-27: `in-review → approved` by the approver (`7faf8255`); on the approver's OK, merged
+  `--no-ff` into `main` (`09a4af7d`); `main` pushed by the approver (plan-090 ruling 13). The task
+  stays `approved` until `main`'s CI on the merge (criterion 9).
