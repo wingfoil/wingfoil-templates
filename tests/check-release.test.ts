@@ -246,6 +246,23 @@ describe('npm run check:release (task-106, dl-054 P1)', () => {
     assert.ok(text.includes(dry), text);
   }));
 
+  it('falls back to the last line when workflow list\'s JSON has no workflows array, or the dry '
+    + 'run prints a tag but no catalog commit (task-107)', withRepo(async (repo) => {
+    const { runner } = recorder((shown) => {
+      if (shown === 'npm run -s wingfoil -- workflow list') return { stdout: '{"workflows": 3}\n' };
+      if (shown === 'npm run publish:pack -- --pack base --dry-run') {
+        return { stdout: '- Tag: `base@2.1.0`\nno commit\n' };
+      }
+      return undefined;
+    });
+    const result = await runCheckRelease(argv(repo, join(repo.outside, 'report.txt')), { runner });
+    const text = result.lines.join('\n');
+    assert.ok(text.includes('- npm run -s wingfoil -- workflow list: exit 0\n'
+      + '  {"workflows": 3}\n'), text);
+    assert.ok(text.includes('- npm run publish:pack -- --pack base --dry-run: exit 0\n'
+      + '  no commit\n'), text);
+  }));
+
   it('falls back to the last line when workflow list\'s output is not its JSON, or the dry run '
     + 'prints no tag (task-107)', withRepo(async (repo) => {
     const { runner } = recorder((shown) => {

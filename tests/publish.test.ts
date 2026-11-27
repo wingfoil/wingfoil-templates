@@ -496,7 +496,7 @@ describe('npm run publish:pack, the lines (task-016, F5.3)', () => {
       // A commit beside the tag's, not descending from it: the tree's only commit amended
       // (task-107: the CHANGELOG entry is written with the tree, so the tag has no parent).
       repo.git(['checkout', '--quiet', '-b', 'maint/base/1.x-old', 'base@1.0.0']);
-      repo.git(['commit', '--quiet', '--amend', '--no-edit', '-m', 'the tree, again']);
+      repo.git(['commit', '--quiet', '--amend', '-m', 'the tree, again']);
       repo.git(['branch', '--quiet', '-D', 'maint/base/1.x']);
       repo.git(['checkout', '--quiet', '-b', 'maint/base/1.x']);
       bump(repo, '1.0.1');

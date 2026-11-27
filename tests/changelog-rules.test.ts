@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
@@ -63,8 +63,27 @@ describe('the changelog rule (task-107, dl-028 D1)', () => {
     assert.equal(shown(problemsOf(`- 1.2.0: ${'é'.repeat(91)}.\n`)).length, 1);
   });
 
-  it('reports a bare version as not a sentence', () => {
-    assert.equal(shown(problemsOf('- 1.2.0\n')).length, 1);
+  it('reports a bare version as not a sentence, and an entry naming no version', () => {
+    assert.deepEqual(shown(problemsOf('- 1.2.0\n')), [
+      '1: methodology/flow: CHANGELOG.md\'s first line is 7 characters, ending with "0"; it '
+        + 'becomes the tag annotation: a whole sentence ending with ".", at most 100 characters '
+        + '(dl-028 D1)']);
+    assert.ok(shown(problemsOf('- \n')).some((line) => /names no version, pack\.yaml/.test(line)));
+  });
+
+  it('ignores a byte order mark, and leaves a linked CHANGELOG.md to the layout rule', () => {
+    assert.deepEqual(problemsOf(`\uFEFF# Changelog\n\n${SENTENCE}`), []);
+    const root = mkdtempSync(join(tmpdir(), 'changelog-rules-'));
+    try {
+      const path = 'packs/methodology/flow';
+      mkdirSync(join(root, path), { recursive: true });
+      writeFileSync(join(root, 'elsewhere.md'), '# nothing\n');
+      symlinkSync(join(root, 'elsewhere.md'), join(root, path, 'CHANGELOG.md'));
+      assert.deepEqual(changelogProblems(root, { id: 'methodology/flow', path,
+        manifest: { version: '1.2.0' } }), []);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 
   it('reports an empty file and a heading only on line 1', () => {
@@ -83,7 +102,7 @@ describe('the changelog rule (task-107, dl-028 D1)', () => {
 
   it('reports a later line of the first entry that is not indented', () => {
     assert.deepEqual(shown(problemsOf(`${SENTENCE}  indented.\n not enough.\n`)), [
-      '3: methodology/flow: CHANGELOG.md\'s first entry has a line not indented by two spaces '
-        + '(dl-028 D1)']);
+      '3: methodology/flow: CHANGELOG.md\'s first entry has a line not indented by two spaces: '
+        + '" not enough." (dl-028 D1)']);
   });
 });

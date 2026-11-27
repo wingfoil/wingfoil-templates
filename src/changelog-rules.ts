@@ -1,7 +1,7 @@
 // The changelog rule of spec-001 §18 (task-107, dl-028 D1): a pack's CHANGELOG.md opens with an
 // entry for its version, whose first line `publish:pack` reads alone into the tag annotation
 // (`changelogEntry`). The lint's only: the composer never reads a CHANGELOG. A missing file, a
-// link or a directory is the layout rule's problem, not this one's.
+// link or a directory is the layout rule's problem, not this one's. A byte order mark is ignored.
 import { lstatSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -32,7 +32,7 @@ export function changelogProblems(tree: string, pack: ChangelogPack): Problem[] 
   const absolute = join(tree, file);
   if (!isFile(absolute)) return [];
   const version = String(pack.manifest.version);
-  const lines = readFileSync(absolute, 'utf8').split(/\r?\n/);
+  const lines = readFileSync(absolute, 'utf8').replace(/^\uFEFF/, '').split(/\r?\n/);
   if (lines.length > 0 && lines[lines.length - 1] === '') lines.pop();
   const problem = (index: number, message: string): Problem =>
     ({ file, line: index + 1, rule: 'changelog', message: `${pack.id}: ${message} (dl-028 D1)` });
@@ -57,20 +57,22 @@ export function changelogProblems(tree: string, pack: ChangelogPack): Problem[] 
   const head = lines[first] ?? '';
   const named = ENTRY.exec(head)?.[1] ?? '';
   if (named !== version) {
-    problems.push(problem(first, `CHANGELOG.md's first entry names ${named}, pack.yaml's version `
-      + `is ${version}`));
+    problems.push(problem(first, `CHANGELOG.md's first entry names `
+      + `${named === '' ? 'no version' : named}, pack.yaml's version is ${version}`));
   }
   const trimmed = head.trimEnd();
-  if (!trimmed.endsWith('.') || [...trimmed].length > MAX_FIRST_LINE) {
-    problems.push(problem(first, 'CHANGELOG.md\'s first line becomes the tag annotation: a whole '
+  const length = [...trimmed].length;
+  if (!trimmed.endsWith('.') || length > MAX_FIRST_LINE) {
+    problems.push(problem(first, `CHANGELOG.md's first line is ${String(length)} characters, `
+      + `ending with "${[...trimmed].pop() ?? ''}"; it becomes the tag annotation: a whole `
       + `sentence ending with ".", at most ${String(MAX_FIRST_LINE)} characters`));
   }
   for (let index = first + 1; index < lines.length; index += 1) {
     const line = lines[index] ?? '';
     if (line.startsWith('- ')) break;
     if (line.trim() !== '' && !line.startsWith('  ')) {
-      problems.push(problem(index, 'CHANGELOG.md\'s first entry has a line not indented by two '
-        + 'spaces'));
+      problems.push(problem(index, `CHANGELOG.md's first entry has a line not indented by two `
+        + `spaces: "${[...line].slice(0, 40).join('')}"`));
       break;
     }
   }
