@@ -281,3 +281,5 @@ counts (criterion 10).
 - 2026-11-27: `in-review → approved` by the approver (`51b1fb65`), criterion 1's author and
   committer headers accepted; on the approver's OK, merged `--no-ff` into `main` (`0be6a781`);
   `main` pushed by the approver. The task stays `approved` until `main`'s CI on the merge.
+- 2026-11-27: `main` pushed by the approver; its CI on `f5c8a31e` (the merge `0be6a781` and its
+  note) `success` (CI run 46043800402, Pages 46043800209); `approved → done`.
