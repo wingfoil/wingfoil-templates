@@ -3,18 +3,117 @@ id: task-108-base-s-next-minor-bug-011-and-bug-014-fixed-the-precedence-lines-th
 type: task
 title: "base's next minor: bug-011 and bug-014 fixed, the Precedence lines, the optional template fields (plan-090 task-108)"
 status: draft
-pack: ""            # the pack element id this task works on; empty for tooling tasks
+pack: "pack-foundation-base"
 depends_on: []
 tags: ["packs","base"]
 ---
 
 ## Context
 
-<!-- Why this task exists, and the element it comes from (pack charter, spec, DL, bug). -->
+plan-090 hosts this task (its Steps 3; points 3, 4 and 5 of its outline, ruled on 2026-11-27): the
+content of `base`'s next minor, 2.1.0 (`prel-009`, prepared after this task and task-109 …
+task-111). A pack task under `kanban-delivery` v7, pack-author, charter `pack-foundation-base`;
+the CHANGELOG entry, the version and the range are `prepare`'s, not this task's.
+
+**What it fixes and adds**, the register's Open rows (`docs/owed-items.md`):
+- **bug-011's fix** (`approved`, `minor`): `security-secrets` forbids "a personal email … into a
+  file, a commit, an element or a message", while `base`'s own `dna.yaml` fragment writes
+  `team.members[].email` (WingFoil authorises an approval by the approving git identity's email and
+  routes it by name and email) and every commit's author header carries the git identity's email.
+  Expected (bug-011): the directive names the two exceptions, and a personal email is written
+  nowhere else (not in Memory, a commit message's text, or a message).
+- **bug-014's fix** (`approved`, `minor`): `governance-evolution` › `apply` asks for "AGENTS.md
+  updated", but the region the packs write is generated (spec-001 §10) and a hand edit inside it is
+  lost. Expected (bug-014): `apply` asks for AGENTS.md updated outside the generated region, and
+  says the region changes only with a pack version, a parameter value or the composition,
+  regenerated (pasted by hand until WingFoil exports AGENTS.md).
+- **The `Precedence:` lines** (dl-025 D2, spec-001 §10.1, `pack-authoring`): each directive's first
+  line after its `# ` title; `base`'s section states §10.1's table and its rules (plan-090 point 4).
+- **The optional template fields** (plan-074 point 6, plan-090 point 5): `decision-log` gets
+  `contributor`, `credit` and `reported_by`; `task` gets `reported_by`.
+- **"`base` composed without `software`"** (task-099 › Execution Notes; owner claude, trigger
+  `base`'s next minor): composed alone, `workflow start decision-log-ingest` reports `no directives
+  assigned to role 'product-owner'`, the role of its `capture` phase; `base`'s `roles.yaml`
+  assigns only `facilitator: [traceability]`, besides its `global` directives. The run goes on.
+  Two options, ruled at this task's backlog gate (plan-090 point 3):
+  - **(a) recommended:** `base` assigns `product-owner: [traceability]`, the directive that asks a
+    captured decision to name where it comes from; the warning goes, and an assignment is the
+    pack's normal means (spec-001 §7.5's merge of `roles.yaml`, checked by the compositions);
+  - **(b):** the reading that the advice stands: the `global` directives apply to every role, the
+    warning is WingFoil's advice, and the row is Closed by a note on this task.
+- **README step 3 "own entries"** (plan-052 › close, task-067; trigger the next README pass,
+  plan-090 point 3): `base`'s step 3 re-adds "Memory types" among the project's own entries, which
+  reads as re-adding what `init` scaffolded; `methodology/kanban`'s step 3 answers it ("only what
+  the project wrote itself, … never the Memory types, roles or workflows WingFoil's `init`
+  scaffolded").
+
+**What exists today** (`main` at `6668e0e4`, `base` 2.0.1 tagged): `packs/base/directives/`
+(`claim-sources`, `doc-versioning`, `security-secrets`, `traceability`), `agents/section.md`,
+`fragments/roles.yaml`, `workflows/governance-evolution.yaml`, `memory-templates/decision-log.md`
+and `task.md` (no optional field), `README.md` with "Updating from 1.0.0" and "Updating from 2.0.0".
+WingFoil 0.3.2's `init` writes the provenance fields on its `adr`, `bug`, `decision-log` and
+`tech-spec` templates (`contributor: ""`, `credit: ""`, `reported_by: []`, each with an `#
+optional — …` comment), none on `task`.
 
 ## Acceptance
 
-<!-- Verifiable criteria: the command to run and the expected result. -->
+1. **bug-011:** `security-secrets`' rule names the exceptions: the team members' emails in
+   `dna.yaml` › `team.members` (WingFoil authorises and routes approvals by them) and the git
+   identity's email in a commit's author header; a personal email is written nowhere else (not in
+   Memory, a commit message's text, a file other than `dna.yaml`, or a message). The rest of the
+   directive unchanged.
+2. **bug-014:** `governance-evolution` › `apply`'s description asks for AGENTS.md updated outside
+   the generated region, and says the region changes only with a pack version, a parameter value or
+   the composition, regenerated by the composer and pasted by hand until WingFoil exports AGENTS.md
+   (spec-001 §10). `agents/section.md`'s line naming "this file" among the governance a change of
+   governance touches says the same. The workflow's `version` moves by one.
+3. **The `Precedence:` lines:** `security-secrets` `Precedence: security`; `claim-sources`,
+   `doc-versioning` and `traceability` `Precedence: foundation`; each the first line after the `#
+   ` title, followed by a blank line.
+4. **The section's precedence:** `agents/section.md` states spec-001 §10.1's table (the seven
+   classes, from the strongest) and its rules: the stricter rule always wins and precedence decides
+   only between rules not comparable by strictness; classes 1 … 3 by subject, the others by pack or
+   axis; a bridge directive's class; a project's `custom/` directives declare their class, only add
+   or tighten, never claim classes 1 … 3 against a pack's rule of those classes, never reuse a
+   pack's directive id; escalation: an agent that meets a contradiction stops and opens a
+   decision-log through `decision-log-ingest`. In the section's own words, shorter than §10.1, its
+   table §10.1's.
+5. **The template fields:** `decision-log.md` gains `contributor: ""`, `credit: ""` and
+   `reported_by: []`; `task.md` gains `reported_by: []`; each with a `# optional — …` comment as
+   0.3.2's, `reported_by`'s adapted: "the feedback ids or feedback note paths this element answers,
+   as provenance only". Neither template gains `id` or `status`; no type's
+   `frontmatter.required` changes.
+6. **"`base` composed without `software`":** as ruled at the backlog gate: (a)
+   `fragments/roles.yaml` assigns `product-owner: [traceability]`, and a run of
+   `decision-log-ingest` on `base` alone reports no `directiveWarnings`; or (b) a note on this task
+   and the row Closed by it.
+7. **The README:** step 3 re-adds only what the project wrote itself, never the Memory types, roles
+   or workflows `init` scaffolded, as `methodology/kanban`'s; an **"Updating from 2.0.1."**
+   paragraph: recompose, regenerate the AGENTS.md region and paste it again (the section's
+   precedence and, with (a), the assignment change it), and the optional fields reach a project only
+   through its copied templates (elements already written are not changed); the lines of "What it
+   adds" that the changes touch (the directives, the fragments, the templates). The generated
+   regions regenerated with `npm run index`.
+8. **Not this task's:** the CHANGELOG entry, `pack.yaml`'s `version` and the range (`prepare`);
+   no file under `src/`, `.wingfoil/`, `presets/` or another pack changes; a change found needed
+   there stops the task and goes to the approver (dl-019).
+9. **Validation:** `npm run lint`, `npm run check:packs`, `npm run index -- --check` and `npm run
+   validate` pass with no warning, `tolerance applied: none`; the four overlays and the golden tree
+   pass; `npm run check:runs` passes, with a scenario that runs `memory add` of a `decision-log` and
+   a `task` on `base`'s composition on 0.3.0 and 0.3.2 (an existing one named, or one added) and,
+   with (a), the run of criterion 6. Tests that read `base`'s files (its directives, section,
+   templates, fragments) updated where their expectations change.
+10. **The counts** the tooling tests take on this repository (the lint's files, the index's, the
+    compositions and runs): each that moves stated in the Execution Notes with the test it changes,
+    measured, not assumed.
+11. **Checks** (`kanban-delivery` › `review`, dl-039): the build review and its amendments; then,
+    once, on the frozen commit, the branch CI `success`, its run id and every job's duration (a job
+    over 25 minutes goes to the approver); dl-039's local list on Node.js 22.21.0 from a clean
+    tree after `npm ci` and `npm run build`.
+12. **Delivery:** the branch `task/task-108-…` from `main`, in a worktree; after `approve`, a
+    `--no-ff` merge on the approver's OK, `main` pushed by the approver (plan-090 ruling 13), its CI
+    read, and `approved → done`; the privacy check of the branch's diff recorded
+    (`repository-practice` rule 2).
 
 ## Design
 
