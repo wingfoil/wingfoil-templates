@@ -30,15 +30,21 @@ round's first `check:release` report.
 **What exists today** (`main` at `4a7aab6b`):
 - `check:packs` (`src/check-packs.ts`): the per-pack rules, `packProblems`; the layout rule
   already requires `CHANGELOG.md` in every pack (`src/layout-rules.ts`, `REQUIRED_FILES`, spec-001
-  §6.1); nothing reads its content. The README rules check that section 9 links it
-  (`src/readme-rules.ts`). The composer does not read a CHANGELOG, so the new rule is the lint's
-  only (spec-001 §17's "the composer refuses what the lint rejects" concerns composed content).
-- The six published packs' CHANGELOGs: each first entry `- <version>` with its `pack.yaml`'s
-  version, its first line a sentence ending with `.` within 100 characters (`base`'s file has no
-  heading, the others `# Changelog`).
-- 34 fixture CHANGELOGs under `tests/fixtures/`: some a heading only (`merge/example-1`,
-  `merge/example-2`, `resolve/full`), some `- 1.0.0` alone (the golden tree's
-  `methodology/kanban`), some a sentence.
+  §6.1), and `resolve` applies the layout rule during composition (`src/resolve.ts`); nothing reads
+  a CHANGELOG's content. The README rules check that section 9 links it (`src/readme-rules.ts`).
+  `validate` and `publish:pack`'s publication validation run `check:packs` over the whole tree.
+  spec-001 §18 says "the composer refuses what they reject"; a CHANGELOG is never composed.
+- The six published packs' CHANGELOGs pass the rule of criterion 1 today: each first entry
+  `- <version>` with its `pack.yaml`'s version, its first line a sentence ending with `.`, at most
+  98 characters (`base`'s file has no heading, the others `# Changelog`).
+- Under `tests/fixtures/`, 33 pack CHANGELOGs (and `intake/report`'s, not a pack): a heading only
+  in `merge/example-1`, `merge/example-2` and `resolve/full`; in the golden tree
+  (`compose/tree`), five bare `- 1.0.0` (`blueprint/web-service`, `methodology/kanban`,
+  `phase/inception/lean`, `stage/production`, `team-mode/agent-first`), the others a sentence.
+  Generated trees: `tests/support/pack-tree.ts`'s `writePack` writes `# <id>` alone (23 test files
+  use it); `tests/publish.test.ts`'s `repository()` appends `- 1.0.0: first version.` and its
+  `bump()` appends the new version's entry after the existing one. No recorded digest covers a
+  CHANGELOG (`tests/digest.test.ts` uses its own inline files).
 - `src/check-release.ts`: `countsOf` reads a command's last non-empty line, except `npm test`'s
   counts and the evidence's `## Validation` section. The dry run prints the Publication's lines
   (`- Tag: …`, `- Catalog commit: …`, `- Digest: …`, `- WingFoil range: …`, then "- Not pushed").
@@ -48,48 +54,74 @@ round's first `check:release` report.
 ## Acceptance
 
 `npm run build` precedes the commands.
-1. **The rule** (`check:packs`, plan-090 point 6), for every pack of the tree, on its
-   `CHANGELOG.md`: lines before the first entry may be blank or a heading (`# …`), nothing else;
-   the first entry is the first line starting `- `; it starts `- <version>` followed by `:` or a
-   space, `<version>` equal to `pack.yaml`'s `version`; that first line is a whole sentence: it ends
-   with `.` and is at most 100 characters; the entry's further lines, if any, are indented. A file
-   with no entry fails. Each failure is one problem, rule `changelog`, the file and its line, a
-   message naming the pack, what was found and what is expected, and plan-090 or dl-028 as its
-   source. A missing file stays the layout rule's problem, not a second one.
+1. **The rule** (`check:packs`, plan-090 point 6), in a module of its own called from
+   `packProblems` (not from `packLayoutProblems`, so the composer does not run it), for every pack
+   of the tree whose `pack.yaml` passes its schema (a pack that fails it has no `version` to
+   compare and is not checked), on its `CHANGELOG.md`:
+   - lines before the first entry are blank or a heading (a line starting `#`), nothing else;
+   - the first entry is the first line starting `- `, and runs up to the next line starting `- `
+     or the end of the file; only the first entry is checked;
+   - it starts `- <version>` followed by `:` or a space, `<version>` equal to `pack.yaml`'s
+     `version`;
+   - its first line is a whole sentence: it ends with `.` and is at most 100 characters counted
+     in code points, the `- ` included (as `check:texts` counts, dl-046; the line `publish:pack`
+     reads into the tag annotation);
+   - its later lines are each blank or indented by at least two spaces.
+
+   A file with no entry (empty, or a heading only) fails, its problem on line 1. Each failure is
+   one problem, rule `changelog`, the file and its line, a message naming the pack, what was found
+   and what is expected, and dl-028 D1 as its source. A missing file stays the layout rule's
+   problem, not a second one.
 2. **spec-001 §18** gains the rule as one bullet under "`pack.yaml` and the pack directory",
-   amended in place with a dated Execution Note on spec-001 (dl-020), the approver's OK being this
-   task's acceptance into the backlog.
-3. **The fixtures.** Every fixture tree that a test expects to pass `check:packs`, or that a
-   composition, `publish:pack` or the index reads with the lint, gets CHANGELOGs that pass
-   criterion 1 (a sentence entry for each pack, its version its `pack.yaml`'s); a tree that a
-   test expects to fail for another reason keeps failing for that reason only. Any digest,
-   index or report expectation the edit changes is re-recorded, and each such change is listed in
-   the Design. The six published packs' CHANGELOGs are not changed.
+   saying the composer does not apply it (a CHANGELOG is never composed); amended in place under
+   plan-090 (point 6, ruling 6), the approver's OK at this task's backlog gate approving the rule
+   and the merge OK approving the text, with a dated Execution Note on spec-001.
+3. **The test trees,** each CHANGELOG passing criterion 1 where a test runs the lint over it, its
+   entry a sentence and its version its `pack.yaml`'s:
+   - `compose/tree` (run by `check:packs`, by CI's `validate --tree`, and read by `index` and the
+     README generation): its five bare entries made sentences;
+   - `merge/example-1`, `merge/example-2`, `resolve/full`: an entry added to each pack (no test
+     lints them; plan-090 point 6 asks for it);
+   - `software-exit` and `feedback-exit`: already passing, unchanged;
+   - `writePack` (`tests/support/pack-tree.ts`): `# <id>`, then `- <version>: <a sentence>.`;
+     `tests/publish.test.ts`'s `bump()` writes the new version's entry first, and its
+     `repository()`'s append is dropped or kept as the Design says, the tests still passing;
+     any other helper that writes a CHANGELOG likewise;
+   - `intake/report`: not a pack, unchanged.
+
+   A test that expects a tree to fail for another reason keeps failing for that reason only. Any
+   index, report or output expectation the edit changes is re-recorded and listed in the Design.
+   The six published packs' CHANGELOGs are not changed.
 4. **The counts' lines** (`check:release`, plan-090 point 7): for `npm run -s wingfoil --
-   workflow list`, the line `workflows: <n>`, `<n>` the length of its JSON's `workflows` array
-   (its output not JSON, or no such array: the last-line rule as today); for the dry run's
-   `publish:pack --dry-run`, its `- Tag: …` and `- Catalog commit: …` lines (either missing: the
-   last-line rule as today). Every other command's counts' lines as task-106 criterion 4 wrote
-   them.
+   workflow list`, the line `workflows: <n>`, `<n>` the length of the `workflows` array of its
+   standard output parsed as JSON (not JSON, or no such array: the last-line rule as today); for
+   the dry run's `publish:pack --dry-run`, its `- Tag: …` and `- Catalog commit: …` lines (either
+   missing: the last-line rule as today). Every other command's counts' lines as task-106
+   criterion 4 wrote them.
 5. **Red first** (dl-018). Before criteria 1, 3 and 4 are built, new tests fail and the red run's
-   command and failing count are recorded: in `tests/check-packs.test.ts` (or a test file of the
-   rule's own), a pack whose first entry names another version; one whose first line wraps
-   mid-sentence (no final `.`); one over 100 characters; one with a heading only; one with text
-   other than a heading before the first entry; one with a bare `- <version>`; a passing file
-   with a heading and one without; a missing file reported once; in
-   `tests/check-release.test.ts`, the two new counts' lines and their fallbacks.
+   command and failing count are recorded: in a test file of the rule's own (or
+   `tests/check-packs.test.ts`), a pack whose first entry names another version; one whose first
+   line wraps mid-sentence (no final `.`); one over 100 characters; an empty file; one with a
+   heading only; one with text other than a heading before the first entry; one with a bare
+   `- <version>`; one whose entry's later line is not indented; in `tests/check-release.test.ts`,
+   the two new counts' lines and their fallbacks. Regression guards that pass at the red run (a
+   passing file with a heading and one without; a missing file reported once, by the layout rule)
+   are not part of its failing count.
 6. **The rest unchanged.** The diff touches only the rule's module and `src/check-packs.ts`'s
-   use of it, `src/check-release.ts`, their tests, the fixture CHANGELOGs and the expectations
-   criterion 3 lists, spec-001, this task and plan-090. No dependency is added (`package-lock.json`
-   unchanged). `npm test`, `lint` and the other checks of the CI pass, read from the branch CI's
-   jobs and dl-039's local list (criterion 7), not run a second time; `npm run check:texts --
-   --base origin/main` exits 0 on the task's branch.
+   use of it, `src/check-release.ts`, their tests, the fixture CHANGELOGs, the test helpers of
+   criterion 3 (`tests/support/pack-tree.ts`, `tests/publish.test.ts`, any other that writes a
+   CHANGELOG) and the expectations it lists, spec-001, this task and plan-090. No workflow or
+   directive text changes (`pack-release-cycle` › `prepare` says "write the CHANGELOG.md entry";
+   the rule's message teaches the shape). No dependency is added (`package-lock.json` unchanged).
+   `npm test`, `lint` and the other checks of the CI pass, read from the branch CI's jobs and
+   dl-039's local list (criterion 7), not run a second time; `npm run check:texts -- --base
+   origin/main` exits 0 on the task's branch.
 7. **dl-039's checks** on the frozen commit: the branch CI once, every job's duration recorded, and
    the local list on Node.js 22.21.0 from a clean tree after `npm ci` and the build.
 8. **Delivery** (`tooling-delivery` v5 `deliver`; plan-090 point 3). The branch
    `task/task-107-…` from `main`, in a worktree; the privacy check of the diff recorded
    (`repository-practice` rule 2); on the approver's OK the merge `--no-ff` into `main`, pushed by
-   the approver.
+   the approver (plan-090 ruling 13, where `deliver` says "and push"; recorded here).
 9. **The check on `main`** (dl-045): `npm run check:packs` exits 0 on `main` after the merge, read
    from `main`'s CI on the merge, its run id recorded here and in plan-090; then the close commit
    and `approved → done`. A red check stops the close: the task stays `approved`, the finding goes
@@ -106,3 +138,15 @@ round's first `check:release` report.
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+
+- 2026-11-27: independent review of the body (dl-017): approve after amendments; one blocker, five
+  should-fix, six nits, all applied in the next commit. **Blocker:** the generated test trees
+  (`writePack`'s `# <id>` alone; `bump()` appending the new entry second) would turn the suite
+  red outside the allowed diff: criterion 3 names them, criterion 6 allows their helpers.
+  **Should-fix:** criterion 3 lists the trees by name; criterion 2's amendment path as spec-001's
+  precedents (backlog OK for the rule, merge OK for the text) and the composer not applying it;
+  the §18 citation and the rule's module outside `packLayoutProblems`; where the first entry ends,
+  a pack failing its schema not checked; the empty file in the red list, the passing guards out of
+  its count. **Nits:** the fixture counts and the five bare entries; code points, the `- `
+  included; `#` headings, dl-028 D1 as source, line 1; standard output as JSON; ruling 13 in
+  criterion 8; no workflow or directive text changes.
