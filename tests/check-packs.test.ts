@@ -451,6 +451,15 @@ describe('layout rules', () => {
     failsWith('layout', CLEAN, (root) => mkdirSync(kanban(root, 'workflows', 'old')));
   });
 
+  it('changelog: a first entry for another version; a missing CHANGELOG.md is the layout rule\'s '
+    + 'problem alone (task-107)', () => {
+    failsWith('changelog', CLEAN, (root) => writeFileSync(kanban(root, 'CHANGELOG.md'),
+      '- 9.9.9: another version.\n'));
+    const missing = lint(CLEAN, (root) => rmSync(kanban(root, 'CHANGELOG.md')));
+    assert.deepEqual(missing.problems.filter((problem) => problem.file.endsWith('CHANGELOG.md'))
+      .map((problem) => problem.rule), ['layout'], missing.lines.join('\n'));
+  });
+
   it('layout: a file outside every pack directory, and packs/pack.yaml', () => {
     failsWith('layout', CLEAN, (root) => writeFileSync(join(root, 'packs', 'methodology',
       'README.md'), 'x'));

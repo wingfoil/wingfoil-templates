@@ -1302,6 +1302,10 @@ check the rest, and the composer refuses what they reject.
   cannot judge (plan-066 ruling 4, task-086);
 - `formats` lists exactly the kinds of the files shipped, with the value each file declares (§5);
 - the layout and path segments of §6.1, with no symbolic link or submodule;
+- `CHANGELOG.md`'s first entry (blank lines and headings before it) starts `- <version>`, the
+  version `pack.yaml`'s, and its first line, which `publish:pack` reads into the tag annotation,
+  is a sentence ending with `.`, at most 100 characters; its later lines are indented. The
+  composer does not apply it: a CHANGELOG is never composed (task-107, dl-028 D1);
 - asset identifiers equal their file stems (§6.1);
 - every `{{name}}` is in the pack's parameter scope (§8.1), checked per part, each entry its own
   (§6.5), and every default passes its type (§8);
@@ -1609,3 +1613,7 @@ check the rest, and the composer refuses what they reject.
   entry's scope, no rule resting on a `checks` string, and the item rule on presets. No schema
   change. Two punctuation changes from spec-003's quotes, no rule changed: §6.5's two references
   joined, §18's review-rule sentence ended with `;` to fit its list.
+- 2026-11-27, amended in place under plan-090 (point 6, ruling 6), the approver's OK at task-107's
+  backlog gate approving the rule and the merge OK approving the text: §18 gains the
+  `changelog` rule (`CHANGELOG.md`'s first entry and its first line), the lint's only. No schema
+  change, so no feedback note.

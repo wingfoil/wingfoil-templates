@@ -2,7 +2,7 @@
 id: task-107-check-packs-checks-a-pack-s-changelog-first-entry-and-check-release-s-counts-lines-carry-a-count-plan-090-task-107
 type: task
 title: "check:packs checks a pack's CHANGELOG first entry, and check:release's counts' lines carry a count (plan-090 task-107)"
-status: backlog
+status: approved
 pack: ""            # tooling task (tooling-delivery v5), plan-090 task-107
 depends_on: []
 tags: ["tooling","pack-release","validation"]
@@ -131,7 +131,67 @@ round's first `check:release` report.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+**The rule** (criterion 1): a new module `src/changelog-rules.ts`, `changelogProblems(tree,
+pack)`, called in `packProblems` (`src/check-packs.ts`) beside `packLayoutProblems`, for each
+pack `loadPacks` kept (its `pack.yaml` passing its schema). It reads `<pack.path>/CHANGELOG.md`
+only when `lstat` finds a regular file (missing, a link or a directory: the layout rule's
+problem, none here). Lines split on `\r?\n`; a final empty line ignored.
+- Before the first entry: a blank line or one starting `#` is skipped; any other line not
+  starting `- ` is a problem on that line ("text before the first entry").
+- No line starting `- `: a problem on line 1 ("no entry").
+- The first entry's first line: `^- (\S+?)(:| |$)`; the token not equal to `manifest.version`, a
+  problem ("names <token>, pack.yaml's version is <version>"); then, unless it ends with `.`
+  (after `trimEnd`) and is at most 100 code points (`[...line].length`), a problem ("the first
+  line becomes the tag annotation: a whole sentence ending with `.`, at most 100 characters").
+  A bare `- <version>` fails the second test only.
+- The entry's later lines, up to the next line starting `- `: each blank or starting with two
+  spaces; the first other line, a problem on that line ("not indented").
+
+Each problem: `rule: 'changelog'`, `file: <pack.path>/CHANGELOG.md`, its line, the message
+`<pack id>: CHANGELOG.md <what> (dl-028 D1)`. At most one problem per test; the version and the
+sentence tests are independent, so one line can give both.
+
+**spec-001 §18** (criterion 2), under "`pack.yaml` and the pack directory", one bullet:
+"`CHANGELOG.md`'s first entry (blank lines and headings before it) starts `- <version>`, the
+version `pack.yaml`'s, and its first line, which `publish:pack` reads into the tag annotation, is
+a sentence ending with `.`, at most 100 characters; its later lines are indented. The composer
+does not apply it: a CHANGELOG is never composed (task-107, dl-028 D1)." A dated Execution Note on
+spec-001 records the in-place amendment (plan-090 point 6, ruling 6; the backlog OK and the
+merge OK).
+
+**The test trees** (criterion 3; every pack fixture's version is `1.0.0`):
+- `compose/tree`: `methodology/kanban`, `stage/production`, `team-mode/agent-first`,
+  `blueprint/web-service`, `phase/inception/lean` get `- 1.0.0: golden fixture.`, as the others.
+- `merge/example-1`, `merge/example-2` (five packs each), `resolve/full` (eleven): after the
+  heading, a blank line and `- 1.0.0: test fixture.`.
+- `tests/support/pack-tree.ts` `writePack`: `# <id>\n\n- <version>: first version.\n`.
+- `tests/publish.test.ts`: `repository()`'s append dropped; `bump()` inserts `- <version>:
+  next.` as the first entry (after the heading) instead of appending it. The test "refuses a
+  missing CHANGELOG entry" writes `# base`: `publish:pack` reads the entry (`changelogEntry`)
+  before its validation, so its message stays; kept as is.
+- `tests/feedback-note.test.ts` line 122: the append dropped.
+
+Expectations re-recorded: none expected (no digest, index or golden output covers a CHANGELOG);
+any the build meets is listed in the Execution Notes.
+
+**The counts' lines** (criterion 4), in `countsOf`: for `run -s wingfoil -- workflow list`, its
+standard output parsed with `JSON.parse` inside `try`; an object whose `workflows` is an array
+gives `workflows: <n>`; otherwise the last-line rule. For `run publish:pack -- --pack <id>
+--dry-run`, its standard output's lines starting `- Tag: ` and `- Catalog commit: `, in that
+order, when both are there; otherwise the last-line rule.
+
+**Red steps** (criterion 5), in this order, each recorded with its command and failing count:
+1. `tests/changelog-rules.test.ts`: `changelogProblems` on packs written with `withPackTree` and
+   a CHANGELOG set per case (another version; no final `.`; 101 code points; empty; a heading only;
+   text before the entry; a bare `- 1.0.0`; a later line not indented), plus the guards (heading
+   and none, passing; the file missing: the layout rule's problem only, through `runCheckPacks`).
+   Red: the module does not exist.
+2. `tests/check-release.test.ts`: the stub's `workflow list` returns JSON (`workflows: 2`) and the
+   dry run returns the Publication's lines (`- Tag: …` and `- Catalog commit: …`); the fallbacks
+   (non-JSON output; a dry run with no `- Tag:`). Red: the last-line rule gives `}` and "- Not
+   pushed".
+3. The rule wired into `check:packs` before the trees are fixed: `npm test` red on the trees of
+   criterion 3 (the count recorded), then the trees fixed, green.
 
 ## Execution Notes
 
@@ -161,3 +221,39 @@ round's first `check:release` report.
   `submit`; its `check:texts` failed (one line of 113 characters in criterion 6), and the `memory
   submit` that followed committed the amendment with that line in `ba110496` (`draft → pending`).
   The line is reflowed in the next commit; the Acceptance's text is unchanged.
+- 2026-11-27: Design (`5691c788`), then `backlog → in-progress` (`17ca985b`), on the branch
+  `task/task-107-…` from `main` at `7dfac6cf`.
+- 2026-11-27: red first (dl-018), on Node.js 24.22.3, the tests committed in `7ae43c6e`:
+  - steps 1 and 2: `npm run build` failed on `tests/changelog-rules.test.ts` (TS2307, the module
+    `src/changelog-rules` missing); `node --test dist/tests/check-release.test.js`: 22 tests, 2
+    failing (the two new counts' lines tests: `}` and "- Not pushed" given);
+  - step 3, the rule wired into `check:packs`, the trees not yet fixed: `npm test`, 1534 tests,
+    186 failing.
+- 2026-11-27: build (`3d2dd967`): `npm test` 1534 tests, 0 failing; `npm run check:packs`
+  (`lint: checked 101 files, 0 problems`) and the golden step exit 0. Two test edits beyond the
+  Design, both from the CHANGELOG entry now written with the tree: `tests/feedback-note.test.ts`
+  expects the commit message `inbox and schemas` (its changelog append dropped); and
+  `tests/publish.test.ts`'s "no descent" case branched from `base@1.0.0~1`, which no longer exists
+  (`repository()`'s commit dropped, the tag on the tree's only commit), now from that commit
+  amended, a commit beside the tag's. No digest, index or golden output re-recorded.
+- 2026-11-27: independent review of the build (dl-017): approve after amendments; no blocker, two
+  should-fix, five nits, all applied in `8b88cb66`. **Should-fix:** an end-to-end test in
+  `tests/check-packs.test.ts` (the rule through `check:packs`; a missing CHANGELOG giving the layout
+  rule alone); the first-line and indentation messages name what was found (the length and the
+  last character; the line quoted). **Nits:** "names no version"; a byte order mark ignored; a
+  linked CHANGELOG left to the layout rule, tested; `check:release`'s fallback for JSON with no
+  `workflows` array and a dry run with a tag but no catalog commit; `--no-edit` dropped.
+- 2026-11-27: re-review: approve; no blocker, no should-fix. Its optional nit (the no-version test
+  pinning both problems with `deepEqual`) not applied: cosmetic, the code frozen for dl-039's
+  checks.
+- 2026-11-27: dl-039's checks (criterion 7), once, on the frozen commit `7e4aca8e`:
+  - the branch CI 45985749222 `success`: `validate (22.21.0, 1)` 16m42s, `validate (22.12.0, 1)`
+    11m00s, `validate (22.21.0, 2)` 8m23s, `validate (22.12.0, 2)` 8m00s;
+  - the local list on Node.js 22.21.0, a clean tree, after `npm ci` and `npm run build`, every
+    command exit 0: `npm test` (1537 tests, 0 failing), `lint`, `check:pins`, `check:schemas`
+    (10 files), `check:packs` (101 files, 0 problems), `index -- --check`, `validate` (32 runs),
+    the golden step (26 runs), the four overlays (40, 40, 40, 48 runs), `workflow list`,
+    `check:runs` (92 runs, 0 failed), `npm audit --omit=dev` and `npm audit` in each
+    `src/matrix/wingfoil-*/`; the tree clean after.
+  - The privacy check of the branch's diff and its commit messages (`repository-practice` rule 2):
+    no local path, no session or transcript, no project outside this repository's named.

@@ -119,9 +119,8 @@ after(() => RELEASE.dispose());
 /** A repository like task-014's, with this repository's inbox and package.json committed. */
 function publishRepository(): TestRepo {
   const repo = treeRepo([...FOUNDATION, KANBAN]);
-  appendFileSync(join(repo.dir, 'packs', 'base', 'CHANGELOG.md'), '\n- 1.0.0: first version.\n');
   addRepositoryFiles(repo.dir);
-  repo.commitAll('inbox, schemas, changelog');
+  repo.commitAll('inbox and schemas');
   return repo;
 }
 
@@ -141,7 +140,7 @@ describe('npm run publish:pack (F5.4, the W7 exit criterion; dl-021 R1)', () => 
       assert.ok(!result.lines.some((line) => line.startsWith('- Feedback note')),
         result.lines.join('\n'));
       assert.deepEqual(repo.git(['log', '-2', '--format=%s']).trim().split('\n'),
-        ['catalog: base@1.0.0', 'inbox, schemas, changelog']);
+        ['catalog: base@1.0.0', 'inbox and schemas']);
       assert.equal(repo.git(['cat-file', '-t', 'refs/tags/base@1.0.0']).trim(), 'tag');
       // The catalog entry, with its digest (spec-001 §11, §13).
       assert.match(readFileSync(join(repo.dir, 'catalog.yaml'), 'utf8'),
