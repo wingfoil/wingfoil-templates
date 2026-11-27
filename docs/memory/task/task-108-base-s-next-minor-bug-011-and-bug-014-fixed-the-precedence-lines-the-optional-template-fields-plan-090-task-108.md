@@ -145,7 +145,39 @@ optional — …` comment), none on `task`.
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+The approver's rulings at the backlog gate (`401efd3d`, 2026-11-27): option (a); bug-011's third
+exception.
+
+**Files** (all under `packs/base/` except the scenario):
+- `directives/security-secrets.md`: the rule's bullet rewritten with the three exceptions
+  (criterion 1); `Precedence: security` after the title.
+- `directives/claim-sources.md`, `doc-versioning.md`, `traceability.md`: `Precedence:
+  foundation` after the title. The four first lines listed in the Execution Notes (criterion 3).
+- `workflows/governance-evolution.yaml`: `apply`'s description (criterion 2); `version: 2 → 3`.
+- `agents/section.md`: "this file outside its generated region"; a "Precedence of directives"
+  block after the workflows' list: the rule that the stricter wins, the table of §10.1's seven
+  classes, then the rules of criterion 4, one bullet each.
+- `fragments/roles.yaml`: `product-owner: [traceability]` beside `facilitator` (option (a)).
+- `memory-templates/decision-log.md`, `task.md`: the fields of criterion 5, between `title` and
+  the closing `---`, each with its comment.
+- `README.md`: step 3 (criterion 7), the "Updating from 2.0.1." paragraph after 2.0.0's;
+  the generated regions by `npm run index`.
+- `tests/fixtures/runs/base.yaml`: a run `main: decision-log-ingest`, `only: [core-records]`,
+  `name` naming it, steps `start` then `add: { type: task, title: … }` (no step named, as
+  `src/runs.ts` allows).
+
+**The checks with the real WingFoil** (criteria 5, 6), a script outside the repository, on 0.3.0
+and 0.3.2 from the matrix cache: each of `base`'s three README examples composed with `npm run
+compose`, into a scratch repository (`git init`, the composed `.wingfoil/` and the AGENTS region
+committed, a fictional identity); `workflow start decision-log-ingest --format json`, its
+`directiveWarnings` read; on `core-records`, `memory add` of a `decision-log` and a `task`, their
+frontmatter read. Before the change (the red), the start's warning is expected on each example;
+after it, none. The commands and outputs recorded in the Execution Notes.
+
+**The steps:** 1. the red: the script on `main`'s `base`, and `check:runs` with the new run (it
+passes before the change, the fields being optional: recorded as such, no red for it); 2. the
+changes; 3. the script again, `npm test`, `check:runs` and the list of criterion 9; 4. the
+counts (criterion 10).
 
 ## Execution Notes
 
