@@ -224,6 +224,44 @@ describe('npm run check:release (task-106, dl-054 P1)', () => {
       assert.equal(result.lines[result.lines.length - 1], 'check:release: pass');
     }));
 
+  it('counts the workflows of workflow list\'s JSON and gives the dry run\'s tag and catalog '
+    + 'commit (task-107)', withRepo(async (repo) => {
+    const { runner } = recorder((shown) => {
+      if (shown === 'npm run -s wingfoil -- workflow list') {
+        return { stdout: `${JSON.stringify({ manifest: {}, workflows: [{ name: 'a' },
+          { name: 'b' }] }, null, 2)}\n` };
+      }
+      if (shown === 'npm run publish:pack -- --pack base --dry-run') {
+        return { stdout: '## Publication\n\n- Line: current\n- Tag: `base@2.1.0` (annotated), at '
+          + '`abc`\n- Catalog commit: `def`\n- Digest: `sha256:0`\n- Not pushed: push by hand.\n' };
+      }
+      return undefined;
+    });
+    const result = await runCheckRelease(argv(repo, join(repo.outside, 'report.txt')), { runner });
+    assert.equal(result.code, 0, result.lines.join('\n'));
+    const text = result.lines.join('\n');
+    assert.match(text, /- npm run -s wingfoil -- workflow list: exit 0\n {2}workflows: 2\n/);
+    const dry = '- npm run publish:pack -- --pack base --dry-run: exit 0\n'
+      + '  - Tag: `base@2.1.0` (annotated), at `abc`\n  - Catalog commit: `def`\n';
+    assert.ok(text.includes(dry), text);
+  }));
+
+  it('falls back to the last line when workflow list\'s output is not its JSON, or the dry run '
+    + 'prints no tag (task-107)', withRepo(async (repo) => {
+    const { runner } = recorder((shown) => {
+      if (shown === 'npm run -s wingfoil -- workflow list') return { stdout: '{ "no": [ }\n' };
+      if (shown === 'npm run publish:pack -- --pack base --dry-run') {
+        return { stdout: '- Catalog commit: `def`\nnothing to tag\n' };
+      }
+      return undefined;
+    });
+    const result = await runCheckRelease(argv(repo, join(repo.outside, 'report.txt')), { runner });
+    const text = result.lines.join('\n');
+    assert.match(text, /- npm run -s wingfoil -- workflow list: exit 0\n {2}\{ "no": \[ \}\n/);
+    assert.ok(text.includes('- npm run publish:pack -- --pack base --dry-run: exit 0\n'
+      + '  nothing to tag\n'), text);
+  }));
+
   it('stops at the first non-zero exit, names it and writes the report', withRepo(async (repo) => {
     const { calls, runner } = recorder((shown) => (shown === 'npm run check:packs'
       ? { code: 1, stdout: 'a pack is wrong\n' } : undefined));
