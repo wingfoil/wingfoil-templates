@@ -265,3 +265,16 @@ counts (criterion 10).
   and naming only the author header would leave every commit's committer header in breach; the
   "nowhere else" list is unchanged. For the approver to read at `approve` (dl-019); the
   Acceptance's text stays as approved.
+- 2026-11-27: dl-039's checks (criterion 11), once, on the frozen commit `44b10c2b`:
+  - the branch CI 46012186819 `success`: `validate (22.21.0, 1)` 14m50s, `validate (22.12.0, 1)`
+    11m08s, `validate (22.12.0, 2)` 5m24s, `validate (22.21.0, 2)` 5m13s;
+  - the local list on Node.js 22.21.0, a clean tree, after `npm ci` and `npm run build`, every
+    command exit 0: `npm test` (1537 tests, 0 failing), `lint`, `check:pins`, `check:schemas`,
+    `check:packs` (101 files, 0 problems), `index -- --check`, `validate` (32 runs), the golden step
+    (26 runs), the four overlays (40, 40, 40, 48 runs), `workflow list`, `check:runs` (94 runs, 0
+    failed), `npm audit --omit=dev` and `npm audit` in each `src/matrix/wingfoil-*/`; the tree clean
+    after.
+  - The privacy check of the branch's diff and its commit messages (`repository-practice` rule 2):
+    no local path, no session or transcript of this work, no project outside this repository's
+    named (the directive's existing "a message to another session" is the pack's own wording,
+    unchanged).
