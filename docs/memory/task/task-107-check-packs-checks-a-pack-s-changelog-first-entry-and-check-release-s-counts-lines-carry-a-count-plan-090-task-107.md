@@ -236,3 +236,13 @@ order, when both are there; otherwise the last-line rule.
   `tests/publish.test.ts`'s "no descent" case branched from `base@1.0.0~1`, which no longer exists
   (`repository()`'s commit dropped, the tag on the tree's only commit), now from that commit
   amended, a commit beside the tag's. No digest, index or golden output re-recorded.
+- 2026-11-27: independent review of the build (dl-017): approve after amendments; no blocker, two
+  should-fix, five nits, all applied in `8b88cb66`. **Should-fix:** an end-to-end test in
+  `tests/check-packs.test.ts` (the rule through `check:packs`; a missing CHANGELOG giving the layout
+  rule alone); the first-line and indentation messages name what was found (the length and the
+  last character; the line quoted). **Nits:** "names no version"; a byte order mark ignored; a
+  linked CHANGELOG left to the layout rule, tested; `check:release`'s fallback for JSON with no
+  `workflows` array and a dry run with a tag but no catalog commit; `--no-edit` dropped.
+- 2026-11-27: re-review: approve; no blocker, no should-fix. Its optional nit (the no-version test
+  pinning both problems with `deepEqual`) not applied: cosmetic, the code frozen for dl-039's
+  checks.
