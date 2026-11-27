@@ -207,11 +207,11 @@ On `task/task-109-…`, from `main` at `632eb8b0` (the backlog approval).
   it once the template declares the field).
 - 2026-11-27: `pending → backlog` by the approver (`632eb8b0`), the departure from plan-090 ruling 5
   accepted with it (a `release` read by hand instead of a `check:runs` run).
-- 2026-11-27: built (`05471c35`) as the Design says. `npm test` 1537 pass, 0 fail (the count unchanged:
-  no test reads the changed texts; the `with-software` fixture's `bug` gained `reported_by` with
-  the template, so FA-6 found it in the same run); `npm run check:runs` 98 runs, 0 failed (94 + the
-  run `software-templates` on both examples and both releases); `check:packs` 101 files, 0
-  problems (unchanged); `index -- --check` 9 files up to date (no generated region moved);
+- 2026-11-27: built (`05471c35`) as the Design says. `npm test` 1537 pass, 0 fail (the count
+  unchanged: no test reads the changed texts; the `with-software` fixture's `bug` gained
+  `reported_by` with the template, so FA-6 found it in the same run); `npm run check:runs` 98 runs,
+  0 failed (94 + the run `software-templates` on both examples and both releases); `check:packs` 101
+  files, 0 problems (unchanged); `index -- --check` 9 files up to date (no generated region moved);
   `check:texts -- --base main`, `lint` and `check:schemas` exit 0.
 - 2026-11-27: criterion 4's reading, on `defaults` composed with `base`, `software` and
   `methodology/scrum`, a scratch repository per release, with `memory add --type <adr|bug|tech-spec>
