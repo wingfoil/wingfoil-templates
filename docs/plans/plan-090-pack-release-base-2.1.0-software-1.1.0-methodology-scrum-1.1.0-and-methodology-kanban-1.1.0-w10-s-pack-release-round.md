@@ -2,7 +2,7 @@
 id: plan-090-pack-release-base-2.1.0-software-1.1.0-methodology-scrum-1.1.0-and-methodology-kanban-1.1.0-w10-s-pack-release-round
 type: plan
 title: "pack-release: base 2.1.0, software 1.1.0, methodology/scrum 1.1.0 and methodology/kanban 1.1.0, W10's pack release round"
-status: draft
+status: active
 workflow: "pack-release"
 phase: "release"
 tags: ["packs","base","software","scrum","kanban","W10"]
