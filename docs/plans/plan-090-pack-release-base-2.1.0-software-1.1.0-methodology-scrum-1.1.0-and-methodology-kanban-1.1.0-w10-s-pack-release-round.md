@@ -311,3 +311,8 @@ list` and `npm run lint` exit 0. Files staged by name.
   `in-review → approved` with criterion 1's author and committer headers accepted (`51b1fb65`),
   merged into `main` on the approver's OK (`0be6a781`). It added an Open row:
   `governance/feedback`'s README sentence on `reported_by`, trigger that pack's next release.
+- 2026-11-27: task-108 `done` (`main`'s CI on `f5c8a31e` `success`, run 46043800402); its worktree
+  and branch removed. task-109 (`software`) added on `main` (`d724938d`), its body reviewed (approve
+  after amendments, all applied) and re-reviewed (approve after amendments: three lines reflowed),
+  then submitted `draft → pending` (`5966a614`). Its Context states a departure from ruling 5: no
+  `check:runs` run can add a `release` (the runner sets no field), read by hand instead.
