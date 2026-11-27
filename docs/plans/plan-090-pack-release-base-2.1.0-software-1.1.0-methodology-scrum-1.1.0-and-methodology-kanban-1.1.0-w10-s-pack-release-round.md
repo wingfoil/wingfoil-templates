@@ -305,3 +305,9 @@ list` and `npm run lint` exit 0. Files staged by name.
 - 2026-11-27: `main` pushed by the approver; its CI on `cadca35d` 45996180999 `success` and Pages
   45996181122 `success`; task-107 `approved → done`. Steps 3: task-108 added (`6668e0e4`), its
   body reviewed and re-reviewed, submitted `draft → pending` (`b975b31a`).
+- 2026-11-27: task-108 (`base`'s content) accepted into the backlog with option (a) and bug-011's
+  third exception (`401efd3d`), built and reviewed on its branch, dl-039's checks on `44b10c2b`
+  (branch CI 46012186819 `success`, longest job 14m50s; the local list on 22.21.0 exit 0),
+  `in-review → approved` with criterion 1's author and committer headers accepted (`51b1fb65`),
+  merged into `main` on the approver's OK (`0be6a781`). It added an Open row:
+  `governance/feedback`'s README sentence on `reported_by`, trigger that pack's next release.

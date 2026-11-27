@@ -278,3 +278,6 @@ counts (criterion 10).
     no local path, no session or transcript of this work, no project outside this repository's
     named (the directive's existing "a message to another session" is the pack's own wording,
     unchanged).
+- 2026-11-27: `in-review → approved` by the approver (`51b1fb65`), criterion 1's author and
+  committer headers accepted; on the approver's OK, merged `--no-ff` into `main` (`0be6a781`);
+  `main` pushed by the approver. The task stays `approved` until `main`'s CI on the merge.
