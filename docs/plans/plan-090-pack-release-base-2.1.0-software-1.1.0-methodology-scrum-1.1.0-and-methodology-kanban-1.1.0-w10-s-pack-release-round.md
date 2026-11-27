@@ -200,6 +200,27 @@ Each point with a recommendation.
     and with each tag (point 10), and at the close, its run read by the next plan. The agent pushes
     the task branches.
 
+## The approver's rulings
+
+Given by the approver on 2026-11-27, in chat: "ok procedi", on the outline as reviewed and
+re-reviewed (`c2d0e34b`). Points 1 … 13 stand as recommended:
+1. **Point 1:** one plan, four pack-releases, `prel-009` … `prel-012` in `requires`' order.
+2. **Point 2:** `minor` for all four; the `pack-semver` row stays Open, its trigger reworded.
+3. **Point 3:** five tasks, task-107 (tooling) and task-108 … task-111 (one per pack), each on its
+   own branch merged into `main`; task-108's two options in its body, ruled at its backlog gate.
+4. **Point 4:** the classes as listed; the governance packs' line by a new row, prel-007's and
+   prel-008's miss by dated notes.
+5. **Point 5:** the fields only, from 0.3.2's templates, checked by `check:packs` and `check:runs`.
+6. **Point 6:** the CHANGELOG check in `check:packs`, the file required, the fixtures updated.
+7. **Point 7:** `check:release`'s two counts' lines made informative.
+8. **Point 8:** task-107, the four pack tasks one at a time, the rehearsal, then the releases.
+9. **Point 9:** `validate`'s list with `check:release` on 22.21.0 and 22.12.0; no private check.
+10. **Point 10:** four approvals and one push; then one pack at a time, `main`'s CI read on each
+    catalog commit before the next pack's commands.
+11. **Point 11:** the records after the tags; the notice sent only on the approver's OK.
+12. **Point 12:** dl-039's checks for the tasks; `validate`'s list for the pack-releases.
+13. **Point 13:** every push of `main` the approver's.
+
 ## Steps
 
 On `main`, except each task's build on its own branch (point 3). Before every commit, the privacy
