@@ -96,3 +96,15 @@ On `task/task-111-…`, from `main` at `fb84cae6` (the backlog approval).
 - 2026-11-28: independent review of the body: approve after amendments (1 should-fix, 1 nit), both
   applied: the region regenerated and pasted again, since the composer takes every pack from one
   tree (plan-090 point 3's wording kept); the Product Owner sentence weighed in the Context.
+- 2026-11-28: built (`33cfe0e4`) as the Design says. `npm test` 1537 pass, 0 fail (the count
+  unchanged: no test reads the changed texts); `npm run check:runs` 98 runs, 0 failed
+  (unchanged); `check:packs` 101 files, 0 problems; `index -- --check` 9 files up to date (no
+  generated region moved); `validate` and the `kanban-exit` overlay `tolerance applied: none`;
+  `check:texts -- --base main`, `lint` and `check:schemas` exit 0. No count moved (criterion 5).
+- 2026-11-28: independent build review: approve after amendments (1 minor, 1 nit), both applied
+  (`7822ed1e`): "the whole tree, and from 1.1.0's" became "composed from every pack's section, so
+  with `base` 2.1.0 and `software` 1.1.0", since `kanban`'s `requires` does not force those
+  releases; "Both directives'" names which lines. Criteria 1 and 3 confirmed (2 lines per
+  directive, only the three pack files changed). Wording only, so no re-review.
+- 2026-11-28: privacy check of the branch's diff (`repository-practice` rule 2): no local path, no
+  session mention, no project named outside this repository.
