@@ -57,8 +57,8 @@ and `software`, with a WingFoil release in the pack's range (see its catalog ent
 
 **Updating from 1.0.0.** The project recomposes `methodology/kanban` and copies the `.wingfoil/`
 files as in steps 2 and 3, then regenerates the AGENTS.md region and pastes it again: `kanban`'s
-section is unchanged, but the region is composed from the whole tree, and from 1.1.0's it carries
-`base` 2.1.0's and `software` 1.1.0's changes (their "Updating from" paragraphs). The directives'
+section is unchanged, but the region is composed from every pack's section, so with `base` 2.1.0 and
+`software` 1.1.0 it carries their changes (their "Updating from" paragraphs). Both directives'
 `Precedence:` lines reach the project only by that copy; nothing in its elements changes.
 
 <!-- generated:begin composition -->
