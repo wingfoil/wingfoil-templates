@@ -28,8 +28,12 @@ paragraph: recompose, regenerate the AGENTS.md region and paste it again.
 `packs/methodology/kanban/directives/` (`definition-of-workflow`, `kanban`, neither with a
 `Precedence:` line), `agents/section.md`, `workflows/` (`delivery`, `release-flow`, `work-item`),
 and a `README.md` whose "Install and update" ends at step 8, with no "Updating from" paragraph.
-The AGENTS.md region does not change with this task (no section or fragment changes): the region a
-1.0.0 project pasted stays valid, and only the directives' copy matters.
+`kanban`'s section, hence its part of the AGENTS.md region, does not change with this task (no
+section or fragment changes). The region as a whole does: the reference composer takes every pack
+from one tree (`src/output.ts`, `agentsRegion`), so a project recomposing from 1.1.0's tree gets
+`base` 2.1.0's and `software` 1.1.0's changes too, in the region and the copied files. The
+section's "Releases are decided by the Product Owner" names a role, not a mapping (the role is
+`delivery` › `plan-release`'s own); weighed and left, as no bug of the round names it.
 
 ## Acceptance
 
@@ -39,9 +43,11 @@ The AGENTS.md region does not change with this task (no section or fragment chan
    4): the Design lists each, and the build review reads them.
 2. **The README:** after step 8, in "Install and update", as `software`'s and `scrum`'s, an
    **"Updating from 1.0.0."** paragraph: the project recomposes `methodology/kanban` and copies the
-   `.wingfoil/` files as in steps 2 and 3; the directives' `Precedence:` lines reach it only by
-   that copy; the AGENTS.md region is unchanged by this version (`base`'s and `software`'s next
-   minors change theirs, regenerated with them); nothing in its elements changes. Step 3 and the
+   `.wingfoil/` files as in steps 2 and 3, then regenerates the AGENTS.md region and pastes it
+   again: `kanban`'s section is unchanged, but the region is composed from the whole tree, and from
+   1.1.0's it carries `base` 2.1.0's and `software` 1.1.0's changes (their "Updating from"
+   paragraphs); the directives' `Precedence:` lines reach it only by that copy; nothing in its
+   elements changes. Step 3 and the
    rest of the README unchanged; the generated regions are not expected to change (`npm run index
    -- --check`).
 3. **Not this task's:** the CHANGELOG entry, `pack.yaml`'s `version` and the range (`prepare`);
@@ -75,3 +81,6 @@ The AGENTS.md region does not change with this task (no section or fragment chan
      proposed reading and the approver's ruling with its date; the Acceptance text stays as
      approved (dl-019).
      An owed item gets its row in docs/owed-items.md (repository-practice rule 4). -->
+- 2026-11-28: independent review of the body: approve after amendments (1 should-fix, 1 nit), both
+  applied: the region regenerated and pasted again, since the composer takes every pack from one
+  tree (plan-090 point 3's wording kept); the Product Owner sentence weighed in the Context.
