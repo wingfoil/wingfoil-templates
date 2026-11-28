@@ -234,5 +234,7 @@ On `task/task-109-…`, from `main` at `632eb8b0` (the backlog approval).
   tag", a project by hand asking the OK before `tag`.
 - 2026-11-28: the approver ruled the build review's major (i): "at `publish` (after the tag,
   before the publication)" in the section and the README, applied; a dated note on dl-041 at
-  plan-090 point 11 records G1's erratum (the OK at `publish` comes after the tag, as
+  plan-090 point 11 will record G1's erratum (the OK at `publish` comes after the tag, as
   `release-publishing` orders its phases). Criterion 2's text stays as approved (dl-019).
+- 2026-11-28: re-review of the amendments (`bd518851`, `bae2105d`): approve, no finding; its one
+  observation applied ("will record" on dl-041's note, not yet written).
