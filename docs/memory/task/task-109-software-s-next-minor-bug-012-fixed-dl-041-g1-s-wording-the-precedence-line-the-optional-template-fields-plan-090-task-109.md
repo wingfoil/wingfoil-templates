@@ -249,3 +249,7 @@ On `task/task-109-…`, from `main` at `632eb8b0` (the backlog approval).
   `tolerance applied: none`; `workflow list` exit 0; `check:runs` 98 runs, 0 failed; `npm audit
   --omit=dev` 0 vulnerabilities; the tree clean after. Privacy check of the branch's diff: no local
   path, no session mention, no project named outside this repository's own.
+- 2026-11-28: `in-review → approved` by the approver (`fd8214b3`); on the approver's OK, merged
+  `--no-ff` into `main` (`f5172ad0`); on `main` after the merge, the build, `workflow list`,
+  `lint`, `check:packs` (101 files, 0 problems) and `index -- --check` pass. The task stays
+  `approved` until `main`'s CI on the merge.

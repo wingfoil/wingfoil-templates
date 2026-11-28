@@ -316,3 +316,9 @@ list` and `npm run lint` exit 0. Files staged by name.
   after amendments, all applied) and re-reviewed (approve after amendments: three lines reflowed),
   then submitted `draft → pending` (`5966a614`). Its Context states a departure from ruling 5: no
   `check:runs` run can add a `release` (the runner sets no field), read by hand instead.
+- 2026-11-28: task-109 (`software`): in `in-progress` its Design (`23cedb21`), built (`05471c35`),
+  the build review's major ruled by the approver (i): the OK at `publish` comes after the tag,
+  before the publication (`bae2105d`); point 11 owes a dated note on dl-041 recording G1's
+  erratum. dl-039's checks on `78246078` (branch CI 46113609079 `success`, longest job 11m31s; the
+  local list on 22.21.0 exit 0, `check:runs` 98 runs), `in-review → approved` (`fd8214b3`), merged
+  into `main` on the approver's OK (`f5172ad0`).
