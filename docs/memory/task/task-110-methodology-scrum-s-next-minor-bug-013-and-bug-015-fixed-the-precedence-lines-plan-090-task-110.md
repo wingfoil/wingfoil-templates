@@ -198,3 +198,15 @@ On `task/task-110-…`, from `main` at `17641bc1` (the backlog approval).
   text unchanged). Not applied: the directive's "a rewrite to the next Sprint names it once that
   Sprint is added", criterion 2's own words. Its note on the evidence, applied here: the check
   reads `workflow list`'s JSON (no diagnostic) and does not test its exit status.
+- 2026-11-28: dl-039's checks on the frozen commit `015b6e96`. The branch CI run 46129403471
+  `success`, its jobs: `validate (22.12.0, 1)` 11m22s, `validate (22.21.0, 1)` 11m12s, `validate
+  (22.21.0, 2)` 7m55s, `validate (22.12.0, 2)` 7m19s (none over 25 minutes). The local list on
+  Node.js 22.21.0, from a clean clone after `npm ci` and `npm run build`: all 18 commands exit 0;
+  `npm test` 1537 pass, 0 fail; `lint`, `check:texts -- --base origin/main`, `check:pins`;
+  `check:schemas` 10 files; `check:packs` 101 files, 0 problems; `index -- --check` 9 files up to
+  date; `validate` 32 runs, the golden tree 26 (tolerance 0.2.2, as on `main`), the overlays
+  `software-exit`, `scrum-exit`, `kanban-exit` 40 each and `feedback-exit` 48, each 0 failed and
+  `tolerance applied: none`; `workflow list` exit 0; `check:runs` 98 runs, 0 failed; `npm audit
+  --omit=dev` 0 vulnerabilities; the tree clean after. Privacy check of the branch's diff and its
+  commit messages (`repository-practice` rule 2): no local path, no session or transcript of this
+  work, no project outside this repository's named.
