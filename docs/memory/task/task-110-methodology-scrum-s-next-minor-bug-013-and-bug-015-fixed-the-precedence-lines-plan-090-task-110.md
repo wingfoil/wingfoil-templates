@@ -133,7 +133,33 @@ gives optional fields (plan-090 point 5 names none for it).
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+On `task/task-110-…`, from `main` at `17641bc1` (the backlog approval).
+
+- **`agents/section.md`** (criterion 1): the "Roles" bullet becomes "**Roles:** by default the
+  Product Owner is `product-owner`, the Scrum Master `facilitator`, the Developers `developer` with
+  `architect`, `reviewer`, `qa` and `tech-lead`; the project's own mapping is the roles its
+  workflows' phases name and `dna.yaml` › `team` gives (its `roles`, and who holds them)."
+- **`directives/scrum.md`** (criteria 1, 2, 3): `Precedence: method` after the title; the
+  Accountabilities bullet opens "By default the Product Owner is …" and gains the same reference,
+  its agent sentence kept; a new bullet after "At the end of a Sprint", **A `sprint` naming no
+  Sprint**, as criterion 2 words it (the rewrite to a next Sprint not yet added, and `n/a`).
+- **`directives/definition-of-done.md`** (criterion 3): `Precedence: method` after the title.
+- **`workflows/sprint.yaml`** (criterion 2): `version: 2`; `sprint-planning`'s description gains
+  "Check each id written against this Sprint's id: a task whose sprint names a Sprint that does not
+  exist (misspelt, or never created) is never selected, and WingFoil gives no message.";
+  `plan-release`'s gains, after "its sprint by editing the draft", the same check for the release.
+- **`README.md`** (criterion 4): step 3 as `methodology/kanban`'s first sentence; after step 7,
+  **"Updating from 1.0.0."** with the outcome of the started-Sprint check.
+- **The started-Sprint check** (criterion 4): a script composing `base`, `software` and
+  `methodology/scrum` with the `defaults` example's parameters from `main`'s tree (1.0.0's files)
+  and from the branch's, into a scratch repository per release (0.3.0, 0.3.2): `workflow start
+  sw-life-cycle`; `docs/inception.md` committed and `inception.approve` finalized by the approver;
+  a `tech-spec` added, submitted and approved; `sprint-001` added at `delivery.plan-sprint`, its
+  `goal` written, submitted (`planned`); a task with `sprint: sprint-001` submitted and approved
+  (`backlog`); the Sprint submitted (`active`) and the task (`in-progress`): `workflow next` gives
+  `backlog-item.build@task:…`. Then the branch's `.wingfoil/` copied over and committed: `workflow
+  list --format json` and `workflow next` read. A trial with only `version: 2` changed, before the
+  build, gave no diagnostic and the same next step on both releases.
 
 ## Execution Notes
 
