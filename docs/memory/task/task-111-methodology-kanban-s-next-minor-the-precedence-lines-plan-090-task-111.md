@@ -2,7 +2,7 @@
 id: task-111-methodology-kanban-s-next-minor-the-precedence-lines-plan-090-task-111
 type: task
 title: "methodology/kanban's next minor: the Precedence lines (plan-090 task-111)"
-status: in-progress
+status: in-review
 pack: "pack-methodology-kanban"
 depends_on: []
 tags: ["packs","kanban"]
