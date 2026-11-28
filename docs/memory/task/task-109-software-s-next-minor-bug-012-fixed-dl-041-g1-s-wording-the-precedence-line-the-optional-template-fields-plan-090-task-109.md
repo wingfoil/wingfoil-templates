@@ -238,3 +238,14 @@ On `task/task-109-…`, from `main` at `632eb8b0` (the backlog approval).
   `release-publishing` orders its phases). Criterion 2's text stays as approved (dl-019).
 - 2026-11-28: re-review of the amendments (`bd518851`, `bae2105d`): approve, no finding; its one
   observation applied ("will record" on dl-041's note, not yet written).
+- 2026-11-28: dl-039's checks on the frozen commit `78246078`. The branch CI run 46113609079
+  `success`, its jobs: `validate (22.21.0, 1)` 11m31s, `validate (22.12.0, 1)` 11m15s, `validate
+  (22.21.0, 2)` 5m35s, `validate (22.12.0, 2)` 5m28s (none over 25 minutes). The local list on
+  Node.js 22.21.0, from a clean clone after `npm ci` and `npm run build`: every command exit 0;
+  `npm test` 1537 pass, 0 fail; `lint`, `check:texts -- --base origin/main`, `check:pins`;
+  `check:schemas` 10 files; `check:packs` 101 files, 0 problems; `index -- --check` 9 files up to
+  date; `validate` 32 runs, the golden tree 26 (tolerance 0.2.2, as on `main`), the overlays
+  `software-exit`, `scrum-exit`, `kanban-exit` 40 each and `feedback-exit` 48, each 0 failed and
+  `tolerance applied: none`; `workflow list` exit 0; `check:runs` 98 runs, 0 failed; `npm audit
+  --omit=dev` 0 vulnerabilities; the tree clean after. Privacy check of the branch's diff: no local
+  path, no session mention, no project named outside this repository's own.
