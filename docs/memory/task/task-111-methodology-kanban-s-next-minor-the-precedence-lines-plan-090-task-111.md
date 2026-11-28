@@ -108,3 +108,9 @@ On `task/task-111-…`, from `main` at `fb84cae6` (the backlog approval).
   directive, only the three pack files changed). Wording only, so no re-review.
 - 2026-11-28: privacy check of the branch's diff (`repository-practice` rule 2): no local path, no
   session mention, no project named outside this repository.
+- 2026-11-28: criterion 6's checks, once, on the frozen commit `0973ceec`: the branch CI
+  `success`, run 46149853710, its jobs `validate (22.12.0, 1)` 17m11s, `(22.12.0, 2)` 5m18s,
+  `(22.21.0, 1)` 10m57s, `(22.21.0, 2)` 4m58s, none over 25 minutes; dl-039's local list on
+  Node.js 22.21.0 from a clean clone after `npm ci` and `npm run build`: its 18 commands exit 0
+  (`npm test` 1537 pass, 0 fail; `validate`, the four overlays `tolerance applied: none`, the
+  golden tree `0.2.2` as on `main`; `check:runs` 98 runs, 0 failed), the tree clean after.
