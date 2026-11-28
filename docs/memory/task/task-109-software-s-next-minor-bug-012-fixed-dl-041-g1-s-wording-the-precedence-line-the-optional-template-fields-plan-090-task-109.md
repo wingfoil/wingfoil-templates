@@ -2,7 +2,7 @@
 id: task-109-software-s-next-minor-bug-012-fixed-dl-041-g1-s-wording-the-precedence-line-the-optional-template-fields-plan-090-task-109
 type: task
 title: "software's next minor: bug-012 fixed, dl-041 G1's wording, the Precedence line, the optional template fields (plan-090 task-109)"
-status: in-progress
+status: in-review
 pack: "pack-foundation-software"
 depends_on: []
 tags: ["packs","software"]
