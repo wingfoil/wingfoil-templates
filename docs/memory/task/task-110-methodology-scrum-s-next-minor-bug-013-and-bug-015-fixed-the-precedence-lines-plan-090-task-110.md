@@ -81,9 +81,8 @@ gives optional fields (plan-090 point 5 names none for it).
    `sprint` names a Sprint that does not exist is never selected by any Sprint and no command says
    so, so whoever writes or rewrites the field checks it against the Sprint's `id`; `n/a —
    <reason>` is the way to leave a task unselected. `sprint-review`'s and `close`'s descriptions
-   unchanged. The
-   workflow's `version` moves by one (`2`), as `base`'s `governance-evolution` did in task-108;
-   its phases, roles, actions and `where` unchanged.
+   unchanged. The workflow's `version` moves by one (`2`), as `base`'s `governance-evolution` did
+   in task-108; its phases, roles, actions and `where` unchanged.
 3. **The `Precedence:` lines:** `definition-of-done` and `scrum` `Precedence: method`, each after
    the `# ` title and a blank line, followed by a blank line, as `base`'s `security-secrets.md`; no
    lint checks it (plan-090 point 4): the Design lists each, and the build review reads them.
