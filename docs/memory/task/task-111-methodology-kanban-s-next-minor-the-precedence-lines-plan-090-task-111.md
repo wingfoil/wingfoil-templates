@@ -72,7 +72,19 @@ section's "Releases are decided by the Product Owner" names a role, not a mappin
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+On `task/task-111-…`, from `main` at `fb84cae6` (the backlog approval).
+
+- **`directives/definition-of-workflow.md`** (criterion 1): `Precedence: method` after the
+  `# Definition of Workflow` title and a blank line, followed by a blank line; the rest unchanged.
+- **`directives/kanban.md`** (criterion 1): `Precedence: method` after the `# Kanban` title, in
+  the same place; the rest unchanged.
+- **`README.md`** (criterion 2): after step 8, before the generated `composition` region, a blank
+  line and **"Updating from 1.0.0."**: the project recomposes `methodology/kanban` and copies the
+  `.wingfoil/` files as in steps 2 and 3, then regenerates the AGENTS.md region and pastes it
+  again: `kanban`'s section is unchanged, but the region is composed from the whole tree, and
+  from 1.1.0's it carries `base` 2.1.0's and `software` 1.1.0's changes (their "Updating from"
+  paragraphs). The directives' `Precedence:` lines reach the project only by that copy; nothing
+  in its elements changes.
 
 ## Execution Notes
 
