@@ -214,3 +214,5 @@ On `task/task-110-…`, from `main` at `17641bc1` (the backlog approval).
   `--no-ff` into `main` (`765f408e`); on `main` after the merge, the build, `workflow list`,
   `lint`, `check:packs` (101 files, 0 problems) and `index -- --check` pass. The task stays
   `approved` until `main`'s CI on the merge.
+- 2026-11-28: `main` pushed by the approver; its CI on `addd7995` (the merge `765f408e` and its
+  note) `success` (CI run 46136218930, Pages 46136218904); `approved → done`.
