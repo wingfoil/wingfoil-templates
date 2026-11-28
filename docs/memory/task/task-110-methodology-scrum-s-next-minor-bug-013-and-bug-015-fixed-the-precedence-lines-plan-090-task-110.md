@@ -2,7 +2,7 @@
 id: task-110-methodology-scrum-s-next-minor-bug-013-and-bug-015-fixed-the-precedence-lines-plan-090-task-110
 type: task
 title: "methodology/scrum's next minor: bug-013 and bug-015 fixed, the Precedence lines (plan-090 task-110)"
-status: approved
+status: done
 pack: "pack-methodology-scrum"
 depends_on: []
 tags: ["packs","scrum"]
