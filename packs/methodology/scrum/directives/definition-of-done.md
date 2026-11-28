@@ -9,6 +9,8 @@ title: "Definition of Done"
 
 # Definition of Done
 
+Precedence: method
+
 An item is done when it meets every rule below; until then it is not part of the Increment. A
 project replaces these rules with its own by a `custom/` directive of the same id.
 
