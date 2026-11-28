@@ -181,3 +181,15 @@ On `task/task-110-…`, from `main` at `17641bc1` (the backlog approval).
   alternative's Open row written by this task; the started-Sprint check's procedure (the main
   started, `development` mid-`backlog-item`, each release's outcome, another outcome to the
   approver); "the procedure in the Design"; "names no Sprint" read explicitly.
+- 2026-11-28: built (`298805c0`) as the Design says, with the approver's ruling at the backlog gate
+  (`17641bc1`: the `scrum` directive's Accountabilities given bug-013's reading). `npm test` 1537
+  pass, 0 fail (the count unchanged: no test reads the changed texts); `npm run check:runs` 98
+  runs, 0 failed (unchanged); `check:packs` 101 files, 0 problems; `index -- --check` 9 files up to
+  date (no generated region moved); `check:texts -- --base main`, `lint` and `check:schemas` exit
+  0.
+- 2026-11-28: criterion 4's started-Sprint check (the Design's procedure, `defaults`' parameters),
+  on 0.3.0 and 0.3.2: on 1.0.0's files (`main`'s tree) the `sw-life-cycle` instance reaches
+  `backlog-item.build@task:task-001-buy-a-ticket` (`sprint-001` `active`, the task `in-progress`);
+  after the branch's `.wingfoil/` copied and committed, `sprint.yaml` at `version: 2`, `workflow
+  list --format json` exits 0 with no diagnostic and `workflow next` gives the same step on both
+  releases. The README's paragraph states it.
