@@ -193,3 +193,8 @@ On `task/task-110-…`, from `main` at `17641bc1` (the backlog approval).
   after the branch's `.wingfoil/` copied and committed, `sprint.yaml` at `version: 2`, `workflow
   list --format json` exits 0 with no diagnostic and `workflow next` gives the same step on both
   releases. The README's paragraph states it.
+- 2026-11-28: build review: approve (0 major, 1 minor, 2 nits). Applied: the README's
+  started-Sprint sentence limited to the case read; `plan-release`'s description refilled (its
+  text unchanged). Not applied: the directive's "a rewrite to the next Sprint names it once that
+  Sprint is added", criterion 2's own words. Its note on the evidence, applied here: the check
+  reads `workflow list`'s JSON (no diagnostic) and does not test its exit status.

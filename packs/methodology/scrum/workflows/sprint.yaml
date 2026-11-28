@@ -28,9 +28,9 @@ phases:
       and release-line with --set and its sprint by editing the draft, checked against this
       Sprint's id (a release whose sprint names a Sprint that does not exist is never selected,
       and WingFoil gives no message), and move it to in-development (draft, planning,
-      in-development). Only once the Sprint Backlog is done or
-      moved, and before a release carried from the previous Sprint completes, which closes this
-      phase (a release can still be added outside the step).
+      in-development). Only once the Sprint Backlog is done or moved, and before a release carried
+      from the previous Sprint completes, which closes this phase (a release can still be added
+      outside the step).
     role: product-owner
     optional: true
     actions:

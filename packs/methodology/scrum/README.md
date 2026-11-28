@@ -58,9 +58,9 @@ now names the role mapping as `scrum`'s default, the project's own being its wor
 no Sprint, each directive's `Precedence:` line) and `sprint` (version 2: `sprint-planning` and
 `plan-release` ask that the `sprint` field be checked) reach the project only by that copy.
 Nothing in its elements changes, but a task or a release whose `sprint` names a Sprint that does
-not exist is worth checking once. A Sprint already started goes on where it was: with WingFoil
-0.3.0 and 0.3.2, a `sprint` in `development` with a task in `backlog-item` keeps its next step
-after the copy, and `workflow list` reports no diagnostic.
+not exist is worth checking once. In the case read with WingFoil 0.3.0 and 0.3.2, a Sprint
+already started goes on where it was: a `sprint` in `development` with a task in `backlog-item`
+keeps its next step after the copy, and `workflow list` reports no diagnostic.
 
 <!-- generated:begin composition -->
 ## Composition
