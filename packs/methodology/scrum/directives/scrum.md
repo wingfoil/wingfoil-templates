@@ -9,12 +9,16 @@ title: "Scrum"
 
 # Scrum
 
+Precedence: method
+
 The project runs Scrum as the Scrum Guide (November 2020) defines it: empiricism (transparency,
 inspection, adaptation) and the values commitment, focus, openness, respect and courage.
 
-- **Accountabilities.** The Product Owner is `product-owner`, the Scrum Master is `facilitator`,
-  the Developers are `developer` with `architect`, `reviewer`, `qa` and `tech-lead`. An agent works
-  for the Developers, as their tool, and holds no Scrum accountability; it never approves.
+- **Accountabilities.** By default the Product Owner is `product-owner`, the Scrum Master is
+  `facilitator`, the Developers are `developer` with `architect`, `reviewer`, `qa` and `tech-lead`;
+  the project's own mapping is the roles its workflows' phases name and `dna.yaml` › `team` gives
+  (its `roles`, and who holds them). An agent works for the Developers, as their tool, and holds no
+  Scrum accountability; it never approves.
 - **The Sprint** lasts {{sprint_length}}, never more than one month, and the next starts only when
   the previous one is done: one Sprint is active at a time. Its events are Sprint Planning (at most
   eight hours for a one-month Sprint), the Daily Scrum (fifteen minutes), the Sprint Review (at
@@ -36,5 +40,10 @@ inspection, adaptation) and the values commitment, focus, openness, respect and 
 - **At the end of a Sprint** an unfinished item goes to the next Sprint or back to the Product
   Backlog, by rewriting its `sprint`; a release still open goes to the next Sprint the same way
   before the Sprint Review completes.
+- **A `sprint` naming no Sprint.** A task or a release whose `sprint` names a Sprint that does not
+  exist (misspelt, or never created) is never selected by any Sprint, and no command says so.
+  Whoever writes or rewrites the field checks it against the Sprint's `id`; a rewrite to the next
+  Sprint names it once that Sprint is added (`memory add`), and is checked then. `n/a — <reason>`
+  is the way to leave a task unselected.
 - The project chooses how it estimates and plans; nothing here requires user stories, story points
   or burn-down charts.

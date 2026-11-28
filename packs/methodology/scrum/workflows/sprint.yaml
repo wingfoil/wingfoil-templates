@@ -5,13 +5,15 @@ name: sprint
 kind: sub
 element: sprint
 description: "One Sprint: planning, its backlog items, its releases, review and retrospective"
-version: 1
+version: 2
 phases:
   - name: sprint-planning
     description: >-
       Agree the Sprint Goal, select the Sprint Backlog by writing the Sprint's id in the sprint
       field of its tasks (an item not selected keeps n/a with its reason), plan how the work is
-      done, and start the Sprint (planned to active; one Sprint is active at a time).
+      done, and start the Sprint (planned to active; one Sprint is active at a time). Check each
+      id written against this Sprint's id: a task whose sprint names a Sprint that does not exist
+      (misspelt, or never created) is never selected, and WingFoil gives no message.
     role: product-owner
     actions:
       - memory.submit
@@ -23,10 +25,12 @@ phases:
   - name: plan-release
     description: >-
       When the Product Owner decides to release an Increment: add a release, giving its version
-      and release-line with --set and its sprint by editing the draft, and move it to
-      in-development (draft, planning, in-development). Only once the Sprint Backlog is done or
-      moved, and before a release carried from the previous Sprint completes, which closes this
-      phase (a release can still be added outside the step).
+      and release-line with --set and its sprint by editing the draft, checked against this
+      Sprint's id (a release whose sprint names a Sprint that does not exist is never selected,
+      and WingFoil gives no message), and move it to in-development (draft, planning,
+      in-development). Only once the Sprint Backlog is done or moved, and before a release carried
+      from the previous Sprint completes, which closes this phase (a release can still be added
+      outside the step).
     role: product-owner
     optional: true
     actions:

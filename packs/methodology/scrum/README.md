@@ -35,8 +35,9 @@ and `software`, with a WingFoil release in the pack's range (see its catalog ent
    wingfoil-templates, giving `base`'s four required parameters and, for a project that is
    already governed, its current values of the path and id parameters, so that no file moves.
 3. Copy the composed `.wingfoil/` files into the project's `.wingfoil/`, keeping its `custom/`
-   folders and re-adding its own entries, among them the `include` entries of the `custom/`
-   workflows the project wrote itself; copy the generated AGENTS.md region into its `AGENTS.md`.
+   folders, then re-add the project's own entries: only what the project wrote itself, among them
+   the `include` entries of the `custom/` workflows it wrote, never the Memory types, roles or
+   workflows WingFoil's `init` scaffolded; copy the generated AGENTS.md region into its `AGENTS.md`.
    Remove the delivery workflow WingFoil's `init` scaffolded under `workflows/custom/`
    (`scrum-delivery` or `kanban-delivery`) with its `include` entry: `scrum`'s `delivery` replaces
    it. `base`'s and `software`'s step 4 remove the other workflows `init` scaffolded.
@@ -49,6 +50,17 @@ and `software`, with a WingFoil release in the pack's range (see its catalog ent
 6. Add the first Sprint with `delivery`'s `plan-sprint`, then write its id in the `sprint` field of
    the tasks it selects.
 7. Record the adopted version of `methodology/scrum` in the project's own Memory.
+
+**Updating from 1.0.0.** The project recomposes `methodology/scrum` and copies the `.wingfoil/`
+files as in steps 2 and 3, then regenerates the AGENTS.md region and pastes it again: the region
+now names the role mapping as `scrum`'s default, the project's own being its workflows' roles and
+`dna.yaml` › `team`. The changed directives (`scrum`'s mapping and its bullet on a `sprint` naming
+no Sprint, each directive's `Precedence:` line) and `sprint` (version 2: `sprint-planning` and
+`plan-release` ask that the `sprint` field be checked) reach the project only by that copy.
+Nothing in its elements changes, but a task or a release whose `sprint` names a Sprint that does
+not exist is worth checking once. In the case read with WingFoil 0.3.0 and 0.3.2, a Sprint
+already started goes on where it was: a `sprint` in `development` with a task in `backlog-item`
+keeps its next step after the copy, and `workflow list` reports no diagnostic.
 
 <!-- generated:begin composition -->
 ## Composition

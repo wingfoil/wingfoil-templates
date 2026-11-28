@@ -2,7 +2,7 @@
 id: task-110-methodology-scrum-s-next-minor-bug-013-and-bug-015-fixed-the-precedence-lines-plan-090-task-110
 type: task
 title: "methodology/scrum's next minor: bug-013 and bug-015 fixed, the Precedence lines (plan-090 task-110)"
-status: backlog
+status: approved
 pack: "pack-methodology-scrum"
 depends_on: []
 tags: ["packs","scrum"]
@@ -133,7 +133,33 @@ gives optional fields (plan-090 point 5 names none for it).
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+On `task/task-110-…`, from `main` at `17641bc1` (the backlog approval).
+
+- **`agents/section.md`** (criterion 1): the "Roles" bullet becomes "**Roles:** by default the
+  Product Owner is `product-owner`, the Scrum Master `facilitator`, the Developers `developer` with
+  `architect`, `reviewer`, `qa` and `tech-lead`; the project's own mapping is the roles its
+  workflows' phases name and `dna.yaml` › `team` gives (its `roles`, and who holds them)."
+- **`directives/scrum.md`** (criteria 1, 2, 3): `Precedence: method` after the title; the
+  Accountabilities bullet opens "By default the Product Owner is …" and gains the same reference,
+  its agent sentence kept; a new bullet after "At the end of a Sprint", **A `sprint` naming no
+  Sprint**, as criterion 2 words it (the rewrite to a next Sprint not yet added, and `n/a`).
+- **`directives/definition-of-done.md`** (criterion 3): `Precedence: method` after the title.
+- **`workflows/sprint.yaml`** (criterion 2): `version: 2`; `sprint-planning`'s description gains
+  "Check each id written against this Sprint's id: a task whose sprint names a Sprint that does not
+  exist (misspelt, or never created) is never selected, and WingFoil gives no message.";
+  `plan-release`'s gains, after "its sprint by editing the draft", the same check for the release.
+- **`README.md`** (criterion 4): step 3 as `methodology/kanban`'s first sentence; after step 7,
+  **"Updating from 1.0.0."** with the outcome of the started-Sprint check.
+- **The started-Sprint check** (criterion 4): a script composing `base`, `software` and
+  `methodology/scrum` with the `defaults` example's parameters from `main`'s tree (1.0.0's files)
+  and from the branch's, into a scratch repository per release (0.3.0, 0.3.2): `workflow start
+  sw-life-cycle`; `docs/inception.md` committed and `inception.approve` finalized by the approver;
+  a `tech-spec` added, submitted and approved; `sprint-001` added at `delivery.plan-sprint`, its
+  `goal` written, submitted (`planned`); a task with `sprint: sprint-001` submitted and approved
+  (`backlog`); the Sprint submitted (`active`) and the task (`in-progress`): `workflow next` gives
+  `backlog-item.build@task:…`. Then the branch's `.wingfoil/` copied over and committed: `workflow
+  list --format json` and `workflow next` read. A trial with only `version: 2` changed, before the
+  build, gave no diagnostic and the same next step on both releases.
 
 ## Execution Notes
 
@@ -155,3 +181,32 @@ gives optional fields (plan-090 point 5 names none for it).
   alternative's Open row written by this task; the started-Sprint check's procedure (the main
   started, `development` mid-`backlog-item`, each release's outcome, another outcome to the
   approver); "the procedure in the Design"; "names no Sprint" read explicitly.
+- 2026-11-28: built (`298805c0`) as the Design says, with the approver's ruling at the backlog gate
+  (`17641bc1`: the `scrum` directive's Accountabilities given bug-013's reading). `npm test` 1537
+  pass, 0 fail (the count unchanged: no test reads the changed texts); `npm run check:runs` 98
+  runs, 0 failed (unchanged); `check:packs` 101 files, 0 problems; `index -- --check` 9 files up to
+  date (no generated region moved); `check:texts -- --base main`, `lint` and `check:schemas` exit
+  0.
+- 2026-11-28: criterion 4's started-Sprint check (the Design's procedure, `defaults`' parameters),
+  on 0.3.0 and 0.3.2: on 1.0.0's files (`main`'s tree) the `sw-life-cycle` instance reaches
+  `backlog-item.build@task:task-001-buy-a-ticket` (`sprint-001` `active`, the task `in-progress`);
+  after the branch's `.wingfoil/` copied and committed, `sprint.yaml` at `version: 2`, `workflow
+  list --format json` exits 0 with no diagnostic and `workflow next` gives the same step on both
+  releases. The README's paragraph states it.
+- 2026-11-28: build review: approve (0 major, 1 minor, 2 nits). Applied: the README's
+  started-Sprint sentence limited to the case read; `plan-release`'s description refilled (its
+  text unchanged). Not applied: the directive's "a rewrite to the next Sprint names it once that
+  Sprint is added", criterion 2's own words. Its note on the evidence, applied here: the check
+  reads `workflow list`'s JSON (no diagnostic) and does not test its exit status.
+- 2026-11-28: dl-039's checks on the frozen commit `015b6e96`. The branch CI run 46129403471
+  `success`, its jobs: `validate (22.12.0, 1)` 11m22s, `validate (22.21.0, 1)` 11m12s, `validate
+  (22.21.0, 2)` 7m55s, `validate (22.12.0, 2)` 7m19s (none over 25 minutes). The local list on
+  Node.js 22.21.0, from a clean clone after `npm ci` and `npm run build`: all 18 commands exit 0;
+  `npm test` 1537 pass, 0 fail; `lint`, `check:texts -- --base origin/main`, `check:pins`;
+  `check:schemas` 10 files; `check:packs` 101 files, 0 problems; `index -- --check` 9 files up to
+  date; `validate` 32 runs, the golden tree 26 (tolerance 0.2.2, as on `main`), the overlays
+  `software-exit`, `scrum-exit`, `kanban-exit` 40 each and `feedback-exit` 48, each 0 failed and
+  `tolerance applied: none`; `workflow list` exit 0; `check:runs` 98 runs, 0 failed; `npm audit
+  --omit=dev` 0 vulnerabilities; the tree clean after. Privacy check of the branch's diff and its
+  commit messages (`repository-practice` rule 2): no local path, no session or transcript of this
+  work, no project outside this repository's named.
