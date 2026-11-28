@@ -210,3 +210,7 @@ On `task/task-110-…`, from `main` at `17641bc1` (the backlog approval).
   --omit=dev` 0 vulnerabilities; the tree clean after. Privacy check of the branch's diff and its
   commit messages (`repository-practice` rule 2): no local path, no session or transcript of this
   work, no project outside this repository's named.
+- 2026-11-28: `in-review → approved` by the approver (`9cf5ab2a`); on the approver's OK, merged
+  `--no-ff` into `main` (`765f408e`); on `main` after the merge, the build, `workflow list`,
+  `lint`, `check:packs` (101 files, 0 problems) and `index -- --check` pass. The task stays
+  `approved` until `main`'s CI on the merge.

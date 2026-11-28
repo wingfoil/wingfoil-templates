@@ -322,3 +322,11 @@ list` and `npm run lint` exit 0. Files staged by name.
   erratum. dl-039's checks on `78246078` (branch CI 46113609079 `success`, longest job 11m31s; the
   local list on 22.21.0 exit 0, `check:runs` 98 runs), `in-review → approved` (`fd8214b3`), merged
   into `main` on the approver's OK (`f5172ad0`).
+- 2026-11-28: task-109 `done` (`main`'s CI on `f574a1d0` `success`, run 46122622065); its worktree
+  and branch removed. task-110 (`methodology/scrum`): body reviewed twice (all applied), its
+  departure ruled at the backlog gate (`17641bc1`: the `scrum` directive's Accountabilities given
+  bug-013's reading); Design `in-progress`, built (`298805c0`), a Sprint started on 1.0.0's files
+  read going on after 1.1.0's copied on 0.3.0 and 0.3.2; the build review's minor and a nit applied
+  (`015b6e96`); dl-039's checks on `015b6e96` (branch CI 46129403471 `success`, longest job 11m22s;
+  the local list on 22.21.0 exit 0); `in-review → approved` (`9cf5ab2a`), merged into `main` on the
+  approver's OK (`765f408e`).
