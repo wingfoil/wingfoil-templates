@@ -42,7 +42,8 @@ task-108 (`base`) and task-109 (`software`, merged at `f5172ad0`), whose shapes 
   `sprint-planning` and `plan-release` name the risk and ask that the field be checked against the
   Sprint's id when written, and the `scrum` directive (the register's row) or `backlog-item`'s
   description says that an element whose `sprint` names no Sprint is never selected. WingFoil's
-  side is F-043, not this task's. `n/a — <reason>` is the intended value of a task no Sprint
+  side is F-043, not this task's. "Names no Sprint" is read as: names a Sprint that does not
+  exist; `n/a — <reason>` is the intended value of a task no Sprint
   selects (the `scrum` directive's Refinement), and has nothing to check against. `sprint-review`
   and `close` also rewrite `sprint`, to the next Sprint, which may not exist yet (it is added
   outside a step); bug-015's Expected names only `sprint-planning` and `plan-release`, so the
@@ -70,16 +71,20 @@ gives optional fields (plan-090 point 5 names none for it).
    `architect`, `reviewer`, `qa` and `tech-lead`) and says a project's own mapping is the roles
    its workflows' phases name and `dna.yaml` › `team` gives (its `roles`, and who holds them); no
    parameter is added (bug-013's other option: a reference follows the project's own files with
-   nothing to set). With the departure ruled (Context): the `scrum` directive's Accountabilities
-   bullet names the mapping as `scrum`'s default and a project's own mapping as the roles its
-   workflows' phases name and `dna.yaml` › `team` gives; the rest of that bullet unchanged.
+   nothing to set). If the approver rules the recommended reading (Context): the `scrum`
+   directive's Accountabilities bullet names the mapping as `scrum`'s default and a project's own
+   mapping as the roles its workflows' phases name and `dna.yaml` › `team` gives, the rest of that
+   bullet unchanged; if the alternative: the directive unchanged, and this task adds an Open row to
+   `docs/owed-items.md` (the directive's mapping by value; owner approver, trigger `scrum`'s next
+   release).
 2. **bug-015:** `sprint.yaml` › `sprint-planning`'s description asks that the id written in each
    selected task's `sprint` field be checked against this Sprint's `id` (its frontmatter) when
    written, and says that a task whose `sprint` names a Sprint that does not exist (misspelt, or
    never created) is never selected, and WingFoil gives no message; `plan-release`'s description
    says the same of the release's `sprint`; the `scrum` directive gains a bullet: an element whose
    `sprint` names a Sprint that does not exist is never selected by any Sprint and no command says
-   so, so whoever writes or rewrites the field checks it against the Sprint's `id`; `n/a —
+   so, so whoever writes or rewrites the field checks it against the Sprint's `id`; a rewrite to
+   the next Sprint names it once that Sprint is added (`memory add`), and is checked then; `n/a —
    <reason>` is the way to leave a task unselected. `sprint-review`'s and `close`'s descriptions
    unchanged. The workflow's `version` moves by one (`2`), as `base`'s `governance-evolution` did
    in task-108; its phases, roles, actions and `where` unchanged.
@@ -95,9 +100,12 @@ gives optional fields (plan-090 point 5 names none for it).
    changed directives and `sprint` reach the project only by that copy; nothing in its elements
    changes, but a task or a release whose `sprint` names a Sprint that does not exist is worth
    checking once. What `sprint` at `version: 2` does to a Sprint already started is read on WingFoil
-   0.3.0 and 0.3.2 (the Design: a `sprint` started on 1.0.0's files, then 1.1.0's copied, `workflow
-   list` and the instance's next step) and recorded in the Execution Notes; the paragraph states the
-   outcome. The generated regions are not expected to change; `npm run index -- --check` says so.
+   0.3.0 and 0.3.2 (the procedure in the Design: a `sw-life-cycle` instance whose `delivery` ›
+   `sprint` is in `development`, a task in `backlog-item`, on 1.0.0's files; then 1.1.0's copied;
+   `workflow list --format json` and `workflow next` on it) and recorded in the Execution Notes; the
+   paragraph states each release's outcome, and an outcome other than the instance going on goes to
+   the approver (dl-019). The generated regions are not expected to change; `npm run index --
+   --check` says so.
 5. **Not this task's:** the CHANGELOG entry, `pack.yaml`'s `version` and the range (`prepare`);
    the notes on the charter `pack-methodology-scrum`, on bug-013 and on bug-015, which are plan-090
    point 11's, after the tag; F-043 (WingFoil's side); no file under `src/`, `.wingfoil/`,
@@ -142,3 +150,8 @@ gives optional fields (plan-090 point 5 names none for it).
   version bump's effect on a started Sprint read on WingFoil; the `scrum-exit` overlay; the release
   case as bug-015 reproduced it; `fragments/memory.yaml`; `dna.yaml` › `team` (its `roles`, and who
   holds them) in place of `team.roles`, since the mapping is also who holds a role.
+- 2026-11-28: re-review of the amendments: approve after amendments (3 minor, 2 nits), all
+  applied: a rewrite to a next Sprint not yet added; criterion 1 under either ruling, the
+  alternative's Open row written by this task; the started-Sprint check's procedure (the main
+  started, `development` mid-`backlog-item`, each release's outcome, another outcome to the
+  approver); "the procedure in the Design"; "names no Sprint" read explicitly.
