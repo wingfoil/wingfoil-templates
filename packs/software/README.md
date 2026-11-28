@@ -65,8 +65,8 @@ agent's `executes_as` under `team.agents`.
 the phase that owns it, `software`'s release approvals stay in `release-submit` ›
 `approve-release` and `release-publishing` › `publish`. A project not running the engine follows
 those steps by hand: the approver's OK is recorded at `approve-release` (in `releasing`, before the
-release commit) and at `publish` (before the tag), and a release never moves past `releasing` by
-`submit` alone.
+release commit) and at `publish` (after the tag, before the publication), and a release never
+moves past `releasing` by `submit` alone.
 
 **Updating from 1.0.0.** The project recomposes `software` and copies the `.wingfoil/` files as in
 steps 2 and 3, then regenerates the AGENTS.md region and pastes it again: the region now names the

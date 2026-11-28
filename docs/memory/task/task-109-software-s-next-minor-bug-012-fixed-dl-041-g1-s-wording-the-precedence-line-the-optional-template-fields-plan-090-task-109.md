@@ -232,3 +232,7 @@ On `task/task-109-…`, from `main` at `632eb8b0` (the backlog approval).
   dated note on dl-041 at plan-090 point 11 recording the erratum; the alternatives: (ii) move
   `publish`'s approval before `tag` (a workflow change, another task), (iii) keep "before the
   tag", a project by hand asking the OK before `tag`.
+- 2026-11-28: the approver ruled the build review's major (i): "at `publish` (after the tag,
+  before the publication)" in the section and the README, applied; a dated note on dl-041 at
+  plan-090 point 11 records G1's erratum (the OK at `publish` comes after the tag, as
+  `release-publishing` orders its phases). Criterion 2's text stays as approved (dl-019).
