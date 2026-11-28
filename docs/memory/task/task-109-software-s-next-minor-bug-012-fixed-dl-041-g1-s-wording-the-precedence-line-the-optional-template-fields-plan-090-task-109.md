@@ -2,7 +2,7 @@
 id: task-109-software-s-next-minor-bug-012-fixed-dl-041-g1-s-wording-the-precedence-line-the-optional-template-fields-plan-090-task-109
 type: task
 title: "software's next minor: bug-012 fixed, dl-041 G1's wording, the Precedence line, the optional template fields (plan-090 task-109)"
-status: backlog
+status: approved
 pack: "pack-foundation-software"
 depends_on: []
 tags: ["packs","software"]
@@ -150,7 +150,42 @@ gains a run for `adr`, `bug` and `tech-spec`, and the `release` is read by hand 
 
 ## Design
 
-<!-- Filled at the start of the work. -->
+On `task/task-109-…`, from `main` at `632eb8b0` (the backlog approval).
+
+- **`agents/section.md`** (criteria 1, 2): the bullet "**{{agent_name}} acts as developer, reviewer,
+  qa and architect** …" becomes "**{{agent_name}} acts in the roles `dna.yaml` › `team.agents`
+  gives it** (its `executes_as`), and never approves: it hands the approver the exact command. A
+  `bug` moves through the gates `memory.yaml` declares for it, including one parked back by its
+  `returns`, only by the approver's `approve`." A new bullet, **The release approvals**, states G1:
+  until a WingFoil release in the pack's range binds a gate's approval to the phase that owns it,
+  the approvals stay in `release-submit` › `approve-release` and `release-publishing` › `publish`;
+  a project not running the engine follows those steps by hand, the approver's OK recorded at
+  `approve-release` (in `releasing`, before the release commit) and at `publish` (before the tag),
+  and a release never moves past `releasing` by `submit` alone. "A WingFoil release that
+  `compat.yaml` lists" reads, in a text a project carries, as "in the pack's range": the range is
+  computed from `compat.yaml` (dl-002), and a project has no `compat.yaml`. The other bullets stay.
+- **`directives/determinism.md`** (criterion 3): its lines after the frontmatter become `#
+  Determinism`, a blank line, `Precedence: foundation`, a blank line, then the text unchanged.
+- **`memory-templates/`** (criterion 4): `adr.md`, `bug.md` and `tech-spec.md` gain, after `title:
+  ""`, the three lines of `base`'s `decision-log.md`, byte for byte; `release.md` gains, after
+  `release-line: ""`, 0.3.2's two `RELEASE_TEMPLATE_FIELDS` lines byte for byte, and after `##
+  Scope`'s comment a blank line and 0.3.2's `## Scope changes`: the heading, its comment reflowed
+  within 100 characters (words unchanged), a blank line and the two table lines. `check:packs`'
+  `releaseFields` (`src/workflow-rules.ts`) adds every key of `release.md`, so `backlog_committed`
+  and `waves` become keys a methodology's `where` may name; no pack's `where` names them today, and
+  nothing fails.
+- **`README.md`** (criteria 2, 5): step 3 reworded as `base`'s 2.1.0 step 3 (only what the project
+  wrote itself, never what `init` scaffolded); after "Who holds `tech-lead`", a paragraph **"The
+  release approvals."** with G1; after it, **"Updating from 1.0.0."** as criterion 5 lists.
+- **Tests and fixtures** (criterion 7): `tests/fixtures/runs/software.yaml` gains a run
+  `software-templates` (main `adr-ingest`; `start`; `add` of an `adr` at `adr-ingest.capture`, a
+  `bug` and a `tech-spec`), on both examples; `bug-001-export-crash` of the `with-software`
+  feedback fixture gains `reported_by: [feedback-001-export-crash]`. Other tests that move are
+  found by the suite and recorded with their counts (criterion 8).
+- **The hand reading** (criterion 4): a script on the composed `defaults` example, in a scratch
+  repository per release, running `memory add` for the four types (the `release` with `--set
+  version=1.0.0 --set release-line=rl-1.0.0`), then `workflow list --format json`; it prints each
+  element's frontmatter lines for the fields and the `release`'s `## Scope changes`.
 
 ## Execution Notes
 
@@ -170,3 +205,47 @@ gains a run for `adr`, `bug` and `tech-spec`, and the `release` is read by hand 
   three amended lines over 100 characters reflowed; not applied: naming `src/workflow-rules.ts` (the
   Design names it) and an FA-6 assertion on `reported_by` (`backReferenceProblems` already enforces
   it once the template declares the field).
+- 2026-11-27: `pending → backlog` by the approver (`632eb8b0`), the departure from plan-090 ruling 5
+  accepted with it (a `release` read by hand instead of a `check:runs` run).
+- 2026-11-27: built (`05471c35`) as the Design says. `npm test` 1537 pass, 0 fail (the count
+  unchanged: no test reads the changed texts; the `with-software` fixture's `bug` gained
+  `reported_by` with the template, so FA-6 found it in the same run); `npm run check:runs` 98 runs,
+  0 failed (94 + the run `software-templates` on both examples and both releases); `check:packs` 101
+  files, 0 problems (unchanged); `index -- --check` 9 files up to date (no generated region moved);
+  `check:texts -- --base main`, `lint` and `check:schemas` exit 0.
+- 2026-11-27: criterion 4's reading, on `defaults` composed with `base`, `software` and
+  `methodology/scrum`, a scratch repository per release, with `memory add --type <adr|bug|tech-spec>
+  --title "Fields check <type>"` and `memory add --type release --title "Fields check release"
+  --set version=1.0.0 --set release-line=rl-1.0.0`: on 0.3.0 and 0.3.2 each exits 0 (the
+  `release` at `docs/memory/release/rl-1.0.0/rel-1.0.0.md`); each element keeps its template's
+  fields and their comments byte for byte (`backlog_committed:` with no value), and the `release`
+  its `## Scope changes` with the comment and the table header; `workflow list --format json`
+  then exits 0 with no diagnostic on both.
+- 2026-11-27: build review: approve (1 major, for the approver; 0 minor; 2 nits). Applied: the
+  nits (`section.md`'s "the approvals stay in"; `tests/fixtures/runs/software.yaml`'s header, as
+  `base.yaml`'s). The major, an Acceptance deviation (dl-019), the Acceptance text unchanged:
+  criterion 2 quotes dl-041 G1's "at `publish` (before the tag)", while `release-publishing` runs
+  `release-commit`, `staging-rehearsal`, `tag`, `publish`, `mark-released`, and the section's own
+  first paragraph says so (commit, rehearsal, tag, publication): the OK at `publish` comes after
+  the tag, before the publication. The build keeps G1's words until the approver rules; proposed
+  (i) "at `publish` (after the tag, before the publication)" in the section and the README, with a
+  dated note on dl-041 at plan-090 point 11 recording the erratum; the alternatives: (ii) move
+  `publish`'s approval before `tag` (a workflow change, another task), (iii) keep "before the
+  tag", a project by hand asking the OK before `tag`.
+- 2026-11-28: the approver ruled the build review's major (i): "at `publish` (after the tag,
+  before the publication)" in the section and the README, applied; a dated note on dl-041 at
+  plan-090 point 11 will record G1's erratum (the OK at `publish` comes after the tag, as
+  `release-publishing` orders its phases). Criterion 2's text stays as approved (dl-019).
+- 2026-11-28: re-review of the amendments (`bd518851`, `bae2105d`): approve, no finding; its one
+  observation applied ("will record" on dl-041's note, not yet written).
+- 2026-11-28: dl-039's checks on the frozen commit `78246078`. The branch CI run 46113609079
+  `success`, its jobs: `validate (22.21.0, 1)` 11m31s, `validate (22.12.0, 1)` 11m15s, `validate
+  (22.21.0, 2)` 5m35s, `validate (22.12.0, 2)` 5m28s (none over 25 minutes). The local list on
+  Node.js 22.21.0, from a clean clone after `npm ci` and `npm run build`: every command exit 0;
+  `npm test` 1537 pass, 0 fail; `lint`, `check:texts -- --base origin/main`, `check:pins`;
+  `check:schemas` 10 files; `check:packs` 101 files, 0 problems; `index -- --check` 9 files up to
+  date; `validate` 32 runs, the golden tree 26 (tolerance 0.2.2, as on `main`), the overlays
+  `software-exit`, `scrum-exit`, `kanban-exit` 40 each and `feedback-exit` 48, each 0 failed and
+  `tolerance applied: none`; `workflow list` exit 0; `check:runs` 98 runs, 0 failed; `npm audit
+  --omit=dev` 0 vulnerabilities; the tree clean after. Privacy check of the branch's diff: no local
+  path, no session mention, no project named outside this repository's own.
