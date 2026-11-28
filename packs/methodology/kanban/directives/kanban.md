@@ -9,6 +9,8 @@ title: "Kanban"
 
 # Kanban
 
+Precedence: method
+
 The project runs Kanban as the Kanban Guide (May 2025) defines it: a strategy for optimizing the
 flow of value through a visual, pull-based system, under a Definition of Workflow (the
 `definition-of-workflow` directive).

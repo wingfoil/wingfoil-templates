@@ -55,6 +55,12 @@ and `software`, with a WingFoil release in the pack's range (see its catalog ent
    wrote itself, not `init`'s, keeps its name beside `work-item`.
 8. Record the adopted version of `methodology/kanban` in the project's own Memory.
 
+**Updating from 1.0.0.** The project recomposes `methodology/kanban` and copies the `.wingfoil/`
+files as in steps 2 and 3, then regenerates the AGENTS.md region and pastes it again: `kanban`'s
+section is unchanged, but the region is composed from the whole tree, and from 1.1.0's it carries
+`base` 2.1.0's and `software` 1.1.0's changes (their "Updating from" paragraphs). The directives'
+`Precedence:` lines reach the project only by that copy; nothing in its elements changes.
+
 <!-- generated:begin composition -->
 ## Composition
 

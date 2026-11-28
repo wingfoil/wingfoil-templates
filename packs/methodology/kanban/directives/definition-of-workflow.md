@@ -9,6 +9,8 @@ title: "Definition of Workflow"
 
 # Definition of Workflow
 
+Precedence: method
+
 The project's Definition of Workflow, as the Kanban Guide asks. A project replaces these rules with
 its own by a `custom/` directive of the same id.
 
